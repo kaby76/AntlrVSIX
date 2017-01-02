@@ -1,9 +1,11 @@
 # AntlrVSIX
 This is an alternative, open source Antlr4 Visual Studio 2015 extension. It only works
-on Antlr4 files, which must have the suffix ".g4".
+on Antlr4 grammars, and the grammar must be in a file that has the suffix ".g4".
 
-This extension is based on the OokLanguage extension. If you want to customize the extension
-for your needs, take care to make sure you follow a few rules:
+This extension is based on the OokLanguage extension (https://github.com/Microsoft/VSSDK-Extensibility-Samples/tree/master/Ook_Language_Integration and
+also https://github.com/visual-studio-extension/ook-language).
+If you want to customize this extension for your needs,
+take care to make sure you follow a few rules:
 
 1) If adding another token class, like punctuation, make sure to add the classification to:
 AntlrTokenTagger; AntlrClassifier; ClassificationFormat.cs; OrdinaryClassificationDefinition.cs;
@@ -16,4 +18,5 @@ modify.
 https://github.com/antlr/grammars-v4/tree/master/antlr4. There were some mofications to get it
 to work in C#.
 
-3) 
+3) Parsing of the input is not incremental, and currently does not recover from
+syntax errors at all. If the input grammar does not parse, there is no mark up.
