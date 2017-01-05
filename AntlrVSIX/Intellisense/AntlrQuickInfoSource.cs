@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
 using System.ComponentModel.Composition;
+using AntlrLanguage.Tag;
 using Microsoft.VisualStudio.Utilities;
 
 namespace AntlrLanguage

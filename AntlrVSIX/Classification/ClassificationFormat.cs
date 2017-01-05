@@ -5,14 +5,15 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace AntlrLanguage
 {
-    #region Format definition
+    // Please refer to Language Service and Editor Extension Points,
+    // https://msdn.microsoft.com/en-us/library/dd885244.aspx,
+    // for information on how this Managed Extensiblility Framework (MEF)
+    // extension hooks into Visual Studio 2015.
 
     [Export(typeof(EditorFormatDefinition))]
     [ClassificationType(ClassificationTypeNames = "terminal")]
     [Name("terminal")]
-    //this should be visible to the end user
     [UserVisible(false)]
-    //set the priority to be after the default classifiers
     [Order(Before = Priority.Default)]
     internal sealed class Terminal : ClassificationFormatDefinition
     {
@@ -26,9 +27,7 @@ namespace AntlrLanguage
     [Export(typeof(EditorFormatDefinition))]
     [ClassificationType(ClassificationTypeNames = "nonterminal")]
     [Name("nonterminal")]
-    //this should be visible to the end user
     [UserVisible(false)]
-    //set the priority to be after the default classifiers
     [Order(Before = Priority.Default)]
     internal sealed class Nonterminal : ClassificationFormatDefinition
     {
@@ -42,9 +41,7 @@ namespace AntlrLanguage
     [Export(typeof(EditorFormatDefinition))]
     [ClassificationType(ClassificationTypeNames = "acomment")]
     [Name("acomment")]
-    //this should be visible to the end user
     [UserVisible(false)]
-    //set the priority to be after the default classifiers
     [Order(Before = Priority.Default)]
     internal sealed class AComment : ClassificationFormatDefinition
     {
@@ -58,9 +55,7 @@ namespace AntlrLanguage
     [Export(typeof(EditorFormatDefinition))]
     [ClassificationType(ClassificationTypeNames = "akeyword")]
     [Name("akeyword")]
-    //this should be visible to the end user
     [UserVisible(false)]
-    //set the priority to be after the default classifiers
     [Order(Before = Priority.Default)]
     internal sealed class Keyword : ClassificationFormatDefinition
     {
@@ -70,6 +65,4 @@ namespace AntlrLanguage
             ForegroundColor = Colors.Blue;
         }
     }
-
-    #endregion //Format definition
 }

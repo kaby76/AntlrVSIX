@@ -1,4 +1,4 @@
-﻿namespace AntlrLanguage
+﻿namespace AntlrLanguage.Tag
 {
     public enum AntlrTokenTypes
     {

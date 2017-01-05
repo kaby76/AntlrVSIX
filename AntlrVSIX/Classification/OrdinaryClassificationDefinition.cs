@@ -4,10 +4,13 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace AntlrLanguage
 {
+    // Please refer to Language Service and Editor Extension Points,
+    // https://msdn.microsoft.com/en-us/library/dd885244.aspx,
+    // for information on how this Managed Extensiblility Framework (MEF)
+    // extension hooks into Visual Studio 2015.
+
     internal static class OrdinaryClassificationDefinition
     {
-        #region Type definition
-
         [Export(typeof(ClassificationTypeDefinition))]
         [Name("terminal")]
         internal static ClassificationTypeDefinition antlrTerminal = null;
@@ -23,7 +26,5 @@ namespace AntlrLanguage
         [Export(typeof(ClassificationTypeDefinition))]
         [Name("akeyword")]
         internal static ClassificationTypeDefinition antlrKeyword = null;
-
-        #endregion
     }
 }

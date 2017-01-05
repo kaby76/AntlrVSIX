@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,31 +8,15 @@ using Antlr4.Runtime.Tree;
 using AntlrLanguage.Grammar;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
-using Microsoft.VisualStudio.Utilities;
 
-namespace AntlrLanguage
+namespace AntlrLanguage.Tag
 {
-    [Export(typeof(ITaggerProvider))]
-    [ContentType("Antlr")]
-    [TagType(typeof(AntlrTokenTag))]
-    internal sealed class AntlrTokenTagProvider : ITaggerProvider
-    {
-        public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
-        {
-            return new AntlrTokenTagger(buffer) as ITagger<T>;
-        }
-    }
-
-    public class AntlrTokenTag : ITag
-    {
-        public AntlrTokenTypes type { get; private set; }
-
-        public AntlrTokenTag(AntlrTokenTypes type)
-        {
-            this.type = type;
-        }
-    }
-
+    /// <summary>
+    /// AntlrTokenTagger is the basic tagging facility of this extension.
+    /// The editor buffer is contained in _buffer. Please refer to
+    /// https://msdn.microsoft.com/en-us/library/dd885240.aspx for more
+    /// information on the editor and tagging.
+    /// </summary>
     internal sealed class AntlrTokenTagger : ITagger<AntlrTokenTag>
     {
         ITextBuffer _buffer;
@@ -53,7 +36,7 @@ namespace AntlrLanguage
         IParseTree _ant_tree = null;
         IParseTree[] _all_nodes = null;
 
-        IDictionary <string, AntlrTokenTypes> _antlrTypes;
+        IDictionary<string, AntlrTokenTypes> _antlrTypes;
 
         private string GetAntText()
         {
@@ -70,10 +53,17 @@ namespace AntlrLanguage
             _antlrTypes["akeyword"] = AntlrTokenTypes.Keyword;
             _antlrTypes["other"] = AntlrTokenTypes.Other;
 
-            //this._buffer.Changed += BufferChanged;
-
             var text = GetAntText();
             Parse(text);
+
+            this._buffer.Changed += OnTextBufferChanged;
+        }
+
+        public event EventHandler ClassificationChanged;
+        private void OnTextBufferChanged(object sender, TextContentChangedEventArgs e)
+        {
+            //ClassificationChanged(this, new ClassificationChangedEventArgs(
+            // new SnapshotSpan(_buffer.CurrentSnapshot, 0, _buffer.CurrentSnapshot.Length)));
         }
 
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged
@@ -306,7 +296,7 @@ namespace AntlrLanguage
 
                     if (tokenSpan.IntersectsWith(curSpan))
                         yield return new TagSpan<AntlrTokenTag>(tokenSpan, new AntlrTokenTag(type));
-                                    }
+                }
             }
         }
     }

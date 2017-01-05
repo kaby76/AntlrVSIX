@@ -15,10 +15,6 @@ namespace AntlrLanguage.Grammar
             _input = input;
         }
 
-        //public override string[] RuleNames { get; }
-        //public override string GrammarFileName { get; }
-        //public override IVocabulary Vocabulary { get; }
-
         /**
          * Track whether we are inside of a rule and whether it is lexical parser. _currentRuleType==Token.INVALID_TYPE
          * means that we are outside of a rule. At the first sign of a rule name reference and _currentRuleType==invalid, we
