@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows;
 using System.Windows.Input;
 using Microsoft.VisualStudio;
@@ -8,6 +9,7 @@ using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Operations;
 using AntlrLanguage.Key;
+using Point = System.Windows.Point;
 
 namespace AntlrLanguage.Mouse
 {
@@ -44,7 +46,7 @@ namespace AntlrLanguage.Mouse
 
         // Remember the location of the mouse on left button down, so we only handle left button up
         // if the mouse has stayed in a single location.
-        Point? _mouseDownAnchorPoint;
+        System.Windows.Point? _mouseDownAnchorPoint;
 
         //public override void PostprocessMouseLeftButtonDown(MouseButtonEventArgs e)
         //{
@@ -74,7 +76,7 @@ namespace AntlrLanguage.Mouse
             //}
         }
 
-        private bool InDragOperation(Point anchorPoint, Point currentPoint)
+        private bool InDragOperation(System.Windows.Point anchorPoint, System.Windows.Point currentPoint)
         {
             // If the mouse up is more than a drag away from the mouse down, this is a drag
             return Math.Abs(anchorPoint.X - currentPoint.X) >= SystemParameters.MinimumHorizontalDragDistance ||
@@ -95,8 +97,8 @@ namespace AntlrLanguage.Mouse
         {
             e.Handled = true;
             _mouseDownAnchorPoint = RelativeToView(e.GetPosition(_view.VisualElement));
-            Point p = _mouseDownAnchorPoint ?? default(Point);
-            if (p == default(Point)) return;
+            System.Windows.Point p = _mouseDownAnchorPoint ?? default(System.Windows.Point);
+            if (p == default(System.Windows.Point)) return;
             SnapshotPoint? where = ConvertPointToBufferIndex(p);
             SnapshotPoint wheren = where ?? default(SnapshotPoint);
             if (wheren == default(SnapshotPoint)) return;
