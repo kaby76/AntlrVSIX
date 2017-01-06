@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
 using AntlrLanguage.Tag;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace AntlrLanguage
 {
@@ -35,10 +36,10 @@ namespace AntlrLanguage
 
         public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
         {
-            ITagAggregator<AntlrTokenTag> antlrTagAggregator = 
+            ITagAggregator<AntlrTokenTag> antlrTagAggregator =
                                             aggregatorFactory.CreateTagAggregator<AntlrTokenTag>(buffer);
 
-            return new AntlrClassifier(buffer, antlrTagAggregator, ClassificationTypeRegistry) as ITagger<T>;
+            return new AntlrClassifier(null, buffer, antlrTagAggregator, ClassificationTypeRegistry) as ITagger<T>;
         }
     }
 }

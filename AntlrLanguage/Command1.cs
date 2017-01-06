@@ -1,7 +1,13 @@
 ﻿using System;
 using System.ComponentModel.Design;
+using System.Linq;
+using Antlr4.Runtime;
+using AntlrLanguage.Tag;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Tagging;
 
 namespace AntlrLanguage
 {
@@ -35,6 +41,10 @@ namespace AntlrLanguage
             set { menuItem.Enabled = value; }
         }
 
+        public SnapshotSpan Symbol { get; set; }
+        public string Classification { get; set; }
+        public ITextView View { get; set; }
+
         public static Command1 Instance { get; private set; }
 
         private IServiceProvider ServiceProvider
@@ -49,23 +59,38 @@ namespace AntlrLanguage
 
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            string message;
-            string title = "Command1";
-            EnvDTE.DTE dte;
-            EnvDTE.Document activeDocument;
+            // Find.
+            AntlrTokenTagger tt = AntlrTokenTagger.Instance;
+            string classification = this.Classification;
+            SnapshotSpan span = this.Symbol;
 
-            dte = (EnvDTE.DTE) this.ServiceProvider.GetService(typeof(EnvDTE.DTE));
-            activeDocument = dte.ActiveDocument;
-            message = $"Called on {activeDocument.FullName}";
+            IToken token = null;
+            if (classification == "nonterminal")
+            {
+                var it = tt._ant_nonterminals_defining.Where(
+                    (t) => t.Text == span.GetText());
+                if (it.Any()) token = it.First();
+                else return;
+            }
+            else if (classification == "terminal")
+            {
+                var it = tt._ant_terminals_defining.Where(
+                    (t) =>
+                    {
+                        return t.Text == span.GetText();
+                    }).ToArray();
+                if (it.Any()) token = it.First();
+                else return;
+            }
 
-            // Show a message box to prove we were here
-            VsShellUtilities.ShowMessageBox(
-                this.ServiceProvider,
-                message,
-                title,
-                OLEMSGICON.OLEMSGICON_INFO,
-                OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+            // Create new span.
+            ITextSnapshot cc = View.TextBuffer.CurrentSnapshot;
+            SnapshotSpan ss = new SnapshotSpan(cc, token.StartIndex, 1);
+            var sp = ss.Start;
+            // Put cursor on symbol.
+            View.Caret.MoveTo(sp);
+            // Center on cursor.
+            View.Caret.EnsureVisible();
         }
     }
 }

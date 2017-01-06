@@ -7,6 +7,7 @@ using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using AntlrLanguage.Grammar;
 using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
 
 namespace AntlrLanguage.Tag
@@ -19,33 +20,44 @@ namespace AntlrLanguage.Tag
     /// </summary>
     internal sealed class AntlrTokenTagger : ITagger<AntlrTokenTag>
     {
-        ITextBuffer _buffer;
-
-        // List of all nonterminals and terminals in the given grammar.
-        private IList<string> _ant_nonterminals_names;
-        private IList<string> _ant_terminals_names;
-
-        // List of all comments, terminal, nonterminal, and keyword tokens in the grammar.
-        private IList<IToken> _ant_terminals;
-        private IList<IToken> _ant_nonterminals;
-        private IList<IToken> _ant_comments;
-        private IList<IToken> _ant_keywords;
+        private ITextBuffer _buffer;
+        private ITextView _view;
 
         // Parser and parse tree.
         private ANTLRv4Parser _ant_parser = null;
         IParseTree _ant_tree = null;
         IParseTree[] _all_nodes = null;
 
+        // List of all nonterminals and terminals in the given grammar.
+        private IList<string> _ant_nonterminals_names;
+        private IList<string> _ant_terminals_names;
+
+        // List of all comments, terminal, nonterminal, and keyword tokens in the grammar.
+        public IList<IToken> _ant_terminals;
+        public IList<IToken> _ant_terminals_defining;
+        public IList<IToken> _ant_nonterminals;
+        public IList<IToken> _ant_nonterminals_defining;
+        private IList<IToken> _ant_comments;
+        private IList<IToken> _ant_keywords;
+
+        // Tagging information.
         IDictionary<string, AntlrTokenTypes> _antlrTypes;
+        public Dictionary<IToken, TagSpan<AntlrTokenTag>> _tag_list;
+        public Dictionary<SnapshotSpan, IToken> _token_list;
 
         private string GetAntText()
         {
             return _buffer.CurrentSnapshot.GetText();
         }
 
-        internal AntlrTokenTagger(ITextBuffer buffer)
+        public static AntlrTokenTagger Instance { get; set; }
+
+        internal AntlrTokenTagger(ITextView view, ITextBuffer buffer)
         {
+            Instance = this;
             _buffer = buffer;
+            _view = view;
+
             _antlrTypes = new Dictionary<string, AntlrTokenTypes>();
             _antlrTypes["nonterminal"] = AntlrTokenTypes.Nonterminal;
             _antlrTypes["terminal"] = AntlrTokenTypes.Terminal;
@@ -55,7 +67,8 @@ namespace AntlrLanguage.Tag
 
             var text = GetAntText();
             Parse(text);
-
+            _tag_list = new Dictionary<IToken, TagSpan<AntlrTokenTag>>(); // filled in tagger code below.
+            _token_list = new Dictionary<SnapshotSpan, IToken>(); // filled in tagger code below.
             this._buffer.Changed += OnTextBufferChanged;
         }
 
@@ -146,6 +159,23 @@ namespace AntlrLanguage.Tag
                 });
                 _ant_nonterminals = nonterm_nodes_iterator.Select<IParseTree, IToken>(
                     (t) => (t as TerminalNodeImpl).Symbol).ToArray();
+                // Get all defining and applied occurences of nonterminal names in grammar.
+                var iterator = nonterm_nodes_iterator.Where((IParseTree n) =>
+                {
+                    TerminalNodeImpl term = n as TerminalNodeImpl;
+                    if (term == null) return false;
+                    IRuleNode parent = term.Parent;
+                    for (int i = 0; i < parent.ChildCount; ++i)
+                    {
+                        if (parent.GetChild(i) == term &&
+                            i + 1 < parent.ChildCount &&
+                            parent.GetChild(i + 1).GetText() == ":")
+                            return true;
+                    }
+                    return false;
+                });
+                _ant_nonterminals_defining = iterator.Select<IParseTree, IToken>(
+                    (t) => (t as TerminalNodeImpl).Symbol).ToArray();
             }
 
             {
@@ -164,6 +194,23 @@ namespace AntlrLanguage.Tag
                     return false;
                 });
                 _ant_terminals = term_nodes_iterator.Select<IParseTree, IToken>(
+                    (t) => (t as TerminalNodeImpl).Symbol).ToArray();
+                // Get all defining nonterminal names in grammar.
+                var iterator = term_nodes_iterator.Where((IParseTree n) =>
+                {
+                    TerminalNodeImpl term = n as TerminalNodeImpl;
+                    if (term == null) return false;
+                    IRuleNode parent = term.Parent;
+                    for (int i = 0; i < parent.ChildCount; ++i)
+                    {
+                        if (parent.GetChild(i) == term &&
+                            i + 1 < parent.ChildCount &&
+                            parent.GetChild(i + 1).GetText() == ":")
+                            return true;
+                    }
+                    return false;
+                });
+                _ant_terminals_defining = iterator.Select<IParseTree, IToken>(
                     (t) => (t as TerminalNodeImpl).Symbol).ToArray();
             }
 
@@ -198,7 +245,6 @@ namespace AntlrLanguage.Tag
 
             //pp.ErrorHandler = new MyErrorStrategy();
         }
-
 
         // For each span of text given, perform a complete parse, and reclassify new spans with
         // the correct tag.
@@ -295,7 +341,10 @@ namespace AntlrLanguage.Tag
                         type = AntlrTokenTypes.Other;
 
                     if (tokenSpan.IntersectsWith(curSpan))
-                        yield return new TagSpan<AntlrTokenTag>(tokenSpan, new AntlrTokenTag(type));
+                    {
+                        TagSpan<AntlrTokenTag> t = new TagSpan<AntlrTokenTag>(tokenSpan, new AntlrTokenTag(type));
+                        yield return t;
+                    }
                 }
             }
         }

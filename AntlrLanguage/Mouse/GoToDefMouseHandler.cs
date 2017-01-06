@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Drawing;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Microsoft.VisualStudio;
@@ -9,6 +9,7 @@ using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Operations;
 using AntlrLanguage.Key;
+using AntlrLanguage.Tag;
 using Point = System.Windows.Point;
 
 namespace AntlrLanguage.Mouse
@@ -102,22 +103,42 @@ namespace AntlrLanguage.Mouse
             SnapshotPoint? where = ConvertPointToBufferIndex(p);
             SnapshotPoint wheren = where ?? default(SnapshotPoint);
             if (wheren == default(SnapshotPoint)) return;
-            var extent = _navigator.GetExtentOfWord(wheren);
+            ITextSnapshot sn = wheren.Snapshot;
+            
+            TextExtent extent = _navigator.GetExtentOfWord(wheren);
+            SnapshotSpan span = extent.Span;
+            SnapshotSpan sp2 = _navigator.GetSpanOfEnclosing(span);           
+
             //  Now, check for valid classification type.
-            foreach (var classification in _aggregator.GetClassificationSpans(extent.Span))
+            Command1 cmd = Command1.Instance;
+
+            var c1 = _aggregator.GetClassificationSpans(span).ToArray();
+
+            Command1.Instance.Enable = false;
+            Command1.Instance.Symbol = default(SnapshotSpan);
+            Command1.Instance.Classification = default(string);
+            Command1.Instance.View = default(ITextView);
+
+            // classification aggregator passed here does not work. Pick up view classifier.
+            foreach (ClassificationSpan classification in c1)
             {
                 var name = classification.ClassificationType.Classification.ToLower();
-                if ((name.Contains("nonterminal") || name.Contains("terminal")))
+                if (name == "terminal")
                 {
-                    Command1 cmd = Command1.Instance;
-                    if (cmd != null) Command1.Instance.Enable = true;
-                    return;
+                    TextExtent ee = extent;
+                    Command1.Instance.Enable = true;
+                    Command1.Instance.Symbol = span;
+                    Command1.Instance.Classification = "terminal";
+                    Command1.Instance.View = this._view;
                 }
-            }
-            {
-                Command1 cmd = Command1.Instance;
-                if (cmd != null) Command1.Instance.Enable = false;
-                return;
+                else if (name == "nonterminal")
+                {
+                    TextExtent ee = extent;
+                    Command1.Instance.Enable = true;
+                    Command1.Instance.Symbol = span;
+                    Command1.Instance.Classification = "nonterminal";
+                    Command1.Instance.View = this._view;
+                }
             }
         }
 

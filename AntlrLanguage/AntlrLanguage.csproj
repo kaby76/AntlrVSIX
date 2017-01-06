@@ -82,6 +82,11 @@
     <Compile Include="Tag\AntlrTokenTagger.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Grammar\ANTLRv4Lexer.g4" />
+    <None Include="Grammar\ANTLRv4Parser.g4" />
+    <None Include="Grammar\LexBasic.g4" />
+    <None Include="Grammar\LexUnicode.g4" />
+    <None Include="Grammar\test.g4" />
     <None Include="Key.snk" />
     <None Include="packages.config" />
     <None Include="source.extension.vsixmanifest">

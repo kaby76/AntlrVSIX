@@ -36,9 +36,11 @@ namespace AntlrLanguage.Mouse
             if (shellCommandDispatcher == null)
                 return null;
 
+            IClassifier ag1 = AggregatorFactory.GetClassifier(buffer);
+
             return new GoToDefMouseHandler(view,
                                            shellCommandDispatcher,
-                                           AggregatorFactory.GetClassifier(buffer),
+                                           ag1,
                                            NavigatorService.GetTextStructureNavigator(buffer),
                                            CtrlKeyState.GetStateForView(view));
         }

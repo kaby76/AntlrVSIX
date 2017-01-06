@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
 
@@ -12,7 +14,7 @@ namespace AntlrLanguage.Tag
     {
         public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
         {
-            return new AntlrTokenTagger(buffer) as ITagger<T>;
+            return new AntlrTokenTagger(null, buffer) as ITagger<T>;
         }
     }
 }

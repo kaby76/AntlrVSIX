@@ -4,20 +4,28 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
 using AntlrLanguage.Tag;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace AntlrLanguage
 {
     internal sealed class AntlrClassifier : ITagger<ClassificationTag>
     {
-        ITextBuffer _buffer = null;
-        ITagAggregator<AntlrTokenTag> _aggregator;
+        public ITextBuffer _buffer = null;
+        public ITextView _view = null;
+        public ITagAggregator<AntlrTokenTag> _aggregator;
         IDictionary<AntlrTokenTypes, IClassificationType> _antlrTypes;
+        public static Dictionary<ITextBuffer, AntlrClassifier> _buffer_to_classifier = new Dictionary<ITextBuffer, AntlrClassifier>();
 
-        internal AntlrClassifier(ITextBuffer buffer,
-                               ITagAggregator<AntlrTokenTag> antlrTagAggregator,
-                               IClassificationTypeRegistryService typeService)
+        internal AntlrClassifier(
+            ITextView view,
+            ITextBuffer buffer,
+            ITagAggregator<AntlrTokenTag> antlrTagAggregator,
+            IClassificationTypeRegistryService typeService)
         {
+            _view = view;
             _buffer = buffer;
+            _buffer_to_classifier[buffer] = this;
+
             _aggregator = antlrTagAggregator;
             _antlrTypes = new Dictionary<AntlrTokenTypes, IClassificationType>();
             _antlrTypes[AntlrTokenTypes.Nonterminal] = typeService.GetClassificationType("nonterminal");
@@ -42,7 +50,7 @@ namespace AntlrLanguage
                 var tagSpans = tagSpan.Span.GetSpans(spans[0].Snapshot);
                 yield return
                     new TagSpan<ClassificationTag>(tagSpans[0],
-                                                   new ClassificationTag(_antlrTypes[tagSpan.Tag.type]));
+                        new ClassificationTag(_antlrTypes[tagSpan.Tag.type]));
             }
         }
     }
