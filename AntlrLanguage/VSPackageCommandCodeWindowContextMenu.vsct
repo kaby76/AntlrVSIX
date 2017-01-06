@@ -13,7 +13,7 @@
          <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="Command1Id" type="Button">
             <Icon guid="guidImages" id="bmpPic1" />
             <Strings>
-               <ButtonText>Command1</ButtonText>
+               <ButtonText>Go to definition</ButtonText>
             </Strings>
          </Button>
       </Buttons>

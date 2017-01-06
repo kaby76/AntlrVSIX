@@ -109,12 +109,16 @@ namespace AntlrLanguage.Mouse
                 var name = classification.ClassificationType.Classification.ToLower();
                 if ((name.Contains("nonterminal") || name.Contains("terminal")))
                 {
-                    //GoToDefinitionCommand cmd = GoToDefinitionCommand.Instance;
-                    //GoToDefinitionCommand.Instance.Enable = true;
+                    Command1 cmd = Command1.Instance;
+                    if (cmd != null) Command1.Instance.Enable = true;
                     return;
                 }
             }
-            //GoToDefinitionCommand.Instance.Enable = false;
+            {
+                Command1 cmd = Command1.Instance;
+                if (cmd != null) Command1.Instance.Enable = false;
+                return;
+            }
         }
 
         //public override void PreprocessMouseUp(MouseButtonEventArgs e)
