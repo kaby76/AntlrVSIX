@@ -18,7 +18,7 @@ namespace AntlrLanguage.Tag
 
         public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
         {
-            return new AntlrTokenTagger(null, buffer) as ITagger<T>;
+            return new AntlrTokenTagger(null, buffer, GlobalServiceProvider) as ITagger<T>;
         }
     }
 }

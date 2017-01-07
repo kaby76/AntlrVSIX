@@ -51,7 +51,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Extensions\ITextBufferExtentions.cs" />
+    <Compile Include="Extensions\GetIVsTextViewExtension.cs" />
     <Compile Include="Extensions\IVsShellExtensions.cs" />
+    <Compile Include="Grammar\ParserDetails.cs" />
     <Compile Include="Navigate\Command1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Navigate\VSPackageCommandCodeWindowContextMenu.cs" />
@@ -82,6 +85,9 @@
     <Compile Include="Tag\AntlrTokenTagger.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\README.md">
+      <Link>README.md</Link>
+    </None>
     <None Include="Grammar\ANTLRv4Lexer.g4" />
     <None Include="Grammar\ANTLRv4Parser.g4" />
     <None Include="Grammar\LexBasic.g4" />
@@ -89,7 +95,6 @@
     <None Include="Grammar\test.g4" />
     <None Include="Key.snk" />
     <None Include="packages.config" />
-    <None Include="README.md" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>

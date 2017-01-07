@@ -2,6 +2,8 @@
 using System.ComponentModel.Design;
 using System.Linq;
 using Antlr4.Runtime;
+using AntlrLanguage.Extensions;
+using AntlrLanguage.Grammar;
 using AntlrLanguage.Tag;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -44,7 +46,6 @@ namespace AntlrLanguage
         public SnapshotSpan Symbol { get; set; }
         public string Classification { get; set; }
         public ITextView View { get; set; }
-
         public static Command1 Instance { get; private set; }
 
         private IServiceProvider ServiceProvider
@@ -59,22 +60,33 @@ namespace AntlrLanguage
 
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            // Find.
-            AntlrTokenTagger tt = AntlrTokenTagger.Instance;
+            ////////////////////////
+            // Go to definition....
+            ////////////////////////
+
             string classification = this.Classification;
             SnapshotSpan span = this.Symbol;
-
+            ITextView view = this.View;
+            
+            // First, find out what this view is, and what the file is.
+            ITextBuffer buffer = view.TextBuffer;
+            ITextDocument doc = buffer.GetTextDocument();
+            string path = doc.FilePath;
+            ParserDetails details = null;
+            bool found = ParserDetails._per_file_parser_details.TryGetValue(path, out details);
+            if (!found) return;
+            
             IToken token = null;
             if (classification == "nonterminal")
             {
-                var it = tt._ant_nonterminals_defining.Where(
+                var it = details._ant_nonterminals_defining.Where(
                     (t) => t.Text == span.GetText());
                 if (it.Any()) token = it.First();
                 else return;
             }
             else if (classification == "terminal")
             {
-                var it = tt._ant_terminals_defining.Where(
+                var it = details._ant_terminals_defining.Where(
                     (t) =>
                     {
                         return t.Text == span.GetText();

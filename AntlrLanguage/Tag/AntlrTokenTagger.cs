@@ -1,16 +1,20 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
+using AntlrLanguage.Extensions;
 using AntlrLanguage.Grammar;
 using EnvDTE;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
+using Microsoft.VisualStudio.TextManager.Interop;
 
 namespace AntlrLanguage.Tag
 {
@@ -24,41 +28,70 @@ namespace AntlrLanguage.Tag
     {
         private ITextBuffer _buffer;
         private ITextView _view;
-
-        // Parser and parse tree.
-        private ANTLRv4Parser _ant_parser = null;
-        IParseTree _ant_tree = null;
-        IParseTree[] _all_nodes = null;
-
-        // List of all nonterminals and terminals in the given grammar.
-        private IList<string> _ant_nonterminals_names;
-        private IList<string> _ant_terminals_names;
-
-        // List of all comments, terminal, nonterminal, and keyword tokens in the grammar.
-        public IList<IToken> _ant_terminals;
-        public IList<IToken> _ant_terminals_defining;
-        public IList<IToken> _ant_nonterminals;
-        public IList<IToken> _ant_nonterminals_defining;
-        private IList<IToken> _ant_comments;
-        private IList<IToken> _ant_keywords;
+        private SVsServiceProvider _service_provider;
 
         // Tagging information.
         IDictionary<string, AntlrTokenTypes> _antlrTypes;
-        public Dictionary<IToken, TagSpan<AntlrTokenTag>> _tag_list;
-        public Dictionary<SnapshotSpan, IToken> _token_list;
 
         private string GetAntText()
         {
             return _buffer.CurrentSnapshot.GetText();
         }
 
-        public static AntlrTokenTagger Instance { get; set; }
-
-        internal AntlrTokenTagger(ITextView view, ITextBuffer buffer)
+        public IEnumerable<ProjectItem> Recurse(ProjectItems i)
         {
-            Instance = this;
+            if (i != null)
+            {
+                foreach (ProjectItem j in i)
+                {
+                    foreach (ProjectItem k in Recurse(j))
+                    {
+                        yield return k;
+                    }
+                }
+            }
+        }
+
+        public IEnumerable<ProjectItem> Recurse(ProjectItem i)
+        {
+            yield return i;
+            foreach (ProjectItem j in Recurse(i.ProjectItems))
+            {
+                yield return j;
+            }
+        }
+
+        public IEnumerable<ProjectItem> SolutionFiles(DTE application)
+        {
+            Solution solution = (Solution)application.Solution;
+            string solution_full_name = solution.FullName;
+            string solution_file_name = solution.FileName;
+            Properties solution_properties = solution.Properties;
+            if (solution_properties != null)
+            {
+                object full_path1 = solution_properties.Item("Path");
+            }
+            foreach (Project project in solution.Projects)
+            {
+                string project_full_name = project.FullName;
+                string project_file_name = project.FileName;
+                Properties project_properties = project.Properties;
+                if (solution_properties != null)
+                {
+                    object full_path = solution_properties.Item(1);
+                }
+                foreach (ProjectItem item in Recurse(project.ProjectItems))
+                {
+                    yield return item;
+                }
+            }
+        }
+
+        internal AntlrTokenTagger(ITextView view, ITextBuffer buffer, SVsServiceProvider service_provider)
+        {
             _buffer = buffer;
             _view = view;
+            var pp = _buffer.Properties;
 
             _antlrTypes = new Dictionary<string, AntlrTokenTypes>();
             _antlrTypes["nonterminal"] = AntlrTokenTypes.Nonterminal;
@@ -67,16 +100,35 @@ namespace AntlrLanguage.Tag
             _antlrTypes["akeyword"] = AntlrTokenTypes.Keyword;
             _antlrTypes["other"] = AntlrTokenTypes.Other;
 
-            // Get VS solution, if any, and parse all grammars.
-            //var dte = serviceProvider.GetService<SDTE, DTE>();
-            //_vsVersion = VisualStudioVersionUtility.FromDteVersion(dte.Version);
-
-
+            // Get VS solution, if any, and parse all grammars
+            DTE dte = null;
+            if (service_provider != null)
+                dte = (DTE)service_provider.GetService(typeof(DTE));
+            DTE application = null;
+            if (dte != null)
+                application = dte.Application;
+            if (application != null)
+            {
+                IEnumerable<ProjectItem> iterator = SolutionFiles(application);
+                ProjectItem[] list = iterator.ToArray();
+                foreach (var item in list)
+                {
+                    var doc = item.Document;
+                    var props = item.Properties;
+                    string file_name = item.Name;
+                    string prefix = file_name.TrimSuffix(".g4");
+                    if (prefix == file_name) continue;
+                    IVsTextView w = file_name.GetIVsTextView();
+                    Window window = item.Open();
+                }
+            }
 
             var text = GetAntText();
-            Parse(text);
-            _tag_list = new Dictionary<IToken, TagSpan<AntlrTokenTag>>(); // filled in tagger code below.
-            _token_list = new Dictionary<SnapshotSpan, IToken>(); // filled in tagger code below.
+            var doc2 = buffer.GetTextDocument();
+            string file_name2 = doc2.FilePath;
+            ParserDetails foo = new ParserDetails();
+            ParserDetails._per_file_parser_details[file_name2] = foo;
+            foo.Parse(text);
             this._buffer.Changed += OnTextBufferChanged;
         }
 
@@ -91,167 +143,6 @@ namespace AntlrLanguage.Tag
         {
             add { }
             remove { }
-        }
-
-        private void Parse(string plain_old_input_grammar)
-        {
-            // Set up Antlr to parse input grammar.
-            byte[] byteArray = Encoding.UTF8.GetBytes(plain_old_input_grammar);
-            CommonTokenStream cts = new CommonTokenStream(
-                new ANTLRv4Lexer(
-                    new AntlrInputStream(
-                        new StreamReader(
-                            new MemoryStream(byteArray)).ReadToEnd())));
-            _ant_parser = new ANTLRv4Parser(cts);
-
-            // Set up another token stream containing comments. This might be
-            // problematic as the parser influences the lexer.
-            CommonTokenStream cts_off_channel = new CommonTokenStream(
-                new ANTLRv4Lexer(
-                    new AntlrInputStream(
-                        new StreamReader(
-                            new MemoryStream(byteArray)).ReadToEnd())),
-                ANTLRv4Lexer.OFF_CHANNEL);
-
-            // Get all comments.
-            _ant_comments = new List<IToken>();
-            while (cts_off_channel.LA(1) != ANTLRv4Parser.Eof)
-            {
-                IToken token = cts_off_channel.LT(1);
-                if (token.Type == ANTLRv4Parser.BLOCK_COMMENT
-                    || token.Type == ANTLRv4Parser.LINE_COMMENT)
-                {
-                    _ant_comments.Add(token);
-                }
-                cts_off_channel.Consume();
-            }
-
-            _ant_tree = _ant_parser.grammarSpec();
-            _all_nodes = DFSVisitor.DFS(_ant_tree as ParserRuleContext).ToArray();
-
-            {
-                // Get all nonterminal names from the grammar.
-                IEnumerable<IParseTree> nonterm_nodes_iterator = _all_nodes.Where((IParseTree n) =>
-                {
-                    TerminalNodeImpl nonterm = n as TerminalNodeImpl;
-                    return nonterm?.Symbol.Type == ANTLRv4Parser.RULE_REF;
-                });
-                _ant_nonterminals_names = nonterm_nodes_iterator.Select<IParseTree, string>(
-                    (t) => (t as TerminalNodeImpl).Symbol.Text).ToArray();
-            }
-
-            {
-                // Get all terminal names from the grammar.
-                IEnumerable<IParseTree> term_nodes_iterator = _all_nodes.Where((IParseTree n) =>
-                {
-                    TerminalNodeImpl nonterm = n as TerminalNodeImpl;
-                    return nonterm?.Symbol.Type == ANTLRv4Parser.TOKEN_REF;
-                });
-                _ant_terminals_names = term_nodes_iterator.Select<IParseTree, string>(
-                    (t) => (t as TerminalNodeImpl).Symbol.Text).ToArray();
-            }
-
-            {
-                // Get all defining and applied occurences of nonterminal names in grammar.
-                IEnumerable<IParseTree> nonterm_nodes_iterator = _all_nodes.Where((IParseTree n) =>
-                {
-                    TerminalNodeImpl nonterm = n as TerminalNodeImpl;
-                    if (nonterm == null) return false;
-                    if (!_ant_nonterminals_names.Contains(nonterm.GetText())) return false;
-                    // The token must be part of parserRuleSpec context.
-                    for (var p = nonterm.Parent; p != null; p = p.Parent)
-                    {
-                        if (p is ANTLRv4Parser.ParserRuleSpecContext) return true;
-                    }
-                    return false;
-                });
-                _ant_nonterminals = nonterm_nodes_iterator.Select<IParseTree, IToken>(
-                    (t) => (t as TerminalNodeImpl).Symbol).ToArray();
-                // Get all defining and applied occurences of nonterminal names in grammar.
-                var iterator = nonterm_nodes_iterator.Where((IParseTree n) =>
-                {
-                    TerminalNodeImpl term = n as TerminalNodeImpl;
-                    if (term == null) return false;
-                    IRuleNode parent = term.Parent;
-                    for (int i = 0; i < parent.ChildCount; ++i)
-                    {
-                        if (parent.GetChild(i) == term &&
-                            i + 1 < parent.ChildCount &&
-                            parent.GetChild(i + 1).GetText() == ":")
-                            return true;
-                    }
-                    return false;
-                });
-                _ant_nonterminals_defining = iterator.Select<IParseTree, IToken>(
-                    (t) => (t as TerminalNodeImpl).Symbol).ToArray();
-            }
-
-            {
-                // Get all defining and applied occurences of nonterminal names in grammar.
-                IEnumerable<IParseTree> term_nodes_iterator = _all_nodes.Where((IParseTree n) =>
-                {
-                    TerminalNodeImpl term = n as TerminalNodeImpl;
-                    if (term == null) return false;
-                    if (!_ant_terminals_names.Contains(term.GetText())) return false;
-                    // The token must be part of parserRuleSpec context.
-                    for (var p = term.Parent; p != null; p = p.Parent)
-                    {
-                        if (p is ANTLRv4Parser.ParserRuleSpecContext ||
-                            p is ANTLRv4Parser.LexerRuleSpecContext) return true;
-                    }
-                    return false;
-                });
-                _ant_terminals = term_nodes_iterator.Select<IParseTree, IToken>(
-                    (t) => (t as TerminalNodeImpl).Symbol).ToArray();
-                // Get all defining nonterminal names in grammar.
-                var iterator = term_nodes_iterator.Where((IParseTree n) =>
-                {
-                    TerminalNodeImpl term = n as TerminalNodeImpl;
-                    if (term == null) return false;
-                    IRuleNode parent = term.Parent;
-                    for (int i = 0; i < parent.ChildCount; ++i)
-                    {
-                        if (parent.GetChild(i) == term &&
-                            i + 1 < parent.ChildCount &&
-                            parent.GetChild(i + 1).GetText() == ":")
-                            return true;
-                    }
-                    return false;
-                });
-                _ant_terminals_defining = iterator.Select<IParseTree, IToken>(
-                    (t) => (t as TerminalNodeImpl).Symbol).ToArray();
-            }
-
-            {
-                // Get all keyword tokens in grammar.
-                IEnumerable<IParseTree> keywords_interator = _all_nodes.Where((IParseTree n) =>
-                {
-                    TerminalNodeImpl nonterm = n as TerminalNodeImpl;
-                    if (nonterm == null) return false;
-                    for (var p = nonterm.Parent; p != null; p = p.Parent)
-                    {
-                        // "parser grammar" "lexer grammar" etc.
-                        if (p is ANTLRv4Parser.GrammarTypeContext) return true;
-                        if (p is ANTLRv4Parser.OptionsSpecContext) return true;
-                        // "options ..."
-                        if (p is ANTLRv4Parser.OptionContext) return false;
-                        // "import ..."
-                        if (p is ANTLRv4Parser.DelegateGrammarsContext) return true;
-                        if (p is ANTLRv4Parser.DelegateGrammarContext) return false;
-                        // "tokens ..."
-                        if (p is ANTLRv4Parser.TokensSpecContext) return true;
-                        if (p is ANTLRv4Parser.IdListContext) return false;
-                        // "channels ..."
-                        if (p is ANTLRv4Parser.ChannelsSpecContext) return true;
-                        if (p is ANTLRv4Parser.ModeSpecContext) return true;
-                    }
-                    return false;
-                });
-                _ant_keywords = keywords_interator.Select<IParseTree, IToken>(
-                    (t) => (t as TerminalNodeImpl).Symbol).ToArray();
-            }
-
-            //pp.ErrorHandler = new MyErrorStrategy();
         }
 
         // For each span of text given, perform a complete parse, and reclassify new spans with
@@ -270,7 +161,13 @@ namespace AntlrLanguage.Tag
                 ITextSnapshotLine containingLine = curSpan.Start.GetContainingLine();
                 int curLoc = containingLine.Start.Position;
 
-                var text = curSpan.GetText();
+                string text = curSpan.GetText();
+                ITextBuffer buf = curSpan.Snapshot.TextBuffer;
+                var doc = buf.GetTextDocument();
+                string file_name = doc.FilePath;
+
+                ParserDetails details = null;
+                bool found = ParserDetails._per_file_parser_details.TryGetValue(file_name, out details);
 
                 SnapshotPoint start = curSpan.Start;
                 int curLocStart = start.Position;
@@ -284,7 +181,7 @@ namespace AntlrLanguage.Tag
                 List<IToken> all_comment_tokens = new List<IToken>();
                 List<IToken> all_keyword_tokens = new List<IToken>();
 
-                all_nonterm_tokens = _ant_nonterminals.Where((token) =>
+                all_nonterm_tokens = details._ant_nonterminals.Where((token) =>
                 {
                     int start_token_start = token.StartIndex;
                     int end_token_end = token.StopIndex;
@@ -293,7 +190,7 @@ namespace AntlrLanguage.Tag
                     return true;
                 }).ToList();
                 combined_tokens = combined_tokens.Concat(all_nonterm_tokens);
-                all_term_tokens = _ant_terminals.Where((token) =>
+                all_term_tokens = details._ant_terminals.Where((token) =>
                 {
                     int start_token_start = token.StartIndex;
                     int end_token_end = token.StopIndex;
@@ -302,7 +199,7 @@ namespace AntlrLanguage.Tag
                     return true;
                 }).ToList();
                 combined_tokens = combined_tokens.Concat(all_term_tokens);
-                all_comment_tokens = _ant_comments.Where((token) =>
+                all_comment_tokens = details._ant_comments.Where((token) =>
                 {
                     int start_token_start = token.StartIndex;
                     int end_token_end = token.StopIndex;
@@ -311,7 +208,7 @@ namespace AntlrLanguage.Tag
                     return true;
                 }).ToList();
                 combined_tokens = combined_tokens.Concat(all_comment_tokens);
-                all_keyword_tokens = _ant_keywords.Where((token) =>
+                all_keyword_tokens = details._ant_keywords.Where((token) =>
                 {
                     int start_token_start = token.StartIndex;
                     int end_token_end = token.StopIndex;
