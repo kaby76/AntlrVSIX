@@ -2,7 +2,7 @@
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
-namespace AntlrLanguage
+namespace AntlrLanguage.Extensions
 {
     internal static class IVsShellExtensions
     {

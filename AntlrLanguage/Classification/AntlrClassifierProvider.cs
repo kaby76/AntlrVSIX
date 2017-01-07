@@ -4,7 +4,6 @@ using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
 using AntlrLanguage.Tag;
-using Microsoft.VisualStudio.Text.Editor;
 
 namespace AntlrLanguage
 {

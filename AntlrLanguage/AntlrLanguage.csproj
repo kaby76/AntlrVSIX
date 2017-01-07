@@ -51,12 +51,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="IVsShellExtensions.cs" />
+    <Compile Include="Extensions\IVsShellExtensions.cs" />
     <Compile Include="Navigate\Command1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Navigate\VSPackageCommandCodeWindowContextMenu.cs" />
     <Compile Include="Classification\AntlrClassifier.cs" />
-    <Compile Include="Key\Class1.cs" />
+    <Compile Include="Keyboard\Class1.cs" />
     <Compile Include="Mouse\GoToDefMouseHandlerProvider.cs" />
     <Compile Include="Mouse\GoToDefMouseHandler.cs" />
     <Compile Include="Tag\AntlrTokenTagProvider.cs" />
@@ -89,6 +89,7 @@
     <None Include="Grammar\test.g4" />
     <None Include="Key.snk" />
     <None Include="packages.config" />
+    <None Include="README.md" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>

@@ -6,6 +6,8 @@ using System.Text;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 using AntlrLanguage.Grammar;
+using EnvDTE;
+using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
@@ -64,6 +66,12 @@ namespace AntlrLanguage.Tag
             _antlrTypes["acomment"] = AntlrTokenTypes.Comment;
             _antlrTypes["akeyword"] = AntlrTokenTypes.Keyword;
             _antlrTypes["other"] = AntlrTokenTypes.Other;
+
+            // Get VS solution, if any, and parse all grammars.
+            //var dte = serviceProvider.GetService<SDTE, DTE>();
+            //_vsVersion = VisualStudioVersionUtility.FromDteVersion(dte.Version);
+
+
 
             var text = GetAntText();
             Parse(text);
