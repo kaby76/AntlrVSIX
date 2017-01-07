@@ -19,7 +19,7 @@
       </Buttons>
 
       <Bitmaps>
-         <Bitmap guid="guidImages" href="Resources\Command1.png" usedList="bmpPic1"/>
+         <Bitmap guid="guidImages" href="..\Resources\Command1.png" usedList="bmpPic1"/>
       </Bitmaps>
    </Commands>
 
