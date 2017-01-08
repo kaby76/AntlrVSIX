@@ -128,7 +128,7 @@ namespace AntlrLanguage.Tag
             string file_name2 = doc2.FilePath;
             ParserDetails foo = new ParserDetails();
             ParserDetails._per_file_parser_details[file_name2] = foo;
-            foo.Parse(text);
+            foo.Parse(text, file_name2);
             this._buffer.Changed += OnTextBufferChanged;
         }
 

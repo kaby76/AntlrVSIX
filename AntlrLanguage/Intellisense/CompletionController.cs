@@ -18,7 +18,7 @@ namespace AntlrLanguage
     [Export(typeof(IVsTextViewCreationListener))]
     [ContentType("Antlr")]
     [TextViewRole(PredefinedTextViewRoles.Interactive)]
-    internal sealed class VsTextViewCreationListener : IVsTextViewCreationListener
+    internal sealed class VsTextViewCreationListener2 : IVsTextViewCreationListener
     {
         [Import]
         IVsEditorAdaptersFactoryService AdaptersFactory = null;

@@ -10,6 +10,8 @@ using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
+using System.Collections.Generic;
+using Microsoft.VisualStudio.TextManager.Interop;
 
 namespace AntlrLanguage
 {
@@ -72,37 +74,50 @@ namespace AntlrLanguage
             ITextBuffer buffer = view.TextBuffer;
             ITextDocument doc = buffer.GetTextDocument();
             string path = doc.FilePath;
-            ParserDetails details = null;
-            bool found = ParserDetails._per_file_parser_details.TryGetValue(path, out details);
-            if (!found) return;
-            
-            IToken token = null;
-            if (classification == "nonterminal")
-            {
-                var it = details._ant_nonterminals_defining.Where(
-                    (t) => t.Text == span.GetText());
-                if (it.Any()) token = it.First();
-                else return;
-            }
-            else if (classification == "terminal")
-            {
-                var it = details._ant_terminals_defining.Where(
-                    (t) =>
-                    {
-                        return t.Text == span.GetText();
-                    }).ToArray();
-                if (it.Any()) token = it.First();
-                else return;
-            }
 
-            // Create new span.
-            ITextSnapshot cc = View.TextBuffer.CurrentSnapshot;
+            //ParserDetails details = null;
+            //bool found = ParserDetails._per_file_parser_details.TryGetValue(path, out details);
+            //if (!found) return;
+
+            List<IToken> where = new List<IToken>();
+            List<ParserDetails> where_details = new List<ParserDetails>();
+            IToken token = null;
+            foreach (var kvp in ParserDetails._per_file_parser_details)
+            {
+                string file_name = kvp.Key;
+                ParserDetails details = kvp.Value;
+                if (classification == "nonterminal")
+                {
+                    var it = details._ant_nonterminals_defining.Where(
+                        (t) => t.Text == span.GetText());
+                    where.AddRange(it);
+                    foreach (var i in it) where_details.Add(details);
+                }
+                else if (classification == "terminal")
+                {
+                    var it = details._ant_terminals_defining.Where(
+                        (t) => t.Text == span.GetText());
+                    where.AddRange(it);
+                    foreach (var i in it) where_details.Add(details);
+                }
+            }
+            if (where.Any()) token = where.First();
+            else return;
+            ParserDetails where_token = where_details.First();
+
+            IVsTextView w = where_token.full_file_name.GetIVsTextView();
+            var v = VsTextViewCreationListener.to_wpftextview[w];
+
+            // Create new span in the appropriate view.
+            ITextSnapshot cc = v.TextBuffer.CurrentSnapshot;
             SnapshotSpan ss = new SnapshotSpan(cc, token.StartIndex, 1);
             var sp = ss.Start;
             // Put cursor on symbol.
-            View.Caret.MoveTo(sp);
+            v.Caret.MoveTo(sp);
             // Center on cursor.
-            View.Caret.EnsureVisible();
+            v.Caret.EnsureVisible();
+            
+            var ok = w.SendExplicitFocus(); // TODO: fix so window is on top. does not work.
         }
     }
 }

@@ -14,6 +14,7 @@ namespace AntlrLanguage.Grammar
         public static Dictionary<string, ParserDetails> _per_file_parser_details =
             new Dictionary<string, ParserDetails>();
 
+        public string full_file_name;
         public string Text;
 
         // Parser and parse tree.
@@ -33,8 +34,11 @@ namespace AntlrLanguage.Grammar
         public IList<IToken> _ant_comments;
         public IList<IToken> _ant_keywords;
 
-        public void Parse(string plain_old_input_grammar)
+        public void Parse(string plain_old_input_grammar, string ffn)
         {
+            Text = plain_old_input_grammar;
+            full_file_name = ffn;
+
             // Set up Antlr to parse input grammar.
             byte[] byteArray = Encoding.UTF8.GetBytes(plain_old_input_grammar);
             CommonTokenStream cts = new CommonTokenStream(
