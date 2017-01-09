@@ -11,6 +11,8 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
 using System.Collections.Generic;
+using System.IO;
+using EnvDTE;
 using Microsoft.VisualStudio.TextManager.Interop;
 
 namespace AntlrLanguage
@@ -66,6 +68,40 @@ namespace AntlrLanguage
             // Go to definition....
             ////////////////////////
 
+            // First, open up every .g4 file in project.
+            // Get VS solution, if any, and parse all grammars
+            DTE application = ApplicationHelper.GetApplication();
+            if (application != null)
+            {
+                IEnumerable<ProjectItem> iterator = ApplicationHelper.SolutionFiles(application);
+                ProjectItem[] list = iterator.ToArray();
+                foreach (var item in list)
+                {
+                    //var doc = item.Document; CRASHES!!!! DO NOT USE!
+                    //var props = item.Properties;
+                    string file_name = item.Name;
+                    if (file_name != null)
+                    {
+                        string prefix = file_name.TrimSuffix(".g4");
+                        if (prefix == file_name) continue;
+
+                        try
+                        {
+                            object prop = item.Properties.Item("FullPath").Value;
+                            string ffn = (string)prop;
+                            if (!ParserDetails._per_file_parser_details.ContainsKey(ffn))
+                            {
+                                StreamReader sr = new StreamReader(ffn);
+                                ParserDetails foo = new ParserDetails();
+                                ParserDetails._per_file_parser_details[ffn] = foo;
+                                foo.Parse(sr.ReadToEnd(), ffn);
+                            }
+                        } catch (Exception eeks)
+                        { }
+                    }
+                }
+            }
+
             string classification = this.Classification;
             SnapshotSpan span = this.Symbol;
             ITextView view = this.View;
@@ -106,11 +142,19 @@ namespace AntlrLanguage
             ParserDetails where_token = where_details.First();
 
             string full_file_name = where_token.full_file_name;
-            IVsTextView w = where_token.full_file_name.GetIVsTextView();
+            IVsTextView w = full_file_name.GetIVsTextView();
             full_file_name.ShowFrame();
             w = where_token.full_file_name.GetIVsTextView();
 
-            var v = VsTextViewCreationListener.to_wpftextview[w];
+            IWpfTextView v = null;
+            try
+            {
+                v = VsTextViewCreationListener.to_wpftextview[w];
+            }
+            catch (Exception eeks)
+            {
+                return;
+            }
 
             // Create new span in the appropriate view.
             ITextSnapshot cc = v.TextBuffer.CurrentSnapshot;
@@ -120,11 +164,6 @@ namespace AntlrLanguage
             v.Caret.MoveTo(sp);     // This sets cursor, bot does not center.
             // Center on cursor.
             v.Caret.EnsureVisible(); // This works, sort of. It moves the scroll bar, but it does not CENTER! Does not really work!
-
-
-            //var ok = w.SendExplicitFocus(); // This does not work, does not bring window to top.
-
-            //Microsoft.VisualStudio.TextManager.Interop.IVsTextManager::NavigateToLineAndColumn();
         }
     }
 }

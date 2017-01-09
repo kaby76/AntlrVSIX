@@ -38,48 +38,6 @@ namespace AntlrLanguage.Tag
             return _buffer.CurrentSnapshot.GetText();
         }
 
-        public IEnumerable<ProjectItem> Recurse(ProjectItems i)
-        {
-            if (i != null)
-            {
-                foreach (ProjectItem j in i)
-                {
-                    foreach (ProjectItem k in Recurse(j))
-                    {
-                        yield return k;
-                    }
-                }
-            }
-        }
-
-        public IEnumerable<ProjectItem> Recurse(ProjectItem i)
-        {
-            yield return i;
-            foreach (ProjectItem j in Recurse(i.ProjectItems))
-            {
-                yield return j;
-            }
-        }
-
-        public IEnumerable<ProjectItem> SolutionFiles(DTE application)
-        {
-            Solution solution = (Solution)application.Solution;
-            string solution_full_name = solution.FullName;
-            string solution_file_name = solution.FileName;
-            Properties solution_properties = solution.Properties;
-            foreach (Project project in solution.Projects)
-            {
-                string project_full_name = project.FullName;
-                string project_file_name = project.FileName;
-                Properties project_properties = project.Properties;
-                if (solution_properties != null)
-                foreach (ProjectItem item in Recurse(project.ProjectItems))
-                {
-                    yield return item;
-                }
-            }
-        }
-
         internal AntlrTokenTagger(ITextView view, ITextBuffer buffer, SVsServiceProvider service_provider)
         {
             _buffer = buffer;
@@ -93,39 +51,15 @@ namespace AntlrLanguage.Tag
             _antlrTypes["akeyword"] = AntlrTokenTypes.Keyword;
             _antlrTypes["other"] = AntlrTokenTypes.Other;
 
-            // Get VS solution, if any, and parse all grammars
-            DTE dte = null;
-            if (service_provider != null)
-                dte = (DTE)service_provider.GetService(typeof(DTE));
-            DTE application = null;
-            if (dte != null)
-                application = dte.Application;
-            if (application != null)
-            {
-                IEnumerable<ProjectItem> iterator = SolutionFiles(application);
-                ProjectItem[] list = iterator.ToArray();
-                foreach (var item in list)
-                {
-                    //var doc = item.Document; CRASHES!!!! DO NOT USE!
-                    //var props = item.Properties;
-                    string file_name = item.Name;
-                    if (file_name != null)
-                    {
-                        string prefix = file_name.TrimSuffix(".g4");
-                        if (prefix == file_name) continue;
-                        IVsTextView w = file_name.GetIVsTextView();
-                        // Window window = item.Open(); Yep this code doesn't work either--of course.
-                        //if (w == null) file_name.OpenStupidFile(); works, but re-entrancy problem.
-                    }
-                }
-            }
-
             var text = GetAntText();
             var doc2 = buffer.GetTextDocument();
             string file_name2 = doc2.FilePath;
-            ParserDetails foo = new ParserDetails();
-            ParserDetails._per_file_parser_details[file_name2] = foo;
-            foo.Parse(text, file_name2);
+            if (!ParserDetails._per_file_parser_details.ContainsKey(file_name2))
+            {
+                ParserDetails foo = new ParserDetails();
+                ParserDetails._per_file_parser_details[file_name2] = foo;
+                foo.Parse(text, file_name2);
+            }
             this._buffer.Changed += OnTextBufferChanged;
         }
 

@@ -51,12 +51,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Extensions\Class1.cs" />
-    <Compile Include="Extensions\Class2.cs" />
-    <Compile Include="Extensions\Class3.cs" />
+    <Compile Include="Extensions\ApplicationHelper.cs" />
+    <Compile Include="Extensions\GetIVsTextViewExtension2.cs" />
+    <Compile Include="Extensions\GetIVsTextViewExtension3.cs" />
     <Compile Include="Extensions\ITextBufferExtentions.cs" />
     <Compile Include="Extensions\GetIVsTextViewExtension.cs" />
     <Compile Include="Extensions\IVsShellExtensions.cs" />
+    <Compile Include="Extensions\VsTextViewCreationListener.cs" />
     <Compile Include="Grammar\ParserDetails.cs" />
     <Compile Include="Navigate\Command1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
