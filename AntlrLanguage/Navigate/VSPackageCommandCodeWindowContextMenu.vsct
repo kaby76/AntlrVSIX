@@ -10,12 +10,17 @@
       </Groups>
 
       <Buttons>
-         <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="Command1Id" type="Button">
-            <Icon guid="guidImages" id="bmpPic1" />
-            <Strings>
-               <ButtonText>Go to definition</ButtonText>
-            </Strings>
-         </Button>
+        <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="Command1Id" type="Button">
+          <Icon guid="guidImages" id="bmpPic1" />
+          <Strings>
+            <ButtonText>Go to definition</ButtonText>
+          </Strings>
+        </Button>
+        <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="Command2Id" type="Button">
+          <Strings>
+            <ButtonText>Find all references</ButtonText>
+          </Strings>
+        </Button>
       </Buttons>
 
       <Bitmaps>
@@ -34,18 +39,24 @@
       </CommandPlacement>
 
       <!-- Placement for command. The parent of a command is always a group, never a menu, context menu or toolbar. -->
-      <CommandPlacement guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="Command1Id" priority="0x0001" >
-         <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="MyGroupForCommands"/>
-      </CommandPlacement>
+     <CommandPlacement guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="Command1Id" priority="0x0001" >
+       <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="MyGroupForCommands"/>
+     </CommandPlacement>
+     <CommandPlacement guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="Command2Id" priority="0x0001" >
+       <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="MyGroupForCommands"/>
+     </CommandPlacement>
    </CommandPlacements>
 
    <Symbols>
-      <GuidSymbol name="guidVSPackageCommandCodeWindowContextMenu" value="{7e37eef9-8cbe-4b10-81f7-66413cd2c9d3}" />
-
-      <GuidSymbol name="guidVSPackageCommandCodeWindowContextMenuCmdSet" value="{0c1acc31-15ac-417c-86b2-eefdc669e8bf}">
-         <IDSymbol name="MyGroupForCommands" value="0x1020" />
-         <!-- Warning!!: Keep the value in sync with the code in Command1.cs -->
-         <IDSymbol name="Command1Id" value="0x0100" />
+      <GuidSymbol name="guidVSPackageCommandCodeWindowContextMenu"
+                  value="{7e37eef9-8cbe-4b10-81f7-66413cd2c9d3}" />
+      <GuidSymbol name="guidVSPackageCommandCodeWindowContextMenuCmdSet"
+                  value="{0c1acc31-15ac-417c-86b2-eefdc669e8bf}">
+        <IDSymbol name="MyGroupForCommands" value="0x1020" />
+        <!-- Warning!!: Keep the value in sync with the code in Command1.cs -->
+        <IDSymbol name="Command1Id" value="0x0100" />
+        <!-- Warning!!: Keep the value in sync with the code in Command2.cs -->
+        <IDSymbol name="Command2Id" value="0x0101" />
       </GuidSymbol>
 
       <GuidSymbol name="guidImages" value="{68759f95-6f1d-4a77-87ea-192fc8d811f1}" >

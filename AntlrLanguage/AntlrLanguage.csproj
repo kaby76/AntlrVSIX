@@ -60,6 +60,7 @@
     <Compile Include="Extensions\VsTextViewCreationListener.cs" />
     <Compile Include="Grammar\ParserDetails.cs" />
     <Compile Include="Navigate\Command1.cs" />
+    <Compile Include="Navigate\Command2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Navigate\VSPackageCommandCodeWindowContextMenu.cs" />
     <Compile Include="Classification\AntlrClassifier.cs" />
