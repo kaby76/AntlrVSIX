@@ -105,7 +105,11 @@ namespace AntlrLanguage
             else return;
             ParserDetails where_token = where_details.First();
 
+            string full_file_name = where_token.full_file_name;
             IVsTextView w = where_token.full_file_name.GetIVsTextView();
+            full_file_name.ShowFrame();
+            w = where_token.full_file_name.GetIVsTextView();
+
             var v = VsTextViewCreationListener.to_wpftextview[w];
 
             // Create new span in the appropriate view.
@@ -113,11 +117,14 @@ namespace AntlrLanguage
             SnapshotSpan ss = new SnapshotSpan(cc, token.StartIndex, 1);
             var sp = ss.Start;
             // Put cursor on symbol.
-            v.Caret.MoveTo(sp);
+            v.Caret.MoveTo(sp);     // This sets cursor, bot does not center.
             // Center on cursor.
-            v.Caret.EnsureVisible();
-            
-            var ok = w.SendExplicitFocus(); // TODO: fix so window is on top. does not work.
+            v.Caret.EnsureVisible(); // This works, sort of. It moves the scroll bar, but it does not CENTER! Does not really work!
+
+
+            //var ok = w.SendExplicitFocus(); // This does not work, does not bring window to top.
+
+            //Microsoft.VisualStudio.TextManager.Interop.IVsTextManager::NavigateToLineAndColumn();
         }
     }
 }

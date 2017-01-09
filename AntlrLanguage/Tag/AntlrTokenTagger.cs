@@ -67,19 +67,12 @@ namespace AntlrLanguage.Tag
             string solution_full_name = solution.FullName;
             string solution_file_name = solution.FileName;
             Properties solution_properties = solution.Properties;
-            if (solution_properties != null)
-            {
-                object full_path1 = solution_properties.Item("Path");
-            }
             foreach (Project project in solution.Projects)
             {
                 string project_full_name = project.FullName;
                 string project_file_name = project.FileName;
                 Properties project_properties = project.Properties;
                 if (solution_properties != null)
-                {
-                    object full_path = solution_properties.Item(1);
-                }
                 foreach (ProjectItem item in Recurse(project.ProjectItems))
                 {
                     yield return item;
@@ -113,13 +106,17 @@ namespace AntlrLanguage.Tag
                 ProjectItem[] list = iterator.ToArray();
                 foreach (var item in list)
                 {
-                    var doc = item.Document;
-                    var props = item.Properties;
+                    //var doc = item.Document; CRASHES!!!! DO NOT USE!
+                    //var props = item.Properties;
                     string file_name = item.Name;
-                    string prefix = file_name.TrimSuffix(".g4");
-                    if (prefix == file_name) continue;
-                    IVsTextView w = file_name.GetIVsTextView();
-                    Window window = item.Open();
+                    if (file_name != null)
+                    {
+                        string prefix = file_name.TrimSuffix(".g4");
+                        if (prefix == file_name) continue;
+                        IVsTextView w = file_name.GetIVsTextView();
+                        // Window window = item.Open(); Yep this code doesn't work either--of course.
+                        //if (w == null) file_name.OpenStupidFile(); works, but re-entrancy problem.
+                    }
                 }
             }
 

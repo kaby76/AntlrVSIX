@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.Text.Operations;
 using Microsoft.VisualStudio.Utilities;
 using Microsoft.VisualStudio.Shell;
 using AntlrLanguage.Key;
+using Microsoft.VisualStudio.TextManager.Interop;
 
 namespace AntlrLanguage.Mouse
 {

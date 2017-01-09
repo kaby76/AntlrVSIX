@@ -52,6 +52,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Extensions\Class1.cs" />
+    <Compile Include="Extensions\Class2.cs" />
+    <Compile Include="Extensions\Class3.cs" />
     <Compile Include="Extensions\ITextBufferExtentions.cs" />
     <Compile Include="Extensions\GetIVsTextViewExtension.cs" />
     <Compile Include="Extensions\IVsShellExtensions.cs" />
@@ -231,6 +233,10 @@
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Collections.Immutable, Version=1.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Immutable.1.3.1\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
