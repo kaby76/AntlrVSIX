@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Operations;
 using AntlrLanguage.Key;
+using AntlrLanguage.Navigate;
 using Point = System.Windows.Point;
 
 namespace AntlrLanguage.Mouse

@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
-namespace VSLTK.Intellisense
+namespace AntlrLanguage.Intellisense
 {
     #region IIntellisenseController
 

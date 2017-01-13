@@ -13,6 +13,10 @@ using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VisualStudio.OLE.Interop;
 using System.Diagnostics;
+using AntlrLanguage.Navigate;
+using Microsoft.VisualStudio.Package;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Text;
 
 namespace AntlrLanguage.Extensions
 {
@@ -22,22 +26,31 @@ namespace AntlrLanguage.Extensions
     public class VsTextViewCreationListener : IVsTextViewCreationListener
     {
         [Import]
-        IVsEditorAdaptersFactoryService AdaptersFactory = null;
+        public IVsEditorAdaptersFactoryService AdaptersFactory = null;
 
+        [Import]
+        public ITextDocumentFactoryService TextDocumentFactoryService { get; set; }
+
+        [Import]
+        public SVsServiceProvider GlobalServiceProvider = null;
+
+        IOleCommandTarget _next;
         public static Dictionary<IVsTextView, IWpfTextView> to_wpftextview = new Dictionary<IVsTextView, IWpfTextView>();
         public static Dictionary<IWpfTextView, IVsTextView> to_ivstextview = new Dictionary<IWpfTextView, IVsTextView>();
+
         public void VsTextViewCreated(IVsTextView textViewAdapter)
         {
-            var wpfTextView = AdaptersFactory.GetWpfTextView(textViewAdapter);
-            if (wpfTextView == null)
+            var wpftv = AdaptersFactory.GetWpfTextView(textViewAdapter);
+            if (wpftv == null)
             {
                 Debug.Fail("Unable to get IWpfTextView from text view adapter");
                 return;
             }
-            to_wpftextview[textViewAdapter] = wpfTextView;
-            to_ivstextview[wpfTextView] = textViewAdapter;
+            to_wpftextview[textViewAdapter] = wpftv;
+            to_ivstextview[wpftv] = textViewAdapter;
 
-            Debug.Write(wpfTextView.TextBuffer.ContentType.TypeName);
+            IVsTextView vstv = AdaptersFactory.GetViewAdapter(wpftv);
+            // vstv should be equal to textViewAdapter.
         }
     }
 }

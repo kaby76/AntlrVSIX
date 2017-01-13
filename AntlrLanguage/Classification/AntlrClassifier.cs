@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AntlrLanguage.Navigate;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
@@ -34,7 +35,7 @@ namespace AntlrLanguage
             _antlrTypes[AntlrTokenTypes.Keyword] = typeService.GetClassificationType("akeyword");
             _antlrTypes[AntlrTokenTypes.Other] = typeService.GetClassificationType("other");
             // Ensure package is loaded.
-            var package = VSPackageCommandCodeWindowContextMenu.Instance;
+            var package = AntlrLanguagePackage.Instance;
         }
 
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged

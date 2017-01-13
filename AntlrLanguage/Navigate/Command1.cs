@@ -15,7 +15,7 @@ using System.IO;
 using EnvDTE;
 using Microsoft.VisualStudio.TextManager.Interop;
 
-namespace AntlrLanguage
+namespace AntlrLanguage.Navigate
 {
     internal sealed class Command1
     {
@@ -142,28 +142,36 @@ namespace AntlrLanguage
             ParserDetails where_token = where_details.First();
 
             string full_file_name = where_token.full_file_name;
-            IVsTextView w = full_file_name.GetIVsTextView();
+            IVsTextView vstv = full_file_name.GetIVsTextView();
             full_file_name.ShowFrame();
-            w = where_token.full_file_name.GetIVsTextView();
+            vstv = where_token.full_file_name.GetIVsTextView();
 
-            IWpfTextView v = null;
+            IWpfTextView wpftv = null;
             try
             {
-                v = VsTextViewCreationListener.to_wpftextview[w];
+                wpftv = VsTextViewCreationListener.to_wpftextview[vstv];
             }
             catch (Exception eeks)
             {
                 return;
             }
 
+            int line_number;
+            int colum_number;
+            vstv.GetLineAndColumn(token.StartIndex, out line_number, out colum_number);
+
             // Create new span in the appropriate view.
-            ITextSnapshot cc = v.TextBuffer.CurrentSnapshot;
+            ITextSnapshot cc = wpftv.TextBuffer.CurrentSnapshot;
             SnapshotSpan ss = new SnapshotSpan(cc, token.StartIndex, 1);
-            var sp = ss.Start;
+            SnapshotPoint sp = ss.Start;
             // Put cursor on symbol.
-            v.Caret.MoveTo(sp);     // This sets cursor, bot does not center.
+            wpftv.Caret.MoveTo(sp);     // This sets cursor, bot does not center.
             // Center on cursor.
-            v.Caret.EnsureVisible(); // This works, sort of. It moves the scroll bar, but it does not CENTER! Does not really work!
+            //wpftv.Caret.EnsureVisible(); // This works, sort of. It moves the scroll bar, but it does not CENTER! Does not really work!
+            if (line_number > 0)
+                vstv.CenterLines(line_number - 1, 2);
+            else
+                vstv.CenterLines(line_number, 1);
         }
     }
 }

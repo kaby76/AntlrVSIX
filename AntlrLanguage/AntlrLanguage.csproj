@@ -51,7 +51,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Constants.cs" />
     <Compile Include="Extensions\ApplicationHelper.cs" />
+    <Compile Include="Extensions\Class2.cs" />
+    <Compile Include="Extensions\Class3.cs" />
     <Compile Include="Extensions\GetIVsTextViewExtension2.cs" />
     <Compile Include="Extensions\GetIVsTextViewExtension3.cs" />
     <Compile Include="Extensions\ITextBufferExtentions.cs" />
@@ -62,7 +65,7 @@
     <Compile Include="Navigate\Command1.cs" />
     <Compile Include="Navigate\Command2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Navigate\VSPackageCommandCodeWindowContextMenu.cs" />
+    <Compile Include="Navigate\AntlrLanguagePackage.cs" />
     <Compile Include="Classification\AntlrClassifier.cs" />
     <Compile Include="Keyboard\Class1.cs" />
     <Compile Include="Mouse\GoToDefMouseHandlerProvider.cs" />
@@ -144,6 +147,10 @@
     </Reference>
     <Reference Include="Microsoft.VisualStudio.OLE.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <HintPath>..\packages\Microsoft.VisualStudio.OLE.Interop.7.10.6070\lib\Microsoft.VisualStudio.OLE.Interop.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.Package.LanguageService.14.0, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.VisualStudio.Package.LanguageService.14.0.14.3.25407\lib\Microsoft.VisualStudio.Package.LanguageService.14.0.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.Shell.14.0, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">

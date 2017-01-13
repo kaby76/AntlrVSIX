@@ -14,7 +14,7 @@ namespace AntlrLanguage
     /// Factory for quick info sources
     /// </summary>
     [Export(typeof(IQuickInfoSourceProvider))]
-    [ContentType("Antlr")]
+    [ContentType(Constants.ContentType)]
     [Name("AntlrQuickInfo")]
     class AntlrQuickInfoSourceProvider : IQuickInfoSourceProvider
     {

@@ -13,7 +13,7 @@ namespace AntlrLanguage
     // extension hooks into Visual Studio 2015.
 
     [Export(typeof(ITaggerProvider))]
-    [ContentType("Antlr")]
+    [ContentType(Constants.ContentType)]
     [TagType(typeof(ClassificationTag))]
     internal sealed class AntlrClassifierProvider : ITaggerProvider
     {
@@ -23,8 +23,8 @@ namespace AntlrLanguage
         internal static ContentTypeDefinition AntlrContentType = null;
 
         [Export]
-        [FileExtension(".g4")]
-        [ContentType("Antlr")]
+        [FileExtension(Constants.FileExtension)]
+        [ContentType(Constants.ContentType)]
         internal static FileExtensionToContentTypeDefinition AntlrFileType = null;
 
         [Import]

@@ -4,18 +4,15 @@ using System.Linq;
 using Antlr4.Runtime;
 using AntlrLanguage.Extensions;
 using AntlrLanguage.Grammar;
-using AntlrLanguage.Tag;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Tagging;
 using System.Collections.Generic;
 using System.IO;
 using EnvDTE;
 using Microsoft.VisualStudio.TextManager.Interop;
 
-namespace AntlrLanguage
+namespace AntlrLanguage.Navigate
 {
     internal sealed class Command2
     {
@@ -65,7 +62,7 @@ namespace AntlrLanguage
         private void MenuItemCallback(object sender, EventArgs e)
         {
             ////////////////////////
-            // Go to definition....
+            // Find all references..
             ////////////////////////
 
             // First, open up every .g4 file in project.
@@ -112,10 +109,6 @@ namespace AntlrLanguage
             ITextDocument doc = buffer.GetTextDocument();
             string path = doc.FilePath;
 
-            //ParserDetails details = null;
-            //bool found = ParserDetails._per_file_parser_details.TryGetValue(path, out details);
-            //if (!found) return;
-
             List<IToken> where = new List<IToken>();
             List<ParserDetails> where_details = new List<ParserDetails>();
             IToken token = null;
@@ -125,46 +118,51 @@ namespace AntlrLanguage
                 ParserDetails details = kvp.Value;
                 if (classification == "nonterminal")
                 {
-                    var it = details._ant_nonterminals_defining.Where(
+                    var it = details._ant_nonterminals.Where(
                         (t) => t.Text == span.GetText());
                     where.AddRange(it);
                     foreach (var i in it) where_details.Add(details);
                 }
                 else if (classification == "terminal")
                 {
-                    var it = details._ant_terminals_defining.Where(
+                    var it = details._ant_terminals.Where(
                         (t) => t.Text == span.GetText());
                     where.AddRange(it);
                     foreach (var i in it) where_details.Add(details);
                 }
             }
-            if (where.Any()) token = where.First();
-            else return;
+            if (!where.Any()) return;
+
             ParserDetails where_token = where_details.First();
 
             string full_file_name = where_token.full_file_name;
-            IVsTextView w = full_file_name.GetIVsTextView();
+            IVsTextView vstv = full_file_name.GetIVsTextView();
             full_file_name.ShowFrame();
-            w = where_token.full_file_name.GetIVsTextView();
+            vstv = where_token.full_file_name.GetIVsTextView();
 
-            IWpfTextView v = null;
+            IWpfTextView wpftv = null;
             try
             {
-                v = VsTextViewCreationListener.to_wpftextview[w];
+                wpftv = VsTextViewCreationListener.to_wpftextview[vstv];
             }
             catch (Exception eeks)
             {
                 return;
             }
 
+            int line_number;
+            int colum_number;
+            vstv.GetLineAndColumn(token.StartIndex, out line_number, out colum_number);
+
             // Create new span in the appropriate view.
-            ITextSnapshot cc = v.TextBuffer.CurrentSnapshot;
+            ITextSnapshot cc = wpftv.TextBuffer.CurrentSnapshot;
             SnapshotSpan ss = new SnapshotSpan(cc, token.StartIndex, 1);
-            var sp = ss.Start;
+            SnapshotPoint sp = ss.Start;
             // Put cursor on symbol.
-            v.Caret.MoveTo(sp);     // This sets cursor, bot does not center.
+            wpftv.Caret.MoveTo(sp);     // This sets cursor, bot does not center.
             // Center on cursor.
-            v.Caret.EnsureVisible(); // This works, sort of. It moves the scroll bar, but it does not CENTER! Does not really work!
+            //wpftv.Caret.EnsureVisible(); // This works, sort of. It moves the scroll bar, but it does not CENTER! Does not really work!
+            vstv.CenterLines(line_number - 2, 4);
         }
     }
 }

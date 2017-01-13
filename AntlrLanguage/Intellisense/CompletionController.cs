@@ -16,7 +16,7 @@ namespace AntlrLanguage
     #region Command Filter
 
     [Export(typeof(IVsTextViewCreationListener))]
-    [ContentType("Antlr")]
+    [ContentType(Constants.ContentType)]
     [TextViewRole(PredefinedTextViewRoles.Interactive)]
     internal sealed class VsTextViewCreationListener2 : IVsTextViewCreationListener
     {

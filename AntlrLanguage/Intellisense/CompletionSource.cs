@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.Utilities;
 namespace AntlrLanguage
 {
     [Export(typeof(ICompletionSourceProvider))]
-    [ContentType("Antlr")]
+    [ContentType(Constants.ContentType)]
     [Name("AntlrCompletion")]
     class AntlrCompletionSourceProvider : ICompletionSourceProvider
     {

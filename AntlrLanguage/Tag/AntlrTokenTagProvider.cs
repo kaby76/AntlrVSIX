@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.Utilities;
 namespace AntlrLanguage.Tag
 {
     [Export(typeof(ITaggerProvider))]
-    [ContentType("Antlr")]
+    [ContentType(Constants.ContentType)]
     [TagType(typeof(AntlrTokenTag))]
     internal sealed class AntlrTokenTagProvider : ITaggerProvider
     {
