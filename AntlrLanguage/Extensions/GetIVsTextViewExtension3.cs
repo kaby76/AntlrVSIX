@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AntlrLanguage.Extensions
+﻿namespace AntlrLanguage.Extensions
 {
+    using System;
+
     internal static class GetIVsTextViewExtension3
     {
         /// <summary>

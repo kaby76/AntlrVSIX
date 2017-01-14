@@ -1,17 +1,16 @@
-﻿using System.ComponentModel.Composition;
-using Microsoft.VisualStudio.OLE.Interop;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Classification;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Operations;
-using Microsoft.VisualStudio.Utilities;
-using Microsoft.VisualStudio.Shell;
-using AntlrLanguage.Key;
-using Microsoft.VisualStudio.TextManager.Interop;
-
-namespace AntlrLanguage.Mouse
+﻿namespace AntlrLanguage.Mouse
 {
+    using System.ComponentModel.Composition;
+    using Microsoft.VisualStudio.OLE.Interop;
+    using Microsoft.VisualStudio.Shell.Interop;
+    using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.Text.Classification;
+    using Microsoft.VisualStudio.Text.Editor;
+    using Microsoft.VisualStudio.Text.Operations;
+    using Microsoft.VisualStudio.Utilities;
+    using Microsoft.VisualStudio.Shell;
+    using AntlrLanguage.Key;
+
     [Export(typeof(IMouseProcessorProvider))]
     [ContentType("code")]
     [Name("Antlr")]

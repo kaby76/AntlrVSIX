@@ -53,14 +53,20 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="Extensions\ApplicationHelper.cs" />
-    <Compile Include="Extensions\Class2.cs" />
-    <Compile Include="Extensions\Class3.cs" />
+    <Compile Include="Extensions\IVsTextViewExtensions.cs" />
+    <Compile Include="Extensions\TextExtensions.cs" />
     <Compile Include="Extensions\GetIVsTextViewExtension2.cs" />
     <Compile Include="Extensions\GetIVsTextViewExtension3.cs" />
     <Compile Include="Extensions\ITextBufferExtentions.cs" />
     <Compile Include="Extensions\GetIVsTextViewExtension.cs" />
     <Compile Include="Extensions\IVsShellExtensions.cs" />
     <Compile Include="Extensions\VsTextViewCreationListener.cs" />
+    <Compile Include="FindAntlrSymbolsModel.cs" />
+    <Compile Include="FindRefsWindow.cs" />
+    <Compile Include="FindRefsWindowCommand.cs" />
+    <Compile Include="FindRefsWindowControl.xaml.cs">
+      <DependentUpon>FindRefsWindowControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Grammar\ParserDetails.cs" />
     <Compile Include="Navigate\Command1.cs" />
     <Compile Include="Navigate\Command2.cs" />
@@ -257,6 +263,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\Command1.png" />
+    <Content Include="Resources\FindRefsWindowCommand.png" />
     <Content Include="Resources\VSPackageCommandCodeWindowContextMenu.ico" />
     <VSCTCompile Include="Navigate\VSPackageCommandCodeWindowContextMenu.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
@@ -268,6 +275,12 @@
       <ManifestResourceName>VSPackage</ManifestResourceName>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="FindRefsWindowControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />

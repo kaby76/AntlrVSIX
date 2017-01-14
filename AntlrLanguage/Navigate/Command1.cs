@@ -1,22 +1,20 @@
-﻿using System;
-using System.ComponentModel.Design;
-using System.Linq;
-using Antlr4.Runtime;
-using AntlrLanguage.Extensions;
-using AntlrLanguage.Grammar;
-using AntlrLanguage.Tag;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Tagging;
-using System.Collections.Generic;
-using System.IO;
-using EnvDTE;
-using Microsoft.VisualStudio.TextManager.Interop;
-
-namespace AntlrLanguage.Navigate
+﻿namespace AntlrLanguage.Navigate
 {
+    using System;
+    using System.ComponentModel.Design;
+    using System.Linq;
+    using Antlr4.Runtime;
+    using AntlrLanguage;
+    using AntlrLanguage.Extensions;
+    using AntlrLanguage.Grammar;
+    using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.Text.Editor;
+    using System.Collections.Generic;
+    using System.IO;
+    using EnvDTE;
+    using Microsoft.VisualStudio.TextManager.Interop;
+
     internal sealed class Command1
     {
         public const int CommandId = 0x0100;
@@ -122,14 +120,14 @@ namespace AntlrLanguage.Navigate
             {
                 string file_name = kvp.Key;
                 ParserDetails details = kvp.Value;
-                if (classification == "nonterminal")
+                if (classification == AntlrLanguage.Constants.ClassificationNameNonterminal)
                 {
                     var it = details._ant_nonterminals_defining.Where(
                         (t) => t.Text == span.GetText());
                     where.AddRange(it);
                     foreach (var i in it) where_details.Add(details);
                 }
-                else if (classification == "terminal")
+                else if (classification == AntlrLanguage.Constants.ClassificationNameTerminal)
                 {
                     var it = details._ant_terminals_defining.Where(
                         (t) => t.Text == span.GetText());

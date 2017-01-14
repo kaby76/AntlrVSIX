@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AntlrLanguage
+﻿namespace AntlrLanguage
 {
     internal static class Constants
     {
@@ -15,9 +9,11 @@ namespace AntlrLanguage
         public const string TextEditorSettingsRegistryKey = LanguageName;
         public const string FileExtension = ".g4";
         public const string WindowsFileExtension = ".g4";
-
         public const string PackageGuidString = "7e37eef9-8cbe-4b10-81f7-66413cd2c9d3";
-
+        public const string ClassificationNameTerminal = "terminal";
+        public const string ClassificationNameNonterminal = "nonterminal";
+        public const string ClassificationNameComment = "acomment";
+        public const string ClassificationNameKeyword = "akeyword";
 
         public const string ProjectImageList = "Microsoft.JImageList.bmp";
         public const string LibraryManagerGuid = "888888e5-b976-4366-9e98-e7bc01f1842c";
@@ -52,12 +48,5 @@ namespace AntlrLanguage
 
         // Shows up before references
         public const int VirtualEnvContainerNodeSortPriority = 200;
-
-        public const string InterpreterId = "InterpreterId";
-        public const string InterpreterVersion = "InterpreterVersion";
-
-        public const string LaunchProvider = "LaunchProvider";
-
-        public const string JExtension = "JExtension";
     }
 }

@@ -1,9 +1,9 @@
-﻿using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-
-namespace AntlrLanguage.Extensions
+﻿namespace AntlrLanguage.Extensions
 {
+    using Microsoft.VisualStudio;
+    using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Shell.Interop;
+
     internal static class IVsShellExtensions
     {
         public static T LoadPackage<T>(this IVsShell shell)

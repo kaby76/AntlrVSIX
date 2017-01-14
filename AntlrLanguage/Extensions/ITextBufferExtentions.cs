@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.Text;
-
+﻿
 namespace AntlrLanguage.Extensions
 {
+    using Microsoft.VisualStudio.Text;
+
     internal static class ITextBufferExtentions
     {
         public static ITextDocument GetTextDocument(this ITextBuffer TextBuffer)

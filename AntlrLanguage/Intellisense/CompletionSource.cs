@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.VisualStudio.Language.Intellisense;
-using Microsoft.VisualStudio.Text;
-using System.ComponentModel.Composition;
-using Microsoft.VisualStudio.Utilities;
-
-namespace AntlrLanguage
+﻿namespace AntlrLanguage
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Microsoft.VisualStudio.Language.Intellisense;
+    using Microsoft.VisualStudio.Text;
+    using System.ComponentModel.Composition;
+    using Microsoft.VisualStudio.Utilities;
+
     [Export(typeof(ICompletionSourceProvider))]
     [ContentType(Constants.ContentType)]
     [Name("AntlrCompletion")]
@@ -36,10 +36,10 @@ namespace AntlrLanguage
 
             List<Completion> completions = new List<Completion>()
             {
-                new Completion("terminal"),
-                new Completion("nonterminal"),
-                new Completion("acomment"),
-                new Completion("akeyword")
+                new Completion(Constants.ClassificationNameTerminal),
+                new Completion(Constants.ClassificationNameNonterminal),
+                new Completion(Constants.ClassificationNameComment),
+                new Completion(Constants.ClassificationNameKeyword)
             };
             
             ITextSnapshot snapshot = _buffer.CurrentSnapshot;

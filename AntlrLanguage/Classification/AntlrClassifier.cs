@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using AntlrLanguage.Navigate;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Classification;
-using Microsoft.VisualStudio.Text.Tagging;
-using AntlrLanguage.Tag;
-using Microsoft.VisualStudio.Text.Editor;
-
-namespace AntlrLanguage
+﻿namespace AntlrLanguage.Classification
 {
+    using System;
+    using System.Collections.Generic;
+    using AntlrLanguage.Navigate;
+    using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.Text.Classification;
+    using Microsoft.VisualStudio.Text.Tagging;
+    using AntlrLanguage.Tag;
+    using Microsoft.VisualStudio.Text.Editor;
+
     internal sealed class AntlrClassifier : ITagger<ClassificationTag>
     {
         public ITextBuffer _buffer = null;
@@ -29,10 +29,10 @@ namespace AntlrLanguage
 
             _aggregator = antlrTagAggregator;
             _antlrTypes = new Dictionary<AntlrTokenTypes, IClassificationType>();
-            _antlrTypes[AntlrTokenTypes.Nonterminal] = typeService.GetClassificationType("nonterminal");
-            _antlrTypes[AntlrTokenTypes.Terminal] = typeService.GetClassificationType("terminal");
-            _antlrTypes[AntlrTokenTypes.Comment] = typeService.GetClassificationType("acomment");
-            _antlrTypes[AntlrTokenTypes.Keyword] = typeService.GetClassificationType("akeyword");
+            _antlrTypes[AntlrTokenTypes.Nonterminal] = typeService.GetClassificationType(Constants.ClassificationNameNonterminal);
+            _antlrTypes[AntlrTokenTypes.Terminal] = typeService.GetClassificationType(Constants.ClassificationNameTerminal);
+            _antlrTypes[AntlrTokenTypes.Comment] = typeService.GetClassificationType(Constants.ClassificationNameComment);
+            _antlrTypes[AntlrTokenTypes.Keyword] = typeService.GetClassificationType(Constants.ClassificationNameKeyword);
             _antlrTypes[AntlrTokenTypes.Other] = typeService.GetClassificationType("other");
             // Ensure package is loaded.
             var package = AntlrLanguagePackage.Instance;

@@ -1,18 +1,17 @@
-﻿using System;
-using System.Linq;
-using System.Windows;
-using System.Windows.Input;
-using Microsoft.VisualStudio.OLE.Interop;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Classification;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Operations;
-using AntlrLanguage.Key;
-using AntlrLanguage.Navigate;
-using Point = System.Windows.Point;
-
-namespace AntlrLanguage.Mouse
+﻿namespace AntlrLanguage.Mouse
 {
+    using System;
+    using System.Linq;
+    using System.Windows.Input;
+    using Microsoft.VisualStudio.OLE.Interop;
+    using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.Text.Classification;
+    using Microsoft.VisualStudio.Text.Editor;
+    using Microsoft.VisualStudio.Text.Operations;
+    using AntlrLanguage.Key;
+    using AntlrLanguage.Navigate;
+    using Point = System.Windows.Point;
+
     internal sealed class GoToDefMouseHandler : MouseProcessorBase
     {
         IWpfTextView _view;
@@ -52,6 +51,10 @@ namespace AntlrLanguage.Mouse
             Command1.Instance.Symbol = default(SnapshotSpan);
             Command1.Instance.Classification = default(string);
             Command1.Instance.View = default(ITextView);
+            Command2.Instance.Enable = false;
+            Command2.Instance.Symbol = default(SnapshotSpan);
+            Command2.Instance.Classification = default(string);
+            Command2.Instance.View = default(ITextView);
 
             // No matter what, say we handled event, otherwise we get all sorts of pop-up errors.
             e.Handled = true;
@@ -71,19 +74,27 @@ namespace AntlrLanguage.Mouse
             foreach (ClassificationSpan classification in c1)
             {
                 var name = classification.ClassificationType.Classification.ToLower();
-                if (name == "terminal")
+                if (name == AntlrLanguage.Constants.ClassificationNameTerminal)
                 {
                     Command1.Instance.Enable = true;
                     Command1.Instance.Symbol = span;
-                    Command1.Instance.Classification = "terminal";
+                    Command1.Instance.Classification = AntlrLanguage.Constants.ClassificationNameTerminal;
                     Command1.Instance.View = _view;
+                    Command2.Instance.Enable = true;
+                    Command2.Instance.Symbol = span;
+                    Command2.Instance.Classification = AntlrLanguage.Constants.ClassificationNameTerminal;
+                    Command2.Instance.View = _view;
                 }
-                else if (name == "nonterminal")
+                else if (name == AntlrLanguage.Constants.ClassificationNameNonterminal)
                 {
                     Command1.Instance.Enable = true;
                     Command1.Instance.Symbol = span;
-                    Command1.Instance.Classification = "nonterminal";
+                    Command1.Instance.Classification = AntlrLanguage.Constants.ClassificationNameNonterminal;
                     Command1.Instance.View = _view;
+                    Command2.Instance.Enable = true;
+                    Command2.Instance.Symbol = span;
+                    Command2.Instance.Classification = AntlrLanguage.Constants.ClassificationNameNonterminal;
+                    Command2.Instance.View = _view;
                 }
             }
         }

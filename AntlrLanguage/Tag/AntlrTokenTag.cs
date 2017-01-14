@@ -1,7 +1,7 @@
-﻿using Microsoft.VisualStudio.Text.Tagging;
-
-namespace AntlrLanguage.Tag
+﻿namespace AntlrLanguage.Tag
 {
+    using Microsoft.VisualStudio.Text.Tagging;
+
     public class AntlrTokenTag : ITag
     {
         public AntlrTokenTypes type { get; private set; }

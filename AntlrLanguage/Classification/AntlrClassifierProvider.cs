@@ -1,12 +1,12 @@
-﻿using System.ComponentModel.Composition;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Classification;
-using Microsoft.VisualStudio.Text.Tagging;
-using Microsoft.VisualStudio.Utilities;
-using AntlrLanguage.Tag;
-
-namespace AntlrLanguage
+﻿namespace AntlrLanguage.Classification
 {
+    using System.ComponentModel.Composition;
+    using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.Text.Classification;
+    using Microsoft.VisualStudio.Text.Tagging;
+    using Microsoft.VisualStudio.Utilities;
+    using AntlrLanguage.Tag;
+
     // Please refer to Language Service and Editor Extension Points,
     // https://msdn.microsoft.com/en-us/library/dd885244.aspx,
     // for information on how this Managed Extensiblility Framework (MEF)

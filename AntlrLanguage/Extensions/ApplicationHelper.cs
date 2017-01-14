@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using EnvDTE;
-
-namespace AntlrLanguage.Extensions
+﻿namespace AntlrLanguage.Extensions
 {
+    using System.Collections.Generic;
+    using EnvDTE;
+
     internal class ApplicationHelper
     {
         private static IEnumerable<ProjectItem> Recurse(ProjectItems i)

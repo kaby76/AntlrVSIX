@@ -1,14 +1,13 @@
-﻿using System;
-using System.Diagnostics.Contracts;
-using System.Runtime.InteropServices;
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.TextManager.Interop;
-using IObjectWithSite = Microsoft.VisualStudio.OLE.Interop.IObjectWithSite;
-using IOleServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
-
-namespace AntlrLanguage.Extensions
+﻿namespace AntlrLanguage.Extensions
 {
+    using System;
+    using System.Diagnostics.Contracts;
+    using System.Runtime.InteropServices;
+    using Microsoft.VisualStudio;
+    using Microsoft.VisualStudio.Shell.Interop;
+    using Microsoft.VisualStudio.TextManager.Interop;
+    using IObjectWithSite = Microsoft.VisualStudio.OLE.Interop.IObjectWithSite;
+    using IOleServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
 
     public static class IVsTextViewExtensions
     {

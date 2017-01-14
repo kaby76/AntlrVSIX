@@ -1,9 +1,9 @@
-﻿using System.ComponentModel.Composition;
-using Microsoft.VisualStudio.Text.Classification;
-using Microsoft.VisualStudio.Utilities;
-
-namespace AntlrLanguage
+﻿namespace AntlrLanguage.Classification
 {
+    using System.ComponentModel.Composition;
+    using Microsoft.VisualStudio.Text.Classification;
+    using Microsoft.VisualStudio.Utilities;
+
     // Please refer to Language Service and Editor Extension Points,
     // https://msdn.microsoft.com/en-us/library/dd885244.aspx,
     // for information on how this Managed Extensiblility Framework (MEF)
@@ -12,19 +12,19 @@ namespace AntlrLanguage
     internal static class OrdinaryClassificationDefinition
     {
         [Export(typeof(ClassificationTypeDefinition))]
-        [Name("terminal")]
+        [Name(Constants.ClassificationNameTerminal)]
         internal static ClassificationTypeDefinition antlrTerminal = null;
 
         [Export(typeof(ClassificationTypeDefinition))]
-        [Name("nonterminal")]
+        [Name(Constants.ClassificationNameNonterminal)]
         internal static ClassificationTypeDefinition antlrNonterminal = null;
 
         [Export(typeof(ClassificationTypeDefinition))]
-        [Name("acomment")]
+        [Name(Constants.ClassificationNameComment)]
         internal static ClassificationTypeDefinition antlrComment = null;
 
         [Export(typeof(ClassificationTypeDefinition))]
-        [Name("akeyword")]
+        [Name(Constants.ClassificationNameKeyword)]
         internal static ClassificationTypeDefinition antlrKeyword = null;
     }
 }

@@ -1,8 +1,8 @@
-﻿using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor;
-
-namespace AntlrLanguage.Extensions
+﻿namespace AntlrLanguage.Extensions
 {
+    using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.Text.Editor;
+
     public static class TextExtensions
     {
         public static string GetFilePath(this ITextView textView)

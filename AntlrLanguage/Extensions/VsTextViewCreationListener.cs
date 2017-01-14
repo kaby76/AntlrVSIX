@@ -1,25 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.Text.Tagging;
-using Microsoft.VisualStudio.Text.Editor;
-
-using System.ComponentModel.Composition;
-using Microsoft.VisualStudio.Utilities;
-using Microsoft.VisualStudio.Editor;
-using Microsoft.VisualStudio.TextManager.Interop;
-using Microsoft.VisualStudio.OLE.Interop;
-using System.Diagnostics;
-using AntlrLanguage.Navigate;
-using Microsoft.VisualStudio.Package;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Text;
-
-namespace AntlrLanguage.Extensions
+﻿namespace AntlrLanguage.Extensions
 {
+    using System.Collections.Generic;
+    using Microsoft.VisualStudio.Text.Editor;
+    using System.ComponentModel.Composition;
+    using Microsoft.VisualStudio.Utilities;
+    using Microsoft.VisualStudio.Editor;
+    using Microsoft.VisualStudio.TextManager.Interop;
+    using Microsoft.VisualStudio.OLE.Interop;
+    using System.Diagnostics;
+    using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Text;
+
     [Export(typeof(IVsTextViewCreationListener))]
     [ContentType("code")]
     [TextViewRole(PredefinedTextViewRoles.Editable)]

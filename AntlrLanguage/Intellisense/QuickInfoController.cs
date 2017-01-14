@@ -1,25 +1,17 @@
-﻿using System.Collections.Generic;
-using Microsoft.VisualStudio.Language.Intellisense;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor;
-
-namespace AntlrLanguage.Intellisense
+﻿namespace AntlrLanguage.Intellisense
 {
-    #region IIntellisenseController
+    using System.Collections.Generic;
+    using Microsoft.VisualStudio.Language.Intellisense;
+    using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.Text.Editor;
 
     internal class TemplateQuickInfoController : IIntellisenseController
     {
-        #region Private Data Members
-
         private ITextView _textView;
         private IList<ITextBuffer> _subjectBuffers;
         private TemplateQuickInfoControllerProvider _componentContext;
 
         private IQuickInfoSession _session;
-
-        #endregion
-
-        #region Constructors
 
         internal TemplateQuickInfoController(ITextView textView, IList<ITextBuffer> subjectBuffers, TemplateQuickInfoControllerProvider componentContext)
         {
@@ -29,10 +21,6 @@ namespace AntlrLanguage.Intellisense
 
             _textView.MouseHover += OnTextViewMouseHover;
         }
-
-        #endregion
-
-        #region IIntellisenseController Members
 
         public void ConnectSubjectBuffer(ITextBuffer subjectBuffer)
         {
@@ -50,10 +38,6 @@ namespace AntlrLanguage.Intellisense
                 _textView = null;
             }
         }
-
-        #endregion
-
-        #region Event Handlers
 
         /// <summary>
         /// Determine if the mouse is hovering over a token. If so, highlight the token and display QuickInfo
@@ -77,10 +61,6 @@ namespace AntlrLanguage.Intellisense
             }
         }
 
-        #endregion
-
-        #region Private Implementation
-
         /// <summary>
         /// get mouse location onscreen. Used to determine what word the cursor is currently hovering over
         /// </summary>
@@ -96,9 +76,5 @@ namespace AntlrLanguage.Intellisense
                 PositionAffinity.Predecessor
                 );
         }
-
-        #endregion
     }
-
-    #endregion
 }

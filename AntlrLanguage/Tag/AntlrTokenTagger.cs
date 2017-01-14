@@ -1,23 +1,16 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using Antlr4.Runtime;
-using Antlr4.Runtime.Tree;
-using AntlrLanguage.Extensions;
-using AntlrLanguage.Grammar;
-using EnvDTE;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Tagging;
-using Microsoft.VisualStudio.TextManager.Interop;
-
-namespace AntlrLanguage.Tag
+﻿namespace AntlrLanguage.Tag
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Antlr4.Runtime;
+    using AntlrLanguage.Extensions;
+    using AntlrLanguage.Grammar;
+    using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.Text.Editor;
+    using Microsoft.VisualStudio.Text.Tagging;
+
     /// <summary>
     /// AntlrTokenTagger is the basic tagging facility of this extension.
     /// The editor buffer is contained in _buffer. Please refer to
@@ -45,10 +38,10 @@ namespace AntlrLanguage.Tag
             var pp = _buffer.Properties;
 
             _antlrTypes = new Dictionary<string, AntlrTokenTypes>();
-            _antlrTypes["nonterminal"] = AntlrTokenTypes.Nonterminal;
-            _antlrTypes["terminal"] = AntlrTokenTypes.Terminal;
-            _antlrTypes["acomment"] = AntlrTokenTypes.Comment;
-            _antlrTypes["akeyword"] = AntlrTokenTypes.Keyword;
+            _antlrTypes[Constants.ClassificationNameNonterminal] = AntlrTokenTypes.Nonterminal;
+            _antlrTypes[Constants.ClassificationNameTerminal] = AntlrTokenTypes.Terminal;
+            _antlrTypes[Constants.ClassificationNameComment] = AntlrTokenTypes.Comment;
+            _antlrTypes[Constants.ClassificationNameKeyword] = AntlrTokenTypes.Keyword;
             _antlrTypes["other"] = AntlrTokenTypes.Other;
 
             var text = GetAntText();

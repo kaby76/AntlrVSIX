@@ -1,19 +1,21 @@
-﻿using System;
-using System.ComponentModel.Design;
-using System.Linq;
-using Antlr4.Runtime;
-using AntlrLanguage.Extensions;
-using AntlrLanguage.Grammar;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor;
-using System.Collections.Generic;
-using System.IO;
-using EnvDTE;
-using Microsoft.VisualStudio.TextManager.Interop;
+﻿using System.Collections.ObjectModel;
 
 namespace AntlrLanguage.Navigate
 {
+    using System;
+    using System.ComponentModel.Design;
+    using System.Linq;
+    using Antlr4.Runtime;
+    using AntlrLanguage.Extensions;
+    using AntlrLanguage.Grammar;
+    using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.Text.Editor;
+    using System.Collections.Generic;
+    using System.IO;
+    using EnvDTE;
+    using Microsoft.VisualStudio.TextManager.Interop;
+
     internal sealed class Command2
     {
         public const int CommandId = 0x0101;
@@ -116,14 +118,14 @@ namespace AntlrLanguage.Navigate
             {
                 string file_name = kvp.Key;
                 ParserDetails details = kvp.Value;
-                if (classification == "nonterminal")
+                if (classification == AntlrLanguage.Constants.ClassificationNameNonterminal)
                 {
                     var it = details._ant_nonterminals.Where(
                         (t) => t.Text == span.GetText());
                     where.AddRange(it);
                     foreach (var i in it) where_details.Add(details);
                 }
-                else if (classification == "terminal")
+                else if (classification == AntlrLanguage.Constants.ClassificationNameTerminal)
                 {
                     var it = details._ant_terminals.Where(
                         (t) => t.Text == span.GetText());
@@ -133,36 +135,16 @@ namespace AntlrLanguage.Navigate
             }
             if (!where.Any()) return;
 
-            ParserDetails where_token = where_details.First();
-
-            string full_file_name = where_token.full_file_name;
-            IVsTextView vstv = full_file_name.GetIVsTextView();
-            full_file_name.ShowFrame();
-            vstv = where_token.full_file_name.GetIVsTextView();
-
-            IWpfTextView wpftv = null;
-            try
+            // Populate the Antlr find results model/window with file/line/col info
+            // for each occurrence.
+            FindAntlrSymbolsModel.Instance.Results.Clear();
+            for (int i = 0; i < where.Count; ++i)
             {
-                wpftv = VsTextViewCreationListener.to_wpftextview[vstv];
+                IToken x = where[i];
+                ParserDetails y = where_details[i];
+                var w = new Entry() { FileName = y.full_file_name, LineNumber = x.Line, ColumnNumber = x.Column, Token = x };
+                FindAntlrSymbolsModel.Instance.Results.Add(w);
             }
-            catch (Exception eeks)
-            {
-                return;
-            }
-
-            int line_number;
-            int colum_number;
-            vstv.GetLineAndColumn(token.StartIndex, out line_number, out colum_number);
-
-            // Create new span in the appropriate view.
-            ITextSnapshot cc = wpftv.TextBuffer.CurrentSnapshot;
-            SnapshotSpan ss = new SnapshotSpan(cc, token.StartIndex, 1);
-            SnapshotPoint sp = ss.Start;
-            // Put cursor on symbol.
-            wpftv.Caret.MoveTo(sp);     // This sets cursor, bot does not center.
-            // Center on cursor.
-            //wpftv.Caret.EnsureVisible(); // This works, sort of. It moves the scroll bar, but it does not CENTER! Does not really work!
-            vstv.CenterLines(line_number - 2, 4);
         }
     }
 }
