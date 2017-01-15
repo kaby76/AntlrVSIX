@@ -14,6 +14,10 @@ if there are multiple rules that define the symbol, AntlrVSIX will go to the fir
 of a symbol. Right-click on a symbol, and choose "Find all references" in the pop-up
 menu. Open the "FindAllReferences" windows and select any occurrence.
 
+* Open all the grammar files in Visual Studio you wish to search, or add the
+grammar files to a project/solution. AntlrVSIX will go through all files, parse,
+and record the occurrences of every symbol.
+
 Caveats:
 
 * This extension only works on Antlr4 grammars, and the grammar must be in a file that has the suffix
