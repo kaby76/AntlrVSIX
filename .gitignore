@@ -2,3 +2,5 @@ packages/
 AntlrLanguage/obj/
 AntlrLanguage/bin/Debug/EnvDTE100.xml
 AntlrLanguage/bin/
+AntlrVSIX/obj/
+AntlrVSIX/bin/
