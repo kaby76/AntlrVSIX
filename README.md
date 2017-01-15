@@ -33,12 +33,13 @@ get the parser to work in C#.
 * The parser is not incremental. The parse does not recover from
 syntax errors at all. If the input grammar does not parse, there is no tagging.
 
-* You should reset your Experimental Hive for Visual Studio. To do that, execute from Cygwin (or a cmd, the
+* If you want to make modifications for yourself, you should reset your
+Experimental Hive for Visual Studio. To do that, execute from Cygwin (or a cmd, the
 equivalent of):
   1. $ cd '/cygdrive/c/Program Files (x86)/Microsoft Visual Studio 14.0/VSSDK/VisualStudioIntegration/Tools/Bin'
   2. $ ./CreateExpInstance /Reset /VSInstance=14.0 /RootSuffix=Exp
 
-* "Go to definition" and "Find all references" are NOT implemented as a
+* "Go to definition" and "Find all references" are not implemented as a
 Language Service! As noted in _Legacy Language Service Extensibility_
 (https://msdn.microsoft.com/en-us/library/bb165099.aspx) "Legacy language
 services are implemented as part of a VSPackage, but the newer way to implement
