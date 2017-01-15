@@ -6,7 +6,8 @@ also https://github.com/visual-studio-extension/ook-language).
 If you want to customize this extension for your needs,
 take care of the caveots.
 
-* This extension only works on Antlr4 grammars, and the grammar must be in a file that has the suffix ".g4".
+* This extension only works on Antlr4 grammars, and the grammar must be in a file that has the suffix
+".g4".
 
 * If adding another token class, like punctuation, make sure to add the classification to:
 AntlrTokenTagger; AntlrClassifier; ClassificationFormat.cs; OrdinaryClassificationDefinition.cs;
@@ -27,3 +28,22 @@ equivalent of):
   1. $ cd '/cygdrive/c/Program Files (x86)/Microsoft Visual Studio 14.0/VSSDK/VisualStudioIntegration/Tools/Bin'
   2. $ ./CreateExpInstance /Reset /VSInstance=14.0 /RootSuffix=Exp
 
+* "Go to definition" and "Find all references" are implemented. This extension is NOT a
+Language Service! As noted in _Legacy Language Service Extensibility_
+(https://msdn.microsoft.com/en-us/library/bb165099.aspx) "Legacy language
+services are implemented as part of a VSPackage, but the newer way to implement
+language service features is to use MEF extensions." In addition, the code
+that is typically employed is overly complicated, difficult to read, and very poorly
+encapsulated.
+
+Go To Definition or Find All References: After opening a ".g4" file, make sure the extension works
+by noting tagging--comments should be green, nonterminals purple, terminals lime green,
+and keywords blue. Right-click on a symbol, then select "go to definition" or
+"find all references". For "go to definition", if the symbol is defined, it will open the file containing
+the symbol (the file must be part of a project, or open already). If the symbol is
+unknown, the operation will do nothing. For "find all references", the "Find All References"
+window will diplay a list of {file name, line number, column number} records that
+is a reference of the symbol selected. Click on a row, and the editor will open
+the file and position the cursor to the reference. Note, the "Find All References"
+window is located in "View -> Other windows -> FindAllReferences". You might want
+to dock the window in Visual Studio for handy reference.
