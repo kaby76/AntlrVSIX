@@ -14,6 +14,7 @@
         public const string ClassificationNameNonterminal = "nonterminal";
         public const string ClassificationNameComment = "acomment";
         public const string ClassificationNameKeyword = "akeyword";
+        public const string ClassificationNameLiteral = "aliteral";
 
         public const string ProjectImageList = "Microsoft.JImageList.bmp";
         public const string LibraryManagerGuid = "888888e5-b976-4366-9e98-e7bc01f1842c";

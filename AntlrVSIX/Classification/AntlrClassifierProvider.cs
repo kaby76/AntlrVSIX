@@ -1,6 +1,4 @@
-﻿using AntlrVSIX.Tag;
-
-namespace AntlrVSIX.Classification
+﻿namespace AntlrVSIX.Classification
 {
     using System.ComponentModel.Composition;
     using Microsoft.VisualStudio.Text;

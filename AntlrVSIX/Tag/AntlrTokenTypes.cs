@@ -6,6 +6,7 @@
         Terminal,
         Comment,
         Keyword,
+        Literal,
         Other
     }
 }

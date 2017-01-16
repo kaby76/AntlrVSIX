@@ -1,7 +1,4 @@
-﻿using AntlrVSIX.Key;
-using AntlrVSIX.Navigate;
-
-namespace AntlrVSIX.Mouse
+﻿namespace AntlrVSIX.Mouse
 {
     using System;
     using System.Linq;

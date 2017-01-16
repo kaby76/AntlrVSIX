@@ -87,6 +87,12 @@ namespace AntlrVSIX
                     applicableToSpan = _buffer.CurrentSnapshot.CreateTrackingSpan(tagSpan, SpanTrackingMode.EdgeExclusive);
                     quickInfoContent.Add("Keyword");
                 }
+                else if (curTag.Tag.type == AntlrTokenTypes.Literal)
+                {
+                    var tagSpan = curTag.Span.GetSpans(_buffer).First();
+                    applicableToSpan = _buffer.CurrentSnapshot.CreateTrackingSpan(tagSpan, SpanTrackingMode.EdgeExclusive);
+                    quickInfoContent.Add("Literal");
+                }
             }
         }
 

@@ -26,5 +26,9 @@
         [Export(typeof(ClassificationTypeDefinition))]
         [Name(Constants.ClassificationNameKeyword)]
         internal static ClassificationTypeDefinition antlrKeyword = null;
+
+        [Export(typeof(ClassificationTypeDefinition))]
+        [Name(Constants.ClassificationNameLiteral)]
+        internal static ClassificationTypeDefinition antlrLiteral = null;
     }
 }

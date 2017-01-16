@@ -1,6 +1,4 @@
-﻿using AntlrVSIX.Key;
-
-namespace AntlrVSIX.Mouse
+﻿namespace AntlrVSIX.Mouse
 {
     using System.ComponentModel.Composition;
     using Microsoft.VisualStudio.OLE.Interop;

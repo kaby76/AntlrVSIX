@@ -44,6 +44,7 @@ namespace AntlrVSIX.Tag
             _antlrTypes[Constants.ClassificationNameTerminal] = AntlrTokenTypes.Terminal;
             _antlrTypes[Constants.ClassificationNameComment] = AntlrTokenTypes.Comment;
             _antlrTypes[Constants.ClassificationNameKeyword] = AntlrTokenTypes.Keyword;
+            _antlrTypes[Constants.ClassificationNameLiteral] = AntlrTokenTypes.Literal;
             _antlrTypes["other"] = AntlrTokenTypes.Other;
 
             var text = GetAntText();
@@ -106,6 +107,7 @@ namespace AntlrVSIX.Tag
                 List<IToken> all_nonterm_tokens = new List<IToken>();
                 List<IToken> all_comment_tokens = new List<IToken>();
                 List<IToken> all_keyword_tokens = new List<IToken>();
+                List<IToken> all_literal_tokens = new List<IToken>();
 
                 all_nonterm_tokens = details._ant_nonterminals.Where((token) =>
                 {
@@ -143,6 +145,15 @@ namespace AntlrVSIX.Tag
                     return true;
                 }).ToList();
                 combined_tokens = combined_tokens.Concat(all_keyword_tokens);
+                all_literal_tokens = details._ant_literals.Where((token) =>
+                {
+                    int start_token_start = token.StartIndex;
+                    int end_token_end = token.StopIndex;
+                    if (start_token_start >= curLocEnd) return false;
+                    if (end_token_end < curLocStart) return false;
+                    return true;
+                }).ToList();
+                combined_tokens = combined_tokens.Concat(all_literal_tokens);
 
                 // Sort the list.
                 var sorted_combined_tokens = combined_tokens.OrderBy((t) => t.StartIndex).ToList();
@@ -168,6 +179,7 @@ namespace AntlrVSIX.Tag
                     else if (all_nonterm_tokens.Contains(token)) type = AntlrTokenTypes.Nonterminal;
                     else if (all_comment_tokens.Contains(token)) type = AntlrTokenTypes.Comment;
                     else if (all_keyword_tokens.Contains(token)) type = AntlrTokenTypes.Keyword;
+                    else if (all_literal_tokens.Contains(token)) type = AntlrTokenTypes.Literal;
                     else
                         type = AntlrTokenTypes.Other;
 

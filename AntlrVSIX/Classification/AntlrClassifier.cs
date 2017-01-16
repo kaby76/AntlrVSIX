@@ -1,7 +1,4 @@
-﻿using AntlrVSIX.Navigate;
-using AntlrVSIX.Tag;
-
-namespace AntlrVSIX.Classification
+﻿namespace AntlrVSIX.Classification
 {
     using System;
     using System.Collections.Generic;
@@ -36,6 +33,7 @@ namespace AntlrVSIX.Classification
             _antlrTypes[AntlrTokenTypes.Terminal] = typeService.GetClassificationType(Constants.ClassificationNameTerminal);
             _antlrTypes[AntlrTokenTypes.Comment] = typeService.GetClassificationType(Constants.ClassificationNameComment);
             _antlrTypes[AntlrTokenTypes.Keyword] = typeService.GetClassificationType(Constants.ClassificationNameKeyword);
+            _antlrTypes[AntlrTokenTypes.Literal] = typeService.GetClassificationType(Constants.ClassificationNameLiteral);
             _antlrTypes[AntlrTokenTypes.Other] = typeService.GetClassificationType("other");
             // Ensure package is loaded.
             var package = AntlrLanguagePackage.Instance;

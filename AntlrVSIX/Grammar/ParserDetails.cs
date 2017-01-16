@@ -31,6 +31,7 @@ namespace AntlrVSIX.Grammar
         public IList<IToken> _ant_nonterminals_defining;
         public IList<IToken> _ant_comments;
         public IList<IToken> _ant_keywords;
+        public IList<IToken> _ant_literals;
 
         public void Parse(string plain_old_input_grammar, string ffn)
         {
@@ -190,6 +191,32 @@ namespace AntlrVSIX.Grammar
                     return false;
                 });
                 _ant_keywords = keywords_interator.Select<IParseTree, IToken>(
+                    (t) => (t as TerminalNodeImpl).Symbol).ToArray();
+            }
+
+            {
+                // Get all defining and applied occurences of nonterminal names in grammar.
+                IEnumerable<IParseTree> lit_nodes_iterator = _all_nodes.Where((IParseTree n) =>
+                {
+                    TerminalNodeImpl term = n as TerminalNodeImpl;
+                    if (term == null) return false;
+                    // Chicken/egg problem. Assume that literals are marked
+                    // with the appropriate token type.
+                    if (term.Symbol == null) return false;
+                    if (!(term.Symbol.Type == ANTLRv4Parser.STRING_LITERAL
+                        || term.Symbol.Type == ANTLRv4Parser.INT
+                        || term.Symbol.Type == ANTLRv4Parser.LEXER_CHAR_SET))
+                        return false;
+
+                    // The token must be part of parserRuleSpec context.
+                    for (var p = term.Parent; p != null; p = p.Parent)
+                    {
+                        if (p is ANTLRv4Parser.ParserRuleSpecContext ||
+                            p is ANTLRv4Parser.LexerRuleSpecContext) return true;
+                    }
+                    return false;
+                });
+                _ant_literals = lit_nodes_iterator.Select<IParseTree, IToken>(
                     (t) => (t as TerminalNodeImpl).Symbol).ToArray();
             }
 

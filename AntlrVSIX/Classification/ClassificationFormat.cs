@@ -65,4 +65,18 @@
             ForegroundColor = Colors.Blue;
         }
     }
+
+    [Export(typeof(EditorFormatDefinition))]
+    [ClassificationType(ClassificationTypeNames = "aliteral")]
+    [Name("aliteral")]
+    [UserVisible(false)]
+    [Order(Before = Priority.Default)]
+    internal sealed class Literal : ClassificationFormatDefinition
+    {
+        public Literal()
+        {
+            DisplayName = "aliteral"; //human readable version of the name
+            ForegroundColor = Colors.Red;
+        }
+    }
 }
