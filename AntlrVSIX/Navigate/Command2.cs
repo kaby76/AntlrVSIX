@@ -68,8 +68,7 @@ namespace AntlrVSIX.Navigate
             // Find all references..
             ////////////////////////
 
-            // First, open up every .g4 file in project.
-            // Get VS solution, if any, and parse all grammars
+            // First, open up every .g4 file in project and parse.
             DTE application = ApplicationHelper.GetApplication();
             if (application != null)
             {
@@ -129,6 +128,13 @@ namespace AntlrVSIX.Navigate
                 else if (classification == AntlrVSIX.Constants.ClassificationNameTerminal)
                 {
                     var it = details._ant_terminals.Where(
+                        (t) => t.Text == span.GetText());
+                    where.AddRange(it);
+                    foreach (var i in it) where_details.Add(details);
+                }
+                else if (classification == AntlrVSIX.Constants.ClassificationNameLiteral)
+                {
+                    var it = details._ant_literals.Where(
                         (t) => t.Text == span.GetText());
                     where.AddRange(it);
                     foreach (var i in it) where_details.Add(details);

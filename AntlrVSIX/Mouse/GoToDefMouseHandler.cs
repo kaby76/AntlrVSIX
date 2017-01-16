@@ -46,11 +46,12 @@
 
         public override void PostprocessMouseRightButtonDown(MouseButtonEventArgs e)
         {
-            // Whack any old values.
+            // Whack any old values that cursor points to.
             Command1.Instance.Enable = false;
             Command1.Instance.Symbol = default(SnapshotSpan);
             Command1.Instance.Classification = default(string);
             Command1.Instance.View = default(ITextView);
+
             Command2.Instance.Enable = false;
             Command2.Instance.Symbol = default(SnapshotSpan);
             Command2.Instance.Classification = default(string);
@@ -94,6 +95,17 @@
                     Command2.Instance.Enable = true;
                     Command2.Instance.Symbol = span;
                     Command2.Instance.Classification = AntlrVSIX.Constants.ClassificationNameNonterminal;
+                    Command2.Instance.View = _view;
+                }
+                else if (name == AntlrVSIX.Constants.ClassificationNameLiteral)
+                {
+                    Command1.Instance.Enable = true;
+                    Command1.Instance.Symbol = span;
+                    Command1.Instance.Classification = AntlrVSIX.Constants.ClassificationNameLiteral;
+                    Command1.Instance.View = _view;
+                    Command2.Instance.Enable = true;
+                    Command2.Instance.Symbol = span;
+                    Command2.Instance.Classification = AntlrVSIX.Constants.ClassificationNameLiteral;
                     Command2.Instance.View = _view;
                 }
             }
