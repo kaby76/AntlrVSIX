@@ -68,6 +68,7 @@
     <Compile Include="Extensions\GetIVsTextViewExtension.cs" />
     <Compile Include="Extensions\IVsShellExtensions.cs" />
     <Compile Include="Extensions\VsTextViewCreationListener.cs" />
+    <Compile Include="Rename\HighlightRenameTaggerProvider.cs" />
     <Compile Include="Model\FindAntlrSymbolsModel.cs" />
     <Compile Include="Navigate\FindRefsWindow.cs" />
     <Compile Include="Navigate\FindRefsWindowCommand.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="Keyboard\Class1.cs" />
     <Compile Include="Mouse\GoToDefMouseHandlerProvider.cs" />
     <Compile Include="Mouse\GoToDefMouseHandler.cs" />
+    <Compile Include="Rename\RenameHighlightTagger.cs" />
     <Compile Include="Tag\AntlrTokenTagProvider.cs" />
     <Compile Include="Tag\AntlrTokenTypes.cs" />
     <Compile Include="Classification\ClassificationFormat.cs" />
