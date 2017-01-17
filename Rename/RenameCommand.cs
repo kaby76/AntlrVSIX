@@ -1,6 +1,4 @@
-﻿using Microsoft.VisualStudio.Editor;
-
-namespace AntlrVSIX.Rename
+﻿namespace AntlrVSIX.Rename
 {
     using System;
     using System.ComponentModel.Design;

@@ -18,7 +18,7 @@
     internal sealed class AntlrClassifierProvider : ITaggerProvider
     {
         [Export]
-        [Name("Antlr")]
+        [Name(Constants.LanguageName)]
         [BaseDefinition("code")]
         internal static ContentTypeDefinition AntlrContentType = null;
 

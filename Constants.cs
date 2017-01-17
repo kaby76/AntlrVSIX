@@ -1,4 +1,6 @@
-﻿namespace AntlrVSIX
+﻿using System.Windows.Media;
+
+namespace AntlrVSIX
 {
     internal static class Constants
     {
@@ -15,6 +17,15 @@
         public const string ClassificationNameComment = "acomment";
         public const string ClassificationNameKeyword = "akeyword";
         public const string ClassificationNameLiteral = "aliteral";
+        public static Color ColorTextForegroundTerminal = Colors.Lime;
+        public static Color ColorTextForegroundNonterminal = Colors.Purple;
+        public static Color ColorTextForegroundComment = Colors.Green;
+        public static Color ColorTextForegroundKeyword = Colors.Blue;
+        public static Color ColorTextForegroundLiteral = Colors.Red;
+
+
+        //=============================
+        // Crap below from somewhere, for use possibly later.
 
         public const string ProjectImageList = "Microsoft.JImageList.bmp";
         public const string LibraryManagerGuid = "888888e5-b976-4366-9e98-e7bc01f1842c";

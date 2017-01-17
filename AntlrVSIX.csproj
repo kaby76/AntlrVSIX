@@ -85,6 +85,9 @@
     <Compile Include="Mouse\GoToDefMouseHandlerProvider.cs" />
     <Compile Include="Mouse\GoToDefMouseHandler.cs" />
     <Compile Include="Rename\RenameCommand.cs" />
+    <Compile Include="Rename\RenameDialogBox.xaml.cs">
+      <DependentUpon>RenameDialogBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Rename\RenameHighlightTagger.cs" />
     <Compile Include="Tagger\AntlrTokenTagProvider.cs" />
     <Compile Include="Tagger\AntlrTokenTypes.cs" />
@@ -292,6 +295,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="FindAllReferences\FindRefsWindowControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Rename\RenameDialogBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -12,7 +12,6 @@
     using System.Collections.Generic;
     using System.IO;
     using EnvDTE;
-    using Microsoft.VisualStudio.TextManager.Interop;
 
     internal sealed class FindAllReferencesCommand
     {

@@ -1,10 +1,12 @@
-﻿using Antlr4.Runtime;
-using AntlrVSIX.Extensions;
-using AntlrVSIX.Grammar;
-using Microsoft.VisualStudio.Text.Classification;
+﻿using System.Windows;
+using Microsoft.VisualStudio.TextManager.Interop;
 
 namespace AntlrVSIX.Rename
 {
+    using Antlr4.Runtime;
+    using AntlrVSIX.Extensions;
+    using AntlrVSIX.Grammar;
+    using Microsoft.VisualStudio.Text.Classification;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -95,6 +97,8 @@ namespace AntlrVSIX.Rename
         private void UpdateWordAdornments(object threadContext)
         {
             if (!Enabled) return;
+
+            Enabled = false;
 
             SnapshotPoint currentRequest = RequestedPoint;
 
@@ -233,6 +237,59 @@ namespace AntlrVSIX.Rename
             // If we are still up-to-date (another change hasn't happened yet), do a real update
             if (currentRequest == RequestedPoint)
                 SynchronousUpdate(currentRequest, new NormalizedSnapshotSpanCollection(wordSpans), currentWord);
+
+            // Call up the rename dialog box. In another thread because
+            // of "The calling thread must be STA, because many UI components require this."
+            // error.
+            Application.Current.Dispatcher.Invoke((Action)delegate {
+
+                RenameDialogBox inputDialog = new RenameDialogBox(currentWord.GetText());
+                if (inputDialog.ShowDialog() == true)
+                {
+                    results.Reverse();
+                    var new_name = inputDialog.Answer;
+                    // Replace all occurrences of symbol, working backwards.
+                    foreach (Entry e in results)
+                    {
+                        string file_name = e.FileName;
+                        var pd = ParserDetails._per_file_parser_details[file_name];
+                        IVsTextView vstv = file_name.GetIVsTextView();
+                        IWpfTextView wpftv = null;
+                        try
+                        {
+                            wpftv = VsTextViewCreationListener.to_wpftextview[vstv];
+                        }
+                        catch (Exception eeks)
+                        {
+                        }
+                        if (wpftv == null) continue;
+                        ITextBuffer tb = wpftv.TextBuffer;
+                        ITextSnapshot cc = tb.CurrentSnapshot;
+                        SnapshotSpan ss = new SnapshotSpan(cc, e.Token.StartIndex, 1 + e.Token.StopIndex - e.Token.StartIndex);
+                        SnapshotPoint sp = ss.Start;
+                        tb.Replace(ss, new_name);
+                    }
+
+                    // Reparse everything.
+                    foreach (string f in results.Select((e) => e.FileName).Distinct())
+                    {
+                        ParserDetails foo = new ParserDetails();
+                        ParserDetails._per_file_parser_details[f] = foo;
+                        IVsTextView vstv = f.GetIVsTextView();
+                        IWpfTextView wpftv = null;
+                        try
+                        {
+                            wpftv = VsTextViewCreationListener.to_wpftextview[vstv];
+                        }
+                        catch (Exception eeks)
+                        {
+                        }
+                        if (wpftv == null) continue;
+                        ITextBuffer tb = wpftv.TextBuffer;
+                        foo.Parse(tb.CurrentSnapshot.GetText(), f);
+                    }
+                }
+            });
         }
 
         static bool WordExtentIsValid(SnapshotPoint currentRequest, TextExtent word)

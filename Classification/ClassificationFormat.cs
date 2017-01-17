@@ -20,13 +20,13 @@
         public Terminal()
         {
             DisplayName = "terminal"; //human readable version of the name
-            ForegroundColor = Colors.Lime;
+            ForegroundColor = Constants.ColorTextForegroundTerminal;
         }
     }
 
     [Export(typeof(EditorFormatDefinition))]
-    [ClassificationType(ClassificationTypeNames = "nonterminal")]
-    [Name("nonterminal")]
+    [ClassificationType(ClassificationTypeNames = Constants.ClassificationNameNonterminal)]
+    [Name(Constants.ClassificationNameNonterminal)]
     [UserVisible(false)]
     [Order(Before = Priority.Default)]
     internal sealed class Nonterminal : ClassificationFormatDefinition
@@ -34,13 +34,13 @@
         public Nonterminal()
         {
             DisplayName = "nonterminal"; //human readable version of the name
-            ForegroundColor = Colors.Purple;
+            ForegroundColor = Constants.ColorTextForegroundNonterminal;
         }
     }
 
     [Export(typeof(EditorFormatDefinition))]
-    [ClassificationType(ClassificationTypeNames = "acomment")]
-    [Name("acomment")]
+    [ClassificationType(ClassificationTypeNames = Constants.ClassificationNameComment)]
+    [Name(Constants.ClassificationNameComment)]
     [UserVisible(false)]
     [Order(Before = Priority.Default)]
     internal sealed class AComment : ClassificationFormatDefinition
@@ -48,13 +48,13 @@
         public AComment()
         {
             DisplayName = "acomment"; //human readable version of the name
-            ForegroundColor = Colors.Green;
+            ForegroundColor = Constants.ColorTextForegroundComment;
         }
     }
 
     [Export(typeof(EditorFormatDefinition))]
-    [ClassificationType(ClassificationTypeNames = "akeyword")]
-    [Name("akeyword")]
+    [ClassificationType(ClassificationTypeNames = Constants.ClassificationNameKeyword)]
+    [Name(Constants.ClassificationNameKeyword)]
     [UserVisible(false)]
     [Order(Before = Priority.Default)]
     internal sealed class Keyword : ClassificationFormatDefinition
@@ -62,13 +62,13 @@
         public Keyword()
         {
             DisplayName = "akeyword"; //human readable version of the name
-            ForegroundColor = Colors.Blue;
+            ForegroundColor = Constants.ColorTextForegroundKeyword;
         }
     }
 
     [Export(typeof(EditorFormatDefinition))]
-    [ClassificationType(ClassificationTypeNames = "aliteral")]
-    [Name("aliteral")]
+    [ClassificationType(ClassificationTypeNames = Constants.ClassificationNameLiteral)]
+    [Name(Constants.ClassificationNameLiteral)]
     [UserVisible(false)]
     [Order(Before = Priority.Default)]
     internal sealed class Literal : ClassificationFormatDefinition
@@ -76,7 +76,7 @@
         public Literal()
         {
             DisplayName = "aliteral"; //human readable version of the name
-            ForegroundColor = Colors.Red;
+            ForegroundColor = Constants.ColorTextForegroundLiteral;
         }
     }
 }
