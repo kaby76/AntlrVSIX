@@ -1,4 +1,4 @@
-﻿namespace AntlrVSIX.Navigate
+﻿namespace AntlrVSIX.FindAllReferences
 {
     using System.Runtime.InteropServices;
     using Microsoft.VisualStudio.Shell;

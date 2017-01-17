@@ -1,7 +1,6 @@
-﻿using AntlrVSIX.Extensions;
-using AntlrVSIX.Grammar;
+﻿using Microsoft.VisualStudio.Editor;
 
-namespace AntlrVSIX.Navigate
+namespace AntlrVSIX.Rename
 {
     using System;
     using System.ComponentModel.Design;
@@ -17,14 +16,14 @@ namespace AntlrVSIX.Navigate
     using EnvDTE;
     using Microsoft.VisualStudio.TextManager.Interop;
 
-    internal sealed class Command2
+    internal sealed class RenameCommand
     {
-        public const int CommandId = 0x0101;
+        public const int CommandId = 0x0102;
         public static readonly Guid CommandSet = new Guid("0c1acc31-15ac-417c-86b2-eefdc669e8bf");
         private readonly Package package;
         private MenuCommand menuItem;
 
-        private Command2(Package package)
+        private RenameCommand(Package package)
         {
             if (package == null)
             {
@@ -50,7 +49,7 @@ namespace AntlrVSIX.Navigate
         public SnapshotSpan Symbol { get; set; }
         public string Classification { get; set; }
         public ITextView View { get; set; }
-        public static Command2 Instance { get; private set; }
+        public static RenameCommand Instance { get; private set; }
 
         private IServiceProvider ServiceProvider
         {
@@ -59,14 +58,15 @@ namespace AntlrVSIX.Navigate
 
         public static void Initialize(Package package)
         {
-            Instance = new Command2(package);
+            Instance = new RenameCommand(package);
         }
 
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            ////////////////////////
-            // Find all references..
-            ////////////////////////
+            // Highlight the symbol, reposition it to the beginning of it.
+            // Every character changes all occurrences of the symbol.
+
+
 
             // First, open up every .g4 file in project and parse.
             DTE application = ApplicationHelper.GetApplication();
@@ -110,6 +110,7 @@ namespace AntlrVSIX.Navigate
             ITextBuffer buffer = view.TextBuffer;
             ITextDocument doc = buffer.GetTextDocument();
             string path = doc.FilePath;
+            IVsTextView vstv = path.GetIVsTextView();
 
             List<IToken> where = new List<IToken>();
             List<ParserDetails> where_details = new List<ParserDetails>();
@@ -142,16 +143,27 @@ namespace AntlrVSIX.Navigate
             }
             if (!where.Any()) return;
 
-            // Populate the Antlr find results model/window with file/line/col info
-            // for each occurrence.
-            FindAntlrSymbolsModel.Instance.Results.Clear();
-            for (int i = 0; i < where.Count; ++i)
+            // Position the cursor to the beginning of the symbol.
+            IWpfTextView wpftv = null;
+            try
             {
-                IToken x = where[i];
-                ParserDetails y = where_details[i];
-                var w = new Entry() { FileName = y.full_file_name, LineNumber = x.Line, ColumnNumber = x.Column, Token = x };
-                FindAntlrSymbolsModel.Instance.Results.Add(w);
+                wpftv = VsTextViewCreationListener.to_wpftextview[vstv];
             }
+            catch (Exception eeks)
+            {
+                return;
+            }
+            
+            // Create new span in the appropriate view.
+            ITextSnapshot cc = wpftv.TextBuffer.CurrentSnapshot;
+            SnapshotSpan ss = new SnapshotSpan(cc, span.Start.Position, 1);
+            SnapshotPoint sp = ss.Start;
+
+            // Enable highlighter.
+            RenameHighlightTagger.Enabled = true;
+
+            // Put cursor on symbol.
+            wpftv.Caret.MoveTo(sp);     // This sets cursor, bot does not center.
         }
     }
 }

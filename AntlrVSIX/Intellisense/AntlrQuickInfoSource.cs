@@ -1,6 +1,4 @@
-﻿using AntlrVSIX.Tag;
-
-namespace AntlrVSIX
+﻿namespace AntlrVSIX
 {
     using System;
     using System.Collections.Generic;
@@ -9,7 +7,7 @@ namespace AntlrVSIX
     using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Tagging;
     using System.ComponentModel.Composition;
-    using AntlrVSIX.Tag;
+    using AntlrVSIX.Tagger;
     using Microsoft.VisualStudio.Utilities;
 
     /// <summary>

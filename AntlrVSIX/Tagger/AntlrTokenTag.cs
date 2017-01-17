@@ -1,4 +1,4 @@
-﻿namespace AntlrVSIX.Tag
+﻿namespace AntlrVSIX.Tagger
 {
     using Microsoft.VisualStudio.Text.Tagging;
 

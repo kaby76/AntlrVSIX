@@ -1,4 +1,4 @@
-﻿namespace AntlrVSIX.Tag
+﻿namespace AntlrVSIX.Tagger
 {
     public enum AntlrTokenTypes
     {

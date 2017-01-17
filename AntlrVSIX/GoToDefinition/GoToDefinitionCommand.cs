@@ -1,13 +1,9 @@
-﻿using AntlrVSIX.Extensions;
-using AntlrVSIX.Grammar;
-
-namespace AntlrVSIX.Navigate
+﻿namespace AntlrVSIX.GoToDefintion
 {
     using System;
     using System.ComponentModel.Design;
     using System.Linq;
     using Antlr4.Runtime;
-    using AntlrVSIX;
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Grammar;
     using Microsoft.VisualStudio.Shell;
@@ -18,14 +14,14 @@ namespace AntlrVSIX.Navigate
     using EnvDTE;
     using Microsoft.VisualStudio.TextManager.Interop;
 
-    internal sealed class Command1
+    internal sealed class GoToDefinitionCommand
     {
         public const int CommandId = 0x0100;
         public static readonly Guid CommandSet = new Guid("0c1acc31-15ac-417c-86b2-eefdc669e8bf");
         private readonly Package package;
         private MenuCommand menuItem;
 
-        private Command1(Package package)
+        private GoToDefinitionCommand(Package package)
         {
             if (package == null)
             {
@@ -51,7 +47,7 @@ namespace AntlrVSIX.Navigate
         public SnapshotSpan Symbol { get; set; }
         public string Classification { get; set; }
         public ITextView View { get; set; }
-        public static Command1 Instance { get; private set; }
+        public static GoToDefinitionCommand Instance { get; private set; }
 
         private IServiceProvider ServiceProvider
         {
@@ -60,7 +56,7 @@ namespace AntlrVSIX.Navigate
 
         public static void Initialize(Package package)
         {
-            Instance = new Command1(package);
+            Instance = new GoToDefinitionCommand(package);
         }
 
         private void MenuItemCallback(object sender, EventArgs e)

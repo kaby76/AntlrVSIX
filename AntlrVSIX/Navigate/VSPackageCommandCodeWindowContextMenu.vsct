@@ -21,6 +21,11 @@
             <ButtonText>Find all references</ButtonText>
           </Strings>
         </Button>
+        <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="Command3Id" type="Button">
+          <Strings>
+            <ButtonText>Rename Antlr symbol</ButtonText>
+          </Strings>
+        </Button>
         <Button guid="guidAntlrLanguagePackageCmdSet" id="cmdidFindRefsWindowCommand" priority="0x0100" type="Button">
         <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1" />
         <Icon guid="guidImages1" id="bmpPic1" />
@@ -53,6 +58,9 @@
      <CommandPlacement guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="Command2Id" priority="0x0001">
        <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="MyGroupForCommands" />
      </CommandPlacement>
+     <CommandPlacement guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="Command3Id" priority="0x0001">
+       <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="MyGroupForCommands" />
+     </CommandPlacement>
    </CommandPlacements>
 
    <Symbols>
@@ -61,8 +69,8 @@
         <IDSymbol name="MyGroupForCommands" value="0x1020" />
         <!-- Warning!!: Keep the value in sync with the code in Command1.cs -->
         <IDSymbol name="Command1Id" value="0x0100" />
-        <!-- Warning!!: Keep the value in sync with the code in Command2.cs -->
         <IDSymbol name="Command2Id" value="0x0101" />
+        <IDSymbol name="Command3Id" value="0x0102" />
       </GuidSymbol>
 
       <GuidSymbol name="guidImages" value="{68759f95-6f1d-4a77-87ea-192fc8d811f1}">

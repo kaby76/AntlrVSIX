@@ -1,6 +1,4 @@
-﻿using AntlrVSIX.Grammar;
-
-namespace AntlrVSIX.Tag
+﻿namespace AntlrVSIX.Tagger
 {
     using System;
     using System.Collections.Generic;

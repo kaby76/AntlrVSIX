@@ -70,23 +70,24 @@
     <Compile Include="Extensions\VsTextViewCreationListener.cs" />
     <Compile Include="Rename\HighlightRenameTaggerProvider.cs" />
     <Compile Include="Model\FindAntlrSymbolsModel.cs" />
-    <Compile Include="Navigate\FindRefsWindow.cs" />
-    <Compile Include="Navigate\FindRefsWindowCommand.cs" />
-    <Compile Include="Navigate\FindRefsWindowControl.xaml.cs">
+    <Compile Include="FindAllReferences\FindRefsWindow.cs" />
+    <Compile Include="FindAllReferences\FindRefsWindowCommand.cs" />
+    <Compile Include="FindAllReferences\FindRefsWindowControl.xaml.cs">
       <DependentUpon>FindRefsWindowControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Grammar\ParserDetails.cs" />
-    <Compile Include="Navigate\Command1.cs" />
-    <Compile Include="Navigate\Command2.cs" />
+    <Compile Include="GoToDefinition\GoToDefinitionCommand.cs" />
+    <Compile Include="FindAllReferences\FindAllReferencesCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Navigate\AntlrLanguagePackage.cs" />
     <Compile Include="Classification\AntlrClassifier.cs" />
     <Compile Include="Keyboard\Class1.cs" />
     <Compile Include="Mouse\GoToDefMouseHandlerProvider.cs" />
     <Compile Include="Mouse\GoToDefMouseHandler.cs" />
+    <Compile Include="Rename\RenameCommand.cs" />
     <Compile Include="Rename\RenameHighlightTagger.cs" />
-    <Compile Include="Tag\AntlrTokenTagProvider.cs" />
-    <Compile Include="Tag\AntlrTokenTypes.cs" />
+    <Compile Include="Tagger\AntlrTokenTagProvider.cs" />
+    <Compile Include="Tagger\AntlrTokenTypes.cs" />
     <Compile Include="Classification\ClassificationFormat.cs" />
     <Compile Include="Classification\OrdinaryClassificationDefinition.cs" />
     <Compile Include="Classification\AntlrClassifierProvider.cs" />
@@ -104,8 +105,8 @@
     <Compile Include="Intellisense\AntlrQuickInfoSource.cs" />
     <Compile Include="Intellisense\QuickInfoController.cs" />
     <Compile Include="Intellisense\QuickInfoControllerProvider.cs" />
-    <Compile Include="Tag\AntlrTokenTag.cs" />
-    <Compile Include="Tag\AntlrTokenTagger.cs" />
+    <Compile Include="Tagger\AntlrTokenTag.cs" />
+    <Compile Include="Tagger\AntlrTokenTagger.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.md">
@@ -279,6 +280,7 @@
     <Content Include="Resources\VSPackageCommandCodeWindowContextMenu.ico" />
     <VSCTCompile Include="Navigate\VSPackageCommandCodeWindowContextMenu.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
+      <SubType>Designer</SubType>
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
@@ -289,7 +291,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Navigate\FindRefsWindowControl.xaml">
+    <Page Include="FindAllReferences\FindRefsWindowControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

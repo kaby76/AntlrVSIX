@@ -9,8 +9,10 @@
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text.Operations;
     using AntlrVSIX.Key;
-    using AntlrVSIX.Navigate;
     using Point = System.Windows.Point;
+    using AntlrVSIX.FindAllReferences;
+    using AntlrVSIX.GoToDefintion;
+    using AntlrVSIX.Rename;
 
     internal sealed class GoToDefMouseHandler : MouseProcessorBase
     {
@@ -47,15 +49,20 @@
         public override void PostprocessMouseRightButtonDown(MouseButtonEventArgs e)
         {
             // Whack any old values that cursor points to.
-            Command1.Instance.Enable = false;
-            Command1.Instance.Symbol = default(SnapshotSpan);
-            Command1.Instance.Classification = default(string);
-            Command1.Instance.View = default(ITextView);
+            GoToDefinitionCommand.Instance.Enable = false;
+            GoToDefinitionCommand.Instance.Symbol = default(SnapshotSpan);
+            GoToDefinitionCommand.Instance.Classification = default(string);
+            GoToDefinitionCommand.Instance.View = default(ITextView);
 
-            Command2.Instance.Enable = false;
-            Command2.Instance.Symbol = default(SnapshotSpan);
-            Command2.Instance.Classification = default(string);
-            Command2.Instance.View = default(ITextView);
+            FindAllReferencesCommand.Instance.Enable = false;
+            FindAllReferencesCommand.Instance.Symbol = default(SnapshotSpan);
+            FindAllReferencesCommand.Instance.Classification = default(string);
+            FindAllReferencesCommand.Instance.View = default(ITextView);
+
+            RenameCommand.Instance.Enable = false;
+            RenameCommand.Instance.Symbol = default(SnapshotSpan);
+            RenameCommand.Instance.Classification = default(string);
+            RenameCommand.Instance.View = default(ITextView);
 
             // No matter what, say we handled event, otherwise we get all sorts of pop-up errors.
             e.Handled = true;
@@ -77,36 +84,54 @@
                 var name = classification.ClassificationType.Classification.ToLower();
                 if (name == AntlrVSIX.Constants.ClassificationNameTerminal)
                 {
-                    Command1.Instance.Enable = true;
-                    Command1.Instance.Symbol = span;
-                    Command1.Instance.Classification = AntlrVSIX.Constants.ClassificationNameTerminal;
-                    Command1.Instance.View = _view;
-                    Command2.Instance.Enable = true;
-                    Command2.Instance.Symbol = span;
-                    Command2.Instance.Classification = AntlrVSIX.Constants.ClassificationNameTerminal;
-                    Command2.Instance.View = _view;
+                    GoToDefinitionCommand.Instance.Enable = true;
+                    GoToDefinitionCommand.Instance.Symbol = span;
+                    GoToDefinitionCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameTerminal;
+                    GoToDefinitionCommand.Instance.View = _view;
+
+                    FindAllReferencesCommand.Instance.Enable = true;
+                    FindAllReferencesCommand.Instance.Symbol = span;
+                    FindAllReferencesCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameTerminal;
+                    FindAllReferencesCommand.Instance.View = _view;
+
+                    RenameCommand.Instance.Enable = true;
+                    RenameCommand.Instance.Symbol = span;
+                    RenameCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameTerminal;
+                    RenameCommand.Instance.View = _view;
                 }
                 else if (name == AntlrVSIX.Constants.ClassificationNameNonterminal)
                 {
-                    Command1.Instance.Enable = true;
-                    Command1.Instance.Symbol = span;
-                    Command1.Instance.Classification = AntlrVSIX.Constants.ClassificationNameNonterminal;
-                    Command1.Instance.View = _view;
-                    Command2.Instance.Enable = true;
-                    Command2.Instance.Symbol = span;
-                    Command2.Instance.Classification = AntlrVSIX.Constants.ClassificationNameNonterminal;
-                    Command2.Instance.View = _view;
+                    GoToDefinitionCommand.Instance.Enable = true;
+                    GoToDefinitionCommand.Instance.Symbol = span;
+                    GoToDefinitionCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameNonterminal;
+                    GoToDefinitionCommand.Instance.View = _view;
+
+                    FindAllReferencesCommand.Instance.Enable = true;
+                    FindAllReferencesCommand.Instance.Symbol = span;
+                    FindAllReferencesCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameNonterminal;
+                    FindAllReferencesCommand.Instance.View = _view;
+
+                    RenameCommand.Instance.Enable = true;
+                    RenameCommand.Instance.Symbol = span;
+                    RenameCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameNonterminal;
+                    RenameCommand.Instance.View = _view;
                 }
                 else if (name == AntlrVSIX.Constants.ClassificationNameLiteral)
                 {
-                    Command1.Instance.Enable = true;
-                    Command1.Instance.Symbol = span;
-                    Command1.Instance.Classification = AntlrVSIX.Constants.ClassificationNameLiteral;
-                    Command1.Instance.View = _view;
-                    Command2.Instance.Enable = true;
-                    Command2.Instance.Symbol = span;
-                    Command2.Instance.Classification = AntlrVSIX.Constants.ClassificationNameLiteral;
-                    Command2.Instance.View = _view;
+                    GoToDefinitionCommand.Instance.Enable = true;
+                    GoToDefinitionCommand.Instance.Symbol = span;
+                    GoToDefinitionCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameLiteral;
+                    GoToDefinitionCommand.Instance.View = _view;
+
+                    FindAllReferencesCommand.Instance.Enable = true;
+                    FindAllReferencesCommand.Instance.Symbol = span;
+                    FindAllReferencesCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameLiteral;
+                    FindAllReferencesCommand.Instance.View = _view;
+
+                    RenameCommand.Instance.Enable = true;
+                    RenameCommand.Instance.Symbol = span;
+                    RenameCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameLiteral;
+                    RenameCommand.Instance.View = _view;
                 }
             }
         }

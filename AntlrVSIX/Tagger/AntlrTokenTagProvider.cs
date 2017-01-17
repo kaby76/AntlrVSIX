@@ -1,4 +1,4 @@
-﻿namespace AntlrVSIX.Tag
+﻿namespace AntlrVSIX.Tagger
 {
     using System.ComponentModel.Composition;
     using Microsoft.VisualStudio.Shell;

@@ -90,8 +90,12 @@ namespace AntlrVSIX.Rename
             ThreadPool.QueueUserWorkItem(UpdateWordAdornments);
         }
 
+        public static bool Enabled = false;
+
         private void UpdateWordAdornments(object threadContext)
         {
+            if (!Enabled) return;
+
             SnapshotPoint currentRequest = RequestedPoint;
 
             List<SnapshotSpan> wordSpans = new List<SnapshotSpan>();
@@ -202,20 +206,20 @@ namespace AntlrVSIX.Rename
 
             // Populate the Antlr find results model/window with file/line/col info
             // for each occurrence.
-            FindAntlrSymbolsModel.Instance.Results = new System.Collections.ObjectModel.ObservableCollection<Entry>();
+            var results = new List<Entry>();
             for (int i = 0; i < where.Count; ++i)
             {
                 IToken x = where[i];
                 ParserDetails y = where_details[i];
                 var w = new Entry() { FileName = y.full_file_name, LineNumber = x.Line, ColumnNumber = x.Column, Token = x };
-                FindAntlrSymbolsModel.Instance.Results.Add(w);
+                results.Add(w);
             }
 
             // Now, for all entries which are in this buffer, highlight.
             //wordSpans.Add(currentWord);
-            for (int i = 0; i < FindAntlrSymbolsModel.Instance.Results.Count; ++i)
+            for (int i = 0; i < results.Count; ++i)
             {
-                var w = FindAntlrSymbolsModel.Instance.Results[i];
+                var w = results[i];
                 if (w.FileName == path)
                 {
                     // Create new span in the appropriate view.

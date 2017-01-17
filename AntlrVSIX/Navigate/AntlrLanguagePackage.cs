@@ -5,6 +5,9 @@
     using Microsoft.VisualStudio.Shell;
     using AntlrVSIX.Extensions;
     using AntlrVSIX;
+    using AntlrVSIX.Rename;
+    using AntlrVSIX.FindAllReferences;
+    using AntlrVSIX.GoToDefintion;
 
     [PackageRegistration(UseManagedResourcesOnly = true)]
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)] // Info on this package for Help/About
@@ -22,8 +25,9 @@
         protected override void Initialize()
         {
             base.Initialize();
-            Command1.Initialize(this);
-            Command2.Initialize(this);
+            GoToDefinitionCommand.Initialize(this);
+            FindAllReferencesCommand.Initialize(this);
+            RenameCommand.Initialize(this);
             FindRefsWindowCommand.Initialize(this);
         }
 

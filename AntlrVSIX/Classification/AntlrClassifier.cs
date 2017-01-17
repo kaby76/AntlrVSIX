@@ -6,7 +6,7 @@
     using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Classification;
     using Microsoft.VisualStudio.Text.Tagging;
-    using AntlrVSIX.Tag;
+    using AntlrVSIX.Tagger;
     using Microsoft.VisualStudio.Text.Editor;
 
     internal sealed class AntlrClassifier : ITagger<ClassificationTag>
