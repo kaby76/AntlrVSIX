@@ -18,7 +18,7 @@ menu. Open the "FindAllReferences" windows and select any occurrence.
 grammar files to a project/solution. AntlrVSIX will go through all files, parse,
 and record the occurrences of every symbol.
 
-Caveats:
+## Caveats:
 
 * This extension only works on Antlr4 grammars, and the grammar must be in a file that has the suffix
 ".g4".
@@ -51,4 +51,11 @@ language service features is to use MEF extensions." The alternative approach,
 a Language Service, is undocumented, and the examples that I could find (PTVS)
 are bloated and poorly structured. Rather than take weeks, if not months, to understand and implement,
 I chose a very simple WPF implementation.
+
+## Alternative Visual Studio Extensions
+
+* ANTLR Language Support -- https://marketplace.visualstudio.com/items?itemName=SamHarwell.ANTLRLanguageSupport
+* Antlr4Code -- https://marketplace.visualstudio.com/items?itemName=RamonFMendes.Antlr4Code
+* Actipro SyntaxEditor for WPF -- https://marketplace.visualstudio.com/items?itemName=ActiproSoftware.ActiproSyntaxEditorforWPF
+* Syntax Highlighting Pack -- https://marketplace.visualstudio.com/items?itemName=MadsKristensen.SyntaxHighlightingPack
 

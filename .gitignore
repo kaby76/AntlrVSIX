@@ -4,3 +4,6 @@ AntlrLanguage/bin/Debug/EnvDTE100.xml
 AntlrLanguage/bin/
 AntlrVSIX/obj/
 AntlrVSIX/bin/
+obj/Release/AntlrVSIX.csproj.FileListAbsolute.txt
+obj/
+bin/
