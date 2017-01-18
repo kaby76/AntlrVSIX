@@ -125,6 +125,7 @@
     <None Include="Grammar\LexUnicode.g4" />
     <None Include="Grammar\test.g4" />
     <None Include="packages.config" />
+    <None Include="README.md" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>

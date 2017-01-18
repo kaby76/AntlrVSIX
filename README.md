@@ -2,9 +2,16 @@
 AntlrVSIX is an open source Visual Studio 2015 extension for Antlr version 4
 grammars. The features in this extension are:
 
-* Tagging of grammar symbols: terminals ("rule name" for lexical
-rule; lime green), non-terminals ("rule name" for parser rules; purple),
-comments (green), keywords (blue), literals (red).
+* Colorized tagging of grammars, including:
+i. _Terminals_, which are symbols defined in the LHS of a lexical grammar production rule.
+Terminals always have the first letter capitalized. These symbols are tagged in lime
+green.
+ii. _Nonterminals_, which are symbols defined in the LHS of a parser grammar production rule.
+Nonterminals never have the first letter capitalized. These symbols are tagged in purple.
+iii. _Comments_, which are either single line (_//_) or multiple line (_/* ... */_). These are
+tagged in green.
+iv. _Keywords_, such as _fragment_, _grammar_, etc. Keywords are tagged in blue.
+v. _Literals_, such as _[\n\r ]_, _'foobar'_, etc. These are tagged in red.
 
 * "Go to definition": AntlrVSIX can locate the rule that defines the symbol.
 Right-click on a symbol, and choose "Go to definition" in the pop-up menu.
@@ -15,13 +22,14 @@ menu. Open the "FindAllReferences" windows and select any occurrence.
 
 * "Replace symbol": AntlrVSIX can rename the defining and applied occurrences of a
 symbol. Right-click on a symbol, and choose "Rename Antlr symbol" in the pop-up
-menu. A pop-up will display requesting the new name. After hitting OK, the extension
-will replace all occurrences with the new name. You must manually save the files to make
-the changes permanent.
+menu. In the pop-up modal dialog box, enter the new name, then click "OK". You must
+manually save the files to make the changes permanent.
 
 * Open all the grammar files in Visual Studio you wish to search, or add the
 grammar files to a project/solution. AntlrVSIX will go through all files, parse,
 and record the occurrences of every symbol.
+
+* No advertisements will ever be displayed using this extension.
 
 ## Caveats:
 
