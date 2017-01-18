@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -69,7 +70,15 @@ namespace AntlrVSIX.Grammar
                 cts_off_channel.Consume();
             }
 
-            _ant_tree = _ant_parser.grammarSpec();
+            try
+            {
+                _ant_tree = _ant_parser.grammarSpec();
+            }
+            catch (Exception e)
+            {
+                // Parsing error.
+            }
+
             _all_nodes = DFSVisitor.DFS(_ant_tree as ParserRuleContext).ToArray();
 
             {

@@ -34,9 +34,9 @@
                 _item_selected = value;
                 if (value == null) return;
                 string full_file_name = _item_selected.FileName;
-                IVsTextView vstv = full_file_name.GetIVsTextView();
+                IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(full_file_name);
                 full_file_name.ShowFrame();
-                vstv = full_file_name.GetIVsTextView();
+                vstv = IVsTextViewExtensions.GetIVsTextView(full_file_name);
                 IWpfTextView wpftv = vstv.GetIWpfTextView();
                 if (wpftv == null) return;
                 int line_number = _item_selected.LineNumber;

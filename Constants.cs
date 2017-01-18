@@ -4,7 +4,7 @@
 
     internal static class Constants
     {
-        //Language name
+        public const string Version = "1.1.1";
         public const string LanguageName = "Antlr";
         public const string ContentType = "Antlr";
         public const string BaseRegistryKey = "AntlrVSIX";

@@ -254,13 +254,13 @@
                     {
                         string file_name = e.FileName;
                         var pd = ParserDetails._per_file_parser_details[file_name];
-                        IVsTextView vstv = file_name.GetIVsTextView();
+                        IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(file_name);
                         IWpfTextView wpftv = vstv.GetIWpfTextView();
                         if (wpftv == null)
                         {
                             // File has not been opened before! Open file in editor.
                             file_name.ShowFrame();
-                            vstv = file_name.GetIVsTextView();
+                            vstv = IVsTextViewExtensions.GetIVsTextView(file_name);
                             wpftv = vstv.GetIWpfTextView();
                         }
                         ITextBuffer tb = wpftv.TextBuffer;
@@ -275,7 +275,7 @@
                     {
                         ParserDetails foo = new ParserDetails();
                         ParserDetails._per_file_parser_details[f] = foo;
-                        IVsTextView vstv = f.GetIVsTextView();
+                        IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(f);
                         IWpfTextView wpftv = vstv.GetIWpfTextView();
                         if (wpftv == null) continue;
                         ITextBuffer tb = wpftv.TextBuffer;

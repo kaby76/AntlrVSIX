@@ -66,10 +66,10 @@
             ////////////////////////
 
             // First, open up every .g4 file in project and parse.
-            DTE application = ApplicationHelper.GetApplication();
+            DTE application = DteExtensions.GetApplication();
             if (application != null)
             {
-                IEnumerable<ProjectItem> iterator = ApplicationHelper.SolutionFiles(application);
+                IEnumerable<ProjectItem> iterator = DteExtensions.SolutionFiles(application);
                 ProjectItem[] list = iterator.ToArray();
                 foreach (var item in list)
                 {

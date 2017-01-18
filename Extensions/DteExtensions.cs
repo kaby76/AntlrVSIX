@@ -3,7 +3,7 @@
     using EnvDTE;
     using System.Collections.Generic;
 
-    internal class ApplicationHelper
+    internal static class DteExtensions
     {
         private static IEnumerable<ProjectItem> Recurse(ProjectItems i)
         {
@@ -28,7 +28,7 @@
             }
         }
 
-        public static IEnumerable<ProjectItem> SolutionFiles(DTE application)
+        public static IEnumerable<ProjectItem> SolutionFiles(this DTE application)
         {
             Solution solution = (Solution)application.Solution;
             string solution_full_name = solution.FullName;

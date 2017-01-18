@@ -67,10 +67,10 @@
 
             // First, open up every .g4 file in project.
             // Get VS solution, if any, and parse all grammars
-            DTE application = ApplicationHelper.GetApplication();
+            DTE application = DteExtensions.GetApplication();
             if (application != null)
             {
-                IEnumerable<ProjectItem> iterator = ApplicationHelper.SolutionFiles(application);
+                IEnumerable<ProjectItem> iterator = DteExtensions.SolutionFiles(application);
                 ProjectItem[] list = iterator.ToArray();
                 foreach (var item in list)
                 {
@@ -139,9 +139,9 @@
             ParserDetails where_token = where_details.First();
 
             string full_file_name = where_token.full_file_name;
-            IVsTextView vstv = full_file_name.GetIVsTextView();
+            IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(full_file_name);
             full_file_name.ShowFrame();
-            vstv = where_token.full_file_name.GetIVsTextView();
+            vstv = IVsTextViewExtensions.GetIVsTextView(where_token.full_file_name);
 
             IWpfTextView wpftv = vstv.GetIWpfTextView();
             if (wpftv == null) return;

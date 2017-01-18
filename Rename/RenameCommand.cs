@@ -67,10 +67,10 @@
 
 
             // First, open up every .g4 file in project and parse.
-            DTE application = ApplicationHelper.GetApplication();
+            DTE application = DteExtensions.GetApplication();
             if (application != null)
             {
-                IEnumerable<ProjectItem> iterator = ApplicationHelper.SolutionFiles(application);
+                IEnumerable<ProjectItem> iterator = DteExtensions.SolutionFiles(application);
                 ProjectItem[] list = iterator.ToArray();
                 foreach (var item in list)
                 {
@@ -108,7 +108,7 @@
             ITextBuffer buffer = view.TextBuffer;
             ITextDocument doc = buffer.GetTextDocument();
             string path = doc.FilePath;
-            IVsTextView vstv = path.GetIVsTextView();
+            IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(path);
 
             List<IToken> where = new List<IToken>();
             List<ParserDetails> where_details = new List<ParserDetails>();

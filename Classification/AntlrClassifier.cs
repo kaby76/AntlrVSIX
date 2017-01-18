@@ -59,7 +59,7 @@
                 ITextDocument doc = _buffer.GetTextDocument();
                 string f = doc.FilePath;
                 ParserDetails._per_file_parser_details[f] = foo;
-                IVsTextView vstv = f.GetIVsTextView();
+                IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(f);
                 IWpfTextView wpftv = vstv.GetIWpfTextView();
                 if (wpftv == null) return;
                 ITextBuffer tb = wpftv.TextBuffer;

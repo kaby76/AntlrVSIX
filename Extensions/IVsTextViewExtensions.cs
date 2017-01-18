@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.Text.Editor;
 namespace AntlrVSIX.Extensions
 {
     using Microsoft.VisualStudio.Shell.Interop;
+    using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.TextManager.Interop;
     using Microsoft.VisualStudio;
     using System.Diagnostics.Contracts;
@@ -11,6 +12,7 @@ namespace AntlrVSIX.Extensions
     using System;
     using IObjectWithSite = Microsoft.VisualStudio.OLE.Interop.IObjectWithSite;
     using IOleServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
+    using IServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
 
     public static class IVsTextViewExtensions
     {
@@ -90,6 +92,22 @@ namespace AntlrVSIX.Extensions
             }
             catch (Exception eeks) { }
             return wpftv;
+        }
+
+        internal static IVsTextView GetIVsTextView(string full_file_name)
+        {
+            var dte2 = (EnvDTE80.DTE2)Package.GetGlobalService(typeof(SDTE));
+            IServiceProvider isp = (IServiceProvider)dte2;
+            ServiceProvider sp = new ServiceProvider(isp);
+            IVsUIHierarchy ivsuih;
+            uint item_id;
+            IVsWindowFrame ivswf;
+            if (VsShellUtilities.IsDocumentOpen(sp, full_file_name, Guid.Empty,
+                out ivsuih, out item_id, out ivswf))
+            {
+                return VsShellUtilities.GetTextView(ivswf);
+            }
+            return null;
         }
     }
 }
