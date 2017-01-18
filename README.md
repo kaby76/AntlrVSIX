@@ -4,15 +4,20 @@ grammars. The features in this extension are:
 
 * Tagging of grammar symbols: terminals ("rule name" for lexical
 rule; lime green), non-terminals ("rule name" for parser rules; purple),
-comments (green), and keywords (blue).
+comments (green), keywords (blue), literals (red).
 
 * "Go to definition": AntlrVSIX can locate the rule that defines the symbol.
-Right-click on a symbol, and choose "Go to definition" in the pop-up menu. Caveat:
-if there are multiple rules that define the symbol, AntlrVSIX will go to the first.
+Right-click on a symbol, and choose "Go to definition" in the pop-up menu.
 
 * "Find all references": AntlrVSIX can locate the defining and applied occurrences
 of a symbol. Right-click on a symbol, and choose "Find all references" in the pop-up
 menu. Open the "FindAllReferences" windows and select any occurrence.
+
+* "Replace symbol": AntlrVSIX can rename the defining and applied occurrences of a
+symbol. Right-click on a symbol, and choose "Rename Antlr symbol" in the pop-up
+menu. A pop-up will display requesting the new name. After hitting OK, the extension
+will replace all occurrences with the new name. You must manually save the files to make
+the changes permanent.
 
 * Open all the grammar files in Visual Studio you wish to search, or add the
 grammar files to a project/solution. AntlrVSIX will go through all files, parse,
