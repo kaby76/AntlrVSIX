@@ -61,31 +61,31 @@
 
             foreach (IMappingTagSpan<AntlrTokenTag> curTag in _aggregator.GetTags(new SnapshotSpan(triggerPoint, triggerPoint)))
             {
-                if (curTag.Tag.TokenType == AntlrTokenTypes.Terminal)
+                if (curTag.Tag.TagType == AntlrTagTypes.Terminal)
                 {
                     var tagSpan = curTag.Span.GetSpans(_buffer).First();
                     applicableToSpan = _buffer.CurrentSnapshot.CreateTrackingSpan(tagSpan, SpanTrackingMode.EdgeExclusive);
                     quickInfoContent.Add("Terminal");
                 }
-                else if (curTag.Tag.TokenType == AntlrTokenTypes.Nonterminal)
+                else if (curTag.Tag.TagType == AntlrTagTypes.Nonterminal)
                 {
                     var tagSpan = curTag.Span.GetSpans(_buffer).First();
                     applicableToSpan = _buffer.CurrentSnapshot.CreateTrackingSpan(tagSpan, SpanTrackingMode.EdgeExclusive);
                     quickInfoContent.Add("Nonterminal");
                 }
-                else if (curTag.Tag.TokenType == AntlrTokenTypes.Comment)
+                else if (curTag.Tag.TagType == AntlrTagTypes.Comment)
                 {
                     var tagSpan = curTag.Span.GetSpans(_buffer).First();
                     applicableToSpan = _buffer.CurrentSnapshot.CreateTrackingSpan(tagSpan, SpanTrackingMode.EdgeExclusive);
                     quickInfoContent.Add("Comment");
                 }
-                else if (curTag.Tag.TokenType == AntlrTokenTypes.Keyword)
+                else if (curTag.Tag.TagType == AntlrTagTypes.Keyword)
                 {
                     var tagSpan = curTag.Span.GetSpans(_buffer).First();
                     applicableToSpan = _buffer.CurrentSnapshot.CreateTrackingSpan(tagSpan, SpanTrackingMode.EdgeExclusive);
                     quickInfoContent.Add("Keyword");
                 }
-                else if (curTag.Tag.TokenType == AntlrTokenTypes.Literal)
+                else if (curTag.Tag.TagType == AntlrTagTypes.Literal)
                 {
                     var tagSpan = curTag.Span.GetSpans(_buffer).First();
                     applicableToSpan = _buffer.CurrentSnapshot.CreateTrackingSpan(tagSpan, SpanTrackingMode.EdgeExclusive);

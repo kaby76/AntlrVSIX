@@ -17,7 +17,7 @@
         public ITextBuffer _buffer = null;
         public ITextView _view = null;
         public ITagAggregator<AntlrTokenTag> _aggregator;
-        private IDictionary<AntlrTokenTypes, IClassificationType> _antlrtype_to_classifiertype;
+        private IDictionary<AntlrTagTypes, IClassificationType> _antlrtype_to_classifiertype;
         public static Dictionary<ITextBuffer, AntlrClassifier> _buffer_to_classifier = new Dictionary<ITextBuffer, AntlrClassifier>();
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 
@@ -32,13 +32,13 @@
             _buffer_to_classifier[buffer] = this;
 
             _aggregator = aggregator;
-            _antlrtype_to_classifiertype = new Dictionary<AntlrTokenTypes, IClassificationType>();
-            _antlrtype_to_classifiertype[AntlrTokenTypes.Nonterminal] = service.GetClassificationType(Constants.ClassificationNameNonterminal);
-            _antlrtype_to_classifiertype[AntlrTokenTypes.Terminal] = service.GetClassificationType(Constants.ClassificationNameTerminal);
-            _antlrtype_to_classifiertype[AntlrTokenTypes.Comment] = service.GetClassificationType(Constants.ClassificationNameComment);
-            _antlrtype_to_classifiertype[AntlrTokenTypes.Keyword] = service.GetClassificationType(Constants.ClassificationNameKeyword);
-            _antlrtype_to_classifiertype[AntlrTokenTypes.Literal] = service.GetClassificationType(Constants.ClassificationNameLiteral);
-            _antlrtype_to_classifiertype[AntlrTokenTypes.Other] = service.GetClassificationType("other");
+            _antlrtype_to_classifiertype = new Dictionary<AntlrTagTypes, IClassificationType>();
+            _antlrtype_to_classifiertype[AntlrTagTypes.Nonterminal] = service.GetClassificationType(Constants.ClassificationNameNonterminal);
+            _antlrtype_to_classifiertype[AntlrTagTypes.Terminal] = service.GetClassificationType(Constants.ClassificationNameTerminal);
+            _antlrtype_to_classifiertype[AntlrTagTypes.Comment] = service.GetClassificationType(Constants.ClassificationNameComment);
+            _antlrtype_to_classifiertype[AntlrTagTypes.Keyword] = service.GetClassificationType(Constants.ClassificationNameKeyword);
+            _antlrtype_to_classifiertype[AntlrTagTypes.Literal] = service.GetClassificationType(Constants.ClassificationNameLiteral);
+            _antlrtype_to_classifiertype[AntlrTagTypes.Other] = service.GetClassificationType("other");
             
             // Ensure package is loaded.
             AntlrLanguagePackage package = AntlrLanguagePackage.Instance;
@@ -75,7 +75,7 @@
                 NormalizedSnapshotSpanCollection tag_spans = tag_span.Span.GetSpans(spans[0].Snapshot);
                 yield return
                     new TagSpan<ClassificationTag>(tag_spans[0],
-                        new ClassificationTag(_antlrtype_to_classifiertype[tag_span.Tag.TokenType]));
+                        new ClassificationTag(_antlrtype_to_classifiertype[tag_span.Tag.TagType]));
             }
         }
     }

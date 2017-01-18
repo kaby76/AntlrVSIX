@@ -1,6 +1,6 @@
 ﻿namespace AntlrVSIX.Tagger
 {
-    public enum AntlrTokenTypes
+    public enum AntlrTagTypes
     {
         Nonterminal,
         Terminal,

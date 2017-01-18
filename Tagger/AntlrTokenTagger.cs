@@ -21,19 +21,19 @@
     {
         private ITextBuffer _buffer;
         private SVsServiceProvider _service_provider;
-        private IDictionary<string, AntlrTokenTypes> _antlrTypes;
+        private IDictionary<string, AntlrTagTypes> _antlr_tag_types;
 
         internal AntlrTokenTagger(ITextBuffer buffer, SVsServiceProvider service_provider)
         {
             _buffer = buffer;
 
-            _antlrTypes = new Dictionary<string, AntlrTokenTypes>();
-            _antlrTypes[Constants.ClassificationNameNonterminal] = AntlrTokenTypes.Nonterminal;
-            _antlrTypes[Constants.ClassificationNameTerminal] = AntlrTokenTypes.Terminal;
-            _antlrTypes[Constants.ClassificationNameComment] = AntlrTokenTypes.Comment;
-            _antlrTypes[Constants.ClassificationNameKeyword] = AntlrTokenTypes.Keyword;
-            _antlrTypes[Constants.ClassificationNameLiteral] = AntlrTokenTypes.Literal;
-            _antlrTypes["other"] = AntlrTokenTypes.Other;
+            _antlr_tag_types = new Dictionary<string, AntlrTagTypes>();
+            _antlr_tag_types[Constants.ClassificationNameNonterminal] = AntlrTagTypes.Nonterminal;
+            _antlr_tag_types[Constants.ClassificationNameTerminal] = AntlrTagTypes.Terminal;
+            _antlr_tag_types[Constants.ClassificationNameComment] = AntlrTagTypes.Comment;
+            _antlr_tag_types[Constants.ClassificationNameKeyword] = AntlrTagTypes.Keyword;
+            _antlr_tag_types[Constants.ClassificationNameLiteral] = AntlrTagTypes.Literal;
+            _antlr_tag_types["other"] = AntlrTagTypes.Other;
 
             var text = _buffer.GetBufferText();
             var doc2 = buffer.GetTextDocument();
@@ -166,14 +166,14 @@
                         curSpan.Snapshot,
                         new Span(start_token_start, length));
 
-                    AntlrTokenTypes type;
-                    if (all_term_tokens.Contains(token)) type = AntlrTokenTypes.Terminal;
-                    else if (all_nonterm_tokens.Contains(token)) type = AntlrTokenTypes.Nonterminal;
-                    else if (all_comment_tokens.Contains(token)) type = AntlrTokenTypes.Comment;
-                    else if (all_keyword_tokens.Contains(token)) type = AntlrTokenTypes.Keyword;
-                    else if (all_literal_tokens.Contains(token)) type = AntlrTokenTypes.Literal;
+                    AntlrTagTypes type;
+                    if (all_term_tokens.Contains(token)) type = AntlrTagTypes.Terminal;
+                    else if (all_nonterm_tokens.Contains(token)) type = AntlrTagTypes.Nonterminal;
+                    else if (all_comment_tokens.Contains(token)) type = AntlrTagTypes.Comment;
+                    else if (all_keyword_tokens.Contains(token)) type = AntlrTagTypes.Keyword;
+                    else if (all_literal_tokens.Contains(token)) type = AntlrTagTypes.Literal;
                     else
-                        type = AntlrTokenTypes.Other;
+                        type = AntlrTagTypes.Other;
 
                     if (tokenSpan.IntersectsWith(curSpan))
                     {
