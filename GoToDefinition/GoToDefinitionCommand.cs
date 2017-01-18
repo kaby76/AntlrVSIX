@@ -140,7 +140,7 @@
 
             string full_file_name = where_token.full_file_name;
             IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(full_file_name);
-            full_file_name.ShowFrame();
+            IVsTextViewExtensions.ShowFrame(full_file_name);
             vstv = IVsTextViewExtensions.GetIVsTextView(where_token.full_file_name);
 
             IWpfTextView wpftv = vstv.GetIWpfTextView();

@@ -259,7 +259,7 @@
                         if (wpftv == null)
                         {
                             // File has not been opened before! Open file in editor.
-                            file_name.ShowFrame();
+                            IVsTextViewExtensions.ShowFrame(file_name);
                             vstv = IVsTextViewExtensions.GetIVsTextView(file_name);
                             wpftv = vstv.GetIWpfTextView();
                         }

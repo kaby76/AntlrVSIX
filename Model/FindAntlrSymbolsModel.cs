@@ -35,7 +35,7 @@
                 if (value == null) return;
                 string full_file_name = _item_selected.FileName;
                 IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(full_file_name);
-                full_file_name.ShowFrame();
+                IVsTextViewExtensions.ShowFrame(full_file_name);
                 vstv = IVsTextViewExtensions.GetIVsTextView(full_file_name);
                 IWpfTextView wpftv = vstv.GetIWpfTextView();
                 if (wpftv == null) return;

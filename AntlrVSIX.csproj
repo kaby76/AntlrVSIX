@@ -61,11 +61,8 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Extensions\DteExtensions.cs" />
     <Compile Include="Extensions\ITextBufferExtensions.cs" />
+    <Compile Include="Extensions\ITextViewExtensions.cs" />
     <Compile Include="Extensions\IVsTextViewExtensions.cs" />
-    <Compile Include="Extensions\TextExtensions.cs" />
-    <Compile Include="Extensions\GetIVsTextViewExtension2.cs" />
-    <Compile Include="Extensions\GetIVsTextViewExtension3.cs" />
-    <Compile Include="Extensions\ITextBufferExtentions.cs" />
     <Compile Include="Extensions\IVsShellExtensions.cs" />
     <Compile Include="Extensions\VsTextViewCreationListener.cs" />
     <Compile Include="Keyboard\CtrlKeyState.cs" />
