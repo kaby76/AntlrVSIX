@@ -4,11 +4,11 @@
 
     public class AntlrTokenTag : ITag
     {
-        public AntlrTokenTypes type { get; private set; }
+        public AntlrTokenTypes TokenType { get; private set; }
 
-        public AntlrTokenTag(AntlrTokenTypes type)
+        public AntlrTokenTag(AntlrTokenTypes token_type)
         {
-            this.type = type;
+            this.TokenType = token_type;
         }
     }
 }

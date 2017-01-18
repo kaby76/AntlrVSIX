@@ -21,7 +21,7 @@
     {
         private ITextBuffer _buffer;
         private SVsServiceProvider _service_provider;
-        IDictionary<string, AntlrTokenTypes> _antlrTypes;
+        private IDictionary<string, AntlrTokenTypes> _antlrTypes;
 
         internal AntlrTokenTagger(ITextBuffer buffer, SVsServiceProvider service_provider)
         {

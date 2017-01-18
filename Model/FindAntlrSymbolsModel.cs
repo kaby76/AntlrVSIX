@@ -11,21 +11,20 @@
 
     internal class FindAntlrSymbolsModel : INotifyPropertyChanged
     {
-        public static FindAntlrSymbolsModel Instance { get; } = new FindAntlrSymbolsModel();
+        private Entry _item_selected = null;
+        public event PropertyChangedEventHandler PropertyChanged;
 
+        public static FindAntlrSymbolsModel Instance { get; } = new FindAntlrSymbolsModel();
         public ObservableCollection<Entry> Results{
             get; set; } = new ObservableCollection<Entry>();
 
         private FindAntlrSymbolsModel() { }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         void OnPropertyChanged([CallerMemberName]string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        Entry _item_selected = null;
         public Entry ItemSelected
         {
             get { return _item_selected; }

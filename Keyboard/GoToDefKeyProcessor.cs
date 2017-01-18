@@ -3,9 +3,6 @@
     using Microsoft.VisualStudio.Text.Editor;
     using System.Windows.Input;
 
-    /// <summary>
-    /// Listen for the control key being pressed or released to update the CtrlKeyStateChanged for a view.
-    /// </summary>
     internal sealed class GoToDefKeyProcessor : KeyProcessor
     {
         private CtrlKeyState _state;

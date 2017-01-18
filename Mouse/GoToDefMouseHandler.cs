@@ -17,17 +17,13 @@
     internal sealed class GoToDefMouseHandler : MouseProcessorBase
     {
         IWpfTextView _view;
-        CtrlKeyState _state;
         IClassifier _aggregator;
         ITextStructureNavigator _navigator;
-        IOleCommandTarget _commandTarget;
 
         public GoToDefMouseHandler(IWpfTextView view, IOleCommandTarget commandTarget, IClassifier aggregator,
                                    ITextStructureNavigator navigator, CtrlKeyState state)
         {
             _view = view;
-            _commandTarget = commandTarget;
-            _state = state;
             _aggregator = aggregator;
             _navigator = navigator;
         }

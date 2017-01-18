@@ -16,10 +16,10 @@
 
     internal sealed class RenameCommand
     {
-        public const int CommandId = 0x0102;
-        public static readonly Guid CommandSet = new Guid("0c1acc31-15ac-417c-86b2-eefdc669e8bf");
-        private readonly Package package;
-        private MenuCommand menuItem;
+        public const int _command_id = 0x0102;
+        public static readonly Guid _command_set = new Guid("0c1acc31-15ac-417c-86b2-eefdc669e8bf");
+        private readonly Package _package;
+        private MenuCommand _menu_item;
 
         private RenameCommand(Package package)
         {
@@ -27,21 +27,21 @@
             {
                 throw new ArgumentNullException("package");
             }
-            this.package = package;
-            OleMenuCommandService commandService =
-                this.ServiceProvider.GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
-            if (commandService != null)
+            _package = package;
+            OleMenuCommandService command_service = this.ServiceProvider.GetService(
+                typeof(IMenuCommandService)) as OleMenuCommandService;
+            if (command_service != null)
             {
-                var menuCommandID = new CommandID(CommandSet, CommandId);
-                menuItem = new MenuCommand(this.MenuItemCallback, menuCommandID);
-                menuItem.Enabled = false;
-                commandService.AddCommand(menuItem);
+                CommandID menu_command_id = new CommandID(_command_set, _command_id);
+                _menu_item = new MenuCommand(RenameCallback, menu_command_id);
+                _menu_item.Enabled = false;
+                command_service.AddCommand(_menu_item);
             }
         }
 
         public bool Enable
         {
-            set { menuItem.Enabled = value; }
+            set { _menu_item.Enabled = value; }
         }
 
         public SnapshotSpan Symbol { get; set; }
@@ -51,7 +51,7 @@
 
         private IServiceProvider ServiceProvider
         {
-            get { return this.package; }
+            get { return this._package; }
         }
 
         public static void Initialize(Package package)
@@ -59,7 +59,7 @@
             Instance = new RenameCommand(package);
         }
 
-        private void MenuItemCallback(object sender, EventArgs e)
+        private void RenameCallback(object sender, EventArgs e)
         {
             // Highlight the symbol, reposition it to the beginning of it.
             // Every character changes all occurrences of the symbol.

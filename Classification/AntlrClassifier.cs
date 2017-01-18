@@ -17,30 +17,31 @@
         public ITextBuffer _buffer = null;
         public ITextView _view = null;
         public ITagAggregator<AntlrTokenTag> _aggregator;
-        IDictionary<AntlrTokenTypes, IClassificationType> _antlrTypes;
+        private IDictionary<AntlrTokenTypes, IClassificationType> _antlrtype_to_classifiertype;
         public static Dictionary<ITextBuffer, AntlrClassifier> _buffer_to_classifier = new Dictionary<ITextBuffer, AntlrClassifier>();
+        public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 
         internal AntlrClassifier(
             ITextView view,
             ITextBuffer buffer,
-            ITagAggregator<AntlrTokenTag> antlrTagAggregator,
-            IClassificationTypeRegistryService typeService)
+            ITagAggregator<AntlrTokenTag> aggregator,
+            IClassificationTypeRegistryService service)
         {
             _view = view;
             _buffer = buffer;
             _buffer_to_classifier[buffer] = this;
 
-            _aggregator = antlrTagAggregator;
-            _antlrTypes = new Dictionary<AntlrTokenTypes, IClassificationType>();
-            _antlrTypes[AntlrTokenTypes.Nonterminal] = typeService.GetClassificationType(Constants.ClassificationNameNonterminal);
-            _antlrTypes[AntlrTokenTypes.Terminal] = typeService.GetClassificationType(Constants.ClassificationNameTerminal);
-            _antlrTypes[AntlrTokenTypes.Comment] = typeService.GetClassificationType(Constants.ClassificationNameComment);
-            _antlrTypes[AntlrTokenTypes.Keyword] = typeService.GetClassificationType(Constants.ClassificationNameKeyword);
-            _antlrTypes[AntlrTokenTypes.Literal] = typeService.GetClassificationType(Constants.ClassificationNameLiteral);
-            _antlrTypes[AntlrTokenTypes.Other] = typeService.GetClassificationType("other");
+            _aggregator = aggregator;
+            _antlrtype_to_classifiertype = new Dictionary<AntlrTokenTypes, IClassificationType>();
+            _antlrtype_to_classifiertype[AntlrTokenTypes.Nonterminal] = service.GetClassificationType(Constants.ClassificationNameNonterminal);
+            _antlrtype_to_classifiertype[AntlrTokenTypes.Terminal] = service.GetClassificationType(Constants.ClassificationNameTerminal);
+            _antlrtype_to_classifiertype[AntlrTokenTypes.Comment] = service.GetClassificationType(Constants.ClassificationNameComment);
+            _antlrtype_to_classifiertype[AntlrTokenTypes.Keyword] = service.GetClassificationType(Constants.ClassificationNameKeyword);
+            _antlrtype_to_classifiertype[AntlrTokenTypes.Literal] = service.GetClassificationType(Constants.ClassificationNameLiteral);
+            _antlrtype_to_classifiertype[AntlrTokenTypes.Other] = service.GetClassificationType("other");
             
             // Ensure package is loaded.
-            var package = AntlrLanguagePackage.Instance;
+            AntlrLanguagePackage package = AntlrLanguagePackage.Instance;
 
             buffer.Changed += BufferChanged;
            // buffer.ContentTypeChanged += BufferContentTypeChanged;
@@ -52,8 +53,7 @@
             // probably be best to make the lexical analyzer incremental, then
             // do a full parse.
             ITextSnapshot snapshot = _buffer.CurrentSnapshot;
-            EventHandler<SnapshotSpanEventArgs> tagsChanged = TagsChanged;
-            if (tagsChanged != null)
+            if (TagsChanged != null)
             {
                 ParserDetails foo = new ParserDetails();
                 ITextDocument doc = _buffer.GetTextDocument();
@@ -64,20 +64,18 @@
                 if (wpftv == null) return;
                 ITextBuffer tb = wpftv.TextBuffer;
                 foo.Parse(tb.GetBufferText(), f);
-                tagsChanged(this, new SnapshotSpanEventArgs(new SnapshotSpan(snapshot, new Span(0, snapshot.Length))));
+                TagsChanged(this, new SnapshotSpanEventArgs(new SnapshotSpan(snapshot, new Span(0, snapshot.Length))));
             }
         }
 
-        public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
-
         public IEnumerable<ITagSpan<ClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
-            foreach (var tagSpan in _aggregator.GetTags(spans))
+            foreach (IMappingTagSpan<AntlrTokenTag> tag_span in _aggregator.GetTags(spans))
             {
-                var tagSpans = tagSpan.Span.GetSpans(spans[0].Snapshot);
+                NormalizedSnapshotSpanCollection tag_spans = tag_span.Span.GetSpans(spans[0].Snapshot);
                 yield return
-                    new TagSpan<ClassificationTag>(tagSpans[0],
-                        new ClassificationTag(_antlrTypes[tagSpan.Tag.type]));
+                    new TagSpan<ClassificationTag>(tag_spans[0],
+                        new ClassificationTag(_antlrtype_to_classifiertype[tag_span.Tag.TokenType]));
             }
         }
     }

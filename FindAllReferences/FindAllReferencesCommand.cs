@@ -18,8 +18,8 @@
     {
         public const int CommandId = 0x0101;
         public static readonly Guid CommandSet = new Guid("0c1acc31-15ac-417c-86b2-eefdc669e8bf");
-        private readonly Package package;
-        private MenuCommand menuItem;
+        private readonly Package _package;
+        private MenuCommand _menu_tem;
 
         private FindAllReferencesCommand(Package package)
         {
@@ -27,21 +27,21 @@
             {
                 throw new ArgumentNullException("package");
             }
-            this.package = package;
-            OleMenuCommandService commandService =
-                this.ServiceProvider.GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
+            _package = package;
+            OleMenuCommandService commandService = this.ServiceProvider.GetService(
+                typeof(IMenuCommandService)) as OleMenuCommandService;
             if (commandService != null)
             {
                 var menuCommandID = new CommandID(CommandSet, CommandId);
-                menuItem = new MenuCommand(this.MenuItemCallback, menuCommandID);
-                menuItem.Enabled = false;
-                commandService.AddCommand(menuItem);
+                _menu_tem = new MenuCommand(this.MenuItemCallback, menuCommandID);
+                _menu_tem.Enabled = false;
+                commandService.AddCommand(_menu_tem);
             }
         }
 
         public bool Enable
         {
-            set { menuItem.Enabled = value; }
+            set { _menu_tem.Enabled = value; }
         }
 
         public SnapshotSpan Symbol { get; set; }
@@ -51,7 +51,7 @@
 
         private IServiceProvider ServiceProvider
         {
-            get { return this.package; }
+            get { return this._package; }
         }
 
         public static void Initialize(Package package)

@@ -16,10 +16,10 @@
 
     internal sealed class GoToDefinitionCommand
     {
-        public const int CommandId = 0x0100;
-        public static readonly Guid CommandSet = new Guid("0c1acc31-15ac-417c-86b2-eefdc669e8bf");
-        private readonly Package package;
-        private MenuCommand menuItem;
+        public const int _command_id = 0x0100;
+        public static readonly Guid _command_set = new Guid("0c1acc31-15ac-417c-86b2-eefdc669e8bf");
+        private readonly Package _package;
+        private MenuCommand _menu_item;
 
         private GoToDefinitionCommand(Package package)
         {
@@ -27,21 +27,21 @@
             {
                 throw new ArgumentNullException("package");
             }
-            this.package = package;
-            OleMenuCommandService commandService =
-                this.ServiceProvider.GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
+            _package = package;
+            OleMenuCommandService commandService = this.ServiceProvider.GetService(
+                typeof(IMenuCommandService)) as OleMenuCommandService;
             if (commandService != null)
             {
-                var menuCommandID = new CommandID(CommandSet, CommandId);
-                menuItem = new MenuCommand(this.MenuItemCallback, menuCommandID);
-                menuItem.Enabled = false;
-                commandService.AddCommand(menuItem);
+                var menuCommandID = new CommandID(_command_set, _command_id);
+                _menu_item = new MenuCommand(this.MenuItemCallback, menuCommandID);
+                _menu_item.Enabled = false;
+                commandService.AddCommand(_menu_item);
             }
         }
 
         public bool Enable
         {
-            set { menuItem.Enabled = value; }
+            set { _menu_item.Enabled = value; }
         }
 
         public SnapshotSpan Symbol { get; set; }
@@ -51,7 +51,7 @@
 
         private IServiceProvider ServiceProvider
         {
-            get { return this.package; }
+            get { return this._package; }
         }
 
         public static void Initialize(Package package)

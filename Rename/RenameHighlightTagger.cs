@@ -24,18 +24,16 @@
 
     public class RenameHighlightTagger : ITagger<HighlightWordTag>
     {
+        public static bool Enabled = false;
+        private object updateLock = new object();
+        private IClassifier _aggregator;
+
         private ITextView View { get; set; }
         private ITextBuffer SourceBuffer { get; set; }
         private ITextSearchService TextSearchService { get; set; }
         private ITextStructureNavigator TextStructureNavigator { get; set; }
-        private object updateLock = new object();
-        private IClassifier _aggregator;
-
-        // The current set of words to highlight
         private NormalizedSnapshotSpanCollection WordSpans { get; set; }
         private SnapshotSpan? CurrentWord { get; set; }
-
-        // The current request, from the last cursor movement or view render
         private SnapshotPoint RequestedPoint { get; set; }
 
         public RenameHighlightTagger(ITextView view, ITextBuffer sourceBuffer, ITextSearchService textSearchService,
@@ -92,8 +90,6 @@
 
             ThreadPool.QueueUserWorkItem(UpdateWordAdornments);
         }
-
-        public static bool Enabled = false;
 
         private void UpdateWordAdornments(object threadContext)
         {

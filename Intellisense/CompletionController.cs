@@ -39,13 +39,13 @@
 
     internal sealed class CommandFilter : IOleCommandTarget
     {
-        ICompletionSession _currentSession;
+        private ICompletionSession _completion_session;
 
-        public CommandFilter(IWpfTextView textView, ICompletionBroker broker)
+        public CommandFilter(IWpfTextView text_view, ICompletionBroker broker)
         {
-            _currentSession = null;
+            _completion_session = null;
 
-            TextView = textView;
+            TextView = text_view;
             Broker = broker;
         }
 
@@ -97,7 +97,7 @@
                             char ch = GetTypeChar(pvaIn);
                             if (ch == ' ')
                                 StartSession();
-                            else if (_currentSession != null)
+                            else if (_completion_session != null)
                                 Filter();
                             break;
                         case VSConstants.VSStd2KCmdID.BACKSPACE:
@@ -115,11 +115,11 @@
         /// </summary>
         private void Filter()
         {
-            if (_currentSession == null)
+            if (_completion_session == null)
                 return;
 
-            _currentSession.SelectedCompletionSet.SelectBestMatch();
-            _currentSession.SelectedCompletionSet.Recalculate();
+            _completion_session.SelectedCompletionSet.SelectBestMatch();
+            _completion_session.SelectedCompletionSet.Recalculate();
         }
 
         /// <summary>
@@ -127,10 +127,10 @@
         /// </summary>
         bool Cancel()
         {
-            if (_currentSession == null)
+            if (_completion_session == null)
                 return false;
 
-            _currentSession.Dismiss();
+            _completion_session.Dismiss();
 
             return true;
         }
@@ -140,17 +140,17 @@
         /// </summary>
         bool Complete(bool force)
         {
-            if (_currentSession == null)
+            if (_completion_session == null)
                 return false;
 
-            if (!_currentSession.SelectedCompletionSet.SelectionStatus.IsSelected && !force)
+            if (!_completion_session.SelectedCompletionSet.SelectionStatus.IsSelected && !force)
             {
-                _currentSession.Dismiss();
+                _completion_session.Dismiss();
                 return false;
             }
             else
             {
-                _currentSession.Commit();
+                _completion_session.Commit();
                 return true;
             }
         }
@@ -160,7 +160,7 @@
         /// </summary>
         bool StartSession()
         {
-            if (_currentSession != null)
+            if (_completion_session != null)
                 return false;
 
             SnapshotPoint caret = TextView.Caret.Position.BufferPosition;
@@ -168,15 +168,15 @@
 
             if (!Broker.IsCompletionActive(TextView))
             {
-                _currentSession = Broker.CreateCompletionSession(TextView, snapshot.CreateTrackingPoint(caret, PointTrackingMode.Positive), true);
+                _completion_session = Broker.CreateCompletionSession(TextView, snapshot.CreateTrackingPoint(caret, PointTrackingMode.Positive), true);
             }
             else
             {
-                _currentSession = Broker.GetSessions(TextView)[0];
+                _completion_session = Broker.GetSessions(TextView)[0];
             }
-            _currentSession.Dismissed += (sender, args) => _currentSession = null;
+            _completion_session.Dismissed += (sender, args) => _completion_session = null;
 
-            _currentSession.Start();
+            _completion_session.Start();
 
             return true;
         }

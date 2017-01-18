@@ -13,22 +13,22 @@
     {
         [Export(typeof(ClassificationTypeDefinition))]
         [Name(Constants.ClassificationNameTerminal)]
-        internal static ClassificationTypeDefinition antlrTerminal = null;
+        internal static ClassificationTypeDefinition _antlr_terminal = null;
 
         [Export(typeof(ClassificationTypeDefinition))]
         [Name(Constants.ClassificationNameNonterminal)]
-        internal static ClassificationTypeDefinition antlrNonterminal = null;
+        internal static ClassificationTypeDefinition _antlr_nonterminal = null;
 
         [Export(typeof(ClassificationTypeDefinition))]
         [Name(Constants.ClassificationNameComment)]
-        internal static ClassificationTypeDefinition antlrComment = null;
+        internal static ClassificationTypeDefinition _antlr_comment = null;
 
         [Export(typeof(ClassificationTypeDefinition))]
         [Name(Constants.ClassificationNameKeyword)]
-        internal static ClassificationTypeDefinition antlrKeyword = null;
+        internal static ClassificationTypeDefinition _antlr_keyword = null;
 
         [Export(typeof(ClassificationTypeDefinition))]
         [Name(Constants.ClassificationNameLiteral)]
-        internal static ClassificationTypeDefinition antlrLiteral = null;
+        internal static ClassificationTypeDefinition _antlr_literal = null;
     }
 }

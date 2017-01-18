@@ -112,6 +112,7 @@
     <Compile Include="Tagger\AntlrTokenTagger.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Grammar\doit.sh" />
     <None Include="README.md">
       <Link>README.md</Link>
     </None>

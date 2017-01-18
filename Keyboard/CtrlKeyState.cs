@@ -4,10 +4,6 @@
     using System.Windows.Input;
     using System;
 
-    /// <summary>
-    /// The state of the control key for a given view, which is kept up-to-date by a combination of the
-    /// key processor and the mouse process
-    /// </summary>
     internal sealed class CtrlKeyState
     {
         internal static CtrlKeyState GetStateForView(ITextView view)

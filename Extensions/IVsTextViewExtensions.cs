@@ -1,52 +1,52 @@
-﻿using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor;
-
-namespace AntlrVSIX.Extensions
+﻿namespace AntlrVSIX.Extensions
 {
     using Microsoft.VisualStudio.Shell.Interop;
     using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Text.Editor;
+    using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.TextManager.Interop;
     using Microsoft.VisualStudio;
     using System.Diagnostics.Contracts;
     using System.Runtime.InteropServices;
     using System;
+
     using IObjectWithSite = Microsoft.VisualStudio.OLE.Interop.IObjectWithSite;
     using IOleServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
     using IServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
 
     public static class IVsTextViewExtensions
     {
-        public static IVsCodeWindow GetCodeWindow(this IVsTextView textView)
+        public static IVsCodeWindow GetCodeWindow(this IVsTextView text_view)
         {
-            Contract.Requires<ArgumentNullException>(textView != null, "textView");
+            Contract.Requires<ArgumentNullException>(text_view != null, "textView");
 
-            IObjectWithSite objectWithSite = textView as IObjectWithSite;
-            if (objectWithSite == null)
+            IObjectWithSite object_with_site = text_view as IObjectWithSite;
+            if (object_with_site == null)
                 return null;
 
             Guid riid = typeof(IOleServiceProvider).GUID;
             IntPtr ppvSite;
-            objectWithSite.GetSite(ref riid, out ppvSite);
+            object_with_site.GetSite(ref riid, out ppvSite);
             if (ppvSite == IntPtr.Zero)
                 return null;
 
-            IOleServiceProvider oleServiceProvider = null;
+            IOleServiceProvider ole_service_provider = null;
             try
             {
-                oleServiceProvider = Marshal.GetObjectForIUnknown(ppvSite) as IOleServiceProvider;
+                ole_service_provider = Marshal.GetObjectForIUnknown(ppvSite) as IOleServiceProvider;
             }
             finally
             {
                 Marshal.Release(ppvSite);
             }
 
-            if (oleServiceProvider == null)
+            if (ole_service_provider == null)
                 return null;
 
-            Guid guidService = typeof(SVsWindowFrame).GUID;
+            Guid guid_service = typeof(SVsWindowFrame).GUID;
             riid = typeof(IVsWindowFrame).GUID;
             IntPtr ppvObject;
-            if (ErrorHandler.Failed(oleServiceProvider.QueryService(ref guidService, ref riid, out ppvObject)) || ppvObject == IntPtr.Zero)
+            if (ErrorHandler.Failed(ole_service_provider.QueryService(ref guid_service, ref riid, out ppvObject)) || ppvObject == IntPtr.Zero)
                 return null;
 
             IVsWindowFrame frame = null;
@@ -63,11 +63,11 @@ namespace AntlrVSIX.Extensions
             if (ErrorHandler.Failed(frame.QueryViewInterface(ref riid, out ppvObject)) || ppvObject == IntPtr.Zero)
                 return null;
 
-            IVsCodeWindow codeWindow = null;
+            IVsCodeWindow code_window = null;
             try
             {
-                codeWindow = Marshal.GetObjectForIUnknown(ppvObject) as IVsCodeWindow;
-                return codeWindow;
+                code_window = Marshal.GetObjectForIUnknown(ppvObject) as IVsCodeWindow;
+                return code_window;
             }
             finally
             {
