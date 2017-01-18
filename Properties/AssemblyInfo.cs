@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("AntlrVSIX")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Antlr V4 Visual Studio Extension")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("AntlrVSIX")]

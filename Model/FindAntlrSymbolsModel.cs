@@ -1,34 +1,13 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using Antlr4.Runtime;
-using AntlrVSIX.Extensions;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.TextManager.Interop;
-
-namespace AntlrVSIX
+﻿namespace AntlrVSIX.Model
 {
-    using System.Collections.Generic;
-
-    internal class Entry : INotifyPropertyChanged
-    {
-        public Entry()
-        {
-        }
-        public string FileName { get; set; }
-        public int LineNumber { get; set; }
-        public int ColumnNumber { get; set; }
-        public IToken Token { get; set; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        void OnPropertyChanged([CallerMemberName]string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
+    using Antlr4.Runtime;
+    using AntlrVSIX.Extensions;
+    using Microsoft.VisualStudio.Text.Editor;
+    using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.TextManager.Interop;
+    using System.Collections.ObjectModel;
+    using System.ComponentModel;
+    using System.Runtime.CompilerServices;
 
     internal class FindAntlrSymbolsModel : INotifyPropertyChanged
     {
@@ -58,16 +37,8 @@ namespace AntlrVSIX
                 IVsTextView vstv = full_file_name.GetIVsTextView();
                 full_file_name.ShowFrame();
                 vstv = full_file_name.GetIVsTextView();
-                IWpfTextView wpftv = null;
-                try
-                {
-                    wpftv = VsTextViewCreationListener.to_wpftextview[vstv];
-                }
-                catch (Exception eeks)
-                {
-                    return;
-                }
-
+                IWpfTextView wpftv = vstv.GetIWpfTextView();
+                if (wpftv == null) return;
                 int line_number = _item_selected.LineNumber;
                 int colum_number = _item_selected.ColumnNumber;
                 IToken token = _item_selected.Token;

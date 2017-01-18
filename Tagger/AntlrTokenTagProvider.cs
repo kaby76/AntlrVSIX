@@ -1,10 +1,10 @@
 ﻿namespace AntlrVSIX.Tagger
 {
-    using System.ComponentModel.Composition;
     using Microsoft.VisualStudio.Shell;
-    using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Tagging;
+    using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Utilities;
+    using System.ComponentModel.Composition;
 
     [Export(typeof(ITaggerProvider))]
     [ContentType(Constants.ContentType)]
@@ -16,7 +16,7 @@
 
         public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
         {
-            return new AntlrTokenTagger(null, buffer, GlobalServiceProvider) as ITagger<T>;
+            return new AntlrTokenTagger(buffer, GlobalServiceProvider) as ITagger<T>;
         }
     }
 }

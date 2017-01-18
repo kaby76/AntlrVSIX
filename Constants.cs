@@ -1,7 +1,7 @@
-﻿using System.Windows.Media;
-
-namespace AntlrVSIX
+﻿namespace AntlrVSIX
 {
+    using System.Windows.Media;
+
     internal static class Constants
     {
         //Language name

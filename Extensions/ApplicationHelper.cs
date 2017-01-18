@@ -1,7 +1,7 @@
 ﻿namespace AntlrVSIX.Extensions
 {
-    using System.Collections.Generic;
     using EnvDTE;
+    using System.Collections.Generic;
 
     internal class ApplicationHelper
     {

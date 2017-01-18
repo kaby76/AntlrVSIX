@@ -1,9 +1,9 @@
 ﻿namespace AntlrVSIX.FindAllReferences
 {
-    using System;
-    using System.ComponentModel.Design;
-    using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Shell.Interop;
+    using Microsoft.VisualStudio.Shell;
+    using System.ComponentModel.Design;
+    using System;
 
     /// <summary>
     /// Command handler

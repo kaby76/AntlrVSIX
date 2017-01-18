@@ -1,5 +1,6 @@
 ﻿namespace AntlrVSIX
 {
+    using AntlrVSIX.Model;
     using System.Windows.Controls;
 
     public partial class FindRefsWindowControl : UserControl

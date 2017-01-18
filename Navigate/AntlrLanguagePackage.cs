@@ -1,13 +1,13 @@
 ﻿namespace AntlrVSIX.Navigate
 {
-    using System.Diagnostics.CodeAnalysis;
-    using System.Runtime.InteropServices;
-    using Microsoft.VisualStudio.Shell;
     using AntlrVSIX.Extensions;
-    using AntlrVSIX;
-    using AntlrVSIX.Rename;
     using AntlrVSIX.FindAllReferences;
     using AntlrVSIX.GoToDefintion;
+    using AntlrVSIX.Rename;
+    using AntlrVSIX;
+    using Microsoft.VisualStudio.Shell;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Runtime.InteropServices;
 
     [PackageRegistration(UseManagedResourcesOnly = true)]
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)] // Info on this package for Help/About

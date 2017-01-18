@@ -1,13 +1,16 @@
 ﻿namespace AntlrVSIX.Classification
 {
-    using System;
-    using System.Collections.Generic;
+    using AntlrVSIX.Extensions;
+    using AntlrVSIX.Grammar;
     using AntlrVSIX.Navigate;
-    using Microsoft.VisualStudio.Text;
-    using Microsoft.VisualStudio.Text.Classification;
-    using Microsoft.VisualStudio.Text.Tagging;
     using AntlrVSIX.Tagger;
+    using Microsoft.VisualStudio.Text.Classification;
     using Microsoft.VisualStudio.Text.Editor;
+    using Microsoft.VisualStudio.Text.Tagging;
+    using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.TextManager.Interop;
+    using System.Collections.Generic;
+    using System;
 
     internal sealed class AntlrClassifier : ITagger<ClassificationTag>
     {
@@ -35,15 +38,37 @@
             _antlrTypes[AntlrTokenTypes.Keyword] = typeService.GetClassificationType(Constants.ClassificationNameKeyword);
             _antlrTypes[AntlrTokenTypes.Literal] = typeService.GetClassificationType(Constants.ClassificationNameLiteral);
             _antlrTypes[AntlrTokenTypes.Other] = typeService.GetClassificationType("other");
+            
             // Ensure package is loaded.
             var package = AntlrLanguagePackage.Instance;
+
+            buffer.Changed += BufferChanged;
+           // buffer.ContentTypeChanged += BufferContentTypeChanged;
         }
 
-        public event EventHandler<SnapshotSpanEventArgs> TagsChanged
+        private void BufferChanged(object sender, TextContentChangedEventArgs e)
         {
-            add { }
-            remove { }
+            // Non-incremental parse. Future work: if performance becomes a problem, it would
+            // probably be best to make the lexical analyzer incremental, then
+            // do a full parse.
+            ITextSnapshot snapshot = _buffer.CurrentSnapshot;
+            EventHandler<SnapshotSpanEventArgs> tagsChanged = TagsChanged;
+            if (tagsChanged != null)
+            {
+                ParserDetails foo = new ParserDetails();
+                ITextDocument doc = _buffer.GetTextDocument();
+                string f = doc.FilePath;
+                ParserDetails._per_file_parser_details[f] = foo;
+                IVsTextView vstv = f.GetIVsTextView();
+                IWpfTextView wpftv = vstv.GetIWpfTextView();
+                if (wpftv == null) return;
+                ITextBuffer tb = wpftv.TextBuffer;
+                foo.Parse(tb.GetBufferText(), f);
+                tagsChanged(this, new SnapshotSpanEventArgs(new SnapshotSpan(snapshot, new Span(0, snapshot.Length))));
+            }
         }
+
+        public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 
         public IEnumerable<ITagSpan<ClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {

@@ -1,7 +1,7 @@
 ﻿namespace AntlrVSIX.Extensions
 {
-    using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Editor;
+    using Microsoft.VisualStudio.Text;
 
     public static class TextExtensions
     {

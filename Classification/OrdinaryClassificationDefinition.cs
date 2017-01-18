@@ -1,8 +1,8 @@
 ﻿namespace AntlrVSIX.Classification
 {
-    using System.ComponentModel.Composition;
     using Microsoft.VisualStudio.Text.Classification;
     using Microsoft.VisualStudio.Utilities;
+    using System.ComponentModel.Composition;
 
     // Please refer to Language Service and Editor Extension Points,
     // https://msdn.microsoft.com/en-us/library/dd885244.aspx,

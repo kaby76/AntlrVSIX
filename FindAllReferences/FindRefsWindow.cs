@@ -1,7 +1,7 @@
 ﻿namespace AntlrVSIX.FindAllReferences
 {
-    using System.Runtime.InteropServices;
     using Microsoft.VisualStudio.Shell;
+    using System.Runtime.InteropServices;
 
     /// <summary>
     /// This class implements the tool window exposed by this package and hosts a user control.

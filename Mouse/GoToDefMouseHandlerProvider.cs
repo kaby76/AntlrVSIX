@@ -1,15 +1,15 @@
 ﻿namespace AntlrVSIX.Mouse
 {
-    using System.ComponentModel.Composition;
+    using AntlrVSIX.Keyboard;
     using Microsoft.VisualStudio.OLE.Interop;
     using Microsoft.VisualStudio.Shell.Interop;
-    using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text.Classification;
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text.Operations;
+    using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Utilities;
-    using Microsoft.VisualStudio.Shell;
-    using AntlrVSIX.Key;
+    using System.ComponentModel.Composition;
 
     [Export(typeof(IMouseProcessorProvider))]
     [ContentType("code")]

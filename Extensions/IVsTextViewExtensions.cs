@@ -1,11 +1,14 @@
-﻿namespace AntlrVSIX.Extensions
+﻿using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
+
+namespace AntlrVSIX.Extensions
 {
-    using System;
-    using System.Diagnostics.Contracts;
-    using System.Runtime.InteropServices;
-    using Microsoft.VisualStudio;
     using Microsoft.VisualStudio.Shell.Interop;
     using Microsoft.VisualStudio.TextManager.Interop;
+    using Microsoft.VisualStudio;
+    using System.Diagnostics.Contracts;
+    using System.Runtime.InteropServices;
+    using System;
     using IObjectWithSite = Microsoft.VisualStudio.OLE.Interop.IObjectWithSite;
     using IOleServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
 
@@ -68,6 +71,25 @@
             {
                 Marshal.Release(ppvObject);
             }
+        }
+
+        public static ITextBuffer GetITextBuffer(this IVsTextView vstv)
+        {
+            IWpfTextView wpftv = vstv.GetIWpfTextView();
+            if (wpftv == null) return null;
+            ITextBuffer tb = wpftv.TextBuffer;
+            return tb;
+        }
+
+        public static IWpfTextView GetIWpfTextView(this IVsTextView vstv)
+        {
+            IWpfTextView wpftv = null;
+            try
+            {
+                wpftv = VsTextViewCreationListener.to_wpftextview[vstv];
+            }
+            catch (Exception eeks) { }
+            return wpftv;
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿namespace AntlrVSIX.Extensions
 {
-    using Microsoft.VisualStudio;
-    using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Shell.Interop;
+    using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio;
 
     internal static class IVsShellExtensions
     {

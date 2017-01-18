@@ -1,20 +1,21 @@
-﻿using System.Windows;
-using Microsoft.VisualStudio.TextManager.Interop;
-
-namespace AntlrVSIX.Rename
+﻿namespace AntlrVSIX.Rename
 {
     using Antlr4.Runtime;
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Grammar;
+    using AntlrVSIX.Model;
     using Microsoft.VisualStudio.Text.Classification;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading;
-    using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text.Operations;
     using Microsoft.VisualStudio.Text.Tagging;
+    using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.TextManager.Interop;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading;
+    using System.Windows;
+    using System;
+
 
     public class HighlightWordTag : TextMarkerTag, ITag
     {
@@ -254,15 +255,14 @@ namespace AntlrVSIX.Rename
                         string file_name = e.FileName;
                         var pd = ParserDetails._per_file_parser_details[file_name];
                         IVsTextView vstv = file_name.GetIVsTextView();
-                        IWpfTextView wpftv = null;
-                        try
+                        IWpfTextView wpftv = vstv.GetIWpfTextView();
+                        if (wpftv == null)
                         {
-                            wpftv = VsTextViewCreationListener.to_wpftextview[vstv];
+                            // File has not been opened before! Open file in editor.
+                            file_name.ShowFrame();
+                            vstv = file_name.GetIVsTextView();
+                            wpftv = vstv.GetIWpfTextView();
                         }
-                        catch (Exception eeks)
-                        {
-                        }
-                        if (wpftv == null) continue;
                         ITextBuffer tb = wpftv.TextBuffer;
                         ITextSnapshot cc = tb.CurrentSnapshot;
                         SnapshotSpan ss = new SnapshotSpan(cc, e.Token.StartIndex, 1 + e.Token.StopIndex - e.Token.StartIndex);
@@ -276,17 +276,10 @@ namespace AntlrVSIX.Rename
                         ParserDetails foo = new ParserDetails();
                         ParserDetails._per_file_parser_details[f] = foo;
                         IVsTextView vstv = f.GetIVsTextView();
-                        IWpfTextView wpftv = null;
-                        try
-                        {
-                            wpftv = VsTextViewCreationListener.to_wpftextview[vstv];
-                        }
-                        catch (Exception eeks)
-                        {
-                        }
+                        IWpfTextView wpftv = vstv.GetIWpfTextView();
                         if (wpftv == null) continue;
                         ITextBuffer tb = wpftv.TextBuffer;
-                        foo.Parse(tb.CurrentSnapshot.GetText(), f);
+                        foo.Parse(tb.GetBufferText(), f);
                     }
                 }
             });

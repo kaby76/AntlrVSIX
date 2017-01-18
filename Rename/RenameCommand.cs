@@ -1,18 +1,18 @@
 ﻿namespace AntlrVSIX.Rename
 {
-    using System;
-    using System.ComponentModel.Design;
-    using System.Linq;
     using Antlr4.Runtime;
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Grammar;
-    using Microsoft.VisualStudio.Shell;
-    using Microsoft.VisualStudio.Text;
-    using Microsoft.VisualStudio.Text.Editor;
-    using System.Collections.Generic;
-    using System.IO;
     using EnvDTE;
+    using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Text.Editor;
+    using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.TextManager.Interop;
+    using System.Collections.Generic;
+    using System.ComponentModel.Design;
+    using System.IO;
+    using System.Linq;
+    using System;
 
     internal sealed class RenameCommand
     {
@@ -141,17 +141,9 @@
             }
             if (!where.Any()) return;
 
-            // Position the cursor to the beginning of the symbol.
-            IWpfTextView wpftv = null;
-            try
-            {
-                wpftv = VsTextViewCreationListener.to_wpftextview[vstv];
-            }
-            catch (Exception eeks)
-            {
-                return;
-            }
-            
+            IWpfTextView wpftv = vstv.GetIWpfTextView();
+            if (wpftv == null) return;
+
             // Create new span in the appropriate view.
             ITextSnapshot cc = wpftv.TextBuffer.CurrentSnapshot;
             SnapshotSpan ss = new SnapshotSpan(cc, span.Start.Position, 1);

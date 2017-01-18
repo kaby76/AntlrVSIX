@@ -1,17 +1,18 @@
 ﻿namespace AntlrVSIX.FindAllReferences
 {
-    using System;
-    using System.ComponentModel.Design;
-    using System.Linq;
     using Antlr4.Runtime;
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Grammar;
-    using Microsoft.VisualStudio.Shell;
-    using Microsoft.VisualStudio.Text;
-    using Microsoft.VisualStudio.Text.Editor;
-    using System.Collections.Generic;
-    using System.IO;
+    using AntlrVSIX.Model;
     using EnvDTE;
+    using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Text.Editor;
+    using Microsoft.VisualStudio.Text;
+    using System.Collections.Generic;
+    using System.ComponentModel.Design;
+    using System.IO;
+    using System.Linq;
+    using System;
 
     internal sealed class FindAllReferencesCommand
     {

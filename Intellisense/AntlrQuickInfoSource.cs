@@ -1,14 +1,14 @@
 ﻿namespace AntlrVSIX
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Microsoft.VisualStudio.Language.Intellisense;
-    using Microsoft.VisualStudio.Text;
-    using Microsoft.VisualStudio.Text.Tagging;
-    using System.ComponentModel.Composition;
     using AntlrVSIX.Tagger;
+    using Microsoft.VisualStudio.Language.Intellisense;
+    using Microsoft.VisualStudio.Text.Tagging;
+    using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Utilities;
+    using System.Collections.Generic;
+    using System.ComponentModel.Composition;
+    using System.Linq;
+    using System;
 
     /// <summary>
     /// Factory for quick info sources

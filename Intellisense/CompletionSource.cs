@@ -1,12 +1,12 @@
 ﻿namespace AntlrVSIX
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using Microsoft.VisualStudio.Language.Intellisense;
     using Microsoft.VisualStudio.Text;
-    using System.ComponentModel.Composition;
     using Microsoft.VisualStudio.Utilities;
+    using System.Collections.Generic;
+    using System.ComponentModel.Composition;
+    using System.Linq;
+    using System;
 
     [Export(typeof(ICompletionSourceProvider))]
     [ContentType(Constants.ContentType)]

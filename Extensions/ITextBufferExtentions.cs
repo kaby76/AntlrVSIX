@@ -1,5 +1,4 @@
-﻿
-namespace AntlrVSIX.Extensions
+﻿namespace AntlrVSIX.Extensions
 {
     using Microsoft.VisualStudio.Text;
 

@@ -1,15 +1,15 @@
 ﻿namespace AntlrVSIX.Tagger
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using Antlr4.Runtime;
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Grammar;
     using Microsoft.VisualStudio.Shell;
-    using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text.Tagging;
+    using Microsoft.VisualStudio.Text;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System;
 
     /// <summary>
     /// AntlrTokenTagger is the basic tagging facility of this extension.
@@ -20,22 +20,12 @@
     internal sealed class AntlrTokenTagger : ITagger<AntlrTokenTag>
     {
         private ITextBuffer _buffer;
-        private ITextView _view;
         private SVsServiceProvider _service_provider;
-
-        // Tagging information.
         IDictionary<string, AntlrTokenTypes> _antlrTypes;
 
-        private string GetAntText()
-        {
-            return _buffer.CurrentSnapshot.GetText();
-        }
-
-        internal AntlrTokenTagger(ITextView view, ITextBuffer buffer, SVsServiceProvider service_provider)
+        internal AntlrTokenTagger(ITextBuffer buffer, SVsServiceProvider service_provider)
         {
             _buffer = buffer;
-            _view = view;
-            var pp = _buffer.Properties;
 
             _antlrTypes = new Dictionary<string, AntlrTokenTypes>();
             _antlrTypes[Constants.ClassificationNameNonterminal] = AntlrTokenTypes.Nonterminal;
@@ -45,14 +35,16 @@
             _antlrTypes[Constants.ClassificationNameLiteral] = AntlrTokenTypes.Literal;
             _antlrTypes["other"] = AntlrTokenTypes.Other;
 
-            var text = GetAntText();
+            var text = _buffer.GetBufferText();
             var doc2 = buffer.GetTextDocument();
-            string file_name2 = doc2.FilePath;
-            if (!ParserDetails._per_file_parser_details.ContainsKey(file_name2))
+            string file_name = doc2.FilePath;
+            if (file_name.TrimSuffix(".g4") == file_name) return;
+
+            if (!ParserDetails._per_file_parser_details.ContainsKey(file_name))
             {
                 ParserDetails foo = new ParserDetails();
-                ParserDetails._per_file_parser_details[file_name2] = foo;
-                foo.Parse(text, file_name2);
+                ParserDetails._per_file_parser_details[file_name] = foo;
+                foo.Parse(text, file_name);
             }
             this._buffer.Changed += OnTextBufferChanged;
         }
@@ -60,8 +52,10 @@
         public event EventHandler ClassificationChanged;
         private void OnTextBufferChanged(object sender, TextContentChangedEventArgs e)
         {
-            //ClassificationChanged(this, new ClassificationChangedEventArgs(
-            // new SnapshotSpan(_buffer.CurrentSnapshot, 0, _buffer.CurrentSnapshot.Length)));
+            //ClassificationChanged(this,
+            //    new ClassificationChangedEventArgs(
+            //        new SnapshotSpan(_buffer.CurrentSnapshot,
+            //        0, _buffer.CurrentSnapshot.Length)));
         }
 
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged
@@ -85,7 +79,6 @@
             {
                 ITextSnapshotLine containingLine = curSpan.Start.GetContainingLine();
                 int curLoc = containingLine.Start.Position;
-
                 string text = curSpan.GetText();
                 ITextBuffer buf = curSpan.Snapshot.TextBuffer;
                 var doc = buf.GetTextDocument();
@@ -93,6 +86,7 @@
 
                 ParserDetails details = null;
                 bool found = ParserDetails._per_file_parser_details.TryGetValue(file_name, out details);
+                if (!found) continue;
 
                 SnapshotPoint start = curSpan.Start;
                 int curLocStart = start.Position;

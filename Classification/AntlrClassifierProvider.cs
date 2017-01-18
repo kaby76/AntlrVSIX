@@ -1,11 +1,11 @@
 ﻿namespace AntlrVSIX.Classification
 {
-    using System.ComponentModel.Composition;
-    using Microsoft.VisualStudio.Text;
+    using AntlrVSIX.Tagger;
     using Microsoft.VisualStudio.Text.Classification;
     using Microsoft.VisualStudio.Text.Tagging;
+    using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Utilities;
-    using AntlrVSIX.Tagger;
+    using System.ComponentModel.Composition;
 
     // Please refer to Language Service and Editor Extension Points,
     // https://msdn.microsoft.com/en-us/library/dd885244.aspx,
@@ -35,9 +35,7 @@
 
         public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
         {
-            ITagAggregator<AntlrTokenTag> antlrTagAggregator =
-                                            aggregatorFactory.CreateTagAggregator<AntlrTokenTag>(buffer);
-
+            ITagAggregator<AntlrTokenTag> antlrTagAggregator = aggregatorFactory.CreateTagAggregator<AntlrTokenTag>(buffer);
             return new AntlrClassifier(null, buffer, antlrTagAggregator, ClassificationTypeRegistry) as ITagger<T>;
         }
     }
