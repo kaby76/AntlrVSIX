@@ -47,49 +47,49 @@
         /// <summary>
         /// Determine which pieces of Quickinfo content should be displayed
         /// </summary>
-        public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quickInfoContent, out ITrackingSpan applicableToSpan)
+        public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quick_info_content, out ITrackingSpan tracking_span)
         {
-            applicableToSpan = null;
+            tracking_span = null;
 
             if (_disposed)
                 throw new ObjectDisposedException("TestQuickInfoSource");
 
-            var triggerPoint = (SnapshotPoint) session.GetTriggerPoint(_buffer.CurrentSnapshot);
+            var trigger_point = (SnapshotPoint) session.GetTriggerPoint(_buffer.CurrentSnapshot);
 
-            if (triggerPoint == null)
+            if (trigger_point == null)
                 return;
 
-            foreach (IMappingTagSpan<AntlrTokenTag> curTag in _aggregator.GetTags(new SnapshotSpan(triggerPoint, triggerPoint)))
+            foreach (IMappingTagSpan<AntlrTokenTag> cur_tag in _aggregator.GetTags(new SnapshotSpan(trigger_point, trigger_point)))
             {
-                if (curTag.Tag.TagType == AntlrTagTypes.Terminal)
+                if (cur_tag.Tag.TagType == AntlrTagTypes.Terminal)
                 {
-                    var tagSpan = curTag.Span.GetSpans(_buffer).First();
-                    applicableToSpan = _buffer.CurrentSnapshot.CreateTrackingSpan(tagSpan, SpanTrackingMode.EdgeExclusive);
-                    quickInfoContent.Add("Terminal");
+                    SnapshotSpan tag_span = cur_tag.Span.GetSpans(_buffer).First();
+                    tracking_span = _buffer.CurrentSnapshot.CreateTrackingSpan(tag_span, SpanTrackingMode.EdgeExclusive);
+                    quick_info_content.Add("Terminal");
                 }
-                else if (curTag.Tag.TagType == AntlrTagTypes.Nonterminal)
+                else if (cur_tag.Tag.TagType == AntlrTagTypes.Nonterminal)
                 {
-                    var tagSpan = curTag.Span.GetSpans(_buffer).First();
-                    applicableToSpan = _buffer.CurrentSnapshot.CreateTrackingSpan(tagSpan, SpanTrackingMode.EdgeExclusive);
-                    quickInfoContent.Add("Nonterminal");
+                    SnapshotSpan tag_span = cur_tag.Span.GetSpans(_buffer).First();
+                    tracking_span = _buffer.CurrentSnapshot.CreateTrackingSpan(tag_span, SpanTrackingMode.EdgeExclusive);
+                    quick_info_content.Add("Nonterminal");
                 }
-                else if (curTag.Tag.TagType == AntlrTagTypes.Comment)
+                else if (cur_tag.Tag.TagType == AntlrTagTypes.Comment)
                 {
-                    var tagSpan = curTag.Span.GetSpans(_buffer).First();
-                    applicableToSpan = _buffer.CurrentSnapshot.CreateTrackingSpan(tagSpan, SpanTrackingMode.EdgeExclusive);
-                    quickInfoContent.Add("Comment");
+                    SnapshotSpan tag_span = cur_tag.Span.GetSpans(_buffer).First();
+                    tracking_span = _buffer.CurrentSnapshot.CreateTrackingSpan(tag_span, SpanTrackingMode.EdgeExclusive);
+                    quick_info_content.Add("Comment");
                 }
-                else if (curTag.Tag.TagType == AntlrTagTypes.Keyword)
+                else if (cur_tag.Tag.TagType == AntlrTagTypes.Keyword)
                 {
-                    var tagSpan = curTag.Span.GetSpans(_buffer).First();
-                    applicableToSpan = _buffer.CurrentSnapshot.CreateTrackingSpan(tagSpan, SpanTrackingMode.EdgeExclusive);
-                    quickInfoContent.Add("Keyword");
+                    SnapshotSpan tag_span = cur_tag.Span.GetSpans(_buffer).First();
+                    tracking_span = _buffer.CurrentSnapshot.CreateTrackingSpan(tag_span, SpanTrackingMode.EdgeExclusive);
+                    quick_info_content.Add("Keyword");
                 }
-                else if (curTag.Tag.TagType == AntlrTagTypes.Literal)
+                else if (cur_tag.Tag.TagType == AntlrTagTypes.Literal)
                 {
-                    var tagSpan = curTag.Span.GetSpans(_buffer).First();
-                    applicableToSpan = _buffer.CurrentSnapshot.CreateTrackingSpan(tagSpan, SpanTrackingMode.EdgeExclusive);
-                    quickInfoContent.Add("Literal");
+                    SnapshotSpan tag_span = cur_tag.Span.GetSpans(_buffer).First();
+                    tracking_span = _buffer.CurrentSnapshot.CreateTrackingSpan(tag_span, SpanTrackingMode.EdgeExclusive);
+                    quick_info_content.Add("Literal");
                 }
             }
         }

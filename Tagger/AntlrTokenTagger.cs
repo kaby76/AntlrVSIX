@@ -4,7 +4,6 @@
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Grammar;
     using Microsoft.VisualStudio.Shell;
-    using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text.Tagging;
     using Microsoft.VisualStudio.Text;
     using System.Collections.Generic;
@@ -22,6 +21,7 @@
         private ITextBuffer _buffer;
         private SVsServiceProvider _service_provider;
         private IDictionary<string, AntlrTagTypes> _antlr_tag_types;
+        public event EventHandler ClassificationChanged;
 
         internal AntlrTokenTagger(ITextBuffer buffer, SVsServiceProvider service_provider)
         {
@@ -35,27 +35,23 @@
             _antlr_tag_types[Constants.ClassificationNameLiteral] = AntlrTagTypes.Literal;
             _antlr_tag_types["other"] = AntlrTagTypes.Other;
 
-            var text = _buffer.GetBufferText();
-            var doc2 = buffer.GetTextDocument();
-            string file_name = doc2.FilePath;
+            ITextDocument document = _buffer.GetTextDocument();
+            string file_name = document.FilePath;
             if (file_name.TrimSuffix(".g4") == file_name) return;
 
             if (!ParserDetails._per_file_parser_details.ContainsKey(file_name))
             {
-                ParserDetails foo = new ParserDetails();
-                ParserDetails._per_file_parser_details[file_name] = foo;
-                foo.Parse(text, file_name);
+                ParserDetails parser_details = new ParserDetails();
+                ParserDetails._per_file_parser_details[file_name] = parser_details;
+                string text = _buffer.GetBufferText();
+                parser_details.Parse(text, file_name);
             }
+
             this._buffer.Changed += OnTextBufferChanged;
         }
 
-        public event EventHandler ClassificationChanged;
         private void OnTextBufferChanged(object sender, TextContentChangedEventArgs e)
         {
-            //ClassificationChanged(this,
-            //    new ClassificationChangedEventArgs(
-            //        new SnapshotSpan(_buffer.CurrentSnapshot,
-            //        0, _buffer.CurrentSnapshot.Length)));
         }
 
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged
@@ -64,8 +60,7 @@
             remove { }
         }
 
-        // For each span of text given, perform a complete parse, and reclassify new spans with
-        // the correct tag.
+        // For each span of text given, perform a complete parse, and reclassify and tag new spans.
         public IEnumerable<ITagSpan<AntlrTokenTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
             // Nothing graceful here in relating a span to a part in the
