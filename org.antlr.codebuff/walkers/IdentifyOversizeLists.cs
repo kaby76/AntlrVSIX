@@ -63,8 +63,10 @@ namespace org.antlr.codebuff.walkers
 		{
 			ParserRuleContext first = siblings[0] as ParserRuleContext;
 			ParentSiblingListKey pair = new ParentSiblingListKey(ctx, first, separator.Type);
-			SiblingListStats stats = corpus.rootAndChildListStats[pair];
-			SiblingListStats splitStats = corpus.rootAndSplitChildListStats[pair];
+		    SiblingListStats stats = null;
+            corpus.rootAndChildListStats.TryGetValue(pair, out stats);
+		    SiblingListStats splitStats = null;
+            corpus.rootAndSplitChildListStats.TryGetValue(pair, out splitStats);
 			bool oversize = stats == null && splitStats != null;
 
 			if (stats != null && splitStats == null)
