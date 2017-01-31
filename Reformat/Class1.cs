@@ -80,22 +80,28 @@ namespace AntlrVSIX.Reformat
             ITextDocument doc = buffer.GetTextDocument();
             string path = doc.FilePath;
 
-            // Get reformated text.
-            string text = buffer.GetBufferText();
-            org.antlr.codebuff.Tool.unformatted_input = text;
-            org.antlr.codebuff.Tool.Main(
-                new string[] { "-g", " ANTLRv4",
-                "-rule", "grammarSpec",
-                "-files", "g4",
-                $@"-corpus", $@"C:\Users\Ken\Documents\codebuff-cs\mycorpus",
-                "-inoutstring",
-                ""
-                });
+            string corpus_location = System.Environment.GetEnvironmentVariable("CORPUS_LOCATION");
+            if (corpus_location != null)
+            {
+                // Get reformated text.
+                string text = buffer.GetBufferText();
+                org.antlr.codebuff.Tool.unformatted_input = text;
+                org.antlr.codebuff.Tool.Main(
+                    new string[]
+                    {
+                        "-g", " ANTLRv4",
+                        "-rule", "grammarSpec",
+                        "-files", "g4",
+                        $@"-corpus", corpus_location,
+                        "-inoutstring",
+                        ""
+                    });
 
-            // Start edit session.
-            var edit = buffer.CreateEdit();
-            edit.Replace(0, buffer.GetBufferText().Length, org.antlr.codebuff.Tool.formatted_output);
-            edit.Apply();
+                // Start edit session.
+                var edit = buffer.CreateEdit();
+                edit.Replace(0, buffer.GetBufferText().Length, org.antlr.codebuff.Tool.formatted_output);
+                edit.Apply();
+            }
         }
     }
 }
