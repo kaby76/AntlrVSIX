@@ -14,16 +14,37 @@ iv. _Keywords_, such as _fragment_, _grammar_, etc. Keywords are tagged in blue.
 v. _Literals_, such as _[\n\r ]_, _'foobar'_, etc. These are tagged in red.
 
 * "Go to definition": AntlrVSIX can locate the rule that defines the symbol.
-Right-click on a symbol, and choose "Go to definition" in the pop-up menu.
+Right-click on a symbol, and choose "Go to definition" in the pop-up menu.</br>
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=Kl_qaY0NF70" target="_blank"><img src="http://img.youtube.com/vi/Kl_qaY0NF70/0.jpg" 
+alt="Go to definition" width="240" height="180" border="10" /></a>
 
 * "Find all references": AntlrVSIX can locate the defining and applied occurrences
 of a symbol. Right-click on a symbol, and choose "Find all references" in the pop-up
 menu. Open the "FindAllReferences" windows and select any occurrence.
+</br>
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=wOX_T4LP8QU
+" target="_blank"><img src="http://img.youtube.com/vi/wOX_T4LP8QU/0.jpg" 
+alt="Go to definition" width="240" height="180" border="10" /></a>
 
 * "Replace symbol": AntlrVSIX can rename the defining and applied occurrences of a
 symbol. Right-click on a symbol, and choose "Rename Antlr symbol" in the pop-up
 menu. In the pop-up modal dialog box, enter the new name, then click "OK". You must
 manually save the files to make the changes permanent.
+</br>
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=JJSQ2_fjxvc
+" target="_blank"><img src="http://img.youtube.com/vi/JJSQ2_fjxvc/0.jpg" 
+alt="Go to definition" width="240" height="180" border="10" /></a>
+
+* "Reformat": AntlrVSIX can reformat the entire file using Codebuff, which is
+ a machine-learning format tool (https://github.com/antlr/codebuff http://dl.acm.org/citation.cfm?id=2997383 https://arxiv.org/abs/1606.08866).
+To reformat you're grammar, you will need to create a list of Antlr4 grammars, set the environmental
+variable CORPUS_LOCATION to the directory. AntlrVSIX will read all ".g4" grammars in
+the directory, the reformat the current document from the formatting discovered in the corpus.
+You must manually save the file to make the changes permanent.
+</br>
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=XPC-wxucdoU
+" target="_blank"><img src="http://img.youtube.com/vi/XPC-wxucdoU/0.jpg" 
+alt="Go to definition" width="240" height="180" border="10" /></a>
 
 * Open all the grammar files in Visual Studio you wish to search, or add the
 grammar files to a project/solution. AntlrVSIX will go through all files, parse,
@@ -64,6 +85,10 @@ language service features is to use MEF extensions." The alternative approach,
 a Language Service, is undocumented, and the examples that I could find (PTVS)
 are bloated and poorly structured. Rather than take weeks, if not months, to understand and implement,
 I chose a very simple WPF implementation.
+
+* The grammar for Antlr that this extension uses may not be the "official" version for Antlr4. Consequently, your
+grammar may be valid according to the Antlr compiler but not with this extension.
+Please bear with me while I try to correct the grammar.
 
 ## Alternative Visual Studio Extensions
 

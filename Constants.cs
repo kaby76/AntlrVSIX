@@ -8,8 +8,9 @@
          * how to automatically synchonize a version string from the package
          * manifest (source.extension.vsixmanifest), so the version must also
          * be set in the manifest file.
+         * Make sure to change the version in source.extension.vsixmanifest as well!
          */
-        public const string Version = "1.1.1";
+        public const string Version = "1.2";
 
         /* Invariants of the AntlrVSIX extension.
          */
