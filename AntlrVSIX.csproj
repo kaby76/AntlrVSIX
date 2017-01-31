@@ -68,6 +68,7 @@
     <Compile Include="Keyboard\CtrlKeyState.cs" />
     <Compile Include="Keyboard\GoToDefKeyProcessor.cs" />
     <Compile Include="Model\Entry.cs" />
+    <Compile Include="Reformat\Class1.cs" />
     <Compile Include="Rename\HighlightRenameTaggerProvider.cs" />
     <Compile Include="Model\FindAntlrSymbolsModel.cs" />
     <Compile Include="FindAllReferences\FindRefsWindow.cs" />
@@ -304,6 +305,12 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="org.antlr.codebuff\org.antlr.codebuff.csproj">
+      <Project>{9b9dc2b0-8117-4f7f-a7d7-7a44f129627b}</Project>
+      <Name>org.antlr.codebuff</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />

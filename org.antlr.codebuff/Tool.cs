@@ -80,21 +80,25 @@ namespace org.antlr.codebuff
 			}
 		}
 
-		public static void Main(string[] args)
-		{
-			if (args.Length < 7)
-			{
-				Console.Error.WriteLine("org.antlr.codebuff.Tool -g grammar-name -rule start-rule -corpus root-dir-of-samples \\\n" + "   [-files file-extension] [-indent num-spaces] \\" + "   [-comment line-comment-name] [-o output-file] file-to-format");
-				return;
-			}
+        public static string formatted_output = null;
+        public static string unformatted_input = null;
 
-			string grammarName = null;
+        public static void Main(string[] args)
+		{
+            if (args.Length < 7)
+            {
+                Console.Error.WriteLine("org.antlr.codebuff.Tool -g grammar-name -rule start-rule -corpus root-dir-of-samples \\\n" + "   [-files file-extension] [-indent num-spaces] \\" + "   [-comment line-comment-name] [-o output-file] file-to-format");
+                return;
+            }
+
+            formatted_output = null;
+            string outputFileName = "";
+            string grammarName = null;
 			string startRule = null;
 			string corpusDir = null;
 			string indentS = "4";
 			string commentS = null;
 			string testFileName = null;
-			string outputFileName = null;
 			string fileExtension = null;
 			int i = 0;
 			while (i < args.Length && args[i].StartsWith("-", StringComparison.Ordinal))
@@ -129,6 +133,11 @@ namespace org.antlr.codebuff
 						i++;
 						outputFileName = args[i++];
 						break;
+                    case "-inoutstring":
+                        i++;
+                        formatted_output = "";
+                        outputFileName = null;
+                        break;
 				}
 			}
 			testFileName = args[i]; // must be last
@@ -183,32 +192,48 @@ namespace org.antlr.codebuff
 				fileRegex = ".*\\." + fileExtension;
 			}
 			LangDescriptor language = new LangDescriptor(grammarName, corpusDir, fileRegex, lexerClass, parserClass, startRule, indentSize, singleLineCommentType);
-			format(language, testFileName, outputFileName);
-		}
+            formatted_output = format(language, testFileName, outputFileName);
+		    if (outputFileName != null && outputFileName == "")
+		    {
+		        System.Console.WriteLine(formatted_output);
+		    }
+        }
 
-		public static void format(LangDescriptor language, string testFileName, string outputFileName)
+        public static string format(LangDescriptor language, string testFileName, string outputFileName)
 		{
 			// load all files up front
 			IList<string> allFiles = getFilenames(language.corpusDir, language.fileRegex);
 			IList<InputDocument> documents = load(allFiles, language);
-			// if in corpus, don't include in corpus
-			string path = System.IO.Path.GetFullPath(testFileName);
-			IList<InputDocument> others = BuffUtils.filter(documents, d => !d.fileName.Equals(path));
-			InputDocument testDoc = parse(testFileName, language);
-			Corpus corpus = new Corpus(others, language);
-			corpus.train();
+            string output = null;
+            if (unformatted_input == null)
+            {
+                // if in corpus, don't include in corpus
+                Corpus corpus = null;
+                string path = System.IO.Path.GetFullPath(testFileName);
+                IList<InputDocument> others = BuffUtils.filter(documents, d => !d.fileName.Equals(path));
+                InputDocument testDoc = parse(testFileName, language);
+                corpus = new Corpus(others, language);
+                corpus.train();
+                Formatter formatter = new Formatter(corpus, language.indentSize, Formatter.DEFAULT_K, Trainer.FEATURES_INJECT_WS, Trainer.FEATURES_HPOS);
+                output = formatter.format(testDoc, false);
+            }
+            else
+            {
+                // if in corpus, don't include in corpus
+                Corpus corpus = null;
+                IList<InputDocument> others = documents;
+                InputDocument testDoc = parse(testFileName, unformatted_input, language);
+                corpus = new Corpus(others, language);
+                corpus.train();
+                Formatter formatter = new Formatter(corpus, language.indentSize, Formatter.DEFAULT_K, Trainer.FEATURES_INJECT_WS, Trainer.FEATURES_HPOS);
+                output = formatter.format(testDoc, false);
+            }
 
-			Formatter formatter = new Formatter(corpus, language.indentSize, Formatter.DEFAULT_K, Trainer.FEATURES_INJECT_WS, Trainer.FEATURES_HPOS);
-			string output = formatter.format(testDoc, false);
-
-			if (!string.ReferenceEquals(outputFileName, null))
+            if (!string.IsNullOrEmpty(outputFileName))
 			{
                 org.antlr.codebuff.misc.Utils.writeFile(outputFileName, output);
 			}
-			else
-			{
-				Console.Write(output);
-			}
+            return output;
 		}
 
 		public static void setToolVersion()

@@ -29,8 +29,11 @@ namespace org.antlr.codebuff
 //ORIGINAL LINE: public static InputDocument dup(InputDocument old) throws Exception
 		public static InputDocument dup(InputDocument old)
 		{
-			// reparse to get new tokens, tree
-			return Tool.parse(old.fileName, old.language);
+		    if (!string.IsNullOrEmpty(old.fileName))
+		        // reparse to get new tokens, tree
+		        return Tool.parse(old.fileName, old.language);
+		    else
+		        return Tool.parse(old.fileName, Tool.unformatted_input, old.language);
 		}
 
 		public InputDocument(string fileName, string content, LangDescriptor language)

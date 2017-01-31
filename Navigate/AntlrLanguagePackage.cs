@@ -29,6 +29,7 @@
             FindAllReferencesCommand.Initialize(this);
             RenameCommand.Initialize(this);
             FindRefsWindowCommand.Initialize(this);
+            Reformat.ReformatCommand.Initialize(this);
         }
 
         private static AntlrLanguagePackage _instance;

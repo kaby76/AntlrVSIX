@@ -26,6 +26,12 @@
             <ButtonText>Rename Antlr symbol</ButtonText>
           </Strings>
         </Button>
+        <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="Command4Id" type="Button">
+          <Strings>
+            <ButtonText>Reformat Antlr rules</ButtonText>
+          </Strings>
+        </Button>
+
         <Button guid="guidAntlrLanguagePackageCmdSet" id="cmdidFindRefsWindowCommand" priority="0x0100" type="Button">
         <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1" />
         <Icon guid="guidImages1" id="bmpPic1" />
@@ -61,6 +67,9 @@
      <CommandPlacement guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="Command3Id" priority="0x0001">
        <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="MyGroupForCommands" />
      </CommandPlacement>
+     <CommandPlacement guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="Command4Id" priority="0x0001">
+       <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="MyGroupForCommands" />
+     </CommandPlacement>
    </CommandPlacements>
 
    <Symbols>
@@ -71,6 +80,7 @@
         <IDSymbol name="Command1Id" value="0x0100" />
         <IDSymbol name="Command2Id" value="0x0101" />
         <IDSymbol name="Command3Id" value="0x0102" />
+        <IDSymbol name="Command4Id" value="0x0103" />
       </GuidSymbol>
 
       <GuidSymbol name="guidImages" value="{68759f95-6f1d-4a77-87ea-192fc8d811f1}">

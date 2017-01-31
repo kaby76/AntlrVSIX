@@ -60,6 +60,9 @@
             RenameCommand.Instance.Classification = default(string);
             RenameCommand.Instance.View = default(ITextView);
 
+            Reformat.ReformatCommand.Instance.Enable = false;
+            RenameCommand.Instance.View = default(ITextView);
+
             // No matter what, say we handled event, otherwise we get all sorts of pop-up errors.
             e.Handled = true;
 
@@ -94,6 +97,11 @@
                     RenameCommand.Instance.Symbol = span;
                     RenameCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameTerminal;
                     RenameCommand.Instance.View = _view;
+
+                    Reformat.ReformatCommand.Instance.Enable = true;
+                    Reformat.ReformatCommand.Instance.Symbol = span;
+                    Reformat.ReformatCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameTerminal;
+                    Reformat.ReformatCommand.Instance.View = _view;
                 }
                 else if (name == AntlrVSIX.Constants.ClassificationNameNonterminal)
                 {
@@ -111,6 +119,11 @@
                     RenameCommand.Instance.Symbol = span;
                     RenameCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameNonterminal;
                     RenameCommand.Instance.View = _view;
+
+                    Reformat.ReformatCommand.Instance.Enable = true;
+                    Reformat.ReformatCommand.Instance.Symbol = span;
+                    Reformat.ReformatCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameNonterminal;
+                    Reformat.ReformatCommand.Instance.View = _view;
                 }
                 else if (name == AntlrVSIX.Constants.ClassificationNameLiteral)
                 {
@@ -128,6 +141,11 @@
                     RenameCommand.Instance.Symbol = span;
                     RenameCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameLiteral;
                     RenameCommand.Instance.View = _view;
+
+                    Reformat.ReformatCommand.Instance.Enable = true;
+                    Reformat.ReformatCommand.Instance.Symbol = span;
+                    Reformat.ReformatCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameLiteral;
+                    Reformat.ReformatCommand.Instance.View = _view;
                 }
             }
         }
