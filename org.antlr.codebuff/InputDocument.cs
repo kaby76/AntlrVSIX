@@ -25,8 +25,6 @@ namespace org.antlr.codebuff
 		public Parser parser;
 		public CodeBuffTokenStream tokens;
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public static InputDocument dup(InputDocument old) throws Exception
 		public static InputDocument dup(InputDocument old)
 		{
 		    if (!string.IsNullOrEmpty(old.fileName))

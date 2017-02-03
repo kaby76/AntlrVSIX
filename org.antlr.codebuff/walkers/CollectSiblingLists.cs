@@ -76,7 +76,9 @@ namespace org.antlr.codebuff.walkers
 			Token hiddenTokenToRight = hiddenToRight != null ? hiddenToRight[0] : null;
 
 			int[] ws = new int[4]; // '\n' (before list, before sep, after sep, after last element)
-			if (hiddenTokenToLeft != null && Tool.count(hiddenTokenToLeft.Text, '\n') > 0)
+            // KED. naked new lines is not platform independent!!!!!!!!!!!!!!!!!!!!
+            // STOP using naked new lines!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            if (hiddenTokenToLeft != null && Tool.count(hiddenTokenToLeft.Text, '\n') > 0)
 			{
 				ws[0] = '\n';
 			}

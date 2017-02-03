@@ -98,7 +98,7 @@ namespace org.antlr.codebuff
 			string corpusDir = null;
 			string indentS = "4";
 			string commentS = null;
-			string testFileName = null;
+			string input_file_name = null;
 			string fileExtension = null;
 			int i = 0;
 			while (i < args.Length && args[i].StartsWith("-", StringComparison.Ordinal))
@@ -140,7 +140,7 @@ namespace org.antlr.codebuff
                         break;
 				}
 			}
-			testFileName = args[i]; // must be last
+			input_file_name = args[i]; // must be last
 
 			Console.WriteLine("gramm: " + grammarName);
 			string parserClassName = grammarName + "Parser";
@@ -192,49 +192,52 @@ namespace org.antlr.codebuff
 				fileRegex = ".*\\." + fileExtension;
 			}
 			LangDescriptor language = new LangDescriptor(grammarName, corpusDir, fileRegex, lexerClass, parserClass, startRule, indentSize, singleLineCommentType);
-            formatted_output = format(language, testFileName, outputFileName);
-		    if (outputFileName != null && outputFileName == "")
-		    {
-		        System.Console.WriteLine(formatted_output);
-		    }
-        }
 
-        public static string format(LangDescriptor language, string testFileName, string outputFileName)
-		{
-			// load all files up front
-			IList<string> allFiles = getFilenames(language.corpusDir, language.fileRegex);
-			IList<InputDocument> documents = load(allFiles, language);
-            string output = null;
+            ////////
+            // load all corpus files up front
+            IList<string> allFiles = getFilenames(language.corpusDir, language.fileRegex);
+            IList<InputDocument> documents = load(allFiles, language);
+
+            // Handle formatting of document if it's passed as a string or not.
             if (unformatted_input == null)
             {
-                // if in corpus, don't include in corpus
-                Corpus corpus = null;
-                string path = System.IO.Path.GetFullPath(testFileName);
+                // Don't include file to format in corpus itself.
+                string path = System.IO.Path.GetFullPath(input_file_name);
                 IList<InputDocument> others = BuffUtils.filter(documents, d => !d.fileName.Equals(path));
-                InputDocument testDoc = parse(testFileName, language);
-                corpus = new Corpus(others, language);
+                // Perform training of formatter.
+                Corpus corpus = new Corpus(others, language);
                 corpus.train();
+
+                // Parse code contained in file.
+                InputDocument unformatted_document = parse(input_file_name, language);
+
+                // Format document.
                 Formatter formatter = new Formatter(corpus, language.indentSize, Formatter.DEFAULT_K, Trainer.FEATURES_INJECT_WS, Trainer.FEATURES_HPOS);
-                output = formatter.format(testDoc, false);
+                formatted_output = formatter.format(unformatted_document, false);
             }
             else
             {
-                // if in corpus, don't include in corpus
-                Corpus corpus = null;
-                IList<InputDocument> others = documents;
-                InputDocument testDoc = parse(testFileName, unformatted_input, language);
-                corpus = new Corpus(others, language);
+                // Perform training of formatter.
+                Corpus corpus = new Corpus(documents, language);
                 corpus.train();
-                Formatter formatter = new Formatter(corpus, language.indentSize, Formatter.DEFAULT_K, Trainer.FEATURES_INJECT_WS, Trainer.FEATURES_HPOS);
-                output = formatter.format(testDoc, false);
-            }
 
-            if (!string.IsNullOrEmpty(outputFileName))
-			{
-                org.antlr.codebuff.misc.Utils.writeFile(outputFileName, output);
-			}
-            return output;
-		}
+                // Parse code that was represented as a string.
+                InputDocument unformatted_document = parse(input_file_name, unformatted_input, language);
+
+                // Format document.
+                Formatter formatter = new Formatter(corpus, language.indentSize, Formatter.DEFAULT_K, Trainer.FEATURES_INJECT_WS, Trainer.FEATURES_HPOS);
+                formatted_output = formatter.format(unformatted_document, false);
+            }
+            ///////
+            if (outputFileName != null && outputFileName == "")
+		    {
+		        System.Console.WriteLine(formatted_output);
+		    }
+            else if (!string.IsNullOrEmpty(outputFileName))
+            {
+                org.antlr.codebuff.misc.Utils.writeFile(outputFileName, formatted_output);
+            }
+        }
 
 		public static void setToolVersion()
 		{
@@ -500,7 +503,7 @@ namespace org.antlr.codebuff
 
 		public static string newlines(int n)
 		{
-			return sequence(n, "\n");
+			return sequence(n, "\r\n"); //KED KED KED = needs to be platform independent
 	//		StringBuilder buf = new StringBuilder();
 	//		for (int sp=1; sp<=n; sp++) buf.append("\n");
 	//		return buf.toString();

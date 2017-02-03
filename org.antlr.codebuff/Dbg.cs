@@ -207,6 +207,9 @@ namespace org.antlr.codebuff
 							levenshtein would count this as 2 I think but
 							for our doc distance, I think it's ok to measure as same
 		 */
+         /* KED. Note, this is not platform independent. Every platform has a different
+          * line termination protocol. \n alone does not work!
+          */
 		public static int whitespaceEditDistance(string s, string t)
 		{
 			int s_spaces = Tool.count(s, ' ');
