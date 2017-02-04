@@ -49,7 +49,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AntlrVSIX\org.antlr.codebuff\org.antlr.codebuff.csproj">
+    <ProjectReference Include="..\org.antlr.codebuff\org.antlr.codebuff.csproj">
       <Project>{9b9dc2b0-8117-4f7f-a7d7-7a44f129627b}</Project>
       <Name>org.antlr.codebuff</Name>
     </ProjectReference>

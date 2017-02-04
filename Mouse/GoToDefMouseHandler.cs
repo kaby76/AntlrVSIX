@@ -44,6 +44,12 @@
 
         public override void PostprocessMouseRightButtonDown(MouseButtonEventArgs e)
         {
+            if (GoToDefinitionCommand.Instance == null ||
+                FindAllReferencesCommand.Instance == null ||
+                RenameCommand.Instance == null ||
+                Reformat.ReformatCommand.Instance == null)
+                return;
+
             // Whack any old values that cursor points to.
             GoToDefinitionCommand.Instance.Enable = false;
             GoToDefinitionCommand.Instance.Symbol = default(SnapshotSpan);
