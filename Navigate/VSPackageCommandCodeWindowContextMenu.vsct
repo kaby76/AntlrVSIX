@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<CommandTable
+  xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
    <Extern href="stdidcmd.h" />
    <Extern href="vsshlids.h" />
@@ -11,35 +13,50 @@
 
       <Buttons>
         <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="Command1Id" type="Button">
-          <Icon guid="guidImages" id="bmpPic1" />
           <Strings>
             <ButtonText>Go to definition</ButtonText>
           </Strings>
+          <!-- The 2 lines below set the default visibility. Note, VS seems to say CommandFlag is an invalid element,
+               the code seems to work. -->
+          <CommandFlag>DefaultInvisible</CommandFlag>
+          <CommandFlag>DynamicVisibility</CommandFlag>
         </Button>
         <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="Command2Id" type="Button">
           <Strings>
             <ButtonText>Find all references</ButtonText>
           </Strings>
+          <!-- The 2 lines below set the default visibility. Note, VS seems to say CommandFlag is an invalid element,
+               the code seems to work. -->
+          <CommandFlag>DefaultInvisible</CommandFlag>
+          <CommandFlag>DynamicVisibility</CommandFlag>
         </Button>
         <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="Command3Id" type="Button">
           <Strings>
             <ButtonText>Rename Antlr symbol</ButtonText>
           </Strings>
+          <!-- The 2 lines below set the default visibility. Note, VS seems to say CommandFlag is an invalid element,
+               the code seems to work. -->
+          <CommandFlag>DefaultInvisible</CommandFlag>
+          <CommandFlag>DynamicVisibility</CommandFlag>
         </Button>
         <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="Command4Id" type="Button">
           <Strings>
             <ButtonText>Reformat Antlr rules</ButtonText>
           </Strings>
+          <!-- The 2 lines below set the default visibility. Note, VS seems to say CommandFlag is an invalid element,
+               the code seems to work. -->
+          <CommandFlag>DefaultInvisible</CommandFlag>
+          <CommandFlag>DynamicVisibility</CommandFlag>
         </Button>
 
         <Button guid="guidAntlrLanguagePackageCmdSet" id="cmdidFindRefsWindowCommand" priority="0x0100" type="Button">
-        <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1" />
-        <Icon guid="guidImages1" id="bmpPic1" />
-        <Strings>
-          <ButtonText>FindRefsWindow</ButtonText>
-        </Strings>
-      </Button>
-    </Buttons>
+          <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1" />
+          <Icon guid="guidImages1" id="bmpPic1" />
+          <Strings>
+            <ButtonText>FindRefsWindow</ButtonText>
+          </Strings>
+        </Button>
+      </Buttons>
 
       <Bitmaps>
          <Bitmap guid="guidImages" href="..\Resources\Command1.png" usedList="bmpPic1" />

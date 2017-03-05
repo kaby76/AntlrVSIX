@@ -41,13 +41,19 @@ namespace AntlrVSIX.Reformat
                 var menuCommandID = new CommandID(_command_set, _command_id);
                 _menu_item = new MenuCommand(this.MenuItemCallback, menuCommandID);
                 _menu_item.Enabled = false;
+                _menu_item.Visible = false;
                 commandService.AddCommand(_menu_item);
             }
         }
 
-        public bool Enable
+        public bool Enabled
         {
             set { _menu_item.Enabled = value; }
+        }
+
+        public bool Visible
+        {
+            set { _menu_item.Visible = value; }
         }
 
         public SnapshotSpan Symbol { get; set; }

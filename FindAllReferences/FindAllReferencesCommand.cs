@@ -19,7 +19,7 @@
         public const int CommandId = 0x0101;
         public static readonly Guid CommandSet = new Guid("0c1acc31-15ac-417c-86b2-eefdc669e8bf");
         private readonly Package _package;
-        private MenuCommand _menu_tem;
+        private MenuCommand _menu_item;
 
         private FindAllReferencesCommand(Package package)
         {
@@ -33,15 +33,21 @@
             if (commandService != null)
             {
                 var menuCommandID = new CommandID(CommandSet, CommandId);
-                _menu_tem = new MenuCommand(this.MenuItemCallback, menuCommandID);
-                _menu_tem.Enabled = false;
-                commandService.AddCommand(_menu_tem);
+                _menu_item = new MenuCommand(this.MenuItemCallback, menuCommandID);
+                _menu_item.Enabled = false;
+                _menu_item.Visible = false;
+                commandService.AddCommand(_menu_item);
             }
         }
 
-        public bool Enable
+        public bool Enabled
         {
-            set { _menu_tem.Enabled = value; }
+            set { _menu_item.Enabled = value; }
+        }
+
+        public bool Visible
+        {
+            set { _menu_item.Visible = value; }
         }
 
         public SnapshotSpan Symbol { get; set; }

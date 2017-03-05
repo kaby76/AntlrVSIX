@@ -1,4 +1,8 @@
-﻿namespace AntlrVSIX.Mouse
+﻿using System.ComponentModel.Design;
+using AntlrVSIX.Tagger;
+using Microsoft.VisualStudio.Shell;
+
+namespace AntlrVSIX.Mouse
 {
     using AntlrVSIX.FindAllReferences;
     using AntlrVSIX.GoToDefintion;
@@ -16,16 +20,22 @@
 
     internal sealed class GoToDefMouseHandler : MouseProcessorBase
     {
-        IWpfTextView _view;
-        IClassifier _aggregator;
-        ITextStructureNavigator _navigator;
+        private IWpfTextView _view;
+        private IClassifier _aggregator;
+        private ITextStructureNavigator _navigator;
+        private SVsServiceProvider _service_provider;
 
-        public GoToDefMouseHandler(IWpfTextView view, IOleCommandTarget commandTarget, IClassifier aggregator,
-                                   ITextStructureNavigator navigator, CtrlKeyState state)
+        public GoToDefMouseHandler(IWpfTextView view,
+            IOleCommandTarget commandTarget,
+            SVsServiceProvider serviceProvider,
+            IClassifier aggregator,
+            ITextStructureNavigator navigator,
+            CtrlKeyState state)
         {
             _view = view;
             _aggregator = aggregator;
             _navigator = navigator;
+            _service_provider = serviceProvider;
         }
 
         // Remember the location of the mouse on left button down, so we only handle left button up
@@ -44,6 +54,9 @@
 
         public override void PostprocessMouseRightButtonDown(MouseButtonEventArgs e)
         {
+            if (_view == null)
+                return;
+
             if (GoToDefinitionCommand.Instance == null ||
                 FindAllReferencesCommand.Instance == null ||
                 RenameCommand.Instance == null ||
@@ -51,22 +64,26 @@
                 return;
 
             // Whack any old values that cursor points to.
-            GoToDefinitionCommand.Instance.Enable = false;
+            GoToDefinitionCommand.Instance.Enabled = false;
+            GoToDefinitionCommand.Instance.Visible = false;
             GoToDefinitionCommand.Instance.Symbol = default(SnapshotSpan);
             GoToDefinitionCommand.Instance.Classification = default(string);
             GoToDefinitionCommand.Instance.View = default(ITextView);
 
-            FindAllReferencesCommand.Instance.Enable = false;
+            FindAllReferencesCommand.Instance.Enabled = false;
+            FindAllReferencesCommand.Instance.Visible = false;
             FindAllReferencesCommand.Instance.Symbol = default(SnapshotSpan);
             FindAllReferencesCommand.Instance.Classification = default(string);
             FindAllReferencesCommand.Instance.View = default(ITextView);
 
-            RenameCommand.Instance.Enable = false;
+            RenameCommand.Instance.Enabled = false;
+            RenameCommand.Instance.Visible = false;
             RenameCommand.Instance.Symbol = default(SnapshotSpan);
             RenameCommand.Instance.Classification = default(string);
             RenameCommand.Instance.View = default(ITextView);
 
-            Reformat.ReformatCommand.Instance.Enable = false;
+            Reformat.ReformatCommand.Instance.Enabled = false;
+            Reformat.ReformatCommand.Instance.Visible = false;
             RenameCommand.Instance.View = default(ITextView);
 
             // No matter what, say we handled event, otherwise we get all sorts of pop-up errors.
@@ -89,66 +106,78 @@
                 var name = classification.ClassificationType.Classification.ToLower();
                 if (name == AntlrVSIX.Constants.ClassificationNameTerminal)
                 {
-                    GoToDefinitionCommand.Instance.Enable = true;
+                    GoToDefinitionCommand.Instance.Enabled = true;
+                    GoToDefinitionCommand.Instance.Visible = true;
                     GoToDefinitionCommand.Instance.Symbol = span;
                     GoToDefinitionCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameTerminal;
                     GoToDefinitionCommand.Instance.View = _view;
 
-                    FindAllReferencesCommand.Instance.Enable = true;
+                    FindAllReferencesCommand.Instance.Enabled = true;
+                    FindAllReferencesCommand.Instance.Visible = true;
                     FindAllReferencesCommand.Instance.Symbol = span;
                     FindAllReferencesCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameTerminal;
                     FindAllReferencesCommand.Instance.View = _view;
 
-                    RenameCommand.Instance.Enable = true;
+                    RenameCommand.Instance.Enabled = true;
+                    RenameCommand.Instance.Visible = true;
                     RenameCommand.Instance.Symbol = span;
                     RenameCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameTerminal;
                     RenameCommand.Instance.View = _view;
 
-                    Reformat.ReformatCommand.Instance.Enable = true;
+                    Reformat.ReformatCommand.Instance.Enabled = true;
+                    Reformat.ReformatCommand.Instance.Visible = true;
                     Reformat.ReformatCommand.Instance.Symbol = span;
                     Reformat.ReformatCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameTerminal;
                     Reformat.ReformatCommand.Instance.View = _view;
                 }
                 else if (name == AntlrVSIX.Constants.ClassificationNameNonterminal)
                 {
-                    GoToDefinitionCommand.Instance.Enable = true;
+                    GoToDefinitionCommand.Instance.Enabled = true;
+                    GoToDefinitionCommand.Instance.Visible = true;
                     GoToDefinitionCommand.Instance.Symbol = span;
                     GoToDefinitionCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameNonterminal;
                     GoToDefinitionCommand.Instance.View = _view;
 
-                    FindAllReferencesCommand.Instance.Enable = true;
+                    FindAllReferencesCommand.Instance.Enabled = true;
+                    FindAllReferencesCommand.Instance.Visible = true;
                     FindAllReferencesCommand.Instance.Symbol = span;
                     FindAllReferencesCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameNonterminal;
                     FindAllReferencesCommand.Instance.View = _view;
 
-                    RenameCommand.Instance.Enable = true;
+                    RenameCommand.Instance.Enabled = true;
+                    RenameCommand.Instance.Visible = true;
                     RenameCommand.Instance.Symbol = span;
                     RenameCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameNonterminal;
                     RenameCommand.Instance.View = _view;
 
-                    Reformat.ReformatCommand.Instance.Enable = true;
+                    Reformat.ReformatCommand.Instance.Enabled = true;
+                    Reformat.ReformatCommand.Instance.Visible = true;
                     Reformat.ReformatCommand.Instance.Symbol = span;
                     Reformat.ReformatCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameNonterminal;
                     Reformat.ReformatCommand.Instance.View = _view;
                 }
                 else if (name == AntlrVSIX.Constants.ClassificationNameLiteral)
                 {
-                    GoToDefinitionCommand.Instance.Enable = true;
+                    GoToDefinitionCommand.Instance.Enabled = true;
+                    GoToDefinitionCommand.Instance.Visible = true;
                     GoToDefinitionCommand.Instance.Symbol = span;
                     GoToDefinitionCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameLiteral;
                     GoToDefinitionCommand.Instance.View = _view;
 
-                    FindAllReferencesCommand.Instance.Enable = true;
+                    FindAllReferencesCommand.Instance.Enabled = true;
+                    FindAllReferencesCommand.Instance.Visible = true;
                     FindAllReferencesCommand.Instance.Symbol = span;
                     FindAllReferencesCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameLiteral;
                     FindAllReferencesCommand.Instance.View = _view;
 
-                    RenameCommand.Instance.Enable = true;
+                    RenameCommand.Instance.Enabled = true;
+                    RenameCommand.Instance.Visible = true;
                     RenameCommand.Instance.Symbol = span;
                     RenameCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameLiteral;
                     RenameCommand.Instance.View = _view;
 
-                    Reformat.ReformatCommand.Instance.Enable = true;
+                    Reformat.ReformatCommand.Instance.Enabled = true;
+                    Reformat.ReformatCommand.Instance.Visible = true;
                     Reformat.ReformatCommand.Instance.Symbol = span;
                     Reformat.ReformatCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameLiteral;
                     Reformat.ReformatCommand.Instance.View = _view;

@@ -40,6 +40,7 @@
 
             return new GoToDefMouseHandler(view,
                                            shellCommandDispatcher,
+                                           GlobalServiceProvider,
                                            ag1,
                                            NavigatorService.GetTextStructureNavigator(buffer),
                                            CtrlKeyState.GetStateForView(view));

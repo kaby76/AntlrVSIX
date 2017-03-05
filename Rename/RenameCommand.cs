@@ -35,13 +35,19 @@
                 CommandID menu_command_id = new CommandID(_command_set, _command_id);
                 _menu_item = new MenuCommand(RenameCallback, menu_command_id);
                 _menu_item.Enabled = false;
+                _menu_item.Visible = false;
                 command_service.AddCommand(_menu_item);
             }
         }
 
-        public bool Enable
+        public bool Enabled
         {
             set { _menu_item.Enabled = value; }
+        }
+
+        public bool Visible
+        {
+            set { _menu_item.Visible = value; }
         }
 
         public SnapshotSpan Symbol { get; set; }
