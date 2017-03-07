@@ -58,6 +58,7 @@
     <StartArguments>/rootsuffix Exp</StartArguments>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Classification\Class2.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Extensions\DteExtensions.cs" />
     <Compile Include="Extensions\ITextBufferExtensions.cs" />
@@ -93,7 +94,7 @@
     <Compile Include="Tagger\AntlrTokenTagProvider.cs" />
     <Compile Include="Tagger\AntlrTagTypes.cs" />
     <Compile Include="Classification\ClassificationFormat.cs" />
-    <Compile Include="Classification\OrdinaryClassificationDefinition.cs" />
+    <Compile Include="Classification\ClassificationTypes.cs" />
     <Compile Include="Classification\AntlrClassifierProvider.cs" />
     <Compile Include="Grammar\ANTLRv4Lexer.cs" />
     <Compile Include="Grammar\ANTLRv4Parser.cs" />

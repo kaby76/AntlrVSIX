@@ -1,4 +1,9 @@
-﻿namespace AntlrVSIX.Classification
+﻿using System;
+using System.Windows.Media;
+using Microsoft.VisualStudio.PlatformUI;
+using Color = System.Drawing.Color;
+
+namespace AntlrVSIX.Classification
 {
     using AntlrVSIX.Tagger;
     using Microsoft.VisualStudio.Text.Classification;
@@ -17,26 +22,40 @@
     [TagType(typeof(ClassificationTag))]
     internal sealed class AntlrClassifierProvider : ITaggerProvider
     {
-        [Export]
-        [Name(Constants.LanguageName)]
-        [BaseDefinition("code")]
-        internal static ContentTypeDefinition AntlrContentType = null;
+        [Export] [Name(Constants.LanguageName)] [BaseDefinition("code")] internal static ContentTypeDefinition
+            AntlrContentType = null;
 
-        [Export]
-        [FileExtension(Constants.FileExtension)]
-        [ContentType(Constants.ContentType)]
-        internal static FileExtensionToContentTypeDefinition AntlrFileType = null;
+        [Export] [FileExtension(Constants.FileExtension)] [ContentType(Constants.ContentType)] internal static
+            FileExtensionToContentTypeDefinition AntlrFileType = null;
 
-        [Import]
-        internal IClassificationTypeRegistryService ClassificationTypeRegistry = null;
+        [Import] internal IClassificationTypeRegistryService ClassificationTypeRegistry = null;
 
-        [Import]
-        internal IBufferTagAggregatorFactoryService aggregatorFactory = null;
+        [Import] internal IClassificationFormatMapService ClassificationFormatMapService = null;
+
+        [Import] internal IBufferTagAggregatorFactoryService aggregatorFactory = null;
 
         public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
         {
-            ITagAggregator<AntlrTokenTag> antlrTagAggregator = aggregatorFactory.CreateTagAggregator<AntlrTokenTag>(buffer);
+            // Receive notification for Visual Studio theme change
+            VSColorTheme.ThemeChanged += UpdateTheme;
+            ITagAggregator<AntlrTokenTag> antlrTagAggregator =
+                aggregatorFactory.CreateTagAggregator<AntlrTokenTag>(buffer);
             return new AntlrClassifier(null, buffer, antlrTagAggregator, ClassificationTypeRegistry) as ITagger<T>;
+        }
+
+        private void UpdateTheme(EventArgs e)
+        {
+            Color defaultBackground = VSColorTheme.GetThemedColor(EnvironmentColors.ToolWindowBackgroundColorKey);
+            Color defaultForeground = VSColorTheme.GetThemedColor(EnvironmentColors.ToolWindowTextColorKey);
+            var formatMap = ClassificationFormatMapService.GetClassificationFormatMap(category: "code");
+            try
+            {
+                formatMap.BeginBatchUpdate();
+            }
+            finally
+            {
+                formatMap.EndBatchUpdate();
+            }
         }
     }
 }

@@ -2,7 +2,9 @@
 {
     using Microsoft.VisualStudio.Text.Classification;
     using Microsoft.VisualStudio.Utilities;
+    using System.Collections.Generic;
     using System.ComponentModel.Composition;
+
 
     // Please refer to Language Service and Editor Extension Points,
     // https://msdn.microsoft.com/en-us/library/dd885244.aspx,
@@ -12,13 +14,13 @@
     [Export(typeof(EditorFormatDefinition))]
     [ClassificationType(ClassificationTypeNames = Constants.ClassificationNameTerminal)]
     [Name(Constants.ClassificationNameTerminal)]
-    [UserVisible(false)]
+    [UserVisible(true)]
     [Order(Before = Priority.Default)]
     internal sealed class Terminal : ClassificationFormatDefinition
     {
         public Terminal()
         {
-            DisplayName = "terminal"; //human readable version of the name
+            DisplayName = "Antlr Terminal"; //human readable version of the name
             ForegroundColor = Constants.ColorTextForegroundTerminal;
         }
     }
@@ -26,13 +28,13 @@
     [Export(typeof(EditorFormatDefinition))]
     [ClassificationType(ClassificationTypeNames = Constants.ClassificationNameNonterminal)]
     [Name(Constants.ClassificationNameNonterminal)]
-    [UserVisible(false)]
+    [UserVisible(true)]
     [Order(Before = Priority.Default)]
     internal sealed class Nonterminal : ClassificationFormatDefinition
     {
         public Nonterminal()
         {
-            DisplayName = "nonterminal"; //human readable version of the name
+            DisplayName = "Antlr Nonterminal"; //human readable version of the name
             ForegroundColor = Constants.ColorTextForegroundNonterminal;
         }
     }
@@ -40,13 +42,13 @@
     [Export(typeof(EditorFormatDefinition))]
     [ClassificationType(ClassificationTypeNames = Constants.ClassificationNameComment)]
     [Name(Constants.ClassificationNameComment)]
-    [UserVisible(false)]
+    [UserVisible(true)]
     [Order(Before = Priority.Default)]
     internal sealed class AComment : ClassificationFormatDefinition
     {
         public AComment()
         {
-            DisplayName = "acomment"; //human readable version of the name
+            DisplayName = "Antlr Comment"; //human readable version of the name
             ForegroundColor = Constants.ColorTextForegroundComment;
         }
     }
@@ -54,13 +56,13 @@
     [Export(typeof(EditorFormatDefinition))]
     [ClassificationType(ClassificationTypeNames = Constants.ClassificationNameKeyword)]
     [Name(Constants.ClassificationNameKeyword)]
-    [UserVisible(false)]
+    [UserVisible(true)]
     [Order(Before = Priority.Default)]
     internal sealed class Keyword : ClassificationFormatDefinition
     {
         public Keyword()
         {
-            DisplayName = "akeyword"; //human readable version of the name
+            DisplayName = "Antlr Keyword"; //human readable version of the name
             ForegroundColor = Constants.ColorTextForegroundKeyword;
         }
     }
@@ -68,13 +70,13 @@
     [Export(typeof(EditorFormatDefinition))]
     [ClassificationType(ClassificationTypeNames = Constants.ClassificationNameLiteral)]
     [Name(Constants.ClassificationNameLiteral)]
-    [UserVisible(false)]
+    [UserVisible(true)]
     [Order(Before = Priority.Default)]
     internal sealed class Literal : ClassificationFormatDefinition
     {
         public Literal()
         {
-            DisplayName = "aliteral"; //human readable version of the name
+            DisplayName = "Antlr Literal"; //human readable version of the name
             ForegroundColor = Constants.ColorTextForegroundLiteral;
         }
     }

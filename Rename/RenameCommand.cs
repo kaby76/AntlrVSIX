@@ -70,8 +70,6 @@
             // Highlight the symbol, reposition it to the beginning of it.
             // Every character changes all occurrences of the symbol.
 
-
-
             // First, open up every .g4 file in project and parse.
             DTE application = DteExtensions.GetApplication();
             if (application != null)
