@@ -1,13 +1,11 @@
-﻿using System.ComponentModel.Design;
-using AntlrVSIX.Tagger;
-using Microsoft.VisualStudio.Shell;
-
-namespace AntlrVSIX.Mouse
+﻿namespace AntlrVSIX.Mouse
 {
+    using Microsoft.VisualStudio.Shell;
     using AntlrVSIX.FindAllReferences;
     using AntlrVSIX.GoToDefintion;
     using AntlrVSIX.Keyboard;
     using AntlrVSIX.Rename;
+    using AntlrVSIX.Extensions;
     using Microsoft.VisualStudio.OLE.Interop;
     using Microsoft.VisualStudio.Text.Classification;
     using Microsoft.VisualStudio.Text.Editor;
@@ -85,6 +83,20 @@ namespace AntlrVSIX.Mouse
             Reformat.ReformatCommand.Instance.Enabled = false;
             Reformat.ReformatCommand.Instance.Visible = false;
             RenameCommand.Instance.View = default(ITextView);
+
+            var fp = _view.GetFilePath();
+            if (fp != null)
+            {
+                string suffix = System.IO.Path.GetExtension(fp);
+                if (suffix.Equals(".g4") || suffix.Equals(".G4"))
+                {
+                    GoToDefinitionCommand.Instance.Visible = true;
+                    FindAllReferencesCommand.Instance.Visible = true;
+                    RenameCommand.Instance.Visible = true;
+                    Reformat.ReformatCommand.Instance.Enabled = true;
+                    Reformat.ReformatCommand.Instance.Visible = true;
+                }
+            }
 
             // No matter what, say we handled event, otherwise we get all sorts of pop-up errors.
             e.Handled = true;
