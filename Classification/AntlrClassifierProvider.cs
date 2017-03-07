@@ -1,16 +1,14 @@
-﻿using System;
-using System.Windows.Media;
-using Microsoft.VisualStudio.PlatformUI;
-using Color = System.Drawing.Color;
-
-namespace AntlrVSIX.Classification
+﻿namespace AntlrVSIX.Classification
 {
     using AntlrVSIX.Tagger;
+    using Color = System.Drawing.Color;
+    using Microsoft.VisualStudio.PlatformUI;
     using Microsoft.VisualStudio.Text.Classification;
     using Microsoft.VisualStudio.Text.Tagging;
     using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Utilities;
     using System.ComponentModel.Composition;
+    using System;
 
     // Please refer to Language Service and Editor Extension Points,
     // https://msdn.microsoft.com/en-us/library/dd885244.aspx,

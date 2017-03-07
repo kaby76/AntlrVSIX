@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
-
-namespace AntlrVSIX.Classification
+﻿namespace AntlrVSIX.Classification
 {
+    using System.Windows.Media;
+
     public class FontColor
     {
         public readonly Color? Foreground;

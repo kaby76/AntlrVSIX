@@ -1,20 +1,20 @@
 ﻿namespace AntlrVSIX.Mouse
 {
-    using Microsoft.VisualStudio.Shell;
+    using AntlrVSIX.Extensions;
     using AntlrVSIX.FindAllReferences;
     using AntlrVSIX.GoToDefintion;
     using AntlrVSIX.Keyboard;
     using AntlrVSIX.Rename;
-    using AntlrVSIX.Extensions;
     using Microsoft.VisualStudio.OLE.Interop;
+    using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text.Classification;
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text.Operations;
     using Microsoft.VisualStudio.Text;
+    using Point = System.Windows.Point;
     using System.Linq;
     using System.Windows.Input;
     using System;
-    using Point = System.Windows.Point;
 
     internal sealed class GoToDefMouseHandler : MouseProcessorBase
     {

@@ -58,7 +58,7 @@
     <StartArguments>/rootsuffix Exp</StartArguments>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Classification\Class2.cs" />
+    <Compile Include="Classification\FontColor.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Extensions\DteExtensions.cs" />
     <Compile Include="Extensions\ITextBufferExtensions.cs" />
@@ -69,7 +69,7 @@
     <Compile Include="Keyboard\CtrlKeyState.cs" />
     <Compile Include="Keyboard\GoToDefKeyProcessor.cs" />
     <Compile Include="Model\Entry.cs" />
-    <Compile Include="Reformat\Class1.cs" />
+    <Compile Include="Reformat\ReformatCommand.cs" />
     <Compile Include="Rename\HighlightRenameTaggerProvider.cs" />
     <Compile Include="Model\FindAntlrSymbolsModel.cs" />
     <Compile Include="FindAllReferences\FindRefsWindow.cs" />
