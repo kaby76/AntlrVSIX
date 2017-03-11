@@ -20,7 +20,7 @@ alt="Go to definition" width="240" height="180" border="10" /></a>
 
 * "Find all references": AntlrVSIX can locate the defining and applied occurrences
 of a symbol. Right-click on a symbol, and choose "Find all references" in the pop-up
-menu. Open the "FindAllReferences" windows and select any occurrence.
+menu. Open the "Antlr Find Results" windows and select any occurrence.
 </br>
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=wOX_T4LP8QU
 " target="_blank"><img src="http://img.youtube.com/vi/wOX_T4LP8QU/0.jpg" 
@@ -91,6 +91,20 @@ grammar may be valid according to the Antlr compiler but not with this extension
 Please bear with me while I try to correct the grammar.
 
 * Use Visual Studio 2017 to build the extension.
+
+## New in v1.2.4:
+
+* The extension is now both VS 2017 and 2015 compatible.
+
+* The results windows of Antlr Find All References is now "Antlr Find Results".
+
+## New in v1.2.3:
+
+* Color selection through VS Options/Environment/Fonts and Colors. Look for "Antlr ..." named items.
+
+* Bug fixes with Context Menu entries for AntlrVSIX. AntlrVSIX commands are now only visible when cursor positioned at an Antlr symbol in the grammar. This fixes the segv's when selecting AntlrVSIX commands in non-Antlr files.
+
+Any questions, email me at ken.domino <at> gmail.com
 
 ## Alternative Visual Studio Extensions
 
