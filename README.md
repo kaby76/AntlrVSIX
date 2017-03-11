@@ -1,5 +1,5 @@
 # AntlrVSIX
-AntlrVSIX is an open source Visual Studio 2015 extension for Antlr version 4
+AntlrVSIX is an open source Visual Studio 2015 and 2017 extension for Antlr version 4
 grammars. The features in this extension are:
 
 * Colorized tagging of grammars, including:
@@ -89,6 +89,8 @@ I chose a very simple WPF implementation.
 * The grammar for Antlr that this extension uses may not be the "official" version for Antlr4. Consequently, your
 grammar may be valid according to the Antlr compiler but not with this extension.
 Please bear with me while I try to correct the grammar.
+
+* Use Visual Studio 2017 to build the extension.
 
 ## Alternative Visual Studio Extensions
 
