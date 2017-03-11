@@ -51,15 +51,14 @@
 
         <Button guid="guidAntlrLanguagePackageCmdSet" id="cmdidFindRefsWindowCommand" priority="0x0100" type="Button">
           <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1" />
-          <Icon guid="guidImages1" id="bmpPic1" />
           <Strings>
-            <ButtonText>FindRefsWindow</ButtonText>
+            <ButtonText>Antlr Find Results</ButtonText>
           </Strings>
         </Button>
       </Buttons>
 
       <Bitmaps>
-         <Bitmap guid="guidImages" href="..\Resources\Command1.png" usedList="bmpPic1" />
+        <Bitmap guid="guidImages" href="..\Resources\Command1.png" usedList="bmpPic1" />
         <Bitmap guid="guidImages1" href="..\Resources\FindRefsWindowCommand.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
     </Bitmaps>
    </Commands>
