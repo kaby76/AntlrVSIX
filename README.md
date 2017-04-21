@@ -14,14 +14,15 @@ iv. _Keywords_, such as _fragment_, _grammar_, etc. Keywords are tagged in blue.
 v. _Literals_, such as _[\n\r ]_, _'foobar'_, etc. These are tagged in red.
 
 * "Go to definition": AntlrVSIX can locate the rule that defines the symbol.
-Right-click on a symbol, and choose "Go to definition" in the pop-up menu.</br>
+Right-click on a symbol, and choose "Go to definition" in the pop-up menu.
+
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=Kl_qaY0NF70" target="_blank"><img src="http://img.youtube.com/vi/Kl_qaY0NF70/0.jpg" 
 alt="Go to definition" width="240" height="180" border="10" /></a>
 
 * "Find all references": AntlrVSIX can locate the defining and applied occurrences
 of a symbol. Right-click on a symbol, and choose "Find all references" in the pop-up
 menu. Open the "Antlr Find Results" windows and select any occurrence.
-</br>
+
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=wOX_T4LP8QU
 " target="_blank"><img src="http://img.youtube.com/vi/wOX_T4LP8QU/0.jpg" 
 alt="Go to definition" width="240" height="180" border="10" /></a>
@@ -30,7 +31,7 @@ alt="Go to definition" width="240" height="180" border="10" /></a>
 symbol. Right-click on a symbol, and choose "Rename Antlr symbol" in the pop-up
 menu. In the pop-up modal dialog box, enter the new name, then click "OK". You must
 manually save the files to make the changes permanent.
-</br>
+
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=JJSQ2_fjxvc
 " target="_blank"><img src="http://img.youtube.com/vi/JJSQ2_fjxvc/0.jpg" 
 alt="Go to definition" width="240" height="180" border="10" /></a>
@@ -41,7 +42,7 @@ To reformat you're grammar, you will need to create a list of Antlr4 grammars, s
 variable CORPUS_LOCATION to the directory. AntlrVSIX will read all ".g4" grammars in
 the directory, the reformat the current document from the formatting discovered in the corpus.
 You must manually save the file to make the changes permanent.
-</br>
+
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=XPC-wxucdoU
 " target="_blank"><img src="http://img.youtube.com/vi/XPC-wxucdoU/0.jpg" 
 alt="Go to definition" width="240" height="180" border="10" /></a>
