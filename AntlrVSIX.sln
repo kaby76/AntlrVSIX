@@ -1,13 +1,35 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.4
+VisualStudioVersion = 15.0.26430.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntlrVSIX", "AntlrVSIX.csproj", "{36897A0A-D67A-4F7F-84F4-87C1C351FA9C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "org.antlr.codebuff", "org.antlr.codebuff\org.antlr.codebuff.csproj", "{9B9DC2B0-8117-4F7F-A7D7-7A44F129627B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApplication1", "ConsoleApplication1\ConsoleApplication1.csproj", "{B3DBE2B1-9CD8-4F04-A7C5-A3DCB6A414A7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "corpus-for-codebuff", "corpus-for-codebuff", "{4F7C6D69-5535-480F-8EFC-86813686E2E7}"
+	ProjectSection(SolutionItems) = preProject
+		corpus-for-codebuff\A.g4 = corpus-for-codebuff\A.g4
+		corpus-for-codebuff\A2.G4.SAVE = corpus-for-codebuff\A2.G4.SAVE
+		corpus-for-codebuff\A3.g4 = corpus-for-codebuff\A3.g4
+		corpus-for-codebuff\AA.g = corpus-for-codebuff\AA.g
+		corpus-for-codebuff\E.g = corpus-for-codebuff\E.g
+		corpus-for-codebuff\Fuzzy.g4 = corpus-for-codebuff\Fuzzy.g4
+		corpus-for-codebuff\HTMLParser.g = corpus-for-codebuff\HTMLParser.g
+		corpus-for-codebuff\JavaLexer.g = corpus-for-codebuff\JavaLexer.g
+		corpus-for-codebuff\JavaLR.g4 = corpus-for-codebuff\JavaLR.g4
+		corpus-for-codebuff\JavaParser.g = corpus-for-codebuff\JavaParser.g
+		corpus-for-codebuff\JavaParser.orig.g = corpus-for-codebuff\JavaParser.orig.g
+		corpus-for-codebuff\L.g = corpus-for-codebuff\L.g
+		corpus-for-codebuff\ModeLexer.g4 = corpus-for-codebuff\ModeLexer.g4
+		corpus-for-codebuff\R.g4 = corpus-for-codebuff\R.g4
+		corpus-for-codebuff\Scannerless.g = corpus-for-codebuff\Scannerless.g
+		corpus-for-codebuff\T.g = corpus-for-codebuff\T.g
+		corpus-for-codebuff\U.g = corpus-for-codebuff\U.g
+		corpus-for-codebuff\W.g = corpus-for-codebuff\W.g
+		corpus-for-codebuff\YangJavaLexer.g = corpus-for-codebuff\YangJavaLexer.g
+		corpus-for-codebuff\YangJavaParser.g = corpus-for-codebuff\YangJavaParser.g
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,10 +41,6 @@ Global
 		{36897A0A-D67A-4F7F-84F4-87C1C351FA9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36897A0A-D67A-4F7F-84F4-87C1C351FA9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{36897A0A-D67A-4F7F-84F4-87C1C351FA9C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9B9DC2B0-8117-4F7F-A7D7-7A44F129627B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9B9DC2B0-8117-4F7F-A7D7-7A44F129627B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9B9DC2B0-8117-4F7F-A7D7-7A44F129627B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9B9DC2B0-8117-4F7F-A7D7-7A44F129627B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B3DBE2B1-9CD8-4F04-A7C5-A3DCB6A414A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B3DBE2B1-9CD8-4F04-A7C5-A3DCB6A414A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B3DBE2B1-9CD8-4F04-A7C5-A3DCB6A414A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
