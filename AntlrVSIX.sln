@@ -5,8 +5,6 @@ VisualStudioVersion = 15.0.26430.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntlrVSIX", "AntlrVSIX.csproj", "{36897A0A-D67A-4F7F-84F4-87C1C351FA9C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApplication1", "ConsoleApplication1\ConsoleApplication1.csproj", "{B3DBE2B1-9CD8-4F04-A7C5-A3DCB6A414A7}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "corpus-for-codebuff", "corpus-for-codebuff", "{4F7C6D69-5535-480F-8EFC-86813686E2E7}"
 	ProjectSection(SolutionItems) = preProject
 		corpus-for-codebuff\A.g4 = corpus-for-codebuff\A.g4
@@ -41,10 +39,6 @@ Global
 		{36897A0A-D67A-4F7F-84F4-87C1C351FA9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36897A0A-D67A-4F7F-84F4-87C1C351FA9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{36897A0A-D67A-4F7F-84F4-87C1C351FA9C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B3DBE2B1-9CD8-4F04-A7C5-A3DCB6A414A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B3DBE2B1-9CD8-4F04-A7C5-A3DCB6A414A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B3DBE2B1-9CD8-4F04-A7C5-A3DCB6A414A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B3DBE2B1-9CD8-4F04-A7C5-A3DCB6A414A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
