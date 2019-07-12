@@ -19,9 +19,7 @@
     internal sealed class AntlrTokenTagger : ITagger<AntlrTokenTag>
     {
         private ITextBuffer _buffer;
-        private SVsServiceProvider _service_provider;
         private IDictionary<string, AntlrTagTypes> _antlr_tag_types;
-        public event EventHandler ClassificationChanged;
 
         internal AntlrTokenTagger(ITextBuffer buffer, SVsServiceProvider service_provider)
         {
