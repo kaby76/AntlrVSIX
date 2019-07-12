@@ -20,17 +20,24 @@
     [TagType(typeof(ClassificationTag))]
     internal sealed class AntlrClassifierProvider : ITaggerProvider
     {
-        [Export] [Name(Constants.LanguageName)] [BaseDefinition("code")] internal static ContentTypeDefinition
-            AntlrContentType = null;
+        [Export]
+        [Name(Constants.LanguageName)]
+        [BaseDefinition("code")]
+        internal static ContentTypeDefinition AntlrContentType = null;
 
-        [Export] [FileExtension(Constants.FileExtension)] [ContentType(Constants.ContentType)] internal static
-            FileExtensionToContentTypeDefinition AntlrFileType = null;
+        [Export]
+        [FileExtension(Constants.FileExtension)]
+        [ContentType(Constants.ContentType)]
+        internal static FileExtensionToContentTypeDefinition AntlrFileType = null;
 
-        [Import] internal IClassificationTypeRegistryService ClassificationTypeRegistry = null;
+        [Import]
+        internal IClassificationTypeRegistryService ClassificationTypeRegistry = null;
 
-        [Import] internal IClassificationFormatMapService ClassificationFormatMapService = null;
+        [Import]
+        internal IClassificationFormatMapService ClassificationFormatMapService = null;
 
-        [Import] internal IBufferTagAggregatorFactoryService aggregatorFactory = null;
+        [Import]
+        internal IBufferTagAggregatorFactoryService aggregatorFactory = null;
 
         public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
         {

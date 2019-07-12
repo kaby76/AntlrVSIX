@@ -5,6 +5,7 @@
 
    <Extern href="stdidcmd.h" />
    <Extern href="vsshlids.h" />
+  
    <Commands package="guidVSPackageCommandCodeWindowContextMenu">
 
       <Groups>
@@ -88,9 +89,29 @@
      </CommandPlacement>
    </CommandPlacements>
 
-   <Symbols>
-      <GuidSymbol name="guidVSPackageCommandCodeWindowContextMenu" value="{7e37eef9-8cbe-4b10-81f7-66413cd2c9d3}" />
-      <GuidSymbol name="guidVSPackageCommandCodeWindowContextMenuCmdSet" value="{0c1acc31-15ac-417c-86b2-eefdc669e8bf}">
+  <Commands package="guidMenuAndCommandsPkg">
+
+    <Groups>
+      <Group guid="guidMenuAndCommandsCmdSet" id="MyMenuGroup" priority="0x600">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_TOOL_MAINMENU"/>
+      </Group>
+    </Groups>
+    
+    <Buttons>
+      <Button guid="guidMenuAndCommandsCmdSet" id="cmdidMyCommand" priority="0x100" type="Button">
+        <Parent guid="guidMenuAndCommandsCmdSet" id="MyMenuGroup"/>
+        <Strings>
+          <ButtonText>C# Command Sample</ButtonText>
+        </Strings>
+      </Button>
+    </Buttons>
+  </Commands>
+
+
+  <Symbols>
+    <GuidSymbol name="guidVSPackageCommandCodeWindowContextMenu" value="{7e37eef9-8cbe-4b10-81f7-66413cd2c9d3}" />
+    
+    <GuidSymbol name="guidVSPackageCommandCodeWindowContextMenuCmdSet" value="{0c1acc31-15ac-417c-86b2-eefdc669e8bf}">
         <IDSymbol name="MyGroupForCommands" value="0x1020" />
         <!-- Warning!!: Keep the value in sync with the code in Command1.cs -->
         <IDSymbol name="Command1Id" value="0x0100" />
@@ -115,5 +136,24 @@
       <IDSymbol name="bmpPicArrows" value="5" />
       <IDSymbol name="bmpPicStrikethrough" value="6" />
     </GuidSymbol>
+
+    <GuidSymbol name="guidMenuAndCommandsPkg" value="{3C7C5ABE-82AC-4A37-B077-0FF60E8B1FD3}" />
+
+    <GuidSymbol name="guidMenuAndCommandsCmdSet" value="{19492BCB-32B3-4EC3-8826-D67CD5526653}">
+      <IDSymbol name="MyToolbar" value="0x6101" />
+      <IDSymbol name="MyMenuGroup" value="0x6010" />
+      <IDSymbol name="MyToolbarGroup" value="0x6011" />
+      <IDSymbol name="MyMainToolbarGroup" value="0x6012" />
+      <IDSymbol name="MyEditorCtxGroup" value="0x6013" />
+      <IDSymbol name="cmdidMyCommand" value="0x7001" />
+      <IDSymbol name="cmdidMyGraph" value="0x7002" />
+      <IDSymbol name="cmdidMyZoom" value="0x7003" />
+      <IDSymbol name="cmdidDynamicTxt" value="0x7004" />
+      <IDSymbol name="cmdidDynVisibility1" value="0x7005" />
+      <IDSymbol name="cmdidDynVisibility2" value="0x7006" />
+    </GuidSymbol>
+
   </Symbols>
+
+
 </CommandTable>
