@@ -32,7 +32,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AntlrVSIX</RootNamespace>
     <AssemblyName>AntlrVSIX</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <GeneratePkgDefFile>true</GeneratePkgDefFile>
     <IncludeAssemblyInVSIXContainer>true</IncludeAssemblyInVSIXContainer>
     <IncludeDebugSymbolsInVSIXContainer>true</IncludeDebugSymbolsInVSIXContainer>
@@ -119,9 +119,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="Grammar\doit.sh" />
-    <None Include="README.md">
-      <Link>README.md</Link>
-    </None>
+    <None Include="README.md" />
     <None Include="Grammar\ANTLRv4Lexer.g4" />
     <None Include="Grammar\ANTLRv4Parser.g4" />
     <None Include="Grammar\LexBasic.g4" />

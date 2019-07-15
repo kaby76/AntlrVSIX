@@ -25,7 +25,6 @@
         [Import]
         public SVsServiceProvider GlobalServiceProvider = null;
 
-        IOleCommandTarget _next;
         public static Dictionary<IVsTextView, IWpfTextView> to_wpftextview = new Dictionary<IVsTextView, IWpfTextView>();
         public static Dictionary<IWpfTextView, IVsTextView> to_ivstextview = new Dictionary<IWpfTextView, IVsTextView>();
 
