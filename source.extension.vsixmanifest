@@ -2,7 +2,7 @@
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
     <Identity Id="AntlrVSIX.Ken Domino.ace904b7-00bd-4b97-afd3-fd0818eddc46"
-              Version="1.2.4" Language="en-US" Publisher="Ken Domino" />
+              Version="2.0" Language="en-US" Publisher="Ken Domino" />
     <DisplayName>AntlrVSIX</DisplayName>
     <Description xml:space="preserve">This is an open source Antlr4 grammar extension for Visual Studio 2015 and 2017. The extension offers tagging of grammar symbols, searching, renaming, and reformatting.</Description>
     <MoreInfo>https://github.com/kaby76/AntlrVSIX</MoreInfo>
