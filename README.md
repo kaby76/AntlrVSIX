@@ -1,3 +1,4 @@
+
 # AntlrVSIX
 AntlrVSIX is an open source Visual Studio 2015 and 2017 extension for Antlr version 4
 grammars. The features in this extension are:
@@ -36,7 +37,8 @@ manually save the files to make the changes permanent.
 " target="_blank"><img src="http://img.youtube.com/vi/JJSQ2_fjxvc/0.jpg" 
 alt="Go to definition" width="240" height="180" border="10" /></a>
 
-* "Reformat": AntlrVSIX can reformat the entire file using Codebuff, which is
+* "Reformat": AntlrVSIX can reformat the entire file to your indentation standards. It uses
+Codebuff, which is
  a machine-learning format tool (https://github.com/antlr/codebuff http://dl.acm.org/citation.cfm?id=2997383 https://arxiv.org/abs/1606.08866).
 To reformat you're grammar, you will need to create a list of Antlr4 grammars, set the environmental
 variable CORPUS_LOCATION to the directory. AntlrVSIX will read all ".g4" grammars in
@@ -72,11 +74,15 @@ get the parser to work in C#.
 * The parser is not incremental. The parse does not recover from
 syntax errors at all. If the input grammar does not parse, there is no tagging.
 
-* If you want to make modifications for yourself, you should reset your
-Experimental Hive for Visual Studio. To do that, execute from Cygwin (or a cmd, the
+* If you want to make modifications for yourself, you should [reset your
+Experimental Hive for Visual Studio](https://docs.microsoft.com/en-us/visualstudio/extensibility/the-experimental-instance?view=vs-2017). To do that, execute from Git Bash (or a cmd, the
 equivalent of):
-  1. $ cd '/cygdrive/c/Program Files (x86)/Microsoft Visual Studio 14.0/VSSDK/VisualStudioIntegration/Tools/Bin'
-  2. $ ./CreateExpInstance /Reset /VSInstance=14.0 /RootSuffix=Exp
+  1. cd to directory of CreateExpInstance.exe
+     * VS2015: $ cd '/c/Program Files (x86)/Microsoft Visual Studio 14.0/VSSDK/VisualStudioIntegration/Tools/Bin'
+     * VS2017: $ cd '/c/Program Files (x86)/Microsoft Visual Studio/2017/Community/VSSDK/VisualStudioIntegration/Tools/Bin'
+  2. Reset Hive
+     * VS2015: $ ./CreateExpInstance /Reset /VSInstance=14.0 /RootSuffix=Exp
+     * VS2017: $ ./CreateExpInstance /Reset /VSInstance=15.0 /RootSuffix=Exp
 
 * "Go to definition" and "Find all references" are not implemented as a
 Language Service! As noted in _Legacy Language Service Extensibility_
