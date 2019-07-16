@@ -95,16 +95,56 @@
       <Group guid="guidMenuAndCommandsCmdSet" id="MyMenuGroup" priority="0x600">
         <Parent guid="guidSHLMainMenu" id="IDM_VS_TOOL_MAINMENU"/>
       </Group>
+      <Group guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup" priority="0x0600">
+        <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenu"/>
+      </Group>
+      <Group guid="guidMenuAndCommandsCmdSet" id="NavigateMenuGroup" priority="0x0600">
+        <Parent guid="guidMenuAndCommandsCmdSet" id="NavigateMenu"/>
+      </Group>
+      <Group guid="guidMenuAndCommandsCmdSet" id="FindMenuGroup" priority="0x0600">
+        <Parent guid="guidMenuAndCommandsCmdSet" id="FindMenu"/>
+      </Group>
     </Groups>
     
     <Buttons>
-      <Button guid="guidMenuAndCommandsCmdSet" id="cmdidMyCommand" priority="0x100" type="Button">
-        <Parent guid="guidMenuAndCommandsCmdSet" id="MyMenuGroup"/>
+      <Button guid="guidMenuAndCommandsCmdSet" id="cmdidMyCommand1" priority="0x100" type="Button">
+        <Parent guid="guidMenuAndCommandsCmdSet" id="FindMenuGroup"/>
         <Strings>
-          <ButtonText>C# Command Sample</ButtonText>
+          <ButtonText>C# 1</ButtonText>
+        </Strings>
+      </Button>
+      <Button guid="guidMenuAndCommandsCmdSet" id="cmdidMyCommand2" priority="0x100" type="Button">
+        <Parent guid="guidMenuAndCommandsCmdSet" id="NavigateMenuGroup"/>
+        <Strings>
+          <ButtonText>C# 2</ButtonText>
         </Strings>
       </Button>
     </Buttons>
+
+    <Menus>
+      <Menu guid="guidMenuAndCommandsCmdSet" id="TopLevelMenu" priority="0x700" type="Menu">
+        <Parent guid="guidMenuAndCommandsCmdSet" id="MyMenuGroup" />
+        <Strings>
+          <ButtonText>Antlr</ButtonText>
+          <CommandName>Antlr</CommandName>
+        </Strings>
+      </Menu>
+      <Menu guid="guidMenuAndCommandsCmdSet" id="NavigateMenu" priority="0x700" type="Menu">
+        <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup" />
+        <Strings>
+          <ButtonText>Navigate</ButtonText>
+          <CommandName>Navigate</CommandName>
+        </Strings>
+      </Menu>
+      <Menu guid="guidMenuAndCommandsCmdSet" id="FindMenu" priority="0x700" type="Menu">
+        <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup" />
+        <Strings>
+          <ButtonText>Find</ButtonText>
+          <CommandName>Find</CommandName>
+        </Strings>
+      </Menu>
+    </Menus>
+
   </Commands>
 
 
@@ -140,13 +180,15 @@
     <GuidSymbol name="guidMenuAndCommandsPkg" value="{3C7C5ABE-82AC-4A37-B077-0FF60E8B1FD3}" />
 
     <GuidSymbol name="guidMenuAndCommandsCmdSet" value="{19492BCB-32B3-4EC3-8826-D67CD5526653}">
-      <IDSymbol name="MyToolbar" value="0x6101" />
       <IDSymbol name="MyMenuGroup" value="0x6010" />
-      <IDSymbol name="MyToolbarGroup" value="0x6011" />
-      <IDSymbol name="MyMainToolbarGroup" value="0x6012" />
-      <IDSymbol name="MyEditorCtxGroup" value="0x6013" />
-      <IDSymbol name="cmdidMyCommand" value="0x7001" />
-      <IDSymbol name="cmdidMyGraph" value="0x7002" />
+      <IDSymbol name="TopLevelMenu" value="0x6011" />
+      <IDSymbol name="TopLevelMenuGroup" value="0x6012" />
+      <IDSymbol name="NavigateMenu" value="0x6013" />
+      <IDSymbol name="NavigateMenuGroup" value="0x6014" />
+      <IDSymbol name="FindMenu" value="0x6015" />
+      <IDSymbol name="FindMenuGroup" value="0x6016" />
+      <IDSymbol name="cmdidMyCommand1" value="0x7001" />
+      <IDSymbol name="cmdidMyCommand2" value="0x7002" />
       <IDSymbol name="cmdidMyZoom" value="0x7003" />
       <IDSymbol name="cmdidDynamicTxt" value="0x7004" />
       <IDSymbol name="cmdidDynVisibility1" value="0x7005" />

@@ -1,6 +1,6 @@
 
 # AntlrVSIX
-AntlrVSIX is an open source Visual Studio 2015 and 2017 extension for Antlr version 4
+AntlrVSIX is an open source Visual Studio 2019 extension for Antlr version 4
 grammars. The features in this extension are:
 
 * Colorized tagging of grammars, including:
@@ -58,7 +58,7 @@ and record the occurrences of every symbol.
 ## Caveats:
 
 * This extension only works on Antlr4 grammars, and the grammar must be in a file that has the suffix
-".g4".
+".g4". That is the defacto standard, as almost all example grammars for Antlr4 use a .g4 suffix.
 
 * If adding another token class, like punctuation, make sure to add the classification to:
 AntlrTokenTagger; AntlrClassifier; ClassificationFormat.cs; OrdinaryClassificationDefinition.cs;
@@ -78,11 +78,12 @@ syntax errors at all. If the input grammar does not parse, there is no tagging.
 Experimental Hive for Visual Studio](https://docs.microsoft.com/en-us/visualstudio/extensibility/the-experimental-instance?view=vs-2017). To do that, execute from Git Bash (or a cmd, the
 equivalent of):
   1. cd to directory of CreateExpInstance.exe
-     * VS2015: $ cd '/c/Program Files (x86)/Microsoft Visual Studio 14.0/VSSDK/VisualStudioIntegration/Tools/Bin'
-     * VS2017: $ cd '/c/Program Files (x86)/Microsoft Visual Studio/2017/Community/VSSDK/VisualStudioIntegration/Tools/Bin'
+     * VS2019: $ cd '/c/Program Files (x86)/Microsoft Visual Studio/2019/Community/VSSDK/VisualStudioIntegration/Tools/Bin'
   2. Reset Hive
-     * VS2015: $ ./CreateExpInstance /Reset /VSInstance=14.0 /RootSuffix=Exp
-     * VS2017: $ ./CreateExpInstance /Reset /VSInstance=15.0 /RootSuffix=Exp
+     * VS2019: $ ./CreateExpInstance /Reset /VSInstance=16.0 /RootSuffix=Exp
+Unfortunately, I've found CreateExpInstance doesn't always work because it copies from
+previous hives stored under the AppData directory. It is often easier to
+just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio\16.0_*.
 
 * "Go to definition" and "Find all references" are not implemented as a
 Language Service! As noted in _Legacy Language Service Extensibility_
@@ -97,7 +98,18 @@ I chose a very simple WPF implementation.
 grammar may be valid according to the Antlr compiler but not with this extension.
 Please bear with me while I try to correct the grammar.
 
-* Use Visual Studio 2017 to build the extension.
+* Use Visual Studio 2019 to build the extension.
+
+## New in v2.0:
+
+* The extension is now only compatible with VS 2019.
+
+* The menus have now be reorganized. There is now only a submenu under the Extensions menu. Use this to
+display the find results window.
+
+* The source code build files have all been updated and migrated to the most recent version
+of .csproj format that is compatible with VS extensions. Unfortunately, updating to the latest
+(version 16) is not possible.
 
 ## New in v1.2.4:
 
