@@ -1,7 +1,7 @@
 
 # AntlrVSIX
 AntlrVSIX is an open source Visual Studio 2019 extension for Antlr version 4
-grammars. The features in this extension are:
+grammars for C#. The features in this extension are:
 
 * Colorized tagging of grammars.
 * "Go to definition" of Antlr symbols.
@@ -11,6 +11,7 @@ grammars. The features in this extension are:
 * "Next/Previous symbol" in grammar.
 * "Go to Visitor / Listener" tree walker methods for a symbol.
 * Options dialog box for this extension.
+* Generate code to set up a parser.
 * No advertisements, free of charge, open source.
 
 For integration of build rules into VS2019 (i.e., so you do not
@@ -19,30 +20,26 @@ please use [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks).
 
 ## Caveats:
 
+* If you are interested in support for the old VS2017 and even older VS2015,
+you can try using an older version of the extension.
+
+* This tool is only for writing grammars. If you want to generate parsers and lexers,
+you will need to use Antlr4BuildTasks (which currently only targets C#), or run the Antlr4 Java
+tool from the command line. There is a [Java Extension Pack](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack) for VS2019,
+but I haven't used it.
+
 * This extension only works on Antlr4 grammars, and the grammar must be in a file that has the suffix
 ".g4". That is the defacto standard, as almost all example grammars for Antlr4 use a .g4 suffix.
 
-* If adding another token class, like punctuation, make sure to add the classification to:
-AntlrTokenTagger; AntlrClassifier; ClassificationFormat.cs; OrdinaryClassificationDefinition.cs;
-AugmentQuickInfoSession; AugmentCompletionSession. If you don't, you end up with very
-bizarre errors in the ActivityLog.xml file for Visual Studio that are very hard to track down.
-I suggest you do a search for "nonterminal" and observe all the locations you may have to
-modify.
-
 * The grammar used is the standard Antlr4 grammar in the examples: 
-https://github.com/antlr/grammars-v4/tree/master/antlr4. There were some modifications to
-get the parser to work in C#.
+https://github.com/antlr/grammars-v4/tree/master/antlr4.
 
 * The parser is not incremental. The parse does not recover from
 syntax errors at all. If the input grammar does not parse, there is no tagging.
 
 * If you want to make modifications for yourself, you should [reset your
-Experimental Hive for Visual Studio](https://docs.microsoft.com/en-us/visualstudio/extensibility/the-experimental-instance?view=vs-2017). To do that, execute from Git Bash (or a cmd, the
-equivalent of):
-  1. cd to directory of CreateExpInstance.exe
-     * VS2019: $ cd '/c/Program Files (x86)/Microsoft Visual Studio/2019/Community/VSSDK/VisualStudioIntegration/Tools/Bin'
-  2. Reset Hive
-     * VS2019: $ ./CreateExpInstance /Reset /VSInstance=16.0 /RootSuffix=Exp
+Experimental Hive for Visual Studio](https://docs.microsoft.com/en-us/visualstudio/extensibility/the-experimental-instance?view=vs-2017). To do that,
+Microsoft recommends using CreateExpInstance.exe.
 Unfortunately, I've found CreateExpInstance doesn't always work because it copies from
 previous hives stored under the AppData directory. It is often easier to
 just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio\16.0_*.
@@ -56,9 +53,9 @@ a Language Service, is undocumented, and the examples that I could find (PTVS)
 are bloated and poorly structured. Rather than take weeks, if not months, to understand and implement,
 I chose a very simple WPF implementation.
 
-* The grammar for Antlr that this extension uses may not be the "official" version for Antlr4. Consequently, your
-grammar may be valid according to the Antlr compiler but not with this extension.
-Please bear with me while I try to correct the grammar.
+* The grammar for Antlr that this extension uses may not be the "official" version for Antlr4 because
+it is version dependent, and I use a copy for this tool.
+Consequently, your grammar may be valid according to the Antlr compiler but not with this extension.
 
 * Use Visual Studio 2019 to build the extension.
 
@@ -102,8 +99,22 @@ Any questions, email me at ken.domino <at> gmail.com
 
 ## Alternative Visual Studio Extensions
 
+There are, of course, alternative extensions for Antlr. Feel free to check
+them out. However, I think you will find this extension and Antlr4BuildTasks
+the most advance of the bunch.
+
 * ANTLR Language Support -- https://marketplace.visualstudio.com/items?itemName=SamHarwell.ANTLRLanguageSupport
 * Antlr4Code -- https://marketplace.visualstudio.com/items?itemName=RamonFMendes.Antlr4Code
 * Actipro SyntaxEditor for WPF -- https://marketplace.visualstudio.com/items?itemName=ActiproSoftware.ActiproSyntaxEditorforWPF
 * Syntax Highlighting Pack -- https://marketplace.visualstudio.com/items?itemName=MadsKristensen.SyntaxHighlightingPack
+
+You also might want to check out the
+plug-in [ANTLR4 grammar syntax support](https://marketplace.visualstudio.com/items?itemName=mike-lischke.vscode-antlr4)
+for Visual Studio Code.
+This tool offers similar functionality to AntlrVSIX, plus code completion,
+parse tree visualization, railroad diagrams,
+and a grammar call graph. Debugging of the generated parsers and lexers
+are intrinsically supported by VS2019. I do not find railroad diagrams and call graph diagrams useful in
+real grammar development, so I probably won't add those features to AntlrVSIX.
+
 
