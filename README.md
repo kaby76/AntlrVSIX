@@ -25,8 +25,7 @@ you can try using an older version of the extension.
 
 * This tool is only for writing grammars. If you want to generate parsers and lexers,
 you will need to use Antlr4BuildTasks (which currently only targets C#), or run the Antlr4 Java
-tool from the command line. There is a [Java Extension Pack](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-pack) for VS2019,
-but I haven't used it.
+tool from the command line.
 
 * This extension only works on Antlr4 grammars, and the grammar must be in a file that has the suffix
 ".g4". That is the defacto standard, as almost all example grammars for Antlr4 use a .g4 suffix.
