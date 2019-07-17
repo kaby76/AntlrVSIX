@@ -16,10 +16,8 @@
          */
         public const string LanguageName = "Antlr";
         public const string ContentType = "Antlr";
-        public const string BaseRegistryKey = "AntlrVSIX";
         public const string TextEditorSettingsRegistryKey = LanguageName;
         public const string FileExtension = ".g4";
-        public const string WindowsFileExtension = ".g4";
         public const string PackageGuidString = "7e37eef9-8cbe-4b10-81f7-66413cd2c9d3";
 
         /* Tagging and classification types. */

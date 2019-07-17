@@ -100,16 +100,29 @@ Please bear with me while I try to correct the grammar.
 
 * Use Visual Studio 2019 to build the extension.
 
-## New in v2.0:
+## New in v2.0 (to be released):
 
-* The extension is now only compatible with VS 2019.
+* The extension will be only compatible with VS 2019.
 
-* The menus have now be reorganized. There is now only a submenu under the Extensions menu. Use this to
-display the find results window.
+* A menu for the extension will be added to a submenu under Extensions. The functionality provided will
+duplicate that in context menus.
 
-* The source code build files have all been updated and migrated to the most recent version
+* The source code build files will be updated and migrated to the most recent version
 of .csproj format that is compatible with VS extensions. Unfortunately, updating to the latest
 (version 16) is not possible.
+
+* With my [Antlr4BuildTasks](https://www.nuget.org/packages/Antlr4BuildTasks/) NuGet package,
+.g4 files can be automatically compiled to .cs input within
+VS 2019 without having to manually run the Antlr4 Java tool on the command line.
+Building of the extension itself will be upgraded to use the Antlr4BuildTasks package.
+
+* Listener and Visitor classes will be automatically generate for a grammar with a simple double click
+so you do not have to manually create the file, class, and method.
+
+* Color selection for tagging will be moved from the VS Options and placed in a separate options dialog box
+for the extension.
+
+* Expansion and contraction of rules will be provided.
 
 ## New in v1.2.4:
 
