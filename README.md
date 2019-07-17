@@ -13,6 +13,10 @@ grammars. The features in this extension are:
 * Options dialog box for this extension.
 * No advertisements, free of charge, open source.
 
+For integration of build rules into VS2019 (i.e., so you do not
+need to manually call the command-line tool to generate Antlr4 lexers and parsers),
+please use [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks).
+
 ## Caveats:
 
 * This extension only works on Antlr4 grammars, and the grammar must be in a file that has the suffix
