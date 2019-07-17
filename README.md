@@ -3,57 +3,15 @@
 AntlrVSIX is an open source Visual Studio 2019 extension for Antlr version 4
 grammars. The features in this extension are:
 
-* Colorized tagging of grammars, including:
-i. _Terminals_, which are symbols defined in the LHS of a lexical grammar production rule.
-Terminals always have the first letter capitalized. These symbols are tagged in lime
-green.
-ii. _Nonterminals_, which are symbols defined in the LHS of a parser grammar production rule.
-Nonterminals never have the first letter capitalized. These symbols are tagged in purple.
-iii. _Comments_, which are either single line (_//_) or multiple line (_/* ... */_). These are
-tagged in green.
-iv. _Keywords_, such as _fragment_, _grammar_, etc. Keywords are tagged in blue.
-v. _Literals_, such as _[\n\r ]_, _'foobar'_, etc. These are tagged in red.
-
-* "Go to definition": AntlrVSIX can locate the rule that defines the symbol.
-Right-click on a symbol, and choose "Go to definition" in the pop-up menu.
-
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=Kl_qaY0NF70" target="_blank"><img src="http://img.youtube.com/vi/Kl_qaY0NF70/0.jpg" 
-alt="Go to definition" width="240" height="180" border="10" /></a>
-
-* "Find all references": AntlrVSIX can locate the defining and applied occurrences
-of a symbol. Right-click on a symbol, and choose "Find all references" in the pop-up
-menu. Open the "Antlr Find Results" windows and select any occurrence.
-
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=wOX_T4LP8QU
-" target="_blank"><img src="http://img.youtube.com/vi/wOX_T4LP8QU/0.jpg" 
-alt="Go to definition" width="240" height="180" border="10" /></a>
-
-* "Replace symbol": AntlrVSIX can rename the defining and applied occurrences of a
-symbol. Right-click on a symbol, and choose "Rename Antlr symbol" in the pop-up
-menu. In the pop-up modal dialog box, enter the new name, then click "OK". You must
-manually save the files to make the changes permanent.
-
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=JJSQ2_fjxvc
-" target="_blank"><img src="http://img.youtube.com/vi/JJSQ2_fjxvc/0.jpg" 
-alt="Go to definition" width="240" height="180" border="10" /></a>
-
-* "Reformat": AntlrVSIX can reformat the entire file to your indentation standards. It uses
-Codebuff, which is
- a machine-learning format tool (https://github.com/antlr/codebuff http://dl.acm.org/citation.cfm?id=2997383 https://arxiv.org/abs/1606.08866).
-To reformat you're grammar, you will need to create a list of Antlr4 grammars, set the environmental
-variable CORPUS_LOCATION to the directory. AntlrVSIX will read all ".g4" grammars in
-the directory, the reformat the current document from the formatting discovered in the corpus.
-You must manually save the file to make the changes permanent.
-
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=XPC-wxucdoU
-" target="_blank"><img src="http://img.youtube.com/vi/XPC-wxucdoU/0.jpg" 
-alt="Go to definition" width="240" height="180" border="10" /></a>
-
-* Open all the grammar files in Visual Studio you wish to search, or add the
-grammar files to a project/solution. AntlrVSIX will go through all files, parse,
-and record the occurrences of every symbol.
-
-* No advertisements will ever be displayed using this extension.
+* Colorized tagging of grammars.
+* "Go to definition" of Antlr symbols.
+* "Find all references" of Antlr symbols.
+* "Replace symbol" in a grammar.
+* "Reformat" grammar based on machine learning tool Codebuff.
+* "Next/Previous symbol" in grammar.
+* "Go to Visitor / Listener" tree walker methods for a symbol.
+* Options dialog box for this extension.
+* No advertisements, free of charge, open source.
 
 ## Caveats:
 
