@@ -9,8 +9,11 @@ namespace AntlrVSIX.Grammar
     {
         private ICharStream _input;
 
-        public LexerAdaptor(ICharStream input)
-            : base(input)
+        public LexerAdaptor(
+            Antlr4.Runtime.ICharStream input,
+            System.IO.TextWriter output,
+            System.IO.TextWriter errorOutput)
+            : base(input, output, errorOutput)
         {
             _input = input;
         }

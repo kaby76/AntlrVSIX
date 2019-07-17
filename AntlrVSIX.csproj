@@ -98,12 +98,6 @@
     <Compile Include="Classification\ClassificationFormat.cs" />
     <Compile Include="Classification\ClassificationTypes.cs" />
     <Compile Include="Classification\AntlrClassifierProvider.cs" />
-    <Compile Include="Grammar\ANTLRv4Lexer.cs" />
-    <Compile Include="Grammar\ANTLRv4Parser.cs" />
-    <Compile Include="Grammar\ANTLRv4ParserBaseListener.cs" />
-    <Compile Include="Grammar\ANTLRv4ParserBaseVisitor.cs" />
-    <Compile Include="Grammar\ANTLRv4ParserListener.cs" />
-    <Compile Include="Grammar\ANTLRv4ParserVisitor.cs" />
     <Compile Include="Grammar\DFSVisitor.cs" />
     <Compile Include="Grammar\LexerAdaptor.cs" />
     <Compile Include="Grammar\MyErrorStrategy.cs" />
@@ -118,11 +112,18 @@
   <ItemGroup>
     <None Include="Grammar\doit.sh" />
     <None Include="README.md" />
-    <None Include="Grammar\ANTLRv4Lexer.g4" />
-    <None Include="Grammar\ANTLRv4Parser.g4" />
-    <None Include="Grammar\LexBasic.g4" />
-    <None Include="Grammar\LexUnicode.g4" />
-    <None Include="Grammar\test.g4" />
+    <Antlr4 Include="Grammar\ANTLRv4Lexer.g4">
+      <CustomToolNamespace>AntlrVSIX.Grammar</CustomToolNamespace>
+    </Antlr4>
+    <Antlr4 Include="Grammar\ANTLRv4Parser.g4">
+      <CustomToolNamespace>AntlrVSIX.Grammar</CustomToolNamespace>
+    </Antlr4>
+    <None Include="Grammar\LexBasic.g4">
+      <CustomToolNamespace>AntlrVSIX.Grammar</CustomToolNamespace>
+    </None>
+    <None Include="Grammar\LexUnicode.g4">
+      <CustomToolNamespace>AntlrVSIX.Grammar</CustomToolNamespace>
+    </None>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
@@ -193,6 +194,9 @@
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard">
       <Version>4.7.2</Version>
+    </PackageReference>
+    <PackageReference Include="Antlr4BuildTasks">
+      <Version>1.0.4</Version>
     </PackageReference>
     <PackageReference Include="cs-codebuff">
       <Version>1.0.0-alpha</Version>
