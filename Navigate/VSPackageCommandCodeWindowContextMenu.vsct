@@ -192,11 +192,11 @@
        <IDSymbol name="bmpPic1" value="1" />
     </GuidSymbol>
    
-    <GuidSymbol value="{9bd1fb43-7317-4992-8f66-8c2277ac652d}" name="guidAntlrLanguagePackageCmdSet">
-      <IDSymbol value="256" name="cmdidFindRefsWindowCommand" />
+    <GuidSymbol name="guidAntlrLanguagePackageCmdSet" value="{9bd1fb43-7317-4992-8f66-8c2277ac652d}" >
+      <IDSymbol name="cmdidFindRefsWindowCommand" value="256" />
     </GuidSymbol>
   
-    <GuidSymbol value="{0b47160c-3bd1-4c1b-a4a5-adef07e3787e}" name="guidImages1">
+    <GuidSymbol name="guidImages1" value="{0b47160c-3bd1-4c1b-a4a5-adef07e3787e}" >
       <IDSymbol name="bmpPic1" value="1" />
       <IDSymbol name="bmpPic2" value="2" />
       <IDSymbol name="bmpPicSearch" value="3" />
@@ -223,7 +223,5 @@
       <IDSymbol name="GoToVisitorCmd" value="0x7006" />
       <IDSymbol name="OptionsCmd" value="0x7007" />
     </GuidSymbol>
-
   </Symbols>
-
 </CommandTable>

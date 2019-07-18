@@ -44,8 +44,8 @@
                     // Set up hook for context menu.
                     var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidMenuAndCommandsCmdSet), 0x0100);
                     _menu_item2 = new MenuCommand(this.MenuItemCallback, menuCommandID);
-       //             _menu_item2.Enabled = true;
-          //          _menu_item2.Visible = true;
+                    _menu_item2.Enabled = false;
+                    _menu_item2.Visible = true;
                     commandService.AddCommand(_menu_item2);
                 }
             }
@@ -56,7 +56,7 @@
             set
             {
                 if (_menu_item1 != null) _menu_item1.Enabled = value;
-          //      if (_menu_item2 != null) _menu_item2.Enabled = value;
+                if (_menu_item2 != null) _menu_item2.Enabled = value;
             }
         }
 

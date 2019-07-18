@@ -10,20 +10,9 @@
     /// </summary>
     internal sealed class FindRefsWindowCommand
     {
-        /// <summary>
-        /// Command ID.
-        /// </summary>
-        public const int CommandId = 256;
-
-        /// <summary>
-        /// Command menu group (command set GUID).
-        /// </summary>
-        public static readonly Guid CommandSet = new Guid("9bd1fb43-7317-4992-8f66-8c2277ac652d");
-
-        /// <summary>
-        /// VS Package that provides this command, not null.
-        /// </summary>
         private readonly Package package;
+        private MenuCommand _menu_item1;
+        private MenuCommand _menu_item2;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FindRefsWindowCommand"/> class.
@@ -43,15 +32,14 @@
                 typeof(IMenuCommandService)) as OleMenuCommandService;
             if (commandService != null)
             {
-                var menuCommandID = new CommandID(CommandSet, CommandId);
-                var menuItem = new MenuCommand(this.ShowToolWindow, menuCommandID);
-                commandService.AddCommand(menuItem);
+                {
+                    var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidFindAllReferences), 256);
+                    _menu_item1 = new MenuCommand(this.ShowToolWindow, menuCommandID);
+                    commandService.AddCommand(_menu_item1);
+                }
             }
         }
 
-        /// <summary>
-        /// Gets the instance of the command.
-        /// </summary>
         public static FindRefsWindowCommand Instance
         {
             get;
