@@ -62,6 +62,92 @@
         <Bitmap guid="guidImages" href="..\Resources\Command1.png" usedList="bmpPic1" />
         <Bitmap guid="guidImages1" href="..\Resources\FindRefsWindowCommand.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
     </Bitmaps>
+
+
+     <Groups>
+       <Group guid="guidMenuAndCommandsCmdSet" id="MyMenuGroup" priority="0x600">
+         <Parent guid="guidSHLMainMenu" id="IDM_VS_TOOL_MAINMENU"/>
+       </Group>
+       <Group guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup" priority="0x0600">
+         <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenu"/>
+       </Group>
+       <Group guid="guidMenuAndCommandsCmdSet" id="NavigateMenuGroup" priority="0x0600">
+         <Parent guid="guidMenuAndCommandsCmdSet" id="NavigateMenu"/>
+       </Group>
+       <Group guid="guidMenuAndCommandsCmdSet" id="FindMenuGroup" priority="0x0600">
+         <Parent guid="guidMenuAndCommandsCmdSet" id="FindMenu"/>
+       </Group>
+     </Groups>
+
+     <Buttons>
+       <Button guid="guidMenuAndCommandsCmdSet" id="GoToDefinitionCmd" priority="0x100" type="Button">
+         <Parent guid="guidMenuAndCommandsCmdSet" id="NavigateMenuGroup"/>
+         <Strings>
+           <ButtonText>Go to definition</ButtonText>
+         </Strings>
+       </Button>
+       <Button guid="guidMenuAndCommandsCmdSet" id="NextRuleCmd" priority="0x100" type="Button">
+         <Parent guid="guidMenuAndCommandsCmdSet" id="NavigateMenuGroup"/>
+         <Strings>
+           <ButtonText>Next rule</ButtonText>
+         </Strings>
+       </Button>
+       <Button guid="guidMenuAndCommandsCmdSet" id="PrevRuleCmd" priority="0x100" type="Button">
+         <Parent guid="guidMenuAndCommandsCmdSet" id="NavigateMenuGroup"/>
+         <Strings>
+           <ButtonText>Previous rule</ButtonText>
+         </Strings>
+       </Button>
+       <Button guid="guidMenuAndCommandsCmdSet" id="GoToListenerCmd" priority="0x100" type="Button">
+         <Parent guid="guidMenuAndCommandsCmdSet" id="NavigateMenuGroup"/>
+         <Strings>
+           <ButtonText>Go to Listener</ButtonText>
+         </Strings>
+       </Button>
+       <Button guid="guidMenuAndCommandsCmdSet" id="GoToVisitorCmd" priority="0x100" type="Button">
+         <Parent guid="guidMenuAndCommandsCmdSet" id="NavigateMenuGroup"/>
+         <Strings>
+           <ButtonText>Go to Visitor</ButtonText>
+         </Strings>
+       </Button>
+       <Button guid="guidMenuAndCommandsCmdSet" id="FindAllOccurencesCmd" priority="0x100" type="Button">
+         <Parent guid="guidMenuAndCommandsCmdSet" id="FindMenuGroup"/>
+         <Strings>
+           <ButtonText>Find all occurences</ButtonText>
+         </Strings>
+       </Button>
+       <Button guid="guidMenuAndCommandsCmdSet" id="OptionsCmd" priority="0x700" type="Button">
+         <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup"/>
+         <Strings>
+           <ButtonText>Options</ButtonText>
+         </Strings>
+       </Button>
+     </Buttons>
+
+     <Menus>
+       <Menu guid="guidMenuAndCommandsCmdSet" id="TopLevelMenu" priority="0x700" type="Menu">
+         <Parent guid="guidMenuAndCommandsCmdSet" id="MyMenuGroup" />
+         <Strings>
+           <ButtonText>Antlr</ButtonText>
+           <CommandName>Antlr</CommandName>
+         </Strings>
+       </Menu>
+       <Menu guid="guidMenuAndCommandsCmdSet" id="NavigateMenu" priority="0x700" type="Menu">
+         <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup" />
+         <Strings>
+           <ButtonText>Navigate</ButtonText>
+           <CommandName>Navigate</CommandName>
+         </Strings>
+       </Menu>
+       <Menu guid="guidMenuAndCommandsCmdSet" id="FindMenu" priority="0x700" type="Menu">
+         <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup" />
+         <Strings>
+           <ButtonText>Find</ButtonText>
+           <CommandName>Find</CommandName>
+         </Strings>
+       </Menu>
+     </Menus>
+
    </Commands>
 
    <CommandPlacements>
@@ -89,110 +175,22 @@
      </CommandPlacement>
    </CommandPlacements>
 
-  <Commands package="guidMenuAndCommandsPkg">
-
-    <Groups>
-      <Group guid="guidMenuAndCommandsCmdSet" id="MyMenuGroup" priority="0x600">
-        <Parent guid="guidSHLMainMenu" id="IDM_VS_TOOL_MAINMENU"/>
-      </Group>
-      <Group guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup" priority="0x0600">
-        <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenu"/>
-      </Group>
-      <Group guid="guidMenuAndCommandsCmdSet" id="NavigateMenuGroup" priority="0x0600">
-        <Parent guid="guidMenuAndCommandsCmdSet" id="NavigateMenu"/>
-      </Group>
-      <Group guid="guidMenuAndCommandsCmdSet" id="FindMenuGroup" priority="0x0600">
-        <Parent guid="guidMenuAndCommandsCmdSet" id="FindMenu"/>
-      </Group>
-    </Groups>
-    
-    <Buttons>
-      <Button guid="guidMenuAndCommandsCmdSet" id="GoToDefinitionCmd" priority="0x100" type="Button">
-        <Parent guid="guidMenuAndCommandsCmdSet" id="NavigateMenuGroup"/>
-        <Strings>
-          <ButtonText>Go to definition</ButtonText>
-        </Strings>
-      </Button>
-      <Button guid="guidMenuAndCommandsCmdSet" id="NextRuleCmd" priority="0x100" type="Button">
-        <Parent guid="guidMenuAndCommandsCmdSet" id="NavigateMenuGroup"/>
-        <Strings>
-          <ButtonText>Next rule</ButtonText>
-        </Strings>
-      </Button>
-      <Button guid="guidMenuAndCommandsCmdSet" id="PrevRuleCmd" priority="0x100" type="Button">
-        <Parent guid="guidMenuAndCommandsCmdSet" id="NavigateMenuGroup"/>
-        <Strings>
-          <ButtonText>Previous rule</ButtonText>
-        </Strings>
-      </Button>
-      <Button guid="guidMenuAndCommandsCmdSet" id="GoToListenerCmd" priority="0x100" type="Button">
-        <Parent guid="guidMenuAndCommandsCmdSet" id="NavigateMenuGroup"/>
-        <Strings>
-          <ButtonText>Go to Listener</ButtonText>
-        </Strings>
-      </Button>
-      <Button guid="guidMenuAndCommandsCmdSet" id="GoToVisitorCmd" priority="0x100" type="Button">
-        <Parent guid="guidMenuAndCommandsCmdSet" id="NavigateMenuGroup"/>
-        <Strings>
-          <ButtonText>Go to Visitor</ButtonText>
-        </Strings>
-      </Button>
-      <Button guid="guidMenuAndCommandsCmdSet" id="FindAllOccurencesCmd" priority="0x100" type="Button">
-        <Parent guid="guidMenuAndCommandsCmdSet" id="FindMenuGroup"/>
-        <Strings>
-          <ButtonText>Find all occurences</ButtonText>
-        </Strings>
-      </Button>
-      <Button guid="guidMenuAndCommandsCmdSet" id="OptionsCmd" priority="0x700" type="Button">
-        <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup"/>
-        <Strings>
-          <ButtonText>Options</ButtonText>
-        </Strings>
-      </Button>
-    </Buttons>
-
-    <Menus>
-      <Menu guid="guidMenuAndCommandsCmdSet" id="TopLevelMenu" priority="0x700" type="Menu">
-        <Parent guid="guidMenuAndCommandsCmdSet" id="MyMenuGroup" />
-        <Strings>
-          <ButtonText>Antlr</ButtonText>
-          <CommandName>Antlr</CommandName>
-        </Strings>
-      </Menu>
-      <Menu guid="guidMenuAndCommandsCmdSet" id="NavigateMenu" priority="0x700" type="Menu">
-        <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup" />
-        <Strings>
-          <ButtonText>Navigate</ButtonText>
-          <CommandName>Navigate</CommandName>
-        </Strings>
-      </Menu>
-      <Menu guid="guidMenuAndCommandsCmdSet" id="FindMenu" priority="0x700" type="Menu">
-        <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup" />
-        <Strings>
-          <ButtonText>Find</ButtonText>
-          <CommandName>Find</CommandName>
-        </Strings>
-      </Menu>
-    </Menus>
-
-  </Commands>
-
 
   <Symbols>
     <GuidSymbol name="guidVSPackageCommandCodeWindowContextMenu" value="{7e37eef9-8cbe-4b10-81f7-66413cd2c9d3}" />
     
     <GuidSymbol name="guidVSPackageCommandCodeWindowContextMenuCmdSet" value="{0c1acc31-15ac-417c-86b2-eefdc669e8bf}">
-        <IDSymbol name="MyGroupForCommands" value="0x1020" />
-        <!-- Warning!!: Keep the value in sync with the code in Command1.cs -->
-        <IDSymbol name="Command1Id" value="0x0100" />
-        <IDSymbol name="Command2Id" value="0x0101" />
-        <IDSymbol name="Command3Id" value="0x0102" />
-        <IDSymbol name="Command4Id" value="0x0103" />
-      </GuidSymbol>
+      <IDSymbol name="MyGroupForCommands" value="0x1020" />
+      <!-- Warning!!: Keep the value in sync with the code in Command1.cs -->
+      <IDSymbol name="Command1Id" value="0x0100" />
+      <IDSymbol name="Command2Id" value="0x0101" />
+      <IDSymbol name="Command3Id" value="0x0102" />
+      <IDSymbol name="Command4Id" value="0x0103" />
+    </GuidSymbol>
 
-      <GuidSymbol name="guidImages" value="{68759f95-6f1d-4a77-87ea-192fc8d811f1}">
-         <IDSymbol name="bmpPic1" value="1" />
-      </GuidSymbol>
+    <GuidSymbol name="guidImages" value="{68759f95-6f1d-4a77-87ea-192fc8d811f1}">
+       <IDSymbol name="bmpPic1" value="1" />
+    </GuidSymbol>
    
     <GuidSymbol value="{9bd1fb43-7317-4992-8f66-8c2277ac652d}" name="guidAntlrLanguagePackageCmdSet">
       <IDSymbol value="256" name="cmdidFindRefsWindowCommand" />
@@ -209,7 +207,7 @@
 
     <GuidSymbol name="guidMenuAndCommandsPkg" value="{3C7C5ABE-82AC-4A37-B077-0FF60E8B1FD3}" />
 
-    <GuidSymbol name="guidMenuAndCommandsCmdSet" value="{19492BCB-32B3-4EC3-8826-D67CD5526653}">
+    <GuidSymbol name="guidMenuAndCommandsCmdSet" value="{1B4BF8E5-B60D-4DF7-95CB-FF3684750363}">
       <IDSymbol name="MyMenuGroup" value="0x6010" />
       <IDSymbol name="TopLevelMenu" value="0x6011" />
       <IDSymbol name="TopLevelMenuGroup" value="0x6012" />
@@ -217,7 +215,7 @@
       <IDSymbol name="NavigateMenuGroup" value="0x6014" />
       <IDSymbol name="FindMenu" value="0x6015" />
       <IDSymbol name="FindMenuGroup" value="0x6016" />
-      <IDSymbol name="GoToDefinitionCmd" value="0x7001" />
+      <IDSymbol name="GoToDefinitionCmd" value="0x0100" />
       <IDSymbol name="NextRuleCmd" value="0x7002" />
       <IDSymbol name="PrevRuleCmd" value="0x7003" />
       <IDSymbol name="FindAllOccurencesCmd" value="0x7004" />
@@ -227,6 +225,5 @@
     </GuidSymbol>
 
   </Symbols>
-
 
 </CommandTable>

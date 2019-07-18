@@ -16,10 +16,9 @@
 
     internal sealed class GoToDefinitionCommand
     {
-        public const int _command_id = 0x0100;
-        public static readonly Guid _command_set = new Guid("0c1acc31-15ac-417c-86b2-eefdc669e8bf");
         private readonly Package _package;
-        private MenuCommand _menu_item;
+        private MenuCommand _menu_item1;
+        private MenuCommand _menu_item2;
 
         private GoToDefinitionCommand(Package package)
         {
@@ -32,22 +31,42 @@
                 typeof(IMenuCommandService)) as OleMenuCommandService;
             if (commandService != null)
             {
-                var menuCommandID = new CommandID(_command_set, _command_id);
-                _menu_item = new MenuCommand(this.MenuItemCallback, menuCommandID);
-                _menu_item.Enabled = false;
-                _menu_item.Visible = false;
-                commandService.AddCommand(_menu_item);
+                {
+                    // Set up hook for context menu.
+                    var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidVSPackageCommandCodeWindowContextMenuCmdSet), 0x0100);
+                    _menu_item1 = new MenuCommand(this.MenuItemCallback, menuCommandID);
+                    _menu_item1.Enabled = false;
+                    _menu_item1.Visible = false;
+                    commandService.AddCommand(_menu_item1);
+                }
+
+                {
+                    // Set up hook for context menu.
+                    var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidMenuAndCommandsCmdSet), 0x0100);
+                    _menu_item2 = new MenuCommand(this.MenuItemCallback, menuCommandID);
+       //             _menu_item2.Enabled = true;
+          //          _menu_item2.Visible = true;
+                    commandService.AddCommand(_menu_item2);
+                }
             }
         }
 
         public bool Enabled
         {
-            set { _menu_item.Enabled = value; }
+            set
+            {
+                if (_menu_item1 != null) _menu_item1.Enabled = value;
+          //      if (_menu_item2 != null) _menu_item2.Enabled = value;
+            }
         }
 
         public bool Visible
         {
-            set { _menu_item.Visible = value; }
+            set
+            {
+                if (_menu_item1 != null) _menu_item1.Visible = value;
+            //    if (_menu_item2 != null) _menu_item2.Visible = value;
+            }
         }
 
         public SnapshotSpan Symbol { get; set; }
