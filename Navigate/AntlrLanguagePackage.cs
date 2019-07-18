@@ -1,4 +1,7 @@
-﻿namespace AntlrVSIX.Navigate
+﻿using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
+
+namespace AntlrVSIX.Navigate
 {
     using AntlrVSIX.Extensions;
     using AntlrVSIX.FindAllReferences;
@@ -30,6 +33,7 @@
             RenameCommand.Initialize(this);
             FindRefsWindowCommand.Initialize(this);
             Reformat.ReformatCommand.Initialize(this);
+            AntlrVSIX.NextSym.NextSymCommand.Initialize(this);
         }
 
         private static AntlrLanguagePackage _instance;
@@ -43,5 +47,9 @@
                 return _instance;
             }
         }
+
+        public ITextView View { get; set; }
+        public SnapshotSpan Symbol { get; set; }
+        public string Classification { get; set; }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace AntlrVSIX.Reformat
+﻿using AntlrVSIX.Navigate;
+
+namespace AntlrVSIX.Reformat
 {
     using AntlrVSIX.Extensions;
     using Microsoft.VisualStudio.Shell;
@@ -43,9 +45,6 @@
             set { _menu_item.Visible = value; }
         }
 
-        public SnapshotSpan Symbol { get; set; }
-        public string Classification { get; set; }
-        public ITextView View { get; set; }
         public static ReformatCommand Instance { get; private set; }
 
         private IServiceProvider ServiceProvider
@@ -64,9 +63,9 @@
             // Reformat code.
             ////////////////////////
 
-            string classification = this.Classification;
-            SnapshotSpan span = this.Symbol;
-            ITextView view = this.View;
+            string classification = AntlrLanguagePackage.Instance.Classification;
+            SnapshotSpan span = AntlrLanguagePackage.Instance.Symbol;
+            ITextView view = AntlrLanguagePackage.Instance.View;
 
             // First, find out what this view is, and what the file is.
             ITextBuffer buffer = view.TextBuffer;

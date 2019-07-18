@@ -1,4 +1,8 @@
-﻿namespace AntlrVSIX.Mouse
+﻿using AntlrVSIX.Navigate;
+using AntlrVSIX.NextSym;
+using AntlrVSIX.Reformat;
+
+namespace AntlrVSIX.Mouse
 {
     using AntlrVSIX.Extensions;
     using AntlrVSIX.FindAllReferences;
@@ -61,28 +65,22 @@
                 Reformat.ReformatCommand.Instance == null)
                 return;
 
+            AntlrLanguagePackage.Instance.Symbol = default(SnapshotSpan);
+            AntlrLanguagePackage.Instance.Classification = default(string);
+            AntlrLanguagePackage.Instance.View = default(ITextView);
+
             // Whack any old values that cursor points to.
             GoToDefinitionCommand.Instance.Enabled = false;
             GoToDefinitionCommand.Instance.Visible = false;
-            GoToDefinitionCommand.Instance.Symbol = default(SnapshotSpan);
-            GoToDefinitionCommand.Instance.Classification = default(string);
-            GoToDefinitionCommand.Instance.View = default(ITextView);
 
             FindAllReferencesCommand.Instance.Enabled = false;
             FindAllReferencesCommand.Instance.Visible = false;
-            FindAllReferencesCommand.Instance.Symbol = default(SnapshotSpan);
-            FindAllReferencesCommand.Instance.Classification = default(string);
-            FindAllReferencesCommand.Instance.View = default(ITextView);
 
             RenameCommand.Instance.Enabled = false;
             RenameCommand.Instance.Visible = false;
-            RenameCommand.Instance.Symbol = default(SnapshotSpan);
-            RenameCommand.Instance.Classification = default(string);
-            RenameCommand.Instance.View = default(ITextView);
 
             Reformat.ReformatCommand.Instance.Enabled = false;
             Reformat.ReformatCommand.Instance.Visible = false;
-            RenameCommand.Instance.View = default(ITextView);
 
             var fp = _view.GetFilePath();
             if (fp != null)
@@ -101,6 +99,8 @@
             // No matter what, say we handled event, otherwise we get all sorts of pop-up errors.
             e.Handled = true;
 
+            AntlrLanguagePackage.Instance.View = _view;
+
             // Find details of the Antlr symbol pointed to.
             _mouseDownAnchorPoint = RelativeToView(e.GetPosition(_view.VisualElement));
             System.Windows.Point point = _mouseDownAnchorPoint ?? default(System.Windows.Point);
@@ -118,81 +118,61 @@
                 var name = classification.ClassificationType.Classification.ToLower();
                 if (name == AntlrVSIX.Constants.ClassificationNameTerminal)
                 {
+
+                    AntlrLanguagePackage.Instance.Symbol = span;
+                    AntlrLanguagePackage.Instance.Classification = AntlrVSIX.Constants.ClassificationNameTerminal;
+
                     GoToDefinitionCommand.Instance.Enabled = true;
                     GoToDefinitionCommand.Instance.Visible = true;
-                    GoToDefinitionCommand.Instance.Symbol = span;
-                    GoToDefinitionCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameTerminal;
-                    GoToDefinitionCommand.Instance.View = _view;
 
                     FindAllReferencesCommand.Instance.Enabled = true;
                     FindAllReferencesCommand.Instance.Visible = true;
-                    FindAllReferencesCommand.Instance.Symbol = span;
-                    FindAllReferencesCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameTerminal;
-                    FindAllReferencesCommand.Instance.View = _view;
 
                     RenameCommand.Instance.Enabled = true;
                     RenameCommand.Instance.Visible = true;
-                    RenameCommand.Instance.Symbol = span;
-                    RenameCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameTerminal;
-                    RenameCommand.Instance.View = _view;
 
                     Reformat.ReformatCommand.Instance.Enabled = true;
                     Reformat.ReformatCommand.Instance.Visible = true;
-                    Reformat.ReformatCommand.Instance.Symbol = span;
-                    Reformat.ReformatCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameTerminal;
-                    Reformat.ReformatCommand.Instance.View = _view;
+
+                    NextSymCommand.Instance.Enabled = true;
                 }
                 else if (name == AntlrVSIX.Constants.ClassificationNameNonterminal)
                 {
+                    AntlrLanguagePackage.Instance.Symbol = span;
+                    AntlrLanguagePackage.Instance.Classification = AntlrVSIX.Constants.ClassificationNameNonterminal;
+
                     GoToDefinitionCommand.Instance.Enabled = true;
                     GoToDefinitionCommand.Instance.Visible = true;
-                    GoToDefinitionCommand.Instance.Symbol = span;
-                    GoToDefinitionCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameNonterminal;
-                    GoToDefinitionCommand.Instance.View = _view;
 
                     FindAllReferencesCommand.Instance.Enabled = true;
                     FindAllReferencesCommand.Instance.Visible = true;
-                    FindAllReferencesCommand.Instance.Symbol = span;
-                    FindAllReferencesCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameNonterminal;
-                    FindAllReferencesCommand.Instance.View = _view;
 
                     RenameCommand.Instance.Enabled = true;
                     RenameCommand.Instance.Visible = true;
-                    RenameCommand.Instance.Symbol = span;
-                    RenameCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameNonterminal;
-                    RenameCommand.Instance.View = _view;
 
                     Reformat.ReformatCommand.Instance.Enabled = true;
                     Reformat.ReformatCommand.Instance.Visible = true;
-                    Reformat.ReformatCommand.Instance.Symbol = span;
-                    Reformat.ReformatCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameNonterminal;
-                    Reformat.ReformatCommand.Instance.View = _view;
+
+                    NextSymCommand.Instance.Enabled = true;
                 }
                 else if (name == AntlrVSIX.Constants.ClassificationNameLiteral)
                 {
+                    AntlrLanguagePackage.Instance.Symbol = span;
+                    AntlrLanguagePackage.Instance.Classification = AntlrVSIX.Constants.ClassificationNameLiteral;
+
                     GoToDefinitionCommand.Instance.Enabled = true;
                     GoToDefinitionCommand.Instance.Visible = true;
-                    GoToDefinitionCommand.Instance.Symbol = span;
-                    GoToDefinitionCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameLiteral;
-                    GoToDefinitionCommand.Instance.View = _view;
 
                     FindAllReferencesCommand.Instance.Enabled = true;
                     FindAllReferencesCommand.Instance.Visible = true;
-                    FindAllReferencesCommand.Instance.Symbol = span;
-                    FindAllReferencesCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameLiteral;
-                    FindAllReferencesCommand.Instance.View = _view;
 
                     RenameCommand.Instance.Enabled = true;
                     RenameCommand.Instance.Visible = true;
-                    RenameCommand.Instance.Symbol = span;
-                    RenameCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameLiteral;
-                    RenameCommand.Instance.View = _view;
 
                     Reformat.ReformatCommand.Instance.Enabled = true;
                     Reformat.ReformatCommand.Instance.Visible = true;
-                    Reformat.ReformatCommand.Instance.Symbol = span;
-                    Reformat.ReformatCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameLiteral;
-                    Reformat.ReformatCommand.Instance.View = _view;
+
+                    NextSymCommand.Instance.Enabled = true;
                 }
             }
         }
@@ -208,28 +188,29 @@
                 Reformat.ReformatCommand.Instance == null)
                 return;
 
+            AntlrLanguagePackage.Instance.Symbol = default(SnapshotSpan);
+            AntlrLanguagePackage.Instance.Classification = default(string);
+            AntlrLanguagePackage.Instance.View = default(ITextView);
+
             // Whack any old values that cursor points to.
             GoToDefinitionCommand.Instance.Enabled = false;
             GoToDefinitionCommand.Instance.Visible = false;
-            GoToDefinitionCommand.Instance.Symbol = default(SnapshotSpan);
-            GoToDefinitionCommand.Instance.Classification = default(string);
-            GoToDefinitionCommand.Instance.View = default(ITextView);
 
             FindAllReferencesCommand.Instance.Enabled = false;
             FindAllReferencesCommand.Instance.Visible = false;
-            FindAllReferencesCommand.Instance.Symbol = default(SnapshotSpan);
-            FindAllReferencesCommand.Instance.Classification = default(string);
-            FindAllReferencesCommand.Instance.View = default(ITextView);
+
+            NextSymCommand.Instance.Enabled = true;
 
             RenameCommand.Instance.Enabled = false;
             RenameCommand.Instance.Visible = false;
-            RenameCommand.Instance.Symbol = default(SnapshotSpan);
-            RenameCommand.Instance.Classification = default(string);
-            RenameCommand.Instance.View = default(ITextView);
 
             Reformat.ReformatCommand.Instance.Enabled = false;
             Reformat.ReformatCommand.Instance.Visible = false;
-            RenameCommand.Instance.View = default(ITextView);
+
+            // No matter what, say we handled event, otherwise we get all sorts of pop-up errors.
+            e.Handled = true;
+
+            AntlrLanguagePackage.Instance.View = _view;
 
             var fp = _view.GetFilePath();
             if (fp != null)
@@ -240,13 +221,12 @@
                     GoToDefinitionCommand.Instance.Visible = true;
                     FindAllReferencesCommand.Instance.Visible = true;
                     RenameCommand.Instance.Visible = true;
+                    NextSymCommand.Instance.Enabled = true;
                     Reformat.ReformatCommand.Instance.Enabled = true;
                     Reformat.ReformatCommand.Instance.Visible = true;
                 }
             }
-
-            // No matter what, say we handled event, otherwise we get all sorts of pop-up errors.
-            e.Handled = true;
+            else return;
 
             // Find details of the Antlr symbol pointed to.
             _mouseDownAnchorPoint = RelativeToView(e.GetPosition(_view.VisualElement));
@@ -258,6 +238,8 @@
             TextExtent extent = _navigator.GetExtentOfWord(where);
             SnapshotSpan span = extent.Span;
 
+            AntlrLanguagePackage.Instance.Symbol = span;
+
             //  Now, check for valid classification type.
             ClassificationSpan[] c1 = _aggregator.GetClassificationSpans(span).ToArray();
             foreach (ClassificationSpan classification in c1)
@@ -265,81 +247,51 @@
                 var name = classification.ClassificationType.Classification.ToLower();
                 if (name == AntlrVSIX.Constants.ClassificationNameTerminal)
                 {
+                    AntlrLanguagePackage.Instance.Classification = AntlrVSIX.Constants.ClassificationNameTerminal;
+
                     GoToDefinitionCommand.Instance.Enabled = true;
                     GoToDefinitionCommand.Instance.Visible = true;
-                    GoToDefinitionCommand.Instance.Symbol = span;
-                    GoToDefinitionCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameTerminal;
-                    GoToDefinitionCommand.Instance.View = _view;
 
                     FindAllReferencesCommand.Instance.Enabled = true;
                     FindAllReferencesCommand.Instance.Visible = true;
-                    FindAllReferencesCommand.Instance.Symbol = span;
-                    FindAllReferencesCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameTerminal;
-                    FindAllReferencesCommand.Instance.View = _view;
 
                     RenameCommand.Instance.Enabled = true;
                     RenameCommand.Instance.Visible = true;
-                    RenameCommand.Instance.Symbol = span;
-                    RenameCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameTerminal;
-                    RenameCommand.Instance.View = _view;
 
                     Reformat.ReformatCommand.Instance.Enabled = true;
                     Reformat.ReformatCommand.Instance.Visible = true;
-                    Reformat.ReformatCommand.Instance.Symbol = span;
-                    Reformat.ReformatCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameTerminal;
-                    Reformat.ReformatCommand.Instance.View = _view;
                 }
                 else if (name == AntlrVSIX.Constants.ClassificationNameNonterminal)
                 {
+                    AntlrLanguagePackage.Instance.Classification = AntlrVSIX.Constants.ClassificationNameNonterminal;
+
                     GoToDefinitionCommand.Instance.Enabled = true;
                     GoToDefinitionCommand.Instance.Visible = true;
-                    GoToDefinitionCommand.Instance.Symbol = span;
-                    GoToDefinitionCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameNonterminal;
-                    GoToDefinitionCommand.Instance.View = _view;
 
                     FindAllReferencesCommand.Instance.Enabled = true;
                     FindAllReferencesCommand.Instance.Visible = true;
-                    FindAllReferencesCommand.Instance.Symbol = span;
-                    FindAllReferencesCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameNonterminal;
-                    FindAllReferencesCommand.Instance.View = _view;
 
                     RenameCommand.Instance.Enabled = true;
                     RenameCommand.Instance.Visible = true;
-                    RenameCommand.Instance.Symbol = span;
-                    RenameCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameNonterminal;
-                    RenameCommand.Instance.View = _view;
 
                     Reformat.ReformatCommand.Instance.Enabled = true;
                     Reformat.ReformatCommand.Instance.Visible = true;
-                    Reformat.ReformatCommand.Instance.Symbol = span;
-                    Reformat.ReformatCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameNonterminal;
-                    Reformat.ReformatCommand.Instance.View = _view;
                 }
                 else if (name == AntlrVSIX.Constants.ClassificationNameLiteral)
                 {
+                    AntlrLanguagePackage.Instance.Classification = AntlrVSIX.Constants.ClassificationNameLiteral;
+
                     GoToDefinitionCommand.Instance.Enabled = true;
                     GoToDefinitionCommand.Instance.Visible = true;
-                    GoToDefinitionCommand.Instance.Symbol = span;
-                    GoToDefinitionCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameLiteral;
-                    GoToDefinitionCommand.Instance.View = _view;
 
                     FindAllReferencesCommand.Instance.Enabled = true;
                     FindAllReferencesCommand.Instance.Visible = true;
-                    FindAllReferencesCommand.Instance.Symbol = span;
-                    FindAllReferencesCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameLiteral;
-                    FindAllReferencesCommand.Instance.View = _view;
 
                     RenameCommand.Instance.Enabled = true;
                     RenameCommand.Instance.Visible = true;
-                    RenameCommand.Instance.Symbol = span;
-                    RenameCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameLiteral;
-                    RenameCommand.Instance.View = _view;
 
                     Reformat.ReformatCommand.Instance.Enabled = true;
                     Reformat.ReformatCommand.Instance.Visible = true;
-                    Reformat.ReformatCommand.Instance.Symbol = span;
-                    Reformat.ReformatCommand.Instance.Classification = AntlrVSIX.Constants.ClassificationNameLiteral;
-                    Reformat.ReformatCommand.Instance.View = _view;
                 }
             }
         }
@@ -360,7 +312,10 @@
                 SnapshotPoint? bufferPosition = line.GetBufferPositionFromXCoordinate(position.X);
 
                 if (!bufferPosition.HasValue)
-                    return default(SnapshotPoint?);
+                {
+                    // Assume beginning of line.
+                    return new SnapshotPoint(line.Snapshot, line.Start);
+                }
 
                 var extent = _navigator.GetExtentOfWord(bufferPosition.Value);
                 if (!extent.IsSignificant)

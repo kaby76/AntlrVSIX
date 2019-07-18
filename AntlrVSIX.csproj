@@ -71,6 +71,7 @@
     <Compile Include="Keyboard\CtrlKeyState.cs" />
     <Compile Include="Keyboard\GoToDefKeyProcessor.cs" />
     <Compile Include="Model\Entry.cs" />
+    <Compile Include="NextSym\NextSymCommand.cs" />
     <Compile Include="Reformat\ReformatCommand.cs" />
     <Compile Include="Rename\HighlightRenameTaggerProvider.cs" />
     <Compile Include="Model\FindAntlrSymbolsModel.cs" />

@@ -1,4 +1,6 @@
-﻿namespace AntlrVSIX.GoToDefintion
+﻿using AntlrVSIX.Navigate;
+
+namespace AntlrVSIX.GoToDefintion
 {
     using Antlr4.Runtime;
     using AntlrVSIX.Extensions;
@@ -69,9 +71,6 @@
             }
         }
 
-        public SnapshotSpan Symbol { get; set; }
-        public string Classification { get; set; }
-        public ITextView View { get; set; }
         public static GoToDefinitionCommand Instance { get; private set; }
 
         private IServiceProvider ServiceProvider
@@ -124,9 +123,9 @@
                 }
             }
 
-            string classification = this.Classification;
-            SnapshotSpan span = this.Symbol;
-            ITextView view = this.View;
+            string classification = AntlrLanguagePackage.Instance.Classification;
+            SnapshotSpan span = AntlrLanguagePackage.Instance.Symbol;
+            ITextView view = AntlrLanguagePackage.Instance.View;
             
             // First, find out what this view is, and what the file is.
             ITextBuffer buffer = view.TextBuffer;
