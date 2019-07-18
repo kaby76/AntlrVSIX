@@ -104,7 +104,7 @@ namespace AntlrVSIX.Rename
             }
 
             string classification = AntlrLanguagePackage.Instance.Classification;
-            SnapshotSpan span = AntlrLanguagePackage.Instance.Symbol;
+            SnapshotSpan span = AntlrLanguagePackage.Instance.Span;
             ITextView view = AntlrLanguagePackage.Instance.View;
 
             // First, find out what this view is, and what the file is.

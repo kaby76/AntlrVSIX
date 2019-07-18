@@ -65,7 +65,7 @@ namespace AntlrVSIX.Mouse
                 Reformat.ReformatCommand.Instance == null)
                 return;
 
-            AntlrLanguagePackage.Instance.Symbol = default(SnapshotSpan);
+            AntlrLanguagePackage.Instance.Span = default(SnapshotSpan);
             AntlrLanguagePackage.Instance.Classification = default(string);
             AntlrLanguagePackage.Instance.View = default(ITextView);
 
@@ -119,7 +119,7 @@ namespace AntlrVSIX.Mouse
                 if (name == AntlrVSIX.Constants.ClassificationNameTerminal)
                 {
 
-                    AntlrLanguagePackage.Instance.Symbol = span;
+                    AntlrLanguagePackage.Instance.Span = span;
                     AntlrLanguagePackage.Instance.Classification = AntlrVSIX.Constants.ClassificationNameTerminal;
 
                     GoToDefinitionCommand.Instance.Enabled = true;
@@ -138,7 +138,7 @@ namespace AntlrVSIX.Mouse
                 }
                 else if (name == AntlrVSIX.Constants.ClassificationNameNonterminal)
                 {
-                    AntlrLanguagePackage.Instance.Symbol = span;
+                    AntlrLanguagePackage.Instance.Span = span;
                     AntlrLanguagePackage.Instance.Classification = AntlrVSIX.Constants.ClassificationNameNonterminal;
 
                     GoToDefinitionCommand.Instance.Enabled = true;
@@ -157,7 +157,7 @@ namespace AntlrVSIX.Mouse
                 }
                 else if (name == AntlrVSIX.Constants.ClassificationNameLiteral)
                 {
-                    AntlrLanguagePackage.Instance.Symbol = span;
+                    AntlrLanguagePackage.Instance.Span = span;
                     AntlrLanguagePackage.Instance.Classification = AntlrVSIX.Constants.ClassificationNameLiteral;
 
                     GoToDefinitionCommand.Instance.Enabled = true;
@@ -188,7 +188,7 @@ namespace AntlrVSIX.Mouse
                 Reformat.ReformatCommand.Instance == null)
                 return;
 
-            AntlrLanguagePackage.Instance.Symbol = default(SnapshotSpan);
+            AntlrLanguagePackage.Instance.Span = default(SnapshotSpan);
             AntlrLanguagePackage.Instance.Classification = default(string);
             AntlrLanguagePackage.Instance.View = default(ITextView);
 
@@ -238,7 +238,7 @@ namespace AntlrVSIX.Mouse
             TextExtent extent = _navigator.GetExtentOfWord(where);
             SnapshotSpan span = extent.Span;
 
-            AntlrLanguagePackage.Instance.Symbol = span;
+            AntlrLanguagePackage.Instance.Span = span;
 
             //  Now, check for valid classification type.
             ClassificationSpan[] c1 = _aggregator.GetClassificationSpans(span).ToArray();

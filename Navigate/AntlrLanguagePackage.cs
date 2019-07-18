@@ -49,7 +49,7 @@ namespace AntlrVSIX.Navigate
         }
 
         public ITextView View { get; set; }
-        public SnapshotSpan Symbol { get; set; }
+        public SnapshotSpan Span { get; set; }
         public string Classification { get; set; }
     }
 }

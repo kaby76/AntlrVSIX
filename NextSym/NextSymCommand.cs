@@ -122,7 +122,7 @@ namespace AntlrVSIX.NextSym
                 }
 
                 string classification = AntlrLanguagePackage.Instance.Classification;
-                SnapshotSpan span = AntlrLanguagePackage.Instance.Symbol;
+                SnapshotSpan span = AntlrLanguagePackage.Instance.Span;
                 ITextView view = AntlrLanguagePackage.Instance.View;
                 ITextCaret car = view.Caret;
                 CaretPosition cp = car.Position;
