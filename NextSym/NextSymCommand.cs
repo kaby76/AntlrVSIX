@@ -35,7 +35,7 @@ namespace AntlrVSIX.NextSym
                 {
                     // Set up hook for context menu.
                     var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidMenuAndCommandsCmdSet), 0x7002);
-                    _menu_item1 = new MenuCommand(this.MenuItemCallback, menuCommandID);
+                    _menu_item1 = new MenuCommand(this.MenuItemCallbackFor, menuCommandID);
                     _menu_item1.Enabled = true;
                     _menu_item1.Visible = true;
                     commandService.AddCommand(_menu_item1);
@@ -43,7 +43,7 @@ namespace AntlrVSIX.NextSym
                 {
                     // Set up hook for context menu.
                     var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidMenuAndCommandsCmdSet), 0x7003);
-                    _menu_item2 = new MenuCommand(this.MenuItemCallback, menuCommandID);
+                    _menu_item2 = new MenuCommand(this.MenuItemCallbackRev, menuCommandID);
                     _menu_item2.Enabled = true;
                     _menu_item2.Visible = true;
                     commandService.AddCommand(_menu_item2);
@@ -81,7 +81,17 @@ namespace AntlrVSIX.NextSym
             Instance = new NextSymCommand(package);
         }
 
-        private void MenuItemCallback(object sender, EventArgs e)
+        private void MenuItemCallbackFor(object sender, EventArgs e)
+        {
+            MenuItemCallback(sender, e, true);
+        }
+
+        private void MenuItemCallbackRev(object sender, EventArgs e)
+        {
+            MenuItemCallback(sender, e, false);
+        }
+
+        private void MenuItemCallback(object sender, EventArgs e, bool forward)
         {
             ////////////////////////
             /// Next rule.
@@ -148,24 +158,43 @@ namespace AntlrVSIX.NextSym
 
                 List<IToken> where = new List<IToken>();
                 List<ParserDetails> where_details = new List<ParserDetails>();
-                int next_sym = Int32.MaxValue;
+                int next_sym = forward ? Int32.MaxValue : -1;
                 foreach (var kvp in ParserDetails._per_file_parser_details)
                 {
                     string file_name = kvp.Key;
                     if (file_name != path)
                         continue;
-
                     ParserDetails details = kvp.Value;
                     foreach (var t in details._ant_nonterminals_defining)
                     {
-                        if (t.StartIndex > pos && t.StartIndex < next_sym)
-                            next_sym = t.StartIndex;
+                        if (forward)
+                        {
+                            if (t.StartIndex > pos && t.StartIndex < next_sym)
+                                next_sym = t.StartIndex;
+                        }
+                        else
+                        {
+                            if (t.StartIndex < pos && t.StartIndex > next_sym)
+                                next_sym = t.StartIndex;
+                        }
                     }
-
+                    foreach (var t in details._ant_terminals_defining)
+                    {
+                        if (forward)
+                        {
+                            if (t.StartIndex > pos && t.StartIndex < next_sym)
+                                next_sym = t.StartIndex;
+                        }
+                        else
+                        {
+                            if (t.StartIndex < pos && t.StartIndex > next_sym)
+                                next_sym = t.StartIndex;
+                        }
+                    }
                     break;
                 }
 
-                if (next_sym == Int32.MaxValue) return;
+                if (next_sym == Int32.MaxValue || next_sym < 0) return;
 
                 string full_file_name = path;
                 IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(full_file_name);
