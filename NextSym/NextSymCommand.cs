@@ -124,6 +124,14 @@ namespace AntlrVSIX.NextSym
                 string classification = AntlrLanguagePackage.Instance.Classification;
                 SnapshotSpan span = AntlrLanguagePackage.Instance.Span;
                 ITextView view = AntlrLanguagePackage.Instance.View;
+
+                var service = ServiceProvider.GetService(typeof(SVsTextManager));
+                var textManager = service as IVsTextManager2;
+                IVsTextView view2;
+                int result = textManager.GetActiveView2(1, null, (uint)_VIEWFRAMETYPE.vftCodeWindow, out view2);
+                var xxx = view2.GetIWpfTextView();
+                view = xxx;
+
                 ITextCaret car = view.Caret;
                 CaretPosition cp = car.Position;
                 SnapshotPoint bp = cp.BufferPosition;

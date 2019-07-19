@@ -1,17 +1,17 @@
 
 # AntlrVSIX
-AntlrVSIX is an open source Visual Studio 2019 extension for Antlr version 4
-grammars for C#. The features in this extension are:
+AntlrVSIX is an open source Visual Studio 2019 extension for Antlr4
+grammars. The features in this extension are:
 
 * Colorized tagging of grammars.
-* "Go to definition" of Antlr symbols.
-* "Find all references" of Antlr symbols.
+* "Go to definition" of a grammar symbol.
+* "Find all references" of a grammar symbol.
 * "Replace symbol" in a grammar.
 * "Reformat" grammar based on machine learning tool Codebuff.
-* "Next/Previous symbol" in grammar.
-* "Go to Visitor / Listener" tree walker methods for a symbol.
+* "Next/Previous rule" for quick navigation through a grammar.
+* "Go to Visitor / Listener" from a grammar symbol to a C# tree walker method.
 * Options dialog box for this extension.
-* Generate code to set up a parser.
+* Parser caller template code insertion.
 * No advertisements, free of charge, open source.
 
 For integration of build rules into VS2019 (i.e., so you do not
@@ -20,8 +20,8 @@ please use [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks).
 
 ## Caveats:
 
-* If you are interested in support for the old VS2017 and even older VS2015,
-you can try using an older version of the extension.
+* Support for the old VS2017 and even older VS2015 has been removed.
+If you are interested in those, you can try using an older version of the extension.
 
 * This tool is only for writing grammars. If you want to generate parsers and lexers,
 you will need to use Antlr4BuildTasks (which currently only targets C#), or run the Antlr4 Java
