@@ -72,6 +72,7 @@
     <Compile Include="Keyboard\CtrlKeyState.cs" />
     <Compile Include="Keyboard\GoToDefKeyProcessor.cs" />
     <Compile Include="Model\Entry.cs" />
+    <Compile Include="Package\MenuEnableProvider.cs" />
     <Compile Include="NextSym\NextSymCommand.cs" />
     <Compile Include="Options\OptionsCommand.cs" />
     <Compile Include="Reformat\ReformatCommand.cs" />
@@ -86,11 +87,11 @@
     <Compile Include="GoToDefinition\GoToDefinitionCommand.cs" />
     <Compile Include="FindAllReferences\FindAllReferencesCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Navigate\AntlrLanguagePackage.cs" />
+    <Compile Include="Package\AntlrLanguagePackage.cs" />
     <Compile Include="Classification\AntlrClassifier.cs" />
     <Compile Include="Keyboard\GoToDefKeyProcessorProvider.cs" />
-    <Compile Include="Mouse\GoToDefMouseHandlerProvider.cs" />
-    <Compile Include="Mouse\GoToDefMouseHandler.cs" />
+    <Compile Include="Mouse\MouseHandlerProvider.cs" />
+    <Compile Include="Mouse\MouseHandler.cs" />
     <Compile Include="Rename\RenameCommand.cs" />
     <Compile Include="Rename\RenameDialogBox.xaml.cs">
       <DependentUpon>RenameDialogBox.xaml</DependentUpon>
@@ -172,7 +173,7 @@
     <Content Include="Resources\Command1.png" />
     <Content Include="Resources\FindRefsWindowCommand.png" />
     <Content Include="Resources\VSPackageCommandCodeWindowContextMenu.ico" />
-    <VSCTCompile Include="Navigate\VSPackageCommandCodeWindowContextMenu.vsct">
+    <VSCTCompile Include="Package\VSPackageCommandCodeWindowContextMenu.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
       <SubType>Designer</SubType>
     </VSCTCompile>

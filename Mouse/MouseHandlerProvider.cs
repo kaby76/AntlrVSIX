@@ -16,7 +16,7 @@
     [Name("Antlr")]
     [TextViewRole(PredefinedTextViewRoles.Document)]
     [Order(Before = "WordSelection")]
-    internal sealed class GoToDefMouseHandlerProvider : IMouseProcessorProvider
+    internal sealed class MouseHandlerProvider : IMouseProcessorProvider
     {
         [Import]
         IClassifierAggregatorService AggregatorFactory = null;
@@ -38,7 +38,7 @@
 
             IClassifier ag1 = AggregatorFactory.GetClassifier(buffer);
 
-            return new GoToDefMouseHandler(view,
+            return new MouseHandler(view,
                                            shellCommandDispatcher,
                                            GlobalServiceProvider,
                                            ag1,

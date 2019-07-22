@@ -7,6 +7,22 @@ using AntlrVSIX.Rename;
 using Microsoft.VisualStudio.Shell;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
+using System;
+using System.Linq;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
+using AntlrVSIX.Extensions;
+using AntlrVSIX.FindAllReferences;
+using AntlrVSIX.GoToDefintion;
+using AntlrVSIX.Rename;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.TextManager.Interop;
+using AntlrVSIX.NextSym;
+using AntlrVSIX.Keyboard;
+using Microsoft.VisualStudio.OLE.Interop;
+using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Text.Operations;
+using System.Collections.Generic;
 
 namespace AntlrVSIX.Navigate
 {
@@ -33,6 +49,7 @@ namespace AntlrVSIX.Navigate
             FindRefsWindowCommand.Initialize(this);
             Reformat.ReformatCommand.Initialize(this);
             AntlrVSIX.NextSym.NextSymCommand.Initialize(this);
+            AntlrVSIX.GoToVisitor.GoToVisitorCommand.Initialize(this);
         }
 
         private static AntlrLanguagePackage _instance;
@@ -50,5 +67,9 @@ namespace AntlrVSIX.Navigate
         public ITextView View { get; set; }
         public SnapshotSpan Span { get; set; }
         public string Classification { get; set; }
+
+        public Dictionary<IWpfTextView, IClassifier> Aggregator { get; } = new Dictionary<IWpfTextView, IClassifier>();
+        public Dictionary<IWpfTextView, ITextStructureNavigator> Navigator { get; } = new Dictionary<IWpfTextView, ITextStructureNavigator>();
+        public Dictionary<IWpfTextView, SVsServiceProvider> ServiceProvider { get; } = new Dictionary<IWpfTextView, SVsServiceProvider>();
     }
 }

@@ -1,10 +1,10 @@
-﻿using AntlrVSIX.Navigate;
-
+﻿
 namespace AntlrVSIX.GoToDefintion
 {
     using Antlr4.Runtime;
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Grammar;
+    using AntlrVSIX.Navigate;
     using EnvDTE;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text.Editor;
@@ -186,6 +186,7 @@ namespace AntlrVSIX.GoToDefintion
                 vstv.CenterLines(line_number - 1, 2);
             else
                 vstv.CenterLines(line_number, 1);
+            AntlrVSIX.Navigate.MenuEnableProvider.ResetMenus();
         }
     }
 }

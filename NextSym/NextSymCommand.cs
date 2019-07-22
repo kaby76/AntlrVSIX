@@ -30,24 +30,27 @@ namespace AntlrVSIX.NextSym
             _package = package;
             OleMenuCommandService commandService = this.ServiceProvider.GetService(
                 typeof(IMenuCommandService)) as OleMenuCommandService;
-            if (commandService != null)
+
+            if (commandService == null)
             {
-                {
-                    // Set up hook for context menu.
-                    var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidMenuAndCommandsCmdSet), 0x7002);
-                    _menu_item1 = new MenuCommand(this.MenuItemCallbackFor, menuCommandID);
-                    _menu_item1.Enabled = true;
-                    _menu_item1.Visible = true;
-                    commandService.AddCommand(_menu_item1);
-                }
-                {
-                    // Set up hook for context menu.
-                    var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidMenuAndCommandsCmdSet), 0x7003);
-                    _menu_item2 = new MenuCommand(this.MenuItemCallbackRev, menuCommandID);
-                    _menu_item2.Enabled = true;
-                    _menu_item2.Visible = true;
-                    commandService.AddCommand(_menu_item2);
-                }
+                throw new ArgumentNullException("OleMenuCommandService");
+            }
+
+            {
+                // Set up hook for context menu.
+                var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidMenuAndCommandsCmdSet), 0x7002);
+                _menu_item1 = new MenuCommand(this.MenuItemCallbackFor, menuCommandID);
+                _menu_item1.Enabled = true;
+                _menu_item1.Visible = true;
+                commandService.AddCommand(_menu_item1);
+            }
+            {
+                // Set up hook for context menu.
+                var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidMenuAndCommandsCmdSet), 0x7003);
+                _menu_item2 = new MenuCommand(this.MenuItemCallbackRev, menuCommandID);
+                _menu_item2.Enabled = true;
+                _menu_item2.Visible = true;
+                commandService.AddCommand(_menu_item2);
             }
         }
 
@@ -219,6 +222,7 @@ namespace AntlrVSIX.NextSym
                     vstv.CenterLines(line_number - 1, 2);
                 else
                     vstv.CenterLines(line_number, 1);
+                AntlrVSIX.Navigate.MenuEnableProvider.ResetMenus();
             }
         }
     }
