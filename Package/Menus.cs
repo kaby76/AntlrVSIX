@@ -72,16 +72,9 @@ namespace AntlrVSIX.Package
             ITextCaret car = view.Caret;
             CaretPosition cp = car.Position;
             SnapshotPoint bp = cp.BufferPosition;
-            int pos = bp.Position;
-            SnapshotSpan span2 = new SnapshotSpan(bp, 0);
             TextExtent extent = AntlrVSIX.Package.AntlrLanguagePackage.Instance.Navigator[view].GetExtentOfWord(bp);
             SnapshotSpan span = extent.Span;
             AntlrLanguagePackage.Instance.Span = span;
-
-            //SnapshotPoint where = bp;
-            //if (where == default(SnapshotPoint)) return;
-            //TextExtent extent = _navigator.GetExtentOfWord(where);
-            //SnapshotSpan span = extent.Span;
 
             //  Now, check for valid classification type.
             ClassificationSpan[] c1 = AntlrVSIX.Package.AntlrLanguagePackage.Instance.Aggregator[view].GetClassificationSpans(span).ToArray();
