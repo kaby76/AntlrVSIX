@@ -53,6 +53,7 @@
                     vstv.CenterLines(line_number - 1, 2);
                 else
                     vstv.CenterLines(line_number, 1);
+                AntlrVSIX.Package.Menus.ResetMenus();
             }
         }
     }

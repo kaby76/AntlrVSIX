@@ -72,7 +72,7 @@
     <Compile Include="Keyboard\CtrlKeyState.cs" />
     <Compile Include="Keyboard\GoToDefKeyProcessor.cs" />
     <Compile Include="Model\Entry.cs" />
-    <Compile Include="Package\MenuEnableProvider.cs" />
+    <Compile Include="Package\Menus.cs" />
     <Compile Include="NextSym\NextSymCommand.cs" />
     <Compile Include="Options\OptionsCommand.cs" />
     <Compile Include="Reformat\ReformatCommand.cs" />

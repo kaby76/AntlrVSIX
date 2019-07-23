@@ -1,4 +1,4 @@
-﻿using AntlrVSIX.Navigate;
+﻿using AntlrVSIX.Package;
 
 namespace AntlrVSIX.FindAllReferences
 {

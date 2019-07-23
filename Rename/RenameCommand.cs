@@ -1,4 +1,4 @@
-﻿using AntlrVSIX.Navigate;
+﻿using AntlrVSIX.Package;
 
 namespace AntlrVSIX.Rename
 {
@@ -156,6 +156,7 @@ namespace AntlrVSIX.Rename
 
             // Put cursor on symbol.
             wpftv.Caret.MoveTo(sp);     // This sets cursor, bot does not center.
+            AntlrVSIX.Package.Menus.ResetMenus();
         }
     }
 }

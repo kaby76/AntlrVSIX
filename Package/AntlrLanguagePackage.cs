@@ -24,7 +24,7 @@ using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Operations;
 using System.Collections.Generic;
 
-namespace AntlrVSIX.Navigate
+namespace AntlrVSIX.Package
 {
 
     [PackageRegistration(UseManagedResourcesOnly = true)]
@@ -34,7 +34,7 @@ namespace AntlrVSIX.Navigate
         Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideToolWindow(typeof(FindRefsWindow))]
-    public sealed class AntlrLanguagePackage : Package
+    public sealed class AntlrLanguagePackage : Microsoft.VisualStudio.Shell.Package
     {
         public AntlrLanguagePackage()
         {
@@ -71,5 +71,29 @@ namespace AntlrVSIX.Navigate
         public Dictionary<IWpfTextView, IClassifier> Aggregator { get; } = new Dictionary<IWpfTextView, IClassifier>();
         public Dictionary<IWpfTextView, ITextStructureNavigator> Navigator { get; } = new Dictionary<IWpfTextView, ITextStructureNavigator>();
         public Dictionary<IWpfTextView, SVsServiceProvider> ServiceProvider { get; } = new Dictionary<IWpfTextView, SVsServiceProvider>();
+
+        public IWpfTextView GetActiveView()
+        {
+            IWpfTextView view = null;
+            // Look for currently active view. I don't know if the SVsTextManager
+            // provider will do this correctly, so I make sure it returns a consistent
+            // view with that stored for the provider.
+            foreach (var kvp in AntlrVSIX.Package.AntlrLanguagePackage.Instance.ServiceProvider)
+            {
+                var k = kvp.Key;
+                var v = kvp.Value;
+                var service = v.GetService(typeof(SVsTextManager));
+                var textManager = service as IVsTextManager2;
+                IVsTextView view2;
+                int result = textManager.GetActiveView2(1, null, (uint)_VIEWFRAMETYPE.vftCodeWindow, out view2);
+                var xxx = view2.GetIWpfTextView();
+                if (xxx == k)
+                {
+                    view = xxx;
+                    break;
+                }
+            }
+            return view;
+        }
     }
 }

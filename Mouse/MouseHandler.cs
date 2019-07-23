@@ -1,4 +1,4 @@
-﻿using AntlrVSIX.Navigate;
+﻿using AntlrVSIX.Package;
 using AntlrVSIX.NextSym;
 using AntlrVSIX.Reformat;
 
@@ -38,9 +38,9 @@ namespace AntlrVSIX.Mouse
             _aggregator = aggregator;
             _navigator = navigator;
             _service_provider = serviceProvider;
-            AntlrVSIX.Navigate.AntlrLanguagePackage.Instance.Aggregator[view] = aggregator;
-            AntlrVSIX.Navigate.AntlrLanguagePackage.Instance.Navigator[view] = navigator;
-            AntlrVSIX.Navigate.AntlrLanguagePackage.Instance.ServiceProvider[view] = serviceProvider;
+            AntlrVSIX.Package.AntlrLanguagePackage.Instance.Aggregator[view] = aggregator;
+            AntlrVSIX.Package.AntlrLanguagePackage.Instance.Navigator[view] = navigator;
+            AntlrVSIX.Package.AntlrLanguagePackage.Instance.ServiceProvider[view] = serviceProvider;
         }
 
         // Remember the location of the mouse on left button down, so we only handle left button up
@@ -59,12 +59,12 @@ namespace AntlrVSIX.Mouse
 
         public override void PostprocessMouseRightButtonDown(MouseButtonEventArgs e)
         {
-            AntlrVSIX.Navigate.MenuEnableProvider.ResetMenus();
+            AntlrVSIX.Package.Menus.ResetMenus();
         }
 
         public override void PostprocessMouseDown(MouseButtonEventArgs e)
         {
-            AntlrVSIX.Navigate.MenuEnableProvider.ResetMenus();
+            AntlrVSIX.Package.Menus.ResetMenus();
         }
 
 

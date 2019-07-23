@@ -1,22 +1,18 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using AntlrVSIX.Extensions;
 using AntlrVSIX.FindAllReferences;
 using AntlrVSIX.GoToDefintion;
 using AntlrVSIX.Rename;
-using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.TextManager.Interop;
 using AntlrVSIX.NextSym;
-using AntlrVSIX.Keyboard;
-using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Operations;
 
-namespace AntlrVSIX.Navigate
+namespace AntlrVSIX.Package
 {
-    public class MenuEnableProvider
+    public class Menus
     {
         public static void ResetMenus()
         {
@@ -26,23 +22,7 @@ namespace AntlrVSIX.Navigate
                 Reformat.ReformatCommand.Instance == null)
                 return;
 
-            IWpfTextView view = null;
-
-            foreach (var kvp in AntlrVSIX.Navigate.AntlrLanguagePackage.Instance.ServiceProvider)
-            {
-                var k = kvp.Key;
-                var v = kvp.Value;
-                var service = v.GetService(typeof(SVsTextManager));
-                var textManager = service as IVsTextManager2;
-                IVsTextView view2;
-                int result = textManager.GetActiveView2(1, null, (uint)_VIEWFRAMETYPE.vftCodeWindow, out view2);
-                var xxx = view2.GetIWpfTextView();
-                if (xxx == k)
-                {
-                    view = xxx;
-                    break;
-                }
-            }
+            IWpfTextView view = AntlrLanguagePackage.Instance.GetActiveView();
 
             if (view == null)
                 return;
@@ -52,9 +32,6 @@ namespace AntlrVSIX.Navigate
             ITextDocument doc = buffer.GetTextDocument();
             string path = doc.FilePath;
 
-            AntlrLanguagePackage.Instance.Span = default(SnapshotSpan);
-            AntlrLanguagePackage.Instance.Classification = default(string);
-            AntlrLanguagePackage.Instance.View = default(ITextView);
 
             // Whack any old values that cursor points to.
             GoToDefinitionCommand.Instance.Enabled = false;
@@ -71,6 +48,8 @@ namespace AntlrVSIX.Navigate
             Reformat.ReformatCommand.Instance.Enabled = false;
             Reformat.ReformatCommand.Instance.Visible = false;
 
+            AntlrLanguagePackage.Instance.Span = default(SnapshotSpan);
+            AntlrLanguagePackage.Instance.Classification = default(string);
             AntlrLanguagePackage.Instance.View = view;
 
             var fp = view.GetFilePath();
@@ -95,8 +74,9 @@ namespace AntlrVSIX.Navigate
             SnapshotPoint bp = cp.BufferPosition;
             int pos = bp.Position;
             SnapshotSpan span2 = new SnapshotSpan(bp, 0);
-            TextExtent extent = AntlrVSIX.Navigate.AntlrLanguagePackage.Instance.Navigator[view].GetExtentOfWord(bp);
+            TextExtent extent = AntlrVSIX.Package.AntlrLanguagePackage.Instance.Navigator[view].GetExtentOfWord(bp);
             SnapshotSpan span = extent.Span;
+            AntlrLanguagePackage.Instance.Span = span;
 
             //SnapshotPoint where = bp;
             //if (where == default(SnapshotPoint)) return;
@@ -104,7 +84,7 @@ namespace AntlrVSIX.Navigate
             //SnapshotSpan span = extent.Span;
 
             //  Now, check for valid classification type.
-            ClassificationSpan[] c1 = AntlrVSIX.Navigate.AntlrLanguagePackage.Instance.Aggregator[view].GetClassificationSpans(span).ToArray();
+            ClassificationSpan[] c1 = AntlrVSIX.Package.AntlrLanguagePackage.Instance.Aggregator[view].GetClassificationSpans(span).ToArray();
             foreach (ClassificationSpan classification in c1)
             {
                 var name = classification.ClassificationType.Classification.ToLower();
@@ -139,6 +119,9 @@ namespace AntlrVSIX.Navigate
 
                     Reformat.ReformatCommand.Instance.Enabled = true;
                     Reformat.ReformatCommand.Instance.Visible = true;
+
+                    GoToVisitor.GoToVisitorCommand.Instance.Enabled = true;
+                    GoToVisitor.GoToVisitorCommand.Instance.Visible = true;
                 }
                 else if (name == AntlrVSIX.Constants.ClassificationNameLiteral)
                 {

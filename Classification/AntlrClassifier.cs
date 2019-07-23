@@ -2,7 +2,7 @@
 {
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Grammar;
-    using AntlrVSIX.Navigate;
+    using AntlrVSIX.Package;
     using AntlrVSIX.Tagger;
     using Microsoft.VisualStudio.Text.Classification;
     using Microsoft.VisualStudio.Text.Editor;

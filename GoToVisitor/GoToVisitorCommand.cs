@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Antlr4.Runtime;
 using AntlrVSIX.Extensions;
 using AntlrVSIX.Grammar;
-using AntlrVSIX.Navigate;
+using AntlrVSIX.Package;
 using EnvDTE;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text.Editor;
@@ -24,11 +24,11 @@ namespace AntlrVSIX.GoToVisitor
 {
     public class GoToVisitorCommand
     {
-        private readonly Package _package;
+        private readonly Microsoft.VisualStudio.Shell.Package _package;
         private MenuCommand _menu_item1;
         private MenuCommand _menu_item2;
 
-        public GoToVisitorCommand(Package package)
+        public GoToVisitorCommand(Microsoft.VisualStudio.Shell.Package package)
         {
             if (package == null)
             {
@@ -86,7 +86,7 @@ namespace AntlrVSIX.GoToVisitor
             get { return this._package; }
         }
 
-        public static void Initialize(Package package)
+        public static void Initialize(Microsoft.VisualStudio.Shell.Package package)
         {
             Instance = new GoToVisitorCommand(package);
         }

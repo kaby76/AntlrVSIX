@@ -11,17 +11,17 @@ using System.ComponentModel.Design;
 using System.IO;
 using System.Linq;
 using System;
-using AntlrVSIX.Navigate;
+using AntlrVSIX.Package;
 
 namespace AntlrVSIX.NextSym
 {
     internal sealed class NextSymCommand
     {
-        private readonly Package _package;
+        private readonly Microsoft.VisualStudio.Shell.Package _package;
         private MenuCommand _menu_item1;
         private MenuCommand _menu_item2;
 
-        private NextSymCommand(Package package)
+        private NextSymCommand(Microsoft.VisualStudio.Shell.Package package)
         {
             if (package == null)
             {
@@ -79,7 +79,7 @@ namespace AntlrVSIX.NextSym
             get { return this._package; }
         }
 
-        public static void Initialize(Package package)
+        public static void Initialize(Microsoft.VisualStudio.Shell.Package package)
         {
             Instance = new NextSymCommand(package);
         }
@@ -138,12 +138,7 @@ namespace AntlrVSIX.NextSym
                 SnapshotSpan span = AntlrLanguagePackage.Instance.Span;
                 ITextView view = AntlrLanguagePackage.Instance.View;
 
-                var service = ServiceProvider.GetService(typeof(SVsTextManager));
-                var textManager = service as IVsTextManager2;
-                IVsTextView view2;
-                int result = textManager.GetActiveView2(1, null, (uint)_VIEWFRAMETYPE.vftCodeWindow, out view2);
-                var xxx = view2.GetIWpfTextView();
-                view = xxx;
+                view = AntlrLanguagePackage.Instance.GetActiveView();
 
                 ITextCaret car = view.Caret;
                 CaretPosition cp = car.Position;
@@ -222,7 +217,7 @@ namespace AntlrVSIX.NextSym
                     vstv.CenterLines(line_number - 1, 2);
                 else
                     vstv.CenterLines(line_number, 1);
-                AntlrVSIX.Navigate.MenuEnableProvider.ResetMenus();
+                AntlrVSIX.Package.Menus.ResetMenus();
             }
         }
     }
