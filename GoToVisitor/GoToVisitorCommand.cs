@@ -148,6 +148,21 @@ namespace AntlrVSIX.GoToVisitor
                 // Look for IParseTreeVisitor classes.
 
                 var root = (CompilationUnitSyntax)tree.GetRoot();
+                foreach (var nm in root.Members)
+                {
+                    var namespace_member = (NamespaceDeclarationSyntax)nm;
+                    foreach (var cm in namespace_member.Members)
+                    {
+                        var class_member = (ClassDeclarationSyntax)cm;
+                        var bls = class_member.BaseList;
+                        var types = bls.Types;
+                        foreach (var type in types)
+                        {
+
+                        }
+                    }
+                }
+                
                 var firstMember = root.Members[0];
                 var helloWorldDeclaration = (NamespaceDeclarationSyntax)firstMember;
                 var programDeclaration = (ClassDeclarationSyntax)helloWorldDeclaration.Members[0];
