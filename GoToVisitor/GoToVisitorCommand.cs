@@ -109,9 +109,37 @@ namespace AntlrVSIX.GoToVisitor
 
         private void MenuItemCallback(object sender, EventArgs e, bool visitor)
         {
-            Dictionary<string, SyntaxTree> trees = new Dictionary<string, SyntaxTree>();
+            // Return if I can't determine what application this is.
             DTE application = DteExtensions.GetApplication();
             if (application == null) return;
+
+            // Get active view and determine if it's a grammar file.
+            var view = AntlrLanguagePackage.Instance.GetActiveView();
+            ITextCaret car = view.Caret;
+            CaretPosition cp = car.Position;
+            SnapshotPoint bp = cp.BufferPosition;
+            int pos = bp.Position;
+            ITextBuffer buffer = view.TextBuffer;
+            ITextDocument doc = buffer.GetTextDocument();
+            string path = doc.FilePath;
+            if (Path.GetExtension(path).ToLower() != ".g4") return;
+
+            // Parse this file to get properties.
+            try
+            {
+                if (!ParserDetails._per_file_parser_details.ContainsKey(path))
+                {
+                    StreamReader sr = new StreamReader(path);
+                    ParserDetails foo = new ParserDetails();
+                    ParserDetails._per_file_parser_details[path] = foo;
+                    foo.Parse(sr.ReadToEnd(), path);
+                }
+            }
+            catch (Exception eeks)
+            { }
+
+
+            Dictionary<string, SyntaxTree> trees = new Dictionary<string, SyntaxTree>();
 
             foreach (var item in DteExtensions.SolutionFiles(application))
             {
@@ -134,39 +162,6 @@ namespace AntlrVSIX.GoToVisitor
                     { }
                 }
             }
-            foreach (var item in DteExtensions.SolutionFiles(application))
-            {
-                string file_name = item.Name;
-                if (file_name != null)
-                {
-                    string prefix = file_name.TrimSuffix(".g4");
-                    if (prefix == file_name) continue;
-
-                    try
-                    {
-                        object prop = item.Properties.Item("FullPath").Value;
-                        string ffn = (string)prop;
-                        if (!ParserDetails._per_file_parser_details.ContainsKey(ffn))
-                        {
-                            StreamReader sr = new StreamReader(ffn);
-                            ParserDetails foo = new ParserDetails();
-                            ParserDetails._per_file_parser_details[ffn] = foo;
-                            foo.Parse(sr.ReadToEnd(), ffn);
-                        }
-                    }
-                    catch (Exception eeks)
-                    { }
-                }
-            }
-            // Get active view.
-            var view = AntlrLanguagePackage.Instance.GetActiveView();
-            ITextCaret car = view.Caret;
-            CaretPosition cp = car.Position;
-            SnapshotPoint bp = cp.BufferPosition;
-            int pos = bp.Position;
-            ITextBuffer buffer = view.TextBuffer;
-            ITextDocument doc = buffer.GetTextDocument();
-            string path = doc.FilePath;
 
             // Find details of the Antlr symbol pointed to.
             TextExtent extent = AntlrVSIX.Package.AntlrLanguagePackage.Instance.Navigator[view].GetExtentOfWord(bp);
@@ -234,9 +229,7 @@ namespace AntlrVSIX.GoToVisitor
                 var file_name = kvp.Key;
                 var tree = kvp.Value;
 
-                // Look for IParseTreeListener classes.
-                // Look for IParseTreeVisitor classes.
-
+                // Look for IParseTreeListener or IParseTreeVisitor classes.
                 var root = (CompilationUnitSyntax)tree.GetRoot();
                 if (root == null) continue;
                 foreach (var nm in root.Members)

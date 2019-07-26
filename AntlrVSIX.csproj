@@ -72,6 +72,9 @@
     <Compile Include="Keyboard\CtrlKeyState.cs" />
     <Compile Include="Keyboard\GoToDefKeyProcessor.cs" />
     <Compile Include="Model\Entry.cs" />
+    <Compile Include="Options\OptionsBox.xaml.cs">
+      <DependentUpon>OptionsBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Package\Menus.cs" />
     <Compile Include="NextSym\NextSymCommand.cs" />
     <Compile Include="Options\OptionsCommand.cs" />
@@ -187,6 +190,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="FindAllReferences\FindRefsWindowControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Options\OptionsBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -7,22 +7,14 @@ using AntlrVSIX.Rename;
 using Microsoft.VisualStudio.Shell;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
-using System;
-using System.Linq;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor;
-using AntlrVSIX.Extensions;
-using AntlrVSIX.FindAllReferences;
-using AntlrVSIX.GoToDefintion;
-using AntlrVSIX.Rename;
-using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.TextManager.Interop;
-using AntlrVSIX.NextSym;
-using AntlrVSIX.Keyboard;
-using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Operations;
 using System.Collections.Generic;
+using AntlrVSIX.GoToVisitor;
+using AntlrVSIX.NextSym;
+using AntlrVSIX.Options;
+using AntlrVSIX.Reformat;
 
 namespace AntlrVSIX.Package
 {
@@ -47,9 +39,10 @@ namespace AntlrVSIX.Package
             FindAllReferencesCommand.Initialize(this);
             RenameCommand.Initialize(this);
             FindRefsWindowCommand.Initialize(this);
-            Reformat.ReformatCommand.Initialize(this);
-            AntlrVSIX.NextSym.NextSymCommand.Initialize(this);
-            AntlrVSIX.GoToVisitor.GoToVisitorCommand.Initialize(this);
+            ReformatCommand.Initialize(this);
+            NextSymCommand.Initialize(this);
+            GoToVisitorCommand.Initialize(this);
+            OptionsCommand.Initialize(this);
         }
 
         private static AntlrLanguagePackage _instance;

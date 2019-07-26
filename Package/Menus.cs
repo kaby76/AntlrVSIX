@@ -5,7 +5,6 @@ using AntlrVSIX.Extensions;
 using AntlrVSIX.FindAllReferences;
 using AntlrVSIX.GoToDefintion;
 using AntlrVSIX.Rename;
-using Microsoft.VisualStudio.TextManager.Interop;
 using AntlrVSIX.NextSym;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Operations;
