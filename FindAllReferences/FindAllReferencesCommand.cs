@@ -87,39 +87,7 @@ namespace AntlrVSIX.FindAllReferences
             // Find all references..
             ////////////////////////
 
-            // First, open up every .g4 file in project and parse.
-            DTE application = DteExtensions.GetApplication();
-            if (application != null)
-            {
-                IEnumerable<ProjectItem> iterator = DteExtensions.SolutionFiles(application);
-                ProjectItem[] list = iterator.ToArray();
-                foreach (var item in list)
-                {
-                    //var doc = item.Document; CRASHES!!!! DO NOT USE!
-                    //var props = item.Properties;
-                    string file_name = item.Name;
-                    if (file_name != null)
-                    {
-                        string prefix = file_name.TrimSuffix(".g4");
-                        if (prefix == file_name) continue;
 
-                        try
-                        {
-                            object prop = item.Properties.Item("FullPath").Value;
-                            string ffn = (string)prop;
-                            if (!ParserDetails._per_file_parser_details.ContainsKey(ffn))
-                            {
-                                StreamReader sr = new StreamReader(ffn);
-                                ParserDetails foo = new ParserDetails();
-                                ParserDetails._per_file_parser_details[ffn] = foo;
-                                foo.Parse(sr.ReadToEnd(), ffn);
-                            }
-                        }
-                        catch (Exception eeks)
-                        { }
-                    }
-                }
-            }
 
             string classification = AntlrLanguagePackage.Instance.Classification;
             SnapshotSpan span = AntlrLanguagePackage.Instance.Span;

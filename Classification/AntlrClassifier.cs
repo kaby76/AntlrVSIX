@@ -49,6 +49,8 @@
 
         private void BufferChanged(object sender, TextContentChangedEventArgs e)
         {
+            if (!AntlrVSIX.Options.OptionsCommand.Instance.InteractiveParse)
+                  return;
             // Non-incremental parse. Future work: if performance becomes a problem, it would
             // probably be best to make the lexical analyzer incremental, then
             // do a full parse.

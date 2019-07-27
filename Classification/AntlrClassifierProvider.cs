@@ -1,4 +1,6 @@
-﻿namespace AntlrVSIX.Classification
+﻿using AntlrVSIX.Package;
+
+namespace AntlrVSIX.Classification
 {
     using AntlrVSIX.Tagger;
     using Color = System.Drawing.Color;
@@ -41,6 +43,9 @@
 
         public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
         {
+            // Ensure package is loaded.
+            AntlrLanguagePackage package = AntlrLanguagePackage.Instance;
+
             // Receive notification for Visual Studio theme change
             VSColorTheme.ThemeChanged += UpdateTheme;
             ITagAggregator<AntlrTokenTag> antlrTagAggregator =

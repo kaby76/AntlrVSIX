@@ -1,14 +1,6 @@
-﻿using AntlrVSIX.Package;
-using AntlrVSIX.NextSym;
-using AntlrVSIX.Reformat;
-
-namespace AntlrVSIX.Mouse
+﻿namespace AntlrVSIX.Mouse
 {
-    using AntlrVSIX.Extensions;
-    using AntlrVSIX.FindAllReferences;
-    using AntlrVSIX.GoToDefintion;
     using AntlrVSIX.Keyboard;
-    using AntlrVSIX.Rename;
     using Microsoft.VisualStudio.OLE.Interop;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text.Classification;
@@ -16,7 +8,6 @@ namespace AntlrVSIX.Mouse
     using Microsoft.VisualStudio.Text.Operations;
     using Microsoft.VisualStudio.Text;
     using Point = System.Windows.Point;
-    using System.Linq;
     using System.Windows.Input;
     using System;
 

@@ -100,125 +100,94 @@ namespace AntlrVSIX.NextSym
             /// Next rule.
             ////////////////////////
 
-            DTE application = DteExtensions.GetApplication();
-            if (application != null)
+
+            string classification = AntlrLanguagePackage.Instance.Classification;
+            SnapshotSpan span = AntlrLanguagePackage.Instance.Span;
+            ITextView view = AntlrLanguagePackage.Instance.View;
+
+            view = AntlrLanguagePackage.Instance.GetActiveView();
+            if (view == null) return;
+
+            ITextCaret car = view.Caret;
+            CaretPosition cp = car.Position;
+            SnapshotPoint bp = cp.BufferPosition;
+            int pos = bp.Position;
+
+            // First, find out what this view is, and what the file is.
+            ITextBuffer buffer = view.TextBuffer;
+            ITextDocument doc = buffer.GetTextDocument();
+            string path = doc.FilePath;
+
+            //ParserDetails details = null;
+            //bool found = ParserDetails._per_file_parser_details.TryGetValue(path, out details);
+            //if (!found) return;
+
+            List<IToken> where = new List<IToken>();
+            List<ParserDetails> where_details = new List<ParserDetails>();
+            int next_sym = forward ? Int32.MaxValue : -1;
+            foreach (var kvp in ParserDetails._per_file_parser_details)
             {
-
-                IEnumerable<ProjectItem> iterator = DteExtensions.SolutionFiles(application);
-                ProjectItem[] list = iterator.ToArray();
-                foreach (var item in list)
+                string file_name = kvp.Key;
+                if (file_name != path)
+                    continue;
+                ParserDetails details = kvp.Value;
+                foreach (var t in details._ant_nonterminals_defining)
                 {
-                    //var doc = item.Document; CRASHES!!!! DO NOT USE!
-                    //var props = item.Properties;
-                    string file_name = item.Name;
-                    if (file_name != null)
+                    if (forward)
                     {
-                        string prefix = file_name.TrimSuffix(".g4");
-                        if (prefix == file_name) continue;
-
-                        try
-                        {
-                            object prop = item.Properties.Item("FullPath").Value;
-                            string ffn = (string) prop;
-                            if (!ParserDetails._per_file_parser_details.ContainsKey(ffn))
-                            {
-                                StreamReader sr = new StreamReader(ffn);
-                                ParserDetails foo = new ParserDetails();
-                                ParserDetails._per_file_parser_details[ffn] = foo;
-                                foo.Parse(sr.ReadToEnd(), ffn);
-                            }
-                        }
-                        catch (Exception eeks)
-                        {
-                        }
+                        if (t.StartIndex > pos && t.StartIndex < next_sym)
+                            next_sym = t.StartIndex;
+                    }
+                    else
+                    {
+                        if (t.StartIndex < pos && t.StartIndex > next_sym)
+                            next_sym = t.StartIndex;
                     }
                 }
 
-                string classification = AntlrLanguagePackage.Instance.Classification;
-                SnapshotSpan span = AntlrLanguagePackage.Instance.Span;
-                ITextView view = AntlrLanguagePackage.Instance.View;
-
-                view = AntlrLanguagePackage.Instance.GetActiveView();
-
-                ITextCaret car = view.Caret;
-                CaretPosition cp = car.Position;
-                SnapshotPoint bp = cp.BufferPosition;
-                int pos = bp.Position;
-
-                // First, find out what this view is, and what the file is.
-                ITextBuffer buffer = view.TextBuffer;
-                ITextDocument doc = buffer.GetTextDocument();
-                string path = doc.FilePath;
-
-                //ParserDetails details = null;
-                //bool found = ParserDetails._per_file_parser_details.TryGetValue(path, out details);
-                //if (!found) return;
-
-                List<IToken> where = new List<IToken>();
-                List<ParserDetails> where_details = new List<ParserDetails>();
-                int next_sym = forward ? Int32.MaxValue : -1;
-                foreach (var kvp in ParserDetails._per_file_parser_details)
+                foreach (var t in details._ant_terminals_defining)
                 {
-                    string file_name = kvp.Key;
-                    if (file_name != path)
-                        continue;
-                    ParserDetails details = kvp.Value;
-                    foreach (var t in details._ant_nonterminals_defining)
+                    if (forward)
                     {
-                        if (forward)
-                        {
-                            if (t.StartIndex > pos && t.StartIndex < next_sym)
-                                next_sym = t.StartIndex;
-                        }
-                        else
-                        {
-                            if (t.StartIndex < pos && t.StartIndex > next_sym)
-                                next_sym = t.StartIndex;
-                        }
+                        if (t.StartIndex > pos && t.StartIndex < next_sym)
+                            next_sym = t.StartIndex;
                     }
-                    foreach (var t in details._ant_terminals_defining)
+                    else
                     {
-                        if (forward)
-                        {
-                            if (t.StartIndex > pos && t.StartIndex < next_sym)
-                                next_sym = t.StartIndex;
-                        }
-                        else
-                        {
-                            if (t.StartIndex < pos && t.StartIndex > next_sym)
-                                next_sym = t.StartIndex;
-                        }
+                        if (t.StartIndex < pos && t.StartIndex > next_sym)
+                            next_sym = t.StartIndex;
                     }
-                    break;
                 }
 
-                if (next_sym == Int32.MaxValue || next_sym < 0) return;
-
-                string full_file_name = path;
-                IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(full_file_name);
-                IVsTextViewExtensions.ShowFrame(full_file_name);
-
-                IWpfTextView wpftv = vstv.GetIWpfTextView();
-                if (wpftv == null) return;
-
-                int line_number;
-                int colum_number;
-                vstv.GetLineAndColumn(next_sym, out line_number, out colum_number);
-
-                // Create new span in the appropriate view.
-                ITextSnapshot cc = wpftv.TextBuffer.CurrentSnapshot;
-                SnapshotSpan ss = new SnapshotSpan(cc, next_sym, 1);
-                SnapshotPoint sp = ss.Start;
-                // Put cursor on symbol.
-                wpftv.Caret.MoveTo(sp); // This sets cursor, bot does not center.
-                // Center on cursor.
-                //wpftv.Caret.EnsureVisible(); // This works, sort of. It moves the scroll bar, but it does not CENTER! Does not really work!
-                if (line_number > 0)
-                    vstv.CenterLines(line_number - 1, 2);
-                else
-                    vstv.CenterLines(line_number, 1);
-                AntlrVSIX.Package.Menus.ResetMenus();
+                break;
             }
+
+            if (next_sym == Int32.MaxValue || next_sym < 0) return;
+
+            string full_file_name = path;
+            IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(full_file_name);
+            IVsTextViewExtensions.ShowFrame(full_file_name);
+
+            IWpfTextView wpftv = vstv.GetIWpfTextView();
+            if (wpftv == null) return;
+
+            int line_number;
+            int colum_number;
+            vstv.GetLineAndColumn(next_sym, out line_number, out colum_number);
+
+            // Create new span in the appropriate view.
+            ITextSnapshot cc = wpftv.TextBuffer.CurrentSnapshot;
+            SnapshotSpan ss = new SnapshotSpan(cc, next_sym, 1);
+            SnapshotPoint sp = ss.Start;
+            // Put cursor on symbol.
+            wpftv.Caret.MoveTo(sp); // This sets cursor, bot does not center.
+            // Center on cursor.
+            //wpftv.Caret.EnsureVisible(); // This works, sort of. It moves the scroll bar, but it does not CENTER! Does not really work!
+            if (line_number > 0)
+                vstv.CenterLines(line_number - 1, 2);
+            else
+                vstv.CenterLines(line_number, 1);
+            AntlrVSIX.Package.Menus.ResetMenus();
         }
     }
 }

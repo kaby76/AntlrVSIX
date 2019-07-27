@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.Text;
+﻿using System;
+using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using AntlrVSIX.Extensions;
 using AntlrVSIX.FindAllReferences;
@@ -11,10 +12,15 @@ using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Operations;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using AntlrVSIX.File;
 using AntlrVSIX.GoToVisitor;
+using AntlrVSIX.Grammar;
 using AntlrVSIX.NextSym;
 using AntlrVSIX.Options;
 using AntlrVSIX.Reformat;
+using EnvDTE;
 
 namespace AntlrVSIX.Package
 {
@@ -35,14 +41,16 @@ namespace AntlrVSIX.Package
         protected override void Initialize()
         {
             base.Initialize();
-            GoToDefinitionCommand.Initialize(this);
+            ParseAllFiles();
+            FileSaveLoad.Initialize(this);
             FindAllReferencesCommand.Initialize(this);
-            RenameCommand.Initialize(this);
             FindRefsWindowCommand.Initialize(this);
-            ReformatCommand.Initialize(this);
-            NextSymCommand.Initialize(this);
+            GoToDefinitionCommand.Initialize(this);
             GoToVisitorCommand.Initialize(this);
+            NextSymCommand.Initialize(this);
             OptionsCommand.Initialize(this);
+            ReformatCommand.Initialize(this);
+            RenameCommand.Initialize(this);
         }
 
         private static AntlrLanguagePackage _instance;
@@ -87,6 +95,43 @@ namespace AntlrVSIX.Package
                 }
             }
             return view;
+        }
+
+        private void ParseAllFiles()
+        {
+            // First, open up every .g4 file in project and parse.
+            DTE application = DteExtensions.GetApplication();
+            if (application == null) return;
+
+            IEnumerable<ProjectItem> iterator = DteExtensions.SolutionFiles(application);
+            ProjectItem[] list = iterator.ToArray();
+            foreach (var item in list)
+            {
+                //var doc = item.Document; CRASHES!!!! DO NOT USE!
+                //var props = item.Properties;
+                string file_name = item.Name;
+                if (file_name != null)
+                {
+                    string prefix = file_name.TrimSuffix(".g4");
+                    if (prefix == file_name) continue;
+
+                    try
+                    {
+                        object prop = item.Properties.Item("FullPath").Value;
+                        string ffn = (string) prop;
+                        if (!ParserDetails._per_file_parser_details.ContainsKey(ffn))
+                        {
+                            StreamReader sr = new StreamReader(ffn);
+                            ParserDetails foo = new ParserDetails();
+                            ParserDetails._per_file_parser_details[ffn] = foo;
+                            foo.Parse(sr.ReadToEnd(), ffn);
+                        }
+                    }
+                    catch (Exception eeks)
+                    {
+                    }
+                }
+            }
         }
     }
 }

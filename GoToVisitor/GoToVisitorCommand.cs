@@ -34,7 +34,7 @@ namespace AntlrVSIX.GoToVisitor
         private MenuCommand _menu_item1;
         private MenuCommand _menu_item2;
 
-        public GoToVisitorCommand(Microsoft.VisualStudio.Shell.Package package)
+        private GoToVisitorCommand(Microsoft.VisualStudio.Shell.Package package)
         {
             if (package == null)
             {
@@ -115,6 +115,7 @@ namespace AntlrVSIX.GoToVisitor
 
             // Get active view and determine if it's a grammar file.
             var view = AntlrLanguagePackage.Instance.GetActiveView();
+            if (view == null) return;
             ITextCaret car = view.Caret;
             CaretPosition cp = car.Position;
             SnapshotPoint bp = cp.BufferPosition;
@@ -123,45 +124,11 @@ namespace AntlrVSIX.GoToVisitor
             ITextDocument doc = buffer.GetTextDocument();
             string path = doc.FilePath;
             if (Path.GetExtension(path).ToLower() != ".g4") return;
-
-            // Parse this file to get properties.
-            try
-            {
-                if (!ParserDetails._per_file_parser_details.ContainsKey(path))
-                {
-                    StreamReader sr = new StreamReader(path);
-                    ParserDetails foo = new ParserDetails();
-                    ParserDetails._per_file_parser_details[path] = foo;
-                    foo.Parse(sr.ReadToEnd(), path);
-                }
-            }
-            catch (Exception eeks)
-            { }
-
-
-            Dictionary<string, SyntaxTree> trees = new Dictionary<string, SyntaxTree>();
-
-            foreach (var item in DteExtensions.SolutionFiles(application))
-            {
-                string file_name = item.Name;
-                if (file_name != null)
-                {
-                    string prefix = file_name.TrimSuffix(".cs");
-                    if (prefix == file_name) continue;
-
-                    try
-                    {
-                        object prop = item.Properties.Item("FullPath").Value;
-                        string ffn = (string)prop;
-                        StreamReader sr = new StreamReader(ffn);
-                        string code = sr.ReadToEnd();
-                        SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
-                        trees[ffn] = tree;
-                    }
-                    catch (Exception eeks)
-                    { }
-                }
-            }
+            // Assumed name...
+            var name = Path.GetFileName(doc.FilePath);
+            name = Path.GetFileNameWithoutExtension(name);
+            var listener_name = name + "BaseListener";
+            var visitor_name = name + "BaseVisitor";
 
             // Find details of the Antlr symbol pointed to.
             TextExtent extent = AntlrVSIX.Package.AntlrLanguagePackage.Instance.Navigator[view].GetExtentOfWord(bp);
@@ -216,11 +183,28 @@ namespace AntlrVSIX.GoToVisitor
             // Symbol
             var sym = token.Text;
 
-            // Assumed name...
-            var name = Path.GetFileName(doc.FilePath);
-            name = Path.GetFileNameWithoutExtension(name);
-            var listener_name = name + "BaseListener";
-            var visitor_name = name + "BaseVisitor";
+            Dictionary<string, SyntaxTree> trees = new Dictionary<string, SyntaxTree>();
+            foreach (var item in DteExtensions.SolutionFiles(application))
+            {
+                string file_name = item.Name;
+                if (file_name != null)
+                {
+                    string prefix = file_name.TrimSuffix(".cs");
+                    if (prefix == file_name) continue;
+
+                    try
+                    {
+                        object prop = item.Properties.Item("FullPath").Value;
+                        string ffn = (string)prop;
+                        StreamReader sr = new StreamReader(ffn);
+                        string code = sr.ReadToEnd();
+                        SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
+                        trees[ffn] = tree;
+                    }
+                    catch (Exception eeks)
+                    { }
+                }
+            }
 
             // Find first occurence of visitor for non-terminal pointed to.
             SyntaxTree found = null;
@@ -285,6 +269,7 @@ namespace AntlrVSIX.GoToVisitor
                                             vstv.CenterLines(line_number - 1, 2);
                                         else
                                             vstv.CenterLines(line_number, 1);
+                                        return;
                                     }
                                 }
                             }
@@ -292,17 +277,6 @@ namespace AntlrVSIX.GoToVisitor
                     }
                 }
                 
-                //var firstMember = root.Members[0];
-                //var helloWorldDeclaration = (NamespaceDeclarationSyntax)firstMember;
-                //var programDeclaration = (ClassDeclarationSyntax)helloWorldDeclaration.Members[0];
-                //var mainDeclaration = (MethodDeclarationSyntax)programDeclaration.Members[0];
-                //var argsParameter = mainDeclaration.ParameterList.Parameters[0];
-                //var firstParameters = root.DescendantNodes()
-                //    .OfType<MethodDeclarationSyntax>()
-                //    .Where(methodDeclaration => methodDeclaration.Identifier.ValueText == "Main")
-                //    .Select(methodDeclaration => methodDeclaration.ParameterList.Parameters.First());
-                //var argsParameter2 = firstParameters.Single();
-
             }
         }
     }

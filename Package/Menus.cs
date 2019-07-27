@@ -22,9 +22,7 @@ namespace AntlrVSIX.Package
                 return;
 
             IWpfTextView view = AntlrLanguagePackage.Instance.GetActiveView();
-
-            if (view == null)
-                return;
+            if (view == null) return;
 
             // First, find out what this view is, and what the file is.
             ITextBuffer buffer = view.TextBuffer;

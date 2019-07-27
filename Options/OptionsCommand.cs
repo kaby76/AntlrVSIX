@@ -16,7 +16,7 @@ namespace AntlrVSIX.Options
         public bool InteractiveParse = false;
         public bool RestrictedDirectory = false;
 
-        public OptionsCommand(Microsoft.VisualStudio.Shell.Package package)
+        private OptionsCommand(Microsoft.VisualStudio.Shell.Package package)
         {
             if (package == null)
             {
