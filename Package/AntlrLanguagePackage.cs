@@ -14,7 +14,6 @@ using Microsoft.VisualStudio.Text.Operations;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using AntlrVSIX.File;
 using AntlrVSIX.GoToVisitor;
 using AntlrVSIX.Grammar;
 using AntlrVSIX.NextSym;
@@ -42,7 +41,6 @@ namespace AntlrVSIX.Package
         {
             base.Initialize();
             ParseAllFiles();
-            FileChangeListener.Initialize(this);
             FindAllReferencesCommand.Initialize(this);
             FindRefsWindowCommand.Initialize(this);
             GoToDefinitionCommand.Initialize(this);

@@ -1,67 +1,59 @@
 ﻿using System;
+using System.ComponentModel.Composition;
+using Microsoft.VisualStudio.Commanding;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor.Commanding;
+using Microsoft.VisualStudio.Text.Editor.Commanding.Commands;
+using Microsoft.VisualStudio.Utilities;
 using System.IO;
+using AntlrVSIX.Extensions;
 using AntlrVSIX.Grammar;
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell.Interop;
 
 namespace AntlrVSIX.File
 {
-    internal class FileSaveListener : IVsRunningDocTableEvents3
+    [Export(typeof(ICommandHandler))]
+    [Name("Antlr")]
+    [ContentType(Constants.ContentType)]
+    [TextViewRole(PredefinedTextViewRoles.Document)]
+    public class FileSaveListener : ICommandHandler<SaveCommandArgs>
     {
-        public int OnAfterFirstDocumentLock(uint docCookie, uint dwRDTLockType, uint dwReadLocksRemaining,
-            uint dwEditLocksRemaining)
+        public string DisplayName => nameof(FileSaveListener);
+
+        private readonly IEditorCommandHandlerServiceFactory _commandService;
+
+        [ImportingConstructor]
+        public FileSaveListener(IEditorCommandHandlerServiceFactory commandService)
         {
-            return VSConstants.S_OK;
+            _commandService = commandService;
         }
 
-        public int OnBeforeLastDocumentUnlock(uint docCookie, uint dwRDTLockType, uint dwReadLocksRemaining,
-            uint dwEditLocksRemaining)
+        public bool ExecuteCommand(SaveCommandArgs args, CommandExecutionContext executionContext)
         {
-            return VSConstants.S_OK;
+
+            try
+            {
+                var view = args.TextView;
+                var ffn = view.GetFilePath();
+                if (Path.GetExtension(ffn).ToLower() == ".g4")
+                {
+                    StreamReader sr = new StreamReader(ffn);
+                    ParserDetails foo = new ParserDetails();
+                    ParserDetails._per_file_parser_details[ffn] = foo;
+                    foo.Parse(sr.ReadToEnd(), ffn);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex);
+            }
+
+            return true;
         }
 
-        public int OnAfterSave(uint docCookie)
+        public CommandState GetCommandState(SaveCommandArgs args)
         {
-            uint flags, readlocks, editlocks;
-            string name; IVsHierarchy hier;
-            uint itemid; IntPtr docData;
-            FileChangeListener.Instance.RunningDocumentTable.GetDocumentInfo(docCookie, out flags, out readlocks, out editlocks, out name, out hier, out itemid, out docData);
-
-            string ffn = name;
-            if (Path.GetExtension(ffn).ToLower() != ".g4") return VSConstants.S_OK;
-
-            StreamReader sr = new StreamReader(ffn);
-            ParserDetails foo = new ParserDetails();
-            ParserDetails._per_file_parser_details[ffn] = foo;
-            foo.Parse(sr.ReadToEnd(), ffn);
-            return VSConstants.S_OK;
+            return CommandState.Available;
         }
 
-        public int OnAfterAttributeChange(uint docCookie, uint grfAttribs)
-        {
-            return VSConstants.S_OK;
-        }
-
-        public int OnBeforeDocumentWindowShow(uint docCookie, int fFirstShow, IVsWindowFrame pFrame)
-        {
-            return VSConstants.S_OK;
-        }
-
-        public int OnAfterDocumentWindowHide(uint docCookie, IVsWindowFrame pFrame)
-        {
-            return VSConstants.S_OK;
-        }
-
-        public int OnAfterAttributeChangeEx(uint docCookie, uint grfAttribs, IVsHierarchy pHierOld, uint itemidOld,
-            string pszMkDocumentOld, IVsHierarchy pHierNew, uint itemidNew, string pszMkDocumentNew)
-        {
-            return VSConstants.S_OK;
-        }
-
-        public int OnBeforeSave(uint docCookie)
-        {
-            /////// MY CODE ////////
-            return VSConstants.S_OK;
-        }
     }
 }

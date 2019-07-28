@@ -70,7 +70,6 @@
     <Compile Include="Extensions\VsTextViewCreationListener.cs" />
     <Compile Include="File\ViewCreationListener.cs" />
     <Compile Include="File\FileSaveListener.cs" />
-    <Compile Include="File\FileChangeListener.cs" />
     <Compile Include="GoToVisitor\GoToVisitorCommand.cs" />
     <Compile Include="Keyboard\CtrlKeyState.cs" />
     <Compile Include="Keyboard\GoToDefKeyProcessor.cs" />
