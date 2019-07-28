@@ -42,7 +42,7 @@ namespace AntlrVSIX.Package
         {
             base.Initialize();
             ParseAllFiles();
-            FileSaveLoad.Initialize(this);
+            FileChangeListener.Initialize(this);
             FindAllReferencesCommand.Initialize(this);
             FindRefsWindowCommand.Initialize(this);
             GoToDefinitionCommand.Initialize(this);
