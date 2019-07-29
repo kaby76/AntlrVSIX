@@ -28,7 +28,7 @@ you will need to use Antlr4BuildTasks (which currently only targets C#), or run 
 tool from the command line.
 
 * This extension only works on Antlr4 grammars, and the grammar must be in a file that has the suffix
-".g4". That is the defacto standard, as almost all example grammars for Antlr4 use a .g4 suffix.
+".g4" or ".g".
 
 * The grammar used is the standard Antlr4 grammar in the examples: 
 https://github.com/antlr/grammars-v4/tree/master/antlr4.

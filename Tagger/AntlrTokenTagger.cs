@@ -35,7 +35,7 @@
 
             ITextDocument document = _buffer.GetTextDocument();
             string file_name = document.FilePath;
-            if (file_name.TrimSuffix(".g4") == file_name) return;
+            if (!file_name.IsAntlrSuffix()) return;
 
             if (!ParserDetails._per_file_parser_details.ContainsKey(file_name))
             {

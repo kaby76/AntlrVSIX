@@ -37,7 +37,7 @@ namespace AntlrVSIX.File
             IVsTextView vstv = AdaptersFactory.GetViewAdapter(wpftv);
             ITextBuffer doc = wpftv.TextBuffer;
             string ffn = doc.GetFilePath();
-            if (Path.GetExtension(ffn).ToLower() != ".g4") return;
+            if (!ffn.IsAntlrSuffix()) return;
 
             if (!ParserDetails._per_file_parser_details.ContainsKey(ffn))
             {

@@ -34,7 +34,7 @@ namespace AntlrVSIX.File
             {
                 var view = args.TextView;
                 var ffn = view.GetFilePath();
-                if (Path.GetExtension(ffn).ToLower() == ".g4")
+                if (Path.GetExtension(ffn).IsAntlrSuffix())
                 {
                     StreamReader sr = new StreamReader(ffn);
                     ParserDetails foo = new ParserDetails();

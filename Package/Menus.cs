@@ -52,8 +52,7 @@ namespace AntlrVSIX.Package
             var fp = view.GetFilePath();
             if (fp != null)
             {
-                string suffix = System.IO.Path.GetExtension(fp);
-                if (suffix.Equals(".g4") || suffix.Equals(".G4"))
+                if (fp.IsAntlrSuffix())
                 {
                     GoToDefinitionCommand.Instance.Visible = true;
                     FindAllReferencesCommand.Instance.Visible = true;

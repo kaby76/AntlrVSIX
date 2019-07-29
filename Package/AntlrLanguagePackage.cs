@@ -105,14 +105,10 @@ namespace AntlrVSIX.Package
             ProjectItem[] list = iterator.ToArray();
             foreach (var item in list)
             {
-                //var doc = item.Document; CRASHES!!!! DO NOT USE!
-                //var props = item.Properties;
                 string file_name = item.Name;
                 if (file_name != null)
                 {
-                    string prefix = file_name.TrimSuffix(".g4");
-                    if (prefix == file_name) continue;
-
+                    if (!file_name.IsAntlrSuffix()) continue;
                     try
                     {
                         object prop = item.Properties.Item("FullPath").Value;

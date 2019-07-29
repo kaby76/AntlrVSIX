@@ -1,4 +1,8 @@
-﻿namespace AntlrVSIX
+﻿using AntlrVSIX.Package;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Operations;
+
+namespace AntlrVSIX
 {
     using AntlrVSIX.Tagger;
     using Microsoft.VisualStudio.Language.Intellisense;
@@ -59,7 +63,13 @@
             if (trigger_point == null)
                 return;
 
-            foreach (IMappingTagSpan<AntlrTokenTag> cur_tag in _aggregator.GetTags(new SnapshotSpan(trigger_point, trigger_point)))
+            IWpfTextView view = AntlrLanguagePackage.Instance.GetActiveView();
+            if (view == null) return;
+
+            TextExtent extent = AntlrVSIX.Package.AntlrLanguagePackage.Instance.Navigator[view].GetExtentOfWord(trigger_point);
+            SnapshotSpan span = extent.Span;
+
+            foreach (IMappingTagSpan<AntlrTokenTag> cur_tag in _aggregator.GetTags(span))
             {
                 if (cur_tag.Tag.TagType == AntlrTagTypes.Terminal)
                 {

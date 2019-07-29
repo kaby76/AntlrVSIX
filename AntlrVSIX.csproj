@@ -62,13 +62,13 @@
   <ItemGroup>
     <Compile Include="Classification\FontColor.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="Extensions\DteExtensions.cs" />
-    <Compile Include="Extensions\ITextBufferExtensions.cs" />
-    <Compile Include="Extensions\ITextViewExtensions.cs" />
-    <Compile Include="Extensions\IVsTextViewExtensions.cs" />
-    <Compile Include="Extensions\IVsShellExtensions.cs" />
-    <Compile Include="Extensions\ProjectHelpers.cs" />
-    <Compile Include="Extensions\VsTextViewCreationListener.cs" />
+    <Compile Include="Helpers\DteExtensions.cs" />
+    <Compile Include="Helpers\ITextBufferExtensions.cs" />
+    <Compile Include="Helpers\ITextViewExtensions.cs" />
+    <Compile Include="Helpers\IVsTextViewExtensions.cs" />
+    <Compile Include="Helpers\IVsShellExtensions.cs" />
+    <Compile Include="Helpers\ProjectHelpers.cs" />
+    <Compile Include="Helpers\VsTextViewCreationListener.cs" />
     <Compile Include="File\ViewCreationListener.cs" />
     <Compile Include="File\FileSaveListener.cs" />
     <Compile Include="GoToVisitor\GoToVisitorCommand.cs" />
