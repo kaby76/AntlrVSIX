@@ -67,6 +67,7 @@
     <Compile Include="Extensions\ITextViewExtensions.cs" />
     <Compile Include="Extensions\IVsTextViewExtensions.cs" />
     <Compile Include="Extensions\IVsShellExtensions.cs" />
+    <Compile Include="Extensions\ProjectHelpers.cs" />
     <Compile Include="Extensions\VsTextViewCreationListener.cs" />
     <Compile Include="File\ViewCreationListener.cs" />
     <Compile Include="File\FileSaveListener.cs" />
