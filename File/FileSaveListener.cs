@@ -6,8 +6,10 @@ using Microsoft.VisualStudio.Text.Editor.Commanding;
 using Microsoft.VisualStudio.Text.Editor.Commanding.Commands;
 using Microsoft.VisualStudio.Utilities;
 using System.IO;
+using AntlrVSIX.Classification;
 using AntlrVSIX.Extensions;
 using AntlrVSIX.Grammar;
+using Microsoft.VisualStudio.Text;
 
 namespace AntlrVSIX.File
 {
@@ -36,10 +38,13 @@ namespace AntlrVSIX.File
                 var ffn = view.GetFilePath();
                 if (Path.GetExtension(ffn).IsAntlrSuffix())
                 {
-                    StreamReader sr = new StreamReader(ffn);
+                    var buffer = view.TextBuffer;
+                    var code = buffer.GetBufferText();
                     ParserDetails foo = new ParserDetails();
                     ParserDetails._per_file_parser_details[ffn] = foo;
-                    foo.Parse(sr.ReadToEnd(), ffn);
+                    foo.Parse(code, ffn);
+                    AntlrClassifier classifier = AntlrClassifier._buffer_to_classifier[buffer];
+                    classifier.BufferChanged();
                 }
             }
             catch (Exception ex)
