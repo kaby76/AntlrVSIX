@@ -15,6 +15,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.TextManager.Interop;
 using System.ComponentModel.Design;
 using System.IO;
+using AntlrVSIX.Keyboard;
 using EnvDTE80;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Operations;
@@ -377,14 +378,19 @@ namespace {name_space}
 
             // Look for enter or exit method for symbol.
             MethodDeclarationSyntax found_member = null;
+            var ctl = CtrlKeyState.GetStateForView(grammar_view).Enabled;
+            var capitalized_member_name = "";
+            if (visitor) capitalized_member_name = "Visit" + capitalized_symbol_name;
+            else if (ctl) capitalized_member_name = "Exit" + capitalized_symbol_name;
+            else capitalized_member_name = "Enter" + capitalized_symbol_name;
+            var capitalized_grammar_name = Capitalized(grammar_name);
             try
             {
-                var to_find = visitor ? ("Visit" + capitalized_symbol_name) : ("Enter" + capitalized_symbol_name);
                 foreach (var me in found_class.Members)
                 {
                     var method_member = me as MethodDeclarationSyntax;
                     if (method_member == null) continue;
-                    if (method_member.Identifier.ValueText.ToLower() == to_find.ToLower())
+                    if (method_member.Identifier.ValueText.ToLower() == capitalized_member_name.ToLower())
                     {
                         found_member = method_member;
                         throw new Exception();
@@ -396,17 +402,17 @@ namespace {name_space}
             }
             if (found_member == null)
             {
-                var capitalized_member_name = visitor ? ("Visit" + capitalized_symbol_name) : ("Enter" + capitalized_symbol_name);
-                var capitalized_grammar_name = Capitalized(grammar_name);
                 // Find point for edit.
                 var here = found_class.OpenBraceToken;
                 var spn = here.FullSpan;
                 var end = spn.End;
 
                 IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(class_file_path);
-                IVsTextViewExtensions.ShowFrame(class_file_path);
-                vstv = IVsTextViewExtensions.GetIVsTextView(class_file_path);
-
+                if (vstv == null)
+                {
+                    IVsTextViewExtensions.ShowFrame(class_file_path);
+                    vstv = IVsTextViewExtensions.GetIVsTextView(class_file_path);
+                }
                 IWpfTextView wpftv = vstv.GetIWpfTextView();
                 if (wpftv == null) return;
                 ITextSnapshot cc = wpftv.TextBuffer.CurrentSnapshot;
@@ -431,7 +437,7 @@ public override Result {capitalized_member_name}([NotNull] {capitalized_grammar_
                     : $@"
 public override void {capitalized_member_name}({capitalized_grammar_name}Parser.{capitalized_symbol_name}Context context)
 {{
-    base.Enter{capitalized_symbol_name}(context);
+    base.{capitalized_member_name}(context);
 }}
 ";
                 editPoint.Insert(member);
