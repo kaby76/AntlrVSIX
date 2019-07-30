@@ -31,10 +31,16 @@
         public const string ClassificationNameLiteral = "aliteral";
 
         /* Color scheme for the tagging. */
-        public static Color ColorTextForegroundTerminal = Colors.Lime;
-        public static Color ColorTextForegroundNonterminal = Colors.Purple;
-        public static Color ColorTextForegroundComment = Colors.Green;
-        public static Color ColorTextForegroundKeyword = Colors.Blue;
-        public static Color ColorTextForegroundLiteral = Colors.Red;
+        public static Color NormalColorTextForegroundTerminal = Colors.Lime;
+        public static Color NormalColorTextForegroundNonterminal = Colors.Purple;
+        public static Color NormalColorTextForegroundComment = Colors.Green;
+        public static Color NormalColorTextForegroundKeyword = Colors.Blue;
+        public static Color NormalColorTextForegroundLiteral = Colors.Red;
+
+        public static Color InvertedColorTextForegroundTerminal = Colors.LightYellow;
+        public static Color InvertedColorTextForegroundNonterminal = Colors.LightPink;
+        public static Color InvertedColorTextForegroundComment = Colors.LightGreen;
+        public static Color InvertedColorTextForegroundKeyword = Colors.LightBlue;
+        public static Color InvertedColorTextForegroundLiteral = Colors.Red;
     }
 }

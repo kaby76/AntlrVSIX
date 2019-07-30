@@ -1,10 +1,19 @@
-﻿namespace AntlrVSIX.Classification
+﻿using Microsoft.VisualStudio.PlatformUI;
+
+namespace AntlrVSIX.Classification
 {
     using Microsoft.VisualStudio.Text.Classification;
     using Microsoft.VisualStudio.Utilities;
     using System.Collections.Generic;
     using System.ComponentModel.Composition;
 
+    class Themes
+    {
+        public static bool IsInvertedTheme()
+        {
+            return VSColorTheme.GetThemedColor(EnvironmentColors.ToolWindowBackgroundColorKey).GetBrightness() < 0.5;
+        }
+    }
 
     // Please refer to Language Service and Editor Extension Points,
     // https://msdn.microsoft.com/en-us/library/dd885244.aspx,
@@ -21,7 +30,10 @@
         public Terminal()
         {
             DisplayName = "Antlr Terminal"; //human readable version of the name
-            ForegroundColor = Constants.ColorTextForegroundTerminal;
+            if (Themes.IsInvertedTheme())
+                ForegroundColor = Constants.InvertedColorTextForegroundTerminal;
+            else
+                ForegroundColor = Constants.NormalColorTextForegroundTerminal;
         }
     }
 
@@ -35,7 +47,10 @@
         public Nonterminal()
         {
             DisplayName = "Antlr Nonterminal"; //human readable version of the name
-            ForegroundColor = Constants.ColorTextForegroundNonterminal;
+            if (Themes.IsInvertedTheme())
+                ForegroundColor = Constants.InvertedColorTextForegroundNonterminal;
+            else
+                ForegroundColor = Constants.NormalColorTextForegroundNonterminal;
         }
     }
 
@@ -49,7 +64,10 @@
         public AComment()
         {
             DisplayName = "Antlr Comment"; //human readable version of the name
-            ForegroundColor = Constants.ColorTextForegroundComment;
+            if (Themes.IsInvertedTheme())
+                ForegroundColor = Constants.InvertedColorTextForegroundComment;
+            else
+                ForegroundColor = Constants.NormalColorTextForegroundComment;
         }
     }
 
@@ -63,7 +81,10 @@
         public Keyword()
         {
             DisplayName = "Antlr Keyword"; //human readable version of the name
-            ForegroundColor = Constants.ColorTextForegroundKeyword;
+            if (Themes.IsInvertedTheme())
+                ForegroundColor = Constants.InvertedColorTextForegroundKeyword;
+            else
+                ForegroundColor = Constants.NormalColorTextForegroundKeyword;
         }
     }
 
@@ -77,7 +98,10 @@
         public Literal()
         {
             DisplayName = "Antlr Literal"; //human readable version of the name
-            ForegroundColor = Constants.ColorTextForegroundLiteral;
+            if (Themes.IsInvertedTheme())
+                ForegroundColor = Constants.InvertedColorTextForegroundLiteral;
+            else
+                ForegroundColor = Constants.NormalColorTextForegroundLiteral;
         }
     }
 }
