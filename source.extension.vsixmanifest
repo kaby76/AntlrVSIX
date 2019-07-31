@@ -4,9 +4,10 @@
         <Identity Id="AntlrVSIX.Ken Domino.ace904b7-00bd-4b97-afd3-fd0818eddc46"
                   Version="2.0" Language="en-US" Publisher="Ken Domino" />
         <DisplayName>AntlrVSIX</DisplayName>
-        <Description xml:space="preserve">This is an open source Antlr4 grammar extension for Visual Studio 2015 and 2017. The extension offers tagging of grammar symbols, searching, renaming, and reformatting.</Description>
+        <Description xml:space="preserve">Antlr4 grammar editing support extension. See NuGet library Antlr4BuildTasks for build support.</Description>
         <MoreInfo>https://github.com/kaby76/AntlrVSIX</MoreInfo>
         <License>license.txt</License>
+        <PreviewImage>AntlrVSIX_large.png</PreviewImage>
         <Tags>Antlr4</Tags>
     </Metadata>
     <Installation InstalledByMsi="false">
