@@ -28,7 +28,7 @@ you will need to use Antlr4BuildTasks (which currently only targets C#), or run 
 tool from the command line.
 
 * This extension only works on Antlr4 grammars, and the grammar must be in a file that has the suffix
-".g4" or ".g".
+".g4" or ".g"
 
 * The grammar used is the standard Antlr4 grammar in the examples: 
 https://github.com/antlr/grammars-v4/tree/master/antlr4.
@@ -60,7 +60,7 @@ Consequently, your grammar may be valid according to the Antlr compiler but not 
 
 ## New in v2.0 (to be released):
 
-* The extension will be only compatible with VS 2019.
+* The extension will support VS 2019 and VS 2017.
 
 * A menu for the extension will be added to a submenu under Extensions. The functionality provided will
 duplicate that in context menus.
@@ -74,13 +74,13 @@ of .csproj format that is compatible with VS extensions. Unfortunately, updating
 VS 2019 without having to manually run the Antlr4 Java tool on the command line.
 Building of the extension itself will be upgraded to use the Antlr4BuildTasks package.
 
-* Listener and Visitor classes will be automatically generate for a grammar with a simple double click
-so you do not have to manually create the file, class, and method.
+* Listener and Visitor classes are generated for a grammar with a right-click
+menu operation. For Listeners, there are two methods associated with a nonterminal.
+Depress the control key to select the Exit method, otherwise it will
+select the Enter method.
 
-* Color selection for tagging will be moved from the VS Options and placed in a separate options dialog box
-for the extension.
-
-* Expansion and contraction of rules will be provided.
+* An options menu is provided to turn on incremental parsing. By default, incremental
+* parsing is off because it is very slow.
 
 ## New in v1.2.4:
 

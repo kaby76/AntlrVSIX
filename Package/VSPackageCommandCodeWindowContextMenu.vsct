@@ -9,45 +9,62 @@
    <Commands package="guidVSPackageCommandCodeWindowContextMenu">
 
       <Groups>
-         <Group guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="MyGroupForCommands" />
+        <Group guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="MyMenuGroup" priority="0x600">
+          <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_CODEWIN"/>
+        </Group>
+         <Group guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="TopLevelMenuGroup" priority="0x0600">
+           <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="TopLevelMenu"/>
+         </Group>
+         <Group guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="NavigateMenuGroup" priority="0x0600">
+           <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="NavigateMenu"/>
+         </Group>
+         <Group guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="FindMenuGroup" priority="0x0600">
+           <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="FindMenu"/>
+         </Group>
       </Groups>
 
       <Buttons>
-        <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="Command1Id" type="Button">
+        <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="GoToDefinitionCmd" priority="0x100" type="Button">
+          <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="NavigateMenuGroup"/>
+          <CommandFlag>DefaultDisabled</CommandFlag>
           <Strings>
             <ButtonText>Go to definition</ButtonText>
           </Strings>
-          <!-- The 2 lines below set the default visibility. Note, VS seems to say CommandFlag is an invalid element,
-               the code seems to work. -->
-          <CommandFlag>DefaultInvisible</CommandFlag>
-          <CommandFlag>DynamicVisibility</CommandFlag>
         </Button>
-        <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="Command2Id" type="Button">
+        <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="NextRuleCmd" priority="0x100" type="Button">
+          <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="NavigateMenuGroup"/>
+          <CommandFlag>DefaultDisabled</CommandFlag>
           <Strings>
-            <ButtonText>Find all references</ButtonText>
+            <ButtonText>Next rule</ButtonText>
           </Strings>
-          <!-- The 2 lines below set the default visibility. Note, VS seems to say CommandFlag is an invalid element,
-               the code seems to work. -->
-          <CommandFlag>DefaultInvisible</CommandFlag>
-          <CommandFlag>DynamicVisibility</CommandFlag>
         </Button>
-        <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="Command3Id" type="Button">
+        <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="PrevRuleCmd" priority="0x100" type="Button">
+          <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="NavigateMenuGroup"/>
+          <CommandFlag>DefaultDisabled</CommandFlag>
           <Strings>
-            <ButtonText>Rename Antlr symbol</ButtonText>
+            <ButtonText>Previous rule</ButtonText>
           </Strings>
-          <!-- The 2 lines below set the default visibility. Note, VS seems to say CommandFlag is an invalid element,
-               the code seems to work. -->
-          <CommandFlag>DefaultInvisible</CommandFlag>
-          <CommandFlag>DynamicVisibility</CommandFlag>
         </Button>
-        <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="Command4Id" type="Button">
+        <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="GoToListenerCmd" priority="0x100" type="Button">
+          <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="NavigateMenuGroup"/>
+          <CommandFlag>DefaultDisabled</CommandFlag>
           <Strings>
-            <ButtonText>Reformat Antlr rules</ButtonText>
+            <ButtonText>Go to Listener</ButtonText>
           </Strings>
-          <!-- The 2 lines below set the default visibility. Note, VS seems to say CommandFlag is an invalid element,
-               the code seems to work. -->
-          <CommandFlag>DefaultInvisible</CommandFlag>
-          <CommandFlag>DynamicVisibility</CommandFlag>
+        </Button>
+        <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="GoToVisitorCmd" priority="0x100" type="Button">
+          <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="NavigateMenuGroup"/>
+          <CommandFlag>DefaultDisabled</CommandFlag>
+          <Strings>
+            <ButtonText>Go to Visitor</ButtonText>
+          </Strings>
+        </Button>
+        <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="FindAllOccurencesCmd" priority="0x100" type="Button">
+          <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="FindMenuGroup"/>
+          <CommandFlag>DefaultDisabled</CommandFlag>
+          <Strings>
+            <ButtonText>Find all occurences</ButtonText>
+          </Strings>
         </Button>
 
         <Button guid="guidAntlrLanguagePackageCmdSet" id="cmdidFindRefsWindowCommand" priority="0x0100" type="Button">
@@ -58,10 +75,34 @@
         </Button>
       </Buttons>
 
+     <Menus>
+       <Menu guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="TopLevelMenu" priority="0x700" type="Menu">
+         <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="MyMenuGroup" />
+         <Strings>
+           <ButtonText>Antlr</ButtonText>
+           <CommandName>Antlr</CommandName>
+         </Strings>
+       </Menu>
+       <Menu guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="NavigateMenu" priority="0x700" type="Menu">
+         <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="TopLevelMenuGroup" />
+         <Strings>
+           <ButtonText>Navigate</ButtonText>
+           <CommandName>Navigate</CommandName>
+         </Strings>
+       </Menu>
+       <Menu guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="FindMenu" priority="0x700" type="Menu">
+         <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="TopLevelMenuGroup" />
+         <Strings>
+           <ButtonText>Find</ButtonText>
+           <CommandName>Find</CommandName>
+         </Strings>
+       </Menu>
+     </Menus>
+
       <Bitmaps>
         <Bitmap guid="guidImages" href="..\Resources\Command1.png" usedList="bmpPic1" />
         <Bitmap guid="guidImages1" href="..\Resources\FindRefsWindowCommand.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
-    </Bitmaps>
+      </Bitmaps>
 
 
      <Groups>
@@ -158,15 +199,10 @@
 
    <CommandPlacements>
 
-      <!-- Placement for group. The parent of a group is a menu, context menu or toolbar. 
-           The priority sets the position of the group compared to the priority of other existing groups in the menu.    
-      -->
       <CommandPlacement guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="MyGroupForCommands" priority="0xFFFF">
-         <!-- The parent of the group will be the code window context menu -->
          <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_CODEWIN" />
       </CommandPlacement>
-
-      <!-- Placement for command. The parent of a command is always a group, never a menu, context menu or toolbar. -->
+<!--
      <CommandPlacement guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="Command1Id" priority="0x0001">
        <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="MyGroupForCommands" />
      </CommandPlacement>
@@ -179,6 +215,7 @@
      <CommandPlacement guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="Command4Id" priority="0x0001">
        <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="MyGroupForCommands" />
      </CommandPlacement>
+     -->
    </CommandPlacements>
 
 
@@ -187,11 +224,20 @@
     
     <GuidSymbol name="guidVSPackageCommandCodeWindowContextMenuCmdSet" value="{0c1acc31-15ac-417c-86b2-eefdc669e8bf}">
       <IDSymbol name="MyGroupForCommands" value="0x1020" />
-      <!-- Warning!!: Keep the value in sync with the code in Command1.cs -->
-      <IDSymbol name="Command1Id" value="0x0100" />
-      <IDSymbol name="Command2Id" value="0x0101" />
-      <IDSymbol name="Command3Id" value="0x0102" />
-      <IDSymbol name="Command4Id" value="0x0103" />
+      <IDSymbol name="MyMenuGroup" value="0x6010" />
+      <IDSymbol name="TopLevelMenu" value="0x6011" />
+      <IDSymbol name="TopLevelMenuGroup" value="0x6012" />
+      <IDSymbol name="NavigateMenu" value="0x6013" />
+      <IDSymbol name="NavigateMenuGroup" value="0x6014" />
+      <IDSymbol name="FindMenu" value="0x6015" />
+      <IDSymbol name="FindMenuGroup" value="0x6016" />
+      <IDSymbol name="GoToDefinitionCmd" value="0x0100" />
+      <IDSymbol name="NextRuleCmd" value="0x7002" />
+      <IDSymbol name="PrevRuleCmd" value="0x7003" />
+      <IDSymbol name="FindAllOccurencesCmd" value="0x7004" />
+      <IDSymbol name="GoToListenerCmd" value="0x7005" />
+      <IDSymbol name="GoToVisitorCmd" value="0x7006" />
+      <IDSymbol name="OptionsCmd" value="0x7007" />
     </GuidSymbol>
 
     <GuidSymbol name="guidImages" value="{68759f95-6f1d-4a77-87ea-192fc8d811f1}">
