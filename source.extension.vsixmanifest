@@ -8,7 +8,7 @@
         <MoreInfo>https://github.com/kaby76/AntlrVSIX</MoreInfo>
         <License>license.txt</License>
         <PreviewImage>AntlrVSIX_large.png</PreviewImage>
-        <Tags>Antlr4</Tags>
+        <Tags>Antlr Antlr4</Tags>
     </Metadata>
     <Installation InstalledByMsi="false">
         <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[15.0,17.0)" />
