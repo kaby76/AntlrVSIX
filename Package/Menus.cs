@@ -32,18 +32,10 @@ namespace AntlrVSIX.Package
 
             // Whack any old values that cursor points to.
             GoToDefinitionCommand.Instance.Enabled = false;
-            GoToDefinitionCommand.Instance.Visible = false;
-
             FindAllReferencesCommand.Instance.Enabled = false;
-            FindAllReferencesCommand.Instance.Visible = false;
-
             NextSymCommand.Instance.Enabled = true;
-
             RenameCommand.Instance.Enabled = false;
-            RenameCommand.Instance.Visible = false;
-
             Reformat.ReformatCommand.Instance.Enabled = false;
-            Reformat.ReformatCommand.Instance.Visible = false;
 
             AntlrLanguagePackage.Instance.Span = default(SnapshotSpan);
             AntlrLanguagePackage.Instance.Classification = default(string);
@@ -54,12 +46,8 @@ namespace AntlrVSIX.Package
             {
                 if (fp.IsAntlrSuffix())
                 {
-                    GoToDefinitionCommand.Instance.Visible = true;
-                    FindAllReferencesCommand.Instance.Visible = true;
-                    RenameCommand.Instance.Visible = true;
                     NextSymCommand.Instance.Enabled = true;
                     Reformat.ReformatCommand.Instance.Enabled = true;
-                    Reformat.ReformatCommand.Instance.Visible = true;
                 }
             }
             else return;
@@ -82,51 +70,28 @@ namespace AntlrVSIX.Package
                     AntlrLanguagePackage.Instance.Classification = AntlrVSIX.Constants.ClassificationNameTerminal;
 
                     GoToDefinitionCommand.Instance.Enabled = true;
-                    GoToDefinitionCommand.Instance.Visible = true;
-
                     FindAllReferencesCommand.Instance.Enabled = true;
-                    FindAllReferencesCommand.Instance.Visible = true;
-
                     RenameCommand.Instance.Enabled = true;
-                    RenameCommand.Instance.Visible = true;
-
                     Reformat.ReformatCommand.Instance.Enabled = true;
-                    Reformat.ReformatCommand.Instance.Visible = true;
                 }
                 else if (name == AntlrVSIX.Constants.ClassificationNameNonterminal)
                 {
                     AntlrLanguagePackage.Instance.Classification = AntlrVSIX.Constants.ClassificationNameNonterminal;
 
                     GoToDefinitionCommand.Instance.Enabled = true;
-                    GoToDefinitionCommand.Instance.Visible = true;
-
                     FindAllReferencesCommand.Instance.Enabled = true;
-                    FindAllReferencesCommand.Instance.Visible = true;
-
                     RenameCommand.Instance.Enabled = true;
-                    RenameCommand.Instance.Visible = true;
-
                     Reformat.ReformatCommand.Instance.Enabled = true;
-                    Reformat.ReformatCommand.Instance.Visible = true;
-
                     GoToVisitor.GoToVisitorCommand.Instance.Enabled = true;
-                    GoToVisitor.GoToVisitorCommand.Instance.Visible = true;
                 }
                 else if (name == AntlrVSIX.Constants.ClassificationNameLiteral)
                 {
                     AntlrLanguagePackage.Instance.Classification = AntlrVSIX.Constants.ClassificationNameLiteral;
 
                     GoToDefinitionCommand.Instance.Enabled = true;
-                    GoToDefinitionCommand.Instance.Visible = true;
-
                     FindAllReferencesCommand.Instance.Enabled = true;
-                    FindAllReferencesCommand.Instance.Visible = true;
-
                     RenameCommand.Instance.Enabled = true;
-                    RenameCommand.Instance.Visible = true;
-
                     Reformat.ReformatCommand.Instance.Enabled = true;
-                    Reformat.ReformatCommand.Instance.Visible = true;
                 }
             }
         }

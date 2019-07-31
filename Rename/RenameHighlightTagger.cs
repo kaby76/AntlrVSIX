@@ -1,4 +1,6 @@
-﻿namespace AntlrVSIX.Rename
+﻿using System.ComponentModel.Design;
+
+namespace AntlrVSIX.Rename
 {
     using Antlr4.Runtime;
     using AntlrVSIX.Extensions;
@@ -24,7 +26,7 @@
 
     public class RenameHighlightTagger : ITagger<HighlightWordTag>
     {
-        public static bool Enabled = false;
+        public bool Enabled = false;
         private object updateLock = new object();
         private IClassifier _aggregator;
 
@@ -34,7 +36,8 @@
         private ITextStructureNavigator TextStructureNavigator { get; set; }
         private NormalizedSnapshotSpanCollection WordSpans { get; set; }
         private SnapshotSpan? CurrentWord { get; set; }
-        private SnapshotPoint RequestedPoint { get; set; }
+        public SnapshotPoint RequestedPoint { get; set; }
+        private static Dictionary<ITextView, RenameHighlightTagger> _view_to_tagger = new Dictionary<ITextView, RenameHighlightTagger>();
 
         public RenameHighlightTagger(ITextView view, ITextBuffer sourceBuffer, ITextSearchService textSearchService,
                                    ITextStructureNavigator textStructureNavigator,
@@ -53,6 +56,8 @@
             // or the caret is moved, we refresh our list of highlighted words.
             View.Caret.PositionChanged += CaretPositionChanged;
             View.LayoutChanged += ViewLayoutChanged;
+
+            _view_to_tagger[view] = this;
         }
 
         private void ViewLayoutChanged(object sender, TextViewLayoutChangedEventArgs e)
@@ -91,10 +96,21 @@
             ThreadPool.QueueUserWorkItem(UpdateWordAdornments);
         }
 
-        private void UpdateWordAdornments(object threadContext)
+        public static void Update(ITextView view, SnapshotPoint point)
+        {
+            foreach (var kvp in _view_to_tagger)
+                if (view == kvp.Key)
+                {
+                    kvp.Value.Enabled = true;
+                    kvp.Value.RequestedPoint = point;
+                    kvp.Value.Update();
+                    break;
+                }
+        }
+
+        public void Update()
         {
             if (!Enabled) return;
-
             Enabled = false;
 
             SnapshotPoint currentRequest = RequestedPoint;
@@ -244,6 +260,7 @@
                 {
                     results.Reverse();
                     var new_name = inputDialog.Answer;
+                    
                     // Replace all occurrences of symbol, working backwards.
                     foreach (Entry e in results)
                     {
@@ -277,7 +294,33 @@
                         foo.Parse(tb.GetBufferText(), f);
                     }
                 }
+
+                foreach (var kvp in _view_to_tagger)
+                {
+                    kvp.Value.WordSpans = new NormalizedSnapshotSpanCollection();
+                    kvp.Value.CurrentWord = null;
+                    var clear_view = kvp.Key;
+                    var tb = clear_view.TextBuffer;
+                    ITextSnapshot snapshot = tb.CurrentSnapshot;
+                    TagsChanged(this, new SnapshotSpanEventArgs(new SnapshotSpan(snapshot, new Span(0, snapshot.Length))));
+                }
             });
+        }
+
+        //private static IDisposable CreateSelectionUndo(ISelectionTracker selectionTracker, IServiceContainer services, string transactionName)
+        //{
+        //    var service = (IServiceProvider) AntlrVSIX.Package.AntlrLanguagePackage.Instance;
+        //    var textBufferUndoManagerProvider = service.GetService(typeof(ITextBufferUndoManagerProvider));
+        //    if (textBufferUndoManagerProvider != null)
+        //    {
+        //        return new SelectionUndo(selectionTracker, textBufferUndoManagerProvider, transactionName, automaticTracking: false);
+        //    }
+        //    return Disposable.Empty;
+        //}
+
+        private void UpdateWordAdornments(object threadContext)
+        {
+            Update();
         }
 
         static bool WordExtentIsValid(SnapshotPoint currentRequest, TextExtent word)

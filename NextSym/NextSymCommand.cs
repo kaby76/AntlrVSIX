@@ -20,6 +20,8 @@ namespace AntlrVSIX.NextSym
         private readonly Microsoft.VisualStudio.Shell.Package _package;
         private MenuCommand _menu_item1;
         private MenuCommand _menu_item2;
+        private MenuCommand _menu_item3;
+        private MenuCommand _menu_item4;
 
         private NextSymCommand(Microsoft.VisualStudio.Shell.Package package)
         {
@@ -38,7 +40,7 @@ namespace AntlrVSIX.NextSym
 
             {
                 // Set up hook for context menu.
-                var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidMenuAndCommandsCmdSet), 0x7002);
+                var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidVSPackageCommandCodeWindowContextMenuCmdSet), 0x7002);
                 _menu_item1 = new MenuCommand(this.MenuItemCallbackFor, menuCommandID);
                 _menu_item1.Enabled = true;
                 _menu_item1.Visible = true;
@@ -46,11 +48,27 @@ namespace AntlrVSIX.NextSym
             }
             {
                 // Set up hook for context menu.
-                var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidMenuAndCommandsCmdSet), 0x7003);
+                var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidVSPackageCommandCodeWindowContextMenuCmdSet), 0x7003);
                 _menu_item2 = new MenuCommand(this.MenuItemCallbackRev, menuCommandID);
                 _menu_item2.Enabled = true;
                 _menu_item2.Visible = true;
                 commandService.AddCommand(_menu_item2);
+            }
+            {
+                // Set up hook for context menu.
+                var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidMenuAndCommandsCmdSet), 0x7002);
+                _menu_item3 = new MenuCommand(this.MenuItemCallbackFor, menuCommandID);
+                _menu_item3.Enabled = true;
+                _menu_item3.Visible = true;
+                commandService.AddCommand(_menu_item3);
+            }
+            {
+                // Set up hook for context menu.
+                var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidMenuAndCommandsCmdSet), 0x7003);
+                _menu_item4 = new MenuCommand(this.MenuItemCallbackRev, menuCommandID);
+                _menu_item4.Enabled = true;
+                _menu_item4.Visible = true;
+                commandService.AddCommand(_menu_item4);
             }
         }
 

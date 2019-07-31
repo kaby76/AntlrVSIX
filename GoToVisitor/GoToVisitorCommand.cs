@@ -27,6 +27,8 @@ namespace AntlrVSIX.GoToVisitor
         private readonly Microsoft.VisualStudio.Shell.Package _package;
         private MenuCommand _menu_item1;
         private MenuCommand _menu_item2;
+        private MenuCommand _menu_item3;
+        private MenuCommand _menu_item4;
 
         private GoToVisitorCommand(Microsoft.VisualStudio.Shell.Package package)
         {
@@ -45,7 +47,7 @@ namespace AntlrVSIX.GoToVisitor
 
             {
                 // Set up hook for context menu.
-                var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidMenuAndCommandsCmdSet), 0x7005);
+                var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidVSPackageCommandCodeWindowContextMenuCmdSet), 0x7005);
                 _menu_item1 = new MenuCommand(this.MenuItemCallbackListener, menuCommandID);
                 _menu_item1.Enabled = false;
                 _menu_item1.Visible = true;
@@ -53,11 +55,27 @@ namespace AntlrVSIX.GoToVisitor
             }
             {
                 // Set up hook for context menu.
-                var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidMenuAndCommandsCmdSet), 0x7006);
+                var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidVSPackageCommandCodeWindowContextMenuCmdSet), 0x7006);
                 _menu_item2 = new MenuCommand(this.MenuItemCallbackVisitor, menuCommandID);
                 _menu_item2.Enabled = false;
                 _menu_item2.Visible = true;
                 commandService.AddCommand(_menu_item2);
+            }
+            {
+                // Set up hook for context menu.
+                var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidMenuAndCommandsCmdSet), 0x7005);
+                _menu_item3 = new MenuCommand(this.MenuItemCallbackListener, menuCommandID);
+                _menu_item3.Enabled = false;
+                _menu_item3.Visible = true;
+                commandService.AddCommand(_menu_item3);
+            }
+            {
+                // Set up hook for context menu.
+                var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidMenuAndCommandsCmdSet), 0x7006);
+                _menu_item4 = new MenuCommand(this.MenuItemCallbackVisitor, menuCommandID);
+                _menu_item4.Enabled = false;
+                _menu_item4.Visible = true;
+                commandService.AddCommand(_menu_item4);
             }
         }
 
@@ -67,16 +85,14 @@ namespace AntlrVSIX.GoToVisitor
             {
                 if (_menu_item1 != null) _menu_item1.Enabled = value;
                 if (_menu_item2 != null) _menu_item2.Enabled = value;
+                if (_menu_item3 != null) _menu_item3.Enabled = value;
+                if (_menu_item4 != null) _menu_item4.Enabled = value;
             }
         }
 
         public bool Visible
         {
-            set
-            {
-                if (_menu_item1 != null) _menu_item1.Visible = value;
-                if (_menu_item2 != null) _menu_item2.Visible = value;
-            }
+            set { }
         }
 
         public static GoToVisitorCommand Instance { get; private set; }

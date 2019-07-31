@@ -5,23 +5,20 @@ namespace AntlrVSIX.Rename
     using Antlr4.Runtime;
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Grammar;
-    using EnvDTE;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.TextManager.Interop;
     using System.Collections.Generic;
     using System.ComponentModel.Design;
-    using System.IO;
     using System.Linq;
     using System;
 
     internal sealed class RenameCommand
     {
-        public const int _command_id = 0x0102;
-        public static readonly Guid _command_set = new Guid("0c1acc31-15ac-417c-86b2-eefdc669e8bf");
         private readonly Package _package;
-        private MenuCommand _menu_item;
+        private MenuCommand _menu_item1;
+        private MenuCommand _menu_item2;
 
         private RenameCommand(Package package)
         {
@@ -32,24 +29,34 @@ namespace AntlrVSIX.Rename
             _package = package;
             OleMenuCommandService command_service = this.ServiceProvider.GetService(
                 typeof(IMenuCommandService)) as OleMenuCommandService;
-            if (command_service != null)
+            if (command_service == null) return;
+
             {
-                CommandID menu_command_id = new CommandID(_command_set, _command_id);
-                _menu_item = new MenuCommand(RenameCallback, menu_command_id);
-                _menu_item.Enabled = false;
-                _menu_item.Visible = false;
-                command_service.AddCommand(_menu_item);
+                CommandID menu_command_id = new CommandID(new Guid(AntlrVSIX.Constants.guidVSPackageCommandCodeWindowContextMenuCmdSet), 0x7009);
+                _menu_item1 = new MenuCommand(RenameCallback, menu_command_id);
+                _menu_item1.Enabled = false;
+                command_service.AddCommand(_menu_item1);
+            }
+            {
+                CommandID menu_command_id = new CommandID(new Guid(AntlrVSIX.Constants.guidMenuAndCommandsCmdSet), 0x7009);
+                _menu_item2 = new MenuCommand(RenameCallback, menu_command_id);
+                _menu_item2.Enabled = false;
+                command_service.AddCommand(_menu_item2);
             }
         }
 
         public bool Enabled
         {
-            set { _menu_item.Enabled = value; }
+            set
+            {
+                _menu_item1.Enabled = value;
+                _menu_item2.Enabled = value;
+            }
         }
 
         public bool Visible
         {
-            set { _menu_item.Visible = value; }
+            set { }
         }
 
         public static RenameCommand Instance { get; private set; }
@@ -118,10 +125,8 @@ namespace AntlrVSIX.Rename
             SnapshotPoint sp = ss.Start;
 
             // Enable highlighter.
-            RenameHighlightTagger.Enabled = true;
+            RenameHighlightTagger.Update(view, sp);
 
-            // Put cursor on symbol.
-            wpftv.Caret.MoveTo(sp);     // This sets cursor, bot does not center.
             AntlrVSIX.Package.Menus.ResetMenus();
         }
     }

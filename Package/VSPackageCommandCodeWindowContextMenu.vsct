@@ -66,6 +66,18 @@
             <ButtonText>Find all occurences</ButtonText>
           </Strings>
         </Button>
+        <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="ReformatCmd" priority="0x700" type="Button">
+          <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="TopLevelMenuGroup"/>
+          <Strings>
+            <ButtonText>Reformat</ButtonText>
+          </Strings>
+        </Button>
+        <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="RenameCmd" priority="0x700" type="Button">
+          <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="TopLevelMenuGroup"/>
+          <Strings>
+            <ButtonText>Rename</ButtonText>
+          </Strings>
+        </Button>
 
         <Button guid="guidAntlrLanguagePackageCmdSet" id="cmdidFindRefsWindowCommand" priority="0x0100" type="Button">
           <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1" />
@@ -169,6 +181,18 @@
            <ButtonText>Options</ButtonText>
          </Strings>
        </Button>
+       <Button guid="guidMenuAndCommandsCmdSet" id="ReformatCmd" priority="0x700" type="Button">
+         <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup"/>
+         <Strings>
+           <ButtonText>Reformat</ButtonText>
+         </Strings>
+       </Button>
+       <Button guid="guidMenuAndCommandsCmdSet" id="RenameCmd" priority="0x700" type="Button">
+         <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup"/>
+         <Strings>
+           <ButtonText>Rename</ButtonText>
+         </Strings>
+       </Button>
      </Buttons>
 
      <Menus>
@@ -198,24 +222,9 @@
    </Commands>
 
    <CommandPlacements>
-
       <CommandPlacement guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="MyGroupForCommands" priority="0xFFFF">
          <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_CODEWIN" />
       </CommandPlacement>
-<!--
-     <CommandPlacement guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="Command1Id" priority="0x0001">
-       <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="MyGroupForCommands" />
-     </CommandPlacement>
-     <CommandPlacement guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="Command2Id" priority="0x0001">
-       <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="MyGroupForCommands" />
-     </CommandPlacement>
-     <CommandPlacement guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="Command3Id" priority="0x0001">
-       <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="MyGroupForCommands" />
-     </CommandPlacement>
-     <CommandPlacement guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="Command4Id" priority="0x0001">
-       <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="MyGroupForCommands" />
-     </CommandPlacement>
-     -->
    </CommandPlacements>
 
 
@@ -238,6 +247,8 @@
       <IDSymbol name="GoToListenerCmd" value="0x7005" />
       <IDSymbol name="GoToVisitorCmd" value="0x7006" />
       <IDSymbol name="OptionsCmd" value="0x7007" />
+      <IDSymbol name="ReformatCmd" value="0x7008" />
+      <IDSymbol name="RenameCmd" value="0x7009" />
     </GuidSymbol>
 
     <GuidSymbol name="guidImages" value="{68759f95-6f1d-4a77-87ea-192fc8d811f1}">
@@ -274,6 +285,8 @@
       <IDSymbol name="GoToListenerCmd" value="0x7005" />
       <IDSymbol name="GoToVisitorCmd" value="0x7006" />
       <IDSymbol name="OptionsCmd" value="0x7007" />
+      <IDSymbol name="ReformatCmd" value="0x7008" />
+      <IDSymbol name="RenameCmd" value="0x7009" />
     </GuidSymbol>
   </Symbols>
 </CommandTable>

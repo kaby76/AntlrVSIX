@@ -35,7 +35,7 @@ namespace AntlrVSIX.FindAllReferences
             if (commandService != null)
             {
                 {
-                    var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidVSPackageCommandCodeWindowContextMenuCmdSet), 0x0101);
+                    var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidVSPackageCommandCodeWindowContextMenuCmdSet), 0x7004);
                     _menu_item1 = new MenuCommand(this.MenuItemCallback, menuCommandID);
                     _menu_item1.Enabled = false;
                     _menu_item1.Visible = false;
