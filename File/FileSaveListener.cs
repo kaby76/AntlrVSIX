@@ -40,9 +40,7 @@ namespace AntlrVSIX.File
                 {
                     var buffer = view.TextBuffer;
                     var code = buffer.GetBufferText();
-                    ParserDetails foo = new ParserDetails();
-                    ParserDetails._per_file_parser_details[ffn] = foo;
-                    foo.Parse(code, ffn);
+                    ParserDetails.Parse(code, ffn);
                     AntlrClassifier classifier = AntlrClassifier._buffer_to_classifier[buffer];
                     classifier.BufferChanged();
                 }

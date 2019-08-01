@@ -116,9 +116,7 @@ namespace AntlrVSIX.Package
                         if (!ParserDetails._per_file_parser_details.ContainsKey(ffn))
                         {
                             StreamReader sr = new StreamReader(ffn);
-                            ParserDetails foo = new ParserDetails();
-                            ParserDetails._per_file_parser_details[ffn] = foo;
-                            foo.Parse(sr.ReadToEnd(), ffn);
+                            ParserDetails.Parse(sr.ReadToEnd(), ffn);
                         }
                     }
                     catch (Exception eeks)

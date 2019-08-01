@@ -18,36 +18,38 @@ namespace AntlrVSIX.Grammar
         public static Dictionary<string, ParserDetails> _per_file_parser_details =
             new Dictionary<string, ParserDetails>();
 
-        public string full_file_name;
-        public string Text;
+        public string FullFileName;
+        public string Code;
 
         // Parser and parse tree.
-        public ANTLRv4Parser _ant_parser = null;
-        public IParseTree _ant_tree = null;
-        public IParseTree[] _all_nodes = null;
+        private ANTLRv4Parser _ant_parser = null;
+        private IParseTree _ant_tree = null;
+        private IEnumerable<IParseTree>_all_nodes = null;
 
         // List of all comments, terminal, nonterminal, and keyword tokens in the grammar.
-        public IList<IToken> _ant_terminals;
-        public IList<IToken> _ant_terminals_defining;
-        public IList<IToken> _ant_nonterminals;
-        public IList<IToken> _ant_nonterminals_defining;
-        public IList<IToken> _ant_comments;
-        public IList<IToken> _ant_keywords;
-        public IList<IToken> _ant_literals;
+        public IEnumerable<IToken> _ant_terminals;
+        public IEnumerable<IToken> _ant_terminals_defining;
+        public IEnumerable<IToken> _ant_nonterminals;
+        public IEnumerable<IToken> _ant_nonterminals_defining;
+        public IEnumerable<IToken> _ant_comments;
+        public IEnumerable<IToken> _ant_keywords;
+        public IEnumerable<IToken> _ant_literals;
 
-        public void Parse(string plain_old_input_grammar, string ffn)
+        public static void Parse(string code, string ffn)
         {
-            Text = plain_old_input_grammar;
-            full_file_name = ffn;
+            ParserDetails pd = new ParserDetails();
+            _per_file_parser_details[ffn] = pd;
+            pd.Code = code;
+            pd.FullFileName = ffn;
 
             // Set up Antlr to parse input grammar.
-            byte[] byteArray = Encoding.UTF8.GetBytes(plain_old_input_grammar);
+            byte[] byteArray = Encoding.UTF8.GetBytes(code);
             CommonTokenStream cts = new CommonTokenStream(
                 new ANTLRv4Lexer(
                     new AntlrInputStream(
                         new StreamReader(
                             new MemoryStream(byteArray)).ReadToEnd())));
-            _ant_parser = new ANTLRv4Parser(cts);
+            pd._ant_parser = new ANTLRv4Parser(cts);
 
             // Set up another token stream containing comments. This might be
             // problematic as the parser influences the lexer.
@@ -59,28 +61,29 @@ namespace AntlrVSIX.Grammar
                 ANTLRv4Lexer.OFF_CHANNEL);
 
             // Get all comments.
-            _ant_comments = new List<IToken>();
+            var new_list = new List<IToken>();
             while (cts_off_channel.LA(1) != ANTLRv4Parser.Eof)
             {
                 IToken token = cts_off_channel.LT(1);
                 if (token.Type == ANTLRv4Parser.BLOCK_COMMENT
                     || token.Type == ANTLRv4Parser.LINE_COMMENT)
                 {
-                    _ant_comments.Add(token);
+                    new_list.Add(token);
                 }
                 cts_off_channel.Consume();
             }
+            pd._ant_comments = new_list;
 
             try
             {
-                _ant_tree = _ant_parser.grammarSpec();
+                pd._ant_tree = pd._ant_parser.grammarSpec();
             }
             catch (Exception e)
             {
                 // Parsing error.
             }
 
-            _all_nodes = DFSVisitor.DFS(_ant_tree as ParserRuleContext).ToArray();
+            pd._all_nodes = DFSVisitor.DFS(pd._ant_tree as ParserRuleContext);
 
             //StringBuilder sb = new StringBuilder();
             //ParenthesizedAST(sb, "", _ant_tree, cts);
@@ -89,7 +92,7 @@ namespace AntlrVSIX.Grammar
 
             {
                 // Get all defining and applied occurences of nonterminal names in grammar.
-                IEnumerable<IParseTree> nonterm_nodes_iterator = _all_nodes.Where((IParseTree n) =>
+                IEnumerable<IParseTree> nonterm_nodes_iterator = pd._all_nodes.Where((IParseTree n) =>
                 {
                     TerminalNodeImpl nonterm = n as TerminalNodeImpl;
                     if (n.Parent as ANTLRv4Parser.RulerefContext != null &&
@@ -102,7 +105,7 @@ namespace AntlrVSIX.Grammar
                         return true;
                     return false;
                 });
-                _ant_nonterminals = nonterm_nodes_iterator.Select<IParseTree, IToken>(
+                pd._ant_nonterminals = nonterm_nodes_iterator.Select<IParseTree, IToken>(
                     (t) => (t as TerminalNodeImpl).Symbol).ToArray();
                 // Get all defining and applied occurences of nonterminal names in grammar.
                 var iterator = nonterm_nodes_iterator.Where((IParseTree n) =>
@@ -119,13 +122,13 @@ namespace AntlrVSIX.Grammar
                     }
                     return false;
                 });
-                _ant_nonterminals_defining = iterator.Select<IParseTree, IToken>(
+                pd._ant_nonterminals_defining = iterator.Select<IParseTree, IToken>(
                     (t) => (t as TerminalNodeImpl).Symbol).ToArray();
             }
 
             {
                 // Get all defining and applied occurences of nonterminal names in grammar.
-                IEnumerable<IParseTree> term_nodes_iterator = _all_nodes.Where((IParseTree n) =>
+                IEnumerable<IParseTree> term_nodes_iterator = pd._all_nodes.Where((IParseTree n) =>
                 {
                     TerminalNodeImpl term = n as TerminalNodeImpl;
                     if (term == null) return false;
@@ -134,7 +137,7 @@ namespace AntlrVSIX.Grammar
                         term.Parent as ANTLRv4Parser.LexerRuleSpecContext != null) return true;
                     return false;
                 });
-                _ant_terminals = term_nodes_iterator.Select<IParseTree, IToken>(
+                pd._ant_terminals = term_nodes_iterator.Select<IParseTree, IToken>(
                     (t) => (t as TerminalNodeImpl).Symbol).ToArray();
                 // Get all defining nonterminal names in grammar.
                 var iterator = term_nodes_iterator.Where((IParseTree n) =>
@@ -151,13 +154,13 @@ namespace AntlrVSIX.Grammar
                     }
                     return false;
                 });
-                _ant_terminals_defining = iterator.Select<IParseTree, IToken>(
+                pd._ant_terminals_defining = iterator.Select<IParseTree, IToken>(
                     (t) => (t as TerminalNodeImpl).Symbol).ToArray();
             }
 
             {
                 // Get all keyword tokens in grammar.
-                IEnumerable<IParseTree> keywords_interator = _all_nodes.Where((IParseTree n) =>
+                IEnumerable<IParseTree> keywords_interator = pd._all_nodes.Where((IParseTree n) =>
                 {
                     TerminalNodeImpl nonterm = n as TerminalNodeImpl;
                     if (nonterm == null) return false;
@@ -180,13 +183,13 @@ namespace AntlrVSIX.Grammar
                     }
                     return false;
                 });
-                _ant_keywords = keywords_interator.Select<IParseTree, IToken>(
+                pd._ant_keywords = keywords_interator.Select<IParseTree, IToken>(
                     (t) => (t as TerminalNodeImpl).Symbol).ToArray();
             }
 
             {
                 // Get all defining and applied occurences of nonterminal names in grammar.
-                IEnumerable<IParseTree> lit_nodes_iterator = _all_nodes.Where((IParseTree n) =>
+                IEnumerable<IParseTree> lit_nodes_iterator = pd._all_nodes.Where((IParseTree n) =>
                 {
                     TerminalNodeImpl term = n as TerminalNodeImpl;
                     if (term == null) return false;
@@ -206,11 +209,9 @@ namespace AntlrVSIX.Grammar
                     }
                     return false;
                 });
-                _ant_literals = lit_nodes_iterator.Select<IParseTree, IToken>(
+                pd._ant_literals = lit_nodes_iterator.Select<IParseTree, IToken>(
                     (t) => (t as TerminalNodeImpl).Symbol).ToArray();
             }
-
-            //pp.ErrorHandler = new MyErrorStrategy();
         }
 
         private int changed = 0;

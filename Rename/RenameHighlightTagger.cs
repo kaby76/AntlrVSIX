@@ -220,7 +220,7 @@ namespace AntlrVSIX.Rename
             {
                 IToken x = where[i];
                 ParserDetails y = where_details[i];
-                var w = new Entry() { FileName = y.full_file_name, LineNumber = x.Line, ColumnNumber = x.Column, Token = x };
+                var w = new Entry() { FileName = y.FullFileName, LineNumber = x.Line, ColumnNumber = x.Column, Token = x };
                 results.Add(w);
             }
 
@@ -284,13 +284,11 @@ namespace AntlrVSIX.Rename
                     // Reparse everything.
                     foreach (string f in results.Select((e) => e.FileName).Distinct())
                     {
-                        ParserDetails foo = new ParserDetails();
-                        ParserDetails._per_file_parser_details[f] = foo;
                         IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(f);
                         IWpfTextView wpftv = vstv.GetIWpfTextView();
                         if (wpftv == null) continue;
                         ITextBuffer tb = wpftv.TextBuffer;
-                        foo.Parse(tb.GetBufferText(), f);
+                        ParserDetails.Parse(tb.GetBufferText(), f);
                     }
                 }
 

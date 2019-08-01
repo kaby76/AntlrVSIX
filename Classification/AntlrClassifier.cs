@@ -57,15 +57,13 @@
             ITextSnapshot snapshot = _buffer.CurrentSnapshot;
             if (TagsChanged != null)
             {
-                ParserDetails foo = new ParserDetails();
                 ITextDocument doc = _buffer.GetTextDocument();
                 string f = doc.FilePath;
-                ParserDetails._per_file_parser_details[f] = foo;
                 IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(f);
                 IWpfTextView wpftv = vstv.GetIWpfTextView();
                 if (wpftv == null) return;
                 ITextBuffer tb = wpftv.TextBuffer;
-                foo.Parse(tb.GetBufferText(), f);
+                ParserDetails.Parse(tb.GetBufferText(), f);
                 TagsChanged(this, new SnapshotSpanEventArgs(new SnapshotSpan(snapshot, new Span(0, snapshot.Length))));
             }
         }
@@ -78,15 +76,13 @@
             ITextSnapshot snapshot = _buffer.CurrentSnapshot;
             if (TagsChanged != null)
             {
-                ParserDetails foo = new ParserDetails();
                 ITextDocument doc = _buffer.GetTextDocument();
                 string f = doc.FilePath;
-                ParserDetails._per_file_parser_details[f] = foo;
                 IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(f);
                 IWpfTextView wpftv = vstv.GetIWpfTextView();
                 if (wpftv == null) return;
                 ITextBuffer tb = wpftv.TextBuffer;
-                foo.Parse(tb.GetBufferText(), f);
+                ParserDetails.Parse(tb.GetBufferText(), f);
                 TagsChanged(this, new SnapshotSpanEventArgs(new SnapshotSpan(snapshot, new Span(0, snapshot.Length))));
             }
         }

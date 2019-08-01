@@ -135,7 +135,7 @@ namespace AntlrVSIX.FindAllReferences
             {
                 IToken x = where[i];
                 ParserDetails y = where_details[i];
-                var w = new Entry() { FileName = y.full_file_name, LineNumber = x.Line, ColumnNumber = x.Column, Token = x };
+                var w = new Entry() { FileName = y.FullFileName, LineNumber = x.Line, ColumnNumber = x.Column, Token = x };
                 FindAntlrSymbolsModel.Instance.Results.Add(w);
             }
         }

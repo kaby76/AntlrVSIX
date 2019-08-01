@@ -39,10 +39,8 @@
 
             if (!ParserDetails._per_file_parser_details.ContainsKey(file_name))
             {
-                ParserDetails parser_details = new ParserDetails();
-                ParserDetails._per_file_parser_details[file_name] = parser_details;
-                string text = _buffer.GetBufferText();
-                parser_details.Parse(text, file_name);
+                string code = _buffer.GetBufferText();
+                ParserDetails.Parse(code, file_name);
             }
 
             this._buffer.Changed += OnTextBufferChanged;
