@@ -48,15 +48,8 @@ namespace AntlrVSIX.Rename
             TextSearchService = textSearchService;
             TextStructureNavigator = textStructureNavigator;
             _aggregator = aggregator;
-
             WordSpans = new NormalizedSnapshotSpanCollection();
             CurrentWord = null;
-
-            // Subscribe to both change events in the view - any time the view is updated
-            // or the caret is moved, we refresh our list of highlighted words.
-            View.Caret.PositionChanged += CaretPositionChanged;
-            View.LayoutChanged += ViewLayoutChanged;
-
             _view_to_tagger[view] = this;
         }
 
@@ -258,28 +251,34 @@ namespace AntlrVSIX.Rename
                 RenameDialogBox inputDialog = new RenameDialogBox(currentWord.GetText());
                 if (inputDialog.ShowDialog() == true)
                 {
-                    results.Reverse();
                     var new_name = inputDialog.Answer;
-                    
-                    // Replace all occurrences of symbol, working backwards.
-                    foreach (Entry e in results)
+                    var files = results.Select(r => r.FileName).OrderBy(q => q).Distinct();
+                    foreach (var f in files)
                     {
-                        string file_name = e.FileName;
-                        var pd = ParserDetails._per_file_parser_details[file_name];
-                        IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(file_name);
+                        var per_file_results = results.Where(r => r.FileName == f);
+                        per_file_results.Reverse();
+                        var pd = ParserDetails._per_file_parser_details[f];
+                        IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(f);
                         IWpfTextView wpftv = vstv.GetIWpfTextView();
                         if (wpftv == null)
                         {
                             // File has not been opened before! Open file in editor.
-                            IVsTextViewExtensions.ShowFrame(file_name);
-                            vstv = IVsTextViewExtensions.GetIVsTextView(file_name);
+                            IVsTextViewExtensions.ShowFrame(f);
+                            vstv = IVsTextViewExtensions.GetIVsTextView(f);
                             wpftv = vstv.GetIWpfTextView();
                         }
                         ITextBuffer tb = wpftv.TextBuffer;
-                        ITextSnapshot cc = tb.CurrentSnapshot;
-                        SnapshotSpan ss = new SnapshotSpan(cc, e.Token.StartIndex, 1 + e.Token.StopIndex - e.Token.StartIndex);
-                        SnapshotPoint sp = ss.Start;
-                        tb.Replace(ss, new_name);
+                        using (var edit = tb.CreateEdit())
+                        {
+                            ITextSnapshot cc = tb.CurrentSnapshot;
+                            foreach (var e in per_file_results)
+                            {
+                                SnapshotSpan ss = new SnapshotSpan(cc, e.Token.StartIndex, 1 + e.Token.StopIndex - e.Token.StartIndex);
+                                SnapshotPoint sp = ss.Start;
+                                edit.Replace(ss, new_name);
+                            }
+                            edit.Apply();
+                        }
                     }
 
                     // Reparse everything.
@@ -306,17 +305,6 @@ namespace AntlrVSIX.Rename
                 }
             });
         }
-
-        //private static IDisposable CreateSelectionUndo(ISelectionTracker selectionTracker, IServiceContainer services, string transactionName)
-        //{
-        //    var service = (IServiceProvider) AntlrVSIX.Package.AntlrLanguagePackage.Instance;
-        //    var textBufferUndoManagerProvider = service.GetService(typeof(ITextBufferUndoManagerProvider));
-        //    if (textBufferUndoManagerProvider != null)
-        //    {
-        //        return new SelectionUndo(selectionTracker, textBufferUndoManagerProvider, transactionName, automaticTracking: false);
-        //    }
-        //    return Disposable.Empty;
-        //}
 
         private void UpdateWordAdornments(object threadContext)
         {

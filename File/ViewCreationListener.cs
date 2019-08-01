@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TextManager.Interop;
+﻿using System;
+using Microsoft.VisualStudio.TextManager.Interop;
 using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text.Editor;
@@ -18,6 +19,8 @@ namespace AntlrVSIX.File
     [TextViewRole(PredefinedTextViewRoles.Editable)]
     public class ViewCreationListener : IVsTextViewCreationListener
     {
+        private string document_file_path;
+
         [Import]
         public IVsEditorAdaptersFactoryService AdaptersFactory = null;
 
@@ -28,24 +31,37 @@ namespace AntlrVSIX.File
         public SVsServiceProvider GlobalServiceProvider = null;
         public void VsTextViewCreated(IVsTextView textViewAdapter)
         {
-            var wpftv = AdaptersFactory.GetWpfTextView(textViewAdapter);
-            if (wpftv == null)
+            IWpfTextView view = AdaptersFactory.GetWpfTextView(textViewAdapter);
+            if (view == null)
             {
                 Debug.Fail("Unable to get IWpfTextView from text view adapter");
                 return;
             }
-            IVsTextView vstv = AdaptersFactory.GetViewAdapter(wpftv);
-            ITextBuffer doc = wpftv.TextBuffer;
+            view.Closed += OnViewClosed;
+            ITextBuffer doc = view.TextBuffer;
             string ffn = doc.GetFilePath();
             if (!ffn.IsAntlrSuffix()) return;
-
+            document_file_path = ffn;
             if (!ParserDetails._per_file_parser_details.ContainsKey(ffn))
             {
-                StreamReader sr = new StreamReader(ffn);
+                var buffer = view.TextBuffer;
+                var code = buffer.GetBufferText();
                 ParserDetails foo = new ParserDetails();
                 ParserDetails._per_file_parser_details[ffn] = foo;
-                foo.Parse(sr.ReadToEnd(), ffn);
+                foo.Parse(code, ffn);
             }
+        }
+
+        private void OnViewClosed(object sender, EventArgs e)
+        {
+            IWpfTextView view = sender as IWpfTextView;
+            if (view == null) return;
+            view.Closed -= OnViewClosed;
+            ITextBuffer doc = view.TextBuffer;
+            string ffn = document_file_path;
+            if (!ffn.IsAntlrSuffix()) return;
+            if (ParserDetails._per_file_parser_details.ContainsKey(ffn))
+                ParserDetails._per_file_parser_details.Remove(ffn);
         }
     }
 }

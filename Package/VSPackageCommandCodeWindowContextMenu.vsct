@@ -91,8 +91,8 @@
        <Menu guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="TopLevelMenu" priority="0x700" type="Menu">
          <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="MyMenuGroup" />
          <Strings>
-           <ButtonText>Antlr</ButtonText>
-           <CommandName>Antlr</CommandName>
+           <ButtonText>AntlrVSIX</ButtonText>
+           <CommandName>AntlrVSIX</CommandName>
          </Strings>
        </Menu>
        <Menu guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="NavigateMenu" priority="0x700" type="Menu">
@@ -199,8 +199,8 @@
        <Menu guid="guidMenuAndCommandsCmdSet" id="TopLevelMenu" priority="0x700" type="Menu">
          <Parent guid="guidMenuAndCommandsCmdSet" id="MyMenuGroup" />
          <Strings>
-           <ButtonText>Antlr</ButtonText>
-           <CommandName>Antlr</CommandName>
+           <ButtonText>AntlrVSIX</ButtonText>
+           <CommandName>AntlrVSIX</CommandName>
          </Strings>
        </Menu>
        <Menu guid="guidMenuAndCommandsCmdSet" id="NavigateMenu" priority="0x700" type="Menu">

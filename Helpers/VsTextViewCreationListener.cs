@@ -1,7 +1,8 @@
-﻿namespace AntlrVSIX.Extensions
+﻿using System;
+
+namespace AntlrVSIX.Extensions
 {
     using Microsoft.VisualStudio.Editor;
-    using Microsoft.VisualStudio.OLE.Interop;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text;
@@ -30,17 +31,29 @@
 
         public void VsTextViewCreated(IVsTextView textViewAdapter)
         {
-            var wpftv = AdaptersFactory.GetWpfTextView(textViewAdapter);
+            IWpfTextView wpftv = AdaptersFactory.GetWpfTextView(textViewAdapter);
             if (wpftv == null)
             {
                 Debug.Fail("Unable to get IWpfTextView from text view adapter");
                 return;
             }
+            wpftv.Closed += OnViewClosed;
             to_wpftextview[textViewAdapter] = wpftv;
             to_ivstextview[wpftv] = textViewAdapter;
+        }
 
-            IVsTextView vstv = AdaptersFactory.GetViewAdapter(wpftv);
-            // vstv should be equal to textViewAdapter.
+        private void OnViewClosed(object sender, EventArgs e)
+        {
+            IWpfTextView view = sender as IWpfTextView;
+            if (view == null) return;
+            view.Closed -= OnViewClosed;
+
+            if (to_ivstextview.ContainsKey(view))
+            {
+                var textViewAdapter = to_ivstextview[view];
+                to_ivstextview.Remove(view);
+                if (to_wpftextview.ContainsKey(textViewAdapter)) to_wpftextview.Remove(textViewAdapter);
+            }
         }
     }
 }
