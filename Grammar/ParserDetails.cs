@@ -26,10 +26,6 @@ namespace AntlrVSIX.Grammar
         public IParseTree _ant_tree = null;
         public IParseTree[] _all_nodes = null;
 
-        // List of all nonterminals and terminals in the given grammar.
-        public IList<string> _ant_nonterminals_names;
-        public IList<string> _ant_terminals_names;
-
         // List of all comments, terminal, nonterminal, and keyword tokens in the grammar.
         public IList<IToken> _ant_terminals;
         public IList<IToken> _ant_terminals_defining;
@@ -90,35 +86,6 @@ namespace AntlrVSIX.Grammar
             //ParenthesizedAST(sb, "", _ant_tree, cts);
             //System.IO.File.WriteAllText("c:\\temp\\kkk.txt", sb.ToString());
 
-            {
-                // Get all nonterminal names from the grammar.
-                IEnumerable<IParseTree> nonterm_nodes_iterator = _all_nodes.Where((IParseTree n) =>
-                {
-                    TerminalNodeImpl nonterm = n as TerminalNodeImpl;
-                    if (n.Parent as ANTLRv4Parser.RulerefContext != null &&
-                        nonterm?.Symbol.Type == ANTLRv4Parser.RULE_REF)
-                        return true;
-                    if (n.Parent as ANTLRv4Parser.ActionBlockContext != null)
-                        return false;
-                    if (n.Parent as ANTLRv4Parser.ParserRuleSpecContext != null &&
-                        nonterm?.Symbol.Type == ANTLRv4Parser.RULE_REF)
-                        return true;
-                    return false;
-                });
-                _ant_nonterminals_names = nonterm_nodes_iterator.Select<IParseTree, string>(
-                    (t) => (t as TerminalNodeImpl).Symbol.Text).ToArray();
-            }
-
-            {
-                // Get all terminal names from the grammar.
-                IEnumerable<IParseTree> term_nodes_iterator = _all_nodes.Where((IParseTree n) =>
-                {
-                    TerminalNodeImpl nonterm = n as TerminalNodeImpl;
-                    return nonterm?.Symbol.Type == ANTLRv4Parser.TOKEN_REF;
-                });
-                _ant_terminals_names = term_nodes_iterator.Select<IParseTree, string>(
-                    (t) => (t as TerminalNodeImpl).Symbol.Text).ToArray();
-            }
 
             {
                 // Get all defining and applied occurences of nonterminal names in grammar.
@@ -162,13 +129,9 @@ namespace AntlrVSIX.Grammar
                 {
                     TerminalNodeImpl term = n as TerminalNodeImpl;
                     if (term == null) return false;
-                    if (!_ant_terminals_names.Contains(term.GetText())) return false;
-                    // The token must be part of parserRuleSpec context.
-                    for (var p = term.Parent; p != null; p = p.Parent)
-                    {
-                        if (p is ANTLRv4Parser.ParserRuleSpecContext ||
-                            p is ANTLRv4Parser.LexerRuleSpecContext) return true;
-                    }
+                    if (term?.Symbol.Type != ANTLRv4Parser.TOKEN_REF) return false;
+                    if (term.Parent as ANTLRv4Parser.ParserRuleSpecContext != null ||
+                        term.Parent as ANTLRv4Parser.LexerRuleSpecContext != null) return true;
                     return false;
                 });
                 _ant_terminals = term_nodes_iterator.Select<IParseTree, IToken>(
