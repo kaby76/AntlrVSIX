@@ -41,8 +41,6 @@ namespace AntlrVSIX.File
                     var buffer = view.TextBuffer;
                     var code = buffer.GetBufferText();
                     ParserDetails.Parse(code, ffn);
-                    AntlrClassifier classifier = AntlrClassifier._buffer_to_classifier[buffer];
-                    classifier.BufferChanged();
                 }
             }
             catch (Exception ex)
