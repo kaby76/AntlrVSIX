@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.Design;
-
+﻿
 namespace AntlrVSIX.Rename
 {
     using Antlr4.Runtime;
@@ -278,29 +277,40 @@ namespace AntlrVSIX.Rename
                                 edit.Replace(ss, new_name);
                             }
                             edit.Apply();
+                            ParserDetails.Parse(tb.GetBufferText(), f);
                         }
                     }
 
                     // Reparse everything.
-                    foreach (string f in results.Select((e) => e.FileName).Distinct())
-                    {
-                        IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(f);
-                        IWpfTextView wpftv = vstv.GetIWpfTextView();
-                        if (wpftv == null) continue;
-                        ITextBuffer tb = wpftv.TextBuffer;
-                        ParserDetails.Parse(tb.GetBufferText(), f);
-                    }
+                    //foreach (string f in results.Select((e) => e.FileName).Distinct())
+                    //{
+                    //    IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(f);
+                    //    IWpfTextView wpftv = vstv.GetIWpfTextView();
+                    //    if (wpftv == null) continue;
+                    //    ITextBuffer tb = wpftv.TextBuffer;
+                    //    ParserDetails.Parse(tb.GetBufferText(), f);
+                    //}
                 }
-
-                foreach (var kvp in _view_to_tagger)
-                {
-                    kvp.Value.WordSpans = new NormalizedSnapshotSpanCollection();
-                    kvp.Value.CurrentWord = null;
-                    var clear_view = kvp.Key;
-                    var tb = clear_view.TextBuffer;
-                    ITextSnapshot snapshot = tb.CurrentSnapshot;
-                    TagsChanged(this, new SnapshotSpanEventArgs(new SnapshotSpan(snapshot, new Span(0, snapshot.Length))));
-                }
+                // Get rid of replace tagging.
+                //foreach (var kvp in _view_to_tagger)
+                //{
+                //    kvp.Value.WordSpans = new NormalizedSnapshotSpanCollection();
+                //    kvp.Value.CurrentWord = null;
+                //    var clear_view = kvp.Key;
+                //    var tb = clear_view.TextBuffer;
+                //    ITextSnapshot snapshot = tb.CurrentSnapshot;
+                //    TagsChanged(this, new SnapshotSpanEventArgs(new SnapshotSpan(snapshot, new Span(0, snapshot.Length))));
+                //}
+                // Update Antlr tagging.
+                //foreach (var kvp in _view_to_tagger)
+                //{
+                //    kvp.Value.WordSpans = new NormalizedSnapshotSpanCollection();
+                //    kvp.Value.CurrentWord = null;
+                //    var clear_view = kvp.Key;
+                //    var tb = clear_view.TextBuffer;
+                //    ITextSnapshot snapshot = tb.CurrentSnapshot;
+                //    TagsChanged(this, new SnapshotSpanEventArgs(new SnapshotSpan(snapshot, new Span(0, snapshot.Length))));
+                //}
             });
         }
 

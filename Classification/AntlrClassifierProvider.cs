@@ -48,8 +48,7 @@ namespace AntlrVSIX.Classification
 
             // Receive notification for Visual Studio theme change
             VSColorTheme.ThemeChanged += UpdateTheme;
-            ITagAggregator<AntlrTokenTag> antlrTagAggregator =
-                aggregatorFactory.CreateTagAggregator<AntlrTokenTag>(buffer);
+            var antlrTagAggregator = aggregatorFactory.CreateTagAggregator<AntlrTokenTag>(buffer);
             return new AntlrClassifier(null, buffer, antlrTagAggregator, ClassificationTypeRegistry) as ITagger<T>;
         }
 

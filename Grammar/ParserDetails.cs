@@ -13,13 +13,14 @@ using Antlr4.Runtime.Tree;
 
 namespace AntlrVSIX.Grammar
 {
-    internal class ParserDetails
+    public class ParserDetails : IObservable<ParserDetails>
     {
         public static Dictionary<string, ParserDetails> _per_file_parser_details =
             new Dictionary<string, ParserDetails>();
 
         public string FullFileName;
         public string Code;
+        private List<IObserver<ParserDetails>> _observers = new List<IObserver<ParserDetails>>();
 
         // Parser and parse tree.
         private ANTLRv4Parser _ant_parser = null;
@@ -35,10 +36,24 @@ namespace AntlrVSIX.Grammar
         public IEnumerable<IToken> _ant_keywords;
         public IEnumerable<IToken> _ant_literals;
 
-        public static void Parse(string code, string ffn)
+        public static ParserDetails Parse(string code, string ffn)
         {
-            ParserDetails pd = new ParserDetails();
-            _per_file_parser_details[ffn] = pd;
+            bool has_entry = _per_file_parser_details.ContainsKey(ffn);
+            ParserDetails pd;
+            if (!has_entry)
+            {
+                pd = new ParserDetails();
+                _per_file_parser_details[ffn] = pd;
+            }
+            else
+            {
+                pd = _per_file_parser_details[ffn];
+            }
+
+            bool has_changed = false;
+            if (pd.Code == code) return pd;
+            else if (pd.Code != null) has_changed = true;
+
             pd.Code = code;
             pd.FullFileName = ffn;
 
@@ -212,6 +227,16 @@ namespace AntlrVSIX.Grammar
                 pd._ant_literals = lit_nodes_iterator.Select<IParseTree, IToken>(
                     (t) => (t as TerminalNodeImpl).Symbol).ToArray();
             }
+
+            if (has_changed)
+            {
+                foreach (var observer in pd._observers)
+                {
+                    observer.OnNext(pd);
+                }
+            }
+
+            return pd;
         }
 
         private int changed = 0;
@@ -294,20 +319,37 @@ namespace AntlrVSIX.Grammar
                 }
             }
         }
+
         public string provide_escapes(string s)
         {
             StringBuilder new_s = new StringBuilder();
             new_s.Append(ToLiteral(s));
-            //for (var i = 0; i != s.Length; ++i)
-            //{
-            //    if (s[i] == '"' || s[i] == '\\')
-            //    {
-            //        new_s.Append('\\');
-            //    }
-            //    new_s.Append(s[i]);
-            //}
             return new_s.ToString();
         }
 
+        public IDisposable Subscribe(IObserver<ParserDetails> observer)
+        {
+            if (!_observers.Contains(observer))
+                _observers.Add(observer);
+            return new Unsubscriber(_observers, observer);
+        }
+
+        private class Unsubscriber : IDisposable
+        {
+            private List<IObserver<ParserDetails>> _observers;
+            private IObserver<ParserDetails> _observer;
+
+            public Unsubscriber(List<IObserver<ParserDetails>> observers, IObserver<ParserDetails> observer)
+            {
+                this._observers = observers;
+                this._observer = observer;
+            }
+
+            public void Dispose()
+            {
+                if (_observer != null && _observers.Contains(_observer))
+                    _observers.Remove(_observer);
+            }
+        }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace AntlrVSIX.Tagger
+﻿using EnvDTE;
+
+namespace AntlrVSIX.Tagger
 {
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text.Tagging;
@@ -16,7 +18,7 @@
 
         public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
         {
-            return new AntlrTokenTagger(buffer, GlobalServiceProvider) as ITagger<T>;
+            return new AntlrTokenTagger(buffer) as ITagger<T>;
         }
     }
 }

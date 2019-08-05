@@ -1,14 +1,16 @@
-﻿namespace AntlrVSIX.Tagger
+﻿
+namespace AntlrVSIX.Tagger
 {
     using Antlr4.Runtime;
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Grammar;
-    using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text.Tagging;
     using Microsoft.VisualStudio.Text;
     using System.Collections.Generic;
     using System.Linq;
     using System;
+    using Microsoft.VisualStudio.Text.Editor;
+    using Microsoft.VisualStudio.TextManager.Interop;
 
     /// <summary>
     /// AntlrTokenTagger is the basic tagging facility of this extension.
@@ -16,12 +18,12 @@
     /// https://msdn.microsoft.com/en-us/library/dd885240.aspx for more
     /// information on the editor and tagging.
     /// </summary>
-    internal sealed class AntlrTokenTagger : ITagger<AntlrTokenTag>
+    internal sealed class AntlrTokenTagger : ITagger<AntlrTokenTag>, IObserver<ParserDetails>
     {
         private ITextBuffer _buffer;
         private IDictionary<string, AntlrTagTypes> _antlr_tag_types;
 
-        internal AntlrTokenTagger(ITextBuffer buffer, SVsServiceProvider service_provider)
+        internal AntlrTokenTagger(ITextBuffer buffer)
         {
             _buffer = buffer;
 
@@ -37,24 +39,30 @@
             string file_name = document.FilePath;
             if (!file_name.IsAntlrSuffix()) return;
 
-            if (!ParserDetails._per_file_parser_details.ContainsKey(file_name))
-            {
-                string code = _buffer.GetBufferText();
-                ParserDetails.Parse(code, file_name);
-            }
+            string code = _buffer.GetBufferText();
+            var pd = ParserDetails.Parse(code, file_name);
+            //pd.Subscribe(this);
 
-            this._buffer.Changed += OnTextBufferChanged;
+           // buffer.Changed += new EventHandler<TextContentChangedEventArgs>(ReparseFile);
         }
 
-        private void OnTextBufferChanged(object sender, TextContentChangedEventArgs e)
+        void ReparseFile(object sender, TextContentChangedEventArgs args)
         {
+            ITextSnapshot snapshot = _buffer.CurrentSnapshot;
+            string code = _buffer.GetBufferText();
+            ITextDocument document = _buffer.GetTextDocument();
+            string file_name = document.FilePath;
+            if (!file_name.IsAntlrSuffix()) return;
+            var pd = ParserDetails.Parse(code, file_name);
+            SnapshotSpan span = new SnapshotSpan(_buffer.CurrentSnapshot, 0, _buffer.CurrentSnapshot.Length);
+            var temp = TagsChanged;
+            if (temp == null)
+                return;
+            //temp(this, new SnapshotSpanEventArgs(span));
         }
 
-        public event EventHandler<SnapshotSpanEventArgs> TagsChanged
-        {
-            add { }
-            remove { }
-        }
+
+        public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 
         // For each span of text given, perform a complete parse, and reclassify and tag new spans.
         public IEnumerable<ITagSpan<AntlrTokenTag>> GetTags(NormalizedSnapshotSpanCollection spans)
@@ -173,6 +181,36 @@
                     }
                 }
             }
+        }
+
+        public void OnNext(ParserDetails value)
+        {
+            ITextSnapshot snapshot = _buffer.CurrentSnapshot;
+            ITextDocument doc = _buffer.GetTextDocument();
+            string f = doc.FilePath;
+            IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(f);
+            IWpfTextView wpftv = vstv.GetIWpfTextView();
+            if (wpftv == null) return;
+            ITextBuffer tb = wpftv.TextBuffer;
+            var pd = ParserDetails._per_file_parser_details[f];
+            SnapshotSpan span = new SnapshotSpan(_buffer.CurrentSnapshot, 0, _buffer.CurrentSnapshot.Length);
+            //var temp = TagsChanged;
+            //if (temp == null)
+            //    return;
+            //Dispatcher.CurrentDispatcher.BeginInvoke(
+            //    new Action(() => temp(this, new SnapshotSpanEventArgs(span))),
+            //        DispatcherPriority.ApplicationIdle);
+            TagsChanged(this, new SnapshotSpanEventArgs(span));
+        }
+
+        public void OnError(Exception error)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnCompleted()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -12,7 +12,7 @@
     using System.Collections.Generic;
     using System;
 
-    internal sealed class AntlrClassifier : ITagger<ClassificationTag>
+    internal sealed class AntlrClassifier : ITagger<ClassificationTag>, IObserver<ParserDetails>
     {
         public ITextBuffer _buffer = null;
         public ITextView _view = null;
@@ -43,52 +43,18 @@
             // Ensure package is loaded.
             AntlrLanguagePackage package = AntlrLanguagePackage.Instance;
 
-            buffer.Changed += BufferChanged;
-           // buffer.ContentTypeChanged += BufferContentTypeChanged;
-        }
-
-        private void BufferChanged(object sender, TextContentChangedEventArgs e)
-        {
-            if (!AntlrVSIX.Options.OptionsCommand.Instance.InteractiveParse)
-                  return;
-            // Non-incremental parse. Future work: if performance becomes a problem, it would
-            // probably be best to make the lexical analyzer incremental, then
-            // do a full parse.
-            ITextSnapshot snapshot = _buffer.CurrentSnapshot;
-            if (TagsChanged != null)
-            {
-                ITextDocument doc = _buffer.GetTextDocument();
-                string f = doc.FilePath;
-                IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(f);
-                IWpfTextView wpftv = vstv.GetIWpfTextView();
-                if (wpftv == null) return;
-                ITextBuffer tb = wpftv.TextBuffer;
-                ParserDetails.Parse(tb.GetBufferText(), f);
-                TagsChanged(this, new SnapshotSpanEventArgs(new SnapshotSpan(snapshot, new Span(0, snapshot.Length))));
-            }
-        }
-
-        public void BufferChanged()
-        {
-            // Non-incremental parse. Future work: if performance becomes a problem, it would
-            // probably be best to make the lexical analyzer incremental, then
-            // do a full parse.
-            ITextSnapshot snapshot = _buffer.CurrentSnapshot;
-            if (TagsChanged != null)
-            {
-                ITextDocument doc = _buffer.GetTextDocument();
-                string f = doc.FilePath;
-                IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(f);
-                IWpfTextView wpftv = vstv.GetIWpfTextView();
-                if (wpftv == null) return;
-                ITextBuffer tb = wpftv.TextBuffer;
-                ParserDetails.Parse(tb.GetBufferText(), f);
-                TagsChanged(this, new SnapshotSpanEventArgs(new SnapshotSpan(snapshot, new Span(0, snapshot.Length))));
-            }
+            ITextDocument doc = _buffer.GetTextDocument();
+            string f = doc.FilePath;
+            var pd = ParserDetails.Parse(_buffer.GetBufferText(), f);
+            // pd.Subscribe(this);
         }
 
         public IEnumerable<ITagSpan<ClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
+            ITextDocument doc = _buffer.GetTextDocument();
+            string f = doc.FilePath;
+            var pd = ParserDetails.Parse(_buffer.GetBufferText(), f);
+
             foreach (IMappingTagSpan<AntlrTokenTag> tag_span in _aggregator.GetTags(spans))
             {
                 NormalizedSnapshotSpanCollection tag_spans = tag_span.Span.GetSpans(spans[0].Snapshot);
@@ -96,6 +62,30 @@
                     new TagSpan<ClassificationTag>(tag_spans[0],
                         new ClassificationTag(_antlrtype_to_classifiertype[tag_span.Tag.TagType]));
             }
+        }
+
+
+        public void OnNext(ParserDetails value)
+        {
+            return;
+            // This code does not work...
+            ITextSnapshot snapshot = _buffer.CurrentSnapshot;
+            ITextDocument doc = _buffer.GetTextDocument();
+            string f = doc.FilePath;
+            if (TagsChanged != null)
+            {
+                TagsChanged(this,
+                    new SnapshotSpanEventArgs(
+                        new SnapshotSpan(snapshot, new Span(0, snapshot.Length))));
+            }
+        }
+
+        public void OnError(Exception error)
+        {
+        }
+
+        public void OnCompleted()
+        {
         }
     }
 }

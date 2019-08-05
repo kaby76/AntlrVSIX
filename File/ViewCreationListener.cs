@@ -42,12 +42,9 @@ namespace AntlrVSIX.File
             string ffn = doc.GetFilePath();
             if (!ffn.IsAntlrSuffix()) return;
             document_file_path = ffn;
-            if (!ParserDetails._per_file_parser_details.ContainsKey(ffn))
-            {
-                var buffer = view.TextBuffer;
-                var code = buffer.GetBufferText();
-                ParserDetails.Parse(code, ffn);
-            }
+            var buffer = view.TextBuffer;
+            var code = buffer.GetBufferText();
+            ParserDetails pd = ParserDetails.Parse(code, ffn);
         }
 
         private void OnViewClosed(object sender, EventArgs e)

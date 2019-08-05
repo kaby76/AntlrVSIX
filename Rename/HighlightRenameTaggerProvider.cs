@@ -1,4 +1,7 @@
-﻿namespace AntlrVSIX.Rename
+﻿using System;
+using AntlrVSIX.Grammar;
+
+namespace AntlrVSIX.Rename
 {
     using Microsoft.VisualStudio.Text.Classification;
     using Microsoft.VisualStudio.Text.Editor;

@@ -127,7 +127,7 @@ namespace AntlrVSIX.Rename
             // Enable highlighter.
             RenameHighlightTagger.Update(view, sp);
 
-            AntlrVSIX.Package.Menus.ResetMenus();
+            //AntlrVSIX.Package.Menus.ResetMenus();
         }
     }
 }
