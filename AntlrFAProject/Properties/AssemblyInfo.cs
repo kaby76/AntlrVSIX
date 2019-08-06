@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("AntlrProject")]
+[assembly: AssemblyTitle("AntlrFAProject")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Ken Domino")]
-[assembly: AssemblyProduct("AntlrProject")]
+[assembly: AssemblyProduct("AntlrFAProject")]
 [assembly: AssemblyCopyright("Copyright © Ken Domino 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("50ead6b9-2d5c-4d6b-947d-fff08ed412a6")]
+[assembly: Guid("bc3ebef2-6efa-472b-9ac9-3a11dcc46e1c")]
 
 // Version information for an assembly consists of the following four values:
 //

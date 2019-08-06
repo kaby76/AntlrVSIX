@@ -1,3 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <RootNamespace>$safeprojectname$</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="ErrorListener.cs" />
+    <Antlr4 Include="arithmetic.g4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Antlr4.Runtime.Standard" Version="4.7.2" />
+    <PackageReference Include="Antlr4BuildTasks" Version="1.0.4" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(JAVA_HOME)'==''">
+    <JAVA_HOME>C:\Program Files\Java\jdk-11.0.1</JAVA_HOME>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Antlr4ToolPath)'==''">
+    <Antlr4ToolPath>C:\Program Files\Java\javalib\antlr-4.7.2-complete.jar</Antlr4ToolPath>
+  </PropertyGroup>
+
+</Project>
+
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
