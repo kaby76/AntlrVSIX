@@ -146,6 +146,7 @@ namespace AntlrVSIX.Extensions
     {
         public static bool IsAntlrSuffix(this string file_name)
         {
+            if (file_name == null) return false;
             var allowable_suffices = Constants.FileExtension.Split(';').ToList<string>();
             var suffix = Path.GetExtension(file_name).ToLower();
             foreach (var s in allowable_suffices)

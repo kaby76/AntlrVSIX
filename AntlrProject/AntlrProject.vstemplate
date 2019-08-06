@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VSTemplate Version="3.0.0" Type="Project" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010">
+  <TemplateData>
+    <Name>AntlrProject</Name>
+    <Description>Antlr4 grammar and parser</Description>
+    <Icon>AntlrProject.ico</Icon>
+    <ProjectType>CSharp</ProjectType>
+    <LanguageTag>csharp</LanguageTag>
+    <RequiredFrameworkVersion>2.0</RequiredFrameworkVersion>
+    <SortOrder>1000</SortOrder>
+    <TemplateID>16cafa51-9654-46fa-9557-1eb3757f96f8</TemplateID>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>AntlrProject</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+  </TemplateData>
+  <TemplateContent>
+    <Project File="ProjectTemplate.csproj" ReplaceParameters="true">
+      <ProjectItem ReplaceParameters="true" TargetFileName="Properties\AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
+      <ProjectItem ReplaceParameters="true" OpenInEditor="true">Program.cs</ProjectItem>
+      <ProjectItem ReplaceParameters="true" OpenInEditor="true">ErrorListener.cs</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="arithmetic.g4" OpenInEditor="true">arithmetic.g4</ProjectItem>
+    </Project>
+  </TemplateContent>
+</VSTemplate>
