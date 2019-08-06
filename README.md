@@ -11,7 +11,7 @@ grammars. The features in this extension are:
 * "Next/Previous rule" for quick navigation through a grammar.
 * "Go to Visitor / Listener" from a grammar symbol to a C# tree walker method.
 * Options dialog box for this extension.
-* Parser caller template code insertion.
+* Antlr4 grammar and parser project template for Visual Studio.
 * No advertisements, free of charge, open source.
 
 For integration of build rules into VS2019 (i.e., so you do not
