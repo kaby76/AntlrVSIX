@@ -10,7 +10,7 @@
     <SortOrder>1000</SortOrder>
     <TemplateID>083a0d77-bfab-4a5f-aa1c-e04fd9abeda0</TemplateID>
     <CreateNewFolder>true</CreateNewFolder>
-    <DefaultName>AntlrFAProject</DefaultName>
+    <DefaultName>AntlrConsole</DefaultName>
     <ProvideDefaultName>true</ProvideDefaultName>
   </TemplateData>
   <TemplateContent>
