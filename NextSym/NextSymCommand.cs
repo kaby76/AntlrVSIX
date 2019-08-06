@@ -184,7 +184,11 @@ namespace AntlrVSIX.NextSym
 
             string full_file_name = path;
             IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(full_file_name);
-            IVsTextViewExtensions.ShowFrame(full_file_name);
+            if (vstv == null)
+            {
+                IVsTextViewExtensions.ShowFrame(full_file_name);
+                vstv = IVsTextViewExtensions.GetIVsTextView(full_file_name);
+            }
 
             IWpfTextView wpftv = vstv.GetIWpfTextView();
             if (wpftv == null) return;

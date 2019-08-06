@@ -258,14 +258,13 @@ namespace AntlrVSIX.Rename
                         per_file_results.Reverse();
                         var pd = ParserDetails._per_file_parser_details[f];
                         IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(f);
-                        IWpfTextView wpftv = vstv.GetIWpfTextView();
-                        if (wpftv == null)
+                        if (vstv == null)
                         {
                             // File has not been opened before! Open file in editor.
                             IVsTextViewExtensions.ShowFrame(f);
                             vstv = IVsTextViewExtensions.GetIVsTextView(f);
-                            wpftv = vstv.GetIWpfTextView();
                         }
+                        IWpfTextView wpftv = vstv.GetIWpfTextView();
                         ITextBuffer tb = wpftv.TextBuffer;
                         using (var edit = tb.CreateEdit())
                         {

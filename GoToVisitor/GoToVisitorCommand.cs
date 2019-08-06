@@ -461,8 +461,11 @@ public override void {capitalized_member_name}({capitalized_grammar_name}Parser.
                 try
                 {
                     vstv = IVsTextViewExtensions.GetIVsTextView(class_file_path);
-                    IVsTextViewExtensions.ShowFrame(class_file_path);
-                    vstv = IVsTextViewExtensions.GetIVsTextView(class_file_path);
+                    if (vstv == null)
+                    {
+                        IVsTextViewExtensions.ShowFrame(class_file_path);
+                        vstv = IVsTextViewExtensions.GetIVsTextView(class_file_path);
+                    }
                     var text_buffer = vstv.GetITextBuffer();
                     var code = text_buffer.GetBufferText();
                     SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
@@ -528,8 +531,11 @@ public override void {capitalized_member_name}({capitalized_grammar_name}Parser.
             {
                 // Open to this line in editor.
                 IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(class_file_path);
-                IVsTextViewExtensions.ShowFrame(class_file_path);
-                vstv = IVsTextViewExtensions.GetIVsTextView(class_file_path);
+                if (vstv == null)
+                {
+                    IVsTextViewExtensions.ShowFrame(class_file_path);
+                    vstv = IVsTextViewExtensions.GetIVsTextView(class_file_path);
+                }
 
                 IWpfTextView wpftv = vstv.GetIWpfTextView();
                 if (wpftv == null) return;
