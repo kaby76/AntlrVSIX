@@ -260,6 +260,9 @@ namespace AntlrVSIX.GoToVisitor
 
             if (found_class == null)
             {
+                if (!Options.OptionsCommand.Instance.GenerateVisitorListener)
+                    return;
+
                 // Look in grammar directory for any C# files.
                 string name_space = null;
                 string ffn = Path.GetFullPath(g4_file_path);
@@ -418,6 +421,9 @@ namespace {name_space}
             }
             if (found_member == null)
             {
+                if (!Options.OptionsCommand.Instance.GenerateVisitorListener)
+                    return;
+
                 // Find point for edit.
                 var here = found_class.OpenBraceToken;
                 var spn = here.FullSpan;
@@ -531,7 +537,6 @@ public override void {capitalized_member_name}({capitalized_grammar_name}Parser.
             {
                 // Open to this line in editor.
                 IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(class_file_path);
-                if (vstv == null)
                 {
                     IVsTextViewExtensions.ShowFrame(class_file_path);
                     vstv = IVsTextViewExtensions.GetIVsTextView(class_file_path);

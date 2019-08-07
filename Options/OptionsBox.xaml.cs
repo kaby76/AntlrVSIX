@@ -13,7 +13,6 @@ namespace AntlrVSIX.Options
 
         private void btnDialogOk_Click(object sender, RoutedEventArgs e)
         {
-            CheckBox r = interactive;
             this.DialogResult = true;
         }
 

@@ -30,18 +30,25 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <TextBox Grid.Column="1" Grid.Row="1" TextWrapping="Wrap" IsReadOnly="True" MinWidth="250">
-            Select this box if you want the parser to be called periodically during editing of the grammar.
-            Note, selecting this option may cause a delay in typing.
+            Select this box if you want the parser to not run with each character changed
+            in the buffer for the grammar.
         </TextBox>
-        <CheckBox Name="interactive" Grid.Column="1" Grid.Row="2">Interactive Parse</CheckBox>
+        <CheckBox Name="noninteractive" Grid.Column="1" Grid.Row="2">Non-Interactive Parse</CheckBox>
 
         <TextBox Grid.Column="1" Grid.Row="3" TextWrapping="Wrap" IsReadOnly="True" MinWidth="250">
             Select this box if you want only search for visitors and listeners in the directory
             of the grammar.
         </TextBox>
         <CheckBox Name="restricted_directory" Grid.Column="1" Grid.Row="4">Visitors/Listeners restricted to directory of grammar.</CheckBox>
+
+        <TextBox Grid.Column="1" Grid.Row="5" TextWrapping="Wrap" IsReadOnly="True" MinWidth="250">
+            Select this box if you want to generate a listener or visitor method if
+            none exists.
+        </TextBox>
+        <CheckBox Name="generate_visitor_listener" Grid.Column="1" Grid.Row="6">Visitors/Listeners restricted to directory of grammar.</CheckBox>
+        
         <!-- Accept or Cancel -->
-        <WrapPanel Grid.Row="5" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="0,15,0,0">
+        <WrapPanel Grid.Row="7" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="0,15,0,0">
             <Button IsDefault="True" Name="btnDialogOk" Click="btnDialogOk_Click" MinWidth="60" Margin="0,0,10,0">_Ok</Button>
             <Button IsCancel="True" MinWidth="60">_Cancel</Button>
         </WrapPanel>

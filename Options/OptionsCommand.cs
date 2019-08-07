@@ -13,8 +13,9 @@ namespace AntlrVSIX.Options
     {
         private readonly Microsoft.VisualStudio.Shell.Package _package;
         private MenuCommand _menu_item1;
-        public bool InteractiveParse = false;
+        public bool NonInteractiveParse = false;
         public bool RestrictedDirectory = false;
+        public bool GenerateVisitorListener = false;
 
         private OptionsCommand(Microsoft.VisualStudio.Shell.Package package)
         {
@@ -60,7 +61,8 @@ namespace AntlrVSIX.Options
                 if (inputDialog.ShowDialog() == true)
                 {
                     RestrictedDirectory = inputDialog.restricted_directory.IsChecked ?? false;
-                    InteractiveParse = inputDialog.interactive.IsChecked ?? false;
+                    NonInteractiveParse = inputDialog.noninteractive.IsChecked ?? false;
+                    GenerateVisitorListener = inputDialog.generate_visitor_listener.IsChecked ?? false;
                 }
             });
         }

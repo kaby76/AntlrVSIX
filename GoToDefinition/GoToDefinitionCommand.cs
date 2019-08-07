@@ -130,7 +130,6 @@ namespace AntlrVSIX.GoToDefintion
 
             string full_file_name = where_token.FullFileName;
             IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(full_file_name);
-            if (vstv == null)
             {
                 IVsTextViewExtensions.ShowFrame(full_file_name);
                 vstv = IVsTextViewExtensions.GetIVsTextView(where_token.FullFileName);
