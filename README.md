@@ -20,12 +20,13 @@ please use [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks).
 
 ## Caveats:
 
-* Support for the old VS2017 and even older VS2015 has been removed.
+* Support for VS2015 and older editions has been removed.
 If you are interested in those, you can try using an older version of the extension.
 
 * This tool is only for writing grammars. If you want to generate parsers and lexers,
 you will need to use Antlr4BuildTasks (which currently only targets C#), or run the Antlr4 Java
-tool from the command line.
+tool from the command line. That said, there are templates to an Antlr project that
+uses the build rules. A Net Core and Net Framework version is supplied.
 
 * This extension only works on Antlr4 grammars, and the grammar must be in a file that has the suffix
 ".g4" or ".g"
@@ -33,7 +34,7 @@ tool from the command line.
 * The grammar used is the standard Antlr4 grammar in the examples: 
 https://github.com/antlr/grammars-v4/tree/master/antlr4.
 
-* The parser is not incremental. The parse does not recover from
+* The parser is not incremental, and it does not recover from
 syntax errors at all. If the input grammar does not parse, there is no tagging.
 
 * If you want to make modifications for yourself, you should [reset your
