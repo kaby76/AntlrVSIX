@@ -31,7 +31,7 @@
         public const string ClassificationNameLiteral = "aliteral";
 
         /* Color scheme for the tagging. */
-        public static Color NormalColorTextForegroundTerminal = Colors.Lime;
+        public static Color NormalColorTextForegroundTerminal = Colors.Orange;
         public static Color NormalColorTextForegroundNonterminal = Colors.Purple;
         public static Color NormalColorTextForegroundComment = Colors.Green;
         public static Color NormalColorTextForegroundKeyword = Colors.Blue;

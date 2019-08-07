@@ -84,8 +84,13 @@ namespace AntlrVSIX.Reformat
             ITextDocument doc = buffer.GetTextDocument();
             string path = doc.FilePath;
 
-            string corpus_location = System.Environment.GetEnvironmentVariable("CORPUS_LOCATION");
-            if (corpus_location != null)
+            string corpus_location = Options.OptionsCommand.Instance.CorpusLocation;
+            if (corpus_location == null)
+            {
+                System.Windows.Forms.MessageBox.Show(
+                    "CORPUS_LOCATION is not set. Set location using AntlrVSIX -> Options.");
+                return;
+            }
             {
                 // Get reformated text.
                 string text = buffer.GetBufferText();

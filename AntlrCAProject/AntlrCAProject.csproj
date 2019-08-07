@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ErrorListener.cs" />
+    <None Include="Output.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

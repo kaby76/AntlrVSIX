@@ -9,6 +9,8 @@ namespace AntlrVSIX.Options
         public OptionsBox()
         {
             InitializeComponent();
+            string path = System.Environment.GetEnvironmentVariable("CORPUS_LOCATION");
+            this.corpus_location.Text = path;
         }
 
         private void btnDialogOk_Click(object sender, RoutedEventArgs e)
