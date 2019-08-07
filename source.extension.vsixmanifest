@@ -4,7 +4,7 @@
     <Identity Id="AntlrVSIX.Ken Domino.ace904b7-00bd-4b97-afd3-fd0818eddc46"
               Version="2.0" Language="en-US" Publisher="Ken Domino" />
     <DisplayName>AntlrVSIX</DisplayName>
-    <Description xml:space="preserve">Antlr4 grammar editing support extension. See NuGet library Antlr4BuildTasks for build support.</Description>
+    <Description xml:space="preserve">Antlr4 grammar support.</Description>
     <MoreInfo>https://github.com/kaby76/AntlrVSIX</MoreInfo>
     <License>license.txt</License>
     <PreviewImage>AntlrVSIX_large.png</PreviewImage>
