@@ -101,9 +101,8 @@ namespace AntlrVSIX.Grammar
             pd._all_nodes = DFSVisitor.DFS(pd._ant_tree as ParserRuleContext);
 
             //StringBuilder sb = new StringBuilder();
-            //ParenthesizedAST(sb, "", _ant_tree, cts);
+            //ParenthesizedAST(sb, "", pd._ant_tree, cts);
             //System.IO.File.WriteAllText("c:\\temp\\kkk.txt", sb.ToString());
-
 
             {
                 // Get all defining and applied occurences of nonterminal names in grammar.
@@ -147,9 +146,13 @@ namespace AntlrVSIX.Grammar
                 {
                     TerminalNodeImpl term = n as TerminalNodeImpl;
                     if (term == null) return false;
-                    if (term?.Symbol.Type != ANTLRv4Parser.TOKEN_REF) return false;
-                    if (term.Parent as ANTLRv4Parser.ParserRuleSpecContext != null ||
-                        term.Parent as ANTLRv4Parser.LexerRuleSpecContext != null) return true;
+                    if (!Char.IsUpper(term.GetText()[0])) return false;
+                    if (term.Parent as ANTLRv4Parser.TerminalContext != null)
+                        return true;
+                    if (term.Parent as ANTLRv4Parser.LexerRuleSpecContext != null)
+                        return true;
+                    if (term.Parent?.Parent as ANTLRv4Parser.LexerCommandExprContext != null)
+                        return true;
                     return false;
                 });
                 pd._ant_terminals = term_nodes_iterator.Select<IParseTree, IToken>(
@@ -239,10 +242,10 @@ namespace AntlrVSIX.Grammar
             return pd;
         }
 
-        private int changed = 0;
-        private bool first_time = true;
+        private static int changed = 0;
+        private static bool first_time = true;
 
-        private void StartLine(StringBuilder sb, string file_name, IParseTree tree, CommonTokenStream stream, int level = 0)
+        private static void StartLine(StringBuilder sb, string file_name, IParseTree tree, CommonTokenStream stream, int level = 0)
         {
             if (changed - level >= 0)
             {
@@ -258,7 +261,7 @@ namespace AntlrVSIX.Grammar
             changed = level;
             for (int j = 0; j < level; ++j) sb.Append("  ");
         }
-        public void ParenthesizedAST(StringBuilder sb, string file_name, IParseTree tree, CommonTokenStream stream, int level = 0)
+        public static void ParenthesizedAST(StringBuilder sb, string file_name, IParseTree tree, CommonTokenStream stream, int level = 0)
         {
             // Antlr always names a non-terminal with first letter lowercase,
             // but renames it when creating the type in C#. So, remove the prefix,
@@ -306,7 +309,7 @@ namespace AntlrVSIX.Grammar
                 changed = 0;
             }
         }
-        private string ToLiteral(string input)
+        private static string ToLiteral(string input)
         {
             using (var writer = new StringWriter())
             {
@@ -320,7 +323,7 @@ namespace AntlrVSIX.Grammar
             }
         }
 
-        public string provide_escapes(string s)
+        public static string provide_escapes(string s)
         {
             StringBuilder new_s = new StringBuilder();
             new_s.Append(ToLiteral(s));
