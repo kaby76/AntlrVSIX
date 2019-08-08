@@ -62,6 +62,10 @@
   <ItemGroup>
     <Compile Include="Classification\FontColor.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="ErrorTagger\ErrorCategory.cs" />
+    <Compile Include="ErrorTagger\ErrorFormatDefinition.cs" />
+    <Compile Include="ErrorTagger\ErrorTagger.cs" />
+    <Compile Include="ErrorTagger\ErrorTaggerProvider.cs" />
     <Compile Include="Grammar\Class1.cs" />
     <Compile Include="Helpers\DteExtensions.cs" />
     <Compile Include="Helpers\ITextBufferExtensions.cs" />

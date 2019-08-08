@@ -1,6 +1,4 @@
-﻿using EnvDTE;
-
-namespace AntlrVSIX.Tagger
+﻿namespace AntlrVSIX.Tagger
 {
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text.Tagging;
