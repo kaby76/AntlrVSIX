@@ -10,9 +10,10 @@ IDE.
 
 To get the most out of AntlrVSIX, start reviewing here:
 
-[Setup](https://github.com/kaby76/AntlrVSIX/doc/setup.md) -- Install AntlrVSIX in Visual Studio IDE.
-[Create a project](https://github.com/kaby76/AntlrVSIX/doc/create.md) -- Create an Antlr application.
-[Go to def](https://github.com/kaby76/AntlrVSIX/doc/gotodef.md) -- Go to definition.
-[Find refs](https://github.com/kaby76/AntlrVSIX/doc/findrefs.md) -- Find references.
-[Go to visitor](https://github.com/kaby76/AntlrVSIX/doc/gotovisitor.md) -- Go to visitor.
+[Setup](setup.md) -- Install AntlrVSIX in Visual Studio IDE.
+[Basic editing of a grammar file](basic.md) -- Basic editing of a grammar.
+[Create a project](create.md) -- Create an Antlr application.
+[Go to def](gotodef.md) -- Go to definition.
+[Find refs](findrefs.md) -- Find references.
+[Go to visitor](gotovisitor.md) -- Go to visitor.
 
