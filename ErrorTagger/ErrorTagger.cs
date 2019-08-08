@@ -13,7 +13,7 @@ using AntlrVSIX.Grammar;
 
 namespace AntlrVSIX.ErrorTagger
 {
-    class ErrorTagger : ITagger<IErrorTag>, IDisposable
+    class ErrorTagger : ITagger<IErrorTag>
     {
         private ITextBuffer _buffer;
 
@@ -25,8 +25,6 @@ namespace AntlrVSIX.ErrorTagger
                 var span = new SnapshotSpan(buffer.CurrentSnapshot, 0, _buffer.CurrentSnapshot.Length);
                 TagsChanged?.Invoke(this, new SnapshotSpanEventArgs(span));
             });
-
-
         }
 
         private void DocumentValidated(object sender, EventArgs e)
@@ -129,12 +127,7 @@ namespace AntlrVSIX.ErrorTagger
                 case ErrorCategory.Warning:
                     return PredefinedErrorTypeNames.Warning;
             }
-
             return ErrorFormatDefinition.Suggestion;
-        }
-
-        public void Dispose()
-        {
         }
 
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
