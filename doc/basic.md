@@ -9,14 +9,14 @@ across multiple grammar files.
 ## Tagging
 
 AntlrVSIX tags all tokens in the grammar file. Keywords are colored blue; terminals are colored
-orange; nonterminals are colored purple; literals are colored red; comments are colored green;
+orange; non-terminals are colored purple; literals are colored red; comments are colored green;
 all punctuation are black.
 
 In addition, AntlrVSIX also provides error squiggles under terminals and non-terminals that do not
 have a defining rule in the file (or in the project). "EOF" is a built-in terminal provided by Antlr,
 but there is no grammar rule that defines it.
 
-<img src="2019-08-08-18.png" width="75%" />
+<img src="2019-08-08-19.png" width="75%" />
 
 To change the default color scheme, open "Tools -> Options" from the Visual Studio menu.
 Select "Environment -> Fonts and Colors". Look for the "Antlr" items in "Display itmes", and

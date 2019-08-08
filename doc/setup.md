@@ -30,10 +30,11 @@ Step4: <img src="2019-08-08-10.png" width="75%" />
 ## Verify Install
 
 To verify that you have AntlrVSIX installed,
-there should be a menu for the extension under Extensions.
-I recommend that you try opening an Antlr grammar (.g or .g4 suffix)
-and start playing with it. Alternatively, you can generate an application
+there should be a menu for AntlrVSIX under Extensions. (This menu is also available
+when you right click in the grammar editor.)
+I recommend that you try opening an Antlr grammar (.g or .g4 suffix).
+Alternatively, you can generate an application
 (NET Core or NET Framework) using one of the two project templates
-that are defined.
+that are defined and use that to explore the features of AntlrVSIX.
 
 <img src="2019-08-08-17.png" width="75%" />
