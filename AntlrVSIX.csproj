@@ -125,6 +125,12 @@
     <Compile Include="Tagger\AntlrTokenTagger.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="doc\readme.md" />
+    <None Include="doc\setup.md" />
+    <None Include="doc\2019-08-08-(3).png" />
+    <None Include="doc\2019-08-08-(4).png" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Grammar\doit.sh" />
     <None Include="README.md" />
     <Antlr4 Include="Grammar\ANTLRv4Lexer.g4">
@@ -181,6 +187,10 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="doc\2019-08-08-10.png" />
+    <Content Include="doc\2019-08-08-7.png" />
+    <Content Include="doc\2019-08-08-8.png" />
+    <Content Include="doc\2019-08-08-9.png" />
     <Content Include="license.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
