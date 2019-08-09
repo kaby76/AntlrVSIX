@@ -125,6 +125,8 @@
     <Compile Include="Tagger\AntlrTokenTagger.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="doc\basic.md" />
+    <None Include="doc\building.md" />
     <None Include="doc\readme.md" />
     <None Include="doc\setup.md" />
     <None Include="doc\2019-08-08-(3).png" />
@@ -188,9 +190,31 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="doc\2019-08-08-10.png" />
+    <Content Include="doc\2019-08-08-17.png" />
+    <Content Include="doc\2019-08-08-18.png" />
+    <Content Include="doc\2019-08-08-19.png" />
+    <Content Include="doc\2019-08-08-20.png" />
+    <Content Include="doc\2019-08-08-21.png" />
+    <Content Include="doc\2019-08-08-22.png" />
+    <Content Include="doc\2019-08-08-23.png" />
+    <Content Include="doc\2019-08-08-24.png" />
+    <Content Include="doc\2019-08-08-25.png" />
+    <Content Include="doc\2019-08-08-26.png" />
+    <Content Include="doc\2019-08-08-3.png" />
+    <Content Include="doc\2019-08-08-30.png" />
+    <Content Include="doc\2019-08-08-31.png" />
+    <Content Include="doc\2019-08-08-32.png" />
+    <Content Include="doc\2019-08-08-33.png" />
+    <Content Include="doc\2019-08-08-34.png" />
+    <Content Include="doc\2019-08-08-4.png" />
     <Content Include="doc\2019-08-08-7.png" />
     <Content Include="doc\2019-08-08-8.png" />
     <Content Include="doc\2019-08-08-9.png" />
+    <Content Include="doc\findallrefs.mp4" />
+    <Content Include="doc\gotodef.mp4" />
+    <Content Include="doc\New Text Document.txt" />
+    <Content Include="doc\reformat.mp4" />
+    <Content Include="doc\rename.mp4" />
     <Content Include="license.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
