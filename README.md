@@ -21,6 +21,10 @@ please use [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks). If yo
 generate the grammar using one of the Antlr project templates, it is
 added to the .CSPROJ file for you.
 
+## Documentation
+
+For information on how to use AntlrVSIX, see the [User Guide](doc/readme.md).
+
 ## Caveats:
 
 * Support for VS2015 and older editions has been removed.

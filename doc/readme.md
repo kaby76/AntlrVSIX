@@ -1,5 +1,5 @@
 
-# Getting Started
+# User Guide
 
 AntlrVSIX is an extension for Visual Studio 2019 and 2017. It provides support for
 writing C# applications using the [Antlr](antlr.org) parser generator. The extension
