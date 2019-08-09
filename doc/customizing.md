@@ -9,4 +9,4 @@ On the right-hand side, search for "antlr" in "Show commands containing:". Selec
 you would like to bind (e.g., AntlrVSIX.Nextrule or AntlrVSIX.Prevrule),
 and enter a shortcut key (e.g., Cntl+Shift+F or Cntl+Shift+R).
 
-<img src="2019-08-09-1.png" width="75%" /><br/>
+<img src="pics/2019-08-09-1.png" width="75%" /><br/>
