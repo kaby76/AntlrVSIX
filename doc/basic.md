@@ -1,10 +1,11 @@
 # Basic Editing of a Grammar
 
 AntlrVSIX works with Antlr version 4 grammars. The extension recognizes Antlr4 grammars
-with suffices .g or .g4. The extension will not recognize a grammar with any other suffix.
+with suffices .g or .g4, and will not recognize a grammar with any other suffix.
 A grammar that is cannot be parsed will affect what features are available from the extension.
-If the grammar is contained in multiple files in a project, the tool will keep track of symbols
-across multiple grammar files.
+Grammars can be split into multiple files, but they must be
+added to a project in order for the tool will keep track of
+all grammar symbols.
 
 ## Tagging
 
@@ -12,9 +13,9 @@ AntlrVSIX tags all tokens in the grammar file. Keywords are colored blue; termin
 orange; non-terminals are colored purple; literals are colored red; comments are colored green;
 all punctuation are black.
 
-In addition, AntlrVSIX also provides error squiggles under terminals and non-terminals that do not
-have a defining rule in the file (or in the project). "EOF" is a built-in terminal provided by Antlr,
-but there is no grammar rule that defines it.
+In addition, AntlrVSIX provides error squiggles below terminals and non-terminals that do not
+have a defining rule in the project. "EOF" is a built-in terminal provided by Antlr,
+but there is no grammar rule that defines it, so an error squiggle always appears below EOF.
 
 <img src="2019-08-08-19.png" width="75%" />
 
@@ -88,3 +89,5 @@ press the Control-key while selecting "Go to listener". Note, for visitors, ther
 Right-click on symbol, select "Go to listener": <br/><img src="2019-08-08-26.png" width="75%" />
 
 Result of navigation: <br/><img src="2019-08-08-30.png" width="75%" />
+
+[Next: Building and Running Antlr Applications](building.md)<br/>

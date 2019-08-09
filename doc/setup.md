@@ -1,8 +1,8 @@
 # Install AntlrVSIX in Visual Studio 2019
 
-There are two ways to install AntlrVSIX in Visual Studio: (1) Download and install from a web browser; (2) Download and install
-within Visual Studio IDE. In either case, I recommend that you verify the extension is installed before
-proceeding.
+There are two ways to install AntlrVSIX in Visual Studio: (1) Download and install from a web browser; or, (2) Download and install
+within Visual Studio IDE. In either case, I recommend that you verify the extension is installed
+properly before proceeding.
  
 ## Download and Install from a Web Browser.
 
@@ -42,9 +42,7 @@ when you right click in the grammar editor.)
 Try opening an Antlr grammar (.g or .g4 suffix).
 It should tag the grammar with colors (terminals orange, non-terminals purple,
 etc).
-A more complicated example would be for you to
-to create an Antlr parser application using 
-one of the two project templates
-that are defined and use that to explore the features of AntlrVSIX.
 
 <img src="2019-08-08-17.png" width="75%" />
+
+[Next: Basic editing of a grammar file](basic.md)<br/>
