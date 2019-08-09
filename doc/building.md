@@ -48,6 +48,18 @@ _Antlr4ToolPath_ within the .CSPROJ file.
 To build and run a program,
 restore packages for the solution, then "F5".
 
+## Multi-file grammars
+
+AntlrVSIX and Antlr4BuildTasks handles multi-file grammars, e.g., a SomethingLexer.g4 and SomethingParser.g4. Simply add them
+to your project, and make sure the Build Action under the File Properties dialog box is set
+to "Antlr4".
+
+If a grammar file imports another grammar file (via an import statement, e.g.,
+"import LexBasic; // Standard set of fragments"),
+make sure to set the Build Action under the File Properties dialog box to "None", not
+"Antlr4". Otherwise, Antlr will be called for this imported file; Antlr should only be invoked
+on the top-level grammar file.
+
 ## Creating an Antlr Application from the Project Templates
 
 AntlrVSIX provides templates, available for NET Core or NET Framework,
