@@ -1,18 +1,14 @@
-﻿using System;
-using System.CodeDom;
-using System.CodeDom.Compiler;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using Antlr4.Runtime;
-using Antlr4.Runtime.Misc;
-using Antlr4.Runtime.Tree;
-
+﻿
 namespace AntlrVSIX.Grammar
 {
+    using Antlr4.Runtime.Tree;
+    using Antlr4.Runtime;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
+    using System;
+
     public class ParserDetails : IObservable<ParserDetails>
     {
         public static Dictionary<string, ParserDetails> _per_file_parser_details =

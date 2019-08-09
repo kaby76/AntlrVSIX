@@ -5,11 +5,6 @@
     using Microsoft.VisualStudio.Utilities;
     using System.ComponentModel.Composition;
 
-    // Please refer to Language Service and Editor Extension Points,
-    // https://msdn.microsoft.com/en-us/library/dd885244.aspx,
-    // for information on how this Managed Extensiblility Framework (MEF)
-    // extension hooks into Visual Studio 2015.
-
     internal static class ClassificationTypes
     {
         public const string AntlrTerminalTypeName = Constants.ClassificationNameTerminal;

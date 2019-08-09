@@ -14,11 +14,6 @@ namespace AntlrVSIX.AggregateTagger
         }
     }
 
-    // Please refer to Language Service and Editor Extension Points,
-    // https://msdn.microsoft.com/en-us/library/dd885244.aspx,
-    // for information on how this Managed Extensiblility Framework (MEF)
-    // extension hooks into Visual Studio 2015.
-
     [Export(typeof(EditorFormatDefinition))]
     [ClassificationType(ClassificationTypeNames = Constants.ClassificationNameTerminal)]
     [Name(Constants.ClassificationNameTerminal)]

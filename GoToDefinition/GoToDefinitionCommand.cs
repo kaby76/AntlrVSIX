@@ -5,7 +5,6 @@ namespace AntlrVSIX.GoToDefintion
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Grammar;
     using AntlrVSIX.Package;
-    using EnvDTE;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text;
@@ -96,7 +95,7 @@ namespace AntlrVSIX.GoToDefintion
             // First, find out what this view is, and what the file is.
             ITextBuffer buffer = view.TextBuffer;
             ITextDocument doc = buffer.GetTextDocument();
-            string path = doc.FilePath;
+            string path_containing_applied_occurrence = Path.GetDirectoryName(doc.FilePath);
 
             //ParserDetails details = null;
             //bool found = ParserDetails._per_file_parser_details.TryGetValue(path, out details);
@@ -108,18 +107,24 @@ namespace AntlrVSIX.GoToDefintion
             foreach (var kvp in ParserDetails._per_file_parser_details)
             {
                 string file_name = kvp.Key;
+                string path_containing_defining_occurrence = Path.GetDirectoryName(file_name);
+
                 ParserDetails details = kvp.Value;
                 if (classification == AntlrVSIX.Constants.ClassificationNameNonterminal)
                 {
                     var it = details._ant_nonterminals_defining.Where(
-                        (t) => t.Text == span.GetText());
+                        (t) => t.Text == span.GetText()
+                            && path_containing_applied_occurrence
+                            == path_containing_defining_occurrence);
                     where.AddRange(it);
                     foreach (var i in it) where_details.Add(details);
                 }
                 else if (classification == AntlrVSIX.Constants.ClassificationNameTerminal)
                 {
                     var it = details._ant_terminals_defining.Where(
-                        (t) => t.Text == span.GetText());
+                        (t) => t.Text == span.GetText()
+                            && path_containing_applied_occurrence
+                            == path_containing_defining_occurrence);
                     where.AddRange(it);
                     foreach (var i in it) where_details.Add(details);
                 }

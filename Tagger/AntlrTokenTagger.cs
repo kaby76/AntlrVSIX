@@ -12,13 +12,7 @@ namespace AntlrVSIX.Tagger
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.TextManager.Interop;
 
-    /// <summary>
-    /// AntlrTokenTagger is the basic tagging facility of this extension.
-    /// The editor buffer is contained in _buffer. Please refer to
-    /// https://msdn.microsoft.com/en-us/library/dd885240.aspx for more
-    /// information on the editor and tagging.
-    /// </summary>
-    internal sealed class AntlrTokenTagger : ITagger<AntlrTokenTag>, IObserver<ParserDetails>
+    internal sealed class AntlrTokenTagger : ITagger<AntlrTokenTag>
     {
         private ITextBuffer _buffer;
         private IDictionary<string, AntlrTagTypes> _antlr_tag_types;
@@ -41,9 +35,6 @@ namespace AntlrVSIX.Tagger
 
             string code = _buffer.GetBufferText();
             var pd = ParserDetails.Parse(code, file_name);
-            //pd.Subscribe(this);
-
-           // buffer.Changed += new EventHandler<TextContentChangedEventArgs>(ReparseFile);
         }
 
         void ReparseFile(object sender, TextContentChangedEventArgs args)
@@ -181,36 +172,6 @@ namespace AntlrVSIX.Tagger
                     }
                 }
             }
-        }
-
-        public void OnNext(ParserDetails value)
-        {
-            ITextSnapshot snapshot = _buffer.CurrentSnapshot;
-            ITextDocument doc = _buffer.GetTextDocument();
-            string f = doc.FilePath;
-            IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(f);
-            IWpfTextView wpftv = vstv.GetIWpfTextView();
-            if (wpftv == null) return;
-            ITextBuffer tb = wpftv.TextBuffer;
-            var pd = ParserDetails._per_file_parser_details[f];
-            SnapshotSpan span = new SnapshotSpan(_buffer.CurrentSnapshot, 0, _buffer.CurrentSnapshot.Length);
-            //var temp = TagsChanged;
-            //if (temp == null)
-            //    return;
-            //Dispatcher.CurrentDispatcher.BeginInvoke(
-            //    new Action(() => temp(this, new SnapshotSpanEventArgs(span))),
-            //        DispatcherPriority.ApplicationIdle);
-            TagsChanged(this, new SnapshotSpanEventArgs(span));
-        }
-
-        public void OnError(Exception error)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OnCompleted()
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -45,8 +45,6 @@ namespace AntlrVSIX.AggregateTagger
         {
             // Ensure package is loaded.
             AntlrLanguagePackage package = AntlrLanguagePackage.Instance;
-
-            // Receive notification for Visual Studio theme change
             VSColorTheme.ThemeChanged += UpdateTheme;
             var antlrTagAggregator = aggregatorFactory.CreateTagAggregator<AntlrTokenTag>(buffer);
             return new AntlrClassifier(null, buffer, antlrTagAggregator, ClassificationTypeRegistry) as ITagger<T>;

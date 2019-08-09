@@ -11,7 +11,7 @@
     using System.Collections.Generic;
     using System;
 
-    internal sealed class AntlrClassifier : ITagger<ClassificationTag>, IObserver<ParserDetails>
+    internal sealed class AntlrClassifier : ITagger<ClassificationTag>
     {
         public ITextBuffer _buffer = null;
         public ITextView _view = null;
@@ -45,7 +45,6 @@
             ITextDocument doc = _buffer.GetTextDocument();
             string f = doc.FilePath;
             var pd = ParserDetails.Parse(_buffer.GetBufferText(), f);
-            // pd.Subscribe(this);
         }
 
         public IEnumerable<ITagSpan<ClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans)
@@ -61,30 +60,6 @@
                     new TagSpan<ClassificationTag>(tag_spans[0],
                         new ClassificationTag(_antlrtype_to_classifiertype[tag_span.Tag.TagType]));
             }
-        }
-
-
-        public void OnNext(ParserDetails value)
-        {
-            return;
-            // This code does not work...
-            ITextSnapshot snapshot = _buffer.CurrentSnapshot;
-            ITextDocument doc = _buffer.GetTextDocument();
-            string f = doc.FilePath;
-            if (TagsChanged != null)
-            {
-                TagsChanged(this,
-                    new SnapshotSpanEventArgs(
-                        new SnapshotSpan(snapshot, new Span(0, snapshot.Length))));
-            }
-        }
-
-        public void OnError(Exception error)
-        {
-        }
-
-        public void OnCompleted()
-        {
         }
     }
 }

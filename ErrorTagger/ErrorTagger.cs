@@ -1,18 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Adornments;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Tagging;
-using System.Windows.Threading;
-using Antlr4.Runtime;
-using AntlrVSIX.Extensions;
-using AntlrVSIX.Grammar;
-
+﻿
 namespace AntlrVSIX.ErrorTagger
 {
+    using Antlr4.Runtime;
+    using AntlrVSIX.Extensions;
+    using AntlrVSIX.Grammar;
+    using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Text.Adornments;
+    using Microsoft.VisualStudio.Text.Tagging;
+    using Microsoft.VisualStudio.Text;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Windows.Threading;
+    using System;
+
     class ErrorTagger : ITagger<IErrorTag>
     {
         private ITextBuffer _buffer;
@@ -35,13 +36,6 @@ namespace AntlrVSIX.ErrorTagger
 
         public IEnumerable<ITagSpan<IErrorTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
-            // Nothing graceful here in relating a span to a part in the
-            // syntax tree. For now, get the bounds of the span, find tree nodes
-            // that overlap the span. Find all nonterminals
-            // and terminals to mark the span up. Likewise, for all comments,
-            // find all that overlap span. Sort all terminals, nonterminals,
-            // and comments into a list, and package it up as new TagSpan.
-
             foreach (SnapshotSpan curSpan in spans)
             {
                 ITextSnapshotLine containingLine = curSpan.Start.GetContainingLine();
@@ -49,18 +43,17 @@ namespace AntlrVSIX.ErrorTagger
                 string text = curSpan.GetText();
                 ITextBuffer buf = curSpan.Snapshot.TextBuffer;
                 var doc = buf.GetTextDocument();
-                string file_name = doc.FilePath;
-
+                string ffn = doc.FilePath;
+                string path_containing_applied_occurrence = Path.GetDirectoryName(doc.FilePath);
                 ParserDetails details = null;
-                bool found = ParserDetails._per_file_parser_details.TryGetValue(file_name, out details);
+                bool found = ParserDetails._per_file_parser_details.TryGetValue(ffn, out details);
                 if (!found) continue;
-
                 SnapshotPoint start = curSpan.Start;
                 int curLocStart = start.Position;
                 SnapshotPoint end = curSpan.End;
                 int curLocEnd = end.Position;
-
-                // Collect all nonterminals and terminals in this span.
+                List<IToken> where = new List<IToken>();
+                List<ParserDetails> where_details = new List<ParserDetails>();
                 IEnumerable<IToken> combined_tokens = new List<IToken>();
                 List<IToken> all_term_tokens = new List<IToken>();
                 List<IToken> all_nonterm_tokens = new List<IToken>();
@@ -71,7 +64,10 @@ namespace AntlrVSIX.ErrorTagger
                     int end_token_end = token.StopIndex;
                     if (start_token_start >= curLocEnd) return false;
                     if (end_token_end < curLocStart) return false;
-                    var is_any_definer = details._ant_nonterminals_defining.Where(d => d.Text == token.Text).Any();
+                    var is_any_definer = ParserDetails._per_file_parser_details
+                        .Where(pd =>
+                            (Path.GetDirectoryName(pd.Value.FullFileName) == path_containing_applied_occurrence)
+                            && pd.Value._ant_nonterminals_defining.Where(d => d.Text == token.Text).Any()).Any();
                     return !is_any_definer;
                 }).ToList();
 
@@ -82,7 +78,10 @@ namespace AntlrVSIX.ErrorTagger
                     int end_token_end = token.StopIndex;
                     if (start_token_start >= curLocEnd) return false;
                     if (end_token_end < curLocStart) return false;
-                    var is_any_definer = details._ant_terminals_defining.Where(d => d.Text == token.Text).Any();
+                    var is_any_definer = ParserDetails._per_file_parser_details
+                        .Where(pd =>
+                            (Path.GetDirectoryName(pd.Value.FullFileName) == path_containing_applied_occurrence)
+                            && pd.Value._ant_terminals_defining.Where(d => d.Text == token.Text).Any()).Any();
                     return !is_any_definer;
                 }).ToList();
                 combined_tokens = combined_tokens.Concat(all_term_tokens);
