@@ -186,6 +186,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="doc\pics\2019-08-09-1.png" />
     <Content Include="doc\pics\2019-08-08-10.png" />
     <Content Include="doc\pics\2019-08-08-17.png" />
     <Content Include="doc\pics\2019-08-08-18.png" />
