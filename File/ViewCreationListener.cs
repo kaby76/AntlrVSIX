@@ -52,11 +52,6 @@ namespace AntlrVSIX.File
             IWpfTextView view = sender as IWpfTextView;
             if (view == null) return;
             view.Closed -= OnViewClosed;
-            ITextBuffer doc = view.TextBuffer;
-            string ffn = document_file_path;
-            if (!ffn.IsAntlrSuffix()) return;
-            if (ParserDetails._per_file_parser_details.ContainsKey(ffn))
-                ParserDetails._per_file_parser_details.Remove(ffn);
         }
     }
 }
