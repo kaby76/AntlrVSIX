@@ -66,3 +66,5 @@ a parenthesized-representation of the parse tree.
 <br/><img src="2019-08-08-34.png" width="75%" />
 
 <br/><img src="2019-08-08-33.png" width="75%" />
+
+[Next: Customizing the keyboard](customizing.md)<br/>

@@ -13,5 +13,6 @@ To get the most out of AntlrVSIX, start reviewing here:
 [Install AntlrVSIX in Visual Studio IDE](setup.md)<br/>
 [Basic editing of a grammar file](basic.md)<br/>
 [Building and Running Antlr Applications](building.md)<br/>
+[Customizing the keyboard](customizing.md)<br/>
 
 
