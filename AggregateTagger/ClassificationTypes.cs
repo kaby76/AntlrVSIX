@@ -1,4 +1,4 @@
-﻿namespace AntlrVSIX.Classification
+﻿namespace AntlrVSIX.AggregateTagger
 {
     using AntlrVSIX;
     using Microsoft.VisualStudio.Text.Classification;

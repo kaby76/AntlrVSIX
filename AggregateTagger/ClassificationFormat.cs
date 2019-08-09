@@ -1,10 +1,9 @@
-﻿using Microsoft.VisualStudio.PlatformUI;
-
-namespace AntlrVSIX.Classification
+﻿
+namespace AntlrVSIX.AggregateTagger
 {
+    using Microsoft.VisualStudio.PlatformUI;
     using Microsoft.VisualStudio.Text.Classification;
     using Microsoft.VisualStudio.Utilities;
-    using System.Collections.Generic;
     using System.ComponentModel.Composition;
 
     class Themes

@@ -1,7 +1,7 @@
-﻿using AntlrVSIX.Package;
-
-namespace AntlrVSIX.Classification
+﻿
+namespace AntlrVSIX.AggregateTagger
 {
+    using AntlrVSIX.Package;
     using AntlrVSIX.Tagger;
     using Color = System.Drawing.Color;
     using Microsoft.VisualStudio.PlatformUI;

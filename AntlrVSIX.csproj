@@ -60,7 +60,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AggregateTagger\FontColor.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="ErrorTagger\ErrorCategory.cs" />
     <Compile Include="ErrorTagger\ErrorFormatDefinition.cs" />

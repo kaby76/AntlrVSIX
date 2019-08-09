@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.Text.Editor.Commanding;
 using Microsoft.VisualStudio.Text.Editor.Commanding.Commands;
 using Microsoft.VisualStudio.Utilities;
 using System.IO;
-using AntlrVSIX.Classification;
+using AntlrVSIX.AggregateTagger;
 using AntlrVSIX.Extensions;
 using AntlrVSIX.Grammar;
 using Microsoft.VisualStudio.Text;
