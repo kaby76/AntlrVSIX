@@ -20,26 +20,26 @@ using AntlrVSIX.NextSym;
 using AntlrVSIX.Options;
 using AntlrVSIX.Reformat;
 using EnvDTE;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace AntlrVSIX.Package
 {
 
-    [PackageRegistration(UseManagedResourcesOnly = true)]
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)] // Info on this package for Help/About
     [Guid(Constants.PackageGuidString)]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly",
         Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideToolWindow(typeof(FindRefsWindow))]
-    public sealed class AntlrLanguagePackage : Microsoft.VisualStudio.Shell.Package
+    public sealed class AntlrLanguagePackage : AsyncPackage
     {
         public AntlrLanguagePackage()
         {
         }
 
-        protected override void Initialize()
+        protected override System.Threading.Tasks.Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
-            base.Initialize();
             ParseAllFiles();
             FindAllReferencesCommand.Initialize(this);
             FindRefsWindowCommand.Initialize(this);
@@ -49,6 +49,7 @@ namespace AntlrVSIX.Package
             OptionsCommand.Initialize(this);
             ReformatCommand.Initialize(this);
             RenameCommand.Initialize(this);
+            return base.InitializeAsync(cancellationToken, progress);
         }
 
         private static AntlrLanguagePackage _instance;
