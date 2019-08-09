@@ -6,6 +6,8 @@ using AntlrVSIX.FindAllReferences;
 using AntlrVSIX.GoToDefintion;
 using AntlrVSIX.Rename;
 using AntlrVSIX.NextSym;
+using AntlrVSIX.GoToVisitor;
+using AntlrVSIX.Reformat;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Operations;
 
@@ -35,7 +37,8 @@ namespace AntlrVSIX.Package
             FindAllReferencesCommand.Instance.Enabled = false;
             NextSymCommand.Instance.Enabled = true;
             RenameCommand.Instance.Enabled = false;
-            Reformat.ReformatCommand.Instance.Enabled = false;
+            ReformatCommand.Instance.Enabled = false;
+            GoToVisitorCommand.Instance.Enabled = false;
 
             AntlrLanguagePackage.Instance.Span = default(SnapshotSpan);
             AntlrLanguagePackage.Instance.Classification = default(string);
@@ -72,7 +75,7 @@ namespace AntlrVSIX.Package
                     GoToDefinitionCommand.Instance.Enabled = true;
                     FindAllReferencesCommand.Instance.Enabled = true;
                     RenameCommand.Instance.Enabled = true;
-                    Reformat.ReformatCommand.Instance.Enabled = true;
+                    ReformatCommand.Instance.Enabled = true;
                 }
                 else if (name == AntlrVSIX.Constants.ClassificationNameNonterminal)
                 {
@@ -81,8 +84,8 @@ namespace AntlrVSIX.Package
                     GoToDefinitionCommand.Instance.Enabled = true;
                     FindAllReferencesCommand.Instance.Enabled = true;
                     RenameCommand.Instance.Enabled = true;
-                    Reformat.ReformatCommand.Instance.Enabled = true;
-                    GoToVisitor.GoToVisitorCommand.Instance.Enabled = true;
+                    ReformatCommand.Instance.Enabled = true;
+                    GoToVisitorCommand.Instance.Enabled = true;
                 }
                 else if (name == AntlrVSIX.Constants.ClassificationNameLiteral)
                 {
@@ -91,7 +94,7 @@ namespace AntlrVSIX.Package
                     GoToDefinitionCommand.Instance.Enabled = true;
                     FindAllReferencesCommand.Instance.Enabled = true;
                     RenameCommand.Instance.Enabled = true;
-                    Reformat.ReformatCommand.Instance.Enabled = true;
+                    ReformatCommand.Instance.Enabled = true;
                 }
             }
         }
