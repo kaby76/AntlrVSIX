@@ -5,8 +5,8 @@ because there were other Antlr extensions for Visual Studio which only performed
 and editor navigation. In order to eliminate conflicting Antlr extensions for tagging, the
 build process was placed in a separate NuGet library.
 
-This build tool, called Antlr4BuildTasks, is written in C#, and encapsulates the Antlr command-line tool which MSBuild can use.
-Antlr4BuildTasks is a standard package which you can reference using NuGet.
+This build tool, called [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks), is written in C#, and encapsulates the Antlr command-line tool which MSBuild can use.
+Antlr4BuildTasks is a standard package which you can [reference using NuGet](https://www.nuget.org/packages/Antlr4BuildTasks/).
 
 ## Adding Build Rules to an Existing Project
 
@@ -17,6 +17,14 @@ restore packages for the solution, then "F5".
 AntlrVSIX provides a template, available in NET Core and NET Framework flavors,
 which defines a self-contained application with a simple
 grammar and parser.
+
+__Important installation notes for Antlr4BuildTasks!__
+* Installed Java tool chain.
+* Downloaded the Java-based Antlr tool chain (a jar file).
+* Set the environment variable JAVA_HOME to the directory of the java installation.
+* Set the environment variable Antlr4BuildTasks to the path of the downloaded Antlr jar file.
+* Do not include the generated .cs Antlr parser files in the CSPROJ file for your program. The generated parser code is placed in the build temp output directory and automatically included.
+* Make sure you do not have a version skew between the Java Antlr tool and the runtime versions!!!!!
 
 ## Creating an Antlr Application from the Project Templates
 

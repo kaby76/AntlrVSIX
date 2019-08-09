@@ -39,9 +39,12 @@ can be downloaded in lieu of building from sources.
 To verify that you have AntlrVSIX installed,
 there should be a menu for AntlrVSIX under Extensions. (This menu is also available
 when you right click in the grammar editor.)
-I recommend that you try opening an Antlr grammar (.g or .g4 suffix).
-Alternatively, you can generate an Antlr parser application
-(NET Core or NET Framework) using one of the two project templates
+Try opening an Antlr grammar (.g or .g4 suffix).
+It should tag the grammar with colors (terminals orange, non-terminals purple,
+etc).
+A more complicated example would be for you to
+to create an Antlr parser application using 
+one of the two project templates
 that are defined and use that to explore the features of AntlrVSIX.
 
 <img src="2019-08-08-17.png" width="75%" />
