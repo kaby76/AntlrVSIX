@@ -1,20 +1,17 @@
-﻿using Antlr4.Runtime;
-using AntlrVSIX.Extensions;
-using AntlrVSIX.Grammar;
-using EnvDTE;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.TextManager.Interop;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.IO;
-using System.Linq;
-using System;
-using AntlrVSIX.Package;
-
-namespace AntlrVSIX.NextSym
+﻿namespace AntlrVSIX.NextSym
 {
+    using Antlr4.Runtime;
+    using AntlrVSIX.Extensions;
+    using AntlrVSIX.Grammar;
+    using AntlrVSIX.Package;
+    using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Text.Editor;
+    using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.TextManager.Interop;
+    using System.Collections.Generic;
+    using System.ComponentModel.Design;
+    using System;
+
     internal sealed class NextSymCommand
     {
         private readonly Microsoft.VisualStudio.Shell.Package _package;

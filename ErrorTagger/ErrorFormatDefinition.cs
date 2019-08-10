@@ -1,11 +1,11 @@
-﻿using Microsoft.VisualStudio.Text.Adornments;
-using Microsoft.VisualStudio.Text.Classification;
-using Microsoft.VisualStudio.Utilities;
-using System.ComponentModel.Composition;
-using System.Windows.Media;
-
-namespace AntlrVSIX.ErrorTagger
+﻿namespace AntlrVSIX.ErrorTagger
 {
+    using Microsoft.VisualStudio.Text.Adornments;
+    using Microsoft.VisualStudio.Text.Classification;
+    using Microsoft.VisualStudio.Utilities;
+    using System.ComponentModel.Composition;
+    using System.Windows.Media;
+
     public class ErrorFormatDefinition
     {
         public const string Suggestion = Constants.LanguageName + " Suggestion";

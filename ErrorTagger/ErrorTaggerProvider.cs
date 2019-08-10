@@ -1,10 +1,10 @@
-﻿using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Tagging;
-using Microsoft.VisualStudio.Utilities;
-using System.ComponentModel.Composition;
-
-namespace AntlrVSIX.ErrorTagger
+﻿namespace AntlrVSIX.ErrorTagger
 {
+    using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.Text.Tagging;
+    using Microsoft.VisualStudio.Utilities;
+    using System.ComponentModel.Composition;
+
     [Export(typeof(ITaggerProvider))]
     [ContentType(Constants.ContentType)]
     [TagType(typeof(ErrorTag))]

@@ -1,10 +1,10 @@
-﻿using System;
-using System.Linq;
-using Antlr4.Runtime;
-using Antlr4.Runtime.Misc;
-
-namespace AntlrVSIX.Grammar
+﻿namespace AntlrVSIX.Grammar
 {
+    using Antlr4.Runtime;
+    using Antlr4.Runtime.Misc;
+    using System;
+    using System.Linq;
+
     public abstract class LexerAdaptor : Lexer
     {
         private ICharStream _input;

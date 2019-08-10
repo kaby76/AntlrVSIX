@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using Microsoft.VisualStudio.Shell;
-
+﻿
 namespace AntlrVSIX.Options
 {
+    using Microsoft.VisualStudio.Shell;
+    using System.ComponentModel.Design;
+    using System.Windows;
+    using System;
+
     public class OptionsCommand
     {
         private readonly Microsoft.VisualStudio.Shell.Package _package;

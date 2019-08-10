@@ -1,30 +1,29 @@
-﻿using System;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor;
-using AntlrVSIX.Extensions;
-using AntlrVSIX.FindAllReferences;
-using AntlrVSIX.GoToDefintion;
-using AntlrVSIX.Rename;
-using Microsoft.VisualStudio.Shell;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.InteropServices;
-using Microsoft.VisualStudio.TextManager.Interop;
-using Microsoft.VisualStudio.Text.Classification;
-using Microsoft.VisualStudio.Text.Operations;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using AntlrVSIX.GoToVisitor;
-using AntlrVSIX.Grammar;
-using AntlrVSIX.NextSym;
-using AntlrVSIX.Options;
-using AntlrVSIX.Reformat;
-using EnvDTE;
-using System.Threading;
-using System.Threading.Tasks;
-
+﻿
 namespace AntlrVSIX.Package
 {
+    using AntlrVSIX.Extensions;
+    using AntlrVSIX.FindAllReferences;
+    using AntlrVSIX.GoToDefintion;
+    using AntlrVSIX.GoToVisitor;
+    using AntlrVSIX.Grammar;
+    using AntlrVSIX.NextSym;
+    using AntlrVSIX.Options;
+    using AntlrVSIX.Reformat;
+    using AntlrVSIX.Rename;
+    using EnvDTE;
+    using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Text.Classification;
+    using Microsoft.VisualStudio.Text.Editor;
+    using Microsoft.VisualStudio.Text.Operations;
+    using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.TextManager.Interop;
+    using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+    using System.IO;
+    using System.Linq;
+    using System.Runtime.InteropServices;
+    using System.Threading;
+    using System;
 
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)] // Info on this package for Help/About
     [Guid(Constants.PackageGuidString)]

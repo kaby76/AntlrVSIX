@@ -1,27 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Antlr4.Runtime;
-using AntlrVSIX.Extensions;
-using AntlrVSIX.Grammar;
-using AntlrVSIX.Package;
-using EnvDTE;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.TextManager.Interop;
-using System.ComponentModel.Design;
-using System.IO;
-using AntlrVSIX.Keyboard;
-using EnvDTE80;
-using Microsoft.VisualStudio.Text.Classification;
-using Microsoft.VisualStudio.Text.Operations;
-
-namespace AntlrVSIX.GoToVisitor
+﻿namespace AntlrVSIX.GoToVisitor
 {
+    using Antlr4.Runtime;
+    using AntlrVSIX.Extensions;
+    using AntlrVSIX.Grammar;
+    using AntlrVSIX.Keyboard;
+    using AntlrVSIX.Package;
+    using EnvDTE;
+    using EnvDTE80;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.Text.Classification;
+    using Microsoft.VisualStudio.Text.Editor;
+    using Microsoft.VisualStudio.Text.Operations;
+    using Microsoft.VisualStudio.TextManager.Interop;
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.Design;
+    using System.IO;
+    using System.Linq;
+
     public class GoToVisitorCommand
     {
         private readonly Microsoft.VisualStudio.Shell.Package _package;

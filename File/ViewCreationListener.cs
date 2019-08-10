@@ -1,18 +1,16 @@
-﻿using System;
-using Microsoft.VisualStudio.TextManager.Interop;
-using Microsoft.VisualStudio.Editor;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Utilities;
-using System.ComponentModel.Composition;
-using System.Diagnostics;
-using System.IO;
-using AntlrVSIX.Extensions;
-using AntlrVSIX.Grammar;
-
-namespace AntlrVSIX.File
+﻿namespace AntlrVSIX.File
 {
+    using AntlrVSIX.Extensions;
+    using AntlrVSIX.Grammar;
+    using Microsoft.VisualStudio.Editor;
+    using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.Text.Editor;
+    using Microsoft.VisualStudio.TextManager.Interop;
+    using Microsoft.VisualStudio.Utilities;
+    using System;
+    using System.ComponentModel.Composition;
+    using System.Diagnostics;
 
     [Export(typeof(IVsTextViewCreationListener))]
     [ContentType("code")]

@@ -1,18 +1,18 @@
-﻿using System.Linq;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor;
-using AntlrVSIX.Extensions;
-using AntlrVSIX.FindAllReferences;
-using AntlrVSIX.GoToDefintion;
-using AntlrVSIX.Rename;
-using AntlrVSIX.NextSym;
-using AntlrVSIX.GoToVisitor;
-using AntlrVSIX.Reformat;
-using Microsoft.VisualStudio.Text.Classification;
-using Microsoft.VisualStudio.Text.Operations;
-
-namespace AntlrVSIX.Package
+﻿namespace AntlrVSIX.Package
 {
+    using AntlrVSIX.Extensions;
+    using AntlrVSIX.FindAllReferences;
+    using AntlrVSIX.GoToDefintion;
+    using AntlrVSIX.GoToVisitor;
+    using AntlrVSIX.NextSym;
+    using AntlrVSIX.Reformat;
+    using AntlrVSIX.Rename;
+    using Microsoft.VisualStudio.Text.Classification;
+    using Microsoft.VisualStudio.Text.Editor;
+    using Microsoft.VisualStudio.Text.Operations;
+    using Microsoft.VisualStudio.Text;
+    using System.Linq;
+
     public class Menus
     {
         public static void ResetMenus()

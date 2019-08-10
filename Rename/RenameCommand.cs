@@ -1,18 +1,18 @@
-﻿using AntlrVSIX.Package;
-
+﻿
 namespace AntlrVSIX.Rename
 {
     using Antlr4.Runtime;
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Grammar;
+    using AntlrVSIX.Package;
     using Microsoft.VisualStudio.Shell;
-    using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.TextManager.Interop;
+    using System;
     using System.Collections.Generic;
     using System.ComponentModel.Design;
     using System.Linq;
-    using System;
 
     internal sealed class RenameCommand
     {

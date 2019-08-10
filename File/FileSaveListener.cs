@@ -1,18 +1,16 @@
-﻿using System;
-using System.ComponentModel.Composition;
-using Microsoft.VisualStudio.Commanding;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Editor.Commanding;
-using Microsoft.VisualStudio.Text.Editor.Commanding.Commands;
-using Microsoft.VisualStudio.Utilities;
-using System.IO;
-using AntlrVSIX.AggregateTagger;
-using AntlrVSIX.Extensions;
-using AntlrVSIX.Grammar;
-using Microsoft.VisualStudio.Text;
-
-namespace AntlrVSIX.File
+﻿namespace AntlrVSIX.File
 {
+    using AntlrVSIX.Extensions;
+    using AntlrVSIX.Grammar;
+    using Microsoft.VisualStudio.Commanding;
+    using Microsoft.VisualStudio.Text.Editor;
+    using Microsoft.VisualStudio.Text.Editor.Commanding;
+    using Microsoft.VisualStudio.Text.Editor.Commanding.Commands;
+    using Microsoft.VisualStudio.Utilities;
+    using System;
+    using System.ComponentModel.Composition;
+    using System.IO;
+
     [Export(typeof(ICommandHandler))]
     [Name("Antlr")]
     [ContentType(Constants.ContentType)]

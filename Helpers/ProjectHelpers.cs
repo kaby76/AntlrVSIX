@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using EnvDTE;
-using Microsoft.Build.Utilities;
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell.Interop;
-
-namespace AntlrVSIX.Extensions
+﻿namespace AntlrVSIX.Extensions
 {
+    using EnvDTE;
+    using Microsoft.VisualStudio;
+    using Microsoft.VisualStudio.Shell.Interop;
+    using System;
+    using System.IO;
+    using System.Linq;
+    using System.Runtime.InteropServices;
+
     public static class ProjectHelpers
     {
         public static object GetSelectedItem()

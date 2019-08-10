@@ -1,11 +1,11 @@
-﻿using AntlrVSIX.Package;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Operations;
-
+﻿
 namespace AntlrVSIX
 {
+    using AntlrVSIX.Package;
     using AntlrVSIX.Tagger;
     using Microsoft.VisualStudio.Language.Intellisense;
+    using Microsoft.VisualStudio.Text.Editor;
+    using Microsoft.VisualStudio.Text.Operations;
     using Microsoft.VisualStudio.Text.Tagging;
     using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Utilities;
@@ -14,9 +14,6 @@ namespace AntlrVSIX
     using System.Linq;
     using System;
 
-    /// <summary>
-    /// Factory for quick info sources
-    /// </summary>
     [Export(typeof(IQuickInfoSourceProvider))]
     [ContentType(Constants.ContentType)]
     [Name("AntlrQuickInfo")]
@@ -32,15 +29,11 @@ namespace AntlrVSIX
         }
     }
 
-    /// <summary>
-    /// Provides QuickInfo information to be displayed in a text buffer
-    /// </summary>
     class AntlrQuickInfoSource : IQuickInfoSource
     {
         private ITagAggregator<AntlrTokenTag> _aggregator;
         private ITextBuffer _buffer;
         private bool _disposed = false;
-
 
         public AntlrQuickInfoSource(ITextBuffer buffer, ITagAggregator<AntlrTokenTag> aggregator)
         {
@@ -48,9 +41,6 @@ namespace AntlrVSIX
             _buffer = buffer;
         }
 
-        /// <summary>
-        /// Determine which pieces of Quickinfo content should be displayed
-        /// </summary>
         public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quick_info_content, out ITrackingSpan tracking_span)
         {
             tracking_span = null;
