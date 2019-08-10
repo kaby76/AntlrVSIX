@@ -1,17 +1,17 @@
 ﻿namespace AntlrVSIX
 {
+    using Microsoft.VisualStudio;
     using Microsoft.VisualStudio.Editor;
     using Microsoft.VisualStudio.Language.Intellisense;
     using Microsoft.VisualStudio.OLE.Interop;
-    using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.TextManager.Interop;
     using Microsoft.VisualStudio.Utilities;
-    using Microsoft.VisualStudio;
+    using System;
     using System.ComponentModel.Composition;
     using System.Diagnostics;
     using System.Runtime.InteropServices;
-    using System;
 
     [Export(typeof(IVsTextViewCreationListener))]
     [ContentType(AntlrVSIX.Constants.ContentType)]
@@ -122,9 +122,6 @@
             _completion_session.SelectedCompletionSet.Recalculate();
         }
 
-        /// <summary>
-        /// Cancel the auto-complete session, and leave the text unmodified
-        /// </summary>
         bool Cancel()
         {
             if (_completion_session == null)
@@ -135,9 +132,6 @@
             return true;
         }
 
-        /// <summary>
-        /// Auto-complete text using the specified token
-        /// </summary>
         bool Complete(bool force)
         {
             if (_completion_session == null)
@@ -155,9 +149,6 @@
             }
         }
 
-        /// <summary>
-        /// Display list of potential tokens
-        /// </summary>
         bool StartSession()
         {
             if (_completion_session != null)

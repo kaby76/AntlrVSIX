@@ -17,7 +17,6 @@
             _text_view = text_view;
             _subject_buffers = subject_buffers;
             _component_context = component_context;
-
             _text_view.MouseHover += OnTextViewMouseHover;
         }
 

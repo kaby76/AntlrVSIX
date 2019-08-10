@@ -1,12 +1,13 @@
 ﻿namespace AntlrVSIX
 {
+    using AntlrVSIX.Extensions;
+    using AntlrVSIX.Grammar;
     using Microsoft.VisualStudio.Language.Intellisense;
     using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Utilities;
     using System.Collections.Generic;
     using System.ComponentModel.Composition;
     using System.Linq;
-    using System;
 
     [Export(typeof(ICompletionSourceProvider))]
     [ContentType(AntlrVSIX.Constants.ContentType)]
@@ -22,7 +23,6 @@
     class AntlrCompletionSource : ICompletionSource
     {
         private ITextBuffer _buffer;
-        private bool _disposed;
         
         public AntlrCompletionSource(ITextBuffer buffer)
         {
@@ -31,17 +31,19 @@
 
         public void AugmentCompletionSession(ICompletionSession session, IList<CompletionSet> completionSets)
         {
-            if (_disposed)
-                throw new ObjectDisposedException("AntlrCompletionSource");
-
-            List<Completion> completions = new List<Completion>()
+            ITextDocument doc = _buffer.GetTextDocument();
+            string path_containing_applied_occurrence = System.IO.Path.GetDirectoryName(doc.FilePath);
+            List<Completion> completions = new List<Completion>();
+            ParserDetails pd = ParserDetails._per_file_parser_details[doc.FilePath];
+            foreach (var s in pd._ant_nonterminals.OrderBy(p => p.Text).Select(p => p.Text).Distinct())
             {
-                new Completion(AntlrVSIX.Constants.ClassificationNameTerminal),
-                new Completion(AntlrVSIX.Constants.ClassificationNameNonterminal),
-                new Completion(AntlrVSIX.Constants.ClassificationNameComment),
-                new Completion(AntlrVSIX.Constants.ClassificationNameKeyword)
-            };
-            
+                completions.Add(new Completion(s));
+            }
+            foreach (var s in pd._ant_terminals.OrderBy(p => p.Text).Select(p => p.Text).Distinct())
+            {
+                completions.Add(new Completion(s));
+            }
+
             ITextSnapshot snapshot = _buffer.CurrentSnapshot;
             SnapshotPoint snapshot_point = (SnapshotPoint)session.GetTriggerPoint(snapshot);
 
@@ -63,7 +65,6 @@
 
         public void Dispose()
         {
-            _disposed = true;
         }
     }
 }
