@@ -9,7 +9,7 @@
     using System.ComponentModel.Composition;
 
     [Export(typeof(IViewTaggerProvider))]
-    [ContentType(Constants.ContentType)]
+    [ContentType(AntlrVSIX.Constants.ContentType)]
     [TagType(typeof(HighlightWordTag))]
     public class HighlightWordTaggerProvider : IViewTaggerProvider
     {

@@ -8,7 +8,7 @@
 
     public class ErrorFormatDefinition
     {
-        public const string Suggestion = Constants.LanguageName + " Suggestion";
+        public const string Suggestion = AntlrVSIX.Constants.LanguageName + " Suggestion";
 
         [Export(typeof(ErrorTypeDefinition))]
         [Name(Suggestion)]

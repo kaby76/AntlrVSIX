@@ -14,7 +14,7 @@
     using System;
 
     [Export(typeof(IVsTextViewCreationListener))]
-    [ContentType(Constants.ContentType)]
+    [ContentType(AntlrVSIX.Constants.ContentType)]
     [TextViewRole(PredefinedTextViewRoles.Interactive)]
     internal sealed class VsTextViewCreationListener2 : IVsTextViewCreationListener
     {

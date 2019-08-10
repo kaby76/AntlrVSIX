@@ -20,11 +20,11 @@ namespace AntlrVSIX.Tagger
             _buffer = buffer;
 
             _antlr_tag_types = new Dictionary<string, AntlrTagTypes>();
-            _antlr_tag_types[Constants.ClassificationNameNonterminal] = AntlrTagTypes.Nonterminal;
-            _antlr_tag_types[Constants.ClassificationNameTerminal] = AntlrTagTypes.Terminal;
-            _antlr_tag_types[Constants.ClassificationNameComment] = AntlrTagTypes.Comment;
-            _antlr_tag_types[Constants.ClassificationNameKeyword] = AntlrTagTypes.Keyword;
-            _antlr_tag_types[Constants.ClassificationNameLiteral] = AntlrTagTypes.Literal;
+            _antlr_tag_types[AntlrVSIX.Constants.ClassificationNameNonterminal] = AntlrTagTypes.Nonterminal;
+            _antlr_tag_types[AntlrVSIX.Constants.ClassificationNameTerminal] = AntlrTagTypes.Terminal;
+            _antlr_tag_types[AntlrVSIX.Constants.ClassificationNameComment] = AntlrTagTypes.Comment;
+            _antlr_tag_types[AntlrVSIX.Constants.ClassificationNameKeyword] = AntlrTagTypes.Keyword;
+            _antlr_tag_types[AntlrVSIX.Constants.ClassificationNameLiteral] = AntlrTagTypes.Literal;
             _antlr_tag_types["other"] = AntlrTagTypes.Other;
 
             ITextDocument document = _buffer.GetTextDocument();

@@ -9,7 +9,7 @@
     using System;
 
     [Export(typeof(ICompletionSourceProvider))]
-    [ContentType(Constants.ContentType)]
+    [ContentType(AntlrVSIX.Constants.ContentType)]
     [Name("AntlrCompletion")]
     class AntlrCompletionSourceProvider : ICompletionSourceProvider
     {
@@ -36,10 +36,10 @@
 
             List<Completion> completions = new List<Completion>()
             {
-                new Completion(Constants.ClassificationNameTerminal),
-                new Completion(Constants.ClassificationNameNonterminal),
-                new Completion(Constants.ClassificationNameComment),
-                new Completion(Constants.ClassificationNameKeyword)
+                new Completion(AntlrVSIX.Constants.ClassificationNameTerminal),
+                new Completion(AntlrVSIX.Constants.ClassificationNameNonterminal),
+                new Completion(AntlrVSIX.Constants.ClassificationNameComment),
+                new Completion(AntlrVSIX.Constants.ClassificationNameKeyword)
             };
             
             ITextSnapshot snapshot = _buffer.CurrentSnapshot;

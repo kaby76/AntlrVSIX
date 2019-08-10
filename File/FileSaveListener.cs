@@ -13,7 +13,7 @@
 
     [Export(typeof(ICommandHandler))]
     [Name("Antlr")]
-    [ContentType(Constants.ContentType)]
+    [ContentType(AntlrVSIX.Constants.ContentType)]
     [TextViewRole(PredefinedTextViewRoles.Document)]
     public class FileSaveListener : ICommandHandler<SaveCommandArgs>
     {

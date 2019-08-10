@@ -32,11 +32,11 @@
 
             _aggregator = aggregator;
             _antlrtype_to_classifiertype = new Dictionary<AntlrTagTypes, IClassificationType>();
-            _antlrtype_to_classifiertype[AntlrTagTypes.Nonterminal] = service.GetClassificationType(Constants.ClassificationNameNonterminal);
-            _antlrtype_to_classifiertype[AntlrTagTypes.Terminal] = service.GetClassificationType(Constants.ClassificationNameTerminal);
-            _antlrtype_to_classifiertype[AntlrTagTypes.Comment] = service.GetClassificationType(Constants.ClassificationNameComment);
-            _antlrtype_to_classifiertype[AntlrTagTypes.Keyword] = service.GetClassificationType(Constants.ClassificationNameKeyword);
-            _antlrtype_to_classifiertype[AntlrTagTypes.Literal] = service.GetClassificationType(Constants.ClassificationNameLiteral);
+            _antlrtype_to_classifiertype[AntlrTagTypes.Nonterminal] = service.GetClassificationType(AntlrVSIX.Constants.ClassificationNameNonterminal);
+            _antlrtype_to_classifiertype[AntlrTagTypes.Terminal] = service.GetClassificationType(AntlrVSIX.Constants.ClassificationNameTerminal);
+            _antlrtype_to_classifiertype[AntlrTagTypes.Comment] = service.GetClassificationType(AntlrVSIX.Constants.ClassificationNameComment);
+            _antlrtype_to_classifiertype[AntlrTagTypes.Keyword] = service.GetClassificationType(AntlrVSIX.Constants.ClassificationNameKeyword);
+            _antlrtype_to_classifiertype[AntlrTagTypes.Literal] = service.GetClassificationType(AntlrVSIX.Constants.ClassificationNameLiteral);
             _antlrtype_to_classifiertype[AntlrTagTypes.Other] = service.GetClassificationType("other");
             
             // Ensure package is loaded.

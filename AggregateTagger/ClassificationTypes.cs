@@ -7,30 +7,30 @@
 
     internal static class ClassificationTypes
     {
-        public const string AntlrTerminalTypeName = Constants.ClassificationNameTerminal;
-        public const string AntlrNonterminalTypeName = Constants.ClassificationNameNonterminal;
-        public const string AntlrCommentTypeName = Constants.ClassificationNameComment;
-        public const string AntlrKeywordTypeName = Constants.ClassificationNameKeyword;
-        public const string AntlrLiteralTypeName = Constants.ClassificationNameLiteral;
+        public const string AntlrTerminalTypeName = AntlrVSIX.Constants.ClassificationNameTerminal;
+        public const string AntlrNonterminalTypeName = AntlrVSIX.Constants.ClassificationNameNonterminal;
+        public const string AntlrCommentTypeName = AntlrVSIX.Constants.ClassificationNameComment;
+        public const string AntlrKeywordTypeName = AntlrVSIX.Constants.ClassificationNameKeyword;
+        public const string AntlrLiteralTypeName = AntlrVSIX.Constants.ClassificationNameLiteral;
 
         [Export(typeof(ClassificationTypeDefinition))]
-        [Name(Constants.ClassificationNameTerminal)]
+        [Name(AntlrVSIX.Constants.ClassificationNameTerminal)]
         internal static ClassificationTypeDefinition _antlr_terminal = null;
 
         [Export(typeof(ClassificationTypeDefinition))]
-        [Name(Constants.ClassificationNameNonterminal)]
+        [Name(AntlrVSIX.Constants.ClassificationNameNonterminal)]
         internal static ClassificationTypeDefinition _antlr_nonterminal = null;
 
         [Export(typeof(ClassificationTypeDefinition))]
-        [Name(Constants.ClassificationNameComment)]
+        [Name(AntlrVSIX.Constants.ClassificationNameComment)]
         internal static ClassificationTypeDefinition _antlr_comment = null;
 
         [Export(typeof(ClassificationTypeDefinition))]
-        [Name(Constants.ClassificationNameKeyword)]
+        [Name(AntlrVSIX.Constants.ClassificationNameKeyword)]
         internal static ClassificationTypeDefinition _antlr_keyword = null;
 
         [Export(typeof(ClassificationTypeDefinition))]
-        [Name(Constants.ClassificationNameLiteral)]
+        [Name(AntlrVSIX.Constants.ClassificationNameLiteral)]
         internal static ClassificationTypeDefinition _antlr_literal = null;
     }
 }

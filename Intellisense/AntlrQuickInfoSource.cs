@@ -15,7 +15,7 @@ namespace AntlrVSIX
     using System;
 
     [Export(typeof(IQuickInfoSourceProvider))]
-    [ContentType(Constants.ContentType)]
+    [ContentType(AntlrVSIX.Constants.ContentType)]
     [Name("AntlrQuickInfo")]
     class AntlrQuickInfoSourceProvider : IQuickInfoSourceProvider
     {

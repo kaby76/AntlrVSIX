@@ -15,8 +15,8 @@ namespace AntlrVSIX.AggregateTagger
     }
 
     [Export(typeof(EditorFormatDefinition))]
-    [ClassificationType(ClassificationTypeNames = Constants.ClassificationNameTerminal)]
-    [Name(Constants.ClassificationNameTerminal)]
+    [ClassificationType(ClassificationTypeNames = AntlrVSIX.Constants.ClassificationNameTerminal)]
+    [Name(AntlrVSIX.Constants.ClassificationNameTerminal)]
     [UserVisible(true)]
     [Order(Before = Priority.Default)]
     internal sealed class Terminal : ClassificationFormatDefinition
@@ -25,15 +25,15 @@ namespace AntlrVSIX.AggregateTagger
         {
             DisplayName = "Antlr Terminal"; //human readable version of the name
             if (Themes.IsInvertedTheme())
-                ForegroundColor = Constants.InvertedColorTextForegroundTerminal;
+                ForegroundColor = AntlrVSIX.Constants.InvertedColorTextForegroundTerminal;
             else
-                ForegroundColor = Constants.NormalColorTextForegroundTerminal;
+                ForegroundColor = AntlrVSIX.Constants.NormalColorTextForegroundTerminal;
         }
     }
 
     [Export(typeof(EditorFormatDefinition))]
-    [ClassificationType(ClassificationTypeNames = Constants.ClassificationNameNonterminal)]
-    [Name(Constants.ClassificationNameNonterminal)]
+    [ClassificationType(ClassificationTypeNames = AntlrVSIX.Constants.ClassificationNameNonterminal)]
+    [Name(AntlrVSIX.Constants.ClassificationNameNonterminal)]
     [UserVisible(true)]
     [Order(Before = Priority.Default)]
     internal sealed class Nonterminal : ClassificationFormatDefinition
@@ -42,15 +42,15 @@ namespace AntlrVSIX.AggregateTagger
         {
             DisplayName = "Antlr Nonterminal"; //human readable version of the name
             if (Themes.IsInvertedTheme())
-                ForegroundColor = Constants.InvertedColorTextForegroundNonterminal;
+                ForegroundColor = AntlrVSIX.Constants.InvertedColorTextForegroundNonterminal;
             else
-                ForegroundColor = Constants.NormalColorTextForegroundNonterminal;
+                ForegroundColor = AntlrVSIX.Constants.NormalColorTextForegroundNonterminal;
         }
     }
 
     [Export(typeof(EditorFormatDefinition))]
-    [ClassificationType(ClassificationTypeNames = Constants.ClassificationNameComment)]
-    [Name(Constants.ClassificationNameComment)]
+    [ClassificationType(ClassificationTypeNames = AntlrVSIX.Constants.ClassificationNameComment)]
+    [Name(AntlrVSIX.Constants.ClassificationNameComment)]
     [UserVisible(true)]
     [Order(Before = Priority.Default)]
     internal sealed class AComment : ClassificationFormatDefinition
@@ -59,15 +59,15 @@ namespace AntlrVSIX.AggregateTagger
         {
             DisplayName = "Antlr Comment"; //human readable version of the name
             if (Themes.IsInvertedTheme())
-                ForegroundColor = Constants.InvertedColorTextForegroundComment;
+                ForegroundColor = AntlrVSIX.Constants.InvertedColorTextForegroundComment;
             else
-                ForegroundColor = Constants.NormalColorTextForegroundComment;
+                ForegroundColor = AntlrVSIX.Constants.NormalColorTextForegroundComment;
         }
     }
 
     [Export(typeof(EditorFormatDefinition))]
-    [ClassificationType(ClassificationTypeNames = Constants.ClassificationNameKeyword)]
-    [Name(Constants.ClassificationNameKeyword)]
+    [ClassificationType(ClassificationTypeNames = AntlrVSIX.Constants.ClassificationNameKeyword)]
+    [Name(AntlrVSIX.Constants.ClassificationNameKeyword)]
     [UserVisible(true)]
     [Order(Before = Priority.Default)]
     internal sealed class Keyword : ClassificationFormatDefinition
@@ -76,15 +76,15 @@ namespace AntlrVSIX.AggregateTagger
         {
             DisplayName = "Antlr Keyword"; //human readable version of the name
             if (Themes.IsInvertedTheme())
-                ForegroundColor = Constants.InvertedColorTextForegroundKeyword;
+                ForegroundColor = AntlrVSIX.Constants.InvertedColorTextForegroundKeyword;
             else
-                ForegroundColor = Constants.NormalColorTextForegroundKeyword;
+                ForegroundColor = AntlrVSIX.Constants.NormalColorTextForegroundKeyword;
         }
     }
 
     [Export(typeof(EditorFormatDefinition))]
-    [ClassificationType(ClassificationTypeNames = Constants.ClassificationNameLiteral)]
-    [Name(Constants.ClassificationNameLiteral)]
+    [ClassificationType(ClassificationTypeNames = AntlrVSIX.Constants.ClassificationNameLiteral)]
+    [Name(AntlrVSIX.Constants.ClassificationNameLiteral)]
     [UserVisible(true)]
     [Order(Before = Priority.Default)]
     internal sealed class Literal : ClassificationFormatDefinition
@@ -93,9 +93,9 @@ namespace AntlrVSIX.AggregateTagger
         {
             DisplayName = "Antlr Literal"; //human readable version of the name
             if (Themes.IsInvertedTheme())
-                ForegroundColor = Constants.InvertedColorTextForegroundLiteral;
+                ForegroundColor = AntlrVSIX.Constants.InvertedColorTextForegroundLiteral;
             else
-                ForegroundColor = Constants.NormalColorTextForegroundLiteral;
+                ForegroundColor = AntlrVSIX.Constants.NormalColorTextForegroundLiteral;
         }
     }
 }

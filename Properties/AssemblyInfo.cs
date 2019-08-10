@@ -14,5 +14,5 @@ using AntlrVSIX;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
-[assembly: AssemblyVersion(Constants.Version)]
-[assembly: AssemblyFileVersion(Constants.Version)]
+[assembly: AssemblyVersion(AntlrVSIX.Constants.Version)]
+[assembly: AssemblyFileVersion(AntlrVSIX.Constants.Version)]

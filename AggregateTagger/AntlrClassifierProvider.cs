@@ -18,18 +18,18 @@ namespace AntlrVSIX.AggregateTagger
     // extension hooks into Visual Studio 2015.
 
     [Export(typeof(ITaggerProvider))]
-    [ContentType(Constants.ContentType)]
+    [ContentType(AntlrVSIX.Constants.ContentType)]
     [TagType(typeof(ClassificationTag))]
     internal sealed class AntlrClassifierProvider : ITaggerProvider
     {
         [Export]
-        [Name(Constants.LanguageName)]
+        [Name(AntlrVSIX.Constants.LanguageName)]
         [BaseDefinition("code")]
         internal static ContentTypeDefinition AntlrContentType = null;
 
         [Export]
-        [FileExtension(Constants.FileExtension)]
-        [ContentType(Constants.ContentType)]
+        [FileExtension(AntlrVSIX.Constants.FileExtension)]
+        [ContentType(AntlrVSIX.Constants.ContentType)]
         internal static FileExtensionToContentTypeDefinition AntlrFileType = null;
 
         [Import]
