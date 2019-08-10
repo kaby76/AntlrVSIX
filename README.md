@@ -1,19 +1,10 @@
 
 # AntlrVSIX
 AntlrVSIX is an open source Visual Studio 2019 extension for Antlr v4
-grammars. The features in this extension are:
-
-* Colorized tagging of grammars.
-* "Go to definition" of a grammar symbol.
-* "Find all references" of a grammar symbol.
-* "Replace symbol" in a grammar.
-* "Reformat" grammar based on machine learning tool Codebuff.
-* "Next/Previous rule" for quick navigation through a grammar.
-* "Go to Visitor / Listener" from a grammar symbol to a C# tree walker method.
-* Dialog box for setting options of this extension.
-* Antlr4 grammar and parser project template for Visual Studio. Sets up a working grammar, parser, and build rules for
-an example that you can run.
-* No advertisements, free of charge, open source.
+grammars. This extension provides tagging, "go to def", "find all refs",
+replace, "go to visitor/listener", command completion, options,
+reformat, and project templates for compiling and running.
+The source code is open source, free of charge, and free of ads.
 
 For integration of build rules into VS2019 (i.e., so you do not
 need to manually call the command-line tool to generate Antlr4 lexers and parsers),
@@ -35,9 +26,6 @@ If you are interested in those, you can try using an older version of the extens
 
 * The grammar used is the standard Antlr4 grammar in the examples: 
 https://github.com/antlr/grammars-v4/tree/master/antlr4.
-
-* Parsing proceeds with each key stroke you make for the grammar. If you do not
-want to parse only at File Save, set the option to perform nonincremental parsing.
 
 * If you want to make modifications for yourself, you should [reset your
 Experimental Hive for Visual Studio](https://docs.microsoft.com/en-us/visualstudio/extensibility/the-experimental-instance?view=vs-2017). To do that,
