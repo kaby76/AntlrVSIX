@@ -27,9 +27,15 @@ change the values to what you would like.
 
 ## Intellisense Tooltip
 
-Currently, AntlrVSIX provides only tool tips of the type of the symbol when you move the mouse over
+AntlrVSIX provides tool tips of the type of the symbol when you move the mouse over
 it. You can, of course, gather the type of symbol by Antlr rules (all terminals begin with an uppercase
 letter, non-terminals begin with a lowercase letter) or by the tag color.
+
+## Intellisense Command Completion
+
+AntlrVSIX provides some command completion suggestions. When the user types, the tool provides
+a list of non-terminals and terminals currently in use in the grammar file. Note, it does not
+yet suggest symbols of imported grammars unless they are already in use.
 
 ## Go to Definition
 
