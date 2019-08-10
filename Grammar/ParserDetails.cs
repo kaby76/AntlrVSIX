@@ -97,8 +97,10 @@ namespace AntlrVSIX.Grammar
             pd._all_nodes = DFSVisitor.DFS(pd._ant_tree as ParserRuleContext);
 
             //StringBuilder sb = new StringBuilder();
-            //ParenthesizedAST(sb, "", pd._ant_tree, cts);
-            //System.IO.File.WriteAllText("c:\\temp\\kkk.txt", sb.ToString());
+            //Class1.ParenthesizedAST(pd._ant_tree, sb, "", cts);
+            //string fn = System.IO.Path.GetFileName(pd.FullFileName);
+            //fn = "c:\\temp\\" + fn;
+            //System.IO.File.WriteAllText(fn, sb.ToString());
 
             {
                 // Get all defining and applied occurences of nonterminal names in grammar.
