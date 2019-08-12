@@ -98,7 +98,7 @@ namespace AntlrVSIX.Reformat
                 org.antlr.codebuff.Tool.Main(
                     new string[]
                     {
-                        "-g", " ANTLRv4",
+                        "-g", "org.antlr.codebuff.grammar.ANTLRv4",
                         "-rule", "grammarSpec",
                         "-files", "g4",
                         $@"-corpus", corpus_location,
