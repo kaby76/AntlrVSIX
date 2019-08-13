@@ -7,20 +7,21 @@
     using AntlrVSIX.Package;
     using EnvDTE;
     using EnvDTE80;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis;
     using Microsoft.VisualStudio.Shell;
-    using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Classification;
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text.Operations;
+    using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.TextManager.Interop;
-    using System;
     using System.Collections.Generic;
     using System.ComponentModel.Design;
     using System.IO;
     using System.Linq;
+    using System.Text.RegularExpressions;
+    using System;
 
     public class GoToVisitorCommand
     {
@@ -143,7 +144,8 @@
             var listener_class_name = visitor ? ("My" + grammar_name + "Visitor") : ("My" + grammar_name + "Listener");
 
             // In the current view, find the details of the Antlr symbol at the cursor.
-            TextExtent extent = AntlrVSIX.Package.AntlrLanguagePackage.Instance.Navigator[grammar_view].GetExtentOfWord(bp);
+            TextExtent extent = AntlrVSIX.Package.AntlrLanguagePackage.Instance.Navigator[grammar_view]
+                .GetExtentOfWord(bp);
             SnapshotSpan span = extent.Span;
             AntlrLanguagePackage.Instance.Span = span;
 
@@ -185,7 +187,12 @@
             }
 
             if (where.Any()) token = where.First();
-            else return;
+            else
+            {
+                System.Windows.Forms.MessageBox.Show(
+                    "Symbol '" + span.GetText() + "' is not a non-terminal.");
+                return;
+            }
 
             // Get the symbol name as a string.
             var symbol_name = token.Text;
@@ -239,9 +246,11 @@
                             var bls = class_member.BaseList;
                             if (bls == null) continue;
                             var types = bls.Types;
+                            Regex reg = new Regex("[<].+[>]");
                             foreach (var type in types)
                             {
                                 var s = type.ToString();
+                                s = reg.Replace(s, "");
                                 if (s.ToString() == listener_baseclass_name)
                                 {
                                     // Found the right class.
@@ -376,9 +385,11 @@ namespace {name_space}
                             var bls = class_member.BaseList;
                             if (bls == null) continue;
                             var types = bls.Types;
+                            Regex reg = new Regex("[<].+[>]");
                             foreach (var type in types)
                             {
                                 var s = type.ToString();
+                                s = reg.Replace(s, "");
                                 if (s.ToString() == listener_baseclass_name)
                                 {
                                     // Found the right class.
@@ -499,9 +510,11 @@ public override void {capitalized_member_name}({capitalized_grammar_name}Parser.
                             var bls = class_member.BaseList;
                             if (bls == null) continue;
                             var types = bls.Types;
+                            Regex reg = new Regex("[<].+[>]");
                             foreach (var type in types)
                             {
                                 var s = type.ToString();
+                                s = reg.Replace(s, "");
                                 if (s.ToString() == listener_baseclass_name)
                                 {
                                     // Found the right class.
