@@ -14,9 +14,7 @@
     internal sealed class MouseHandler : MouseProcessorBase
     {
         private IWpfTextView _view;
-        private IClassifier _aggregator;
         private ITextStructureNavigator _navigator;
-        private SVsServiceProvider _service_provider;
 
         public MouseHandler(IWpfTextView view,
             IOleCommandTarget commandTarget,
@@ -26,9 +24,7 @@
             CtrlKeyState state)
         {
             _view = view;
-            _aggregator = aggregator;
             _navigator = navigator;
-            _service_provider = serviceProvider;
             AntlrVSIX.Package.AntlrLanguagePackage.Instance.Aggregator[view] = aggregator;
             AntlrVSIX.Package.AntlrLanguagePackage.Instance.Navigator[view] = navigator;
             AntlrVSIX.Package.AntlrLanguagePackage.Instance.ServiceProvider[view] = serviceProvider;

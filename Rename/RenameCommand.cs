@@ -22,11 +22,7 @@ namespace AntlrVSIX.Rename
 
         private RenameCommand(Package package)
         {
-            if (package == null)
-            {
-                throw new ArgumentNullException("package");
-            }
-            _package = package;
+            _package = package ?? throw new ArgumentNullException("package");
             OleMenuCommandService command_service = this.ServiceProvider.GetService(
                 typeof(IMenuCommandService)) as OleMenuCommandService;
             if (command_service == null) return;

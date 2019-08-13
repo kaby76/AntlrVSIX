@@ -22,11 +22,7 @@
 
         private NextSymCommand(Microsoft.VisualStudio.Shell.Package package)
         {
-            if (package == null)
-            {
-                throw new ArgumentNullException("package");
-            }
-            _package = package;
+            _package = package ?? throw new ArgumentNullException("package");
             OleMenuCommandService commandService = this.ServiceProvider.GetService(
                 typeof(IMenuCommandService)) as OleMenuCommandService;
 
@@ -201,7 +197,6 @@
             // Put cursor on symbol.
             wpftv.Caret.MoveTo(sp); // This sets cursor, bot does not center.
             // Center on cursor.
-            //wpftv.Caret.EnsureVisible(); // This works, sort of. It moves the scroll bar, but it does not CENTER! Does not really work!
             if (line_number > 0)
                 vstv.CenterLines(line_number - 1, 2);
             else

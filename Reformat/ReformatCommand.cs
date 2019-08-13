@@ -17,11 +17,7 @@ namespace AntlrVSIX.Reformat
 
         private ReformatCommand(Package package)
         {
-            if (package == null)
-            {
-                throw new ArgumentNullException("package");
-            }
-            _package = package;
+            _package = package ?? throw new ArgumentNullException("package");
             OleMenuCommandService commandService = this.ServiceProvider.GetService(
                 typeof(IMenuCommandService)) as OleMenuCommandService;
 
