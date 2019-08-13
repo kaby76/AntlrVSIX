@@ -30,15 +30,6 @@
             AntlrVSIX.Package.AntlrLanguagePackage.Instance.ServiceProvider[view] = serviceProvider;
         }
 
-        // Remember the location of the mouse on left button down, so we only handle left button up
-        // if the mouse has stayed in a single location.
-        System.Windows.Point? _mouseDownAnchorPoint;
-
-        public override void PreprocessMouseLeave(MouseEventArgs e)
-        {
-            _mouseDownAnchorPoint = null;
-        }
-
         public override void PreprocessMouseUp(MouseButtonEventArgs e)
         {
             e.Handled = true;
