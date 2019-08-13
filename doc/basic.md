@@ -2,9 +2,9 @@
 
 AntlrVSIX works with Antlr version 4 grammars. The extension recognizes Antlr4 grammars
 with suffices .g or .g4, and will not recognize a grammar with any other suffix.
-A grammar that is cannot be parsed will affect what features are available from the extension.
+A grammar that cannot be parsed will affect what features are available from the extension.
 Grammars can be split into multiple files, but they must be
-added to a project in order for the tool will keep track of
+added to a Visual Studio C# Project in order for the tool to keep track of
 all grammar symbols.
 
 ## Tagging
