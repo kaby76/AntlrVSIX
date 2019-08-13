@@ -6,10 +6,9 @@ replace, "go to visitor/listener", command completion, options,
 reformat, and project templates for compiling and running.
 The source code is open source, free of charge, and free of ads.
 
-For integration of build rules into VS2019 (i.e., so you do not
-need to manually call the command-line tool to generate Antlr4 lexers and parsers),
-please use [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks). If you
-generate the grammar using one of the Antlr project templates, it is
+For building parsers in Visual Studio using the [downloaded ANTLR tool](https://www.antlr.org/download/antlr-4.7.2-complete.jar),
+please use [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks), which is a wrapper for the ANTLR tool.
+If you generate the grammar using one of the Antlr project templates, it is
 added to the .CSPROJ file for you.
 
 ## Documentation
