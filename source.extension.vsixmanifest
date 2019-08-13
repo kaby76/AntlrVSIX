@@ -9,7 +9,6 @@
         <License>license.txt</License>
         <Icon>AntlrVSIX_large.png</Icon>
         <Tags>Antlr Antlr4 C#</Tags>
-        <Preview>true</Preview>
     </Metadata>
     <Installation InstalledByMsi="false">
         <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[15.0,17.0)" />
