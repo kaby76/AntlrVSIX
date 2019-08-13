@@ -1,5 +1,5 @@
 ﻿
-namespace AntlrVSIX.GoToDefintion
+namespace AntlrVSIX.GoToDefinition
 {
     using Antlr4.Runtime;
     using AntlrVSIX.Extensions;

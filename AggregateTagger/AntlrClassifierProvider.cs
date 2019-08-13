@@ -12,11 +12,6 @@ namespace AntlrVSIX.AggregateTagger
     using System.ComponentModel.Composition;
     using System;
 
-    // Please refer to Language Service and Editor Extension Points,
-    // https://msdn.microsoft.com/en-us/library/dd885244.aspx,
-    // for information on how this Managed Extensiblility Framework (MEF)
-    // extension hooks into Visual Studio 2015.
-
     [Export(typeof(ITaggerProvider))]
     [ContentType(AntlrVSIX.Constants.ContentType)]
     [TagType(typeof(ClassificationTag))]
@@ -43,11 +38,10 @@ namespace AntlrVSIX.AggregateTagger
 
         public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
         {
-            // Ensure package is loaded.
             AntlrLanguagePackage package = AntlrLanguagePackage.Instance;
             VSColorTheme.ThemeChanged += UpdateTheme;
             var antlrTagAggregator = aggregatorFactory.CreateTagAggregator<AntlrTokenTag>(buffer);
-            return new AntlrClassifier(null, buffer, antlrTagAggregator, ClassificationTypeRegistry) as ITagger<T>;
+            return new AntlrClassifier(buffer, antlrTagAggregator, ClassificationTypeRegistry) as ITagger<T>;
         }
 
         private void UpdateTheme(EventArgs e)

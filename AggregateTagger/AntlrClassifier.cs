@@ -13,24 +13,18 @@
 
     internal sealed class AntlrClassifier : ITagger<ClassificationTag>
     {
-        public ITextBuffer _buffer = null;
-        public ITextView _view = null;
+        public ITextBuffer _buffer;
         public ITagAggregator<AntlrTokenTag> _aggregator;
         private IDictionary<AntlrTagTypes, IClassificationType> _antlrtype_to_classifiertype;
-        public static Dictionary<ITextBuffer, AntlrClassifier> _buffer_to_classifier = new Dictionary<ITextBuffer, AntlrClassifier>();
-        public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 
         internal AntlrClassifier(
-            ITextView view,
             ITextBuffer buffer,
             ITagAggregator<AntlrTokenTag> aggregator,
             IClassificationTypeRegistryService service)
         {
-            _view = view;
             _buffer = buffer;
-            _buffer_to_classifier[buffer] = this;
-
             _aggregator = aggregator;
+
             _antlrtype_to_classifiertype = new Dictionary<AntlrTagTypes, IClassificationType>();
             _antlrtype_to_classifiertype[AntlrTagTypes.Nonterminal] = service.GetClassificationType(AntlrVSIX.Constants.ClassificationNameNonterminal);
             _antlrtype_to_classifiertype[AntlrTagTypes.Terminal] = service.GetClassificationType(AntlrVSIX.Constants.ClassificationNameTerminal);
@@ -41,10 +35,6 @@
             
             // Ensure package is loaded.
             AntlrLanguagePackage package = AntlrLanguagePackage.Instance;
-
-            ITextDocument doc = _buffer.GetTextDocument();
-            string f = doc.FilePath;
-            var pd = ParserDetails.Parse(_buffer.GetBufferText(), f);
         }
 
         public IEnumerable<ITagSpan<ClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans)
@@ -61,5 +51,7 @@
                         new ClassificationTag(_antlrtype_to_classifiertype[tag_span.Tag.TagType]));
             }
         }
+
+        public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
     }
 }

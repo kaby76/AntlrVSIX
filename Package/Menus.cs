@@ -2,7 +2,7 @@
 {
     using AntlrVSIX.Extensions;
     using AntlrVSIX.FindAllReferences;
-    using AntlrVSIX.GoToDefintion;
+    using AntlrVSIX.GoToDefinition;
     using AntlrVSIX.GoToVisitor;
     using AntlrVSIX.NextSym;
     using AntlrVSIX.Reformat;

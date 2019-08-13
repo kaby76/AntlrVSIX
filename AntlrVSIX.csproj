@@ -130,7 +130,6 @@
     <None Include="doc\setup.md" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Grammar\doit.sh" />
     <None Include="README.md" />
     <Antlr4 Include="Grammar\ANTLRv4Lexer.g4">
       <CustomToolNamespace>AntlrVSIX.Grammar</CustomToolNamespace>

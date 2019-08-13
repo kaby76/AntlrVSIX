@@ -3,7 +3,7 @@ namespace AntlrVSIX.Package
 {
     using AntlrVSIX.Extensions;
     using AntlrVSIX.FindAllReferences;
-    using AntlrVSIX.GoToDefintion;
+    using GoToDefinition;
     using AntlrVSIX.GoToVisitor;
     using AntlrVSIX.Grammar;
     using AntlrVSIX.NextSym;

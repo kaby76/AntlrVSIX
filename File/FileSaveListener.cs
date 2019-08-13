@@ -19,12 +19,9 @@
     {
         public string DisplayName => nameof(FileSaveListener);
 
-        private readonly IEditorCommandHandlerServiceFactory _commandService;
-
         [ImportingConstructor]
         public FileSaveListener(IEditorCommandHandlerServiceFactory commandService)
         {
-            _commandService = commandService;
         }
 
         public bool ExecuteCommand(SaveCommandArgs args, CommandExecutionContext executionContext)
@@ -53,6 +50,5 @@
         {
             return CommandState.Available;
         }
-
     }
 }

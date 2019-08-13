@@ -17,16 +17,9 @@
     [TextViewRole(PredefinedTextViewRoles.Editable)]
     public class ViewCreationListener : IVsTextViewCreationListener
     {
-        private string document_file_path;
-
         [Import]
         public IVsEditorAdaptersFactoryService AdaptersFactory = null;
 
-        [Import]
-        public ITextDocumentFactoryService TextDocumentFactoryService { get; set; }
-
-        [Import]
-        public SVsServiceProvider GlobalServiceProvider = null;
         public void VsTextViewCreated(IVsTextView textViewAdapter)
         {
             IWpfTextView view = AdaptersFactory.GetWpfTextView(textViewAdapter);
@@ -39,7 +32,6 @@
             ITextBuffer doc = view.TextBuffer;
             string ffn = doc.GetFilePath();
             if (!ffn.IsAntlrSuffix()) return;
-            document_file_path = ffn;
             var buffer = view.TextBuffer;
             var code = buffer.GetBufferText();
             ParserDetails pd = ParserDetails.Parse(code, ffn);

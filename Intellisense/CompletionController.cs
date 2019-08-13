@@ -31,8 +31,7 @@
 
             CommandFilter filter = new CommandFilter(view, CompletionBroker);
 
-            IOleCommandTarget next;
-            textViewAdapter.AddCommandFilter(filter, out next);
+            textViewAdapter.AddCommandFilter(filter, out var next);
             filter.Next = next;
         }
     }
