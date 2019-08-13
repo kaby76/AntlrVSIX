@@ -16,10 +16,11 @@
   </TemplateData>
   <TemplateContent>
     <Project File="ProjectTemplate.csproj" ReplaceParameters="true">
-      <ProjectItem ReplaceParameters="true" OpenInEditor="true">Program.cs</ProjectItem>
-      <ProjectItem ReplaceParameters="true" OpenInEditor="true">Output.cs</ProjectItem>
-      <ProjectItem ReplaceParameters="true" OpenInEditor="true">ErrorListener.cs</ProjectItem>
       <ProjectItem ReplaceParameters="false" OpenInEditor="true">arithmetic.g4</ProjectItem>
+      <ProjectItem ReplaceParameters="true" OpenInEditor="true">CalculatorVisitor.cs</ProjectItem>
+      <ProjectItem ReplaceParameters="true" OpenInEditor="true">ErrorListener.cs</ProjectItem>
+      <ProjectItem ReplaceParameters="true" OpenInEditor="true">Output.cs</ProjectItem>
+      <ProjectItem ReplaceParameters="true" OpenInEditor="true">Program.cs</ProjectItem>
     </Project>
   </TemplateContent>
 </VSTemplate>

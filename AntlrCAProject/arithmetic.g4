@@ -3,11 +3,11 @@
 file : expression* EOF;
 
 expression
-   :  expression  POW expression
-   |  expression  (TIMES | DIV)  expression
-   |  expression  (PLUS | MINUS) expression
-   |  LPAREN expression RPAREN
-   |  (PLUS | MINUS)* atom
+   :  left=expression op=POW right=expression
+   |  left=expression op=(TIMES | DIV) right=expression
+   |  left=expression op=(PLUS | MINUS) right=expression
+   |  LPAREN evalue=expression RPAREN
+   |  op=(PLUS | MINUS)* avalue=atom
    ;
 
 atom

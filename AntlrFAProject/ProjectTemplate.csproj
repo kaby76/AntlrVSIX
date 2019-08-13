@@ -44,9 +44,10 @@
 		<Reference Include="System.Xml"/>
 	</ItemGroup>
 	<ItemGroup>
-    <Compile Include="Program.cs" />
-    <Compile Include="Output.cs" />
+    <Compile Include="CalculatorVisitor.cs" />
     <Compile Include="ErrorListener.cs" />
+    <Compile Include="Output.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Antlr4 Include="arithmetic.g4" />
 	</ItemGroup>

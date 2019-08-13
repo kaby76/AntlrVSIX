@@ -23,6 +23,8 @@ namespace $safeprojectname$
                 System.Console.WriteLine("parse completed.");
                 System.Console.WriteLine(tree.OutputTree(tokens));
             }
+            var visitor = new CalculatorVisitor();
+            visitor.Visit(tree);
         }
-    }
+}
 }
