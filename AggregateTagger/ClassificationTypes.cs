@@ -25,5 +25,13 @@
         [Export(typeof(ClassificationTypeDefinition))]
         [Name(AntlrVSIX.Constants.ClassificationNameLiteral)]
         internal static ClassificationTypeDefinition _antlr_literal = null;
+
+        [Export(typeof(ClassificationTypeDefinition))]
+        [Name(AntlrVSIX.Constants.ClassificationNameMode)]
+        internal static ClassificationTypeDefinition _antlr_mode = null;
+
+        [Export(typeof(ClassificationTypeDefinition))]
+        [Name(AntlrVSIX.Constants.ClassificationNameChannel)]
+        internal static ClassificationTypeDefinition _antlr_channel = null;
     }
 }

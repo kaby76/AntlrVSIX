@@ -98,4 +98,38 @@ namespace AntlrVSIX.AggregateTagger
                 ForegroundColor = AntlrVSIX.Constants.NormalColorTextForegroundLiteral;
         }
     }
+
+    [Export(typeof(EditorFormatDefinition))]
+    [ClassificationType(ClassificationTypeNames = AntlrVSIX.Constants.ClassificationNameMode)]
+    [Name(AntlrVSIX.Constants.ClassificationNameMode)]
+    [UserVisible(true)]
+    [Order(Before = Priority.Default)]
+    internal sealed class Mode : ClassificationFormatDefinition
+    {
+        public Mode()
+        {
+            DisplayName = "Antlr Mode"; //human readable version of the name
+            if (Themes.IsInvertedTheme())
+                ForegroundColor = AntlrVSIX.Constants.InvertedColorTextForegroundMode;
+            else
+                ForegroundColor = AntlrVSIX.Constants.NormalColorTextForegroundMode;
+        }
+    }
+
+    [Export(typeof(EditorFormatDefinition))]
+    [ClassificationType(ClassificationTypeNames = AntlrVSIX.Constants.ClassificationNameChannel)]
+    [Name(AntlrVSIX.Constants.ClassificationNameChannel)]
+    [UserVisible(true)]
+    [Order(Before = Priority.Default)]
+    internal sealed class Channel : ClassificationFormatDefinition
+    {
+        public Channel()
+        {
+            DisplayName = "Antlr Channel"; //human readable version of the name
+            if (Themes.IsInvertedTheme())
+                ForegroundColor = AntlrVSIX.Constants.InvertedColorTextForegroundChannel;
+            else
+                ForegroundColor = AntlrVSIX.Constants.NormalColorTextForegroundChannel;
+        }
+    }
 }

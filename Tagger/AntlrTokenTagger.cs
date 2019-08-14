@@ -25,6 +25,8 @@ namespace AntlrVSIX.Tagger
             _antlr_tag_types[AntlrVSIX.Constants.ClassificationNameComment] = AntlrTagTypes.Comment;
             _antlr_tag_types[AntlrVSIX.Constants.ClassificationNameKeyword] = AntlrTagTypes.Keyword;
             _antlr_tag_types[AntlrVSIX.Constants.ClassificationNameLiteral] = AntlrTagTypes.Literal;
+            _antlr_tag_types[AntlrVSIX.Constants.ClassificationNameMode] = AntlrTagTypes.Mode;
+            _antlr_tag_types[AntlrVSIX.Constants.ClassificationNameChannel] = AntlrTagTypes.Channel;
             _antlr_tag_types["other"] = AntlrTagTypes.Other;
 
             ITextDocument document = _buffer.GetTextDocument();
@@ -88,6 +90,8 @@ namespace AntlrVSIX.Tagger
                 List<IToken> all_comment_tokens = new List<IToken>();
                 List<IToken> all_keyword_tokens = new List<IToken>();
                 List<IToken> all_literal_tokens = new List<IToken>();
+                List<IToken> all_mode_tokens = new List<IToken>();
+                List<IToken> all_channel_tokens = new List<IToken>();
 
                 all_nonterm_tokens = details._ant_nonterminals.Where((token) =>
                 {
@@ -134,6 +138,24 @@ namespace AntlrVSIX.Tagger
                     return true;
                 }).ToList();
                 combined_tokens = combined_tokens.Concat(all_literal_tokens);
+                all_mode_tokens = details._ant_modes.Where((token) =>
+                {
+                    int start_token_start = token.StartIndex;
+                    int end_token_end = token.StopIndex;
+                    if (start_token_start >= curLocEnd) return false;
+                    if (end_token_end < curLocStart) return false;
+                    return true;
+                }).ToList();
+                combined_tokens = combined_tokens.Concat(all_mode_tokens);
+                all_channel_tokens = details._ant_channels.Where((token) =>
+                {
+                    int start_token_start = token.StartIndex;
+                    int end_token_end = token.StopIndex;
+                    if (start_token_start >= curLocEnd) return false;
+                    if (end_token_end < curLocStart) return false;
+                    return true;
+                }).ToList();
+                combined_tokens = combined_tokens.Concat(all_channel_tokens);
 
                 // Sort the list.
                 var sorted_combined_tokens = combined_tokens.OrderBy((t) => t.StartIndex).ToList();
@@ -160,6 +182,8 @@ namespace AntlrVSIX.Tagger
                     else if (all_comment_tokens.Contains(token)) type = AntlrTagTypes.Comment;
                     else if (all_keyword_tokens.Contains(token)) type = AntlrTagTypes.Keyword;
                     else if (all_literal_tokens.Contains(token)) type = AntlrTagTypes.Literal;
+                    else if (all_mode_tokens.Contains(token)) type = AntlrTagTypes.Mode;
+                    else if (all_channel_tokens.Contains(token)) type = AntlrTagTypes.Channel;
                     else
                         type = AntlrTagTypes.Other;
 

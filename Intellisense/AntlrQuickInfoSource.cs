@@ -91,6 +91,18 @@ namespace AntlrVSIX
                     tracking_span = _buffer.CurrentSnapshot.CreateTrackingSpan(tag_span, SpanTrackingMode.EdgeExclusive);
                     quick_info_content.Add("Literal");
                 }
+                else if (cur_tag.Tag.TagType == AntlrTagTypes.Mode)
+                {
+                    SnapshotSpan tag_span = cur_tag.Span.GetSpans(_buffer).First();
+                    tracking_span = _buffer.CurrentSnapshot.CreateTrackingSpan(tag_span, SpanTrackingMode.EdgeExclusive);
+                    quick_info_content.Add("Mode");
+                }
+                else if (cur_tag.Tag.TagType == AntlrTagTypes.Channel)
+                {
+                    SnapshotSpan tag_span = cur_tag.Span.GetSpans(_buffer).First();
+                    tracking_span = _buffer.CurrentSnapshot.CreateTrackingSpan(tag_span, SpanTrackingMode.EdgeExclusive);
+                    quick_info_content.Add("Channel");
+                }
             }
         }
 

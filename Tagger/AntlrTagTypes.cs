@@ -7,6 +7,8 @@
         Comment,
         Keyword,
         Literal,
+        Mode,
+        Channel,
         Other
     }
 }

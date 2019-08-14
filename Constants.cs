@@ -29,6 +29,8 @@
         public const string ClassificationNameComment = "acomment";
         public const string ClassificationNameKeyword = "akeyword";
         public const string ClassificationNameLiteral = "aliteral";
+        public const string ClassificationNameMode = "mode";
+        public const string ClassificationNameChannel = "channel";
 
         /* Color scheme for the tagging. */
         public static Color NormalColorTextForegroundTerminal = Colors.Orange;
@@ -36,11 +38,15 @@
         public static Color NormalColorTextForegroundComment = Colors.Green;
         public static Color NormalColorTextForegroundKeyword = Colors.Blue;
         public static Color NormalColorTextForegroundLiteral = Colors.Red;
+        public static Color NormalColorTextForegroundMode = Colors.Salmon;
+        public static Color NormalColorTextForegroundChannel = Colors.Coral;
 
         public static Color InvertedColorTextForegroundTerminal = Colors.LightYellow;
         public static Color InvertedColorTextForegroundNonterminal = Colors.LightPink;
         public static Color InvertedColorTextForegroundComment = Colors.LightGreen;
         public static Color InvertedColorTextForegroundKeyword = Colors.LightBlue;
         public static Color InvertedColorTextForegroundLiteral = Colors.Red;
+        public static Color InvertedColorTextForegroundMode = Colors.LightSalmon;
+        public static Color InvertedColorTextForegroundChannel = Colors.LightCoral;
     }
 }

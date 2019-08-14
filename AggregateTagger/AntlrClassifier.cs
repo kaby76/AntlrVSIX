@@ -5,7 +5,6 @@
     using AntlrVSIX.Package;
     using AntlrVSIX.Tagger;
     using Microsoft.VisualStudio.Text.Classification;
-    using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text.Tagging;
     using Microsoft.VisualStudio.Text;
     using System.Collections.Generic;
@@ -31,6 +30,8 @@
             _antlrtype_to_classifiertype[AntlrTagTypes.Comment] = service.GetClassificationType(AntlrVSIX.Constants.ClassificationNameComment);
             _antlrtype_to_classifiertype[AntlrTagTypes.Keyword] = service.GetClassificationType(AntlrVSIX.Constants.ClassificationNameKeyword);
             _antlrtype_to_classifiertype[AntlrTagTypes.Literal] = service.GetClassificationType(AntlrVSIX.Constants.ClassificationNameLiteral);
+            _antlrtype_to_classifiertype[AntlrTagTypes.Mode] = service.GetClassificationType(AntlrVSIX.Constants.ClassificationNameMode);
+            _antlrtype_to_classifiertype[AntlrTagTypes.Channel] = service.GetClassificationType(AntlrVSIX.Constants.ClassificationNameChannel);
             _antlrtype_to_classifiertype[AntlrTagTypes.Other] = service.GetClassificationType("other");
             
             // Ensure package is loaded.
