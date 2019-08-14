@@ -28,32 +28,33 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <TextBox Grid.Column="1" Grid.Row="1" TextWrapping="Wrap" IsReadOnly="True" MinWidth="250">
+        <TextBox Grid.Column="1" Grid.Row="1" TextWrapping="Wrap" IsReadOnly="True" MinWidth="250" BorderThickness="0">
             Select this box if you want the parser to not run with each character changed
             in the buffer for the grammar.
         </TextBox>
-        <CheckBox Name="noninteractive" Grid.Column="1" Grid.Row="2">Non-Interactive Parse</CheckBox>
+        <CheckBox Name="noninteractive" Grid.Column="1" Grid.Row="2" Margin="10,0,10,10">Non-Interactive Parse</CheckBox>
 
-        <TextBox Grid.Column="1" Grid.Row="3" TextWrapping="Wrap" IsReadOnly="True" MinWidth="250">
+        <TextBox Grid.Column="1" Grid.Row="3" TextWrapping="Wrap" IsReadOnly="True" MinWidth="250"  BorderThickness="0">
             Select this box if you want only search for visitors and listeners in the directory
             of the grammar.
         </TextBox>
-        <CheckBox Name="restricted_directory" Grid.Column="1" Grid.Row="4">Visitors/Listeners restricted to directory of grammar.</CheckBox>
+        <CheckBox Name="restricted_directory" Grid.Column="1" Grid.Row="4" Margin="10,0,10,10">Visitors/Listeners restricted to directory of grammar.</CheckBox>
 
-        <TextBox Grid.Column="1" Grid.Row="5" TextWrapping="Wrap" IsReadOnly="True" MinWidth="250">
+        <TextBox Grid.Column="1" Grid.Row="5" TextWrapping="Wrap" IsReadOnly="True" MinWidth="250" BorderThickness="0">
             Select this box if you want to generate a listener or visitor method if
             none exists.
         </TextBox>
-        <CheckBox Name="generate_visitor_listener" Grid.Column="1" Grid.Row="6">Visitors/Listeners restricted to directory of grammar.</CheckBox>
+        <CheckBox Name="generate_visitor_listener" Grid.Column="1" Grid.Row="6" Margin="10,0,10,10">Visitors/Listeners generated if missing.</CheckBox>
 
-        <TextBox Grid.Column="1" Grid.Row="7" TextWrapping="Wrap" IsReadOnly="True" MinWidth="250">
+        <TextBox Grid.Column="1" Grid.Row="7" TextWrapping="Wrap" IsReadOnly="True" MinWidth="250" BorderThickness="0">
             Set full path of CORPUS_LOCATION directory.
         </TextBox>
-        <TextBox Name="corpus_location" Grid.Column="1" Grid.Row="8">Not set</TextBox>
+        <TextBox Name="corpus_location" Grid.Row="8" Grid.Column="1" Margin="10,0,10,10">Not set</TextBox>
 
         <!-- Accept or Cancel -->
-        <WrapPanel Grid.Row="9" Grid.ColumnSpan="2" HorizontalAlignment="Right" Margin="0,15,0,0">
+        <WrapPanel Grid.Row="9" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="10,0,0,0" >
             <Button IsDefault="True" Name="btnDialogOk" Click="btnDialogOk_Click" MinWidth="60" Margin="0,0,10,0">_Ok</Button>
             <Button IsCancel="True" MinWidth="60">_Cancel</Button>
         </WrapPanel>
