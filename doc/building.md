@@ -76,7 +76,8 @@ The template program is a complete example of Antlr:
 * outputs a parenthesized-representation of the parse tree;
 * creates a tree visitor that computes the synthesized value of each subexpression,
 and runs the visitor on the parse tree.
-With this example, you should be able to tackle more complex grammars, including
+
+From this template, you should be able to tackle more complex grammars, including
 C++ (with preprocessor), C#, Java, Python, etc.
 
 <br/><img src="pics/2019-08-08-31.png" width="75%" />
