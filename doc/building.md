@@ -68,8 +68,16 @@ which you can use to create a self-contained "Hello World!" Antlr application.
 To create an Antlr application, open Visual Studio, then at the prompt, "Create a new project".
 In the "Create a new project" dialog box, search for "Antlr" and select one of the two
 templates AntlrVSIX provides. Configure the project, if you would like, then click on Create.
-You should then be able to run and go: "F5". The program parses a simple expression, then outputs
-a parenthesized-representation of the parse tree.
+You should then be able to run and go: "F5".
+
+The template program is a complete example of Antlr:
+* grammar is for complex expressions;
+* creates a parser and lexer, and runs it on a simple expression;
+* outputs a parenthesized-representation of the parse tree;
+* creates a tree visitor that computes the synthesized value of each subexpression,
+and runs the visitor on the parse tree.
+With this example, you should be able to tackle more complex grammars, including
+C++ (with preprocessor), C#, Java, Python, etc.
 
 <br/><img src="pics/2019-08-08-31.png" width="75%" />
 
