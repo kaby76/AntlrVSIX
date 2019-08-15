@@ -244,7 +244,7 @@
       <Version>4.7.2</Version>
     </PackageReference>
     <PackageReference Include="Antlr4BuildTasks">
-      <Version>1.0.4</Version>
+      <Version>1.0.5</Version>
     </PackageReference>
     <PackageReference Include="cs-codebuff">
       <Version>2.0.1</Version>

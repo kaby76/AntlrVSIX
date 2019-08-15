@@ -54,7 +54,7 @@
 
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.7.2" />
-    <PackageReference Include="Antlr4BuildTasks" Version="1.0.4" />
+    <PackageReference Include="Antlr4BuildTasks" Version="1.0.5" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="3.1.0" />
 	</ItemGroup>
   <PropertyGroup Condition="'$(JAVA_HOME)'==''">
