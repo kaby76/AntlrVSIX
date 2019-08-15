@@ -11,6 +11,7 @@ namespace AntlrVSIX.Package
     using AntlrVSIX.Reformat;
     using AntlrVSIX.Rename;
     using EnvDTE;
+    using Microsoft.VisualStudio;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text.Classification;
     using Microsoft.VisualStudio.Text.Editor;
@@ -24,6 +25,21 @@ namespace AntlrVSIX.Package
     using System.Runtime.InteropServices;
     using System.Threading;
     using System;
+    using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Shell.Interop;
+    using EnvDTE;
+    using EnvDTE80;
+    using Microsoft.VisualStudio;
+    using Microsoft.VisualStudio.CommandBars;
+    using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Shell.Interop;
+    using System;
+    using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Runtime.InteropServices;
+    using System.Threading;
+    using Task = System.Threading.Tasks.Task;
+    using IAsyncServiceProvider = Microsoft.VisualStudio.Shell.IAsyncServiceProvider;
 
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)] // Info on this package for Help/About
     [Guid(AntlrVSIX.Constants.PackageGuidString)]
@@ -31,15 +47,26 @@ namespace AntlrVSIX.Package
         Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideToolWindow(typeof(FindRefsWindow))]
-    public sealed class AntlrLanguagePackage : AsyncPackage
+    [ProvideService((typeof(IVsSolutionEvents)), IsAsyncQueryable = true)]
+    public sealed class AntlrLanguagePackage : AsyncPackage, IVsSolutionEvents
     {
         public AntlrLanguagePackage()
         {
         }
 
-        protected override System.Threading.Tasks.Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
+        private IVsSolution solution;
+        private uint solutionEventsCookie;
+
+        protected override async System.Threading.Tasks.Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
-            ParseAllFiles();
+            await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+            await base.InitializeAsync(cancellationToken, progress);
+
+            // Attach to solution events
+            solution = GetService(typeof(SVsSolution)) as IVsSolution;
+            //if (solution == null) Common.Log("Could not get solution");
+            solution.AdviseSolutionEvents(this, out solutionEventsCookie);
+
             FindAllReferencesCommand.Initialize(this);
             FindRefsWindowCommand.Initialize(this);
             GoToDefinitionCommand.Initialize(this);
@@ -48,7 +75,6 @@ namespace AntlrVSIX.Package
             OptionsCommand.Initialize(this);
             ReformatCommand.Initialize(this);
             RenameCommand.Initialize(this);
-            return base.InitializeAsync(cancellationToken, progress);
         }
 
         private static AntlrLanguagePackage _instance;
@@ -124,6 +150,60 @@ namespace AntlrVSIX.Package
                     }
                 }
             }
+        }
+
+
+        public int OnAfterOpenProject(IVsHierarchy aPHierarchy, int aFAdded)
+        {
+            return VSConstants.S_OK;
+        }
+
+        public int OnQueryCloseProject(IVsHierarchy aPHierarchy, int aFRemoving, ref int aPfCancel)
+        {
+            return VSConstants.S_OK;
+        }
+
+        public int OnBeforeCloseProject(IVsHierarchy aPHierarchy, int aFRemoved)
+        {
+            return VSConstants.S_OK;
+        }
+
+        public int OnAfterLoadProject(IVsHierarchy aPStubHierarchy, IVsHierarchy aPRealHierarchy)
+        {
+            return VSConstants.S_OK;
+        }
+
+        public int OnQueryUnloadProject(IVsHierarchy aPRealHierarchy, ref int aPfCancel)
+        {
+            return VSConstants.S_OK;
+        }
+
+        public int OnBeforeUnloadProject(IVsHierarchy aPRealHierarchy, IVsHierarchy aPStubHierarchy)
+        {
+            return VSConstants.S_OK;
+        }
+
+
+        public int OnAfterOpenSolution(object aPUnkReserved, int aFNewSolution)
+        {
+            ParseAllFiles();
+            return VSConstants.S_OK;
+        }
+
+
+        public int OnQueryCloseSolution(object aPUnkReserved, ref int aPfCancel)
+        {
+            return VSConstants.S_OK;
+        }
+
+        public int OnBeforeCloseSolution(object aPUnkReserved)
+        {
+            return VSConstants.S_OK;
+        }
+
+        public int OnAfterCloseSolution(object aPUnkReserved)
+        {
+            return VSConstants.S_OK;
         }
     }
 }

@@ -261,8 +261,23 @@
     <PackageReference Include="Microsoft.VisualStudio.Package.LanguageService.14.0">
       <Version>14.3.25407</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Shell.Interop.11.0">
+      <Version>11.0.61031</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Shell.Interop.12.0">
       <Version>12.0.30111</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Shell.Interop.14.0.DesignTime">
+      <Version>14.3.26929</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Shell.Interop.15.3.DesignTime">
+      <Version>15.0.26929</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Shell.Interop.15.8.DesignTime">
+      <Version>15.8.1</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Shell.Interop.16.2.DesignTime">
+      <Version>16.2.29116.78</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VSSDK.BuildTools">
       <Version>16.3.1066</Version>
