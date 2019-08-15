@@ -1,6 +1,6 @@
 
 # AntlrVSIX
-AntlrVSIX is an open source Visual Studio 2019 extension for Antlr v4
+AntlrVSIX is a Visual Studio 2019 extension for Antlr v4
 grammars. This extension provides tagging, "go to def", "find all refs",
 replace, "go to visitor/listener", command completion, options,
 reformat, and project templates for compiling and running.
