@@ -61,5 +61,10 @@
             IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
             Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
         }
+
+        public void Show()
+        {
+            ShowToolWindow(null, null);
+       }
     }
 }

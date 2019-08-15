@@ -8,7 +8,8 @@
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
-
+    using System;
+    using System.Runtime.InteropServices;
     internal class FindAntlrSymbolsModel : INotifyPropertyChanged
     {
         private Entry _item_selected = null;
@@ -25,6 +26,9 @@
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
         public Entry ItemSelected
         {
             get { return _item_selected; }
@@ -38,9 +42,11 @@
                 {
                     IVsTextViewExtensions.ShowFrame(full_file_name);
                     vstv = IVsTextViewExtensions.GetIVsTextView(full_file_name);
-                }
+                }       
                 IWpfTextView wpftv = vstv.GetIWpfTextView();
                 if (wpftv == null) return;
+                var frame = IVsTextViewExtensions.FindWindowFrame(full_file_name);
+                frame?.Show();
                 int line_number = _item_selected.LineNumber;
                 int colum_number = _item_selected.ColumnNumber;
                 IToken token = _item_selected.Token;

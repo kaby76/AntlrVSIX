@@ -20,7 +20,6 @@ namespace AntlrVSIX.FindAllReferences
         private MenuCommand _menu_item1;
         private MenuCommand _menu_item2;
 
-
         private FindAllReferencesCommand(Package package)
         {
             if (package == null)
@@ -85,8 +84,6 @@ namespace AntlrVSIX.FindAllReferences
             // Find all references..
             ////////////////////////
 
-
-
             string classification = AntlrLanguagePackage.Instance.Classification;
             SnapshotSpan span = AntlrLanguagePackage.Instance.Span;
             ITextView view = AntlrLanguagePackage.Instance.View;
@@ -126,7 +123,7 @@ namespace AntlrVSIX.FindAllReferences
             }
             if (!where.Any()) return;
 
-            // Populate the Antlr find results model/window with file/line/col info
+            // Populate the Antlr find results model with file/line/col info
             // for each occurrence.
             FindAntlrSymbolsModel.Instance.Results.Clear();
             for (int i = 0; i < where.Count; ++i)
@@ -136,6 +133,7 @@ namespace AntlrVSIX.FindAllReferences
                 var w = new Entry() { FileName = y.FullFileName, LineNumber = x.Line, ColumnNumber = x.Column, Token = x };
                 FindAntlrSymbolsModel.Instance.Results.Add(w);
             }
+            FindRefsWindowCommand.Instance.Show();
         }
     }
 }

@@ -70,7 +70,7 @@ click on a line to navigate to the line of the file containing the symbol.
 Note, AntlrVSIX looks across multiple .g4 files contained in the Solution.
 
 
-Right-click on symbol, select "find all occurrences": <br/><img src="pics/2019-08-08-23.png" width="75%" />
+Right-click on symbol, select "find all references": <br/><img src="pics/2019-08-08-23.png" width="75%" />
 
 Open up "Antlr Find Results": <br/><img src="pics/2019-08-08-24.png" width="75%" />
 

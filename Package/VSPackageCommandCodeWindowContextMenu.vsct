@@ -63,7 +63,7 @@
           <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="FindMenuGroup"/>
           <CommandFlag>DefaultDisabled</CommandFlag>
           <Strings>
-            <ButtonText>Find all occurences</ButtonText>
+            <ButtonText>Find all references</ButtonText>
           </Strings>
         </Button>
         <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="ReformatCmd" priority="0x700" type="Button">
@@ -172,7 +172,7 @@
          <Parent guid="guidMenuAndCommandsCmdSet" id="FindMenuGroup"/>
          <CommandFlag>DefaultDisabled</CommandFlag>
          <Strings>
-           <ButtonText>Find all occurences</ButtonText>
+           <ButtonText>Find all references</ButtonText>
          </Strings>
        </Button>
        <Button guid="guidMenuAndCommandsCmdSet" id="OptionsCmd" priority="0x700" type="Button">
