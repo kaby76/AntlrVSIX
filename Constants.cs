@@ -10,7 +10,7 @@
          * be set in the manifest file.
          * Make sure to change the version in source.extension.vsixmanifest as well!
          */
-        public const string Version = "2.0.7";
+        public const string Version = "2.0.8";
 
         /* Invariants of the AntlrVSIX extension.
          */
