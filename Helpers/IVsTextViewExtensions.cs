@@ -97,18 +97,8 @@
 
         internal static IVsTextView GetIVsTextView(string full_file_name)
         {
-            var dte2 = (EnvDTE80.DTE2)Package.GetGlobalService(typeof(SDTE));
-            IServiceProvider isp = (IServiceProvider)dte2;
-            ServiceProvider sp = new ServiceProvider(isp);
-            IVsUIHierarchy ivsuih;
-            uint item_id;
-            IVsWindowFrame ivswf;
-            if (VsShellUtilities.IsDocumentOpen(sp, full_file_name, Guid.Empty,
-                out ivsuih, out item_id, out ivswf))
-            {
-                return VsShellUtilities.GetTextView(ivswf);
-            }
-            return null;
+            throw new Exception();
+            return FindTextViewFor(full_file_name);
         }
 
         internal static IVsTextView OpenStupidFile(string full_file_name)
@@ -124,7 +114,7 @@
             {
                 VsShellUtilities.OpenDocument(sp, full_file_name);
             }
-            return GetIVsTextView(full_file_name);
+            return FindTextViewFor(full_file_name);
         }
 
         internal static void ShowFrame(string full_file_name)

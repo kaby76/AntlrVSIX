@@ -134,10 +134,10 @@ namespace AntlrVSIX.GoToDefinition
             ParserDetails where_token = where_details.First();
 
             string full_file_name = where_token.FullFileName;
-            IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(full_file_name);
+            IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(full_file_name);
             {
                 IVsTextViewExtensions.ShowFrame(full_file_name);
-                vstv = IVsTextViewExtensions.GetIVsTextView(where_token.FullFileName);
+                vstv = IVsTextViewExtensions.FindTextViewFor(where_token.FullFileName);
             }
 
             IWpfTextView wpftv = vstv.GetIWpfTextView();

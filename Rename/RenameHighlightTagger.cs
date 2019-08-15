@@ -257,12 +257,12 @@ namespace AntlrVSIX.Rename
                         var per_file_results = results.Where(r => r.FileName == f);
                         per_file_results.Reverse();
                         var pd = ParserDetails._per_file_parser_details[f];
-                        IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(f);
+                        IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(f);
                         if (vstv == null)
                         {
                             // File has not been opened before! Open file in editor.
                             IVsTextViewExtensions.ShowFrame(f);
-                            vstv = IVsTextViewExtensions.GetIVsTextView(f);
+                            vstv = IVsTextViewExtensions.FindTextViewFor(f);
                         }
                         IWpfTextView wpftv = vstv.GetIWpfTextView();
                         ITextBuffer tb = wpftv.TextBuffer;

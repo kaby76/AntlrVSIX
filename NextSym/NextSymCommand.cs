@@ -176,11 +176,11 @@
             if (next_sym == Int32.MaxValue || next_sym < 0) return;
 
             string full_file_name = path;
-            IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(full_file_name);
+            IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(full_file_name);
             if (vstv == null)
             {
                 IVsTextViewExtensions.ShowFrame(full_file_name);
-                vstv = IVsTextViewExtensions.GetIVsTextView(full_file_name);
+                vstv = IVsTextViewExtensions.FindTextViewFor(full_file_name);
             }
 
             IWpfTextView wpftv = vstv.GetIWpfTextView();

@@ -80,7 +80,7 @@ namespace AntlrVSIX.Rename
             ITextBuffer buffer = view.TextBuffer;
             ITextDocument doc = buffer.GetTextDocument();
             string path = doc.FilePath;
-            IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(path);
+            IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(path);
 
             List<IToken> where = new List<IToken>();
             List<ParserDetails> where_details = new List<ParserDetails>();
