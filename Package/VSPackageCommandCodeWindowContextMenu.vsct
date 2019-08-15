@@ -78,6 +78,12 @@
             <ButtonText>Rename</ButtonText>
           </Strings>
         </Button>
+        <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="AboutCmd" priority="0x700" type="Button">
+          <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="TopLevelMenuGroup"/>
+          <Strings>
+            <ButtonText>About</ButtonText>
+          </Strings>
+        </Button>
 
         <Button guid="guidAntlrLanguagePackageCmdSet" id="cmdidFindRefsWindowCommand" priority="0x0100" type="Button">
           <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1" />
@@ -85,6 +91,7 @@
             <ButtonText>Antlr Find Results</ButtonText>
           </Strings>
         </Button>
+
       </Buttons>
 
      <Menus>
@@ -193,6 +200,13 @@
            <ButtonText>Rename</ButtonText>
          </Strings>
        </Button>
+       
+       <Button guid="guidMenuAndCommandsCmdSet" id="AboutCmd" priority="0x700" type="Button">
+         <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup"/>
+         <Strings>
+           <ButtonText>About</ButtonText>
+         </Strings>
+       </Button>
      </Buttons>
 
      <Menus>
@@ -249,6 +263,7 @@
       <IDSymbol name="OptionsCmd" value="0x7007" />
       <IDSymbol name="ReformatCmd" value="0x7008" />
       <IDSymbol name="RenameCmd" value="0x7009" />
+      <IDSymbol name="AboutCmd" value="0x7010" />
     </GuidSymbol>
 
     <GuidSymbol name="guidImages" value="{68759f95-6f1d-4a77-87ea-192fc8d811f1}">
@@ -287,6 +302,7 @@
       <IDSymbol name="OptionsCmd" value="0x7007" />
       <IDSymbol name="ReformatCmd" value="0x7008" />
       <IDSymbol name="RenameCmd" value="0x7009" />
+      <IDSymbol name="AboutCmd" value="0x7010" />
     </GuidSymbol>
   </Symbols>
 </CommandTable>

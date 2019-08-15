@@ -1,9 +1,10 @@
 ﻿
 namespace AntlrVSIX.Package
 {
+    using AntlrVSIX.About;
     using AntlrVSIX.Extensions;
     using AntlrVSIX.FindAllReferences;
-    using GoToDefinition;
+    using AntlrVSIX.GoToDefinition;
     using AntlrVSIX.GoToVisitor;
     using AntlrVSIX.Grammar;
     using AntlrVSIX.NextSym;
@@ -75,6 +76,7 @@ namespace AntlrVSIX.Package
             OptionsCommand.Initialize(this);
             ReformatCommand.Initialize(this);
             RenameCommand.Initialize(this);
+            AboutCommand.Initialize(this);
         }
 
         private static AntlrLanguagePackage _instance;

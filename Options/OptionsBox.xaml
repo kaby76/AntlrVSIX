@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     x:Class="AntlrVSIX.Options.OptionsBox"
     xmlns:local="clr-namespace:AntlrVSIX.Options"
-    Title="Margins"
+    Title="AntlrVSIX Options"
     Height="307.334"
     Width="650"
     MinHeight="10"
