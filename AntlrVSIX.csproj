@@ -64,6 +64,7 @@
       <DependentUpon>AboutBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="About\AboutCommand.cs" />
+    <Compile Include="AggregateTagger\AntlrToClassifier.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="ErrorTagger\ErrorCategory.cs" />
     <Compile Include="ErrorTagger\ErrorFormatDefinition.cs" />
@@ -113,8 +114,6 @@
     <Compile Include="Rename\RenameHighlightTagger.cs" />
     <Compile Include="Tagger\AntlrTokenTagProvider.cs" />
     <Compile Include="Tagger\AntlrTagTypes.cs" />
-    <Compile Include="AggregateTagger\ClassificationFormat.cs" />
-    <Compile Include="AggregateTagger\ClassificationTypes.cs" />
     <Compile Include="AggregateTagger\AntlrClassifierProvider.cs" />
     <Compile Include="Grammar\DFSVisitor.cs" />
     <Compile Include="Grammar\LexerAdaptor.cs" />

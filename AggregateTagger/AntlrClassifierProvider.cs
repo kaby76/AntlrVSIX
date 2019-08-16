@@ -41,7 +41,11 @@ namespace AntlrVSIX.AggregateTagger
             AntlrLanguagePackage package = AntlrLanguagePackage.Instance;
             VSColorTheme.ThemeChanged += UpdateTheme;
             var antlrTagAggregator = aggregatorFactory.CreateTagAggregator<AntlrTokenTag>(buffer);
-            return new AntlrClassifier(buffer, antlrTagAggregator, ClassificationTypeRegistry) as ITagger<T>;
+            return new AntlrClassifier(
+                buffer,
+                antlrTagAggregator,
+                ClassificationTypeRegistry,
+                ClassificationFormatMapService) as ITagger<T>;
         }
 
         private void UpdateTheme(EventArgs e)

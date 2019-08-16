@@ -9,6 +9,17 @@
     using Microsoft.VisualStudio.Text;
     using System.Collections.Generic;
     using System;
+    using Microsoft.VisualStudio.PlatformUI;
+    using Microsoft.VisualStudio.Utilities;
+    using System.ComponentModel.Composition;
+
+    class Themes
+    {
+        public static bool IsInvertedTheme()
+        {
+            return VSColorTheme.GetThemedColor(EnvironmentColors.ToolWindowBackgroundColorKey).GetBrightness() < 0.5;
+        }
+    }
 
     internal sealed class AntlrClassifier : ITagger<ClassificationTag>
     {
@@ -19,22 +30,34 @@
         internal AntlrClassifier(
             ITextBuffer buffer,
             ITagAggregator<AntlrTokenTag> aggregator,
-            IClassificationTypeRegistryService service)
+            IClassificationTypeRegistryService service,
+            IClassificationFormatMapService ClassificationFormatMapService)
         {
+            foreach (var kvp in AntlrToClassifierName.Map)
+            {
+                var key = kvp.Key;
+                var val = kvp.Value;
+                var identiferClassificationType = service.GetClassificationType(val);
+                var classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
+                        : identiferClassificationType;
+                var classificationFormatMap = ClassificationFormatMapService.GetClassificationFormatMap(category: "text");
+                var identifierProperties = classificationFormatMap
+                    .GetExplicitTextProperties(classificationType);
+                var color =  ! Themes.IsInvertedTheme() ? AntlrToClassifierName.MapColor[key]
+                    : AntlrToClassifierName.MapInvertedColor[key];
+                var newProperties = identifierProperties.SetForeground(color);
+                classificationFormatMap.AddExplicitTextProperties(classificationType, newProperties);
+            }
+            
             _buffer = buffer;
             _aggregator = aggregator;
-
             _antlrtype_to_classifiertype = new Dictionary<AntlrTagTypes, IClassificationType>();
-            _antlrtype_to_classifiertype[AntlrTagTypes.Nonterminal] = service.GetClassificationType(AntlrVSIX.Constants.ClassificationNameNonterminal);
-            _antlrtype_to_classifiertype[AntlrTagTypes.Terminal] = service.GetClassificationType(AntlrVSIX.Constants.ClassificationNameTerminal);
-            _antlrtype_to_classifiertype[AntlrTagTypes.Comment] = service.GetClassificationType(AntlrVSIX.Constants.ClassificationNameComment);
-            _antlrtype_to_classifiertype[AntlrTagTypes.Keyword] = service.GetClassificationType(AntlrVSIX.Constants.ClassificationNameKeyword);
-            _antlrtype_to_classifiertype[AntlrTagTypes.Literal] = service.GetClassificationType(AntlrVSIX.Constants.ClassificationNameLiteral);
-            _antlrtype_to_classifiertype[AntlrTagTypes.Mode] = service.GetClassificationType(AntlrVSIX.Constants.ClassificationNameMode);
-            _antlrtype_to_classifiertype[AntlrTagTypes.Channel] = service.GetClassificationType(AntlrVSIX.Constants.ClassificationNameChannel);
-            _antlrtype_to_classifiertype[AntlrTagTypes.Other] = service.GetClassificationType("other");
-            
-            // Ensure package is loaded.
+            foreach (var kvp in AntlrToClassifierName.Map)
+            {
+                var key = kvp.Key;
+                var val = kvp.Value;
+                _antlrtype_to_classifiertype[key] = service.GetClassificationType(val);
+            }            
             AntlrLanguagePackage package = AntlrLanguagePackage.Instance;
         }
 
