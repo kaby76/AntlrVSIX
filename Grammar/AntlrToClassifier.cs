@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AntlrVSIX.Extensions;
-using AntlrVSIX.Grammar;
-using AntlrVSIX.Package;
-using AntlrVSIX.Tagger;
-
-namespace AntlrVSIX.AggregateTagger
+﻿namespace AntlrVSIX.Grammar
 {
+    using Antlr4.Runtime.Tree;
+    using Antlr4.Runtime;
+    using AntlrVSIX.Tagger;
+    using System.Collections.Generic;
+    using System;
+
     class AntlrToClassifierName
     {
         public static Dictionary<AntlrTagTypes, string> Map = new Dictionary<AntlrTagTypes, string>()
@@ -42,5 +38,6 @@ namespace AntlrVSIX.AggregateTagger
             { AntlrTagTypes.Mode, AntlrVSIX.Constants.InvertedColorTextForegroundMode },
             { AntlrTagTypes.Channel, AntlrVSIX.Constants.InvertedColorTextForegroundChannel },
         };
+        public static Dictionary<AntlrTagTypes, Func<IParseTree, bool>> MapTagPredicates = new Dictionary<AntlrTagTypes, Func<IParseTree, bool>>();
     }
 }

@@ -64,7 +64,7 @@
       <DependentUpon>AboutBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="About\AboutCommand.cs" />
-    <Compile Include="AggregateTagger\AntlrToClassifier.cs" />
+    <Compile Include="Grammar\AntlrToClassifier.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="ErrorTagger\ErrorCategory.cs" />
     <Compile Include="ErrorTagger\ErrorFormatDefinition.cs" />
