@@ -25,7 +25,7 @@
     {
         public ITextBuffer _buffer;
         public ITagAggregator<AntlrTokenTag> _aggregator;
-        private IDictionary<AntlrTagTypes, IClassificationType> _antlrtype_to_classifiertype;
+        private IDictionary<int, IClassificationType> _antlrtype_to_classifiertype;
 
         internal AntlrClassifier(
             ITextBuffer buffer,
@@ -33,10 +33,10 @@
             IClassificationTypeRegistryService service,
             IClassificationFormatMapService ClassificationFormatMapService)
         {
-            foreach (var kvp in AntlrToClassifierName.Map)
+            for (int i = 0; i < AntlrToClassifierName.Map.Count; ++i)
             {
-                var key = kvp.Key;
-                var val = kvp.Value;
+                var key = i;
+                var val = AntlrToClassifierName.Map[i];
                 var identiferClassificationType = service.GetClassificationType(val);
                 var classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
                         : identiferClassificationType;
@@ -51,11 +51,11 @@
             
             _buffer = buffer;
             _aggregator = aggregator;
-            _antlrtype_to_classifiertype = new Dictionary<AntlrTagTypes, IClassificationType>();
-            foreach (var kvp in AntlrToClassifierName.Map)
+            _antlrtype_to_classifiertype = new Dictionary<int, IClassificationType>();
+            for (int i = 0; i < AntlrToClassifierName.Map.Count; ++i)
             {
-                var key = kvp.Key;
-                var val = kvp.Value;
+                var key = i;
+                var val = AntlrToClassifierName.Map[i];
                 _antlrtype_to_classifiertype[key] = service.GetClassificationType(val);
             }            
             AntlrLanguagePackage package = AntlrLanguagePackage.Instance;
@@ -72,7 +72,7 @@
                 NormalizedSnapshotSpanCollection tag_spans = tag_span.Span.GetSpans(spans[0].Snapshot);
                 yield return
                     new TagSpan<ClassificationTag>(tag_spans[0],
-                        new ClassificationTag(_antlrtype_to_classifiertype[tag_span.Tag.TagType]));
+                        new ClassificationTag(_antlrtype_to_classifiertype[(int)tag_span.Tag.TagType]));
             }
         }
 

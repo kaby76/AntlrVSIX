@@ -61,48 +61,10 @@ namespace AntlrVSIX
 
             foreach (IMappingTagSpan<AntlrTokenTag> cur_tag in _aggregator.GetTags(span))
             {
-                if (cur_tag.Tag.TagType == AntlrTagTypes.Terminal)
-                {
-                    SnapshotSpan tag_span = cur_tag.Span.GetSpans(_buffer).First();
-                    tracking_span = _buffer.CurrentSnapshot.CreateTrackingSpan(tag_span, SpanTrackingMode.EdgeExclusive);
-                    quick_info_content.Add("Terminal");
-                }
-                else if (cur_tag.Tag.TagType == AntlrTagTypes.Nonterminal)
-                {
-                    SnapshotSpan tag_span = cur_tag.Span.GetSpans(_buffer).First();
-                    tracking_span = _buffer.CurrentSnapshot.CreateTrackingSpan(tag_span, SpanTrackingMode.EdgeExclusive);
-                    quick_info_content.Add("Nonterminal");
-                }
-                else if (cur_tag.Tag.TagType == AntlrTagTypes.Comment)
-                {
-                    SnapshotSpan tag_span = cur_tag.Span.GetSpans(_buffer).First();
-                    tracking_span = _buffer.CurrentSnapshot.CreateTrackingSpan(tag_span, SpanTrackingMode.EdgeExclusive);
-                    quick_info_content.Add("Comment");
-                }
-                else if (cur_tag.Tag.TagType == AntlrTagTypes.Keyword)
-                {
-                    SnapshotSpan tag_span = cur_tag.Span.GetSpans(_buffer).First();
-                    tracking_span = _buffer.CurrentSnapshot.CreateTrackingSpan(tag_span, SpanTrackingMode.EdgeExclusive);
-                    quick_info_content.Add("Keyword");
-                }
-                else if (cur_tag.Tag.TagType == AntlrTagTypes.Literal)
-                {
-                    SnapshotSpan tag_span = cur_tag.Span.GetSpans(_buffer).First();
-                    tracking_span = _buffer.CurrentSnapshot.CreateTrackingSpan(tag_span, SpanTrackingMode.EdgeExclusive);
-                    quick_info_content.Add("Literal");
-                }
-                else if (cur_tag.Tag.TagType == AntlrTagTypes.Mode)
-                {
-                    SnapshotSpan tag_span = cur_tag.Span.GetSpans(_buffer).First();
-                    tracking_span = _buffer.CurrentSnapshot.CreateTrackingSpan(tag_span, SpanTrackingMode.EdgeExclusive);
-                    quick_info_content.Add("Mode");
-                }
-                else if (cur_tag.Tag.TagType == AntlrTagTypes.Channel)
-                {
-                    SnapshotSpan tag_span = cur_tag.Span.GetSpans(_buffer).First();
-                    tracking_span = _buffer.CurrentSnapshot.CreateTrackingSpan(tag_span, SpanTrackingMode.EdgeExclusive);
-                    quick_info_content.Add("Channel");
-                }
+                int tag_type = (int)cur_tag.Tag.TagType;
+                SnapshotSpan tag_span = cur_tag.Span.GetSpans(_buffer).First();
+                tracking_span = _buffer.CurrentSnapshot.CreateTrackingSpan(tag_span, SpanTrackingMode.EdgeExclusive);
+                quick_info_content.Add(AntlrVSIX.Grammar.AntlrToClassifierName.Map[tag_type]);
             }
         }
 

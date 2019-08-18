@@ -26,9 +26,9 @@
         /* Tagging and classification types. */
         public const string ClassificationNameTerminal = "terminal";
         public const string ClassificationNameNonterminal = "nonterminal";
-        public const string ClassificationNameComment = "acomment";
-        public const string ClassificationNameKeyword = "akeyword";
-        public const string ClassificationNameLiteral = "aliteral";
+        public const string ClassificationNameComment = "comment";
+        public const string ClassificationNameKeyword = "keyword";
+        public const string ClassificationNameLiteral = "literal";
         public const string ClassificationNameMode = "mode";
         public const string ClassificationNameChannel = "channel";
 

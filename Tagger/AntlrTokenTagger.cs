@@ -13,21 +13,18 @@ namespace AntlrVSIX.Tagger
     internal sealed class AntlrTokenTagger : ITagger<AntlrTokenTag>
     {
         private ITextBuffer _buffer;
-        private IDictionary<string, AntlrTagTypes> _antlr_tag_types;
+        private IDictionary<string, int> _antlr_tag_types;
 
         internal AntlrTokenTagger(ITextBuffer buffer)
         {
             _buffer = buffer;
 
-            _antlr_tag_types = new Dictionary<string, AntlrTagTypes>();
-            _antlr_tag_types[AntlrVSIX.Constants.ClassificationNameNonterminal] = AntlrTagTypes.Nonterminal;
-            _antlr_tag_types[AntlrVSIX.Constants.ClassificationNameTerminal] = AntlrTagTypes.Terminal;
-            _antlr_tag_types[AntlrVSIX.Constants.ClassificationNameComment] = AntlrTagTypes.Comment;
-            _antlr_tag_types[AntlrVSIX.Constants.ClassificationNameKeyword] = AntlrTagTypes.Keyword;
-            _antlr_tag_types[AntlrVSIX.Constants.ClassificationNameLiteral] = AntlrTagTypes.Literal;
-            _antlr_tag_types[AntlrVSIX.Constants.ClassificationNameMode] = AntlrTagTypes.Mode;
-            _antlr_tag_types[AntlrVSIX.Constants.ClassificationNameChannel] = AntlrTagTypes.Channel;
-            _antlr_tag_types["other"] = AntlrTagTypes.Other;
+            _antlr_tag_types = new Dictionary<string, int>();
+            for (int i = 0; i < AntlrToClassifierName.Map.Count; ++i)
+            {
+                string name = AntlrToClassifierName.Map[i];
+                _antlr_tag_types[name] = i;
+            }
 
             ITextDocument document = _buffer.GetTextDocument();
             string file_name = document.FilePath;
@@ -55,16 +52,8 @@ namespace AntlrVSIX.Tagger
 
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 
-        // For each span of text given, perform a complete parse, and reclassify and tag new spans.
         public IEnumerable<ITagSpan<AntlrTokenTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
-            // Nothing graceful here in relating a span to a part in the
-            // syntax tree. For now, get the bounds of the span, find tree nodes
-            // that overlap the span. Find all nonterminals
-            // and terminals to mark the span up. Likewise, for all comments,
-            // find all that overlap span. Sort all terminals, nonterminals,
-            // and comments into a list, and package it up as new TagSpan.
-
             foreach (SnapshotSpan curSpan in spans)
             {
                 ITextSnapshotLine containingLine = curSpan.Start.GetContainingLine();
@@ -176,21 +165,23 @@ namespace AntlrVSIX.Tagger
                         curSpan.Snapshot,
                         new Span(start_token_start, length));
 
-                    AntlrTagTypes type;
-                    if (all_term_tokens.Contains(token)) type = AntlrTagTypes.Terminal;
-                    else if (all_nonterm_tokens.Contains(token)) type = AntlrTagTypes.Nonterminal;
-                    else if (all_comment_tokens.Contains(token)) type = AntlrTagTypes.Comment;
-                    else if (all_keyword_tokens.Contains(token)) type = AntlrTagTypes.Keyword;
-                    else if (all_literal_tokens.Contains(token)) type = AntlrTagTypes.Literal;
-                    else if (all_mode_tokens.Contains(token)) type = AntlrTagTypes.Mode;
-                    else if (all_channel_tokens.Contains(token)) type = AntlrTagTypes.Channel;
-                    else
-                        type = AntlrTagTypes.Other;
+                    int type;
+                    if (all_nonterm_tokens.Contains(token)) type = 0;
+                    if (all_term_tokens.Contains(token)) type = 1;
+                    else if (all_comment_tokens.Contains(token)) type = 2;
+                    else if (all_keyword_tokens.Contains(token)) type = 3;
+                    else if (all_literal_tokens.Contains(token)) type = 4;
+                    else if (all_mode_tokens.Contains(token)) type = 5;
+                    else if (all_channel_tokens.Contains(token)) type = 6;
+                    else type = -1;
 
                     if (tokenSpan.IntersectsWith(curSpan))
                     {
-                        TagSpan<AntlrTokenTag> t = new TagSpan<AntlrTokenTag>(tokenSpan, new AntlrTokenTag(type));
-                        yield return t;
+                        if (type >= 0)
+                        {
+                            TagSpan<AntlrTokenTag> t = new TagSpan<AntlrTokenTag>(tokenSpan, new AntlrTokenTag(type));
+                            yield return t;
+                        }
                     }
                 }
             }

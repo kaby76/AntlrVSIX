@@ -4,9 +4,9 @@
 
     public class AntlrTokenTag : ITag
     {
-        public AntlrTagTypes TagType { get; private set; }
+        public int TagType { get; private set; }
 
-        public AntlrTokenTag(AntlrTagTypes token_type)
+        public AntlrTokenTag(int token_type)
         {
             this.TagType = token_type;
         }
