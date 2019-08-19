@@ -78,11 +78,14 @@ namespace AntlrVSIX.Grammar
 
             pd._all_nodes = DFSVisitor.DFS(pd._ant_tree as ParserRuleContext);
 
-            StringBuilder sb = new StringBuilder();
-            Class1.ParenthesizedAST(pd._ant_tree, sb, "", cts);
-            string fn = System.IO.Path.GetFileName(pd.FullFileName);
-            fn = "c:\\temp\\" + fn;
-            System.IO.File.WriteAllText(fn, sb.ToString());
+            //StringBuilder sb = new StringBuilder();
+            //Class1.ParenthesizedAST(pd._ant_tree, sb, "", cts);
+            //string fn = System.IO.Path.GetFileName(pd.FullFileName);
+            //fn = "c:\\temp\\" + fn;
+            //System.IO.File.WriteAllText(fn, sb.ToString());
+
+            pd._ant_defining_occurrence_classes = new Dictionary<IToken, int>();
+            pd._ant_applied_occurrence_classes = new Dictionary<IToken, int>();
 
             // Order of finding stuff dependent here. First find defs, then refs.
             for (int classification = 0; classification < AntlrVSIX.Grammar.AntlrToClassifierName.IdentifyDefinition.Count; ++classification)

@@ -188,18 +188,20 @@ namespace AntlrVSIX.Rename
             {
                 string file_name = kvp.Key;
                 ParserDetails details = kvp.Value;
-                if (classification == AntlrVSIX.Constants.ClassificationNameNonterminal)
                 {
                     var it = details._ant_applied_occurrence_classes.Where(
-                        (t) => (t.Value == 0 || t.Value == 1) && t.Key.Text == span.GetText()).Select(t => t.Key);
+                        (t) => AntlrVSIX.Grammar.AntlrToClassifierName.CanRename[t.Value] && t.Key.Text == span.GetText()).Select(t => t.Key);
+                    where.AddRange(it);
+                    foreach (var i in it) where_details.Add(details);
+                }
+                {
+                    var it = details._ant_defining_occurrence_classes.Where(
+                        (t) => AntlrVSIX.Grammar.AntlrToClassifierName.CanRename[t.Value] && t.Key.Text == span.GetText()).Select(t => t.Key);
                     where.AddRange(it);
                     foreach (var i in it) where_details.Add(details);
                 }
             }
             if (!where.Any()) return;
-
-            // Populate the Antlr find results model/window with file/line/col info
-            // for each occurrence.
             var results = new List<Entry>();
             for (int i = 0; i < where.Count; ++i)
             {
