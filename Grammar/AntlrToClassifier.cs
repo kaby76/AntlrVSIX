@@ -49,6 +49,16 @@
             true, // mode
             true, // channel
         };
+        public static List<bool> CanRename = new List<bool>()
+        {
+            true, // nonterminal
+            true, // Terminal
+            false, // comment
+            false, // keyword
+            false, // literal
+            true, // mode
+            true, // channel
+        };
 
         private static List<string> _antlr_keywords = new List<string>()
         {

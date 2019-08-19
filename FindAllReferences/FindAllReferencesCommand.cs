@@ -87,34 +87,31 @@ namespace AntlrVSIX.FindAllReferences
             string classification = AntlrLanguagePackage.Instance.Classification;
             SnapshotSpan span = AntlrLanguagePackage.Instance.Span;
             ITextView view = AntlrLanguagePackage.Instance.View;
-
-            // First, find out what this view is, and what the file is.
             ITextBuffer buffer = view.TextBuffer;
             ITextDocument doc = buffer.GetTextDocument();
             string path = doc.FilePath;
-
             List<IToken> where = new List<IToken>();
             List<ParserDetails> where_details = new List<ParserDetails>();
             foreach (var kvp in ParserDetails._per_file_parser_details)
             {
                 string file_name = kvp.Key;
                 ParserDetails details = kvp.Value;
-                for (int i = 0; i < AntlrToClassifierName.CanFindAllRefs.Count; ++i)
                 {
-                    if (!AntlrToClassifierName.CanFindAllRefs[i]) continue;
-                    if (classification == AntlrToClassifierName.Map[i])
-                    {
-                        var it = details._ant_applied_occurrence_classes.Where(
-                            (t) => t.Value == 0 && t.Key.Text == span.GetText()).Select(t => t.Key);
-                        where.AddRange(it);
-                        foreach (var j in it) where_details.Add(details);
-                    }
+                    var it = details._ant_applied_occurrence_classes.Where(
+                        (t) => AntlrToClassifierName.CanFindAllRefs[t.Value]
+                            && t.Key.Text == span.GetText()).Select(t => t.Key);
+                    where.AddRange(it);
+                    foreach (var j in it) where_details.Add(details);
+                }
+                {
+                    var it = details._ant_defining_occurrence_classes.Where(
+                        (t) => AntlrToClassifierName.CanFindAllRefs[t.Value]
+                            && t.Key.Text == span.GetText()).Select(t => t.Key);
+                    where.AddRange(it);
+                    foreach (var j in it) where_details.Add(details);
                 }
             }
             if (!where.Any()) return;
-
-            // Populate the Antlr find results model with file/line/col info
-            // for each occurrence.
             FindAntlrSymbolsModel.Instance.Results.Clear();
             for (int i = 0; i < where.Count; ++i)
             {

@@ -88,19 +88,11 @@ namespace AntlrVSIX.GoToDefinition
             // Go to definition....
             ////////////////////////
 
-            string classification = AntlrLanguagePackage.Instance.Classification;
             SnapshotSpan span = AntlrLanguagePackage.Instance.Span;
             ITextView view = AntlrLanguagePackage.Instance.View;
-            
-            // First, find out what this view is, and what the file is.
             ITextBuffer buffer = view.TextBuffer;
             ITextDocument doc = buffer.GetTextDocument();
             string path_containing_applied_occurrence = Path.GetDirectoryName(doc.FilePath);
-
-            //ParserDetails details = null;
-            //bool found = ParserDetails._per_file_parser_details.TryGetValue(path, out details);
-            //if (!found) return;
-
             List<IToken> where = new List<IToken>();
             List<ParserDetails> where_details = new List<ParserDetails>();
             IToken token = null;
@@ -108,21 +100,10 @@ namespace AntlrVSIX.GoToDefinition
             {
                 string file_name = kvp.Key;
                 string path_containing_defining_occurrence = Path.GetDirectoryName(file_name);
-
                 ParserDetails details = kvp.Value;
-                if (classification == AntlrVSIX.Constants.ClassificationNameNonterminal)
                 {
                     var it = details._ant_defining_occurrence_classes.Where(
-                        (t) => t.Value == 0 && t.Key.Text == span.GetText()
-                            && path_containing_applied_occurrence
-                            == path_containing_defining_occurrence).Select(t => t.Key);
-                    where.AddRange(it);
-                    foreach (var i in it) where_details.Add(details);
-                }
-                else if (classification == AntlrVSIX.Constants.ClassificationNameTerminal)
-                {
-                    var it = details._ant_defining_occurrence_classes.Where(
-                        (t) => t.Value == 1 && t.Key.Text == span.GetText()
+                        (t) => t.Key.Text == span.GetText()
                             && path_containing_applied_occurrence
                             == path_containing_defining_occurrence).Select(t => t.Key);
                     where.AddRange(it);
@@ -132,29 +113,22 @@ namespace AntlrVSIX.GoToDefinition
             if (where.Any()) token = where.First();
             else return;
             ParserDetails where_token = where_details.First();
-
             string full_file_name = where_token.FullFileName;
             IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(full_file_name);
             {
                 IVsTextViewExtensions.ShowFrame(full_file_name);
                 vstv = IVsTextViewExtensions.FindTextViewFor(where_token.FullFileName);
             }
-
             IWpfTextView wpftv = vstv.GetIWpfTextView();
             if (wpftv == null) return;
 
             int line_number;
             int colum_number;
             vstv.GetLineAndColumn(token.StartIndex, out line_number, out colum_number);
-
-            // Create new span in the appropriate view.
             ITextSnapshot cc = wpftv.TextBuffer.CurrentSnapshot;
             SnapshotSpan ss = new SnapshotSpan(cc, token.StartIndex, 1);
             SnapshotPoint sp = ss.Start;
-            // Put cursor on symbol.
-            wpftv.Caret.MoveTo(sp);     // This sets cursor, bot does not center.
-            // Center on cursor.
-            //wpftv.Caret.EnsureVisible(); // This works, sort of. It moves the scroll bar, but it does not CENTER! Does not really work!
+            wpftv.Caret.MoveTo(sp);
             if (line_number > 0)
                 vstv.CenterLines(line_number - 1, 2);
             else

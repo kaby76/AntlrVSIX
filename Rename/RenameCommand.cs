@@ -72,42 +72,39 @@ namespace AntlrVSIX.Rename
             // Highlight the symbol, reposition it to the beginning of it.
             // Every character changes all occurrences of the symbol.
 
-            string classification = AntlrLanguagePackage.Instance.Classification;
             SnapshotSpan span = AntlrLanguagePackage.Instance.Span;
             ITextView view = AntlrLanguagePackage.Instance.View;
-
-            // First, find out what this view is, and what the file is.
             ITextBuffer buffer = view.TextBuffer;
             ITextDocument doc = buffer.GetTextDocument();
             string path = doc.FilePath;
             IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(path);
-
             List<IToken> where = new List<IToken>();
             List<ParserDetails> where_details = new List<ParserDetails>();
             foreach (var kvp in ParserDetails._per_file_parser_details)
             {
                 string file_name = kvp.Key;
                 ParserDetails details = kvp.Value;
-                if (classification == AntlrVSIX.Constants.ClassificationNameNonterminal ||
-                    classification == AntlrVSIX.Constants.ClassificationNameTerminal)
                 {
                     var it = details._ant_applied_occurrence_classes.Where(
-                        (t) => (t.Value == 0 || t.Value == 1) && t.Key.Text == span.GetText()).Select(t => t.Key);
+                        (t) => AntlrToClassifierName.CanRename[t.Value]
+                            && t.Key.Text == span.GetText()).Select(t => t.Key);
+                    where.AddRange(it);
+                    foreach (var i in it) where_details.Add(details);
+                }
+                {
+                    var it = details._ant_defining_occurrence_classes.Where(
+                        (t) => AntlrToClassifierName.CanRename[t.Value]
+                            && t.Key.Text == span.GetText()).Select(t => t.Key);
                     where.AddRange(it);
                     foreach (var i in it) where_details.Add(details);
                 }
             }
             if (!where.Any()) return;
-
             IWpfTextView wpftv = vstv.GetIWpfTextView();
             if (wpftv == null) return;
-
-            // Create new span in the appropriate view.
             ITextSnapshot cc = wpftv.TextBuffer.CurrentSnapshot;
             SnapshotSpan ss = new SnapshotSpan(cc, span.Start.Position, 1);
             SnapshotPoint sp = ss.Start;
-
-            // Enable highlighter.
             RenameHighlightTagger.Update(view, sp);
 
             //AntlrVSIX.Package.Menus.ResetMenus();
