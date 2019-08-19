@@ -142,8 +142,10 @@
                 if (file_name != path)
                     continue;
                 ParserDetails details = kvp.Value;
-                foreach (var t in details._ant_nonterminals_defining)
+                foreach (var p in details._ant_defining_occurrence_classes)
                 {
+                    if (p.Value != 0) continue;
+                    var t = p.Key;
                     if (forward)
                     {
                         if (t.StartIndex > pos && t.StartIndex < next_sym)
@@ -156,8 +158,10 @@
                     }
                 }
 
-                foreach (var t in details._ant_terminals_defining)
+                foreach (var p in details._ant_defining_occurrence_classes)
                 {
+                    if (p.Value != 1) continue;
+                    var t = p.Key;
                     if (forward)
                     {
                         if (t.StartIndex > pos && t.StartIndex < next_sym)

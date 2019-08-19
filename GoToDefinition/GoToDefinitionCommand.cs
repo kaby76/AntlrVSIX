@@ -112,19 +112,19 @@ namespace AntlrVSIX.GoToDefinition
                 ParserDetails details = kvp.Value;
                 if (classification == AntlrVSIX.Constants.ClassificationNameNonterminal)
                 {
-                    var it = details._ant_nonterminals_defining.Where(
-                        (t) => t.Text == span.GetText()
+                    var it = details._ant_defining_occurrence_classes.Where(
+                        (t) => t.Value == 0 && t.Key.Text == span.GetText()
                             && path_containing_applied_occurrence
-                            == path_containing_defining_occurrence);
+                            == path_containing_defining_occurrence).Select(t => t.Key);
                     where.AddRange(it);
                     foreach (var i in it) where_details.Add(details);
                 }
                 else if (classification == AntlrVSIX.Constants.ClassificationNameTerminal)
                 {
-                    var it = details._ant_terminals_defining.Where(
-                        (t) => t.Text == span.GetText()
+                    var it = details._ant_defining_occurrence_classes.Where(
+                        (t) => t.Value == 1 && t.Key.Text == span.GetText()
                             && path_containing_applied_occurrence
-                            == path_containing_defining_occurrence);
+                            == path_containing_defining_occurrence).Select(t => t.Key);
                     where.AddRange(it);
                     foreach (var i in it) where_details.Add(details);
                 }

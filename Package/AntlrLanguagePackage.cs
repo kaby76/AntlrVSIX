@@ -139,6 +139,7 @@ namespace AntlrVSIX.Package
                     if (!file_name.IsAntlrSuffix()) continue;
                     try
                     {
+                        if (item.Properties == null) continue;
                         object prop = item.Properties.Item("FullPath").Value;
                         string ffn = (string) prop;
                         if (!ParserDetails._per_file_parser_details.ContainsKey(ffn))

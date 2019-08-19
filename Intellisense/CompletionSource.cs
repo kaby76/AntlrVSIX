@@ -35,11 +35,21 @@
             string path_containing_applied_occurrence = System.IO.Path.GetDirectoryName(doc.FilePath);
             List<Completion> completions = new List<Completion>();
             ParserDetails pd = ParserDetails._per_file_parser_details[doc.FilePath];
-            foreach (var s in pd._ant_nonterminals.OrderBy(p => p.Text).Select(p => p.Text).Distinct())
+            foreach (var s in pd._ant_applied_occurrence_classes
+                .Where(t => t.Value == 0)
+                .Select(t => t.Key)
+                .OrderBy(p => p.Text)
+                .Select(p => p.Text)
+                .Distinct())
             {
                 completions.Add(new Completion(s));
             }
-            foreach (var s in pd._ant_terminals.OrderBy(p => p.Text).Select(p => p.Text).Distinct())
+            foreach (var s in pd._ant_applied_occurrence_classes
+                .Where(t => t.Value == 1)
+                .Select(t => t.Key)
+                .OrderBy(p => p.Text)
+                .Select(p => p.Text)
+                .Distinct())
             {
                 completions.Add(new Completion(s));
             }

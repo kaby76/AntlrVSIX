@@ -73,86 +73,41 @@ namespace AntlrVSIX.Tagger
                 int curLocEnd = end.Position;
 
                 // Collect all nonterminals, terminals, ..., in this span.
-                IEnumerable<IToken> combined_tokens = new List<IToken>();
-                List<IToken> all_term_tokens = new List<IToken>();
-                List<IToken> all_nonterm_tokens = new List<IToken>();
-                List<IToken> all_comment_tokens = new List<IToken>();
-                List<IToken> all_keyword_tokens = new List<IToken>();
-                List<IToken> all_literal_tokens = new List<IToken>();
-                List<IToken> all_mode_tokens = new List<IToken>();
-                List<IToken> all_channel_tokens = new List<IToken>();
+                List<KeyValuePair<IToken, int>> combined_tokens = new List<KeyValuePair<IToken, int>>();
 
-                all_nonterm_tokens = details._ant_nonterminals.Where((token) =>
                 {
-                    int start_token_start = token.StartIndex;
-                    int end_token_end = token.StopIndex;
-                    if (start_token_start >= curLocEnd) return false;
-                    if (end_token_end < curLocStart) return false;
-                    return true;
-                }).ToList();
-                combined_tokens = combined_tokens.Concat(all_nonterm_tokens);
-                all_term_tokens = details._ant_terminals.Where((token) =>
+                    List<KeyValuePair<IToken, int>> partial = details._ant_applied_occurrence_classes.Where((pair) =>
+                    {
+                        var token = pair.Key;
+                        int start_token_start = token.StartIndex;
+                        int end_token_end = token.StopIndex;
+                        if (start_token_start >= curLocEnd) return false;
+                        if (end_token_end < curLocStart) return false;
+                        return true;
+                    }).ToList();
+                    combined_tokens.AddRange(partial);
+                }
+
                 {
-                    int start_token_start = token.StartIndex;
-                    int end_token_end = token.StopIndex;
-                    if (start_token_start >= curLocEnd) return false;
-                    if (end_token_end < curLocStart) return false;
-                    return true;
-                }).ToList();
-                combined_tokens = combined_tokens.Concat(all_term_tokens);
-                all_comment_tokens = details._ant_comments.Where((token) =>
-                {
-                    int start_token_start = token.StartIndex;
-                    int end_token_end = token.StopIndex;
-                    if (start_token_start >= curLocEnd) return false;
-                    if (end_token_end < curLocStart) return false;
-                    return true;
-                }).ToList();
-                combined_tokens = combined_tokens.Concat(all_comment_tokens);
-                all_keyword_tokens = details._ant_keywords.Where((token) =>
-                {
-                    int start_token_start = token.StartIndex;
-                    int end_token_end = token.StopIndex;
-                    if (start_token_start >= curLocEnd) return false;
-                    if (end_token_end < curLocStart) return false;
-                    return true;
-                }).ToList();
-                combined_tokens = combined_tokens.Concat(all_keyword_tokens);
-                all_literal_tokens = details._ant_literals.Where((token) =>
-                {
-                    int start_token_start = token.StartIndex;
-                    int end_token_end = token.StopIndex;
-                    if (start_token_start >= curLocEnd) return false;
-                    if (end_token_end < curLocStart) return false;
-                    return true;
-                }).ToList();
-                combined_tokens = combined_tokens.Concat(all_literal_tokens);
-                all_mode_tokens = details._ant_modes.Where((token) =>
-                {
-                    int start_token_start = token.StartIndex;
-                    int end_token_end = token.StopIndex;
-                    if (start_token_start >= curLocEnd) return false;
-                    if (end_token_end < curLocStart) return false;
-                    return true;
-                }).ToList();
-                combined_tokens = combined_tokens.Concat(all_mode_tokens);
-                all_channel_tokens = details._ant_channels.Where((token) =>
-                {
-                    int start_token_start = token.StartIndex;
-                    int end_token_end = token.StopIndex;
-                    if (start_token_start >= curLocEnd) return false;
-                    if (end_token_end < curLocStart) return false;
-                    return true;
-                }).ToList();
-                combined_tokens = combined_tokens.Concat(all_channel_tokens);
+                    var partial = details._ant_defining_occurrence_classes.Where((pair) =>
+                    {
+                        var token = pair.Key;
+                        int start_token_start = token.StartIndex;
+                        int end_token_end = token.StopIndex;
+                        if (start_token_start >= curLocEnd) return false;
+                        if (end_token_end < curLocStart) return false;
+                        return true;
+                    }).ToList();
+                    combined_tokens.AddRange(partial);
+                }
 
                 // Sort the list.
-                var sorted_combined_tokens = combined_tokens.OrderBy((t) => t.StartIndex).ToList();
+                List<KeyValuePair<IToken, int>> sorted_combined_tokens = combined_tokens.OrderBy((t) => t.Key.StartIndex).ToList();
 
-                // Assumption: tokens do not overlap.
-
-                foreach (IToken token in sorted_combined_tokens)
+                foreach (KeyValuePair<IToken, int> p in sorted_combined_tokens)
                 {
+                    var token = p.Key;
+                    var type = p.Value;
                     int start_token_start = token.StartIndex;
                     int end_token_end = token.StopIndex;
                     int length = end_token_end - start_token_start + 1;
@@ -164,16 +119,6 @@ namespace AntlrVSIX.Tagger
                     var tokenSpan = new SnapshotSpan(
                         curSpan.Snapshot,
                         new Span(start_token_start, length));
-
-                    int type;
-                    if (all_nonterm_tokens.Contains(token)) type = 0;
-                    if (all_term_tokens.Contains(token)) type = 1;
-                    else if (all_comment_tokens.Contains(token)) type = 2;
-                    else if (all_keyword_tokens.Contains(token)) type = 3;
-                    else if (all_literal_tokens.Contains(token)) type = 4;
-                    else if (all_mode_tokens.Contains(token)) type = 5;
-                    else if (all_channel_tokens.Contains(token)) type = 6;
-                    else type = -1;
 
                     if (tokenSpan.IntersectsWith(curSpan))
                     {

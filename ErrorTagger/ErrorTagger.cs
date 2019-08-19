@@ -58,8 +58,11 @@ namespace AntlrVSIX.ErrorTagger
                 List<IToken> all_term_tokens = new List<IToken>();
                 List<IToken> all_nonterm_tokens = new List<IToken>();
 
-                all_nonterm_tokens = details._ant_nonterminals.Where((token) =>
+                all_nonterm_tokens = details._ant_applied_occurrence_classes.Where((pair) =>
                 {
+                    var token = pair.Key;
+                    var classification = pair.Value;
+                    if (classification != 0) return false;
                     int start_token_start = token.StartIndex;
                     int end_token_end = token.StopIndex;
                     if (start_token_start >= curLocEnd) return false;
@@ -67,13 +70,24 @@ namespace AntlrVSIX.ErrorTagger
                     var is_any_definer = ParserDetails._per_file_parser_details
                         .Where(pd =>
                             (Path.GetDirectoryName(pd.Value.FullFileName) == path_containing_applied_occurrence)
-                            && pd.Value._ant_nonterminals_defining.Where(d => d.Text == token.Text).Any()).Any();
+                            && pd.Value._ant_defining_occurrence_classes.Where(
+                                p =>
+                                {
+                                    var d = p.Key;
+                                    var c = p.Value;
+                                    if (c != 0) return false;
+                                    return d.Text == token.Text;
+                                }).Any()).Any();
                     return !is_any_definer;
-                }).ToList();
+                }).Select(t => t.Key).ToList();
 
                 combined_tokens = combined_tokens.Concat(all_nonterm_tokens);
-                all_term_tokens = details._ant_terminals.Where((token) =>
+
+                all_nonterm_tokens = details._ant_applied_occurrence_classes.Where((pair) =>
                 {
+                    var token = pair.Key;
+                    var classification = pair.Value;
+                    if (classification != 1) return false;
                     int start_token_start = token.StartIndex;
                     int end_token_end = token.StopIndex;
                     if (start_token_start >= curLocEnd) return false;
@@ -81,9 +95,17 @@ namespace AntlrVSIX.ErrorTagger
                     var is_any_definer = ParserDetails._per_file_parser_details
                         .Where(pd =>
                             (Path.GetDirectoryName(pd.Value.FullFileName) == path_containing_applied_occurrence)
-                            && pd.Value._ant_terminals_defining.Where(d => d.Text == token.Text).Any()).Any();
+                            && pd.Value._ant_defining_occurrence_classes.Where(
+                                p =>
+                                {
+                                    var d = p.Key;
+                                    var c = p.Value;
+                                    if (c != 1) return false;
+                                    return d.Text == token.Text;
+                                }).Any()).Any();
                     return !is_any_definer;
-                }).ToList();
+                }).Select(t => t.Key).ToList();
+
                 combined_tokens = combined_tokens.Concat(all_term_tokens);
 
                 // Sort the list.

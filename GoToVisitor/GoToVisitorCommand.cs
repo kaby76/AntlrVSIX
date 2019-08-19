@@ -179,8 +179,8 @@
                 ParserDetails details = kvp.Value;
                 if (AntlrLanguagePackage.Instance.Classification == AntlrVSIX.Constants.ClassificationNameNonterminal)
                 {
-                    var it = details._ant_nonterminals_defining.Where(
-                        (t) => t.Text == span.GetText());
+                    var it = details._ant_defining_occurrence_classes.Where(
+                             (t) => t.Value == 0 && t.Key.Text == span.GetText()).Select(t => t.Key);
                     where.AddRange(it);
                     foreach (var i in it) where_details.Add(details);
                 }

@@ -99,26 +99,16 @@ namespace AntlrVSIX.FindAllReferences
             {
                 string file_name = kvp.Key;
                 ParserDetails details = kvp.Value;
-                if (classification == AntlrVSIX.Constants.ClassificationNameNonterminal)
+                for (int i = 0; i < AntlrToClassifierName.CanFindAllRefs.Count; ++i)
                 {
-                    var it = details._ant_nonterminals.Where(
-                        (t) => t.Text == span.GetText());
-                    where.AddRange(it);
-                    foreach (var i in it) where_details.Add(details);
-                }
-                else if (classification == AntlrVSIX.Constants.ClassificationNameTerminal)
-                {
-                    var it = details._ant_terminals.Where(
-                        (t) => t.Text == span.GetText());
-                    where.AddRange(it);
-                    foreach (var i in it) where_details.Add(details);
-                }
-                else if (classification == AntlrVSIX.Constants.ClassificationNameLiteral)
-                {
-                    var it = details._ant_literals.Where(
-                        (t) => t.Text == span.GetText());
-                    where.AddRange(it);
-                    foreach (var i in it) where_details.Add(details);
+                    if (!AntlrToClassifierName.CanFindAllRefs[i]) continue;
+                    if (classification == AntlrToClassifierName.Map[i])
+                    {
+                        var it = details._ant_applied_occurrence_classes.Where(
+                            (t) => t.Value == 0 && t.Key.Text == span.GetText()).Select(t => t.Key);
+                        where.AddRange(it);
+                        foreach (var j in it) where_details.Add(details);
+                    }
                 }
             }
             if (!where.Any()) return;
