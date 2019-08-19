@@ -26,13 +26,9 @@
         {
             if (textView.TextBuffer != buffer)
                 return null;
-
-            ITextStructureNavigator textStructureNavigator =
-                TextStructureNavigatorSelector.GetTextStructureNavigator(buffer);
-            
-            IClassifier ag1 = AggregatorFactory.GetClassifier(buffer);
-
-            return new RenameHighlightTagger(textView, buffer, TextSearchService, textStructureNavigator, ag1) as ITagger<T>;
+            return new RenameHighlightTagger(textView, buffer, TextSearchService,
+                TextStructureNavigatorSelector.GetTextStructureNavigator(buffer),
+                AggregatorFactory.GetClassifier(buffer)) as ITagger<T>;
         }
     }
 }
