@@ -68,34 +68,16 @@
             foreach (ClassificationSpan classification in c1)
             {
                 var name = classification.ClassificationType.Classification.ToLower();
-                if (name == AntlrVSIX.Constants.ClassificationNameTerminal)
-                {
-                    AntlrLanguagePackage.Instance.Classification = AntlrVSIX.Constants.ClassificationNameTerminal;
-
-                    GoToDefinitionCommand.Instance.Enabled = true;
+                var type = AntlrVSIX.Grammar.AntlrToClassifierName.InverseMap[name];
+                if (AntlrVSIX.Grammar.AntlrToClassifierName.CanFindAllRefs[type])
                     FindAllReferencesCommand.Instance.Enabled = true;
+                if (AntlrVSIX.Grammar.AntlrToClassifierName.CanRename[type])
                     RenameCommand.Instance.Enabled = true;
-                    ReformatCommand.Instance.Enabled = true;
-                }
-                else if (name == AntlrVSIX.Constants.ClassificationNameNonterminal)
-                {
-                    AntlrLanguagePackage.Instance.Classification = AntlrVSIX.Constants.ClassificationNameNonterminal;
-
+                if (AntlrVSIX.Grammar.AntlrToClassifierName.CanGotodef[type])
                     GoToDefinitionCommand.Instance.Enabled = true;
-                    FindAllReferencesCommand.Instance.Enabled = true;
-                    RenameCommand.Instance.Enabled = true;
-                    ReformatCommand.Instance.Enabled = true;
+                if (AntlrVSIX.Grammar.AntlrToClassifierName.CanGotovisitor[type])
                     GoToVisitorCommand.Instance.Enabled = true;
-                }
-                else if (name == AntlrVSIX.Constants.ClassificationNameLiteral)
-                {
-                    AntlrLanguagePackage.Instance.Classification = AntlrVSIX.Constants.ClassificationNameLiteral;
-
-                    GoToDefinitionCommand.Instance.Enabled = true;
-                    FindAllReferencesCommand.Instance.Enabled = true;
-                    RenameCommand.Instance.Enabled = true;
-                    ReformatCommand.Instance.Enabled = true;
-                }
+                ReformatCommand.Instance.Enabled = true;
             }
         }
     }

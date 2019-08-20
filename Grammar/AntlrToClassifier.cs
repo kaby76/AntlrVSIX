@@ -18,6 +18,16 @@
             AntlrVSIX.Constants.ClassificationNameMode,
             AntlrVSIX.Constants.ClassificationNameChannel,
         };
+        public static Dictionary<string, int> InverseMap = new Dictionary<string, int>()
+        {
+            { AntlrVSIX.Constants.ClassificationNameNonterminal, 0 },
+            { AntlrVSIX.Constants.ClassificationNameTerminal, 1 },
+            { AntlrVSIX.Constants.ClassificationNameComment, 2 },
+            { AntlrVSIX.Constants.ClassificationNameKeyword, 3 },
+            { AntlrVSIX.Constants.ClassificationNameLiteral, 4 },
+            { AntlrVSIX.Constants.ClassificationNameMode, 5 },
+            { AntlrVSIX.Constants.ClassificationNameChannel, 6 },
+        };
         public static List<System.Windows.Media.Color> MapColor = new List<System.Windows.Media.Color>()
         {
             AntlrVSIX.Constants.NormalColorTextForegroundNonterminal,
@@ -58,6 +68,26 @@
             false, // literal
             true, // mode
             true, // channel
+        };
+        public static List<bool> CanGotodef = new List<bool>()
+        {
+            true, // nonterminal
+            true, // Terminal
+            false, // comment
+            false, // keyword
+            false, // literal
+            true, // mode
+            true, // channel
+        };
+        public static List<bool> CanGotovisitor = new List<bool>()
+        {
+            true, // nonterminal
+            false, // Terminal
+            false, // comment
+            false, // keyword
+            false, // literal
+            false, // mode
+            false, // channel
         };
 
         private static List<string> _antlr_keywords = new List<string>()

@@ -113,7 +113,6 @@
     </Compile>
     <Compile Include="Rename\RenameHighlightTagger.cs" />
     <Compile Include="Tagger\AntlrTokenTagProvider.cs" />
-    <Compile Include="Tagger\AntlrTagTypes.cs" />
     <Compile Include="AggregateTagger\AntlrClassifierProvider.cs" />
     <Compile Include="Grammar\DFSVisitor.cs" />
     <Compile Include="Grammar\LexerAdaptor.cs" />
