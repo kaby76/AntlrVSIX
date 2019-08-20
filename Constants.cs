@@ -23,30 +23,5 @@
         public const string guidVSPackageCommandCodeWindowContextMenuCmdSet = "{0c1acc31-15ac-417c-86b2-eefdc669e8bf}";
         public const string guidFindAllReferences =                           "{9bd1fb43-7317-4992-8f66-8c2277ac652d}";
 
-        /* Tagging and classification types. */
-        public const string ClassificationNameTerminal = "terminal";
-        public const string ClassificationNameNonterminal = "nonterminal";
-        public const string ClassificationNameComment = "comment";
-        public const string ClassificationNameKeyword = "keyword";
-        public const string ClassificationNameLiteral = "literal";
-        public const string ClassificationNameMode = "mode";
-        public const string ClassificationNameChannel = "channel";
-
-        /* Color scheme for the tagging. */
-        public static Color NormalColorTextForegroundTerminal = Colors.Orange;
-        public static Color NormalColorTextForegroundNonterminal = Colors.Purple;
-        public static Color NormalColorTextForegroundComment = Colors.Green;
-        public static Color NormalColorTextForegroundKeyword = Colors.Blue;
-        public static Color NormalColorTextForegroundLiteral = Colors.Red;
-        public static Color NormalColorTextForegroundMode = Colors.Salmon;
-        public static Color NormalColorTextForegroundChannel = Colors.Coral;
-
-        public static Color InvertedColorTextForegroundTerminal = Colors.LightYellow;
-        public static Color InvertedColorTextForegroundNonterminal = Colors.LightPink;
-        public static Color InvertedColorTextForegroundComment = Colors.LightGreen;
-        public static Color InvertedColorTextForegroundKeyword = Colors.LightBlue;
-        public static Color InvertedColorTextForegroundLiteral = Colors.Red;
-        public static Color InvertedColorTextForegroundMode = Colors.LightSalmon;
-        public static Color InvertedColorTextForegroundChannel = Colors.LightCoral;
     }
 }

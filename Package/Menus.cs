@@ -67,7 +67,7 @@
             ClassificationSpan[] c1 = AntlrVSIX.Package.AntlrLanguagePackage.Instance.Aggregator[view].GetClassificationSpans(span).ToArray();
             foreach (ClassificationSpan classification in c1)
             {
-                var name = classification.ClassificationType.Classification.ToLower();
+                var name = classification.ClassificationType.Classification;
                 var type = AntlrVSIX.Grammar.AntlrToClassifierName.InverseMap[name];
                 if (AntlrVSIX.Grammar.AntlrToClassifierName.CanFindAllRefs[type])
                     FindAllReferencesCommand.Instance.Enabled = true;

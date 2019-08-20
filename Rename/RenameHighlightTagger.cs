@@ -158,21 +158,14 @@ namespace AntlrVSIX.Rename
 
             // Verify current word is a grammar symbol.
             //  Now, check for valid classification type.
-            string classification = null;
-            ClassificationSpan[] c1 = _aggregator.GetClassificationSpans(currentWord).ToArray();
-            foreach (ClassificationSpan cl in c1)
-            {
-                classification = cl.ClassificationType.Classification.ToLower();
-                if (classification == AntlrVSIX.Constants.ClassificationNameTerminal)
+            bool can_rename = _aggregator.GetClassificationSpans(currentWord).Where(
+                classification =>
                 {
-                    break;
-                }
-                else if (classification == AntlrVSIX.Constants.ClassificationNameNonterminal)
-                {
-                    break;
-                }
-            }
-            if (classification == null) return;
+                    var name = classification.ClassificationType.Classification;
+                    var type = AntlrVSIX.Grammar.AntlrToClassifierName.InverseMap[name];
+                    return AntlrVSIX.Grammar.AntlrToClassifierName.CanRename[type];
+                }).Any();
+            if (! can_rename) return;
 
             SnapshotSpan span = currentWord;
             ITextView view = this.View;

@@ -150,26 +150,17 @@
             AntlrLanguagePackage.Instance.Span = span;
 
             //  Now, check for valid classification type.
-            ClassificationSpan[] c1 = AntlrVSIX.Package.AntlrLanguagePackage.Instance.Aggregator[grammar_view]
-                .GetClassificationSpans(span).ToArray();
-            foreach (ClassificationSpan classification in c1)
-            {
-                var cname = classification.ClassificationType.Classification.ToLower();
-                if (cname == AntlrVSIX.Constants.ClassificationNameTerminal)
-                {
-                    AntlrLanguagePackage.Instance.Classification = AntlrVSIX.Constants.ClassificationNameTerminal;
-                }
-                else if (cname == AntlrVSIX.Constants.ClassificationNameNonterminal)
-                {
-                    AntlrLanguagePackage.Instance.Classification = AntlrVSIX.Constants.ClassificationNameNonterminal;
-                }
-                else if (cname == AntlrVSIX.Constants.ClassificationNameLiteral)
-                {
-                    AntlrLanguagePackage.Instance.Classification = AntlrVSIX.Constants.ClassificationNameLiteral;
-                }
-            }
+            var cla = -1;
+            bool can_gotovisitor = AntlrVSIX.Package.AntlrLanguagePackage.Instance.Aggregator[grammar_view].GetClassificationSpans(span).Where(
+              classification =>
+              {
+                  var name = classification.ClassificationType.Classification;
+                  cla = AntlrVSIX.Grammar.AntlrToClassifierName.InverseMap[name];
+                  return AntlrVSIX.Grammar.AntlrToClassifierName.CanGotovisitor[cla];
+              }).Any();
+            if (!can_gotovisitor) return;
 
-            // Determine if the symbol is a rule symbol. The symbol has to be a nonterminal.
+            // Find defining occurrence.
             List<IToken> where = new List<IToken>();
             List<ParserDetails> where_details = new List<ParserDetails>();
             IToken token = null;
@@ -177,10 +168,9 @@
             {
                 string file_name = kvp.Key;
                 ParserDetails details = kvp.Value;
-                if (AntlrLanguagePackage.Instance.Classification == AntlrVSIX.Constants.ClassificationNameNonterminal)
                 {
                     var it = details._ant_defining_occurrence_classes.Where(
-                             (t) => t.Value == 0 && t.Key.Text == span.GetText()).Select(t => t.Key);
+                             (t) => t.Value == cla && t.Key.Text == span.GetText()).Select(t => t.Key);
                     where.AddRange(it);
                     foreach (var i in it) where_details.Add(details);
                 }
@@ -190,7 +180,7 @@
             else
             {
                 System.Windows.Forms.MessageBox.Show(
-                    "Symbol '" + span.GetText() + "' is not a non-terminal.");
+                    "Symbol '" + span.GetText() + "' definer not found.");
                 return;
             }
 

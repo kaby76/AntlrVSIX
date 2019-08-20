@@ -5,48 +5,75 @@
     using AntlrVSIX.Tagger;
     using System.Collections.Generic;
     using System;
+    using System.Windows.Media;
 
     class AntlrToClassifierName
     {
+        /* Tagging and classification types. */
+        public const string ClassificationNameTerminal = "terminal";
+        public const string ClassificationNameNonterminal = "nonterminal";
+        public const string ClassificationNameComment = "comment";
+        public const string ClassificationNameKeyword = "keyword";
+        public const string ClassificationNameLiteral = "literal";
+        public const string ClassificationNameMode = "mode";
+        public const string ClassificationNameChannel = "channel";
+
+        /* Color scheme for the tagging. */
+        public static Color NormalColorTextForegroundTerminal = Colors.Orange;
+        public static Color NormalColorTextForegroundNonterminal = Colors.Purple;
+        public static Color NormalColorTextForegroundComment = Colors.Green;
+        public static Color NormalColorTextForegroundKeyword = Colors.Blue;
+        public static Color NormalColorTextForegroundLiteral = Colors.Red;
+        public static Color NormalColorTextForegroundMode = Colors.Salmon;
+        public static Color NormalColorTextForegroundChannel = Colors.Coral;
+
+        public static Color InvertedColorTextForegroundTerminal = Colors.LightYellow;
+        public static Color InvertedColorTextForegroundNonterminal = Colors.LightPink;
+        public static Color InvertedColorTextForegroundComment = Colors.LightGreen;
+        public static Color InvertedColorTextForegroundKeyword = Colors.LightBlue;
+        public static Color InvertedColorTextForegroundLiteral = Colors.Red;
+        public static Color InvertedColorTextForegroundMode = Colors.LightSalmon;
+        public static Color InvertedColorTextForegroundChannel = Colors.LightCoral;
+
         public static List<string> Map = new List<string>()
         {
-            AntlrVSIX.Constants.ClassificationNameNonterminal,
-            AntlrVSIX.Constants.ClassificationNameTerminal,
-            AntlrVSIX.Constants.ClassificationNameComment,
-            AntlrVSIX.Constants.ClassificationNameKeyword,
-            AntlrVSIX.Constants.ClassificationNameLiteral,
-            AntlrVSIX.Constants.ClassificationNameMode,
-            AntlrVSIX.Constants.ClassificationNameChannel,
+            ClassificationNameNonterminal,
+            ClassificationNameTerminal,
+            ClassificationNameComment,
+            ClassificationNameKeyword,
+            ClassificationNameLiteral,
+            ClassificationNameMode,
+            ClassificationNameChannel,
         };
         public static Dictionary<string, int> InverseMap = new Dictionary<string, int>()
         {
-            { AntlrVSIX.Constants.ClassificationNameNonterminal, 0 },
-            { AntlrVSIX.Constants.ClassificationNameTerminal, 1 },
-            { AntlrVSIX.Constants.ClassificationNameComment, 2 },
-            { AntlrVSIX.Constants.ClassificationNameKeyword, 3 },
-            { AntlrVSIX.Constants.ClassificationNameLiteral, 4 },
-            { AntlrVSIX.Constants.ClassificationNameMode, 5 },
-            { AntlrVSIX.Constants.ClassificationNameChannel, 6 },
+            { ClassificationNameNonterminal, 0 },
+            { ClassificationNameTerminal, 1 },
+            { ClassificationNameComment, 2 },
+            { ClassificationNameKeyword, 3 },
+            { ClassificationNameLiteral, 4 },
+            { ClassificationNameMode, 5 },
+            { ClassificationNameChannel, 6 },
         };
         public static List<System.Windows.Media.Color> MapColor = new List<System.Windows.Media.Color>()
         {
-            AntlrVSIX.Constants.NormalColorTextForegroundNonterminal,
-            AntlrVSIX.Constants.NormalColorTextForegroundTerminal,
-            AntlrVSIX.Constants.NormalColorTextForegroundComment,
-            AntlrVSIX.Constants.NormalColorTextForegroundKeyword,
-            AntlrVSIX.Constants.NormalColorTextForegroundLiteral,
-            AntlrVSIX.Constants.NormalColorTextForegroundMode,
-            AntlrVSIX.Constants.NormalColorTextForegroundChannel,
+            NormalColorTextForegroundNonterminal,
+            NormalColorTextForegroundTerminal,
+            NormalColorTextForegroundComment,
+            NormalColorTextForegroundKeyword,
+            NormalColorTextForegroundLiteral,
+            NormalColorTextForegroundMode,
+            NormalColorTextForegroundChannel,
         };
         public static List<System.Windows.Media.Color> MapInvertedColor = new List<System.Windows.Media.Color>()
         {
-            AntlrVSIX.Constants.InvertedColorTextForegroundNonterminal,
-            AntlrVSIX.Constants.InvertedColorTextForegroundTerminal,
-            AntlrVSIX.Constants.InvertedColorTextForegroundComment,
-            AntlrVSIX.Constants.InvertedColorTextForegroundKeyword,
-            AntlrVSIX.Constants.InvertedColorTextForegroundLiteral,
-            AntlrVSIX.Constants.InvertedColorTextForegroundMode,
-            AntlrVSIX.Constants.InvertedColorTextForegroundChannel,
+            InvertedColorTextForegroundNonterminal,
+            InvertedColorTextForegroundTerminal,
+            InvertedColorTextForegroundComment,
+            InvertedColorTextForegroundKeyword,
+            InvertedColorTextForegroundLiteral,
+            InvertedColorTextForegroundMode,
+            InvertedColorTextForegroundChannel,
         };
         public static List<Func<IParseTree, bool>> MapTagPredicates = new List<Func<IParseTree, bool>>();
         public static List<bool> CanFindAllRefs = new List<bool>()
