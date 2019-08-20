@@ -132,6 +132,7 @@
             SnapshotPoint bp = cp.BufferPosition;
             int pos = bp.Position;
             ITextBuffer buffer = grammar_view.TextBuffer;
+            IGrammarDescription grammar_description = AntlrToClassifierName.Instance;
             ITextDocument doc = buffer.GetTextDocument();
             string g4_file_path = doc.FilePath;
             if (!g4_file_path.IsAntlrSuffix()) return;
@@ -155,8 +156,8 @@
               classification =>
               {
                   var name = classification.ClassificationType.Classification;
-                  cla = AntlrVSIX.Grammar.AntlrToClassifierName.InverseMap[name];
-                  return AntlrVSIX.Grammar.AntlrToClassifierName.CanGotovisitor[cla];
+                  cla = grammar_description.InverseMap[name];
+                  return grammar_description.CanGotovisitor[cla];
               }).Any();
             if (!can_gotovisitor) return;
 

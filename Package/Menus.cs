@@ -4,6 +4,7 @@
     using AntlrVSIX.FindAllReferences;
     using AntlrVSIX.GoToDefinition;
     using AntlrVSIX.GoToVisitor;
+    using AntlrVSIX.Grammar;
     using AntlrVSIX.NextSym;
     using AntlrVSIX.Reformat;
     using AntlrVSIX.Rename;
@@ -28,6 +29,7 @@
 
             // First, find out what this view is, and what the file is.
             ITextBuffer buffer = view.TextBuffer;
+            IGrammarDescription grammar_description = AntlrVSIX.Grammar.AntlrToClassifierName.Instance;
             ITextDocument doc = buffer.GetTextDocument();
             string path = doc.FilePath;
 
@@ -68,14 +70,14 @@
             foreach (ClassificationSpan classification in c1)
             {
                 var name = classification.ClassificationType.Classification;
-                var type = AntlrVSIX.Grammar.AntlrToClassifierName.InverseMap[name];
-                if (AntlrVSIX.Grammar.AntlrToClassifierName.CanFindAllRefs[type])
+                var type = grammar_description.InverseMap[name];
+                if (grammar_description.CanFindAllRefs[type])
                     FindAllReferencesCommand.Instance.Enabled = true;
-                if (AntlrVSIX.Grammar.AntlrToClassifierName.CanRename[type])
+                if (grammar_description.CanRename[type])
                     RenameCommand.Instance.Enabled = true;
-                if (AntlrVSIX.Grammar.AntlrToClassifierName.CanGotodef[type])
+                if (grammar_description.CanGotodef[type])
                     GoToDefinitionCommand.Instance.Enabled = true;
-                if (AntlrVSIX.Grammar.AntlrToClassifierName.CanGotovisitor[type])
+                if (grammar_description.CanGotovisitor[type])
                     GoToVisitorCommand.Instance.Enabled = true;
                 ReformatCommand.Instance.Enabled = true;
             }

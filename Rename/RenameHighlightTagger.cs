@@ -29,8 +29,9 @@ namespace AntlrVSIX.Rename
         private object updateLock = new object();
         private IClassifier _aggregator;
 
-        private ITextView View { get; set; }
-        private ITextBuffer SourceBuffer { get; set; }
+        private ITextView _view;
+        private IGrammarDescription _grammar_description;
+        private ITextBuffer _buffer;
         private ITextSearchService TextSearchService { get; set; }
         private ITextStructureNavigator TextStructureNavigator { get; set; }
         private NormalizedSnapshotSpanCollection WordSpans { get; set; }
@@ -42,8 +43,9 @@ namespace AntlrVSIX.Rename
                                    ITextStructureNavigator textStructureNavigator,
                                    IClassifier aggregator)
         {
-            View = view;
-            SourceBuffer = sourceBuffer;
+            _view = view;
+            _buffer = sourceBuffer;
+            _grammar_description = Grammar.AntlrToClassifierName.Instance;
             TextSearchService = textSearchService;
             TextStructureNavigator = textStructureNavigator;
             _aggregator = aggregator;
@@ -57,7 +59,7 @@ namespace AntlrVSIX.Rename
             // If a new snapshot wasn't generated, then skip this layout
             if (e.NewViewState.EditSnapshot != e.OldViewState.EditSnapshot)
             {
-                UpdateAtCaretPosition(View.Caret.Position);
+                UpdateAtCaretPosition(_view.Caret.Position);
             }
         }
 
@@ -68,7 +70,7 @@ namespace AntlrVSIX.Rename
 
         private void UpdateAtCaretPosition(CaretPosition caretPoisition)
         {
-            SnapshotPoint? point = caretPoisition.Point.GetPoint(SourceBuffer, caretPoisition.Affinity);
+            SnapshotPoint? point = caretPoisition.Point.GetPoint(_buffer, caretPoisition.Affinity);
 
             if (!point.HasValue)
                 return;
@@ -76,7 +78,7 @@ namespace AntlrVSIX.Rename
             // If the new cursor position is still within the current word (and on the same snapshot),
             // we don't need to check it.
             if (CurrentWord.HasValue &&
-                CurrentWord.Value.Snapshot == View.TextSnapshot &&
+                CurrentWord.Value.Snapshot == _view.TextSnapshot &&
                 point.Value >= CurrentWord.Value.Start &&
                 point.Value <= CurrentWord.Value.End)
             {
@@ -162,13 +164,13 @@ namespace AntlrVSIX.Rename
                 classification =>
                 {
                     var name = classification.ClassificationType.Classification;
-                    var type = AntlrVSIX.Grammar.AntlrToClassifierName.InverseMap[name];
-                    return AntlrVSIX.Grammar.AntlrToClassifierName.CanRename[type];
+                    var type = _grammar_description.InverseMap[name];
+                    return _grammar_description.CanRename[type];
                 }).Any();
             if (! can_rename) return;
 
             SnapshotSpan span = currentWord;
-            ITextView view = this.View;
+            ITextView view = this._view;
 
             // First, find out what this view is, and what the file is.
             ITextBuffer buffer = view.TextBuffer;
@@ -183,13 +185,13 @@ namespace AntlrVSIX.Rename
                 ParserDetails details = kvp.Value;
                 {
                     var it = details._ant_applied_occurrence_classes.Where(
-                        (t) => AntlrVSIX.Grammar.AntlrToClassifierName.CanRename[t.Value] && t.Key.Text == span.GetText()).Select(t => t.Key);
+                        (t) => _grammar_description.CanRename[t.Value] && t.Key.Text == span.GetText()).Select(t => t.Key);
                     where.AddRange(it);
                     foreach (var i in it) where_details.Add(details);
                 }
                 {
                     var it = details._ant_defining_occurrence_classes.Where(
-                        (t) => AntlrVSIX.Grammar.AntlrToClassifierName.CanRename[t.Value] && t.Key.Text == span.GetText()).Select(t => t.Key);
+                        (t) => _grammar_description.CanRename[t.Value] && t.Key.Text == span.GetText()).Select(t => t.Key);
                     where.AddRange(it);
                     foreach (var i in it) where_details.Add(details);
                 }
@@ -316,7 +318,7 @@ namespace AntlrVSIX.Rename
 
                 var tempEvent = TagsChanged;
                 if (tempEvent != null)
-                    tempEvent(this, new SnapshotSpanEventArgs(new SnapshotSpan(SourceBuffer.CurrentSnapshot, 0, SourceBuffer.CurrentSnapshot.Length)));
+                    tempEvent(this, new SnapshotSpanEventArgs(new SnapshotSpan(_buffer.CurrentSnapshot, 0, _buffer.CurrentSnapshot.Length)));
             }
         }
 

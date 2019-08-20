@@ -23,8 +23,9 @@
 
     internal sealed class AntlrClassifier : ITagger<ClassificationTag>
     {
-        public ITextBuffer _buffer;
-        public ITagAggregator<AntlrTokenTag> _aggregator;
+        private ITextBuffer _buffer;
+        private IGrammarDescription _grammar_description;
+        private ITagAggregator<AntlrTokenTag> _aggregator;
         private IDictionary<int, IClassificationType> _antlrtype_to_classifiertype;
 
         internal AntlrClassifier(
@@ -33,29 +34,31 @@
             IClassificationTypeRegistryService service,
             IClassificationFormatMapService ClassificationFormatMapService)
         {
-            for (int i = 0; i < AntlrToClassifierName.Map.Count; ++i)
+            _buffer = buffer;
+            _grammar_description = AntlrToClassifierName.Instance;
+            _aggregator = aggregator;
+            _antlrtype_to_classifiertype = new Dictionary<int, IClassificationType>();
+
+            for (int i = 0; i < _grammar_description.Map.Length; ++i)
             {
                 var key = i;
-                var val = AntlrToClassifierName.Map[i];
+                var val = _grammar_description.Map[i];
                 var identiferClassificationType = service.GetClassificationType(val);
                 var classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
                         : identiferClassificationType;
                 var classificationFormatMap = ClassificationFormatMapService.GetClassificationFormatMap(category: "text");
                 var identifierProperties = classificationFormatMap
                     .GetExplicitTextProperties(classificationType);
-                var color =  ! Themes.IsInvertedTheme() ? AntlrToClassifierName.MapColor[key]
-                    : AntlrToClassifierName.MapInvertedColor[key];
+                var color =  ! Themes.IsInvertedTheme() ? _grammar_description.MapColor[key]
+                    : _grammar_description.MapInvertedColor[key];
                 var newProperties = identifierProperties.SetForeground(color);
                 classificationFormatMap.AddExplicitTextProperties(classificationType, newProperties);
             }
             
-            _buffer = buffer;
-            _aggregator = aggregator;
-            _antlrtype_to_classifiertype = new Dictionary<int, IClassificationType>();
-            for (int i = 0; i < AntlrToClassifierName.Map.Count; ++i)
+            for (int i = 0; i < _grammar_description.Map.Length; ++i)
             {
                 var key = i;
-                var val = AntlrToClassifierName.Map[i];
+                var val = _grammar_description.Map[i];
                 _antlrtype_to_classifiertype[key] = service.GetClassificationType(val);
             }            
             AntlrLanguagePackage package = AntlrLanguagePackage.Instance;

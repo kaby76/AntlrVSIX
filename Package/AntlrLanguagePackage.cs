@@ -20,32 +20,15 @@ namespace AntlrVSIX.Package
     using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.TextManager.Interop;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
     using System.Runtime.InteropServices;
     using System.Threading;
     using System;
-    using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Shell.Interop;
-    using EnvDTE;
-    using EnvDTE80;
-    using Microsoft.VisualStudio;
-    using Microsoft.VisualStudio.CommandBars;
-    using Microsoft.VisualStudio.Shell;
-    using Microsoft.VisualStudio.Shell.Interop;
-    using System;
-    using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Runtime.InteropServices;
-    using System.Threading;
-    using Task = System.Threading.Tasks.Task;
-    using IAsyncServiceProvider = Microsoft.VisualStudio.Shell.IAsyncServiceProvider;
 
-    [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)] // Info on this package for Help/About
+    [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
     [Guid(AntlrVSIX.Constants.PackageGuidString)]
-    [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly",
-        Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideToolWindow(typeof(FindRefsWindow))]
     [ProvideService((typeof(IVsSolutionEvents)), IsAsyncQueryable = true)]

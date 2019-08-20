@@ -11,21 +11,16 @@ namespace AntlrVSIX.Grammar
 
     public class ParserDetails : IObservable<ParserDetails>
     {
-        public static Dictionary<string, ParserDetails> _per_file_parser_details =
-            new Dictionary<string, ParserDetails>();
-
+        public static Dictionary<string, ParserDetails> _per_file_parser_details = new Dictionary<string, ParserDetails>();
         public string FullFileName;
         public string Code;
-        private List<IObserver<ParserDetails>> _observers = new List<IObserver<ParserDetails>>();
+        public Dictionary<IToken, int> _ant_applied_occurrence_classes = new Dictionary<IToken, int>();
+        public Dictionary<IToken, int> _ant_defining_occurrence_classes = new Dictionary<IToken, int>();
 
-        // Parser and parse tree.
-        private ANTLRv4Parser _ant_parser = null;
+        private List<IObserver<ParserDetails>> _observers = new List<IObserver<ParserDetails>>();
         private IParseTree _ant_tree = null;
         private IEnumerable<IParseTree>_all_nodes = null;
 
-        // List of all comments, terminal, nonterminal, and keyword tokens in the grammar.
-        public Dictionary<IToken, int> _ant_applied_occurrence_classes = new Dictionary<IToken, int>();
-        public Dictionary<IToken, int> _ant_defining_occurrence_classes = new Dictionary<IToken, int>();
 
         public static ParserDetails Parse(string code, string ffn)
         {
@@ -48,33 +43,8 @@ namespace AntlrVSIX.Grammar
             pd.Code = code;
             pd.FullFileName = ffn;
 
-            // Set up Antlr to parse input grammar.
-            byte[] byteArray = Encoding.UTF8.GetBytes(code);
-            CommonTokenStream cts = new CommonTokenStream(
-                new ANTLRv4Lexer(
-                    new AntlrInputStream(
-                        new StreamReader(
-                            new MemoryStream(byteArray)).ReadToEnd())));
-            pd._ant_parser = new ANTLRv4Parser(cts);
-
-            // Set up another token stream containing comments. This might be
-            // problematic as the parser influences the lexer.
-            CommonTokenStream cts_off_channel = new CommonTokenStream(
-                new ANTLRv4Lexer(
-                    new AntlrInputStream(
-                        new StreamReader(
-                            new MemoryStream(byteArray)).ReadToEnd())),
-                ANTLRv4Lexer.OFF_CHANNEL);
-
-
-            try
-            {
-                pd._ant_tree = pd._ant_parser.grammarSpec();
-            }
-            catch (Exception e)
-            {
-                // Parsing error.
-            }
+            IGrammarDescription gd = AntlrToClassifierName.Instance;
+            pd._ant_tree = gd.Parse(code);
 
             pd._all_nodes = DFSVisitor.DFS(pd._ant_tree as ParserRuleContext);
 
@@ -88,22 +58,22 @@ namespace AntlrVSIX.Grammar
             pd._ant_applied_occurrence_classes = new Dictionary<IToken, int>();
 
             // Order of finding stuff dependent here. First find defs, then refs.
-            for (int classification = 0; classification < AntlrVSIX.Grammar.AntlrToClassifierName.IdentifyDefinition.Count; ++classification)
+            for (int classification = 0; classification < gd.IdentifyDefinition.Count; ++classification)
             {
-                var fun = AntlrVSIX.Grammar.AntlrToClassifierName.IdentifyDefinition[classification];
+                var fun = gd.IdentifyDefinition[classification];
                 if (fun == null) continue;
-                var it = pd._all_nodes.Where(t => fun(t));
+                var it = pd._all_nodes.Where(t => fun(gd, t));
                 foreach (var t in it)
                 {
                     var itoken = (t as TerminalNodeImpl).Symbol;
                     pd._ant_defining_occurrence_classes.Add(itoken, classification);
                 }
             }
-            for (int classification = 0; classification < AntlrVSIX.Grammar.AntlrToClassifierName.Identify.Count; ++classification)
+            for (int classification = 0; classification < gd.Identify.Count; ++classification)
             {
-                var fun = AntlrVSIX.Grammar.AntlrToClassifierName.Identify[classification];
+                var fun = gd.Identify[classification];
                 if (fun == null) continue;
-                var it = pd._all_nodes.Where(t => fun(t));
+                var it = pd._all_nodes.Where(t => fun(gd, t));
                 foreach (var t in it)
                 {
                     var itoken = (t as TerminalNodeImpl).Symbol;
@@ -111,18 +81,18 @@ namespace AntlrVSIX.Grammar
                 }
             }
 
-            // Get all comments.
-            var new_list = new List<IToken>();
-            while (cts_off_channel.LA(1) != ANTLRv4Parser.Eof)
-            {
-                IToken token = cts_off_channel.LT(1);
-                if (token.Type == ANTLRv4Parser.BLOCK_COMMENT
-                    || token.Type == ANTLRv4Parser.LINE_COMMENT)
-                {
-                    new_list.Add(token);
-                }
-                cts_off_channel.Consume();
-            }
+            //// Get all comments.
+            //var new_list = new List<IToken>();
+            //while (cts_off_channel.LA(1) != ANTLRv4Parser.Eof)
+            //{
+            //    IToken token = cts_off_channel.LT(1);
+            //    if (token.Type == ANTLRv4Parser.BLOCK_COMMENT
+            //        || token.Type == ANTLRv4Parser.LINE_COMMENT)
+            //    {
+            //        new_list.Add(token);
+            //    }
+            //    cts_off_channel.Consume();
+            //}
            // pd._ant_comments = new_list;
 
             if (has_changed)

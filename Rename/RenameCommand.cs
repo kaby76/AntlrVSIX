@@ -75,6 +75,7 @@ namespace AntlrVSIX.Rename
             SnapshotSpan span = AntlrLanguagePackage.Instance.Span;
             ITextView view = AntlrLanguagePackage.Instance.View;
             ITextBuffer buffer = view.TextBuffer;
+            IGrammarDescription grammar_description = AntlrToClassifierName.Instance;
             ITextDocument doc = buffer.GetTextDocument();
             string path = doc.FilePath;
             IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(path);
@@ -86,14 +87,14 @@ namespace AntlrVSIX.Rename
                 ParserDetails details = kvp.Value;
                 {
                     var it = details._ant_applied_occurrence_classes.Where(
-                        (t) => AntlrToClassifierName.CanRename[t.Value]
+                        (t) => grammar_description.CanRename[t.Value]
                             && t.Key.Text == span.GetText()).Select(t => t.Key);
                     where.AddRange(it);
                     foreach (var i in it) where_details.Add(details);
                 }
                 {
                     var it = details._ant_defining_occurrence_classes.Where(
-                        (t) => AntlrToClassifierName.CanRename[t.Value]
+                        (t) => grammar_description.CanRename[t.Value]
                             && t.Key.Text == span.GetText()).Select(t => t.Key);
                     where.AddRange(it);
                     foreach (var i in it) where_details.Add(details);

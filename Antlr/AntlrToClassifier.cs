@@ -1,39 +1,66 @@
 ﻿namespace AntlrVSIX.Grammar
 {
+    using Antlr4.Runtime;
     using Antlr4.Runtime.Tree;
     using System;
     using System.Collections.Generic;
     using System.Windows.Media;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
+    using System;
 
-    class AntlrToClassifierName
+    class AntlrToClassifierName : IGrammarDescription
     {
+        private AntlrToClassifierName() { }
+
+        public IParseTree Parse(string code)
+        {
+            IParseTree _ant_tree = null;
+
+            // Set up Antlr to parse input grammar.
+            byte[] byteArray = Encoding.UTF8.GetBytes(code);
+            CommonTokenStream cts = new CommonTokenStream(
+                new ANTLRv4Lexer(
+                    new AntlrInputStream(
+                        new StreamReader(
+                            new MemoryStream(byteArray)).ReadToEnd())));
+            var _ant_parser = new ANTLRv4Parser(cts);
+
+            // Set up another token stream containing comments. This might be
+            // problematic as the parser influences the lexer.
+            CommonTokenStream cts_off_channel = new CommonTokenStream(
+                new ANTLRv4Lexer(
+                    new AntlrInputStream(
+                        new StreamReader(
+                            new MemoryStream(byteArray)).ReadToEnd())),
+                ANTLRv4Lexer.OFF_CHANNEL);
+
+            try
+            {
+                _ant_tree = _ant_parser.grammarSpec();
+            }
+            catch (Exception e)
+            {
+                // Parsing error.
+            }
+            return _ant_tree;
+        }
+
+
+        public static AntlrToClassifierName Instance { get; private set; } = new AntlrToClassifierName();
+
+
         /* Tagging and classification types. */
-        public const string ClassificationNameTerminal = "terminal";
-        public const string ClassificationNameNonterminal = "nonterminal";
-        public const string ClassificationNameComment = "comment";
-        public const string ClassificationNameKeyword = "keyword";
-        public const string ClassificationNameLiteral = "literal";
-        public const string ClassificationNameMode = "mode";
-        public const string ClassificationNameChannel = "channel";
+        private const string ClassificationNameTerminal = "terminal";
+        private const string ClassificationNameNonterminal = "nonterminal";
+        private const string ClassificationNameComment = "comment";
+        private const string ClassificationNameKeyword = "keyword";
+        private const string ClassificationNameLiteral = "literal";
+        private const string ClassificationNameMode = "mode";
+        private const string ClassificationNameChannel = "channel";
 
-        /* Color scheme for the tagging. */
-        public static Color NormalColorTextForegroundTerminal = Colors.Orange;
-        public static Color NormalColorTextForegroundNonterminal = Colors.Purple;
-        public static Color NormalColorTextForegroundComment = Colors.Green;
-        public static Color NormalColorTextForegroundKeyword = Colors.Blue;
-        public static Color NormalColorTextForegroundLiteral = Colors.Red;
-        public static Color NormalColorTextForegroundMode = Colors.Salmon;
-        public static Color NormalColorTextForegroundChannel = Colors.Coral;
-
-        public static Color InvertedColorTextForegroundTerminal = Colors.LightYellow;
-        public static Color InvertedColorTextForegroundNonterminal = Colors.LightPink;
-        public static Color InvertedColorTextForegroundComment = Colors.LightGreen;
-        public static Color InvertedColorTextForegroundKeyword = Colors.LightBlue;
-        public static Color InvertedColorTextForegroundLiteral = Colors.Red;
-        public static Color InvertedColorTextForegroundMode = Colors.LightSalmon;
-        public static Color InvertedColorTextForegroundChannel = Colors.LightCoral;
-
-        public static List<string> Map = new List<string>()
+        public string[] Map { get; } = new string[]
         {
             ClassificationNameNonterminal,
             ClassificationNameTerminal,
@@ -43,7 +70,8 @@
             ClassificationNameMode,
             ClassificationNameChannel,
         };
-        public static Dictionary<string, int> InverseMap = new Dictionary<string, int>()
+
+        public Dictionary<string, int> InverseMap { get; } = new Dictionary<string, int>()
         {
             { ClassificationNameNonterminal, 0 },
             { ClassificationNameTerminal, 1 },
@@ -53,28 +81,31 @@
             { ClassificationNameMode, 5 },
             { ClassificationNameChannel, 6 },
         };
-        public static List<System.Windows.Media.Color> MapColor = new List<System.Windows.Media.Color>()
+
+        /* Color scheme for the tagging. */
+        public List<System.Windows.Media.Color> MapColor { get; } = new List<System.Windows.Media.Color>()
         {
-            NormalColorTextForegroundNonterminal,
-            NormalColorTextForegroundTerminal,
-            NormalColorTextForegroundComment,
-            NormalColorTextForegroundKeyword,
-            NormalColorTextForegroundLiteral,
-            NormalColorTextForegroundMode,
-            NormalColorTextForegroundChannel,
+            Colors.Purple,
+            Colors.Orange,
+            Colors.Green,
+            Colors.Blue,
+            Colors.Red,
+            Colors.Salmon,
+            Colors.Coral,
         };
-        public static List<System.Windows.Media.Color> MapInvertedColor = new List<System.Windows.Media.Color>()
+
+        public List<System.Windows.Media.Color> MapInvertedColor { get; } = new List<System.Windows.Media.Color>()
         {
-            InvertedColorTextForegroundNonterminal,
-            InvertedColorTextForegroundTerminal,
-            InvertedColorTextForegroundComment,
-            InvertedColorTextForegroundKeyword,
-            InvertedColorTextForegroundLiteral,
-            InvertedColorTextForegroundMode,
-            InvertedColorTextForegroundChannel,
+            Colors.LightPink,
+            Colors.LightYellow,
+            Colors.LightGreen,
+            Colors.LightBlue,
+            Colors.Red,
+            Colors.LightSalmon,
+            Colors.LightCoral,
         };
-        public static List<Func<IParseTree, bool>> MapTagPredicates = new List<Func<IParseTree, bool>>();
-        public static List<bool> CanFindAllRefs = new List<bool>()
+
+        public List<bool> CanFindAllRefs { get; } = new List<bool>()
         {
             true, // nonterminal
             true, // Terminal
@@ -84,7 +115,8 @@
             true, // mode
             true, // channel
         };
-        public static List<bool> CanRename = new List<bool>()
+
+        public List<bool> CanRename { get; } = new List<bool>()
         {
             true, // nonterminal
             true, // Terminal
@@ -94,7 +126,8 @@
             true, // mode
             true, // channel
         };
-        public static List<bool> CanGotodef = new List<bool>()
+
+        public List<bool> CanGotodef { get; } = new List<bool>()
         {
             true, // nonterminal
             true, // Terminal
@@ -104,7 +137,8 @@
             true, // mode
             true, // channel
         };
-        public static List<bool> CanGotovisitor = new List<bool>()
+
+        public List<bool> CanGotovisitor { get; } = new List<bool>()
         {
             true, // nonterminal
             false, // Terminal
@@ -140,15 +174,15 @@
             "channel"
         };
 
-        public static List<Func<IParseTree, bool>> Identify = new List<Func<IParseTree, bool>>()
+        public List<Func<IGrammarDescription, IParseTree, bool>> Identify { get; } = new List<Func<IGrammarDescription, IParseTree, bool>>()
         {
-            (IParseTree n) => // nonterminal = 0
+            (IGrammarDescription gd, IParseTree n) => // nonterminal = 0
                 {
                     TerminalNodeImpl term = n as TerminalNodeImpl;
                     if (term == null) return false;
                     var text = term.GetText();
                     // Make sure it's not a def.
-                    var is_def = IdentifyDefinition[0](term);
+                    var is_def = gd.IdentifyDefinition[0](gd, term);
                     if (is_def) return false;
                     if (_antlr_keywords.Contains(text)) return false;
                     if (n.Parent as ANTLRv4Parser.RulerefContext != null &&
@@ -161,20 +195,20 @@
                         return true;
                     return false;
                 },
-            (IParseTree n) => // terminal = 1
+            (IGrammarDescription gd, IParseTree n) => // terminal = 1
                 {
                     TerminalNodeImpl term = n as TerminalNodeImpl;
                     if (term == null) return false;
                     var text = term.GetText();
                     if (!Char.IsUpper(text[0])) return false;
                     // Make sure it's not a def.
-                    var is_def = IdentifyDefinition[1](term);
+                    var is_def = gd.IdentifyDefinition[1](gd, term);
                     if (is_def) return false;
                        // special case--channels get their own classification.
-                    var is_channel = IdentifyDefinition[6](term);
+                    var is_channel = gd.IdentifyDefinition[6](gd, term);
                     if (is_channel) return false;
-                    if (Identify[5](term)) return false;
-                    if (Identify[6](term)) return false;
+                    if (gd.Identify[5](gd, term)) return false;
+                    if (gd.Identify[6](gd, term)) return false;
                     if (term.Parent as ANTLRv4Parser.TerminalContext != null)
                         return true;
                     if (term.Parent as ANTLRv4Parser.LexerRuleSpecContext != null)
@@ -184,7 +218,7 @@
                     return false;
                 },
             null, // comment = 2
-            (IParseTree t) => // keyword = 3
+            (IGrammarDescription gd, IParseTree t) => // keyword = 3
                 {
                     TerminalNodeImpl nonterm = t as TerminalNodeImpl;
                     if (nonterm == null) return false;
@@ -192,7 +226,7 @@
                     if (!_antlr_keywords.Contains(text)) return false;
                     return true;
                 },
-            (IParseTree t) => // literal = 4
+            (IGrammarDescription gd, IParseTree t) => // literal = 4
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -212,7 +246,7 @@
                     }
                     return false;
                 },
-            (IParseTree t) => // mode = 5
+            (IGrammarDescription gd, IParseTree t) => // mode = 5
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -220,7 +254,7 @@
                     if (_antlr_keywords.Contains(text)) return false;
                     return false;
                 },
-            (IParseTree t) => // channel = 6
+            (IGrammarDescription gd, IParseTree t) => // channel = 6
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -235,9 +269,9 @@
                 }
         };
 
-        public static List<Func<IParseTree, bool>> IdentifyDefinition = new List<Func<IParseTree, bool>>()
+        public List<Func<IGrammarDescription, IParseTree, bool>> IdentifyDefinition { get; } = new List<Func<IGrammarDescription, IParseTree, bool>>()
         {
-            (IParseTree t) => // nonterminal
+            (IGrammarDescription gd, IParseTree t) => // nonterminal
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -255,7 +289,7 @@
                     }
                     return false;
                 },
-            (IParseTree n) => // terminal
+            (IGrammarDescription gd, IParseTree n) => // terminal
                 {
                     TerminalNodeImpl term = n as TerminalNodeImpl;
                     if (term == null) return false;
@@ -276,7 +310,7 @@
             null, // comment
             null, // keyword
             null, // literal
-            (IParseTree n) => // mode
+            (IGrammarDescription gd, IParseTree n) => // mode
                 {
                     TerminalNodeImpl term = n as TerminalNodeImpl;
                     if (term == null) return false;
@@ -294,7 +328,7 @@
                     }
                     return false;
                 },
-            (IParseTree t) => // channel
+            (IGrammarDescription gd, IParseTree t) => // channel
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -313,5 +347,6 @@
                     return false;
                 }
         };
+
     }
 }

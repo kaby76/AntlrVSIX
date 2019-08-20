@@ -88,6 +88,7 @@ namespace AntlrVSIX.FindAllReferences
             SnapshotSpan span = AntlrLanguagePackage.Instance.Span;
             ITextView view = AntlrLanguagePackage.Instance.View;
             ITextBuffer buffer = view.TextBuffer;
+            IGrammarDescription grammar_description = AntlrToClassifierName.Instance;
             ITextDocument doc = buffer.GetTextDocument();
             string path = doc.FilePath;
             List<IToken> where = new List<IToken>();
@@ -98,14 +99,14 @@ namespace AntlrVSIX.FindAllReferences
                 ParserDetails details = kvp.Value;
                 {
                     var it = details._ant_applied_occurrence_classes.Where(
-                        (t) => AntlrToClassifierName.CanFindAllRefs[t.Value]
+                        (t) => grammar_description.CanFindAllRefs[t.Value]
                             && t.Key.Text == span.GetText()).Select(t => t.Key);
                     where.AddRange(it);
                     foreach (var j in it) where_details.Add(details);
                 }
                 {
                     var it = details._ant_defining_occurrence_classes.Where(
-                        (t) => AntlrToClassifierName.CanFindAllRefs[t.Value]
+                        (t) => grammar_description.CanFindAllRefs[t.Value]
                             && t.Key.Text == span.GetText()).Select(t => t.Key);
                     where.AddRange(it);
                     foreach (var j in it) where_details.Add(details);

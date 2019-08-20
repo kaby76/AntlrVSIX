@@ -13,16 +13,18 @@ namespace AntlrVSIX.Tagger
     internal sealed class AntlrTokenTagger : ITagger<AntlrTokenTag>
     {
         private ITextBuffer _buffer;
+        private IGrammarDescription _grammar_description;
         private IDictionary<string, int> _antlr_tag_types;
 
         internal AntlrTokenTagger(ITextBuffer buffer)
         {
             _buffer = buffer;
+            _grammar_description = AntlrToClassifierName.Instance;
 
             _antlr_tag_types = new Dictionary<string, int>();
-            for (int i = 0; i < AntlrToClassifierName.Map.Count; ++i)
+            for (int i = 0; i < _grammar_description.Map.Length; ++i)
             {
-                string name = AntlrToClassifierName.Map[i];
+                string name = _grammar_description.Map[i];
                 _antlr_tag_types[name] = i;
             }
 

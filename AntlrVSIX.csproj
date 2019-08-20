@@ -64,13 +64,14 @@
       <DependentUpon>AboutBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="About\AboutCommand.cs" />
-    <Compile Include="Grammar\AntlrToClassifier.cs" />
+    <Compile Include="Antlr\AntlrToClassifier.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="ErrorTagger\ErrorCategory.cs" />
     <Compile Include="ErrorTagger\ErrorFormatDefinition.cs" />
     <Compile Include="ErrorTagger\ErrorTagger.cs" />
     <Compile Include="ErrorTagger\ErrorTaggerProvider.cs" />
     <Compile Include="Grammar\Class1.cs" />
+    <Compile Include="Grammar\IGrammarDescription.cs" />
     <Compile Include="Helpers\DteExtensions.cs" />
     <Compile Include="Helpers\ITextBufferExtensions.cs" />
     <Compile Include="Helpers\ITextViewExtensions.cs" />
@@ -115,8 +116,7 @@
     <Compile Include="Tagger\AntlrTokenTagProvider.cs" />
     <Compile Include="AggregateTagger\AntlrClassifierProvider.cs" />
     <Compile Include="Grammar\DFSVisitor.cs" />
-    <Compile Include="Grammar\LexerAdaptor.cs" />
-    <Compile Include="Grammar\MyErrorStrategy.cs" />
+    <Compile Include="Antlr\LexerAdaptor.cs" />
     <Compile Include="Intellisense\CompletionController.cs" />
     <Compile Include="Intellisense\CompletionSource.cs" />
     <Compile Include="Intellisense\AntlrQuickInfoSource.cs" />
@@ -133,16 +133,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
-    <Antlr4 Include="Grammar\ANTLRv4Lexer.g4">
+    <Antlr4 Include="Antlr\ANTLRv4Lexer.g4">
       <CustomToolNamespace>AntlrVSIX.Grammar</CustomToolNamespace>
     </Antlr4>
-    <Antlr4 Include="Grammar\ANTLRv4Parser.g4">
+    <Antlr4 Include="Antlr\ANTLRv4Parser.g4">
       <CustomToolNamespace>AntlrVSIX.Grammar</CustomToolNamespace>
     </Antlr4>
-    <None Include="Grammar\LexBasic.g4">
+    <None Include="Antlr\LexBasic.g4">
       <CustomToolNamespace>AntlrVSIX.Grammar</CustomToolNamespace>
     </None>
-    <None Include="Grammar\LexUnicode.g4">
+    <None Include="Antlr\LexUnicode.g4">
       <CustomToolNamespace>AntlrVSIX.Grammar</CustomToolNamespace>
     </None>
     <None Include="source.extension.vsixmanifest">
@@ -310,6 +310,7 @@
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

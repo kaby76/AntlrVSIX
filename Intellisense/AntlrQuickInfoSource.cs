@@ -3,6 +3,7 @@ namespace AntlrVSIX
 {
     using AntlrVSIX.Package;
     using AntlrVSIX.Tagger;
+    using AntlrVSIX.Grammar;
     using Microsoft.VisualStudio.Language.Intellisense;
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text.Operations;
@@ -33,12 +34,14 @@ namespace AntlrVSIX
     {
         private ITagAggregator<AntlrTokenTag> _aggregator;
         private ITextBuffer _buffer;
+        private IGrammarDescription _grammar_description;
         private bool _disposed = false;
 
         public AntlrQuickInfoSource(ITextBuffer buffer, ITagAggregator<AntlrTokenTag> aggregator)
         {
             _aggregator = aggregator;
             _buffer = buffer;
+            _grammar_description = AntlrToClassifierName.Instance;
         }
 
         public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quick_info_content, out ITrackingSpan tracking_span)
@@ -64,7 +67,7 @@ namespace AntlrVSIX
                 int tag_type = (int)cur_tag.Tag.TagType;
                 SnapshotSpan tag_span = cur_tag.Span.GetSpans(_buffer).First();
                 tracking_span = _buffer.CurrentSnapshot.CreateTrackingSpan(tag_span, SpanTrackingMode.EdgeExclusive);
-                quick_info_content.Add(AntlrVSIX.Grammar.AntlrToClassifierName.Map[tag_type]);
+                quick_info_content.Add(_grammar_description.Map[tag_type]);
             }
         }
 
