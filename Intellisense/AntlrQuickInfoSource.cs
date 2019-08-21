@@ -4,6 +4,7 @@ namespace AntlrVSIX
     using AntlrVSIX.Package;
     using AntlrVSIX.Tagger;
     using AntlrVSIX.Grammar;
+    using AntlrVSIX.Extensions;
     using Microsoft.VisualStudio.Language.Intellisense;
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text.Operations;
@@ -41,7 +42,9 @@ namespace AntlrVSIX
         {
             _aggregator = aggregator;
             _buffer = buffer;
-            _grammar_description = AntlrToClassifierName.Instance;
+            var doc = buffer.GetTextDocument();
+            var path = doc.FilePath;
+            _grammar_description = GrammarDescriptionFactory.Create(path);
         }
 
         public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quick_info_content, out ITrackingSpan tracking_span)

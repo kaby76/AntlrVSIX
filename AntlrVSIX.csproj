@@ -64,13 +64,14 @@
       <DependentUpon>AboutBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="About\AboutCommand.cs" />
-    <Compile Include="Antlr\AntlrToClassifier.cs" />
+    <Compile Include="Antlr\AntlrGrammarDescription.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="ErrorTagger\ErrorCategory.cs" />
     <Compile Include="ErrorTagger\ErrorFormatDefinition.cs" />
     <Compile Include="ErrorTagger\ErrorTagger.cs" />
     <Compile Include="ErrorTagger\ErrorTaggerProvider.cs" />
     <Compile Include="Grammar\Class1.cs" />
+    <Compile Include="Grammar\GrammarDescriptionFactory.cs" />
     <Compile Include="Grammar\IGrammarDescription.cs" />
     <Compile Include="Helpers\DteExtensions.cs" />
     <Compile Include="Helpers\ITextBufferExtensions.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="File\ViewCreationListener.cs" />
     <Compile Include="File\FileSaveListener.cs" />
     <Compile Include="GoToVisitor\GoToVisitorCommand.cs" />
+    <Compile Include="Java\JavaGrammarDescription.cs" />
     <Compile Include="Keyboard\CtrlKeyState.cs" />
     <Compile Include="Keyboard\GoToDefKeyProcessor.cs" />
     <Compile Include="Model\Entry.cs" />
@@ -132,6 +134,7 @@
     <None Include="doc\setup.md" />
   </ItemGroup>
   <ItemGroup>
+    <Antlr4 Include="Java\Java9.g4" />
     <None Include="README.md" />
     <Antlr4 Include="Antlr\ANTLRv4Lexer.g4">
       <CustomToolNamespace>AntlrVSIX.Grammar</CustomToolNamespace>

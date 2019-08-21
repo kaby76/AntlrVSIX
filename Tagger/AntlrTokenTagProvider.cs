@@ -6,7 +6,7 @@
     using System.ComponentModel.Composition;
 
     [Export(typeof(ITaggerProvider))]
-    [ContentType(AntlrVSIX.Constants.ContentType)]
+    [ContentType("any")]
     [TagType(typeof(AntlrTokenTag))]
     internal sealed class AntlrTokenTagProvider : ITaggerProvider
     {

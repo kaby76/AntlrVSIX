@@ -88,9 +88,9 @@ namespace AntlrVSIX.FindAllReferences
             SnapshotSpan span = AntlrLanguagePackage.Instance.Span;
             ITextView view = AntlrLanguagePackage.Instance.View;
             ITextBuffer buffer = view.TextBuffer;
-            IGrammarDescription grammar_description = AntlrToClassifierName.Instance;
             ITextDocument doc = buffer.GetTextDocument();
             string path = doc.FilePath;
+            IGrammarDescription grammar_description = GrammarDescriptionFactory.Create(path);
             List<IToken> where = new List<IToken>();
             List<ParserDetails> where_details = new List<ParserDetails>();
             foreach (var kvp in ParserDetails._per_file_parser_details)

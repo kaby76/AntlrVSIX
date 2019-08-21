@@ -19,7 +19,11 @@ namespace AntlrVSIX.Tagger
         internal AntlrTokenTagger(ITextBuffer buffer)
         {
             _buffer = buffer;
-            _grammar_description = AntlrToClassifierName.Instance;
+            var doc = _buffer.GetTextDocument();
+            if (doc == null) return;
+            var ffn = doc.FilePath;
+            _grammar_description = GrammarDescriptionFactory.Create(ffn);
+            if (_grammar_description == null) return;
 
             _antlr_tag_types = new Dictionary<string, int>();
             for (int i = 0; i < _grammar_description.Map.Length; ++i)
@@ -30,32 +34,16 @@ namespace AntlrVSIX.Tagger
 
             ITextDocument document = _buffer.GetTextDocument();
             string file_name = document.FilePath;
-            if (!file_name.IsAntlrSuffix()) return;
-
             string code = _buffer.GetBufferText();
             var pd = ParserDetails.Parse(code, file_name);
         }
-
-        void ReparseFile(object sender, TextContentChangedEventArgs args)
-        {
-            ITextSnapshot snapshot = _buffer.CurrentSnapshot;
-            string code = _buffer.GetBufferText();
-            ITextDocument document = _buffer.GetTextDocument();
-            string file_name = document.FilePath;
-            if (!file_name.IsAntlrSuffix()) return;
-            var pd = ParserDetails.Parse(code, file_name);
-            SnapshotSpan span = new SnapshotSpan(_buffer.CurrentSnapshot, 0, _buffer.CurrentSnapshot.Length);
-            var temp = TagsChanged;
-            if (temp == null)
-                return;
-            //temp(this, new SnapshotSpanEventArgs(span));
-        }
-
 
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 
         public IEnumerable<ITagSpan<AntlrTokenTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
+            if (_grammar_description == null) yield break;
+            if (_grammar_description == null) throw new Exception();
             foreach (SnapshotSpan curSpan in spans)
             {
                 ITextSnapshotLine containingLine = curSpan.Start.GetContainingLine();

@@ -12,7 +12,7 @@
     using System.ComponentModel.Composition;
 
     [Export(typeof(IMouseProcessorProvider))]
-    [ContentType("code")]
+    [ContentType("text")]
     [Name("Antlr")]
     [TextViewRole(PredefinedTextViewRoles.Document)]
     [Order(Before = "WordSelection")]

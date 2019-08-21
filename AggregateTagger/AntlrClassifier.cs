@@ -4,14 +4,13 @@
     using AntlrVSIX.Grammar;
     using AntlrVSIX.Package;
     using AntlrVSIX.Tagger;
+    using Microsoft.VisualStudio.PlatformUI;
+    using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Classification;
     using Microsoft.VisualStudio.Text.Tagging;
-    using Microsoft.VisualStudio.Text;
-    using System.Collections.Generic;
     using System;
-    using Microsoft.VisualStudio.PlatformUI;
-    using Microsoft.VisualStudio.Utilities;
-    using System.ComponentModel.Composition;
+    using System.Collections.Generic;
+    using System.Linq;
 
     class Themes
     {
@@ -35,8 +34,13 @@
             IClassificationFormatMapService ClassificationFormatMapService)
         {
             _buffer = buffer;
-            _grammar_description = AntlrToClassifierName.Instance;
             _aggregator = aggregator;
+            var doc = _buffer.GetTextDocument();
+            if (doc == null) return;
+            var ffn = doc.FilePath;
+            if (ffn == null) return;
+            _grammar_description = GrammarDescriptionFactory.Create(ffn);
+            if (_grammar_description == null) return;
             _antlrtype_to_classifiertype = new Dictionary<int, IClassificationType>();
 
             for (int i = 0; i < _grammar_description.Map.Length; ++i)
@@ -66,6 +70,8 @@
 
         public IEnumerable<ITagSpan<ClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
+            if (_grammar_description == null) yield break;
+            if (_grammar_description == null) throw new Exception();
             ITextDocument doc = _buffer.GetTextDocument();
             string f = doc.FilePath;
             var pd = ParserDetails.Parse(_buffer.GetBufferText(), f);

@@ -9,7 +9,7 @@
 
     [Export(typeof(IIntellisenseControllerProvider))]
     [Name("Template QuickInfo Controller")]
-    [ContentType("text")]
+    [ContentType("any")]
     internal class TemplateQuickInfoControllerProvider : IIntellisenseControllerProvider
     {
         [Import]

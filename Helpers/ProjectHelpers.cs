@@ -137,18 +137,4 @@
         public const string NODE_JS = "{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}";
         public const string SSDT = "{00d1a9c2-b5f0-4af3-8072-f6c62b433612}";
     }
-
-    public static class FilePathExtension
-    {
-        public static bool IsAntlrSuffix(this string file_name)
-        {
-            if (file_name == null) return false;
-            var allowable_suffices = AntlrVSIX.Constants.FileExtension.Split(';').ToList<string>();
-            var suffix = Path.GetExtension(file_name).ToLower();
-            foreach (var s in allowable_suffices)
-                if (suffix == s)
-                    return true;
-            return false;
-        }
-    }
 }

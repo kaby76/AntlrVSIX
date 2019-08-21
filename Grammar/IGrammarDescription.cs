@@ -9,7 +9,8 @@ namespace AntlrVSIX.Grammar
 {
     interface IGrammarDescription
     {
-        IParseTree Parse(string ffn);
+        IParseTree Parse(string ffn, string code);
+        bool CanNextRule { get; }
         string[] Map { get; }
         Dictionary<string, int> InverseMap { get; }
         List<System.Windows.Media.Color> MapColor { get; }
@@ -20,5 +21,6 @@ namespace AntlrVSIX.Grammar
         List<bool> CanGotovisitor { get; }
         List<Func<IGrammarDescription, IParseTree, bool>> Identify { get; }
         List<Func<IGrammarDescription, IParseTree, bool>> IdentifyDefinition { get; }
+        bool IsFileType(string ffn);
     }
 }

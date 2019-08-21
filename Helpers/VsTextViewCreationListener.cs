@@ -13,7 +13,7 @@ namespace AntlrVSIX.Extensions
     using System.Diagnostics;
 
     [Export(typeof(IVsTextViewCreationListener))]
-    [ContentType("code")]
+    [ContentType("text")]
     [TextViewRole(PredefinedTextViewRoles.Editable)]
     public class VsTextViewCreationListener : IVsTextViewCreationListener
     {

@@ -6,7 +6,7 @@
 
     [Export(typeof(IKeyProcessorProvider))]
     [TextViewRole(PredefinedTextViewRoles.Document)]
-    [ContentType("code")]
+    [ContentType("text")]
     [Name("Antlr")]
     [Order(Before = "VisualStudioKeyboardProcessor")]
     internal sealed class GoToDefKeyProcessorProvider : IKeyProcessorProvider

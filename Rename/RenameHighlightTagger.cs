@@ -45,7 +45,9 @@ namespace AntlrVSIX.Rename
         {
             _view = view;
             _buffer = sourceBuffer;
-            _grammar_description = Grammar.AntlrToClassifierName.Instance;
+            var doc = _buffer.GetTextDocument();
+            var ffn = doc.FilePath;
+            _grammar_description = GrammarDescriptionFactory.Create(ffn);
             TextSearchService = textSearchService;
             TextStructureNavigator = textStructureNavigator;
             _aggregator = aggregator;

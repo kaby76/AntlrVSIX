@@ -13,7 +13,7 @@
     using System.Diagnostics;
 
     [Export(typeof(IVsTextViewCreationListener))]
-    [ContentType("code")]
+    [ContentType("any")]
     [TextViewRole(PredefinedTextViewRoles.Editable)]
     public class ViewCreationListener : IVsTextViewCreationListener
     {
@@ -31,7 +31,8 @@
             view.Closed += OnViewClosed;
             ITextBuffer doc = view.TextBuffer;
             string ffn = doc.GetFilePath();
-            if (!ffn.IsAntlrSuffix()) return;
+            var grammar_description = GrammarDescriptionFactory.Create(ffn);
+            if (grammar_description == null) return;
             var buffer = view.TextBuffer;
             var code = buffer.GetBufferText();
             ParserDetails pd = ParserDetails.Parse(code, ffn);

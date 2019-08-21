@@ -1,20 +1,20 @@
-﻿namespace AntlrVSIX.Grammar
+﻿namespace AntlrVSIX.Antlr
 {
     using Antlr4.Runtime;
     using Antlr4.Runtime.Tree;
+    using AntlrVSIX.Grammar;
     using System;
     using System.Collections.Generic;
-    using System.Windows.Media;
     using System.IO;
     using System.Linq;
     using System.Text;
-    using System;
+    using System.Windows.Media;
 
-    class AntlrToClassifierName : IGrammarDescription
+    class AntlrGrammarDescription : IGrammarDescription
     {
-        private AntlrToClassifierName() { }
+        private AntlrGrammarDescription() { }
 
-        public IParseTree Parse(string code)
+        public IParseTree Parse(string ffn, string code)
         {
             IParseTree _ant_tree = null;
 
@@ -44,11 +44,30 @@
             {
                 // Parsing error.
             }
+
+            StringBuilder sb = new StringBuilder();
+            Class1.ParenthesizedAST(_ant_tree, sb, "", cts);
+            string fn = System.IO.Path.GetFileName(ffn);
+            fn = "c:\\temp\\" + fn;
+            System.IO.File.WriteAllText(fn, sb.ToString());
+
             return _ant_tree;
         }
 
+        public const string FileExtension = ".g4;.g";
 
-        public static AntlrToClassifierName Instance { get; private set; } = new AntlrToClassifierName();
+        public bool IsFileType(string ffn)
+        {
+            if (ffn == null) return false;
+            var allowable_suffices = FileExtension.Split(';').ToList<string>();
+            var suffix = Path.GetExtension(ffn).ToLower();
+            foreach (var s in allowable_suffices)
+                if (suffix == s)
+                    return true;
+            return false;
+        }
+
+        public static AntlrGrammarDescription Instance { get; private set; } = new AntlrGrammarDescription();
 
 
         /* Tagging and classification types. */
@@ -348,5 +367,6 @@
                 }
         };
 
+        public bool CanNextRule { get { return true; } }
     }
 }

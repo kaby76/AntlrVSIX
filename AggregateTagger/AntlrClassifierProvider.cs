@@ -3,6 +3,8 @@ namespace AntlrVSIX.AggregateTagger
 {
     using AntlrVSIX.Package;
     using AntlrVSIX.Tagger;
+    using AntlrVSIX.Extensions;
+    using AntlrVSIX.Grammar;
     using Color = System.Drawing.Color;
     using Microsoft.VisualStudio.PlatformUI;
     using Microsoft.VisualStudio.Text.Classification;
@@ -13,19 +15,19 @@ namespace AntlrVSIX.AggregateTagger
     using System;
 
     [Export(typeof(ITaggerProvider))]
-    [ContentType(AntlrVSIX.Constants.ContentType)]
+    [ContentType("any")]
     [TagType(typeof(ClassificationTag))]
     internal sealed class AntlrClassifierProvider : ITaggerProvider
     {
-        [Export]
-        [Name(AntlrVSIX.Constants.LanguageName)]
-        [BaseDefinition("code")]
-        internal static ContentTypeDefinition AntlrContentType = null;
+        //[Export]
+        //[Name(AntlrVSIX.Constants.LanguageName)]
+        //[BaseDefinition("text")]
+        //internal static ContentTypeDefinition AntlrContentType = null;
 
-        [Export]
-        [FileExtension(AntlrVSIX.Constants.FileExtension)]
-        [ContentType(AntlrVSIX.Constants.ContentType)]
-        internal static FileExtensionToContentTypeDefinition AntlrFileType = null;
+        //[Export]
+        //[FileExtension(AntlrVSIX.Constants.FileExtension)]
+        //[ContentType(AntlrVSIX.Constants.ContentType)]
+        //internal static FileExtensionToContentTypeDefinition AntlrFileType = null;
 
         [Import]
         internal IClassificationTypeRegistryService ClassificationTypeRegistry = null;

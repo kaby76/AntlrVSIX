@@ -31,7 +31,8 @@
             {
                 var view = args.TextView;
                 var ffn = view.GetFilePath();
-                if (Path.GetExtension(ffn).IsAntlrSuffix())
+                var grammar_description = GrammarDescriptionFactory.Create(ffn);
+                if (grammar_description != null)
                 {
                     var buffer = view.TextBuffer;
                     var code = buffer.GetBufferText();

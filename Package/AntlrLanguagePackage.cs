@@ -119,7 +119,8 @@ namespace AntlrVSIX.Package
                 string file_name = item.Name;
                 if (file_name != null)
                 {
-                    if (!file_name.IsAntlrSuffix()) continue;
+                    var gd = GrammarDescriptionFactory.Create(file_name);
+                    if (gd == null) continue;
                     try
                     {
                         if (item.Properties == null) continue;

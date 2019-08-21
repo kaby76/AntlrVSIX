@@ -29,10 +29,9 @@
 
             // First, find out what this view is, and what the file is.
             ITextBuffer buffer = view.TextBuffer;
-            IGrammarDescription grammar_description = AntlrVSIX.Grammar.AntlrToClassifierName.Instance;
             ITextDocument doc = buffer.GetTextDocument();
             string path = doc.FilePath;
-
+            IGrammarDescription grammar_description = GrammarDescriptionFactory.Create(path);
 
             // Whack any old values that cursor points to.
             GoToDefinitionCommand.Instance.Enabled = false;
@@ -49,7 +48,8 @@
             var fp = view.GetFilePath();
             if (fp != null)
             {
-                if (fp.IsAntlrSuffix())
+                var gd = GrammarDescriptionFactory.Create(fp);
+                if (gd != null && gd.CanNextRule)
                 {
                     NextSymCommand.Instance.Enabled = true;
                     Reformat.ReformatCommand.Instance.Enabled = true;

@@ -43,16 +43,11 @@ namespace AntlrVSIX.Grammar
             pd.Code = code;
             pd.FullFileName = ffn;
 
-            IGrammarDescription gd = AntlrToClassifierName.Instance;
-            pd._ant_tree = gd.Parse(code);
+            IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);
+            if (gd == null) throw new Exception();
+            pd._ant_tree = gd.Parse(ffn, code);
 
             pd._all_nodes = DFSVisitor.DFS(pd._ant_tree as ParserRuleContext);
-
-            //StringBuilder sb = new StringBuilder();
-            //Class1.ParenthesizedAST(pd._ant_tree, sb, "", cts);
-            //string fn = System.IO.Path.GetFileName(pd.FullFileName);
-            //fn = "c:\\temp\\" + fn;
-            //System.IO.File.WriteAllText(fn, sb.ToString());
 
             pd._ant_defining_occurrence_classes = new Dictionary<IToken, int>();
             pd._ant_applied_occurrence_classes = new Dictionary<IToken, int>();

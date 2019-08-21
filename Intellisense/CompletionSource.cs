@@ -32,6 +32,10 @@
         public void AugmentCompletionSession(ICompletionSession session, IList<CompletionSet> completionSets)
         {
             ITextDocument doc = _buffer.GetTextDocument();
+            if (doc == null) return;
+            var ffn = doc.FilePath;
+            var gd = GrammarDescriptionFactory.Create(ffn);
+            if (gd == null) return;
             string path_containing_applied_occurrence = System.IO.Path.GetDirectoryName(doc.FilePath);
             List<Completion> completions = new List<Completion>();
             ParserDetails pd = ParserDetails._per_file_parser_details[doc.FilePath];
