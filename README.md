@@ -15,6 +15,9 @@ added to the .CSPROJ file for you.
 
 For information on how to use AntlrVSIX, see the [User Guide](doc/readme.md).
 
+Note, in the next release of the extension, the description of programming languages is abstracted.
+One will be able to use the tool on any code file with a language description. 
+
 ## Caveats:
 
 * Support for VS2015 and older editions has been removed.
