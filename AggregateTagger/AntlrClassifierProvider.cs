@@ -29,14 +29,8 @@ namespace AntlrVSIX.AggregateTagger
         [Import]
         internal IBufferTagAggregatorFactoryService aggregatorFactory = null;
 
-        [Import]
-        internal IContentTypeRegistryService ContentTypeRegistryService { get; set; }
-
         public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
         {
-
-            System.Collections.Generic.List<IContentType> content_types = ContentTypeRegistryService.ContentTypes.ToList();
-
             AntlrLanguagePackage package = AntlrLanguagePackage.Instance;
             VSColorTheme.ThemeChanged += UpdateTheme;
             var antlrTagAggregator = aggregatorFactory.CreateTagAggregator<AntlrTokenTag>(buffer);

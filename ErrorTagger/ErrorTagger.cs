@@ -21,6 +21,11 @@ namespace AntlrVSIX.ErrorTagger
         public ErrorTagger(ITextBuffer buffer)
         {
             _buffer = buffer;
+            var doc = _buffer.GetFilePath();
+            var gd = GrammarDescriptionFactory.Create(doc);
+            if (gd == null) return;
+            if (!gd.DoErrorSquiggles) return;
+
             ThreadHelper.Generic.BeginInvoke(DispatcherPriority.ApplicationIdle, () =>
             {
                 var span = new SnapshotSpan(buffer.CurrentSnapshot, 0, _buffer.CurrentSnapshot.Length);
@@ -36,15 +41,20 @@ namespace AntlrVSIX.ErrorTagger
 
         public IEnumerable<ITagSpan<IErrorTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
+            var doc = _buffer.GetFilePath();
+            var gd = GrammarDescriptionFactory.Create(doc);
+            if (gd == null) yield break;
+            if (!gd.DoErrorSquiggles) yield break;
+
             foreach (SnapshotSpan curSpan in spans)
             {
                 ITextSnapshotLine containingLine = curSpan.Start.GetContainingLine();
                 int curLoc = containingLine.Start.Position;
                 string text = curSpan.GetText();
                 ITextBuffer buf = curSpan.Snapshot.TextBuffer;
-                var doc = buf.GetTextDocument();
-                string ffn = doc.FilePath;
-                string path_containing_applied_occurrence = Path.GetDirectoryName(doc.FilePath);
+                var dd = buf.GetTextDocument();
+                string ffn = dd.FilePath;
+                string path_containing_applied_occurrence = Path.GetDirectoryName(ffn);
                 ParserDetails details = null;
                 bool found = ParserDetails._per_file_parser_details.TryGetValue(ffn, out details);
                 if (!found) continue;

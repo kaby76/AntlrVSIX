@@ -45,6 +45,8 @@
             var content_type = buffer.ContentType;
             System.Collections.Generic.List<IContentType> content_types = ContentTypeRegistryService.ContentTypes.ToList();
             var found = content_types.Find(ct => ct.TypeName == "Antlr");
+            var type_of_content_type = found.GetType();
+            var assembly = type_of_content_type.Assembly;
             buffer.ChangeContentType(found, null);
             var code = buffer.GetBufferText();
             ParserDetails pd = ParserDetails.Parse(code, ffn);

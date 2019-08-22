@@ -22,5 +22,6 @@ namespace AntlrVSIX.Grammar
         List<Func<IGrammarDescription, IParseTree, bool>> Identify { get; }
         List<Func<IGrammarDescription, IParseTree, bool>> IdentifyDefinition { get; }
         bool IsFileType(string ffn);
+        bool DoErrorSquiggles { get; }
     }
 }

@@ -368,5 +368,7 @@
         };
 
         public bool CanNextRule { get { return true; } }
+
+        public bool DoErrorSquiggles { get { return true; } }
     }
 }

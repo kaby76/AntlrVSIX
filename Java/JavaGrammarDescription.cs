@@ -254,5 +254,7 @@ namespace AntlrVSIX.Java
         };
 
         public bool CanNextRule { get { return false; } }
+
+        public bool DoErrorSquiggles { get { return false; } }
     }
 }
