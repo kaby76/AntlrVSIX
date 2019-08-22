@@ -70,7 +70,8 @@
             foreach (ClassificationSpan classification in c1)
             {
                 var name = classification.ClassificationType.Classification;
-                var type = grammar_description.InverseMap[name];
+                if (!grammar_description.InverseMap.TryGetValue(name, out int type))
+                    continue;
                 if (grammar_description.CanFindAllRefs[type])
                     FindAllReferencesCommand.Instance.Enabled = true;
                 if (grammar_description.CanRename[type])

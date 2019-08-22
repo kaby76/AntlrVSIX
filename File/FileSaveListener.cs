@@ -12,9 +12,8 @@
     using System.IO;
 
     [Export(typeof(ICommandHandler))]
-    [Name("Antlr")]
-    [ContentType(AntlrVSIX.Constants.ContentType)]
-    [TextViewRole(PredefinedTextViewRoles.Document)]
+    [ContentType("any")]
+    [TextViewRole(PredefinedTextViewRoles.Editable)]
     public class FileSaveListener : ICommandHandler<SaveCommandArgs>
     {
         public string DisplayName => nameof(FileSaveListener);

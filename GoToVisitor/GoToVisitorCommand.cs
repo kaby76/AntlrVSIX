@@ -156,7 +156,9 @@
               classification =>
               {
                   var name = classification.ClassificationType.Classification;
-                  cla = grammar_description.InverseMap[name];
+                  if (!grammar_description.InverseMap.TryGetValue(name, out int c))
+                      return false;
+                  cla = c;
                   return grammar_description.CanGotovisitor[cla];
               }).Any();
             if (!can_gotovisitor) return;

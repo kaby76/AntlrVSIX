@@ -11,6 +11,11 @@
     using System;
     using System.ComponentModel.Composition;
     using System.Diagnostics;
+    using System.Linq;
+    using AntlrVSIX.Package;
+    using AntlrVSIX.Tagger;
+    using Microsoft.VisualStudio.Text.Classification;
+
 
     [Export(typeof(IVsTextViewCreationListener))]
     [ContentType("any")]
@@ -19,6 +24,9 @@
     {
         [Import]
         public IVsEditorAdaptersFactoryService AdaptersFactory = null;
+
+        [Import]
+        internal IContentTypeRegistryService ContentTypeRegistryService { get; set; }
 
         public void VsTextViewCreated(IVsTextView textViewAdapter)
         {
@@ -34,6 +42,10 @@
             var grammar_description = GrammarDescriptionFactory.Create(ffn);
             if (grammar_description == null) return;
             var buffer = view.TextBuffer;
+            var content_type = buffer.ContentType;
+            System.Collections.Generic.List<IContentType> content_types = ContentTypeRegistryService.ContentTypes.ToList();
+            var found = content_types.Find(ct => ct.TypeName == "Antlr");
+            buffer.ChangeContentType(found, null);
             var code = buffer.GetBufferText();
             ParserDetails pd = ParserDetails.Parse(code, ffn);
         }

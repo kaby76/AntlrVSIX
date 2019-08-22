@@ -13,22 +13,13 @@ namespace AntlrVSIX.AggregateTagger
     using Microsoft.VisualStudio.Utilities;
     using System.ComponentModel.Composition;
     using System;
+    using System.Linq;
 
     [Export(typeof(ITaggerProvider))]
     [ContentType("any")]
     [TagType(typeof(ClassificationTag))]
     internal sealed class AntlrClassifierProvider : ITaggerProvider
     {
-        //[Export]
-        //[Name(AntlrVSIX.Constants.LanguageName)]
-        //[BaseDefinition("text")]
-        //internal static ContentTypeDefinition AntlrContentType = null;
-
-        //[Export]
-        //[FileExtension(AntlrVSIX.Constants.FileExtension)]
-        //[ContentType(AntlrVSIX.Constants.ContentType)]
-        //internal static FileExtensionToContentTypeDefinition AntlrFileType = null;
-
         [Import]
         internal IClassificationTypeRegistryService ClassificationTypeRegistry = null;
 
@@ -38,8 +29,14 @@ namespace AntlrVSIX.AggregateTagger
         [Import]
         internal IBufferTagAggregatorFactoryService aggregatorFactory = null;
 
+        [Import]
+        internal IContentTypeRegistryService ContentTypeRegistryService { get; set; }
+
         public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
         {
+
+            System.Collections.Generic.List<IContentType> content_types = ContentTypeRegistryService.ContentTypes.ToList();
+
             AntlrLanguagePackage package = AntlrLanguagePackage.Instance;
             VSColorTheme.ThemeChanged += UpdateTheme;
             var antlrTagAggregator = aggregatorFactory.CreateTagAggregator<AntlrTokenTag>(buffer);

@@ -70,6 +70,7 @@
     <Compile Include="ErrorTagger\ErrorFormatDefinition.cs" />
     <Compile Include="ErrorTagger\ErrorTagger.cs" />
     <Compile Include="ErrorTagger\ErrorTaggerProvider.cs" />
+    <Compile Include="File\Class1.cs" />
     <Compile Include="Grammar\Class1.cs" />
     <Compile Include="Grammar\GrammarDescriptionFactory.cs" />
     <Compile Include="Grammar\IGrammarDescription.cs" />

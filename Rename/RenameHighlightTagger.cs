@@ -166,7 +166,8 @@ namespace AntlrVSIX.Rename
                 classification =>
                 {
                     var name = classification.ClassificationType.Classification;
-                    var type = _grammar_description.InverseMap[name];
+                    if (!_grammar_description.InverseMap.TryGetValue(name, out int type))
+                        return false;
                     return _grammar_description.CanRename[type];
                 }).Any();
             if (! can_rename) return;
