@@ -4,6 +4,8 @@ using AntlrVSIX.Extensions;
 using EnvDTE;
 using Window = System.Windows.Window;
 using System.Diagnostics;
+using AntlrVSIX.Package;
+using AntlrVSIX.File;
 
 namespace AntlrVSIX.About
 {
@@ -28,6 +30,22 @@ namespace AntlrVSIX.About
             _info.AppendText(Environment.NewLine);
             var cla = application.CommandLineArguments;
             _info.AppendText("Command line args: " + cla);
+            var grammar_view = AntlrLanguagePackage.Instance.GetActiveView();
+            if (grammar_view != null)
+            {
+                var buf = grammar_view.TextBuffer;
+                var active = buf.GetFilePath();
+                var content_type = buf.ContentType;
+                _info.AppendText("Active view: " + active);
+                _info.AppendText(Environment.NewLine);
+                _info.AppendText("Content type: " + content_type.DisplayName);
+                _info.AppendText(Environment.NewLine);
+                if (ViewCreationListener.PreviousContentType.ContainsKey(active))
+                {
+                    _info.AppendText("Old content type: " + ViewCreationListener.PreviousContentType[active].DisplayName);
+                    _info.AppendText(Environment.NewLine);
+                }
+            }
         }
 
         private void BtnDialogOk_Click(object sender, RoutedEventArgs e)

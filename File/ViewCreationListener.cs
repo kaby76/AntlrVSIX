@@ -12,6 +12,7 @@
     using System.ComponentModel.Composition;
     using System.Diagnostics;
     using System.Linq;
+    using System.Collections.Generic;
     using AntlrVSIX.Package;
     using AntlrVSIX.Tagger;
     using Microsoft.VisualStudio.Text.Classification;
@@ -22,6 +23,9 @@
     [TextViewRole(PredefinedTextViewRoles.Editable)]
     public class ViewCreationListener : IVsTextViewCreationListener
     {
+
+        public static Dictionary<string, IContentType> PreviousContentType = new Dictionary<string, IContentType>();
+
         [Import]
         public IVsEditorAdaptersFactoryService AdaptersFactory = null;
 
@@ -44,10 +48,12 @@
             var buffer = view.TextBuffer;
             var content_type = buffer.ContentType;
             System.Collections.Generic.List<IContentType> content_types = ContentTypeRegistryService.ContentTypes.ToList();
-            var found = content_types.Find(ct => ct.TypeName == "Antlr");
-            var type_of_content_type = found.GetType();
+            var new_content_type = content_types.Find(ct => ct.TypeName == "Antlr");
+            var type_of_content_type = new_content_type.GetType();
             var assembly = type_of_content_type.Assembly;
-            buffer.ChangeContentType(found, null);
+            buffer.ChangeContentType(new_content_type, null);
+            if (!PreviousContentType.ContainsKey(ffn))
+                PreviousContentType[ffn] = content_type;
             var code = buffer.GetBufferText();
             ParserDetails pd = ParserDetails.Parse(code, ffn);
         }

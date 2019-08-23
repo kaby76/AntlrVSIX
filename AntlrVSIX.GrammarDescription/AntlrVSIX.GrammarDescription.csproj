@@ -8,6 +8,9 @@
     <RepositoryType>Git</RepositoryType>
     <PackageTags>Antlr VS Extension</PackageTags>
     <Description>Contains interface used to describe a language for support in AntlrVSIX and Visual Studio IDE.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Authors>Ken Domino</Authors>
+    <Company />
   </PropertyGroup>
 
   <ItemGroup>
