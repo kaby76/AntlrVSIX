@@ -126,13 +126,6 @@
     <Compile Include="Tagger\AntlrTokenTagger.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="doc\basic.md" />
-    <None Include="doc\building.md" />
-    <None Include="doc\readme.md" />
-    <None Include="doc\setup.md" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="README.md" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
@@ -174,28 +167,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="doc\pics\2019-08-09-1.png" />
-    <Content Include="doc\pics\2019-08-08-10.png" />
-    <Content Include="doc\pics\2019-08-08-17.png" />
-    <Content Include="doc\pics\2019-08-08-18.png" />
-    <Content Include="doc\pics\2019-08-08-19.png" />
-    <Content Include="doc\pics\2019-08-08-20.png" />
-    <Content Include="doc\pics\2019-08-08-21.png" />
-    <Content Include="doc\pics\2019-08-08-22.png" />
-    <Content Include="doc\pics\2019-08-08-23.png" />
-    <Content Include="doc\pics\2019-08-08-24.png" />
-    <Content Include="doc\pics\2019-08-08-25.png" />
-    <Content Include="doc\pics\2019-08-08-26.png" />
-    <Content Include="doc\pics\2019-08-08-3.png" />
-    <Content Include="doc\pics\2019-08-08-30.png" />
-    <Content Include="doc\pics\2019-08-08-31.png" />
-    <Content Include="doc\pics\2019-08-08-32.png" />
-    <Content Include="doc\pics\2019-08-08-33.png" />
-    <Content Include="doc\pics\2019-08-08-34.png" />
-    <Content Include="doc\pics\2019-08-08-4.png" />
-    <Content Include="doc\pics\2019-08-08-7.png" />
-    <Content Include="doc\pics\2019-08-08-8.png" />
-    <Content Include="doc\pics\2019-08-08-9.png" />
     <Content Include="license.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -283,29 +254,29 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="AntlrCAProject\AntlrCAProject.csproj">
+    <ProjectReference Include="..\AntlrCAProject\AntlrCAProject.csproj">
       <Project>{9F91F144-0200-415F-9136-FE386DDA7FB9}</Project>
       <Name>AntlrCAProject</Name>
       <VSIXSubPath>ProjectTemplates</VSIXSubPath>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
-    <ProjectReference Include="AntlrFAProject\AntlrFAProject.csproj">
+    <ProjectReference Include="..\AntlrFAProject\AntlrFAProject.csproj">
       <Project>{BC3EBEF2-6EFA-472B-9AC9-3A11DCC46E1C}</Project>
       <Name>AntlrFAProject</Name>
       <VSIXSubPath>ProjectTemplates</VSIXSubPath>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
-    <ProjectReference Include="AntlrVSIX.GrammarDescription.Antlr\AntlrVSIX.GrammarDescription.Antlr.csproj">
+    <ProjectReference Include="..\AntlrVSIX.GrammarDescription.Antlr\AntlrVSIX.GrammarDescription.Antlr.csproj">
       <Project>{1b4ad20d-e4fa-40ba-bc63-8eec48d0ced5}</Project>
       <Name>AntlrVSIX.GrammarDescription.Antlr</Name>
     </ProjectReference>
-    <ProjectReference Include="AntlrVSIX.GrammarDescription.Java\AntlrVSIX.GrammarDescription.Java.csproj">
+    <ProjectReference Include="..\AntlrVSIX.GrammarDescription.Java\AntlrVSIX.GrammarDescription.Java.csproj">
       <Project>{1a59abf4-e066-4e4b-b8f9-ed83a8b2cd93}</Project>
       <Name>AntlrVSIX.GrammarDescription.Java</Name>
     </ProjectReference>
-    <ProjectReference Include="AntlrVSIX.GrammarDescription\AntlrVSIX.GrammarDescription.csproj">
+    <ProjectReference Include="..\AntlrVSIX.GrammarDescription\AntlrVSIX.GrammarDescription.csproj">
       <Project>{9600baec-e51a-4f80-9251-2306a7a84d44}</Project>
       <Name>AntlrVSIX.GrammarDescription</Name>
     </ProjectReference>
