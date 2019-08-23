@@ -4,6 +4,7 @@ namespace AntlrVSIX
     using AntlrVSIX.Package;
     using AntlrVSIX.Tagger;
     using AntlrVSIX.Grammar;
+    using AntlrVSIX.GrammarDescription;
     using AntlrVSIX.Extensions;
     using Microsoft.VisualStudio.Language.Intellisense;
     using Microsoft.VisualStudio.Text.Editor;

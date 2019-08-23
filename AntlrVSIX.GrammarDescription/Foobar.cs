@@ -1,4 +1,4 @@
-﻿namespace AntlrVSIX.Grammar
+﻿namespace AntlrVSIX.GrammarDescription
 {
     using Antlr4.Runtime;
     using Antlr4.Runtime.Misc;
@@ -10,7 +10,7 @@
     using System.Text;
     using System.Text.RegularExpressions;
 
-    static class Class1
+    public static class Foobar
     {
         private static int changed = 0;
         private static bool first_time = true;

@@ -5,6 +5,7 @@
     using AntlrVSIX.GoToDefinition;
     using AntlrVSIX.GoToVisitor;
     using AntlrVSIX.Grammar;
+    using AntlrVSIX.GrammarDescription;
     using AntlrVSIX.NextSym;
     using AntlrVSIX.Reformat;
     using AntlrVSIX.Rename;

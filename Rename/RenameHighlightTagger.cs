@@ -4,6 +4,7 @@ namespace AntlrVSIX.Rename
     using Antlr4.Runtime;
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Grammar;
+    using AntlrVSIX.GrammarDescription;
     using AntlrVSIX.Model;
     using Microsoft.VisualStudio.Text.Classification;
     using Microsoft.VisualStudio.Text.Editor;

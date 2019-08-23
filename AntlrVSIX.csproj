@@ -64,16 +64,15 @@
       <DependentUpon>AboutBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="About\AboutCommand.cs" />
-    <Compile Include="Antlr\AntlrGrammarDescription.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="ErrorTagger\ErrorCategory.cs" />
     <Compile Include="ErrorTagger\ErrorFormatDefinition.cs" />
     <Compile Include="ErrorTagger\ErrorTagger.cs" />
     <Compile Include="ErrorTagger\ErrorTaggerProvider.cs" />
     <Compile Include="File\Class1.cs" />
-    <Compile Include="Grammar\Class1.cs" />
+    <Compile Include="Grammar\Foobar.cs" />
+    <Compile Include="Grammar\CompileGrammarDescription.cs" />
     <Compile Include="Grammar\GrammarDescriptionFactory.cs" />
-    <Compile Include="Grammar\IGrammarDescription.cs" />
     <Compile Include="Helpers\DteExtensions.cs" />
     <Compile Include="Helpers\ITextBufferExtensions.cs" />
     <Compile Include="Helpers\ITextViewExtensions.cs" />
@@ -84,7 +83,6 @@
     <Compile Include="File\ViewCreationListener.cs" />
     <Compile Include="File\FileSaveListener.cs" />
     <Compile Include="GoToVisitor\GoToVisitorCommand.cs" />
-    <Compile Include="Java\JavaGrammarDescription.cs" />
     <Compile Include="Keyboard\CtrlKeyState.cs" />
     <Compile Include="Keyboard\GoToDefKeyProcessor.cs" />
     <Compile Include="Model\Entry.cs" />
@@ -119,7 +117,6 @@
     <Compile Include="Tagger\AntlrTokenTagProvider.cs" />
     <Compile Include="AggregateTagger\AntlrClassifierProvider.cs" />
     <Compile Include="Grammar\DFSVisitor.cs" />
-    <Compile Include="Antlr\LexerAdaptor.cs" />
     <Compile Include="Intellisense\CompletionController.cs" />
     <Compile Include="Intellisense\CompletionSource.cs" />
     <Compile Include="Intellisense\AntlrQuickInfoSource.cs" />
@@ -135,20 +132,7 @@
     <None Include="doc\setup.md" />
   </ItemGroup>
   <ItemGroup>
-    <Antlr4 Include="Java\Java9.g4" />
     <None Include="README.md" />
-    <Antlr4 Include="Antlr\ANTLRv4Lexer.g4">
-      <CustomToolNamespace>AntlrVSIX.Grammar</CustomToolNamespace>
-    </Antlr4>
-    <Antlr4 Include="Antlr\ANTLRv4Parser.g4">
-      <CustomToolNamespace>AntlrVSIX.Grammar</CustomToolNamespace>
-    </Antlr4>
-    <None Include="Antlr\LexBasic.g4">
-      <CustomToolNamespace>AntlrVSIX.Grammar</CustomToolNamespace>
-    </None>
-    <None Include="Antlr\LexUnicode.g4">
-      <CustomToolNamespace>AntlrVSIX.Grammar</CustomToolNamespace>
-    </None>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
@@ -312,6 +296,18 @@
       <VSIXSubPath>ProjectTemplates</VSIXSubPath>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+    </ProjectReference>
+    <ProjectReference Include="AntlrVSIX.GrammarDescription.Antlr\AntlrVSIX.GrammarDescription.Antlr.csproj">
+      <Project>{1b4ad20d-e4fa-40ba-bc63-8eec48d0ced5}</Project>
+      <Name>AntlrVSIX.GrammarDescription.Antlr</Name>
+    </ProjectReference>
+    <ProjectReference Include="AntlrVSIX.GrammarDescription.Java\AntlrVSIX.GrammarDescription.Java.csproj">
+      <Project>{1a59abf4-e066-4e4b-b8f9-ed83a8b2cd93}</Project>
+      <Name>AntlrVSIX.GrammarDescription.Java</Name>
+    </ProjectReference>
+    <ProjectReference Include="AntlrVSIX.GrammarDescription\AntlrVSIX.GrammarDescription.csproj">
+      <Project>{9600baec-e51a-4f80-9251-2306a7a84d44}</Project>
+      <Name>AntlrVSIX.GrammarDescription</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

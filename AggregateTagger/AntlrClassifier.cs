@@ -2,6 +2,7 @@
 {
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Grammar;
+    using AntlrVSIX.GrammarDescription;
     using AntlrVSIX.Package;
     using AntlrVSIX.Tagger;
     using Microsoft.VisualStudio.PlatformUI;
@@ -11,6 +12,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Windows.Media;
 
     class Themes
     {
@@ -33,6 +35,7 @@
             IClassificationTypeRegistryService service,
             IClassificationFormatMapService ClassificationFormatMapService)
         {
+            var xxx = System.Windows.Media.Colors.Red;
             _buffer = buffer;
             _aggregator = aggregator;
             var doc = _buffer.GetTextDocument();

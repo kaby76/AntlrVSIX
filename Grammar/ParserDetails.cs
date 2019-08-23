@@ -3,6 +3,7 @@ namespace AntlrVSIX.Grammar
 {
     using Antlr4.Runtime.Tree;
     using Antlr4.Runtime;
+    using AntlrVSIX.GrammarDescription;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;

@@ -1,4 +1,4 @@
-﻿namespace AntlrVSIX.Antlr
+﻿namespace AntlrVSIX.GrammarDescription.Antlr
 {
     using Antlr4.Runtime;
     using Antlr4.Runtime.Misc;

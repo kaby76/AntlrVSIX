@@ -1,13 +1,10 @@
 ﻿using Antlr4.Runtime.Tree;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace AntlrVSIX.Grammar
+namespace AntlrVSIX.GrammarDescription
 {
-    interface IGrammarDescription
+    public interface IGrammarDescription
     {
         IParseTree Parse(string ffn, string code);
         bool CanNextRule { get; }

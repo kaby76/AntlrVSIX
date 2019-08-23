@@ -4,6 +4,7 @@ namespace AntlrVSIX.FindAllReferences
     using Antlr4.Runtime;
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Grammar;
+    using AntlrVSIX.GrammarDescription;
     using AntlrVSIX.Model;
     using AntlrVSIX.Package;
     using Microsoft.VisualStudio.Shell;
