@@ -12,8 +12,9 @@ namespace AntlrVSIX.Grammar
     {
         private static List<IGrammarDescription> _list_of_languages = new List<IGrammarDescription>();
 
-        private static IGrammarDescription _antlr = Register("AntlrVSIX.GrammarDescription.Antlr.dll");
-        private static IGrammarDescription _java = Register("AntlrVSIX.GrammarDescription.Java.dll");
+        private static IGrammarDescription _antlr  = Register("AntlrVSIX.GrammarDescription.Antlr.dll");
+        private static IGrammarDescription _java   = Register("AntlrVSIX.GrammarDescription.Java.dll");
+        private static IGrammarDescription _python = Register("AntlrVSIX.GrammarDescription.Python.dll");
 
         public static IGrammarDescription Register(string assembly_ffn)
         {

@@ -10,14 +10,11 @@
          * be set in the manifest file.
          * Make sure to change the version in source.extension.vsixmanifest as well!
          */
-        public const string Version = "2.0.9";
+        public const string Version = "3.0.0";
 
         /* Invariants of the AntlrVSIX extension.
          */
-        public const string LanguageName = "Antlr";
         public const string ContentType = "Antlr";
-        public const string TextEditorSettingsRegistryKey = LanguageName;
-        public const string FileExtension = ".g4;.g";
         public const string PackageGuidString = "7e37eef9-8cbe-4b10-81f7-66413cd2c9d3";
         public const string guidMenuAndCommandsCmdSet =                       "{1B4BF8E5-B60D-4DF7-95CB-FF3684750363}";
         public const string guidVSPackageCommandCodeWindowContextMenuCmdSet = "{0c1acc31-15ac-417c-86b2-eefdc669e8bf}";

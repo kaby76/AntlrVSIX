@@ -276,6 +276,10 @@
       <Project>{1a59abf4-e066-4e4b-b8f9-ed83a8b2cd93}</Project>
       <Name>AntlrVSIX.GrammarDescription.Java</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AntlrVSIX.GrammarDescription.Python\AntlrVSIX.GrammarDescription.Python.csproj">
+      <Project>{080bebb7-17bd-4714-bebc-47db13774ad9}</Project>
+      <Name>AntlrVSIX.GrammarDescription.Python</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AntlrVSIX.GrammarDescription\AntlrVSIX.GrammarDescription.csproj">
       <Project>{9600baec-e51a-4f80-9251-2306a7a84d44}</Project>
       <Name>AntlrVSIX.GrammarDescription</Name>

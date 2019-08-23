@@ -46,6 +46,8 @@
             AntlrLanguagePackage.Instance.Classification = default(string);
             AntlrLanguagePackage.Instance.View = view;
 
+            if (grammar_description == null) return;
+
             var fp = view.GetFilePath();
             if (fp != null)
             {

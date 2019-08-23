@@ -39,6 +39,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntlrVSIX.GrammarDescriptio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntlrVSIX.GrammarDescription.Antlr", "AntlrVSIX.GrammarDescription.Antlr\AntlrVSIX.GrammarDescription.Antlr.csproj", "{1B4AD20D-E4FA-40BA-BC63-8EEC48D0CED5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntlrVSIX.GrammarDescription.Python", "AntlrVSIX.GrammarDescription.Python\AntlrVSIX.GrammarDescription.Python.csproj", "{080BEBB7-17BD-4714-BEBC-47DB13774AD9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{1B4AD20D-E4FA-40BA-BC63-8EEC48D0CED5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B4AD20D-E4FA-40BA-BC63-8EEC48D0CED5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B4AD20D-E4FA-40BA-BC63-8EEC48D0CED5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{080BEBB7-17BD-4714-BEBC-47DB13774AD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{080BEBB7-17BD-4714-BEBC-47DB13774AD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{080BEBB7-17BD-4714-BEBC-47DB13774AD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{080BEBB7-17BD-4714-BEBC-47DB13774AD9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
