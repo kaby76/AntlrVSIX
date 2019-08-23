@@ -2,6 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageProjectUrl>https://github.com/kaby76/AntlrVSIX</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/kaby76/AntlrVSIX</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>Antlr VS Extension</PackageTags>
+    <Description>Contains interface used to describe a language for support in AntlrVSIX and Visual Studio IDE.</Description>
   </PropertyGroup>
 
   <ItemGroup>
