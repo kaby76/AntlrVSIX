@@ -4,11 +4,11 @@
         <Identity Id="AntlrVSIX.Ken Domino.ace904b7-00bd-4b97-afd3-fd0818eddc46"
                   Version="3.0.0" Language="en-US" Publisher="Ken Domino" />
         <DisplayName>AntlrVSIX</DisplayName>
-        <Description xml:space="preserve">Programming language editor support in Visual Studio using Antlr4 grammars.</Description>
+        <Description xml:space="preserve">Generalized programming language editor support in Visual Studio using Antlr4-based grammars, including Antlr4, Java, Python, Rust.</Description>
         <MoreInfo>https://github.com/kaby76/AntlrVSIX</MoreInfo>
         <License>license.txt</License>
         <Icon>AntlrVSIX_large.png</Icon>
-        <Tags>Antlr Antlr4 C#</Tags>
+        <Tags>Antlr Antlr4 C# Java Python Rust</Tags>
     </Metadata>
     <Installation InstalledByMsi="false">
         <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[15.0,17.0)" />
