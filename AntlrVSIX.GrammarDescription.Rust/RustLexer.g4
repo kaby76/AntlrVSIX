@@ -6,6 +6,7 @@ UNDERSCORE: '_';
 ABSTRACT: 'abstract';
 ALIGNOF: 'alignof';
 AS: 'as';
+AUTO: 'auto';
 BECOME: 'become';
 BOX: 'box';
 BREAK: 'break';
