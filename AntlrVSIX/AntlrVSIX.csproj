@@ -209,7 +209,7 @@
       <Version>4.7.2</Version>
     </PackageReference>
     <PackageReference Include="Antlr4BuildTasks">
-      <Version>1.0.5</Version>
+      <Version>1.0.6</Version>
     </PackageReference>
     <PackageReference Include="cs-codebuff">
       <Version>2.0.1</Version>
@@ -279,6 +279,10 @@
     <ProjectReference Include="..\AntlrVSIX.GrammarDescription.Python\AntlrVSIX.GrammarDescription.Python.csproj">
       <Project>{080bebb7-17bd-4714-bebc-47db13774ad9}</Project>
       <Name>AntlrVSIX.GrammarDescription.Python</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AntlrVSIX.GrammarDescription.Rust\AntlrVSIX.GrammarDescription.Rust.csproj">
+      <Project>{39fe4f32-9ca9-46da-8f5a-f51a70c40829}</Project>
+      <Name>AntlrVSIX.GrammarDescription.Rust</Name>
     </ProjectReference>
     <ProjectReference Include="..\AntlrVSIX.GrammarDescription\AntlrVSIX.GrammarDescription.csproj">
       <Project>{9600baec-e51a-4f80-9251-2306a7a84d44}</Project>

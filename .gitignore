@@ -39,3 +39,4 @@ tool/target/
 
 # ignore NuGet output folders
 /build/nuget/
+f/

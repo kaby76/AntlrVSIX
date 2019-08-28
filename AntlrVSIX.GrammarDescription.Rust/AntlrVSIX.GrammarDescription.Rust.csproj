@@ -9,16 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Antlr4 Remove="LexBasic.g4" />
-    <Antlr4 Remove="LexUnicode.g4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Antlr4 Include="ANTLRv4Lexer.g4">
-      <CustomToolNamespace>AntlrVSIX.GrammarDescription.Antlr</CustomToolNamespace>
+    <Antlr4 Include="RustLexer.g4">
+      <CustomToolNamespace>AntlrVSIX.GrammarDescription.Rust</CustomToolNamespace>
     </Antlr4>
-    <Antlr4 Include="ANTLRv4Parser.g4">
-      <CustomToolNamespace>AntlrVSIX.GrammarDescription.Antlr</CustomToolNamespace>
+    <Antlr4 Include="RustParser.g4">
+      <CustomToolNamespace>AntlrVSIX.GrammarDescription.Rust</CustomToolNamespace>
     </Antlr4>
   </ItemGroup>
 
@@ -26,7 +21,9 @@
     <PackageReference Include="Antlr4.Runtime.Standard">
       <Version>4.7.2</Version>
     </PackageReference>
-    <PackageReference Include="Antlr4BuildTasks" Version="1.0.6" />
+    <PackageReference Include="Antlr4BuildTasks">
+      <Version>1.0.6</Version>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>

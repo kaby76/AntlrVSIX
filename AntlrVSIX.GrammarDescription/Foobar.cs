@@ -25,7 +25,8 @@
             {
                 TerminalNodeImpl tok = tree as TerminalNodeImpl;
                 Interval interval = tok.SourceInterval;
-                var inter = stream.GetHiddenTokensToLeft(tok.Symbol.TokenIndex);
+
+                var inter = tok.Symbol.TokenIndex >= 0 ? stream.GetHiddenTokensToLeft(tok.Symbol.TokenIndex) : null;
                 if (inter != null)
                     foreach (var t in inter)
                     {
