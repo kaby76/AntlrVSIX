@@ -41,6 +41,7 @@ PUB: 'pub';
 REF: 'ref';
 RETURN: 'return';
 SELF: 'self';
+CSELF: 'Self';
 SIZEOF: 'sizeof';
 STATIC: 'static';
 STRUCT: 'struct';
@@ -113,11 +114,9 @@ CARETEQ: '^=';
 PERCENT: '%';
 PERCENTEQ: '%=';
 
+POUND: '#';
 
-POUND: '#'; // THIS SHOULD NOT EXIST.
-
-SHEBANG_LINE:  { this.Line == 1 && this.Column == 0 }? '#!' (~[\r\n])+ [\n\r]+ ;
-
+SHEBANG_LINE:  { this.Line == 1 && this.Column == 0 }? '#!' (~[\r\n])+ [\n\r] ;
 
 // `$` is recognized as a token, so it may be present in token trees,
 // and `macro_rules!` makes use of it. But it is not mentioned anywhere

@@ -1,6 +1,7 @@
 // Derived from https://github.com/kaby76/rust-grammar
-// and from https://github.com/rust-lang/rust/blob/master/src/grammar
 
+// Additional stuff from https://github.com/rust-lang/rust/blob/master/src/grammar, NB has errors.
+// # [derive(.......)] is valid by the compiler, but not recognized by this Lexx/Yacc grammar.
 
 parser grammar RustParser;
 
@@ -37,10 +38,10 @@ visibility_restriction:
     | OP IN ident CP;
 
 item:
-    attr* visibility? pub_item
-    | attr* impl_block
-    | attr* extern_mod
-    | attr* item_macro_use;
+    outer_attr* visibility? pub_item
+    | outer_attr* impl_block
+    | outer_attr* extern_mod
+    | outer_attr* item_macro_use;
 
 pub_item:
     extern_crate     // `pub extern crate` is deprecated but still allowed
@@ -124,8 +125,8 @@ extern_mod:
     extern_abi OC inner_attr* foreign_item* CC;
 
 foreign_item:
-    attr* visibility? foreign_item_tail
-    | attr* item_macro_use;
+    outer_attr* visibility? foreign_item_tail
+    | outer_attr* item_macro_use;
 
 foreign_item_tail:
     STATIC MUT? ident COL ty_sum SEMI
@@ -229,13 +230,13 @@ struct_tail:
     | where_clause? OC field_decl_list? CC;
 
 tuple_struct_field:
-    attr* visibility? ty_sum;
+    outer_attr* visibility? ty_sum;
 
 tuple_struct_field_list:
     tuple_struct_field (CO tuple_struct_field)* CO?;
 
 field_decl:
-    attr* visibility? ident COL ty_sum;
+    outer_attr* visibility? ident COL ty_sum;
 
 field_decl_list:
     field_decl (CO field_decl)* CO?;
@@ -244,7 +245,7 @@ enum_decl:
     ENUM ident ty_params? where_clause? OC enum_variant_list? CC;
 
 enum_variant:
-    attr* enum_variant_main;
+    outer_attr* enum_variant_main;
 
 enum_variant_list:
     enum_variant (CO enum_variant)* CO?;
@@ -257,7 +258,7 @@ enum_variant_main:
 
 // enum variants that are tuple-struct-like can't have `pub` on individual fields.
 enum_tuple_field:
-    attr* ty_sum;
+    outer_attr* ty_sum;
 
 enum_tuple_field_list:
     enum_tuple_field (CO enum_tuple_field)* CO?;
@@ -281,10 +282,10 @@ trait_decl:
     UNSAFE? AUTO? TRAIT ident ty_params? colon_bound? where_clause? OC trait_item* CC;
 
 trait_item:
-    attr* TYPE ident colon_bound? ty_default? SEMI
-    | attr* CONST ident COL ty_sum const_default? SEMI  // experimental associated constants
-    | attr* trait_method_decl
-    | attr* item_macro_path NOT item_macro_tail;
+    outer_attr* TYPE ident colon_bound? ty_default? SEMI
+    | outer_attr* CONST ident COL ty_sum const_default? SEMI  // experimental associated constants
+    | outer_attr* trait_method_decl
+    | outer_attr* item_macro_path NOT item_macro_tail;
 
 ty_default:
     EQ ty_sum;
@@ -305,7 +306,7 @@ impl_what:
     | ty_sum;
 
 impl_item:
-    attr* visibility? impl_item_tail;
+    outer_attr* visibility? impl_item_tail;
 
 impl_item_tail:
     DEFAULT? method_decl
@@ -316,7 +317,7 @@ impl_item_tail:
 
 // === Attributes and token trees
 
-attr:
+outer_attr:
     POUND OB tt* CB;
 
 inner_attr:
@@ -386,7 +387,7 @@ path_segment_no_super:
 
 simple_path_segment:
     ident
-    | SELF;
+    | CSELF;
 
 
 // === Type paths
@@ -413,7 +414,7 @@ ty_path_main:
     | ty_path_parent? COCO ty_path_tail;
 
 ty_path_tail:
-    (ident | SELF) OP ty_sum_list? CP rtype?
+    (ident | CSELF) OP ty_sum_list? CP rtype?
     | ty_path_segment_no_super;
 
 ty_path_parent:
@@ -428,7 +429,7 @@ ty_path_segment:
     | SUPER;
 
 ty_path_segment_no_super:
-    (ident | SELF) ty_args?;
+    (ident | CSELF) ty_args?;
 
 
 // === Type bounds
@@ -504,13 +505,13 @@ ty_params:
     | LT (lifetime_param CO)* ty_param_list GT;
 
 lifetime_param:
-    attr* Lifetime (COL lifetime_bound)?;
+    outer_attr* Lifetime (COL lifetime_bound)?;
 
 lifetime_param_list:
     lifetime_param (CO lifetime_param)* CO?;
 
 ty_param:
-    attr* ident colon_bound? ty_default?;
+    outer_attr* ident colon_bound? ty_default?;
 
 ty_param_list:
     ty_param (CO ty_param)* CO?;
@@ -637,8 +638,8 @@ stmt:
 // Attributes on block expressions that appear anywhere else are an
 // experimental feature, `feature(stmt_expr_attributes)`. We support both.
 stmt_tail:
-    attr* LET pat (COL ty)? (EQ expr)? SEMI
-    | attr* blocky_expr
+    outer_attr* LET pat (COL ty)? (EQ expr)? SEMI
+    | outer_attr* blocky_expr
     | expr SEMI;
 
 // Inner attributes in `match`, `while`, `for`, `loop`, and `unsafe` blocks are
@@ -664,7 +665,7 @@ match_arms:
     | match_arm_intro expr (CO match_arms?)?;
 
 match_arm_intro:
-    attr* match_pat match_if_clause? FAT_ARROW;
+    outer_attr* match_pat match_if_clause? FAT_ARROW;
 
 match_pat:
     pat
@@ -679,7 +680,7 @@ match_if_clause:
 // Attributes on expressions are experimental.
 // Enable with `feature(stmt_expr_attributes)`.
 expr_attrs:
-    attr attr*;
+    outer_attr outer_attr*;
 
 // Inner attributes in array and struct expressions are experimental.
 // Enable with `feature(stmt_expr_attributes)`.
@@ -883,7 +884,7 @@ bit_or_expr_no_struct:
 
 cmp_expr_no_struct:
     bit_or_expr_no_struct
-    | bit_or_expr_no_struct (EQEQ | NE | LT | LE | GT | GT EQ) bit_or_expr_no_struct;
+    | bit_or_expr_no_struct (EQEQ | NE | LT | LE | GT | GE) bit_or_expr_no_struct;
 
 and_expr_no_struct:
     cmp_expr_no_struct
@@ -917,6 +918,7 @@ ident:
 any_ident:
     ident
     | SELF
+	| CSELF
     | STATIC
     | SUPER;
 
