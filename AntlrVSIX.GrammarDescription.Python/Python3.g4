@@ -488,8 +488,10 @@ RIGHT_SHIFT_ASSIGN : '>>=';
 POWER_ASSIGN : '**=';
 IDIV_ASSIGN : '//=';
 
+LINE_COMMENT: COMMENT -> channel(HIDDEN);
+
 SKIP_
- : ( SPACES | COMMENT | LINE_JOINING ) -> skip
+ : ( SPACES | LINE_JOINING ) -> skip
  ;
 
 UNKNOWN_CHAR

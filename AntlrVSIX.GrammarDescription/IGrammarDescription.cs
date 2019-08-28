@@ -1,4 +1,5 @@
-﻿using Antlr4.Runtime.Tree;
+﻿using Antlr4.Runtime;
+using Antlr4.Runtime.Tree;
 using System;
 using System.Collections.Generic;
 
@@ -7,6 +8,7 @@ namespace AntlrVSIX.GrammarDescription
     public interface IGrammarDescription
     {
         IParseTree Parse(string ffn, string code);
+        Dictionary<IToken, int> ExtractComments(string code);
         bool CanNextRule { get; }
         string[] Map { get; }
         Dictionary<string, int> InverseMap { get; }

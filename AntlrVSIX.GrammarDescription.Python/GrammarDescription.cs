@@ -11,7 +11,7 @@ namespace AntlrVSIX.GrammarDescription.Python
     using System.Text;
     using System.Windows.Media;
 
-    class PythonGrammarDescription : IGrammarDescription
+    class GrammarDescription : IGrammarDescription
     {
         public IParseTree Parse(string ffn, string code)
         {
@@ -42,6 +42,29 @@ namespace AntlrVSIX.GrammarDescription.Python
             System.IO.File.WriteAllText(fn, sb.ToString());
 
             return _ant_tree;
+        }
+
+        public Dictionary<IToken, int> ExtractComments(string code)
+        {
+            byte[] byteArray = Encoding.UTF8.GetBytes(code);
+            CommonTokenStream cts_off_channel = new CommonTokenStream(
+                new Python3Lexer(
+                    new AntlrInputStream(
+                        new StreamReader(
+                            new MemoryStream(byteArray)).ReadToEnd())),
+                Python3Lexer.Hidden);
+            var new_list = new Dictionary<IToken, int>();
+            var type = InverseMap[ClassificationNameComment];
+            while (cts_off_channel.LA(1) != Python3Lexer.Eof)
+            {
+                IToken token = cts_off_channel.LT(1);
+                if (token.Type == Python3Lexer.LINE_COMMENT)
+                {
+                    new_list[token] = type;
+                }
+                cts_off_channel.Consume();
+            }
+            return new_list;
         }
 
         public const string FileExtension = ".py";

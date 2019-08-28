@@ -92,6 +92,19 @@ namespace AntlrVSIX.Tagger
                     combined_tokens.AddRange(partial);
                 }
 
+                {
+                    var partial = details._ant_comments.Where((pair) =>
+                    {
+                        var token = pair.Key;
+                        int start_token_start = token.StartIndex;
+                        int end_token_end = token.StopIndex;
+                        if (start_token_start >= curLocEnd) return false;
+                        if (end_token_end < curLocStart) return false;
+                        return true;
+                    }).ToList();
+                    combined_tokens.AddRange(partial);
+                }
+
                 // Sort the list.
                 List<KeyValuePair<IToken, int>> sorted_combined_tokens = combined_tokens.OrderBy((t) => t.Key.StartIndex).ToList();
 

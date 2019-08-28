@@ -17,11 +17,11 @@ namespace AntlrVSIX.Grammar
         public string Code;
         public Dictionary<IToken, int> _ant_applied_occurrence_classes = new Dictionary<IToken, int>();
         public Dictionary<IToken, int> _ant_defining_occurrence_classes = new Dictionary<IToken, int>();
+        public Dictionary<IToken, int> _ant_comments = new Dictionary<IToken, int>();
 
         private List<IObserver<ParserDetails>> _observers = new List<IObserver<ParserDetails>>();
         private IParseTree _ant_tree = null;
         private IEnumerable<IParseTree>_all_nodes = null;
-
 
         public static ParserDetails Parse(string code, string ffn)
         {
@@ -77,19 +77,7 @@ namespace AntlrVSIX.Grammar
                 }
             }
 
-            //// Get all comments.
-            //var new_list = new List<IToken>();
-            //while (cts_off_channel.LA(1) != ANTLRv4Parser.Eof)
-            //{
-            //    IToken token = cts_off_channel.LT(1);
-            //    if (token.Type == ANTLRv4Parser.BLOCK_COMMENT
-            //        || token.Type == ANTLRv4Parser.LINE_COMMENT)
-            //    {
-            //        new_list.Add(token);
-            //    }
-            //    cts_off_channel.Consume();
-            //}
-           // pd._ant_comments = new_list;
+            pd._ant_comments = gd.ExtractComments(code);
 
             if (has_changed)
             {

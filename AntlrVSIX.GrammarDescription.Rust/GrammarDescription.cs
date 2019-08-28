@@ -19,11 +19,11 @@ namespace AntlrVSIX.GrammarDescription.Rust
             // Set up Antlr to parse input grammar.
             byte[] byteArray = Encoding.UTF8.GetBytes(code);
             CommonTokenStream cts = new CommonTokenStream(
-                new AntlrVSIX.GrammarDescription.Rust.RustLexer(
+                new RustLexer(
                     new AntlrInputStream(
                         new StreamReader(
                             new MemoryStream(byteArray)).ReadToEnd())));
-            var _parser = new AntlrVSIX.GrammarDescription.Rust.RustParser(cts);
+            var _parser = new RustParser(cts);
 
 
             try
@@ -42,6 +42,31 @@ namespace AntlrVSIX.GrammarDescription.Rust
             System.IO.File.WriteAllText(fn, sb.ToString());
 
             return _tree;
+        }
+
+        public Dictionary<IToken, int> ExtractComments(string code)
+        {
+            byte[] byteArray = Encoding.UTF8.GetBytes(code);
+            CommonTokenStream cts_off_channel = new CommonTokenStream(
+                new RustLexer(
+                    new AntlrInputStream(
+                        new StreamReader(
+                            new MemoryStream(byteArray)).ReadToEnd())),
+                RustLexer.Hidden);
+            var new_list = new Dictionary<IToken, int>();
+            var type = InverseMap[ClassificationNameComment];
+            while (cts_off_channel.LA(1) != RustLexer.Eof)
+            {
+                IToken token = cts_off_channel.LT(1);
+                if (token.Type == RustLexer.LineComment ||
+                    token.Type == RustLexer.BlockComment
+                    )
+                {
+                    new_list[token] = type;
+                }
+                cts_off_channel.Consume();
+            }
+            return new_list;
         }
 
         public const string FileExtension = ".rs";
@@ -64,6 +89,7 @@ namespace AntlrVSIX.GrammarDescription.Rust
         private const string ClassificationNameKeyword = "keyword";
         private const string ClassificationNameLiteral = "literal";
         private const string ClassificationNameMacro = "macro";
+        private const string ClassificationNameType = "type";
 
         public string[] Map { get; } = new string[]
         {
@@ -73,6 +99,7 @@ namespace AntlrVSIX.GrammarDescription.Rust
             ClassificationNameKeyword,
             ClassificationNameLiteral,
             ClassificationNameMacro,
+            ClassificationNameType,
         };
 
         public Dictionary<string, int> InverseMap { get; } = new Dictionary<string, int>()
@@ -83,15 +110,17 @@ namespace AntlrVSIX.GrammarDescription.Rust
             { ClassificationNameKeyword, 3 },
             { ClassificationNameLiteral, 4 },
             { ClassificationNameMacro, 5 },
+            { ClassificationNameType, 6 },
         };
 
         /* Color scheme for the tagging. */
         public List<System.Windows.Media.Color> MapColor { get; } = new List<System.Windows.Media.Color>()
         {
-            Colors.Purple,
+            Colors.Black,
             Colors.Orange,
             Colors.Green,
-            Colors.Blue,
+            Colors.Purple,
+            Colors.Red,
             Colors.Red,
             Colors.Red,
         };
@@ -104,6 +133,7 @@ namespace AntlrVSIX.GrammarDescription.Rust
             Colors.LightBlue,
             Colors.Red,
             Colors.Red,
+            Colors.Red,
         };
 
         public List<bool> CanFindAllRefs { get; } = new List<bool>()
@@ -114,6 +144,7 @@ namespace AntlrVSIX.GrammarDescription.Rust
             false, // keyword
             true, // literal
             false, // macro
+            true, // type
         };
 
         public List<bool> CanRename { get; } = new List<bool>()
@@ -124,6 +155,7 @@ namespace AntlrVSIX.GrammarDescription.Rust
             false, // keyword
             false, // literal
             false, // macro
+            false, // type
        };
 
         public List<bool> CanGotodef { get; } = new List<bool>()
@@ -134,6 +166,7 @@ namespace AntlrVSIX.GrammarDescription.Rust
             false, // keyword
             false, // literal
             false, // macro
+            false, // type
        };
 
         public List<bool> CanGotovisitor { get; } = new List<bool>()
@@ -144,6 +177,7 @@ namespace AntlrVSIX.GrammarDescription.Rust
             false, // keyword
             false, // literal
             false, // macro
+            false, // type
         };
 
         private static List<string> _keywords = new List<string>()
@@ -152,6 +186,10 @@ namespace AntlrVSIX.GrammarDescription.Rust
             "use",
             "let",
             "mut",
+            "pub",
+            "struct",
+            "self",
+            "bool",
         };
 
         public List<Func<IGrammarDescription, IParseTree, bool>> Identify { get; } = new List<Func<IGrammarDescription, IParseTree, bool>>()

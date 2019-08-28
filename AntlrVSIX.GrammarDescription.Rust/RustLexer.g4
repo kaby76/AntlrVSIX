@@ -252,10 +252,10 @@ Whitespace:
     [ \t\r\n]+ -> skip;
 
 LineComment:
-    '//' ~[\r\n]* -> skip;
+    '//' ~[\r\n]* -> channel(HIDDEN);
 
 BlockComment:
-    '/*' (~[*/] | '/'* BlockComment | '/'+ (~[*/]) | '*'+ ~[*/])* '*'+ '/' -> skip;
+    '/*' (~[*/] | '/'* BlockComment | '/'+ (~[*/]) | '*'+ ~[*/])* '*'+ '/' -> channel(HIDDEN);
 
 // BUG: only ascii identifiers are permitted
 // BUG: doc comments are ignored

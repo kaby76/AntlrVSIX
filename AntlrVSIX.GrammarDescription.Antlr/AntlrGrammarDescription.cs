@@ -25,15 +25,6 @@
                             new MemoryStream(byteArray)).ReadToEnd())));
             var _ant_parser = new ANTLRv4Parser(cts);
 
-            // Set up another token stream containing comments. This might be
-            // problematic as the parser influences the lexer.
-            CommonTokenStream cts_off_channel = new CommonTokenStream(
-                new ANTLRv4Lexer(
-                    new AntlrInputStream(
-                        new StreamReader(
-                            new MemoryStream(byteArray)).ReadToEnd())),
-                ANTLRv4Lexer.OFF_CHANNEL);
-
             try
             {
                 _ant_tree = _ant_parser.grammarSpec();
@@ -50,6 +41,30 @@
             System.IO.File.WriteAllText(fn, sb.ToString());
 
             return _ant_tree;
+        }
+
+        public Dictionary<IToken, int> ExtractComments(string code)
+        {
+            byte[] byteArray = Encoding.UTF8.GetBytes(code);
+            CommonTokenStream cts_off_channel = new CommonTokenStream(
+                new ANTLRv4Lexer(
+                    new AntlrInputStream(
+                        new StreamReader(
+                            new MemoryStream(byteArray)).ReadToEnd())),
+                ANTLRv4Lexer.OFF_CHANNEL);
+            var new_list = new Dictionary<IToken, int>();
+            var type = InverseMap[ClassificationNameComment];
+            while (cts_off_channel.LA(1) != ANTLRv4Parser.Eof)
+            {
+                IToken token = cts_off_channel.LT(1);
+                if (token.Type == ANTLRv4Parser.BLOCK_COMMENT
+                    || token.Type == ANTLRv4Parser.LINE_COMMENT)
+                {
+                    new_list[token] = type;
+                }
+                cts_off_channel.Consume();
+            }
+            return new_list;
         }
 
         public const string FileExtension = ".g4;.g";
