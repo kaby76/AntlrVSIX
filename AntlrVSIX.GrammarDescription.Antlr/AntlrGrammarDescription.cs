@@ -57,8 +57,9 @@
             while (cts_off_channel.LA(1) != ANTLRv4Parser.Eof)
             {
                 IToken token = cts_off_channel.LT(1);
-                if (token.Type == ANTLRv4Parser.BLOCK_COMMENT
-                    || token.Type == ANTLRv4Parser.LINE_COMMENT)
+                if (token.Type == ANTLRv4Lexer.BLOCK_COMMENT
+                    || token.Type == ANTLRv4Lexer.LINE_COMMENT
+                    || token.Type == ANTLRv4Lexer.DOC_COMMENT)
                 {
                     new_list[token] = type;
                 }
