@@ -35,11 +35,11 @@ namespace AntlrVSIX.GrammarDescription.Rust
                 // Parsing error.
             }
 
-            StringBuilder sb = new StringBuilder();
-            Foobar.ParenthesizedAST(_tree, sb, "", cts);
-            string fn = System.IO.Path.GetFileName(ffn);
-            fn = "c:\\temp\\" + fn;
-            System.IO.File.WriteAllText(fn, sb.ToString());
+            //StringBuilder sb = new StringBuilder();
+            //Foobar.ParenthesizedAST(_tree, sb, "", cts);
+            //string fn = System.IO.Path.GetFileName(ffn);
+            //fn = "c:\\temp\\" + fn;
+            //System.IO.File.WriteAllText(fn, sb.ToString());
 
             return _tree;
         }

@@ -10,7 +10,7 @@
     using System.Text;
     using System.Windows.Media;
 
-    class AntlrGrammarDescription : IGrammarDescription
+    class GrammarDescription : IGrammarDescription
     {
         public IParseTree Parse(string ffn, string code)
         {
@@ -34,11 +34,11 @@
                 // Parsing error.
             }
 
-            StringBuilder sb = new StringBuilder();
-            Foobar.ParenthesizedAST(_ant_tree, sb, "", cts);
-            string fn = System.IO.Path.GetFileName(ffn);
-            fn = "c:\\temp\\" + fn;
-            System.IO.File.WriteAllText(fn, sb.ToString());
+            //StringBuilder sb = new StringBuilder();
+            //Foobar.ParenthesizedAST(_ant_tree, sb, "", cts);
+            //string fn = System.IO.Path.GetFileName(ffn);
+            //fn = "c:\\temp\\" + fn;
+            //System.IO.File.WriteAllText(fn, sb.ToString());
 
             return _ant_tree;
         }

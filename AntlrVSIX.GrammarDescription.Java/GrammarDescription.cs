@@ -11,7 +11,7 @@ namespace AntlrVSIX.GrammarDescription.Java
     using System.Text;
     using System.Windows.Media;
 
-    class JavaGrammarDescription : IGrammarDescription
+    class GrammarDescription : IGrammarDescription
     {
         public IParseTree Parse(string ffn, string code)
         {
@@ -35,11 +35,11 @@ namespace AntlrVSIX.GrammarDescription.Java
                 // Parsing error.
             }
 
-            StringBuilder sb = new StringBuilder();
-            Foobar.ParenthesizedAST(_ant_tree, sb, "", cts);
-            string fn = System.IO.Path.GetFileName(ffn);
-            fn = "c:\\temp\\" + fn;
-            System.IO.File.WriteAllText(fn, sb.ToString());
+            //StringBuilder sb = new StringBuilder();
+            //Foobar.ParenthesizedAST(_ant_tree, sb, "", cts);
+            //string fn = System.IO.Path.GetFileName(ffn);
+            //fn = "c:\\temp\\" + fn;
+            //System.IO.File.WriteAllText(fn, sb.ToString());
 
             return _ant_tree;
         }
@@ -52,7 +52,7 @@ namespace AntlrVSIX.GrammarDescription.Java
                     new AntlrInputStream(
                         new StreamReader(
                             new MemoryStream(byteArray)).ReadToEnd())),
-                Java9Lexer.Hidden);
+                Lexer.Hidden);
             var new_list = new Dictionary<IToken, int>();
             var type = InverseMap[ClassificationNameComment];
             while (cts_off_channel.LA(1) != Java9Lexer.Eof)
@@ -73,7 +73,7 @@ namespace AntlrVSIX.GrammarDescription.Java
         public bool IsFileType(string ffn)
         {
             if (ffn == null) return false;
-            var allowable_suffices = FileExtension.Split(';').ToList<string>();
+            var allowable_suffices = FileExtension.Split(';').ToList();
             var suffix = Path.GetExtension(ffn).ToLower();
             foreach (var s in allowable_suffices)
                 if (suffix == s)
@@ -86,7 +86,9 @@ namespace AntlrVSIX.GrammarDescription.Java
         private const string ClassificationNameMethod = "method";
         private const string ClassificationNameComment = "comment";
         private const string ClassificationNameKeyword = "keyword";
+        private const string ClassificationNameKeywordControl = "keyword-control";
         private const string ClassificationNameLiteral = "literal";
+        private const string ClassificationNameType = "type";
 
         public string[] Map { get; } = new string[]
         {
@@ -94,7 +96,9 @@ namespace AntlrVSIX.GrammarDescription.Java
             ClassificationNameMethod,
             ClassificationNameComment,
             ClassificationNameKeyword,
+            ClassificationNameKeywordControl,
             ClassificationNameLiteral,
+            ClassificationNameType,
         };
 
         public Dictionary<string, int> InverseMap { get; } = new Dictionary<string, int>()
@@ -103,20 +107,24 @@ namespace AntlrVSIX.GrammarDescription.Java
             { ClassificationNameMethod, 1 },
             { ClassificationNameComment, 2 },
             { ClassificationNameKeyword, 3 },
-            { ClassificationNameLiteral, 4 },
+            { ClassificationNameKeywordControl, 4 },
+            { ClassificationNameLiteral, 5 },
+            { ClassificationNameType, 6 },
         };
 
         /* Color scheme for the tagging. */
-        public List<System.Windows.Media.Color> MapColor { get; } = new List<System.Windows.Media.Color>()
+        public List<Color> MapColor { get; } = new List<Color>()
         {
             Colors.Purple,
             Colors.Orange,
-            Colors.Green,
-            Colors.Blue,
-            Colors.Red,
+            Color.FromRgb(0, 128, 0), //ClassificationNameComment
+            Color.FromRgb(0, 0, 255), //ClassificationNameKeyword
+            Color.FromRgb(189, 8, 196), //ClassificationNameKeywordControl
+            Color.FromRgb(163, 21, 21), //ClassificationNameLiteral
+            Color.FromRgb(43, 145, 175), //ClassificationNameType
         };
 
-        public List<System.Windows.Media.Color> MapInvertedColor { get; } = new List<System.Windows.Media.Color>()
+        public List<Color> MapInvertedColor { get; } = new List<Color>()
         {
             Colors.LightPink,
             Colors.LightYellow,
@@ -131,7 +139,9 @@ namespace AntlrVSIX.GrammarDescription.Java
             true, // method
             false, // comment
             false, // keyword
+            false, // keyword-control
             true, // literal
+            true, // type
         };
 
         public List<bool> CanRename { get; } = new List<bool>()
@@ -140,7 +150,9 @@ namespace AntlrVSIX.GrammarDescription.Java
             true, // method
             false, // comment
             false, // keyword
+            false, // keyword-control
             false, // literal
+            true, // type
         };
 
         public List<bool> CanGotodef { get; } = new List<bool>()
@@ -149,7 +161,9 @@ namespace AntlrVSIX.GrammarDescription.Java
             true, // method
             false, // comment
             false, // keyword
+            false, // keyword-control
             false, // literal
+            true, // type
         };
 
         public List<bool> CanGotovisitor { get; } = new List<bool>()
@@ -158,26 +172,64 @@ namespace AntlrVSIX.GrammarDescription.Java
             false, // method
             false, // comment
             false, // keyword
+            false, // keyword-control
             false, // literal
+            false, // type
         };
 
         private static List<string> _keywords = new List<string>()
         {
+            "abstract",
+            "assert",
+            "boolean",
+            "byte",
+            "char",
             "class",
-            "int",
-            "bool",
+            "const",
+            "double",
+            "enum",
+            "extends",
+            "final",
+            "float",
+            "implements",
             "import",
-            "public",
-            "static",
+            "instanceof",
+            "int",
+            "interface",
+            "long",
+            "native",
+            "new",
+            "package",
             "private",
             "protected",
+            "public",
+            "short",
+            "static",
+            "strictfp",
+            "super",
+            "synchronized",
+            "this",
+            "transient",
             "void",
-            "return",
-            "throws",
+            "volatile",
+        };
+        private static List<string> _keywords_control = new List<string>()
+        {
+            "break",
+            "case",
             "catch",
+            "continue",
+            "default",
+            "do",
+            "else",
             "finally",
-            "new",
+            "for",
             "if",
+            "goto",
+            "return",
+            "switch",
+            "throws",
+            "try",
             "while",
         };
 
@@ -191,7 +243,10 @@ namespace AntlrVSIX.GrammarDescription.Java
                     // Make sure it's not a def.
                     var is_def = gd.IdentifyDefinition[0](gd, term);
                     if (is_def) return false;
+                    var is_type = gd.Identify[6](gd, term);
+                    if (is_type) return false;
                     if (_keywords.Contains(text)) return false;
+                    if (_keywords_control.Contains(text)) return false;
                     if (term.Parent as Java9Parser.IdentifierContext == null) return false;
                     if (term.Parent.Parent is Java9Parser.MethodInvocation_lfno_primaryContext) return false;
                     for (var p = term.Parent; p != null; p = p.Parent)
@@ -208,6 +263,7 @@ namespace AntlrVSIX.GrammarDescription.Java
                     var is_def = gd.IdentifyDefinition[1](gd, term);
                     if (is_def) return false;
                     if (_keywords.Contains(text)) return false;
+                    if (_keywords_control.Contains(text)) return false;
                     if (term.Parent as Java9Parser.IdentifierContext == null) return false;
                     for (var p = term.Parent; p != null; p = p.Parent)
                     {
@@ -226,13 +282,30 @@ namespace AntlrVSIX.GrammarDescription.Java
                     if (!_keywords.Contains(text)) return false;
                     return true;
                 },
-            (IGrammarDescription gd, IParseTree t) => // literal = 4
+            (IGrammarDescription gd, IParseTree t) => // keyword-control = 4
+                {
+                    TerminalNodeImpl nonterm = t as TerminalNodeImpl;
+                    if (nonterm == null) return false;
+                    var text = nonterm.GetText();
+                    if (!_keywords_control.Contains(text)) return false;
+                    return true;
+                },
+            (IGrammarDescription gd, IParseTree t) => // literal = 5
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
-                    // Chicken/egg problem. Assume that literals are marked
-                    // with the appropriate token type.
                     if (term.Symbol == null) return false;
+                    return false;
+                },
+            (IGrammarDescription gd, IParseTree t) => // type = 6
+                {
+                    TerminalNodeImpl term = t as TerminalNodeImpl;
+                    if (term == null) return false;
+                    var text = term.GetText();
+                    if (_keywords.Contains(text)) return false;
+                    if (_keywords_control.Contains(text)) return false;
+                    if (term.Parent as Java9Parser.IdentifierContext == null) return false;
+                    if (term.Parent.Parent is Java9Parser.UnannClassType_lfno_unannClassOrInterfaceTypeContext) return true;
                     return false;
                 },
         };
@@ -261,7 +334,9 @@ namespace AntlrVSIX.GrammarDescription.Java
                 },
             null, // comment
             null, // keyword
+            null, // keyword-control
             null, // literal
+            null, // type
         };
 
         public bool CanNextRule { get { return false; } }
