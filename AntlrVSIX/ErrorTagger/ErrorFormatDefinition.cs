@@ -8,7 +8,7 @@
 
     public class ErrorFormatDefinition
     {
-        public const string Suggestion = "Suggestion";
+        public const string Suggestion = "AntlrVSIX - Suggestion";
 
         [Export(typeof(ErrorTypeDefinition))]
         [Name(Suggestion)]

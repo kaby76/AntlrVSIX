@@ -82,13 +82,13 @@ namespace AntlrVSIX.GrammarDescription.Java
         }
 
         /* Tagging and classification types. */
-        private const string ClassificationNameVariable = "variable";
-        private const string ClassificationNameMethod = "method";
-        private const string ClassificationNameComment = "comment";
-        private const string ClassificationNameKeyword = "keyword";
-        private const string ClassificationNameKeywordControl = "keyword-control";
-        private const string ClassificationNameLiteral = "literal";
-        private const string ClassificationNameType = "type";
+        private const string ClassificationNameVariable = "Java - variable";
+        private const string ClassificationNameMethod = "Java - method";
+        private const string ClassificationNameComment = "Java - comment";
+        private const string ClassificationNameKeyword = "Java - keyword";
+        private const string ClassificationNameKeywordControl = "Java - keyword-control";
+        private const string ClassificationNameLiteral = "Java - literal";
+        private const string ClassificationNameType = "Java - type";
 
         public string[] Map { get; } = new string[]
         {
@@ -115,8 +115,8 @@ namespace AntlrVSIX.GrammarDescription.Java
         /* Color scheme for the tagging. */
         public List<Color> MapColor { get; } = new List<Color>()
         {
-            Colors.Purple,
-            Colors.Orange,
+            Colors.Purple, //ClassificationNameVariable
+            Colors.Orange, //ClassificationNameMethod
             Color.FromRgb(0, 128, 0), //ClassificationNameComment
             Color.FromRgb(0, 0, 255), //ClassificationNameKeyword
             Color.FromRgb(189, 8, 196), //ClassificationNameKeywordControl
@@ -239,12 +239,12 @@ namespace AntlrVSIX.GrammarDescription.Java
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
-                    var text = term.GetText();
                     // Make sure it's not a def.
                     var is_def = gd.IdentifyDefinition[0](gd, term);
                     if (is_def) return false;
                     var is_type = gd.Identify[6](gd, term);
                     if (is_type) return false;
+                    var text = term.GetText();
                     if (_keywords.Contains(text)) return false;
                     if (_keywords_control.Contains(text)) return false;
                     if (term.Parent as Java9Parser.IdentifierContext == null) return false;

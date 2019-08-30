@@ -83,13 +83,13 @@ namespace AntlrVSIX.GrammarDescription.Rust
         }
 
         /* Tagging and classification types. */
-        private const string ClassificationNameVariable = "variable";
-        private const string ClassificationNameFunction = "function";
-        private const string ClassificationNameComment = "comment";
-        private const string ClassificationNameKeyword = "keyword";
-        private const string ClassificationNameLiteral = "literal";
-        private const string ClassificationNameMacro = "macro";
-        private const string ClassificationNameType = "type";
+        private const string ClassificationNameVariable = "Rust - variable";
+        private const string ClassificationNameFunction = "Rust - function";
+        private const string ClassificationNameComment = "Rust - comment";
+        private const string ClassificationNameKeyword = "Rust - keyword";
+        private const string ClassificationNameLiteral = "Rust - literal";
+        private const string ClassificationNameMacro = "Rust - macro";
+        private const string ClassificationNameType = "Rust - type";
 
         public string[] Map { get; } = new string[]
         {
@@ -116,13 +116,13 @@ namespace AntlrVSIX.GrammarDescription.Rust
         /* Color scheme for the tagging. */
         public List<System.Windows.Media.Color> MapColor { get; } = new List<System.Windows.Media.Color>()
         {
-            Colors.Black,
-            Colors.Orange,
-            Colors.Green,
             Colors.Purple,
+            Colors.Orange,
+            Color.FromRgb(0, 128, 0), //ClassificationNameComment
+            Color.FromRgb(0, 0, 255), //ClassificationNameKeyword
+            Color.FromRgb(163, 21, 21), //ClassificationNameLiteral
             Colors.Red,
-            Colors.Red,
-            Colors.Red,
+            Color.FromRgb(43, 145, 175), //ClassificationNameType
         };
 
         public List<System.Windows.Media.Color> MapInvertedColor { get; } = new List<System.Windows.Media.Color>()

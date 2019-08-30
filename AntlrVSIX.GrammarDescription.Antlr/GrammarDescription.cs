@@ -83,13 +83,13 @@
 
 
         /* Tagging and classification types. */
-        private const string ClassificationNameTerminal = "terminal";
-        private const string ClassificationNameNonterminal = "nonterminal";
-        private const string ClassificationNameComment = "comment";
-        private const string ClassificationNameKeyword = "keyword";
-        private const string ClassificationNameLiteral = "literal";
-        private const string ClassificationNameMode = "mode";
-        private const string ClassificationNameChannel = "channel";
+        private const string ClassificationNameTerminal = "Antlr - terminal";
+        private const string ClassificationNameNonterminal = "Antlr - nonterminal";
+        private const string ClassificationNameComment = "Antlr - comment";
+        private const string ClassificationNameKeyword = "Antlr - keyword";
+        private const string ClassificationNameLiteral = "Antlr - literal";
+        private const string ClassificationNameMode = "Antlr - mode";
+        private const string ClassificationNameChannel = "Antlr - channel";
 
         public string[] Map { get; } = new string[]
         {
@@ -116,13 +116,13 @@
         /* Color scheme for the tagging. */
         public List<System.Windows.Media.Color> MapColor { get; } = new List<System.Windows.Media.Color>()
         {
-            Colors.Purple,
-            Colors.Orange,
-            Colors.Green,
-            Colors.Blue,
-            Colors.Red,
-            Colors.Salmon,
-            Colors.Coral,
+            Color.FromRgb(43, 145, 175), //ClassificationNameNonterminal
+            Colors.Purple, //ClassificationNameTerminal
+            Color.FromRgb(0, 128, 0), //ClassificationNameComment
+            Color.FromRgb(0, 0, 255), //ClassificationNameKeyword
+            Color.FromRgb(163, 21, 21), //ClassificationNameLiteral
+            Colors.Salmon, //ClassificationNameMode
+            Colors.Coral, //ClassificationNameChannel
         };
 
         public List<System.Windows.Media.Color> MapInvertedColor { get; } = new List<System.Windows.Media.Color>()

@@ -81,11 +81,11 @@ namespace AntlrVSIX.GrammarDescription.Python
         }
 
         /* Tagging and classification types. */
-        private const string ClassificationNameVariable = "variable";
-        private const string ClassificationNameMethod = "method";
-        private const string ClassificationNameComment = "comment";
-        private const string ClassificationNameKeyword = "keyword";
-        private const string ClassificationNameLiteral = "literal";
+        private const string ClassificationNameVariable = "Python - variable";
+        private const string ClassificationNameMethod = "Python - method";
+        private const string ClassificationNameComment = "Python - comment";
+        private const string ClassificationNameKeyword = "Python - keyword";
+        private const string ClassificationNameLiteral = "Python - literal";
 
         public string[] Map { get; } = new string[]
         {
@@ -110,9 +110,9 @@ namespace AntlrVSIX.GrammarDescription.Python
         {
             Colors.Purple,
             Colors.Orange,
-            Colors.Green,
-            Colors.Blue,
-            Colors.Red,
+            Color.FromRgb(0, 128, 0), //ClassificationNameComment
+            Color.FromRgb(0, 0, 255), //ClassificationNameKeyword
+            Color.FromRgb(163, 21, 21), //ClassificationNameLiteral
         };
 
         public List<System.Windows.Media.Color> MapInvertedColor { get; } = new List<System.Windows.Media.Color>()
