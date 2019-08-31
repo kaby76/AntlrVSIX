@@ -10,7 +10,7 @@
     using System.Text;
     using System.Text.RegularExpressions;
 
-    public static class Foobar
+    public static class TreeSerializer
     {
         private static int changed = 0;
         private static bool first_time = true;

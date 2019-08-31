@@ -7,10 +7,11 @@
     <RepositoryUrl>https://github.com/kaby76/AntlrVSIX</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>Antlr VS Extension</PackageTags>
-    <Description>Contains interface used to describe a language for support in AntlrVSIX and Visual Studio IDE.</Description>
+    <Description>Contains interface used to describe a language for support in AntlrVSIX and Visual Studio IDE, and a tree serializer for Antlr's IParseTree as a parenthesized expression.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Authors>Ken Domino</Authors>
     <Company />
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
