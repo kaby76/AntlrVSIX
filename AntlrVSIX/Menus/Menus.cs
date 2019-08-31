@@ -68,6 +68,8 @@
             SnapshotSpan span = extent.Span;
             AntlrLanguagePackage.Instance.Span = span;
 
+            RenameHighlightTagger.Update(view, bp);
+
             //  Now, check for valid classification type.
             ClassificationSpan[] c1 = AntlrVSIX.Package.AntlrLanguagePackage.Instance.Aggregator[view].GetClassificationSpans(span).ToArray();
             foreach (ClassificationSpan classification in c1)

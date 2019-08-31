@@ -11,11 +11,9 @@ namespace AntlrVSIX.Rename
     using Microsoft.VisualStudio.Text.Operations;
     using Microsoft.VisualStudio.Text.Tagging;
     using Microsoft.VisualStudio.Text;
-    using Microsoft.VisualStudio.TextManager.Interop;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
-    using System.Windows;
     using System;
 
 
@@ -36,7 +34,7 @@ namespace AntlrVSIX.Rename
         private ITextSearchService TextSearchService { get; set; }
         private ITextStructureNavigator TextStructureNavigator { get; set; }
         private NormalizedSnapshotSpanCollection WordSpans { get; set; }
-        private SnapshotSpan? CurrentWord { get; set; }
+        public static SnapshotSpan? CurrentWord { get; set; }
         public SnapshotPoint RequestedPoint { get; set; }
         private static Dictionary<ITextView, RenameHighlightTagger> _view_to_tagger = new Dictionary<ITextView, RenameHighlightTagger>();
 
@@ -107,8 +105,8 @@ namespace AntlrVSIX.Rename
 
         public void Update()
         {
-            if (!Enabled) return;
-            Enabled = false;
+            //if (!Enabled) return;
+            //Enabled = false;
 
             SnapshotPoint currentRequest = RequestedPoint;
 
@@ -229,75 +227,6 @@ namespace AntlrVSIX.Rename
             if (currentRequest == RequestedPoint)
                 SynchronousUpdate(currentRequest, new NormalizedSnapshotSpanCollection(wordSpans), currentWord);
 
-            // Call up the rename dialog box. In another thread because
-            // of "The calling thread must be STA, because many UI components require this."
-            // error.
-            Application.Current.Dispatcher.Invoke((Action)delegate {
-
-                RenameDialogBox inputDialog = new RenameDialogBox(currentWord.GetText());
-                if (inputDialog.ShowDialog() == true)
-                {
-                    var new_name = inputDialog.Answer;
-                    var files = results.Select(r => r.FileName).OrderBy(q => q).Distinct();
-                    foreach (var f in files)
-                    {
-                        var per_file_results = results.Where(r => r.FileName == f);
-                        per_file_results.Reverse();
-                        var pd = ParserDetails._per_file_parser_details[f];
-                        IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(f);
-                        if (vstv == null)
-                        {
-                            // File has not been opened before! Open file in editor.
-                            IVsTextViewExtensions.ShowFrame(f);
-                            vstv = IVsTextViewExtensions.FindTextViewFor(f);
-                        }
-                        IWpfTextView wpftv = vstv.GetIWpfTextView();
-                        ITextBuffer tb = wpftv.TextBuffer;
-                        using (var edit = tb.CreateEdit())
-                        {
-                            ITextSnapshot cc = tb.CurrentSnapshot;
-                            foreach (var e in per_file_results)
-                            {
-                                SnapshotSpan ss = new SnapshotSpan(cc, e.Token.StartIndex, 1 + e.Token.StopIndex - e.Token.StartIndex);
-                                SnapshotPoint sp = ss.Start;
-                                edit.Replace(ss, new_name);
-                            }
-                            edit.Apply();
-                            ParserDetails.Parse(tb.GetBufferText(), f);
-                        }
-                    }
-
-                    // Reparse everything.
-                    //foreach (string f in results.Select((e) => e.FileName).Distinct())
-                    //{
-                    //    IVsTextView vstv = IVsTextViewExtensions.GetIVsTextView(f);
-                    //    IWpfTextView wpftv = vstv.GetIWpfTextView();
-                    //    if (wpftv == null) continue;
-                    //    ITextBuffer tb = wpftv.TextBuffer;
-                    //    ParserDetails.Parse(tb.GetBufferText(), f);
-                    //}
-                }
-                // Get rid of replace tagging.
-                //foreach (var kvp in _view_to_tagger)
-                //{
-                //    kvp.Value.WordSpans = new NormalizedSnapshotSpanCollection();
-                //    kvp.Value.CurrentWord = null;
-                //    var clear_view = kvp.Key;
-                //    var tb = clear_view.TextBuffer;
-                //    ITextSnapshot snapshot = tb.CurrentSnapshot;
-                //    TagsChanged(this, new SnapshotSpanEventArgs(new SnapshotSpan(snapshot, new Span(0, snapshot.Length))));
-                //}
-                // Update Antlr tagging.
-                //foreach (var kvp in _view_to_tagger)
-                //{
-                //    kvp.Value.WordSpans = new NormalizedSnapshotSpanCollection();
-                //    kvp.Value.CurrentWord = null;
-                //    var clear_view = kvp.Key;
-                //    var tb = clear_view.TextBuffer;
-                //    ITextSnapshot snapshot = tb.CurrentSnapshot;
-                //    TagsChanged(this, new SnapshotSpanEventArgs(new SnapshotSpan(snapshot, new Span(0, snapshot.Length))));
-                //}
-            });
         }
 
         private void UpdateWordAdornments(object threadContext)
