@@ -1,22 +1,16 @@
 
 # AntlrVSIX
-AntlrVSIX is a Visual Studio 2019 extension for Antlr v4
-grammars. This extension provides tagging, "go to def", "find all refs",
-replace, "go to visitor/listener", command completion, options,
-reformat, and project templates for compiling and running.
-The source code is open source, free of charge, and free of ads.
 
-For building parsers in Visual Studio using the [downloaded ANTLR tool](https://www.antlr.org/download/antlr-4.7.2-complete.jar),
-please use [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks), which is a wrapper for the ANTLR tool.
-If you generate the grammar using one of the Antlr project templates, it is
-added to the .CSPROJ file for you.
+AntlrVSIX is a Visual Studio 2019 extension for supporting languages that are based in
+Antlr v4 grammars. Each language is described by the grammar along with mappings of syntax
+to support tagging, go to def, find all refs,
+replace, go to visitor/listener, command completion, options,
+reformat. Project templates for compiling and running Antlr v4 programs is provided.
+The source code is open source, free of charge, and free of ads.
 
 ## Documentation
 
 For information on how to use AntlrVSIX, see the [User Guide](doc/readme.md).
-
-Note, in the next release of the extension, the description of programming languages is abstracted.
-One will be able to use the tool on any code file with a language description. 
 
 ## Caveats:
 
