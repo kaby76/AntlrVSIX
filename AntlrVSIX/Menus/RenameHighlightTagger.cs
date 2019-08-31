@@ -24,7 +24,6 @@ namespace AntlrVSIX.Rename
 
     public class RenameHighlightTagger : ITagger<HighlightWordTag>
     {
-        public bool Enabled = false;
         private object updateLock = new object();
         private IClassifier _aggregator;
 
@@ -96,7 +95,6 @@ namespace AntlrVSIX.Rename
             foreach (var kvp in _view_to_tagger)
                 if (view == kvp.Key)
                 {
-                    kvp.Value.Enabled = true;
                     kvp.Value.RequestedPoint = point;
                     kvp.Value.Update();
                     break;
