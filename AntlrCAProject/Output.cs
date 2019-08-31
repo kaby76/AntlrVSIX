@@ -41,7 +41,8 @@ namespace $safeprojectname$
                     }
                 StartLine(sb, tree, stream, level);
                 sb.AppendLine("( TOKEN i=" + tree.SourceInterval.a
-                    + " t=" + tree.GetText().PerformEscapes());
+                    + " txt=" + tree.GetText().PerformEscapes()
+                    + " tt=" + tok.Symbol.Type);
             }
             else
             {
