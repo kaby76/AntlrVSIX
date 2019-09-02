@@ -17,9 +17,6 @@ For information on how to use AntlrVSIX, see the [User Guide](doc/readme.md).
 * Support for VS2015 and older editions has been removed.
 If you are interested in those, you can try using an older version of the extension.
 
-* This extension only works on Antlr4 grammars, and the grammar must be in a file that has the suffix
-".g4" or ".g"
-
 * The grammar used is the standard Antlr4 grammar in the examples: 
 https://github.com/antlr/grammars-v4/tree/master/antlr4.
 
@@ -30,13 +27,13 @@ Unfortunately, I've found CreateExpInstance doesn't always work because it copie
 previous hives stored under the AppData directory. It is often easier to
 just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio\16.0_*.
 
-* The grammar for Antlr that this extension uses may not be the "official" version for Antlr4 because
-it is version dependent, and I use a copy for this tool.
-Consequently, your grammar may be valid according to the Antlr compiler but not with this extension.
-
 * Use Visual Studio 2019 to build the extension.
 
-## New in v2.0 (to be released):
+## New in v3.0:
+
+* Supports Java, Python, Rust, Antlr in various stages. Description of languages abstracted into a "Grammar Description".
+
+## New in v2.0:
 
 * The extension will support VS 2019 and VS 2017.
 
