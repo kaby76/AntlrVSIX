@@ -70,25 +70,3 @@ select the Enter method.
 * Bug fixes with Context Menu entries for AntlrVSIX. AntlrVSIX commands are now only visible when cursor positioned at an Antlr symbol in the grammar. This fixes the segv's when selecting AntlrVSIX commands in non-Antlr files.
 
 Any questions, email me at ken.domino <at> gmail.com
-
-## Alternative Visual Studio Extensions
-
-There are, of course, alternative extensions for Antlr. Feel free to check
-them out. However, I think you will find this extension and Antlr4BuildTasks
-the most advance of the bunch.
-
-* ANTLR Language Support -- https://marketplace.visualstudio.com/items?itemName=SamHarwell.ANTLRLanguageSupport
-* Antlr4Code -- https://marketplace.visualstudio.com/items?itemName=RamonFMendes.Antlr4Code
-* Actipro SyntaxEditor for WPF -- https://marketplace.visualstudio.com/items?itemName=ActiproSoftware.ActiproSyntaxEditorforWPF
-* Syntax Highlighting Pack -- https://marketplace.visualstudio.com/items?itemName=MadsKristensen.SyntaxHighlightingPack
-
-You also might want to check out the
-plug-in [ANTLR4 grammar syntax support](https://marketplace.visualstudio.com/items?itemName=mike-lischke.vscode-antlr4)
-for Visual Studio Code.
-This tool offers similar functionality to AntlrVSIX, plus code completion,
-parse tree visualization, railroad diagrams,
-and a grammar call graph. Debugging of the generated parsers and lexers
-are intrinsically supported by VS2019. I do not find railroad diagrams and call graph diagrams useful in
-real grammar development, so I probably won't add those features to AntlrVSIX.
-
-
