@@ -63,7 +63,7 @@ channels {
 // Comments
 
 DOC_COMMENT
-	:	DocComment
+	:	DocComment	-> channel(OFF_CHANNEL)
 	;
 
 BLOCK_COMMENT
