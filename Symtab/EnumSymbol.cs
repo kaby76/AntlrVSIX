@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace org.antlr.symtab
+namespace Symtab
 {
-    public class EnumSymbol : SymbolWithScope, Symbol, Type
+    public class EnumSymbol : SymbolWithScope, Symbol, TypeReference
     {
         public EnumSymbol(string name) : base(name)
         {

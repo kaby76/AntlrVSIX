@@ -1,4 +1,4 @@
-﻿namespace org.antlr.symtab
+﻿namespace Symtab
 {
     using System.Collections.Generic;
 
@@ -6,12 +6,12 @@
     /// For C types like "void (*)(int)", we need that to be a pointer to a function
     ///  taking a single integer argument returning void.
     /// </summary>
-    public class FunctionType : Type
+    public class FunctionType : TypeReference
     {
-        protected internal readonly Type returnType;
-        protected internal readonly IList<Type> argumentTypes;
+        protected internal readonly TypeReference returnType;
+        protected internal readonly IList<TypeReference> argumentTypes;
 
-        public FunctionType(Type returnType, IList<Type> argumentTypes)
+        public FunctionType(TypeReference returnType, IList<TypeReference> argumentTypes)
         {
             this.returnType = returnType;
             this.argumentTypes = argumentTypes;
@@ -33,7 +33,7 @@
             }
         }
 
-        public virtual IList<Type> ArgumentTypes
+        public virtual IList<TypeReference> ArgumentTypes
         {
             get
             {

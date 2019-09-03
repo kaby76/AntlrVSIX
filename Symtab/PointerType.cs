@@ -1,14 +1,14 @@
-﻿namespace org.antlr.symtab
+﻿namespace Symtab
 {
 
     /// <summary>
     /// An element in a type tree that represents a pointer to some type,
     ///  such as we need for C.  "int *" would need a PointerType(intType) object.
     /// </summary>
-    public class PointerType : Type
+    public class PointerType : TypeReference
     {
-        protected internal Type targetType;
-        public PointerType(Type targetType)
+        protected internal TypeReference targetType;
+        public PointerType(TypeReference targetType)
         {
             this.targetType = targetType;
         }

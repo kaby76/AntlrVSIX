@@ -1,4 +1,4 @@
-﻿namespace org.antlr.symtab
+﻿namespace Symtab
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -12,7 +12,7 @@
     public abstract class BaseSymbol : Symbol
     {
         protected internal readonly string name; // All symbols at least have a name
-        protected internal Type type; // If language statically typed, record type
+        protected internal TypeReference type; // If language statically typed, record type
         protected internal Scope scope; // All symbols know what scope contains them.
         protected internal ParserRuleContext defNode; // points at definition node in tree
         protected internal int lexicalOrder; // order seen or insertion order from 0; compilers often need this
@@ -41,7 +41,7 @@
             }
         }
 
-        public virtual Type Type
+        public virtual TypeReference Type
         {
             get
             {

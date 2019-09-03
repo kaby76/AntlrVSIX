@@ -1,4 +1,4 @@
-﻿namespace org.antlr.symtab
+﻿namespace Symtab
 {
 
     public class StructSymbol : DataAggregateSymbol

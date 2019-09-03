@@ -1,7 +1,7 @@
-﻿namespace org.antlr.symtab
+﻿namespace Symtab
 {
 
-    public class InvalidType : Type
+    public class InvalidType : TypeReference
     {
         public virtual string Name
         {

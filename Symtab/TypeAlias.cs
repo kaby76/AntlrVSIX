@@ -1,12 +1,12 @@
-﻿namespace org.antlr.symtab
+﻿namespace Symtab
 {
 
     /// <summary>
     /// A "typedef int I;" in C results in a TypeAlias("I", ptrToIntegerType) </summary>
-    public class TypeAlias : BaseSymbol, Type
+    public class TypeAlias : BaseSymbol, TypeReference
     {
-        protected internal Type targetType;
-        public TypeAlias(string name, Type targetType) : base(name)
+        protected internal TypeReference targetType;
+        public TypeAlias(string name, TypeReference targetType) : base(name)
         {
             this.targetType = targetType;
         }
@@ -19,7 +19,7 @@
             }
         }
 
-        public virtual Type TargetType
+        public virtual TypeReference TargetType
         {
             get
             {

@@ -2,7 +2,7 @@
 using Antlr4.Runtime.Tree;
 using System;
 using System.Collections.Generic;
-using org.antlr.symtab;
+using Symtab;
 
 namespace AntlrVSIX.GrammarDescription
 {
@@ -19,8 +19,8 @@ namespace AntlrVSIX.GrammarDescription
         List<bool> CanRename { get; }
         List<bool> CanGotodef { get; }
         List<bool> CanGotovisitor { get; }
-        List<Func<IGrammarDescription, Dictionary<IParseTree, org.antlr.symtab.Symbol>, IParseTree, bool>> Identify { get; }
-        List<Func<IGrammarDescription, Dictionary<IParseTree, org.antlr.symtab.Symbol>, IParseTree, bool>> IdentifyDefinition { get; }
+        List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.Symbol>, IParseTree, bool>> Identify { get; }
+        List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.Symbol>, IParseTree, bool>> IdentifyDefinition { get; }
         bool IsFileType(string ffn);
         bool DoErrorSquiggles { get; }
     }

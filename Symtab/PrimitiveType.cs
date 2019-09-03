@@ -1,7 +1,7 @@
-﻿namespace org.antlr.symtab
+﻿namespace Symtab
 {
 
-    public class PrimitiveType : BaseSymbol, Type
+    public class PrimitiveType : BaseSymbol, TypeReference
     {
         protected internal int typeIndex;
 

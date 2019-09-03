@@ -1,4 +1,4 @@
-﻿namespace org.antlr.symtab
+﻿namespace Symtab
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -38,7 +38,7 @@
         /// Return first ancestor node up the chain towards the root that is clazz.
         ///  Search includes the current node.
         /// </summary>
-        public static ParserRuleContext getFirstAncestorOfType(ParserRuleContext t, Type clazz)
+        public static ParserRuleContext getFirstAncestorOfType(ParserRuleContext t, TypeReference clazz)
         {
             while (t != null)
             {

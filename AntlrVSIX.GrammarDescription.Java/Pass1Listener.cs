@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using org.antlr.symtab;
+using Symtab;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
 
@@ -33,7 +33,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             var md = mh.GetChild(j) as Java9Parser.MethodDeclaratorContext;
             var node = md.GetChild(0);
             var name = node.GetText();
-            var m = new org.antlr.symtab.MethodSymbol(name);
+            var m = new Symtab.MethodSymbol(name);
             _current_scope.Peek().define(m);
             _symbols[node] = m;
             _scopes[context] = m;
@@ -59,7 +59,7 @@ namespace AntlrVSIX.GrammarDescription.Java
                 var vd = vdl.GetChild(j) as Java9Parser.VariableDeclaratorContext;
                 var node = vd.GetChild(0);
                 var name = node.GetText();
-                var f = new org.antlr.symtab.FieldSymbol(name);
+                var f = new Symtab.FieldSymbol(name);
                 _symbols[node] = f;
                 _current_scope.Peek().define(f);
             }
@@ -74,7 +74,7 @@ namespace AntlrVSIX.GrammarDescription.Java
                     break;
             var node = context.GetChild(i+1) as Java9Parser.IdentifierContext;
             var name = node.GetText();
-            var e = new org.antlr.symtab.EnumSymbol(name);
+            var e = new Symtab.EnumSymbol(name);
             _current_scope.Peek().define(e);
             _symbols[node] = e;
             base.EnterEnumDeclaration(context);
@@ -83,7 +83,7 @@ namespace AntlrVSIX.GrammarDescription.Java
         public override void EnterBlock(Java9Parser.BlockContext context)
         {
             var e = _current_scope.Peek();
-            var b = new org.antlr.symtab.LocalScope(e);
+            var b = new Symtab.LocalScope(e);
             _current_scope.Push(b);
             _scopes[context] = b;
             base.EnterBlock(context);
@@ -104,7 +104,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             var vdi = context.GetChild(i) as Java9Parser.VariableDeclaratorIdContext;
             var node = vdi.GetChild(0);
             var name = node.GetText();
-            var v = new org.antlr.symtab.MethodSymbol(name);
+            var v = new Symtab.MethodSymbol(name);
             _current_scope.Peek().define(v);
             _symbols[node] = v;
             base.EnterFormalParameter(context);
@@ -130,7 +130,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             var md = mh.GetChild(j) as Java9Parser.MethodDeclaratorContext;
             var node = md.GetChild(0);
             var name = node.GetText();
-            var m = new org.antlr.symtab.MethodSymbol(name);
+            var m = new Symtab.MethodSymbol(name);
             _current_scope.Peek().define(m);
             _symbols[node] = m;
             _scopes[context] = m;
@@ -152,7 +152,7 @@ namespace AntlrVSIX.GrammarDescription.Java
                 var vd = vdl.GetChild(j) as Java9Parser.VariableDeclaratorContext;
                 var node = vd.GetChild(0);
                 var name = node.GetText();
-                var f = new org.antlr.symtab.FieldSymbol(name);
+                var f = new Symtab.FieldSymbol(name);
                 _current_scope.Peek().define(f);
                 _symbols[node] = f;
             }
@@ -167,7 +167,7 @@ namespace AntlrVSIX.GrammarDescription.Java
                     break;
             var node = context.GetChild(i) as Java9Parser.IdentifierContext;
             var id_name = node.GetText();
-            var cs = new org.antlr.symtab.ClassSymbol(id_name);
+            var cs = new Symtab.ClassSymbol(id_name);
             _current_scope.Peek().define(cs);
             _symbols[node] = cs;
             _scopes[context] = cs;
@@ -189,7 +189,7 @@ namespace AntlrVSIX.GrammarDescription.Java
                     break;
             var node = context.GetChild(i) as Java9Parser.IdentifierContext;
             var id_name = node.GetText();
-            var cs = new org.antlr.symtab.InterfaceSymbol(id_name);
+            var cs = new Symtab.InterfaceSymbol(id_name);
             _current_scope.Peek().define(cs);
             _symbols[node] = cs;
             _scopes[context] = cs;

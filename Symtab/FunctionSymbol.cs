@@ -1,4 +1,4 @@
-﻿namespace org.antlr.symtab
+﻿namespace Symtab
 {
     using Antlr4.Runtime;
 
@@ -10,7 +10,7 @@
     public class FunctionSymbol : SymbolWithScope, TypedSymbol
     {
         protected internal ParserRuleContext defNode;
-        protected internal Type retType;
+        protected internal TypeReference retType;
 
         public FunctionSymbol(string name) : base(name)
         {
@@ -29,7 +29,7 @@
         }
 
 
-        public virtual Type Type
+        public virtual TypeReference Type
         {
             get
             {

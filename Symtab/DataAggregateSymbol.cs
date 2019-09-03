@@ -1,4 +1,4 @@
-﻿namespace org.antlr.symtab
+﻿namespace Symtab
 {
     using System.Collections.Generic;
     using Antlr4.Runtime;
@@ -9,7 +9,7 @@
     ///  and methods with different slot sequences. A DataAggregateSymbol
     ///  can also be a member of an aggregate itself (nested structs, ...).
     /// </summary>
-    public abstract class DataAggregateSymbol : SymbolWithScope, Symbol, Type
+    public abstract class DataAggregateSymbol : SymbolWithScope, Symbol, TypeReference
     {
         protected internal ParserRuleContext defNode;
         protected internal int nextFreeFieldSlot = 0; // next slot to allocate

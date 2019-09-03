@@ -10,7 +10,7 @@ namespace AntlrVSIX.GrammarDescription.Java
     using System.Linq;
     using System.Text;
     using System.Windows.Media;
-    using org.antlr.symtab;
+    using Symtab;
 
     class GrammarDescription : IGrammarDescription
     {
@@ -255,9 +255,9 @@ namespace AntlrVSIX.GrammarDescription.Java
             "while",
         };
 
-        public List<Func<IGrammarDescription, Dictionary<IParseTree, org.antlr.symtab.Symbol>, IParseTree, bool>> Identify { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, org.antlr.symtab.Symbol>, IParseTree, bool>>()
+        public List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.Symbol>, IParseTree, bool>> Identify { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.Symbol>, IParseTree, bool>>()
         {
-            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // variable = 0
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // variable = 0
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -277,7 +277,7 @@ namespace AntlrVSIX.GrammarDescription.Java
                     }
                     return false;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // method = 1
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // method = 1
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -295,7 +295,7 @@ namespace AntlrVSIX.GrammarDescription.Java
                     return false;
                 },
             null, // comment = 2
-            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // keyword = 3
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // keyword = 3
                 {
                     TerminalNodeImpl nonterm = t as TerminalNodeImpl;
                     if (nonterm == null) return false;
@@ -303,7 +303,7 @@ namespace AntlrVSIX.GrammarDescription.Java
                     if (!_keywords.Contains(text)) return false;
                     return true;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // keyword-control = 4
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // keyword-control = 4
                 {
                     TerminalNodeImpl nonterm = t as TerminalNodeImpl;
                     if (nonterm == null) return false;
@@ -311,14 +311,14 @@ namespace AntlrVSIX.GrammarDescription.Java
                     if (!_keywords_control.Contains(text)) return false;
                     return true;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // literal = 5
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // literal = 5
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
                     if (term.Symbol == null) return false;
                     return false;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // type = 6
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // type = 6
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -329,19 +329,19 @@ namespace AntlrVSIX.GrammarDescription.Java
                     if (term.Parent.Parent is Java9Parser.UnannClassType_lfno_unannClassOrInterfaceTypeContext) return true;
                     return false;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // class
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // class
                 {
                     return false;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // field
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // field
                 {
                     return false;
                 },
         };
 
-        public List<Func<IGrammarDescription, Dictionary<IParseTree, org.antlr.symtab.Symbol>, IParseTree, bool>> IdentifyDefinition { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, org.antlr.symtab.Symbol>, IParseTree, bool>>()
+        public List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.Symbol>, IParseTree, bool>> IdentifyDefinition { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.Symbol>, IParseTree, bool>>()
         {
-            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // variable
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // variable
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -353,17 +353,17 @@ namespace AntlrVSIX.GrammarDescription.Java
                     if (term.Parent.Parent is Java9Parser.VariableDeclaratorIdContext) return true;
                     return false;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // method
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // method
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     for (; p != null; p = p.Parent)
                     {
-                        st.TryGetValue(p, out org.antlr.symtab.Symbol value);
+                        st.TryGetValue(p, out Symtab.Symbol value);
                         if (value != null)
                         {
-                            if (value is org.antlr.symtab.MethodSymbol)
+                            if (value is Symtab.MethodSymbol)
                             {
                                 return true;
                             }
@@ -376,17 +376,17 @@ namespace AntlrVSIX.GrammarDescription.Java
             null, // keyword-control
             null, // literal
             null, // type
-            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // class
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // class
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     for (; p != null; p = p.Parent)
                     {
-                        st.TryGetValue(p, out org.antlr.symtab.Symbol value);
+                        st.TryGetValue(p, out Symtab.Symbol value);
                         if (value != null)
                         {
-                            if (value is org.antlr.symtab.ClassSymbol)
+                            if (value is Symtab.ClassSymbol)
                             {
                                 return true;
                             }
@@ -394,17 +394,17 @@ namespace AntlrVSIX.GrammarDescription.Java
                     }
                     return false;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // field
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // field
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     for (; p != null; p = p.Parent)
                     {
-                        st.TryGetValue(p, out org.antlr.symtab.Symbol value);
+                        st.TryGetValue(p, out Symtab.Symbol value);
                         if (value != null)
                         {
-                            if (value is org.antlr.symtab.FieldSymbol)
+                            if (value is Symtab.FieldSymbol)
                             {
                                 return true;
                             }

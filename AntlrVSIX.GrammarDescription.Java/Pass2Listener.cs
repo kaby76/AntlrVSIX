@@ -1,6 +1,6 @@
 ﻿using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
-using org.antlr.symtab;
+using Symtab;
 using System.Collections.Generic;
 
 namespace AntlrVSIX.GrammarDescription.Java
@@ -20,7 +20,7 @@ namespace AntlrVSIX.GrammarDescription.Java
 
         public override void EnterInterfaceMethodDeclaration(Java9Parser.InterfaceMethodDeclarationContext context)
         {
-            var m = (org.antlr.symtab.MethodSymbol)_scopes[context];
+            var m = (Symtab.MethodSymbol)_scopes[context];
             _current_scope.Push(m);
             base.EnterInterfaceMethodDeclaration(context);
         }
@@ -33,13 +33,13 @@ namespace AntlrVSIX.GrammarDescription.Java
 
         public override void EnterEnumDeclaration(Java9Parser.EnumDeclarationContext context)
         {
-            var e = (org.antlr.symtab.EnumSymbol)_scopes[context];
+            var e = (Symtab.EnumSymbol)_scopes[context];
             base.EnterEnumDeclaration(context);
         }
 
         public override void EnterBlock(Java9Parser.BlockContext context)
         {
-            var b = (org.antlr.symtab.LocalScope)_scopes[context];
+            var b = (Symtab.LocalScope)_scopes[context];
             _current_scope.Push(b);
             base.EnterBlock(context);
         }
@@ -52,7 +52,7 @@ namespace AntlrVSIX.GrammarDescription.Java
 
         public override void EnterMethodDeclaration(Java9Parser.MethodDeclarationContext context)
         {
-            var m = (org.antlr.symtab.MethodSymbol)_scopes[context];
+            var m = (Symtab.MethodSymbol)_scopes[context];
             _current_scope.Push(m);
             base.EnterMethodDeclaration(context);
         }
@@ -65,7 +65,7 @@ namespace AntlrVSIX.GrammarDescription.Java
 
         public override void EnterNormalClassDeclaration(Java9Parser.NormalClassDeclarationContext context)
         {
-            var m = (org.antlr.symtab.ClassSymbol)_scopes[context];
+            var m = (Symtab.ClassSymbol)_scopes[context];
             _current_scope.Push(m);
             base.EnterNormalClassDeclaration(context);
         }
@@ -78,7 +78,7 @@ namespace AntlrVSIX.GrammarDescription.Java
 
         public override void EnterNormalInterfaceDeclaration(Java9Parser.NormalInterfaceDeclarationContext context)
         {
-            var m = (org.antlr.symtab.InterfaceSymbol)_scopes[context];
+            var m = (Symtab.InterfaceSymbol)_scopes[context];
             _current_scope.Push(m);
             base.EnterNormalInterfaceDeclaration(context);
         }

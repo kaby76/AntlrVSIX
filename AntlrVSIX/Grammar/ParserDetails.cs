@@ -18,7 +18,7 @@ namespace AntlrVSIX.Grammar
         public Dictionary<IToken, int> _ant_applied_occurrence_classes = new Dictionary<IToken, int>();
         public Dictionary<IToken, int> _ant_defining_occurrence_classes = new Dictionary<IToken, int>();
         public Dictionary<IToken, int> _ant_comments = new Dictionary<IToken, int>();
-        public Dictionary<IParseTree, org.antlr.symtab.Symbol> _ant_symtab = new Dictionary<IParseTree, org.antlr.symtab.Symbol>();
+        public Dictionary<IParseTree, Symtab.Symbol> _ant_symtab = new Dictionary<IParseTree, Symtab.Symbol>();
         private List<IObserver<ParserDetails>> _observers = new List<IObserver<ParserDetails>>();
         public IParseTree _ant_tree = null;
         private IEnumerable<IParseTree>_all_nodes = null;

@@ -1,4 +1,4 @@
-﻿namespace org.antlr.symtab
+﻿namespace Symtab
 {
 
     /// <summary>
@@ -12,7 +12,7 @@
             GLOBALS = new GlobalScope(PREDEFINED);
         }
 
-        public static readonly Type INVALID_TYPE = new InvalidType();
+        public static readonly TypeReference INVALID_TYPE = new InvalidType();
 
         public BaseScope PREDEFINED = new PredefinedScope();
         public GlobalScope GLOBALS = new GlobalScope(null);

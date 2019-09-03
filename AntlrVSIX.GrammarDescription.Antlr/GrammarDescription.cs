@@ -3,7 +3,7 @@
     using Antlr4.Runtime;
     using Antlr4.Runtime.Tree;
     using AntlrVSIX.GrammarDescription;
-    using org.antlr.symtab;
+    using Symtab;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -214,9 +214,9 @@
             "channel"
         };
 
-        public List<Func<IGrammarDescription, Dictionary<IParseTree, org.antlr.symtab.Symbol>, IParseTree, bool>> Identify { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, org.antlr.symtab.Symbol>, IParseTree, bool>>()
+        public List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.Symbol>, IParseTree, bool>> Identify { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.Symbol>, IParseTree, bool>>()
         {
-            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree n) => // nonterminal = 0
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree n) => // nonterminal = 0
                 {
                     TerminalNodeImpl term = n as TerminalNodeImpl;
                     if (term == null) return false;
@@ -235,7 +235,7 @@
                         return true;
                     return false;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree n) => // terminal = 1
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree n) => // terminal = 1
                 {
                     TerminalNodeImpl term = n as TerminalNodeImpl;
                     if (term == null) return false;
@@ -258,7 +258,7 @@
                     return false;
                 },
             null, // comment = 2
-            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // keyword = 3
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // keyword = 3
                 {
                     TerminalNodeImpl nonterm = t as TerminalNodeImpl;
                     if (nonterm == null) return false;
@@ -266,7 +266,7 @@
                     if (!_antlr_keywords.Contains(text)) return false;
                     return true;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // literal = 4
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // literal = 4
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -286,7 +286,7 @@
                     }
                     return false;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // mode = 5
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // mode = 5
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -294,7 +294,7 @@
                     if (_antlr_keywords.Contains(text)) return false;
                     return false;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // channel = 6
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // channel = 6
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -309,9 +309,9 @@
                 }
         };
 
-        public List<Func<IGrammarDescription, Dictionary<IParseTree, org.antlr.symtab.Symbol>, IParseTree, bool>> IdentifyDefinition { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, org.antlr.symtab.Symbol>, IParseTree, bool>>()
+        public List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.Symbol>, IParseTree, bool>> IdentifyDefinition { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.Symbol>, IParseTree, bool>>()
         {
-            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // nonterminal
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // nonterminal
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -329,7 +329,7 @@
                     }
                     return false;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree n) => // terminal
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree n) => // terminal
                 {
                     TerminalNodeImpl term = n as TerminalNodeImpl;
                     if (term == null) return false;
@@ -350,7 +350,7 @@
             null, // comment
             null, // keyword
             null, // literal
-            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree n) => // mode
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree n) => // mode
                 {
                     TerminalNodeImpl term = n as TerminalNodeImpl;
                     if (term == null) return false;
@@ -368,7 +368,7 @@
                     }
                     return false;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // channel
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // channel
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;

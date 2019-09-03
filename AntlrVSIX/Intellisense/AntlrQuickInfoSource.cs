@@ -84,7 +84,7 @@ namespace AntlrVSIX
                     Antlr4.Runtime.Tree.IParseTree p = pt;
                     for (; p != null; p = p.Parent)
                     {
-                        pd._ant_symtab.TryGetValue(p, out org.antlr.symtab.Symbol value);
+                        pd._ant_symtab.TryGetValue(p, out Symtab.Symbol value);
                         if (value != null)
                         {
                             quick_info_content.Add(

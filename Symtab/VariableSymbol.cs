@@ -1,4 +1,4 @@
-﻿namespace org.antlr.symtab
+﻿namespace Symtab
 {
 
     public class VariableSymbol : BaseSymbol, TypedSymbol
@@ -7,7 +7,7 @@
         {
         }
 
-        public override Type Type
+        public override TypeReference Type
         {
             set
             {

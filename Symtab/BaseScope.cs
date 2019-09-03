@@ -1,4 +1,4 @@
-﻿namespace org.antlr.symtab
+﻿namespace Symtab
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -182,7 +182,7 @@
         ///  MethodSymbol.class, unless of course you have created a subclass for
         ///  your language implementation.
         /// </summary>
-        public virtual MethodSymbol getEnclosingScopeOfType(Type type)
+        public virtual MethodSymbol getEnclosingScopeOfType(TypeReference type)
         {
             Scope s = this;
             while (s != null)

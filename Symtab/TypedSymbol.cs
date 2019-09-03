@@ -1,4 +1,4 @@
-﻿namespace org.antlr.symtab
+﻿namespace Symtab
 {
 
     /// <summary>
@@ -7,7 +7,7 @@
     /// </summary>
     public interface TypedSymbol
     {
-        Type Type {get;set;}
+        TypeReference Type {get;set;}
     }
 
 }
