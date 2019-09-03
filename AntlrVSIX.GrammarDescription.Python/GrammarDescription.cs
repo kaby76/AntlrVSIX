@@ -201,27 +201,27 @@ namespace AntlrVSIX.GrammarDescription.Python
             "await",
         };
 
-        public List<Func<IGrammarDescription, IParseTree, bool>> Identify { get; } = new List<Func<IGrammarDescription, IParseTree, bool>>()
+        public List<Func<IGrammarDescription, Dictionary<IParseTree, org.antlr.symtab.Symbol>, IParseTree, bool>> Identify { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, org.antlr.symtab.Symbol>, IParseTree, bool>>()
         {
-            (IGrammarDescription gd, IParseTree t) => // variable = 0
+            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // variable = 0
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
                     var text = term.GetText();
                     // Make sure it's not a def.
                     var fun = gd.IdentifyDefinition[0];
-                    var is_def = fun != null ? fun(gd, term) : false;
+                    var is_def = fun != null ? fun(gd, st, term) : false;
                     if (is_def) return false;
                     if (_keywords.Contains(text)) return false;
                     if (term?.Symbol.Type == Python3Parser.NAME) return true;
                     return false;
                 },
-            (IGrammarDescription gd, IParseTree t) => // method = 1
+            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // method = 1
                 {
                     return false;
                 },
             null, // comment = 2
-            (IGrammarDescription gd, IParseTree t) => // keyword = 3
+            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // keyword = 3
                 {
                     TerminalNodeImpl nonterm = t as TerminalNodeImpl;
                     if (nonterm == null) return false;
@@ -229,7 +229,7 @@ namespace AntlrVSIX.GrammarDescription.Python
                     if (!_keywords.Contains(text)) return false;
                     return true;
                 },
-            (IGrammarDescription gd, IParseTree t) => // literal = 4
+            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // literal = 4
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -240,13 +240,13 @@ namespace AntlrVSIX.GrammarDescription.Python
                 },
         };
 
-        public List<Func<IGrammarDescription, IParseTree, bool>> IdentifyDefinition { get; } = new List<Func<IGrammarDescription, IParseTree, bool>>()
+        public List<Func<IGrammarDescription, Dictionary<IParseTree, org.antlr.symtab.Symbol>, IParseTree, bool>> IdentifyDefinition { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, org.antlr.symtab.Symbol>, IParseTree, bool>>()
         {
-            (IGrammarDescription gd, IParseTree t) => // variable
+            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // variable
                 {
                     return false;
                 },
-            (IGrammarDescription gd, IParseTree t) => // method
+            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // method
                 {
                     return false;
                 },

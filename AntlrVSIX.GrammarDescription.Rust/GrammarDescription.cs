@@ -194,15 +194,15 @@ namespace AntlrVSIX.GrammarDescription.Rust
             "bool",
         };
 
-        public List<Func<IGrammarDescription, IParseTree, bool>> Identify { get; } = new List<Func<IGrammarDescription, IParseTree, bool>>()
+        public List<Func<IGrammarDescription, Dictionary<IParseTree, org.antlr.symtab.Symbol>, IParseTree, bool>> Identify { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, org.antlr.symtab.Symbol>, IParseTree, bool>>()
         {
-            (IGrammarDescription gd, IParseTree t) => // variable = 0
+            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // variable = 0
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
                     var text = term.GetText();
                     // Make sure it's not a def.
-                    var is_def = gd.IdentifyDefinition[0](gd, term);
+                    var is_def = gd.IdentifyDefinition[0](gd, st, term);
                     if (is_def) return false;
                     if (_keywords.Contains(text)) return false;
                     //if (term.Parent as RustParser.IdentContext == null) return false;
@@ -213,12 +213,12 @@ namespace AntlrVSIX.GrammarDescription.Rust
                     //}
                     return false;
                 },
-            (IGrammarDescription gd, IParseTree t) => // method = 1
+            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // method = 1
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
                     var text = term.GetText();
-                    var is_def = gd.IdentifyDefinition[1](gd, term);
+                    var is_def = gd.IdentifyDefinition[1](gd, st, term);
                     if (is_def) return false;
                     if (_keywords.Contains(text)) return false;
                     //if (term.Parent as RustParser.IdentifierContext == null) return false;
@@ -231,7 +231,7 @@ namespace AntlrVSIX.GrammarDescription.Rust
                     return false;
                 },
             null, // comment = 2
-            (IGrammarDescription gd, IParseTree t) => // keyword = 3
+            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // keyword = 3
                 {
                     TerminalNodeImpl nonterm = t as TerminalNodeImpl;
                     if (nonterm == null) return false;
@@ -239,7 +239,7 @@ namespace AntlrVSIX.GrammarDescription.Rust
                     if (!_keywords.Contains(text)) return false;
                     return true;
                 },
-            (IGrammarDescription gd, IParseTree t) => // literal = 4
+            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // literal = 4
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -248,7 +248,7 @@ namespace AntlrVSIX.GrammarDescription.Rust
                     if (term.Symbol == null) return false;
                     return false;
                 },
-            (IGrammarDescription gd, IParseTree t) => // macro = 5
+            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // macro = 5
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -256,9 +256,9 @@ namespace AntlrVSIX.GrammarDescription.Rust
                 },
         };
 
-        public List<Func<IGrammarDescription, IParseTree, bool>> IdentifyDefinition { get; } = new List<Func<IGrammarDescription, IParseTree, bool>>()
+        public List<Func<IGrammarDescription, Dictionary<IParseTree, org.antlr.symtab.Symbol>, IParseTree, bool>> IdentifyDefinition { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, org.antlr.symtab.Symbol>, IParseTree, bool>>()
         {
-            (IGrammarDescription gd, IParseTree t) => // variable
+            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // variable
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -268,7 +268,7 @@ namespace AntlrVSIX.GrammarDescription.Rust
                     //if (term.Parent.Parent is RustParser.VariableDeclaratorIdContext) return true;
                     return false;
                 },
-            (IGrammarDescription gd, IParseTree t) => // method
+            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // method
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -281,7 +281,7 @@ namespace AntlrVSIX.GrammarDescription.Rust
             null, // comment
             null, // keyword
             null, // literal
-            (IGrammarDescription gd, IParseTree t) => // macro = 5
+            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // macro = 5
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;

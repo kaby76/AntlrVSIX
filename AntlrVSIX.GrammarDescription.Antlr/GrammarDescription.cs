@@ -214,15 +214,15 @@
             "channel"
         };
 
-        public List<Func<IGrammarDescription, IParseTree, bool>> Identify { get; } = new List<Func<IGrammarDescription, IParseTree, bool>>()
+        public List<Func<IGrammarDescription, Dictionary<IParseTree, org.antlr.symtab.Symbol>, IParseTree, bool>> Identify { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, org.antlr.symtab.Symbol>, IParseTree, bool>>()
         {
-            (IGrammarDescription gd, IParseTree n) => // nonterminal = 0
+            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree n) => // nonterminal = 0
                 {
                     TerminalNodeImpl term = n as TerminalNodeImpl;
                     if (term == null) return false;
                     var text = term.GetText();
                     // Make sure it's not a def.
-                    var is_def = gd.IdentifyDefinition[0](gd, term);
+                    var is_def = gd.IdentifyDefinition[0](gd, st, term);
                     if (is_def) return false;
                     if (_antlr_keywords.Contains(text)) return false;
                     if (n.Parent as ANTLRv4Parser.RulerefContext != null &&
@@ -235,20 +235,20 @@
                         return true;
                     return false;
                 },
-            (IGrammarDescription gd, IParseTree n) => // terminal = 1
+            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree n) => // terminal = 1
                 {
                     TerminalNodeImpl term = n as TerminalNodeImpl;
                     if (term == null) return false;
                     var text = term.GetText();
                     if (!Char.IsUpper(text[0])) return false;
                     // Make sure it's not a def.
-                    var is_def = gd.IdentifyDefinition[1](gd, term);
+                    var is_def = gd.IdentifyDefinition[1](gd, st, term);
                     if (is_def) return false;
                        // special case--channels get their own classification.
-                    var is_channel = gd.IdentifyDefinition[6](gd, term);
+                    var is_channel = gd.IdentifyDefinition[6](gd, st, term);
                     if (is_channel) return false;
-                    if (gd.Identify[5](gd, term)) return false;
-                    if (gd.Identify[6](gd, term)) return false;
+                    if (gd.Identify[5](gd, st, term)) return false;
+                    if (gd.Identify[6](gd, st, term)) return false;
                     if (term.Parent as ANTLRv4Parser.TerminalContext != null)
                         return true;
                     if (term.Parent as ANTLRv4Parser.LexerRuleSpecContext != null)
@@ -258,7 +258,7 @@
                     return false;
                 },
             null, // comment = 2
-            (IGrammarDescription gd, IParseTree t) => // keyword = 3
+            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // keyword = 3
                 {
                     TerminalNodeImpl nonterm = t as TerminalNodeImpl;
                     if (nonterm == null) return false;
@@ -266,7 +266,7 @@
                     if (!_antlr_keywords.Contains(text)) return false;
                     return true;
                 },
-            (IGrammarDescription gd, IParseTree t) => // literal = 4
+            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // literal = 4
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -286,7 +286,7 @@
                     }
                     return false;
                 },
-            (IGrammarDescription gd, IParseTree t) => // mode = 5
+            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // mode = 5
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -294,7 +294,7 @@
                     if (_antlr_keywords.Contains(text)) return false;
                     return false;
                 },
-            (IGrammarDescription gd, IParseTree t) => // channel = 6
+            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // channel = 6
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -309,9 +309,9 @@
                 }
         };
 
-        public List<Func<IGrammarDescription, IParseTree, bool>> IdentifyDefinition { get; } = new List<Func<IGrammarDescription, IParseTree, bool>>()
+        public List<Func<IGrammarDescription, Dictionary<IParseTree, org.antlr.symtab.Symbol>, IParseTree, bool>> IdentifyDefinition { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, org.antlr.symtab.Symbol>, IParseTree, bool>>()
         {
-            (IGrammarDescription gd, IParseTree t) => // nonterminal
+            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // nonterminal
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -329,7 +329,7 @@
                     }
                     return false;
                 },
-            (IGrammarDescription gd, IParseTree n) => // terminal
+            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree n) => // terminal
                 {
                     TerminalNodeImpl term = n as TerminalNodeImpl;
                     if (term == null) return false;
@@ -350,7 +350,7 @@
             null, // comment
             null, // keyword
             null, // literal
-            (IGrammarDescription gd, IParseTree n) => // mode
+            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree n) => // mode
                 {
                     TerminalNodeImpl term = n as TerminalNodeImpl;
                     if (term == null) return false;
@@ -368,7 +368,7 @@
                     }
                     return false;
                 },
-            (IGrammarDescription gd, IParseTree t) => // channel
+            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // channel
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;

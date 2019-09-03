@@ -58,7 +58,7 @@ namespace AntlrVSIX.Grammar
             {
                 var fun = gd.IdentifyDefinition[classification];
                 if (fun == null) continue;
-                var it = pd._all_nodes.Where(t => fun(gd, t));
+                var it = pd._all_nodes.Where(t => fun(gd, pd._ant_symtab, t));
                 foreach (var t in it)
                 {
                     var itoken = (t as TerminalNodeImpl).Symbol;
@@ -69,7 +69,7 @@ namespace AntlrVSIX.Grammar
             {
                 var fun = gd.Identify[classification];
                 if (fun == null) continue;
-                var it = pd._all_nodes.Where(t => fun(gd, t));
+                var it = pd._all_nodes.Where(t => fun(gd, pd._ant_symtab, t));
                 foreach (var t in it)
                 {
                     var itoken = (t as TerminalNodeImpl).Symbol;
