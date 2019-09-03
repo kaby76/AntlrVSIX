@@ -10,6 +10,9 @@
     using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Utilities;
     using System.ComponentModel.Composition;
+    using AntlrVSIX.Extensions;
+    using AntlrVSIX.GrammarDescription;
+    using AntlrVSIX.Grammar;
 
     [Export(typeof(IMouseProcessorProvider))]
     [ContentType("text")]
@@ -30,14 +33,13 @@
         public IMouseProcessor GetAssociatedProcessor(IWpfTextView view)
         {
             ITextBuffer buffer = view.TextBuffer;
-
+            if (buffer == null) return null;
+            string ffn = buffer.GetFilePath();
+            var grammar_description = GrammarDescriptionFactory.Create(ffn);
+            if (grammar_description == null) return null;
             IOleCommandTarget shellCommandDispatcher = GetShellCommandDispatcher(view);
-
-            if (shellCommandDispatcher == null)
-                return null;
-
+            if (shellCommandDispatcher == null) return null;
             IClassifier ag1 = AggregatorFactory.GetClassifier(buffer);
-
             return new MouseHandler(view,
                                            shellCommandDispatcher,
                                            GlobalServiceProvider,
