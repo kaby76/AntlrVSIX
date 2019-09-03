@@ -94,6 +94,7 @@ namespace AntlrVSIX.GrammarDescription.Java
         private const string ClassificationNameLiteral = "Java - literal";
         private const string ClassificationNameType = "Java - type";
         private const string ClassificationNameClass = "Java - class";
+        private const string ClassificationNameField = "Java - field";
 
         public string[] Map { get; } = new string[]
         {
@@ -105,6 +106,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             ClassificationNameLiteral,
             ClassificationNameType,
             ClassificationNameClass,
+            ClassificationNameField,
         };
 
         public Dictionary<string, int> InverseMap { get; } = new Dictionary<string, int>()
@@ -117,6 +119,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             { ClassificationNameLiteral, 5 },
             { ClassificationNameType, 6 },
             { ClassificationNameClass, 7 },
+            { ClassificationNameField, 8 },
         };
 
         /* Color scheme for the tagging. */
@@ -130,6 +133,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             Color.FromRgb(163, 21, 21), //ClassificationNameLiteral
             Color.FromRgb(43, 145, 175), //ClassificationNameType
             Color.FromRgb(43, 145, 175), //ClassificationNameClass
+            Color.FromRgb(43, 145, 175), //ClassificationNameField
         };
 
         public List<Color> MapInvertedColor { get; } = new List<Color>()
@@ -151,6 +155,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             true, // literal
             true, // type
             true, // class
+            true, // field
         };
 
         public List<bool> CanRename { get; } = new List<bool>()
@@ -163,6 +168,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             false, // literal
             true, // type
             true, // class
+            true, // field
         };
 
         public List<bool> CanGotodef { get; } = new List<bool>()
@@ -175,6 +181,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             false, // literal
             true, // type
             true, // class
+            true, // field
         };
 
         public List<bool> CanGotovisitor { get; } = new List<bool>()
@@ -187,6 +194,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             false, // literal
             false, // type
             false, // class
+            false, // field
         };
 
         private static List<string> _keywords = new List<string>()
@@ -272,8 +280,7 @@ namespace AntlrVSIX.GrammarDescription.Java
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
                     var text = term.GetText();
-                    var is_def = gd.IdentifyDefinition[1](gd, st, term);
-                    if (is_def) return false;
+                    if (gd.IdentifyDefinition[gd.InverseMap[ClassificationNameMethod]](gd, st, term)) return false;
                     if (_keywords.Contains(text)) return false;
                     if (_keywords_control.Contains(text)) return false;
                     if (term.Parent as Java9Parser.IdentifierContext == null) return false;
@@ -324,6 +331,10 @@ namespace AntlrVSIX.GrammarDescription.Java
                 {
                     return false;
                 },
+            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // field
+                {
+                    return false;
+                },
         };
 
         public List<Func<IGrammarDescription, Dictionary<IParseTree, org.antlr.symtab.Symbol>, IParseTree, bool>> IdentifyDefinition { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, org.antlr.symtab.Symbol>, IParseTree, bool>>()
@@ -334,6 +345,8 @@ namespace AntlrVSIX.GrammarDescription.Java
                     if (term == null) return false;
                     var text = term.GetText();
                     if (_keywords.Contains(text)) return false;
+                    if (gd.IdentifyDefinition[gd.InverseMap[ClassificationNameField]](gd, st, term)) return false;
+                    if (gd.IdentifyDefinition[gd.InverseMap[ClassificationNameMethod]](gd, st, term)) return false;
                     if (term.Parent as Java9Parser.IdentifierContext == null) return false;
                     if (term.Parent.Parent is Java9Parser.VariableDeclaratorIdContext) return true;
                     return false;
@@ -342,10 +355,18 @@ namespace AntlrVSIX.GrammarDescription.Java
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
-                    var text = term.GetText();
-                    if (_keywords.Contains(text)) return false;
-                    if (term.Parent as Java9Parser.IdentifierContext == null) return false;
-                    if (term.Parent.Parent is Java9Parser.MethodDeclaratorContext) return true;
+                    Antlr4.Runtime.Tree.IParseTree p = term;
+                    for (; p != null; p = p.Parent)
+                    {
+                        st.TryGetValue(p, out org.antlr.symtab.Symbol value);
+                        if (value != null)
+                        {
+                            if (value is org.antlr.symtab.MethodSymbol)
+                            {
+                                return true;
+                            }
+                        }
+                    }
                     return false;
                 },
             null, // comment
@@ -364,6 +385,24 @@ namespace AntlrVSIX.GrammarDescription.Java
                         if (value != null)
                         {
                             if (value is org.antlr.symtab.ClassSymbol)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                },
+            (IGrammarDescription gd, Dictionary<IParseTree, org.antlr.symtab.Symbol> st, IParseTree t) => // field
+                {
+                    TerminalNodeImpl term = t as TerminalNodeImpl;
+                    if (term == null) return false;
+                    Antlr4.Runtime.Tree.IParseTree p = term;
+                    for (; p != null; p = p.Parent)
+                    {
+                        st.TryGetValue(p, out org.antlr.symtab.Symbol value);
+                        if (value != null)
+                        {
+                            if (value is org.antlr.symtab.FieldSymbol)
                             {
                                 return true;
                             }
