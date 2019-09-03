@@ -10,6 +10,7 @@
     using System.Runtime.CompilerServices;
     using System;
     using System.Runtime.InteropServices;
+
     internal class FindAntlrSymbolsModel : INotifyPropertyChanged
     {
         private Entry _item_selected = null;

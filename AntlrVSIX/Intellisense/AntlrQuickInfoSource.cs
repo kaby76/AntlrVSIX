@@ -65,13 +65,40 @@ namespace AntlrVSIX
 
             TextExtent extent = AntlrVSIX.Package.AntlrLanguagePackage.Instance.Navigator[view].GetExtentOfWord(trigger_point);
             SnapshotSpan span = extent.Span;
+            ITextBuffer buffer = view.TextBuffer;
+            ITextDocument doc = buffer.GetTextDocument();
+            string file_path = doc.FilePath;
+            IGrammarDescription grammar_description = GrammarDescriptionFactory.Create(file_path);
+            if (!grammar_description.IsFileType(file_path)) return;
+            ParserDetails pd = ParserDetails._per_file_parser_details[file_path];
 
             foreach (IMappingTagSpan<AntlrTokenTag> cur_tag in _aggregator.GetTags(span))
             {
                 int tag_type = (int)cur_tag.Tag.TagType;
                 SnapshotSpan tag_span = cur_tag.Span.GetSpans(_buffer).First();
                 tracking_span = _buffer.CurrentSnapshot.CreateTrackingSpan(tag_span, SpanTrackingMode.EdgeExclusive);
-                quick_info_content.Add(_grammar_description.Map[tag_type]);
+                Antlr4.Runtime.Tree.IParseTree pt = tag_span.Start.Find();
+                bool found = false;
+                if (pt != null)
+                {
+                    Antlr4.Runtime.Tree.IParseTree p = pt;
+                    for (; p != null; p = p.Parent)
+                    {
+                        pd._ant_symtab.TryGetValue(p, out org.antlr.symtab.Symbol value);
+                        if (value != null)
+                        {
+                            quick_info_content.Add(
+                                _grammar_description.Map[tag_type]
+                                + "\n"
+                                + value.Name);
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                if (! found)
+                    quick_info_content.Add(
+                    _grammar_description.Map[tag_type]);
             }
         }
 

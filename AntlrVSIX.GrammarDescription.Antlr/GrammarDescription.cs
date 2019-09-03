@@ -3,6 +3,7 @@
     using Antlr4.Runtime;
     using Antlr4.Runtime.Tree;
     using AntlrVSIX.GrammarDescription;
+    using org.antlr.symtab;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -12,9 +13,11 @@
 
     class GrammarDescription : IGrammarDescription
     {
-        public IParseTree Parse(string ffn, string code)
+        IParseTree _parse_tree;
+
+        public void Parse(string ffn, string code, out IParseTree parse_tree, out Dictionary<IParseTree, Symbol> symbols)
         {
-            IParseTree _ant_tree = null;
+            IParseTree pt = null;
 
             // Set up Antlr to parse input grammar.
             byte[] byteArray = Encoding.UTF8.GetBytes(code);
@@ -23,11 +26,11 @@
                     new AntlrInputStream(
                         new StreamReader(
                             new MemoryStream(byteArray)).ReadToEnd())));
-            var _ant_parser = new ANTLRv4Parser(cts);
+            var parser = new ANTLRv4Parser(cts);
 
             try
             {
-                _ant_tree = _ant_parser.grammarSpec();
+                pt = parser.grammarSpec();
             }
             catch (Exception e)
             {
@@ -40,7 +43,8 @@
             //fn = "c:\\temp\\" + fn;
             //System.IO.File.WriteAllText(fn, sb.ToString());
 
-            return _ant_tree;
+            parse_tree = pt;
+            symbols = new Dictionary<IParseTree, Symbol>();
         }
 
         public Dictionary<IToken, int> ExtractComments(string code)
@@ -79,6 +83,11 @@
                 if (suffix == s)
                     return true;
             return false;
+        }
+
+        public Dictionary<IParseTree, Symbol> GetSymbolTable()
+        {
+            return new Dictionary<IParseTree, Symbol>();
         }
 
 

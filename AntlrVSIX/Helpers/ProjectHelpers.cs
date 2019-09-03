@@ -5,7 +5,6 @@
     using Microsoft.VisualStudio.Shell.Interop;
     using System;
     using System.IO;
-    using System.Linq;
     using System.Runtime.InteropServices;
 
     public static class ProjectHelpers

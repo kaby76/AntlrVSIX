@@ -18,9 +18,9 @@ namespace AntlrVSIX.Grammar
         public Dictionary<IToken, int> _ant_applied_occurrence_classes = new Dictionary<IToken, int>();
         public Dictionary<IToken, int> _ant_defining_occurrence_classes = new Dictionary<IToken, int>();
         public Dictionary<IToken, int> _ant_comments = new Dictionary<IToken, int>();
-
+        public Dictionary<IParseTree, org.antlr.symtab.Symbol> _ant_symtab = new Dictionary<IParseTree, org.antlr.symtab.Symbol>();
         private List<IObserver<ParserDetails>> _observers = new List<IObserver<ParserDetails>>();
-        private IParseTree _ant_tree = null;
+        public IParseTree _ant_tree = null;
         private IEnumerable<IParseTree>_all_nodes = null;
 
         public static ParserDetails Parse(string code, string ffn)
@@ -46,7 +46,7 @@ namespace AntlrVSIX.Grammar
 
             IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);
             if (gd == null) throw new Exception();
-            pd._ant_tree = gd.Parse(ffn, code);
+            gd.Parse(ffn, code, out pd._ant_tree, out pd._ant_symtab);
 
             pd._all_nodes = DFSVisitor.DFS(pd._ant_tree as ParserRuleContext);
 

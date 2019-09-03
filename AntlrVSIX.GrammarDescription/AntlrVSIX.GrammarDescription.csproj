@@ -25,4 +25,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Symtab\Symtab.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -2,12 +2,13 @@
 using Antlr4.Runtime.Tree;
 using System;
 using System.Collections.Generic;
+using org.antlr.symtab;
 
 namespace AntlrVSIX.GrammarDescription
 {
     public interface IGrammarDescription
     {
-        IParseTree Parse(string ffn, string code);
+        void Parse(string ffn, string code, out IParseTree parse_tree, out Dictionary<IParseTree, Symbol> symbols);
         Dictionary<IToken, int> ExtractComments(string code);
         bool CanNextRule { get; }
         string[] Map { get; }

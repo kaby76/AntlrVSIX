@@ -10,12 +10,13 @@ namespace AntlrVSIX.GrammarDescription.Python
     using System.Linq;
     using System.Text;
     using System.Windows.Media;
+    using org.antlr.symtab;
 
     class GrammarDescription : IGrammarDescription
     {
-        public IParseTree Parse(string ffn, string code)
+        public void Parse(string ffn, string code, out IParseTree parse_tree, out Dictionary<IParseTree, Symbol> symbols)
         {
-            IParseTree _ant_tree = null;
+            IParseTree pt = null;
 
             // Set up Antlr to parse input grammar.
             byte[] byteArray = Encoding.UTF8.GetBytes(code);
@@ -28,7 +29,7 @@ namespace AntlrVSIX.GrammarDescription.Python
 
             try
             {
-                _ant_tree = parser.file_input();
+                pt = parser.file_input();
             }
             catch (Exception e)
             {
@@ -41,7 +42,8 @@ namespace AntlrVSIX.GrammarDescription.Python
             //fn = "c:\\temp\\" + fn;
             //System.IO.File.WriteAllText(fn, sb.ToString());
 
-            return _ant_tree;
+            parse_tree = pt;
+            symbols = new Dictionary<IParseTree, Symbol>();
         }
 
         public Dictionary<IToken, int> ExtractComments(string code)

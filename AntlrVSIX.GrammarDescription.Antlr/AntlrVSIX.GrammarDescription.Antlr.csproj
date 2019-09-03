@@ -31,6 +31,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AntlrVSIX.GrammarDescription\AntlrVSIX.GrammarDescription.csproj" />
+    <ProjectReference Include="..\Symtab\Symtab.csproj" />
   </ItemGroup>
 
   <ItemGroup>

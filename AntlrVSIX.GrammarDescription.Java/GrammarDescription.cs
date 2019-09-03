@@ -10,12 +10,13 @@ namespace AntlrVSIX.GrammarDescription.Java
     using System.Linq;
     using System.Text;
     using System.Windows.Media;
+    using org.antlr.symtab;
 
     class GrammarDescription : IGrammarDescription
     {
-        public IParseTree Parse(string ffn, string code)
+        public void Parse(string ffn, string code, out IParseTree parse_tree, out Dictionary<IParseTree, Symbol> symbols)
         {
-            IParseTree _ant_tree = null;
+            IParseTree pt = null;
 
             // Set up Antlr to parse input grammar.
             byte[] byteArray = Encoding.UTF8.GetBytes(code);
@@ -28,7 +29,7 @@ namespace AntlrVSIX.GrammarDescription.Java
 
             try
             {
-                _ant_tree = parser.ordinaryCompilation();
+                pt = parser.ordinaryCompilation();
             }
             catch (Exception e)
             {
@@ -41,7 +42,10 @@ namespace AntlrVSIX.GrammarDescription.Java
             //fn = "c:\\temp\\" + fn;
             //System.IO.File.WriteAllText(fn, sb.ToString());
 
-            return _ant_tree;
+            parse_tree = pt;
+            var st = new MyJava9Listener();
+            ParseTreeWalker.Default.Walk(st, parse_tree);
+            symbols = st.symbols;
         }
 
         public Dictionary<IToken, int> ExtractComments(string code)
@@ -89,6 +93,7 @@ namespace AntlrVSIX.GrammarDescription.Java
         private const string ClassificationNameKeywordControl = "Java - keyword-control";
         private const string ClassificationNameLiteral = "Java - literal";
         private const string ClassificationNameType = "Java - type";
+        private const string ClassificationNameClass = "Java - class";
 
         public string[] Map { get; } = new string[]
         {
@@ -99,6 +104,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             ClassificationNameKeywordControl,
             ClassificationNameLiteral,
             ClassificationNameType,
+            ClassificationNameClass,
         };
 
         public Dictionary<string, int> InverseMap { get; } = new Dictionary<string, int>()
@@ -110,6 +116,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             { ClassificationNameKeywordControl, 4 },
             { ClassificationNameLiteral, 5 },
             { ClassificationNameType, 6 },
+            { ClassificationNameClass, 7 },
         };
 
         /* Color scheme for the tagging. */
@@ -122,6 +129,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             Color.FromRgb(189, 8, 196), //ClassificationNameKeywordControl
             Color.FromRgb(163, 21, 21), //ClassificationNameLiteral
             Color.FromRgb(43, 145, 175), //ClassificationNameType
+            Color.FromRgb(43, 145, 175), //ClassificationNameClass
         };
 
         public List<Color> MapInvertedColor { get; } = new List<Color>()
@@ -142,6 +150,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             false, // keyword-control
             true, // literal
             true, // type
+            true, // class
         };
 
         public List<bool> CanRename { get; } = new List<bool>()
@@ -153,6 +162,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             false, // keyword-control
             false, // literal
             true, // type
+            true, // class
         };
 
         public List<bool> CanGotodef { get; } = new List<bool>()
@@ -164,6 +174,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             false, // keyword-control
             false, // literal
             true, // type
+            true, // class
         };
 
         public List<bool> CanGotovisitor { get; } = new List<bool>()
@@ -175,6 +186,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             false, // keyword-control
             false, // literal
             false, // type
+            false, // class
         };
 
         private static List<string> _keywords = new List<string>()
