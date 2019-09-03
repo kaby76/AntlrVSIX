@@ -8,16 +8,15 @@ using Antlr4.Runtime.Tree;
 
 namespace AntlrVSIX.GrammarDescription.Java
 {
-    class MyJava9Listener : Java9BaseListener
+    class Pass1Listener : Java9BaseListener
     {
-        SymbolTable st = new SymbolTable();
-        Stack<Scope> current_scope = new Stack<Scope>();
-        public Dictionary<IParseTree, Symbol> symbols = new Dictionary<IParseTree, Symbol>();
+        public Stack<Scope> _current_scope = new Stack<Scope>();
+        public Dictionary<IParseTree, Symbol> _symbols = new Dictionary<IParseTree, Symbol>();
+        public Dictionary<IParseTree, Scope> _scopes = new Dictionary<IParseTree, Scope>();
 
-        public override void ExitInterfaceMethodDeclaration(Java9Parser.InterfaceMethodDeclarationContext context)
+        public Pass1Listener()
         {
-            current_scope.Pop();
-            base.ExitInterfaceMethodDeclaration(context);
+            _current_scope.Push(new SymbolTable().GLOBALS);
         }
 
         public override void EnterInterfaceMethodDeclaration(Java9Parser.InterfaceMethodDeclarationContext context)
@@ -35,10 +34,17 @@ namespace AntlrVSIX.GrammarDescription.Java
             var node = md.GetChild(0);
             var name = node.GetText();
             var m = new org.antlr.symtab.MethodSymbol(name);
-            current_scope.Peek().define(m);
-            symbols[node] = m;
-            current_scope.Push(m);
+            _current_scope.Peek().define(m);
+            _symbols[node] = m;
+            _scopes[context] = m;
+            _current_scope.Push(m);
             base.EnterInterfaceMethodDeclaration(context);
+        }
+
+        public override void ExitInterfaceMethodDeclaration(Java9Parser.InterfaceMethodDeclarationContext context)
+        {
+            _current_scope.Pop();
+            base.ExitInterfaceMethodDeclaration(context);
         }
 
         public override void EnterLocalVariableDeclaration(Java9Parser.LocalVariableDeclarationContext context)
@@ -54,8 +60,8 @@ namespace AntlrVSIX.GrammarDescription.Java
                 var node = vd.GetChild(0);
                 var name = node.GetText();
                 var f = new org.antlr.symtab.FieldSymbol(name);
-                symbols[node] = f;
-                current_scope.Peek().define(f);
+                _symbols[node] = f;
+                _current_scope.Peek().define(f);
             }
             base.EnterLocalVariableDeclaration(context);
         }
@@ -69,22 +75,23 @@ namespace AntlrVSIX.GrammarDescription.Java
             var node = context.GetChild(i+1) as Java9Parser.IdentifierContext;
             var name = node.GetText();
             var e = new org.antlr.symtab.EnumSymbol(name);
-            current_scope.Peek().define(e);
-            symbols[node] = e;
+            _current_scope.Peek().define(e);
+            _symbols[node] = e;
             base.EnterEnumDeclaration(context);
         }
 
         public override void EnterBlock(Java9Parser.BlockContext context)
         {
-            var e = current_scope.Peek();
+            var e = _current_scope.Peek();
             var b = new org.antlr.symtab.LocalScope(e);
-            current_scope.Push(b);
+            _current_scope.Push(b);
+            _scopes[context] = b;
             base.EnterBlock(context);
         }
 
         public override void ExitBlock(Java9Parser.BlockContext context)
         {
-            current_scope.Pop();
+            _current_scope.Pop();
             base.ExitBlock(context);
         }
 
@@ -98,14 +105,14 @@ namespace AntlrVSIX.GrammarDescription.Java
             var node = vdi.GetChild(0);
             var name = node.GetText();
             var v = new org.antlr.symtab.MethodSymbol(name);
-            current_scope.Peek().define(v);
-            symbols[node] = v;
+            _current_scope.Peek().define(v);
+            _symbols[node] = v;
             base.EnterFormalParameter(context);
         }
 
         public override void ExitMethodDeclaration(Java9Parser.MethodDeclarationContext context)
         {
-            current_scope.Pop();
+            _current_scope.Pop();
             base.ExitMethodDeclaration(context);
         }
 
@@ -124,17 +131,13 @@ namespace AntlrVSIX.GrammarDescription.Java
             var node = md.GetChild(0);
             var name = node.GetText();
             var m = new org.antlr.symtab.MethodSymbol(name);
-            current_scope.Peek().define(m);
-            symbols[node] = m;
-            current_scope.Push(m);
+            _current_scope.Peek().define(m);
+            _symbols[node] = m;
+            _scopes[context] = m;
+            _current_scope.Push(m);
             base.EnterMethodDeclaration(context);
         }
 
-
-        public MyJava9Listener()
-        {
-            current_scope.Push(st.GLOBALS);
-        }
 
         public override void EnterFieldDeclaration(Java9Parser.FieldDeclarationContext context)
         {
@@ -150,8 +153,8 @@ namespace AntlrVSIX.GrammarDescription.Java
                 var node = vd.GetChild(0);
                 var name = node.GetText();
                 var f = new org.antlr.symtab.FieldSymbol(name);
-                current_scope.Peek().define(f);
-                symbols[node] = f;
+                _current_scope.Peek().define(f);
+                _symbols[node] = f;
             }
             base.EnterFieldDeclaration(context);
         }
@@ -165,15 +168,16 @@ namespace AntlrVSIX.GrammarDescription.Java
             var node = context.GetChild(i) as Java9Parser.IdentifierContext;
             var id_name = node.GetText();
             var cs = new org.antlr.symtab.ClassSymbol(id_name);
-            current_scope.Peek().define(cs);
-            symbols[node] = cs;
-            current_scope.Push(cs);
+            _current_scope.Peek().define(cs);
+            _symbols[node] = cs;
+            _scopes[context] = cs;
+            _current_scope.Push(cs);
             base.EnterNormalClassDeclaration(context);
         }
 
         public override void ExitNormalClassDeclaration(Java9Parser.NormalClassDeclarationContext context)
         {
-            current_scope.Pop();
+            _current_scope.Pop();
             base.ExitNormalClassDeclaration(context);
         }
 
@@ -186,17 +190,17 @@ namespace AntlrVSIX.GrammarDescription.Java
             var node = context.GetChild(i) as Java9Parser.IdentifierContext;
             var id_name = node.GetText();
             var cs = new org.antlr.symtab.InterfaceSymbol(id_name);
-            current_scope.Peek().define(cs);
-            symbols[node] = cs;
-            current_scope.Push(cs);
+            _current_scope.Peek().define(cs);
+            _symbols[node] = cs;
+            _scopes[context] = cs;
+            _current_scope.Push(cs);
             base.EnterNormalInterfaceDeclaration(context);
         }
 
         public override void ExitNormalInterfaceDeclaration(Java9Parser.NormalInterfaceDeclarationContext context)
         {
-            current_scope.Pop();
+            _current_scope.Pop();
             base.ExitNormalInterfaceDeclaration(context);
         }
-
     }
 }

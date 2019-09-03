@@ -43,9 +43,11 @@ namespace AntlrVSIX.GrammarDescription.Java
             //System.IO.File.WriteAllText(fn, sb.ToString());
 
             parse_tree = pt;
-            var st = new MyJava9Listener();
-            ParseTreeWalker.Default.Walk(st, parse_tree);
-            symbols = st.symbols;
+            var pass1 = new Pass1Listener();
+            ParseTreeWalker.Default.Walk(pass1, parse_tree);
+            var pass2 = new Pass2Listener(pass1._current_scope, pass1._symbols, pass1._scopes);
+            ParseTreeWalker.Default.Walk(pass2, parse_tree);
+            symbols = pass2._symbols;
         }
 
         public Dictionary<IToken, int> ExtractComments(string code)
