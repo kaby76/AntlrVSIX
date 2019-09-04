@@ -8,31 +8,30 @@
     using AntlrVSIX.Package;
     using EnvDTE;
     using EnvDTE80;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.VisualStudio.Shell;
-    using Microsoft.VisualStudio.Text.Classification;
+    using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text.Operations;
-    using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.TextManager.Interop;
+    using System;
     using System.Collections.Generic;
     using System.ComponentModel.Design;
     using System.IO;
     using System.Linq;
     using System.Text.RegularExpressions;
-    using System;
 
     public class GoToVisitorCommand
     {
-        private readonly Microsoft.VisualStudio.Shell.Package _package;
+        private readonly Package _package;
         private MenuCommand _menu_item1;
         private MenuCommand _menu_item2;
         private MenuCommand _menu_item3;
         private MenuCommand _menu_item4;
 
-        private GoToVisitorCommand(Microsoft.VisualStudio.Shell.Package package)
+        private GoToVisitorCommand(Package package)
         {
             if (package == null)
             {
@@ -104,7 +103,7 @@
             get { return this._package; }
         }
 
-        public static void Initialize(Microsoft.VisualStudio.Shell.Package package)
+        public static void Initialize(Package package)
         {
             Instance = new GoToVisitorCommand(package);
         }
@@ -216,8 +215,8 @@
                 }
             }
 
-            // Find first occurence of visitor class.
-            ClassDeclarationSyntax found_class = null;
+            // Find all occurrences of visitor class.
+            List<ClassDeclarationSyntax> found_class = new List<ClassDeclarationSyntax>();
             string class_file_path = null;
             try
             {
@@ -248,8 +247,7 @@
                                 if (s.ToString() == listener_baseclass_name)
                                 {
                                     // Found the right class.
-                                    found_class = class_member;
-                                    class_file_path = file_name;
+                                    found_class.Add(class_member);
                                     throw new Exception();
                                 }
                             }
@@ -261,7 +259,7 @@
             {
             }
 
-            if (found_class == null)
+            if (found_class.Count == 0)
             {
                 if (!Options.OptionsCommand.Instance.GenerateVisitorListener)
                     return;
@@ -387,8 +385,7 @@ namespace {name_space}
                                 if (s.ToString() == listener_baseclass_name)
                                 {
                                     // Found the right class.
-                                    found_class = class_member;
-                                    class_file_path = save;
+                                    found_class.Add(class_member);
                                     throw new Exception();
                                 }
                             }
@@ -410,14 +407,17 @@ namespace {name_space}
             var capitalized_grammar_name = Capitalized(grammar_name);
             try
             {
-                foreach (var me in found_class.Members)
+                foreach (var fc in found_class)
                 {
-                    var method_member = me as MethodDeclarationSyntax;
-                    if (method_member == null) continue;
-                    if (method_member.Identifier.ValueText.ToLower() == capitalized_member_name.ToLower())
+                    foreach (var me in fc.Members)
                     {
-                        found_member = method_member;
-                        throw new Exception();
+                        var method_member = me as MethodDeclarationSyntax;
+                        if (method_member == null) continue;
+                        if (method_member.Identifier.ValueText.ToLower() == capitalized_member_name.ToLower())
+                        {
+                            found_member = method_member;
+                            throw new Exception();
+                        }
                     }
                 }
             }
@@ -430,7 +430,8 @@ namespace {name_space}
                     return;
 
                 // Find point for edit.
-                var here = found_class.OpenBraceToken;
+                var fc = found_class.First();
+                var here = fc.OpenBraceToken;
                 var spn = here.FullSpan;
                 var end = spn.End;
 
@@ -512,7 +513,7 @@ public override void {capitalized_member_name}({capitalized_grammar_name}Parser.
                                 if (s.ToString() == listener_baseclass_name)
                                 {
                                     // Found the right class.
-                                    found_class = class_member;
+                                    found_class.Add(class_member);
                                     class_file_path = save;
                                     throw new Exception();
                                 }
@@ -525,14 +526,17 @@ public override void {capitalized_member_name}({capitalized_grammar_name}Parser.
                 }
                 try
                 {
-                    foreach (var me in found_class.Members)
+                    foreach (var fcc in found_class)
                     {
-                        var method_member = me as MethodDeclarationSyntax;
-                        if (method_member == null) continue;
-                        if (method_member.Identifier.ValueText.ToLower() == capitalized_member_name.ToLower())
+                        foreach (var me in fcc.Members)
                         {
-                            found_member = method_member;
-                            throw new Exception();
+                            var method_member = me as MethodDeclarationSyntax;
+                            if (method_member == null) continue;
+                            if (method_member.Identifier.ValueText.ToLower() == capitalized_member_name.ToLower())
+                            {
+                                found_member = method_member;
+                                throw new Exception();
+                            }
                         }
                     }
                 }

@@ -59,7 +59,7 @@ namespace AntlrVSIX.GrammarDescription.Java
                 var vd = vdl.GetChild(j) as Java9Parser.VariableDeclaratorContext;
                 var node = vd.GetChild(0);
                 var name = node.GetText();
-                var f = new Symtab.FieldSymbol(name);
+                var f = new Symtab.LocalSymbol(name);
                 _symbols[node] = f;
                 _current_scope.Peek().define(f);
             }
@@ -168,6 +168,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             var node = context.GetChild(i) as Java9Parser.IdentifierContext;
             var id_name = node.GetText();
             var cs = new Symtab.ClassSymbol(id_name);
+            cs.MonoType = new Mono.Cecil.TypeDefinition(null, id_name, default(Mono.Cecil.TypeAttributes));
             _current_scope.Peek().define(cs);
             _symbols[node] = cs;
             _scopes[context] = cs;

@@ -262,10 +262,9 @@ namespace AntlrVSIX.GrammarDescription.Java
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
                     // Make sure it's not a def.
-                    var is_def = gd.IdentifyDefinition[0](gd, st, term);
-                    if (is_def) return false;
-                    var is_type = gd.Identify[6](gd, st, term);
-                    if (is_type) return false;
+                    if (gd.IdentifyDefinition[gd.InverseMap[ClassificationNameVariable]](gd, st, term)) return false;
+                    if (gd.IdentifyDefinition[gd.InverseMap[ClassificationNameField]](gd, st, term)) return false;
+                    if (gd.Identify[gd.InverseMap[ClassificationNameType]](gd, st, term)) return false;
                     var text = term.GetText();
                     if (_keywords.Contains(text)) return false;
                     if (_keywords_control.Contains(text)) return false;
@@ -345,12 +344,18 @@ namespace AntlrVSIX.GrammarDescription.Java
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
-                    var text = term.GetText();
-                    if (_keywords.Contains(text)) return false;
-                    if (gd.IdentifyDefinition[gd.InverseMap[ClassificationNameField]](gd, st, term)) return false;
-                    if (gd.IdentifyDefinition[gd.InverseMap[ClassificationNameMethod]](gd, st, term)) return false;
-                    if (term.Parent as Java9Parser.IdentifierContext == null) return false;
-                    if (term.Parent.Parent is Java9Parser.VariableDeclaratorIdContext) return true;
+                    Antlr4.Runtime.Tree.IParseTree p = term;
+                    for (; p != null; p = p.Parent)
+                    {
+                        st.TryGetValue(p, out Symtab.Symbol value);
+                        if (value != null)
+                        {
+                            if (value is Symtab.LocalSymbol)
+                            {
+                                return true;
+                            }
+                        }
+                    }
                     return false;
                 },
             (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // method

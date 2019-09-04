@@ -102,5 +102,26 @@ namespace AntlrVSIX.GrammarDescription.Java
                 _symbols[node] = s;
             base.EnterTypeVariable(context);
         }
+
+        public override void EnterLocalVariableDeclaration(Java9Parser.LocalVariableDeclarationContext context)
+        {
+            int i;
+            for (i = 0; i < context.ChildCount; ++i)
+                if (context.GetChild(i) as Java9Parser.UnannTypeContext != null)
+                    break;
+            var unanntype = context.GetChild(i) as Java9Parser.UnannTypeContext;
+            var c1 = unanntype.GetChild(0);
+            if (c1 is Java9Parser.UnannPrimitiveTypeContext)
+            {
+                var type_name = c1.GetText();
+                var type = new Symtab.PrimitiveType(type_name);
+                type.MonoType = new Mono.Cecil.TypeReference(null, type_name, null, null, true);
+            } else if (c1 is Java9Parser.UnannReferenceTypeContext)
+            {
+
+            }
+
+            base.EnterLocalVariableDeclaration(context);
+        }
     }
 }
