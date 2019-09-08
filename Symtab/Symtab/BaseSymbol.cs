@@ -123,6 +123,8 @@
             }
             return s + Name;
         }
+
+        public Symbol definition { get; set; }
     }
 
 }

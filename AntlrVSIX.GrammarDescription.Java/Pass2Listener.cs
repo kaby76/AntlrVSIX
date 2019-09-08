@@ -123,5 +123,18 @@ namespace AntlrVSIX.GrammarDescription.Java
 
             base.EnterLocalVariableDeclaration(context);
         }
+
+        public override void EnterMethodInvocation_lfno_primary([NotNull] Java9Parser.MethodInvocation_lfno_primaryContext context)
+        {
+            var name = context.GetText();
+            var s_ref = new Symtab.MethodSymbol(name);
+            var s_def = _current_scope.Peek().resolve(name);
+            if (s_def != null)
+            {
+                s_ref.definition = s_def;
+            }
+            _symbols[context] = s_ref;
+            base.EnterMethodInvocation_lfno_primary(context);
+        }
     }
 }

@@ -91,16 +91,25 @@ namespace AntlrVSIX.Reformat
                 // Get reformated text.
                 string text = buffer.GetBufferText();
                 org.antlr.codebuff.Tool.unformatted_input = text;
-                org.antlr.codebuff.Tool.Main(
-                    new string[]
-                    {
+                try
+                {
+                    var result = org.antlr.codebuff.Tool.Main(
+                        new string[]
+                        {
                         "-g", "org.antlr.codebuff.grammar.ANTLRv4",
                         "-rule", "grammarSpec",
                         "-files", "g4",
                         $@"-corpus", corpus_location,
                         "-inoutstring",
                         ""
-                    });
+                        });
+                }
+                catch (Exception eeks)
+                {
+                    var result = org.antlr.codebuff.Log.Message();
+                    System.Windows.Forms.MessageBox.Show(result);
+                    return;
+                }
 
                 // Start edit session.
                 var edit = buffer.CreateEdit();

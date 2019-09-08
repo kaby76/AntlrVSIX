@@ -138,7 +138,6 @@ namespace AntlrVSIX.GrammarDescription.Java
             base.EnterMethodDeclaration(context);
         }
 
-
         public override void EnterFieldDeclaration(Java9Parser.FieldDeclarationContext context)
         {
             int i;

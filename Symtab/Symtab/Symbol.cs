@@ -16,6 +16,7 @@
         // to satisfy adding symbols to sets, hashtables
         int GetHashCode();
         bool Equals(object o);
+        Symbol definition { get; set; }
     }
 
 }

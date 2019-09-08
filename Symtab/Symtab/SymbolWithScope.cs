@@ -113,6 +113,8 @@
         {
             return name.GetHashCode();
         }
+
+        public Symbol definition { get; set; }
     }
 
 }
