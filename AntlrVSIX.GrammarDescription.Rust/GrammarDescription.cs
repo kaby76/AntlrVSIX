@@ -73,7 +73,8 @@ namespace AntlrVSIX.GrammarDescription.Rust
             return new_list;
         }
 
-        public const string FileExtension = ".rs";
+        public string FileExtension { get; } = ".rs";
+        public string StartRule { get; } = "crate";
 
         public bool IsFileType(string ffn)
         {
@@ -294,5 +295,8 @@ namespace AntlrVSIX.GrammarDescription.Rust
         public bool CanNextRule { get { return false; } }
 
         public bool DoErrorSquiggles { get { return false; } }
+
+        public bool CanReformat { get { return true; } }
+
     }
 }

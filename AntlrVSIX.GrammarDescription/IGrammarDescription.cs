@@ -21,9 +21,12 @@ namespace AntlrVSIX.GrammarDescription
         List<bool> CanRename { get; }
         List<bool> CanGotodef { get; }
         List<bool> CanGotovisitor { get; }
+        bool CanReformat { get; }
         List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.Symbol>, IParseTree, bool>> Identify { get; }
         List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.Symbol>, IParseTree, bool>> IdentifyDefinition { get; }
         bool IsFileType(string ffn);
+        string FileExtension { get; }
+        string StartRule { get; }
         bool DoErrorSquiggles { get; }
     }
 }

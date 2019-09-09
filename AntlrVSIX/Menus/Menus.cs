@@ -55,6 +55,9 @@
                 if (gd != null && gd.CanNextRule)
                 {
                     NextSymCommand.Instance.Enabled = true;
+                }
+                if (gd != null && gd.CanReformat)
+                {
                     Reformat.ReformatCommand.Instance.Enabled = true;
                 }
             }
@@ -85,7 +88,8 @@
                     GoToDefinitionCommand.Instance.Enabled = true;
                 if (grammar_description.CanGotovisitor[type])
                     GoToVisitorCommand.Instance.Enabled = true;
-                ReformatCommand.Instance.Enabled = true;
+                if (grammar_description.CanReformat)
+                    ReformatCommand.Instance.Enabled = true;
             }
         }
     }

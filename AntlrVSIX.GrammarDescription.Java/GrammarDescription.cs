@@ -31,7 +31,7 @@ namespace AntlrVSIX.GrammarDescription.Java
 
             try
             {
-                pt = parser.ordinaryCompilation();
+                pt = parser.compilationUnit();
             }
             catch (Exception e)
             {
@@ -76,7 +76,8 @@ namespace AntlrVSIX.GrammarDescription.Java
             return new_list;
         }
 
-        public const string FileExtension = ".java";
+        public string FileExtension { get; } = ".java";
+        public string StartRule { get; } = "compilationUnit";
 
         public bool IsFileType(string ffn)
         {
@@ -424,5 +425,7 @@ namespace AntlrVSIX.GrammarDescription.Java
         public bool CanNextRule { get { return false; } }
 
         public bool DoErrorSquiggles { get { return false; } }
+
+        public bool CanReformat { get { return true; } }
     }
 }

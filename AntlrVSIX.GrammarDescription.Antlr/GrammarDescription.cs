@@ -75,7 +75,8 @@
             return new_list;
         }
 
-        public const string FileExtension = ".g4;.g";
+        public string FileExtension { get; } = ".g4;.g";
+        public string StartRule { get; } = "grammarSpec";
 
         public bool IsFileType(string ffn)
         {
@@ -394,5 +395,8 @@
         public bool CanNextRule { get { return true; } }
 
         public bool DoErrorSquiggles { get { return true; } }
+
+        public bool CanReformat { get { return true; } }
+
     }
 }

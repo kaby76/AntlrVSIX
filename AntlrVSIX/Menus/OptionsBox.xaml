@@ -4,7 +4,7 @@
     x:Class="AntlrVSIX.Options.OptionsBox"
     xmlns:local="clr-namespace:AntlrVSIX.Options"
     Title="AntlrVSIX Options"
-    Height="307.334"
+    Height="350"
     Width="650"
     MinHeight="10"
     MinWidth="300"
@@ -19,6 +19,8 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -56,12 +58,17 @@
         <TextBox Name="corpus_location" Grid.Row="8" Grid.Column="1" Margin="10,0,10,10">Not set</TextBox>
 
         <TextBox Grid.Column="1" Grid.Row="9" TextWrapping="Wrap" IsReadOnly="True" MinWidth="250" BorderThickness="0">
+            Select this box if you want reformat to replace text using Google's diff-match-patch algorithm.
+        </TextBox>
+        <CheckBox Name="incremental_reformat" Grid.Column="1" Grid.Row="10" Margin="10,0,10,10">Incremental replacement of text when reformatting document.</CheckBox>
+
+        <TextBox Grid.Column="1" Grid.Row="11" TextWrapping="Wrap" IsReadOnly="True" MinWidth="250" BorderThickness="0">
             List of grammar description assembly files, separated by semi-colons.
         </TextBox>
-        <TextBox Name="grammar_description_locations" Grid.Row="10" Grid.Column="1" Margin="10,0,10,10">Not set</TextBox>
+        <TextBox Name="grammar_description_locations" Grid.Row="12" Grid.Column="1" Margin="10,0,10,10">Not set</TextBox>
 
         <!-- Accept or Cancel -->
-        <WrapPanel Grid.Row="11" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="10,0,0,0" >
+        <WrapPanel Grid.Row="13" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="10,0,0,0" >
             <Button IsDefault="True" Name="btnDialogOk" Click="btnDialogOk_Click" MinWidth="60" Margin="0,0,10,0">_Ok</Button>
             <Button IsCancel="True" MinWidth="60">_Cancel</Button>
         </WrapPanel>

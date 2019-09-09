@@ -71,7 +71,8 @@ namespace AntlrVSIX.GrammarDescription.Python
             return new_list;
         }
 
-        public const string FileExtension = ".py";
+        public string FileExtension { get; } = ".py";
+        public string StartRule { get; } = "file_input";
 
         public bool IsFileType(string ffn)
         {
@@ -260,5 +261,8 @@ namespace AntlrVSIX.GrammarDescription.Python
         public bool CanNextRule { get { return false; } }
 
         public bool DoErrorSquiggles { get { return false; } }
+
+        public bool CanReformat { get { return true; } }
+
     }
 }

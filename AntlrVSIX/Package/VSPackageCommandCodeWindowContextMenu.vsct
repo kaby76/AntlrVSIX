@@ -68,12 +68,14 @@
         </Button>
         <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="ReformatCmd" priority="0x700" type="Button">
           <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="TopLevelMenuGroup"/>
+          <CommandFlag>DefaultDisabled</CommandFlag>
           <Strings>
             <ButtonText>Reformat</ButtonText>
           </Strings>
         </Button>
         <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="RenameCmd" priority="0x700" type="Button">
           <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="TopLevelMenuGroup"/>
+          <CommandFlag>DefaultDisabled</CommandFlag>
           <Strings>
             <ButtonText>Rename</ButtonText>
           </Strings>
@@ -190,12 +192,14 @@
        </Button>
        <Button guid="guidMenuAndCommandsCmdSet" id="ReformatCmd" priority="0x700" type="Button">
          <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup"/>
+         <CommandFlag>DefaultDisabled</CommandFlag>
          <Strings>
            <ButtonText>Reformat</ButtonText>
          </Strings>
        </Button>
        <Button guid="guidMenuAndCommandsCmdSet" id="RenameCmd" priority="0x700" type="Button">
          <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup"/>
+         <CommandFlag>DefaultDisabled</CommandFlag>
          <Strings>
            <ButtonText>Rename</ButtonText>
          </Strings>

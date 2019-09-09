@@ -10,22 +10,11 @@ namespace AntlrVSIX.Options
     {
         private readonly Microsoft.VisualStudio.Shell.Package _package;
         private MenuCommand _menu_item1;
-        public bool NonInteractiveParse
-        {
-            get; private set;
-        }
-        public bool RestrictedDirectory
-        {
-            get; private set;
-        }
-        public bool GenerateVisitorListener
-        {
-            get; private set;
-        }
-        public string CorpusLocation
-        {
-            get; private set;
-        }
+        public bool IncrementalReformat { get; private set; }
+        public bool NonInteractiveParse { get; private set; }
+        public bool RestrictedDirectory { get; private set; }
+        public bool GenerateVisitorListener { get; private set; }
+        public string CorpusLocation { get; private set; }
 
         private OptionsCommand(Microsoft.VisualStudio.Shell.Package package)
         {
@@ -51,11 +40,11 @@ namespace AntlrVSIX.Options
                 commandService.AddCommand(_menu_item1);
             }
 
+            IncrementalReformat = true;
             NonInteractiveParse = false;
             RestrictedDirectory = false;
             GenerateVisitorListener = false;
-            string path = System.Environment.GetEnvironmentVariable("CORPUS_LOCATION");
-            CorpusLocation = path;
+            CorpusLocation = System.Environment.GetEnvironmentVariable("CORPUS_LOCATION");
         }
         public static OptionsCommand Instance { get; private set; }
 
@@ -78,12 +67,14 @@ namespace AntlrVSIX.Options
                 inputDialog.noninteractive.IsChecked = NonInteractiveParse;
                 inputDialog.generate_visitor_listener.IsChecked = GenerateVisitorListener;
                 inputDialog.corpus_location.Text = CorpusLocation;
+                inputDialog.incremental_reformat.IsChecked = IncrementalReformat;
                 if (inputDialog.ShowDialog() == true)
                 {
                     RestrictedDirectory = inputDialog.restricted_directory.IsChecked ?? false;
                     NonInteractiveParse = inputDialog.noninteractive.IsChecked ?? false;
                     GenerateVisitorListener = inputDialog.generate_visitor_listener.IsChecked ?? false;
                     CorpusLocation = inputDialog.corpus_location.Text;
+                    IncrementalReformat = inputDialog.incremental_reformat.IsChecked ?? false;
                 }
             });
         }
