@@ -77,7 +77,7 @@
         /// </summary>
         public override Symbol resolveMember(string name)
         {
-            Symbol s = symbols[name];
+            symbols.TryGetValue(name, out Symbol s);
             if (s is MemberSymbol)
             {
                 return s;
