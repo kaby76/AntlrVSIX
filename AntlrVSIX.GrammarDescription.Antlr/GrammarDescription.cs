@@ -15,6 +15,9 @@
     {
         IParseTree _parse_tree;
 
+        public System.Type Parser { get; } = typeof(ANTLRv4Parser);
+        public System.Type Lexer { get; } = typeof(ANTLRv4Lexer);
+
         public void Parse(string ffn, string code, out IParseTree parse_tree, out Dictionary<IParseTree, Symbol> symbols)
         {
             IParseTree pt = null;

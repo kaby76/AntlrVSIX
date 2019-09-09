@@ -13,6 +13,8 @@ namespace AntlrVSIX.GrammarDescription.Rust
 
     class GrammarDescription : IGrammarDescription
     {
+        public System.Type Parser { get; } = typeof(RustParser);
+        public System.Type Lexer { get; } = typeof(RustLexer);
         public void Parse(string ffn, string code, out IParseTree parse_tree, out Dictionary<IParseTree, Symbol> symbols)
         {
             IParseTree pt = null;

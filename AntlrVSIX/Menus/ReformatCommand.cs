@@ -2,12 +2,13 @@
 namespace AntlrVSIX.Reformat
 {
     using AntlrVSIX.Extensions;
+    using AntlrVSIX.Grammar;
     using AntlrVSIX.Package;
     using Microsoft.VisualStudio.Shell;
-    using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text;
-    using System.ComponentModel.Design;
+    using Microsoft.VisualStudio.Text.Editor;
     using System;
+    using System.ComponentModel.Design;
 
     internal sealed class ReformatCommand
     {
@@ -90,13 +91,18 @@ namespace AntlrVSIX.Reformat
             {
                 // Get reformated text.
                 string text = buffer.GetBufferText();
+                string ffn = buffer.GetFilePath();
+                var grammar_description = GrammarDescriptionFactory.Create(ffn);
+                if (grammar_description == null) return;
                 org.antlr.codebuff.Tool.unformatted_input = text;
                 try
                 {
                     var result = org.antlr.codebuff.Tool.Main(
-                        new string[]
+                        new object[]
                         {
-                        "-g", "org.antlr.codebuff.grammar.ANTLRv4",
+                        "-g", "",
+                        "-lexer", grammar_description.Lexer,
+                        "-parser", grammar_description.Parser,
                         "-rule", "grammarSpec",
                         "-files", "g4",
                         $@"-corpus", corpus_location,

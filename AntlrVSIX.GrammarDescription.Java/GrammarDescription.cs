@@ -14,6 +14,8 @@ namespace AntlrVSIX.GrammarDescription.Java
 
     class GrammarDescription : IGrammarDescription
     {
+        public System.Type Parser { get; } = typeof(Java9Parser);
+        public System.Type Lexer { get; } = typeof(Java9Lexer);
         public void Parse(string ffn, string code, out IParseTree parse_tree, out Dictionary<IParseTree, Symbol> symbols)
         {
             IParseTree pt = null;
@@ -58,7 +60,7 @@ namespace AntlrVSIX.GrammarDescription.Java
                     new AntlrInputStream(
                         new StreamReader(
                             new MemoryStream(byteArray)).ReadToEnd())),
-                Lexer.Hidden);
+                Java9Lexer.Hidden);
             var new_list = new Dictionary<IToken, int>();
             var type = InverseMap[ClassificationNameComment];
             while (cts_off_channel.LA(1) != Java9Lexer.Eof)
