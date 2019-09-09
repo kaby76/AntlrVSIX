@@ -60,7 +60,7 @@ namespace AntlrVSIX.GrammarDescription.Java
                     new AntlrInputStream(
                         new StreamReader(
                             new MemoryStream(byteArray)).ReadToEnd())),
-                Java9Lexer.Hidden);
+                Java9Lexer.COMMENTS_CHANNEL);
             var new_list = new Dictionary<IToken, int>();
             var type = InverseMap[ClassificationNameComment];
             while (cts_off_channel.LA(1) != Java9Lexer.Eof)

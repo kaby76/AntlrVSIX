@@ -8,7 +8,7 @@ using Antlr4.Runtime.Tree;
 
 namespace AntlrVSIX.GrammarDescription.Java
 {
-    class Pass1Listener : Java9BaseListener
+    class Pass1Listener : Java9ParserBaseListener
     {
         public Stack<Scope> _current_scope = new Stack<Scope>();
         public Dictionary<IParseTree, Symbol> _symbols = new Dictionary<IParseTree, Symbol>();

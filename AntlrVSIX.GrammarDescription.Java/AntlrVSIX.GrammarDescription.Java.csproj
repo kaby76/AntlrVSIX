@@ -9,7 +9,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Antlr4 Include="Java9.g4">
+    <None Remove="Java9Lexer.g4" />
+    <None Remove="Java9Parser.g4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Antlr4 Include="Java9Lexer.g4">
+      <CustomToolNamespace>AntlrVSIX.GrammarDescription.Java</CustomToolNamespace>
+    </Antlr4>
+    <Antlr4 Include="Java9Parser.g4">
       <CustomToolNamespace>AntlrVSIX.GrammarDescription.Java</CustomToolNamespace>
     </Antlr4>
   </ItemGroup>

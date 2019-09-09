@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace AntlrVSIX.GrammarDescription.Java
 {
-    class Pass2Listener : Java9BaseListener
+    class Pass2Listener : Java9ParserBaseListener
     {
         Stack<Scope> _current_scope;
         public Dictionary<IParseTree, Symbol> _symbols;
