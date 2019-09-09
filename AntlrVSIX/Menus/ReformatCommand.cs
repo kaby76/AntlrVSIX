@@ -103,6 +103,57 @@ namespace AntlrVSIX.Reformat
                         "-inoutstring",
                         ""
                         });
+
+                    var diff = new Diff.diff_match_patch();
+                    var diffs = diff.diff_main(text, org.antlr.codebuff.Tool.formatted_output);
+                    var patch = diff.patch_make(diffs);
+                    //patch.Reverse();
+
+                    // Start edit session.
+                    var edit = buffer.CreateEdit();
+                    int times = 0;
+                    int delta = 0;
+                    foreach (var p in patch)
+                    {
+                        times++;
+                        var start = p.start1 - delta;
+
+                        var offset = 0;
+                        foreach (var ed in p.diffs)
+                        {
+                            if (ed.operation == Diff.Operation.EQUAL)
+                            {
+                                // Let's verify that.
+                                var len = ed.text.Length;
+                                var tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
+                                  new Span(start + offset, len));
+                                var tt = tokenSpan.GetText();
+                                if (ed.text != tt)
+                                { }
+                                offset = offset + len;
+                            }
+                            else if (ed.operation == Diff.Operation.DELETE)
+                            {
+                                var len = ed.text.Length;
+                                var tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
+                                  new Span(start + offset, len));
+                                var tt = tokenSpan.GetText();
+                                if (ed.text != tt)
+                                { }
+                                var sp = new Span(start + offset, len);
+                                offset = offset + len;
+                                edit.Delete(sp);
+                            }
+                            else if (ed.operation == Diff.Operation.INSERT)
+                            {
+                                var len = ed.text.Length;
+                                edit.Insert(start + offset, ed.text);
+                            }
+                        }
+                        delta = delta + (p.length2 - p.length1);
+                    }
+                    //edit.Replace(0, buffer.GetBufferText().Length, org.antlr.codebuff.Tool.formatted_output);
+                    edit.Apply();
                 }
                 catch (Exception eeks)
                 {
@@ -110,11 +161,6 @@ namespace AntlrVSIX.Reformat
                     System.Windows.Forms.MessageBox.Show(result);
                     return;
                 }
-
-                // Start edit session.
-                var edit = buffer.CreateEdit();
-                edit.Replace(0, buffer.GetBufferText().Length, org.antlr.codebuff.Tool.formatted_output);
-                edit.Apply();
             }
         }
     }
