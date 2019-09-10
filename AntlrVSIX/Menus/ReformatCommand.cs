@@ -101,12 +101,12 @@ namespace AntlrVSIX.Reformat
                     var result = org.antlr.codebuff.Tool.Main(
                         new object[]
                         {
-                        "-g", "",
+                        "-g", grammar_description.Name,
                         "-lexer", grammar_description.Lexer,
                         "-parser", grammar_description.Parser,
                         "-rule", grammar_description.StartRule,
                         "-files", grammar_description.FileExtension,
-                        $@"-corpus", corpus_location,
+                        "-corpus", corpus_location,
                         "-inoutstring",
                         ""
                         });

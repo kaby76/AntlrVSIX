@@ -1,14 +1,12 @@
 ﻿
 namespace AntlrVSIX.Grammar
 {
-    using Antlr4.Runtime.Tree;
     using Antlr4.Runtime;
+    using Antlr4.Runtime.Tree;
     using AntlrVSIX.GrammarDescription;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Text;
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class ParserDetails : IObservable<ParserDetails>
     {

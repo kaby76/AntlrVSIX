@@ -14,6 +14,7 @@ namespace AntlrVSIX.GrammarDescription.Java
 
     class GrammarDescription : IGrammarDescription
     {
+        public string Name { get; } = "Java";
         public System.Type Parser { get; } = typeof(Java9Parser);
         public System.Type Lexer { get; } = typeof(Java9Lexer);
         public void Parse(string ffn, string code, out IParseTree parse_tree, out Dictionary<IParseTree, Symbol> symbols)

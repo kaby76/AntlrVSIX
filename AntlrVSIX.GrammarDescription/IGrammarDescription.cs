@@ -8,6 +8,7 @@ namespace AntlrVSIX.GrammarDescription
 {
     public interface IGrammarDescription
     {
+        string Name { get; }
         System.Type Parser { get; }
         System.Type Lexer { get; }
         void Parse(string ffn, string code, out IParseTree parse_tree, out Dictionary<IParseTree, Symbol> symbols);

@@ -28,8 +28,6 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         
         <TextBox Grid.Column="0" Grid.Row="0" TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0">
@@ -67,8 +65,8 @@
 
         <CheckBox Name="override_antlr" Grid.Row="6" Grid.Column="1" Margin="10,0,10,10">Override any other ANTLR plugins.</CheckBox>
         <CheckBox Name="override_java" Grid.Row="7" Grid.Column="1" Margin="10,0,10,10">Override any other Java plugins.</CheckBox>
-        <CheckBox Name="override_python" Grid.Row="8" Grid.Column="1" Margin="10,0,10,10">Override any other Python plugins.</CheckBox>
-        <CheckBox Name="override_rust" Grid.Row="9" Grid.Column="1" Margin="10,0,10,10">Override any other Rust plugins.</CheckBox>
+        <CheckBox Name="override_python" Grid.Row="6" Grid.Column="0" Margin="10,0,10,10">Override any other Python plugins.</CheckBox>
+        <CheckBox Name="override_rust" Grid.Row="7" Grid.Column="0" Margin="10,0,10,10">Override any other Rust plugins.</CheckBox>
 
 
         <!-- Accept or Cancel -->

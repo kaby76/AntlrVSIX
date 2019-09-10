@@ -14,6 +14,7 @@ namespace AntlrVSIX.GrammarDescription.Python
 
     class GrammarDescription : IGrammarDescription
     {
+        public string Name { get; } = "Python";
         public System.Type Parser { get; } = typeof(Python3Parser);
         public System.Type Lexer { get; } = typeof(Python3Lexer);
         public void Parse(string ffn, string code, out IParseTree parse_tree, out Dictionary<IParseTree, Symbol> symbols)

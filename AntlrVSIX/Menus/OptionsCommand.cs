@@ -15,6 +15,10 @@ namespace AntlrVSIX.Options
         public bool RestrictedDirectory { get; private set; }
         public bool GenerateVisitorListener { get; private set; }
         public string CorpusLocation { get; private set; }
+        public bool OverrideAntlrPluggins { get; private set; }
+        public bool OverrideJavaPluggins { get; private set; }
+        public bool OverridePythonPluggins { get; private set; }
+        public bool OverrideRustPluggins { get; private set; }
 
         private OptionsCommand(Microsoft.VisualStudio.Shell.Package package)
         {
@@ -44,6 +48,10 @@ namespace AntlrVSIX.Options
             NonInteractiveParse = false;
             RestrictedDirectory = false;
             GenerateVisitorListener = false;
+            OverrideAntlrPluggins = true;
+            OverrideJavaPluggins = true;
+            OverridePythonPluggins = true;
+            OverrideRustPluggins = true;
             CorpusLocation = System.Environment.GetEnvironmentVariable("CORPUS_LOCATION");
         }
         public static OptionsCommand Instance { get; private set; }
@@ -68,6 +76,10 @@ namespace AntlrVSIX.Options
                 inputDialog.generate_visitor_listener.IsChecked = GenerateVisitorListener;
                 inputDialog.corpus_location.Text = CorpusLocation;
                 inputDialog.incremental_reformat.IsChecked = IncrementalReformat;
+                inputDialog.override_antlr.IsChecked = OverrideAntlrPluggins;
+                inputDialog.override_java.IsChecked = OverrideJavaPluggins;
+                inputDialog.override_python.IsChecked = OverridePythonPluggins;
+                inputDialog.override_rust.IsChecked = OverrideRustPluggins;
                 if (inputDialog.ShowDialog() == true)
                 {
                     RestrictedDirectory = inputDialog.restricted_directory.IsChecked ?? false;
@@ -75,6 +87,10 @@ namespace AntlrVSIX.Options
                     GenerateVisitorListener = inputDialog.generate_visitor_listener.IsChecked ?? false;
                     CorpusLocation = inputDialog.corpus_location.Text;
                     IncrementalReformat = inputDialog.incremental_reformat.IsChecked ?? false;
+                    OverrideAntlrPluggins = inputDialog.override_antlr.IsChecked ?? false;
+                    OverrideJavaPluggins = inputDialog.override_java.IsChecked ?? false;
+                    OverridePythonPluggins = inputDialog.override_python.IsChecked ?? false;
+                    OverrideRustPluggins = inputDialog.override_rust.IsChecked ?? false;
                 }
             });
         }

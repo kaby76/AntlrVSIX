@@ -132,7 +132,18 @@ namespace AntlrVSIX.Grammar
         {
             foreach (var gd in _list_of_languages)
             {
-                if (gd.IsFileType(ffn)) return gd;
+                if (gd.IsFileType(ffn))
+                {
+                    if (gd.Name.ToLower() == "antlr" && !Options.OptionsCommand.Instance.OverrideAntlrPluggins)
+                        return null;
+                    if (gd.Name.ToLower() == "java" && !Options.OptionsCommand.Instance.OverrideJavaPluggins)
+                        return null;
+                    if (gd.Name.ToLower() == "python" && !Options.OptionsCommand.Instance.OverridePythonPluggins)
+                        return null;
+                    if (gd.Name.ToLower() == "rust" && !Options.OptionsCommand.Instance.OverrideRustPluggins)
+                        return null;
+                    return gd;
+                }
             }
             return null;
         }

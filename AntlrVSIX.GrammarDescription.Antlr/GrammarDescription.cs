@@ -15,6 +15,7 @@
     {
         IParseTree _parse_tree;
 
+        public string Name { get; } = "Antlr";
         public System.Type Parser { get; } = typeof(ANTLRv4Parser);
         public System.Type Lexer { get; } = typeof(ANTLRv4Lexer);
 
@@ -304,12 +305,16 @@
                     if (term == null) return false;
                     var text = term.GetText();
                     if (_antlr_keywords.Contains(text)) return false;
-                    // The channel def must be part of channelsSpec context.
-                    for (var p = term.Parent; p != null; p = p.Parent)
-                    {
-                        if (p is ANTLRv4Parser.ChannelsSpecContext) return true;
-                    }
-                    return false;
+                    if (! (term.Parent is ANTLRv4Parser.IdContext))
+                        return false;
+                    if (! (term.Parent.Parent is ANTLRv4Parser.LexerCommandExprContext))
+                        return false;
+                    if (! (term.Parent.Parent.Parent is ANTLRv4Parser.LexerCommandContext))
+                        return false;
+                    var p = term.Parent.Parent.Parent;
+                    var id = p.GetChild(0).GetText();
+                    if (id != "channel") return false;
+                    return true;
                 }
         };
 
