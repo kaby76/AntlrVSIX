@@ -56,7 +56,7 @@ namespace AntlrVSIX.GrammarDescription.Python
                     new AntlrInputStream(
                         new StreamReader(
                             new MemoryStream(byteArray)).ReadToEnd())),
-                Python3Lexer.Hidden);
+                Python3Lexer.OFF_CHANNEL);
             var new_list = new Dictionary<IToken, int>();
             var type = InverseMap[ClassificationNameComment];
             while (cts_off_channel.LA(1) != Python3Lexer.Eof)

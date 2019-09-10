@@ -9,7 +9,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Antlr4 Include="Python3.g4">
+    <None Remove="Python3Lexer.g4" />
+    <None Remove="Python3Parser.g4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Antlr4 Include="Python3Lexer.g4">
+      <CustomToolNamespace>AntlrVSIX.GrammarDescription.Python</CustomToolNamespace>
+    </Antlr4>
+    <Antlr4 Include="Python3Parser.g4">
       <CustomToolNamespace>AntlrVSIX.GrammarDescription.Python</CustomToolNamespace>
     </Antlr4>
   </ItemGroup>

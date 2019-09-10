@@ -56,7 +56,7 @@ namespace AntlrVSIX.GrammarDescription.Rust
                     new AntlrInputStream(
                         new StreamReader(
                             new MemoryStream(byteArray)).ReadToEnd())),
-                RustLexer.Hidden);
+                RustLexer.OFF_CHANNEL);
             var new_list = new Dictionary<IToken, int>();
             var type = InverseMap[ClassificationNameComment];
             while (cts_off_channel.LA(1) != RustLexer.Eof)

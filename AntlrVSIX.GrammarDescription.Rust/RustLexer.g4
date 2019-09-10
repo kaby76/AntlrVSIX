@@ -1,5 +1,9 @@
 ﻿lexer grammar RustLexer;
 
+channels {
+	OFF_CHANNEL		// non-default channel for whitespace and comments
+}
+
 import xidstart, xidcontinue;
 
 UNDERSCORE: '_';
@@ -249,13 +253,13 @@ FloatLit:
     | DEC_DIGITS FLOAT_SUFFIX;
 
 Whitespace:
-    [ \t\r\n]+ -> skip;
-
+    [ \t\r\n]+ -> channel(OFF_CHANNEL);
+	
 LineComment:
-    '//' ~[\r\n]* -> channel(HIDDEN);
+    '//' ~[\r\n]* -> channel(OFF_CHANNEL);
 
 BlockComment:
-    '/*' (~[*/] | '/'* BlockComment | '/'+ (~[*/]) | '*'+ ~[*/])* '*'+ '/' -> channel(HIDDEN);
+    '/*' (~[*/] | '/'* BlockComment | '/'+ (~[*/]) | '*'+ ~[*/])* '*'+ '/' -> channel(OFF_CHANNEL);
 
 // BUG: only ascii identifiers are permitted
 // BUG: doc comments are ignored
