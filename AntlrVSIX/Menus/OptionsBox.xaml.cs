@@ -19,6 +19,5 @@ namespace AntlrVSIX.Options
         private void Window_ContentRendered(object sender, EventArgs e)
         {
         }
-
     }
 }

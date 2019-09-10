@@ -4,8 +4,8 @@
     x:Class="AntlrVSIX.Options.OptionsBox"
     xmlns:local="clr-namespace:AntlrVSIX.Options"
     Title="AntlrVSIX Options"
-    Height="350"
-    Width="650"
+    Height="500"
+    Width="800"
     MinHeight="10"
     MinWidth="300"
     ResizeMode="CanResizeWithGrip"
@@ -15,60 +15,64 @@
 
     <Grid Margin="15">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <TextBox Grid.Column="1" Grid.Row="1" TextWrapping="Wrap" IsReadOnly="True" MinWidth="250" BorderThickness="0">
+        
+        <TextBox Grid.Column="0" Grid.Row="0" TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0">
             Select this box if you want the parser to not run with each character changed
             in the buffer for the grammar.
         </TextBox>
-        <CheckBox Name="noninteractive" Grid.Column="1" Grid.Row="2" Margin="10,0,10,10">Non-Interactive Parse</CheckBox>
+        <CheckBox Name="noninteractive" Grid.Row="0" Grid.Column="1" Margin="10,0,10,10">Non-Interactive Parse</CheckBox>
 
-        <TextBox Grid.Column="1" Grid.Row="3" TextWrapping="Wrap" IsReadOnly="True" MinWidth="250"  BorderThickness="0">
+        <TextBox Grid.Row="1" Grid.Column="0" TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0">
             Select this box if you want only search for visitors and listeners in the directory
             of the grammar.
         </TextBox>
-        <CheckBox Name="restricted_directory" Grid.Column="1" Grid.Row="4" Margin="10,0,10,10">Visitors/Listeners restricted to directory of grammar.</CheckBox>
+        <CheckBox Name="restricted_directory" Grid.Row="1" Grid.Column="1" Margin="10,0,10,10">Visitors/Listeners restricted to directory of grammar.</CheckBox>
 
-        <TextBox Grid.Column="1" Grid.Row="5" TextWrapping="Wrap" IsReadOnly="True" MinWidth="250" BorderThickness="0">
+        <TextBox Grid.Row="2" Grid.Column="0" TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0">
             Select this box if you want to generate a listener or visitor method if
             none exists.
         </TextBox>
-        <CheckBox Name="generate_visitor_listener" Grid.Column="1" Grid.Row="6" Margin="10,0,10,10">Visitors/Listeners generated if missing.</CheckBox>
+        <CheckBox Name="generate_visitor_listener" Grid.Row="2" Grid.Column="1" Margin="10,0,10,10">Visitors/Listeners generated if missing.</CheckBox>
 
-        <TextBox Grid.Column="1" Grid.Row="7" TextWrapping="Wrap" IsReadOnly="True" MinWidth="250" BorderThickness="0">
+        <TextBox Grid.Row="3" Grid.Column="0" TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0">
             Set full path of CORPUS_LOCATION directory.
         </TextBox>
-        <TextBox Name="corpus_location" Grid.Row="8" Grid.Column="1" Margin="10,0,10,10">Not set</TextBox>
+        <TextBox Name="corpus_location" Grid.Row="3" Grid.Column="1"  Margin="10,0,10,10">Not set</TextBox>
 
-        <TextBox Grid.Column="1" Grid.Row="9" TextWrapping="Wrap" IsReadOnly="True" MinWidth="250" BorderThickness="0">
+        <TextBox Grid.Row="4" Grid.Column="0" TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0">
             Select this box if you want reformat to replace text using Google's diff-match-patch algorithm.
         </TextBox>
-        <CheckBox Name="incremental_reformat" Grid.Column="1" Grid.Row="10" Margin="10,0,10,10">Incremental replacement of text when reformatting document.</CheckBox>
+        <CheckBox Name="incremental_reformat" Grid.Row="4" Grid.Column="1" Margin="10,0,10,10">Incremental replacement.</CheckBox>
 
-        <TextBox Grid.Column="1" Grid.Row="11" TextWrapping="Wrap" IsReadOnly="True" MinWidth="250" BorderThickness="0">
+        <TextBox Grid.Row="5" Grid.Column="0" TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0">
             List of grammar description assembly files, separated by semi-colons.
         </TextBox>
-        <TextBox Name="grammar_description_locations" Grid.Row="12" Grid.Column="1" Margin="10,0,10,10">Not set</TextBox>
+        <TextBox Name="grammar_description_locations" Grid.Row="5" Grid.Column="1" Margin="10,0,10,10">Not set</TextBox>
+
+        <CheckBox Name="override_antlr" Grid.Row="6" Grid.Column="1" Margin="10,0,10,10">Override any other ANTLR plugins.</CheckBox>
+        <CheckBox Name="override_java" Grid.Row="7" Grid.Column="1" Margin="10,0,10,10">Override any other Java plugins.</CheckBox>
+        <CheckBox Name="override_python" Grid.Row="8" Grid.Column="1" Margin="10,0,10,10">Override any other Python plugins.</CheckBox>
+        <CheckBox Name="override_rust" Grid.Row="9" Grid.Column="1" Margin="10,0,10,10">Override any other Rust plugins.</CheckBox>
+
 
         <!-- Accept or Cancel -->
-        <WrapPanel Grid.Row="13" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="10,0,0,0" >
+        <WrapPanel Grid.Row="14" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="10,0,0,0" >
             <Button IsDefault="True" Name="btnDialogOk" Click="btnDialogOk_Click" MinWidth="60" Margin="0,0,10,0">_Ok</Button>
             <Button IsCancel="True" MinWidth="60">_Cancel</Button>
         </WrapPanel>
