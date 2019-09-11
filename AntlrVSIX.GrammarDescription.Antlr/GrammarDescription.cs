@@ -354,6 +354,13 @@
                             parent.GetChild(i + 1).GetText() == ":")
                             return true;
                     }
+                    if (term.Parent != null
+                        && term.Parent is ANTLRv4Parser.IdContext
+                        && term.Parent.Parent != null
+                        && term.Parent.Parent is ANTLRv4Parser.IdListContext
+                        && term.Parent.Parent.Parent != null
+                        && term.Parent.Parent.Parent is ANTLRv4Parser.TokensSpecContext)
+                        return true;
                     return false;
                 },
             null, // comment
