@@ -5,6 +5,7 @@ using System.Text;
 using Symtab;
 using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
+using Antlr4.Runtime.Misc;
 
 namespace AntlrVSIX.GrammarDescription.Java
 {
@@ -33,11 +34,12 @@ namespace AntlrVSIX.GrammarDescription.Java
             var md = mh.GetChild(j) as Java9Parser.MethodDeclaratorContext;
             var node = md.GetChild(0);
             var name = node.GetText();
-            var m = new Symtab.MethodSymbol(name);
-            _current_scope.Peek().define(m);
+            Symbol m = new Symtab.MethodSymbol(name);
+            _current_scope.Peek().define(ref m);
             _symbols[node] = m;
-            _scopes[context] = m;
-            _current_scope.Push(m);
+            Scope mm = (Scope)m;
+            _scopes[context] = mm;
+            _current_scope.Push(mm);
             base.EnterInterfaceMethodDeclaration(context);
         }
 
@@ -59,9 +61,9 @@ namespace AntlrVSIX.GrammarDescription.Java
                 var vd = vdl.GetChild(j) as Java9Parser.VariableDeclaratorContext;
                 var node = vd.GetChild(0);
                 var name = node.GetText();
-                var f = new Symtab.LocalSymbol(name);
+                Symbol f = new Symtab.LocalSymbol(name);
                 _symbols[node] = f;
-                _current_scope.Peek().define(f);
+                _current_scope.Peek().define(ref f);
             }
             base.EnterLocalVariableDeclaration(context);
         }
@@ -74,10 +76,19 @@ namespace AntlrVSIX.GrammarDescription.Java
                     break;
             var node = context.GetChild(i+1) as Java9Parser.IdentifierContext;
             var name = node.GetText();
-            var e = new Symtab.EnumSymbol(name);
-            _current_scope.Peek().define(e);
+            Symbol e = new Symtab.EnumSymbol(name);
+            _current_scope.Peek().define(ref e);
             _symbols[node] = e;
+            Scope mm = (Scope)e;
+            _scopes[context] = mm;
+            _current_scope.Push(mm);
             base.EnterEnumDeclaration(context);
+        }
+
+        public override void ExitEnumDeclaration([NotNull] Java9Parser.EnumDeclarationContext context)
+        {
+            _current_scope.Pop();
+            base.ExitEnumDeclaration(context);
         }
 
         public override void EnterBlock(Java9Parser.BlockContext context)
@@ -104,8 +115,8 @@ namespace AntlrVSIX.GrammarDescription.Java
             var vdi = context.GetChild(i) as Java9Parser.VariableDeclaratorIdContext;
             var node = vdi.GetChild(0);
             var name = node.GetText();
-            var v = new Symtab.MethodSymbol(name);
-            _current_scope.Peek().define(v);
+            Symbol v = new Symtab.MethodSymbol(name);
+            _current_scope.Peek().define(ref v);
             _symbols[node] = v;
             base.EnterFormalParameter(context);
         }
@@ -130,11 +141,12 @@ namespace AntlrVSIX.GrammarDescription.Java
             var md = mh.GetChild(j) as Java9Parser.MethodDeclaratorContext;
             var node = md.GetChild(0);
             var name = node.GetText();
-            var m = new Symtab.MethodSymbol(name);
-            _current_scope.Peek().define(m);
+            Symbol m = new Symtab.MethodSymbol(name);
+            _current_scope.Peek().define(ref m);
             _symbols[node] = m;
-            _scopes[context] = m;
-            _current_scope.Push(m);
+            Scope mm = (Scope)m;
+            _scopes[context] = mm;
+            _current_scope.Push(mm);
             base.EnterMethodDeclaration(context);
         }
 
@@ -151,8 +163,8 @@ namespace AntlrVSIX.GrammarDescription.Java
                 var vd = vdl.GetChild(j) as Java9Parser.VariableDeclaratorContext;
                 var node = vd.GetChild(0);
                 var name = node.GetText();
-                var f = new Symtab.FieldSymbol(name);
-                _current_scope.Peek().define(f);
+                Symbol f = new Symtab.FieldSymbol(name);
+                _current_scope.Peek().define(ref f);
                 _symbols[node] = f;
             }
             base.EnterFieldDeclaration(context);
@@ -166,12 +178,13 @@ namespace AntlrVSIX.GrammarDescription.Java
                     break;
             var node = context.GetChild(i) as Java9Parser.IdentifierContext;
             var id_name = node.GetText();
-            var cs = new Symtab.ClassSymbol(id_name);
-            cs.MonoType = new Mono.Cecil.TypeDefinition(null, id_name, default(Mono.Cecil.TypeAttributes));
-            _current_scope.Peek().define(cs);
+            Symbol cs = new Symtab.ClassSymbol(id_name);
+            //cs.MonoType = new Mono.Cecil.TypeDefinition(null, id_name, default(Mono.Cecil.TypeAttributes));
+            _current_scope.Peek().define(ref cs);
             _symbols[node] = cs;
-            _scopes[context] = cs;
-            _current_scope.Push(cs);
+            Scope s = (Scope)cs;
+            _scopes[context] = s;
+            _current_scope.Push(s);
             base.EnterNormalClassDeclaration(context);
         }
 
@@ -189,11 +202,12 @@ namespace AntlrVSIX.GrammarDescription.Java
                     break;
             var node = context.GetChild(i) as Java9Parser.IdentifierContext;
             var id_name = node.GetText();
-            var cs = new Symtab.InterfaceSymbol(id_name);
-            _current_scope.Peek().define(cs);
+            Symbol cs = new Symtab.InterfaceSymbol(id_name);
+            _current_scope.Peek().define(ref cs);
             _symbols[node] = cs;
-            _scopes[context] = cs;
-            _current_scope.Push(cs);
+            Scope s = (Scope)cs;
+            _scopes[context] = s;
+            _current_scope.Push(s);
             base.EnterNormalInterfaceDeclaration(context);
         }
 
@@ -201,6 +215,66 @@ namespace AntlrVSIX.GrammarDescription.Java
         {
             _current_scope.Pop();
             base.ExitNormalInterfaceDeclaration(context);
+        }
+
+        public override void EnterBasicForStatement([NotNull] Java9Parser.BasicForStatementContext context)
+        {
+            var e = _current_scope.Peek();
+            var b = new Symtab.LocalScope(e);
+            _current_scope.Push(b);
+            _scopes[context] = b;
+            base.EnterBasicForStatement(context);
+        }
+
+        public override void ExitBasicForStatement([NotNull] Java9Parser.BasicForStatementContext context)
+        {
+            _current_scope.Pop();
+            base.ExitBasicForStatement(context);
+        }
+
+        public override void EnterBasicForStatementNoShortIf([NotNull] Java9Parser.BasicForStatementNoShortIfContext context)
+        {
+            var e = _current_scope.Peek();
+            var b = new Symtab.LocalScope(e);
+            _current_scope.Push(b);
+            _scopes[context] = b;
+            base.EnterBasicForStatementNoShortIf(context);
+        }
+
+        public override void ExitBasicForStatementNoShortIf([NotNull] Java9Parser.BasicForStatementNoShortIfContext context)
+        {
+            _current_scope.Pop();
+            base.ExitBasicForStatementNoShortIf(context);
+        }
+
+        public override void EnterEnhancedForStatement([NotNull] Java9Parser.EnhancedForStatementContext context)
+        {
+            var e = _current_scope.Peek();
+            var b = new Symtab.LocalScope(e);
+            _current_scope.Push(b);
+            _scopes[context] = b;
+            base.EnterEnhancedForStatement(context);
+        }
+
+        public override void ExitEnhancedForStatement([NotNull] Java9Parser.EnhancedForStatementContext context)
+        {
+            _current_scope.Pop();
+            base.ExitEnhancedForStatement(context);
+        }
+
+        public override void EnterEnhancedForStatementNoShortIf([NotNull] Java9Parser.EnhancedForStatementNoShortIfContext context)
+        {
+            var e = _current_scope.Peek();
+            var b = new Symtab.LocalScope(e);
+            _current_scope.Push(b);
+            _scopes[context] = b;
+            base.EnterEnhancedForStatementNoShortIf(context);
+        }
+
+        public override void ExitEnhancedForStatementNoShortIf([NotNull] Java9Parser.EnhancedForStatementNoShortIfContext context)
+        {
+            _current_scope.Pop();
+            base.ExitEnhancedForStatementNoShortIf(context);
         }
     }
 }

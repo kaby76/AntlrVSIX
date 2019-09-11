@@ -30,14 +30,14 @@
         {
         }
 
-        public virtual void definePredefinedSymbol(Symbol s)
+        public virtual void definePredefinedSymbol(ref Symbol s)
         {
-            PREDEFINED.define(s);
+            PREDEFINED.define(ref s);
         }
 
-        public virtual void defineGlobalSymbol(Symbol s)
+        public virtual void defineGlobalSymbol(ref Symbol s)
         {
-            GLOBALS.define(s);
+            GLOBALS.define(ref s);
         }
     }
 }

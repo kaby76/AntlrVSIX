@@ -73,8 +73,6 @@
         {
             get
             {
-    //JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in .NET:
-    //ORIGINAL LINE: java.util.List<? extends Symbol> scopes = Utils.filter(getSymbols(), s -> s instanceof Scope);
                 IList<Symbol> scopes = Utils.filter(Symbols, s => s is Scope);
                 return (IList<Scope>)scopes; // force it to cast
             }
@@ -144,13 +142,14 @@
             }
         }
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void define(Symbol sym) throws IllegalArgumentException
-        public virtual void define(Symbol sym)
+        public virtual void define(ref Symbol sym)
         {
             if (symbols.ContainsKey(sym.Name))
             {
-                throw new System.ArgumentException("duplicate symbol " + sym.Name);
+                System.Type t = sym.GetType();
+                var s = System.Activator.CreateInstance(t, new object[] { "_generated_" + new System.Random().Next() } );
+                sym = s as Symbol;
+                // throw new System.ArgumentException("duplicate symbol " + sym.Name);
             }
             sym.Scope = this;
             sym.InsertionOrderNumber = symbols.Count; // set to insertion position from 0

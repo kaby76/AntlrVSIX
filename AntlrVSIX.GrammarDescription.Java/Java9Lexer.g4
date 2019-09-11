@@ -1,5 +1,46 @@
 lexer grammar Java9Lexer;
 
+@lexer::header{
+using System.Linq;
+using System.Text.RegularExpressions;
+}
+
+@lexer::members {
+	private class Character
+	{
+		public static bool isJavaIdentifierPart(int c)
+		{
+			if (Char.IsLetter((char)c))
+				return true;
+			else if (c == (int)'$')
+				return true;
+			else if (c == (int)'_')
+				return true;
+			else if (Char.IsDigit((char)c))
+				return true;
+			else if (Char.IsNumber((char)c))
+				return true;
+			return false;
+		}
+
+		public static bool isJavaIdentifierStart(int c)
+		{
+			if (Char.IsLetter((char)c))
+				return true;
+			else if (c == (int)'$')
+				return true;
+			else if (c == (int)'_')
+				return true;
+			return false;
+		}
+
+		public static int toCodePoint(int high, int low)
+		{
+			return Char.ConvertToUtf32(high, low);
+		}
+	}
+}
+
 channels {
 	COMMENTS_CHANNEL		// non-default channel for whitespace and comments
 }
@@ -419,10 +460,10 @@ JavaLetter
 	:	[a-zA-Z$_] // these are the "java letters" below 0x7F
 	|	// covers all characters above 0x7F which are not a surrogate
 		~[\u0000-\u007F\uD800-\uDBFF]
-// pass for now		{Character.isJavaIdentifierStart(_input.LA(-1))}?
+		{Character.isJavaIdentifierStart(this.InputStream.LA(-1))}?
 	|	// covers UTF-16 surrogate pairs encodings for U+10000 to U+10FFFF
 		[\uD800-\uDBFF] [\uDC00-\uDFFF]
-// pass for now		{Character.isJavaIdentifierStart(Character.toCodePoint((char)_input.LA(-2), (char)_input.LA(-1)))}?
+		{Character.isJavaIdentifierStart(Character.toCodePoint((char)this.InputStream.LA(-2), (char)this.InputStream.LA(-1)))}?
 	;
 
 fragment
@@ -430,10 +471,10 @@ JavaLetterOrDigit
 	:	[a-zA-Z0-9$_] // these are the "java letters or digits" below 0x7F
 	|	// covers all characters above 0x7F which are not a surrogate
 		~[\u0000-\u007F\uD800-\uDBFF]
-// pass for now		{Character.isJavaIdentifierPart(_input.LA(-1))}?
+		{Character.isJavaIdentifierPart(this.InputStream.LA(-1))}?
 	|	// covers UTF-16 surrogate pairs encodings for U+10000 to U+10FFFF
 		[\uD800-\uDBFF] [\uDC00-\uDFFF]
-// pass for now		{Character.isJavaIdentifierPart(Character.toCodePoint((char)_input.LA(-2), (char)_input.LA(-1)))}?
+		{Character.isJavaIdentifierPart(Character.toCodePoint((char)this.InputStream.LA(-2), (char)this.InputStream.LA(-1)))}?
 	;
 
 //

@@ -136,5 +136,57 @@ namespace AntlrVSIX.GrammarDescription.Java
             _symbols[context] = s_ref;
             base.EnterMethodInvocation_lfno_primary(context);
         }
+
+        public override void EnterBasicForStatement([NotNull] Java9Parser.BasicForStatementContext context)
+        {
+            var b = (Symtab.LocalScope)_scopes[context];
+            _current_scope.Push(b);
+            base.EnterBasicForStatement(context);
+        }
+
+        public override void ExitBasicForStatement([NotNull] Java9Parser.BasicForStatementContext context)
+        {
+            _current_scope.Pop();
+            base.ExitBasicForStatement(context);
+        }
+
+        public override void EnterBasicForStatementNoShortIf([NotNull] Java9Parser.BasicForStatementNoShortIfContext context)
+        {
+            var b = (Symtab.LocalScope)_scopes[context];
+            _current_scope.Push(b);
+            base.EnterBasicForStatementNoShortIf(context);
+        }
+
+        public override void ExitBasicForStatementNoShortIf([NotNull] Java9Parser.BasicForStatementNoShortIfContext context)
+        {
+            _current_scope.Pop();
+            base.ExitBasicForStatementNoShortIf(context);
+        }
+
+        public override void EnterEnhancedForStatement([NotNull] Java9Parser.EnhancedForStatementContext context)
+        {
+            var b = (Symtab.LocalScope)_scopes[context];
+            _current_scope.Push(b);
+            base.EnterEnhancedForStatement(context);
+        }
+
+        public override void ExitEnhancedForStatement([NotNull] Java9Parser.EnhancedForStatementContext context)
+        {
+            _current_scope.Pop();
+            base.ExitEnhancedForStatement(context);
+        }
+
+        public override void EnterEnhancedForStatementNoShortIf([NotNull] Java9Parser.EnhancedForStatementNoShortIfContext context)
+        {
+            var b = (Symtab.LocalScope)_scopes[context];
+            _current_scope.Push(b);
+            base.EnterEnhancedForStatementNoShortIf(context);
+        }
+
+        public override void ExitEnhancedForStatementNoShortIf([NotNull] Java9Parser.EnhancedForStatementNoShortIfContext context)
+        {
+            _current_scope.Pop();
+            base.ExitEnhancedForStatementNoShortIf(context);
+        }
     }
 }

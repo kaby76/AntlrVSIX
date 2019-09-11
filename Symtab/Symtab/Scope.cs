@@ -43,7 +43,7 @@
         ///  The order in which symbols are defined must be preserved so that
         ///  <seealso cref="#getSymbols()"/> returns the list in definition order.
         /// </summary>
-        void define(Symbol sym);
+        void define(ref Symbol sym);
 
         /// <summary>
         /// Look up name in this scope or recursively in parent scope if not here </summary>

@@ -9,7 +9,7 @@
     ///  and methods with different slot sequences. A DataAggregateSymbol
     ///  can also be a member of an aggregate itself (nested structs, ...).
     /// </summary>
-    public abstract class DataAggregateSymbol : SymbolWithScope, Symbol, Type
+    public abstract class DataAggregateSymbol : SymbolWithScope, MemberSymbol, Symbol, Type
     {
         public Mono.Cecil.MemberReference MonoType { get; set; }
         protected internal ParserRuleContext defNode;
@@ -33,15 +33,13 @@
         }
 
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void define(Symbol sym) throws IllegalArgumentException
-        public override void define(Symbol sym)
+        public override void define(ref Symbol sym)
         {
             if (!(sym is MemberSymbol))
             {
                 throw new System.ArgumentException("sym is " + sym.GetType().Name + " not MemberSymbol");
             }
-            base.define(sym);
+            base.define(ref sym);
             setSlotNumber(sym);
         }
 

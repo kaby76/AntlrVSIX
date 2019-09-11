@@ -1347,7 +1347,11 @@ relationalExpression
 shiftExpression
 	:	additiveExpression
 	|	shiftExpression LT LT additiveExpression
-	|	shiftExpression GT GT additiveExpression
+	|	shiftExpression GT
+			{ this.CurrentToken.Column + 1 == this.TokenStream.Get(this.CurrentToken.TokenIndex + 1).Column }?
+		GT
+			{ this.CurrentToken.Column + 1 == this.TokenStream.Get(this.CurrentToken.TokenIndex + 1).Column }?
+		additiveExpression
 	|	shiftExpression GT GT GT additiveExpression
 	;
 
