@@ -259,7 +259,12 @@
                     if (term.Parent as ANTLRv4Parser.LexerRuleSpecContext != null)
                         return true;
                     if (term.Parent?.Parent as ANTLRv4Parser.LexerCommandExprContext != null)
-                        return true;
+                    {
+                        var p = term.Parent.Parent.Parent;
+                        if (!(p is ANTLRv4Parser.LexerCommandContext)) return false;
+                        if (p.GetChild(0).GetText() == "type") return true;
+                        return false;
+                    }
                     return false;
                 },
             null, // comment = 2
@@ -297,6 +302,13 @@
                     if (term == null) return false;
                     var text = term.GetText();
                     if (_antlr_keywords.Contains(text)) return false;
+                    if (term.Parent?.Parent as ANTLRv4Parser.LexerCommandExprContext != null)
+                    {
+                        var p = term.Parent.Parent.Parent;
+                        if (!(p is ANTLRv4Parser.LexerCommandContext)) return false;
+                        if (p.GetChild(0).GetText() == "pushMode") return true;
+                        return false;
+                    }
                     return false;
                 },
             (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // channel = 6
