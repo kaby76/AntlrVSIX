@@ -40,7 +40,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             }
 
             //StringBuilder sb = new StringBuilder();
-            //Foobar.ParenthesizedAST(_ant_tree, sb, "", cts);
+            //TreeSerializer.ParenthesizedAST(pt, sb, "", cts);
             //string fn = System.IO.Path.GetFileName(ffn);
             //fn = "c:\\temp\\" + fn;
             //System.IO.File.WriteAllText(fn, sb.ToString());

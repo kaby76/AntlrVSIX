@@ -179,10 +179,14 @@ namespace AntlrVSIX.Rename
 
             List<IToken> where = new List<IToken>();
             List<ParserDetails> where_details = new List<ParserDetails>();
-            foreach (var kvp in ParserDetails._per_file_parser_details)
+            //foreach (var kvp in ParserDetails._per_file_parser_details)
             {
-                string file_name = kvp.Key;
-                ParserDetails details = kvp.Value;
+                //string file_name = kvp.Key;
+                //ParserDetails details = kvp.Value;
+                var file_name = path;
+                ParserDetails._per_file_parser_details.TryGetValue(file_name, out ParserDetails details);
+                if (details == null) return;
+
                 {
                     var it = details._ant_applied_occurrence_classes.Where(
                         (t) => _grammar_description.CanRename[t.Value] && t.Key.Text == span.GetText()).Select(t => t.Key);

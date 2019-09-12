@@ -188,5 +188,29 @@ namespace AntlrVSIX.GrammarDescription.Java
             _current_scope.Pop();
             base.ExitEnhancedForStatementNoShortIf(context);
         }
+
+        public override void EnterExpressionName([NotNull] Java9Parser.ExpressionNameContext context)
+        {
+            var first = context.GetChild(0);
+            if (first is Java9Parser.IdentifierContext)
+            {
+                bool is_statement = false;
+                for (var p = first.Parent; p != null; p = p.Parent)
+                {
+                    if (p is Java9Parser.StatementContext)
+                    {
+                        is_statement = true;
+                        break;
+                    }
+                }
+                if (is_statement)
+                {
+                    var id_name = first.GetText();
+                    var s = _current_scope.Peek().resolve(id_name);
+                    if (s != null) _symbols[first] = s;
+                }
+            }
+            base.EnterExpressionName(context);
+        }
     }
 }

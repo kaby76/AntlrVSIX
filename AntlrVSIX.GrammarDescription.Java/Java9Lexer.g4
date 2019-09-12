@@ -36,7 +36,7 @@ using System.Text.RegularExpressions;
 
 		public static int toCodePoint(int high, int low)
 		{
-			return Char.ConvertToUtf32(high, low);
+			return Char.ConvertToUtf32((char)high, (char)low);
 		}
 	}
 }
