@@ -46,7 +46,7 @@ namespace AntlrVSIX.Options
 
             IncrementalReformat = true;
             NonInteractiveParse = false;
-            RestrictedDirectory = false;
+            RestrictedDirectory = true;
             GenerateVisitorListener = false;
             OverrideAntlrPluggins = true;
             OverrideJavaPluggins = true;

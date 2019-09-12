@@ -36,7 +36,6 @@
             var ffn = doc.FilePath;
             var gd = GrammarDescriptionFactory.Create(ffn);
             if (gd == null) return;
-            string path_containing_applied_occurrence = System.IO.Path.GetDirectoryName(doc.FilePath);
             List<Completion> completions = new List<Completion>();
             ParserDetails pd = ParserDetails._per_file_parser_details[doc.FilePath];
             foreach (var s in pd._ant_applied_occurrence_classes

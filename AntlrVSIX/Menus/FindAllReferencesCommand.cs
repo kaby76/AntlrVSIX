@@ -98,6 +98,14 @@ namespace AntlrVSIX.FindAllReferences
             {
                 string file_name = kvp.Key;
                 ParserDetails details = kvp.Value;
+                var gd = GrammarDescriptionFactory.Create(file_name);
+                if (gd != grammar_description) continue;
+                if (Options.OptionsCommand.Instance.RestrictedDirectory)
+                {
+                    string p1 = System.IO.Path.GetDirectoryName(file_name);
+                    string p2 = System.IO.Path.GetDirectoryName(path);
+                    if (p1 != p2) continue;
+                }
                 {
                     var it = details._ant_applied_occurrence_classes.Where(
                         (t) => grammar_description.CanFindAllRefs[t.Value]
