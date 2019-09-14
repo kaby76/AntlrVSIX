@@ -210,7 +210,325 @@ namespace AntlrVSIX.GrammarDescription.Java
                     if (s != null) _symbols[first] = s;
                 }
             }
+            else if (first is Java9Parser.AmbiguousNameContext)
+            {
+                //bool is_statement = false;
+                //for (var p = first.Parent; p != null; p = p.Parent)
+                //{
+                //    if (p is Java9Parser.StatementContext)
+                //    {
+                //        is_statement = true;
+                //        break;
+                //    }
+                //}
+                //if (is_statement)
+                //{
+                //    var id_name = first.GetText();
+                //    var s = _current_scope.Peek().resolve(id_name);
+                //    if (s != null) _symbols[first] = s;
+                //}
+            }
             base.EnterExpressionName(context);
+        }
+
+        public override void ExitAmbiguousName([NotNull] Java9Parser.AmbiguousNameContext context)
+        {
+            // Synthesize attributes.
+            var first = context.GetChild(0);
+            if (first is Java9Parser.IdentifierContext)
+            {
+                bool is_statement = false;
+                for (var p = first.Parent; p != null; p = p.Parent)
+                {
+                    if (p is Java9Parser.StatementContext)
+                    {
+                        is_statement = true;
+                        break;
+                    }
+                }
+                if (is_statement)
+                {
+                    var id_name = first.GetText();
+                    Symbol s = (id_name == "this")
+                        ? _current_scope.Peek() as Symbol
+                        : _current_scope.Peek().resolve(id_name);
+                    if (s != null) _symbols[first] = s;
+                }
+            }
+            else if (first is Java9Parser.AmbiguousNameContext)
+            {
+                bool is_statement = false;
+                for (var p = first.Parent; p != null; p = p.Parent)
+                {
+                    if (p is Java9Parser.StatementContext)
+                    {
+                        is_statement = true;
+                        break;
+                    }
+                }
+                if (is_statement)
+                {
+                    _symbols.TryGetValue(first, out Symbol v);
+                    if (v != null && v is SymbolWithScope)
+                    {
+                        var id_name = context.GetChild(2).GetText();
+                        var w = v as SymbolWithScope;
+                        var s = w.resolve(id_name);
+                        if (s != null) _symbols[context] = s;
+                    }
+                }
+            }
+            base.ExitAmbiguousName(context);
+        }
+
+        public override void ExitModuleName([NotNull] Java9Parser.ModuleNameContext context)
+        {
+            // Synthesize attributes.
+            var first = context.GetChild(0);
+            if (first is Java9Parser.IdentifierContext)
+            {
+                bool is_statement = false;
+                for (var p = first.Parent; p != null; p = p.Parent)
+                {
+                    if (p is Java9Parser.StatementContext)
+                    {
+                        is_statement = true;
+                        break;
+                    }
+                }
+                if (is_statement)
+                {
+                    var id_name = first.GetText();
+                    Symbol s = (id_name == "this")
+                        ? _current_scope.Peek() as Symbol
+                        : _current_scope.Peek().resolve(id_name);
+                    if (s != null) _symbols[first] = s;
+                }
+            }
+            else if (first is Java9Parser.ModuleNameContext)
+            {
+                bool is_statement = false;
+                for (var p = first.Parent; p != null; p = p.Parent)
+                {
+                    if (p is Java9Parser.StatementContext)
+                    {
+                        is_statement = true;
+                        break;
+                    }
+                }
+                if (is_statement)
+                {
+                    _symbols.TryGetValue(first, out Symbol v);
+                    if (v != null && v is SymbolWithScope)
+                    {
+                        var id_name = context.GetChild(2).GetText();
+                        var w = v as SymbolWithScope;
+                        var s = w.resolve(id_name);
+                        if (s != null) _symbols[context] = s;
+                    }
+                }
+            }
+            base.ExitModuleName(context);
+        }
+
+        public override void ExitPackageName([NotNull] Java9Parser.PackageNameContext context)
+        {
+            // Synthesize attributes.
+            var first = context.GetChild(0);
+            if (first is Java9Parser.IdentifierContext)
+            {
+                bool is_statement = false;
+                for (var p = first.Parent; p != null; p = p.Parent)
+                {
+                    if (p is Java9Parser.StatementContext)
+                    {
+                        is_statement = true;
+                        break;
+                    }
+                }
+                if (is_statement)
+                {
+                    var id_name = first.GetText();
+                    Symbol s = (id_name == "this")
+                        ? _current_scope.Peek() as Symbol
+                        : _current_scope.Peek().resolve(id_name);
+                    if (s != null) _symbols[first] = s;
+                }
+            }
+            else if (first is Java9Parser.PackageNameContext)
+            {
+                bool is_statement = false;
+                for (var p = first.Parent; p != null; p = p.Parent)
+                {
+                    if (p is Java9Parser.StatementContext)
+                    {
+                        is_statement = true;
+                        break;
+                    }
+                }
+                if (is_statement)
+                {
+                    _symbols.TryGetValue(first, out Symbol v);
+                    if (v != null && v is SymbolWithScope)
+                    {
+                        var id_name = context.GetChild(2).GetText();
+                        var w = v as SymbolWithScope;
+                        var s = w.resolve(id_name);
+                        if (s != null) _symbols[context] = s;
+                    }
+                }
+            }
+            base.ExitPackageName(context);
+        }
+
+        public override void ExitTypeName([NotNull] Java9Parser.TypeNameContext context)
+        {
+            // Synthesize attributes.
+            var first = context.GetChild(0);
+            if (first is Java9Parser.IdentifierContext)
+            {
+                bool is_statement = false;
+                for (var p = first.Parent; p != null; p = p.Parent)
+                {
+                    if (p is Java9Parser.StatementContext)
+                    {
+                        is_statement = true;
+                        break;
+                    }
+                }
+                if (is_statement)
+                {
+                    var id_name = first.GetText();
+                    Symbol s = (id_name == "this")
+                        ? _current_scope.Peek() as Symbol
+                        : _current_scope.Peek().resolve(id_name);
+                    if (s != null) _symbols[first] = s;
+                }
+            }
+            else if (first is Java9Parser.TypeNameContext)
+            {
+                bool is_statement = false;
+                for (var p = first.Parent; p != null; p = p.Parent)
+                {
+                    if (p is Java9Parser.StatementContext)
+                    {
+                        is_statement = true;
+                        break;
+                    }
+                }
+                if (is_statement)
+                {
+                    _symbols.TryGetValue(first, out Symbol v);
+                    if (v != null && v is SymbolWithScope)
+                    {
+                        var id_name = context.GetChild(2).GetText();
+                        var w = v as SymbolWithScope;
+                        var s = w.resolve(id_name);
+                        if (s != null) _symbols[context] = s;
+                    }
+                }
+            }
+            base.ExitTypeName(context);
+        }
+
+        public override void ExitPackageOrTypeName([NotNull] Java9Parser.PackageOrTypeNameContext context)
+        {
+            // Synthesize attributes.
+            var first = context.GetChild(0);
+            if (first is Java9Parser.IdentifierContext)
+            {
+                bool is_statement = false;
+                for (var p = first.Parent; p != null; p = p.Parent)
+                {
+                    if (p is Java9Parser.StatementContext)
+                    {
+                        is_statement = true;
+                        break;
+                    }
+                }
+                if (is_statement)
+                {
+                    var id_name = first.GetText();
+                    Symbol s = (id_name == "this")
+                        ? _current_scope.Peek() as Symbol
+                        : _current_scope.Peek().resolve(id_name);
+                    if (s != null) _symbols[first] = s;
+                }
+            }
+            else if (first is Java9Parser.PackageOrTypeNameContext)
+            {
+                bool is_statement = false;
+                for (var p = first.Parent; p != null; p = p.Parent)
+                {
+                    if (p is Java9Parser.StatementContext)
+                    {
+                        is_statement = true;
+                        break;
+                    }
+                }
+                if (is_statement)
+                {
+                    _symbols.TryGetValue(first, out Symbol v);
+                    if (v != null && v is SymbolWithScope)
+                    {
+                        var id_name = context.GetChild(2).GetText();
+                        var w = v as SymbolWithScope;
+                        var s = w.resolve(id_name);
+                        if (s != null) _symbols[context] = s;
+                    }
+                }
+            }
+            base.ExitPackageOrTypeName(context);
+        }
+
+        public override void ExitExpressionName([NotNull] Java9Parser.ExpressionNameContext context)
+        {
+            // Synthesize attributes.
+            var first = context.GetChild(0);
+            if (first is Java9Parser.IdentifierContext)
+            {
+                bool is_statement = false;
+                for (var p = first.Parent; p != null; p = p.Parent)
+                {
+                    if (p is Java9Parser.StatementContext)
+                    {
+                        is_statement = true;
+                        break;
+                    }
+                }
+                if (is_statement)
+                {
+                    var id_name = first.GetText();
+                    Symbol s = (id_name == "this")
+                        ? _current_scope.Peek() as Symbol
+                        : _current_scope.Peek().resolve(id_name);
+                    if (s != null) _symbols[first] = s;
+                }
+            }
+            else if (first is Java9Parser.ExpressionNameContext)
+            {
+                bool is_statement = false;
+                for (var p = first.Parent; p != null; p = p.Parent)
+                {
+                    if (p is Java9Parser.StatementContext)
+                    {
+                        is_statement = true;
+                        break;
+                    }
+                }
+                if (is_statement)
+                {
+                    _symbols.TryGetValue(first, out Symbol v);
+                    if (v != null && v is SymbolWithScope)
+                    {
+                        var id_name = context.GetChild(2).GetText();
+                        var w = v as SymbolWithScope;
+                        var s = w.resolve(id_name);
+                        if (s != null) _symbols[context] = s;
+                    }
+                }
+            }
+            base.ExitExpressionName(context);
         }
     }
 }
