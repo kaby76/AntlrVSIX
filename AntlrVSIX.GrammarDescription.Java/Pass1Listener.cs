@@ -276,5 +276,35 @@ namespace AntlrVSIX.GrammarDescription.Java
             _current_scope.Pop();
             base.ExitEnhancedForStatementNoShortIf(context);
         }
+
+        public override void EnterTryWithResourcesStatement([NotNull] Java9Parser.TryWithResourcesStatementContext context)
+        {
+            var e = _current_scope.Peek();
+            var b = new Symtab.LocalScope(e);
+            _current_scope.Push(b);
+            _scopes[context] = b;
+            base.EnterTryWithResourcesStatement(context);
+        }
+
+        public override void ExitTryWithResourcesStatement([NotNull] Java9Parser.TryWithResourcesStatementContext context)
+        {
+            _current_scope.Pop();
+            base.ExitTryWithResourcesStatement(context);
+        }
+
+        public override void ExitResource([NotNull] Java9Parser.ResourceContext context)
+        {
+            int i;
+            for (i = 0; i < context.ChildCount; ++i)
+                if (context.GetChild(i) as Java9Parser.VariableDeclaratorIdContext != null)
+                    break;
+            var vdi = context.GetChild(i) as Java9Parser.VariableDeclaratorIdContext;
+            var node = vdi;
+            var name = vdi.GetChild(0).GetText();
+            Symbol f = new Symtab.LocalSymbol(name);
+            _symbols[node] = f;
+            _current_scope.Peek().define(ref f);
+            base.ExitResource(context);
+        }
     }
 }

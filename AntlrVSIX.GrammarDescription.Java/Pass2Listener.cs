@@ -249,10 +249,20 @@ namespace AntlrVSIX.GrammarDescription.Java
                 if (is_statement)
                 {
                     var id_name = first.GetText();
-                    Symbol s = (id_name == "this")
-                        ? _current_scope.Peek() as Symbol
-                        : _current_scope.Peek().resolve(id_name);
-                    if (s != null) _symbols[first] = s;
+                    if (id_name == "this")
+                    {
+                        var sc = _current_scope.Peek();
+                        for (; sc != null; sc = sc.EnclosingScope)
+                        {
+                            if (sc is ClassSymbol) break;
+                        }
+                        if (sc != null) _symbols[first] = (Symbol)sc;
+                    }
+                    else
+                    {
+                        var s = _current_scope.Peek().resolve(id_name);
+                        if (s != null) _symbols[first] = s;
+                    }
                 }
             }
             else if (first is Java9Parser.AmbiguousNameContext)
@@ -299,10 +309,20 @@ namespace AntlrVSIX.GrammarDescription.Java
                 if (is_statement)
                 {
                     var id_name = first.GetText();
-                    Symbol s = (id_name == "this")
-                        ? _current_scope.Peek() as Symbol
-                        : _current_scope.Peek().resolve(id_name);
-                    if (s != null) _symbols[first] = s;
+                    if (id_name == "this")
+                    {
+                        var sc = _current_scope.Peek();
+                        for (; sc != null; sc = sc.EnclosingScope)
+                        {
+                            if (sc is ClassSymbol) break;
+                        }
+                        if (sc != null) _symbols[first] = (Symbol)sc;
+                    }
+                    else
+                    {
+                        var s = _current_scope.Peek().resolve(id_name);
+                        if (s != null) _symbols[first] = s;
+                    }
                 }
             }
             else if (first is Java9Parser.ModuleNameContext)
@@ -349,10 +369,20 @@ namespace AntlrVSIX.GrammarDescription.Java
                 if (is_statement)
                 {
                     var id_name = first.GetText();
-                    Symbol s = (id_name == "this")
-                        ? _current_scope.Peek() as Symbol
-                        : _current_scope.Peek().resolve(id_name);
-                    if (s != null) _symbols[first] = s;
+                    if (id_name == "this")
+                    {
+                        var sc = _current_scope.Peek();
+                        for (; sc != null; sc = sc.EnclosingScope)
+                        {
+                            if (sc is ClassSymbol) break;
+                        }
+                        if (sc != null) _symbols[first] = (Symbol)sc;
+                    }
+                    else
+                    {
+                        var s = _current_scope.Peek().resolve(id_name);
+                        if (s != null) _symbols[first] = s;
+                    }
                 }
             }
             else if (first is Java9Parser.PackageNameContext)
@@ -399,10 +429,20 @@ namespace AntlrVSIX.GrammarDescription.Java
                 if (is_statement)
                 {
                     var id_name = first.GetText();
-                    Symbol s = (id_name == "this")
-                        ? _current_scope.Peek() as Symbol
-                        : _current_scope.Peek().resolve(id_name);
-                    if (s != null) _symbols[first] = s;
+                    if (id_name == "this")
+                    {
+                        var sc = _current_scope.Peek();
+                        for (; sc != null; sc = sc.EnclosingScope)
+                        {
+                            if (sc is ClassSymbol) break;
+                        }
+                        if (sc != null) _symbols[first] = (Symbol)sc;
+                    }
+                    else
+                    {
+                        var s = _current_scope.Peek().resolve(id_name);
+                        if (s != null) _symbols[first] = s;
+                    }
                 }
             }
             else if (first is Java9Parser.TypeNameContext)
@@ -449,10 +489,20 @@ namespace AntlrVSIX.GrammarDescription.Java
                 if (is_statement)
                 {
                     var id_name = first.GetText();
-                    Symbol s = (id_name == "this")
-                        ? _current_scope.Peek() as Symbol
-                        : _current_scope.Peek().resolve(id_name);
-                    if (s != null) _symbols[first] = s;
+                    if (id_name == "this")
+                    {
+                        var sc = _current_scope.Peek();
+                        for (; sc != null; sc = sc.EnclosingScope)
+                        {
+                            if (sc is ClassSymbol) break;
+                        }
+                        if (sc != null) _symbols[first] = (Symbol)sc;
+                    }
+                    else
+                    {
+                        var s = _current_scope.Peek().resolve(id_name);
+                        if (s != null) _symbols[first] = s;
+                    }
                 }
             }
             else if (first is Java9Parser.PackageOrTypeNameContext)
@@ -495,14 +545,29 @@ namespace AntlrVSIX.GrammarDescription.Java
                         is_statement = true;
                         break;
                     }
+                    if (p is Java9Parser.BlockStatementContext)
+                    {
+                        is_statement = true;
+                        break;
+                    }
                 }
                 if (is_statement)
                 {
                     var id_name = first.GetText();
-                    Symbol s = (id_name == "this")
-                        ? _current_scope.Peek() as Symbol
-                        : _current_scope.Peek().resolve(id_name);
-                    if (s != null) _symbols[first] = s;
+                    if (id_name == "this")
+                    {
+                        var sc = _current_scope.Peek();
+                        for (; sc != null; sc = sc.EnclosingScope)
+                        {
+                            if (sc is ClassSymbol) break;
+                        }
+                        if (sc != null) _symbols[first] = (Symbol)sc;
+                    }
+                    else
+                    {
+                        var s = _current_scope.Peek().resolve(id_name);
+                        if (s != null) _symbols[first] = s;
+                    }
                 }
             }
             else if (first is Java9Parser.ExpressionNameContext)
@@ -511,6 +576,11 @@ namespace AntlrVSIX.GrammarDescription.Java
                 for (var p = first.Parent; p != null; p = p.Parent)
                 {
                     if (p is Java9Parser.StatementContext)
+                    {
+                        is_statement = true;
+                        break;
+                    }
+                    if (p is Java9Parser.BlockStatementContext)
                     {
                         is_statement = true;
                         break;
@@ -529,6 +599,68 @@ namespace AntlrVSIX.GrammarDescription.Java
                 }
             }
             base.ExitExpressionName(context);
+        }
+
+        public override void ExitPrimaryNoNewArray_lfno_primary([NotNull] Java9Parser.PrimaryNoNewArray_lfno_primaryContext context)
+        {
+            // Synthesize attributes.
+            var first = context.GetChild(0);
+            if (first is TerminalNodeImpl)
+            {
+                bool is_statement = false;
+                for (var p = first.Parent; p != null; p = p.Parent)
+                {
+                    if (p is Java9Parser.StatementContext)
+                    {
+                        is_statement = true;
+                        break;
+                    }
+                    if (p is Java9Parser.BlockStatementContext)
+                    {
+                        is_statement = true;
+                        break;
+                    }
+                }
+                if (is_statement)
+                {
+                    var id_name = first.GetText();
+                    if (id_name == "this")
+                    {
+                        var sc = _current_scope.Peek();
+                        for (; sc != null; sc = sc.EnclosingScope)
+                        {
+                            if (sc is ClassSymbol) break;
+                        }
+                        if (sc != null) _symbols[first] = (Symbol)sc;
+                    } else
+                    {
+                        var s = _current_scope.Peek().resolve(id_name);
+                        if (s != null) _symbols[first] = s;
+                    }
+                }
+            }
+            base.ExitPrimaryNoNewArray_lfno_primary(context);
+        }
+
+        public override void ExitFieldAccess([NotNull] Java9Parser.FieldAccessContext context)
+        {
+            var first = context.GetChild(0);
+            if (first is Java9Parser.PrimaryContext)
+            {
+                var c = context.GetChild(2);
+                var id_name = c.GetText();
+                _symbols.TryGetValue(first, out Symbol p);
+                if (p != null)
+                {
+                    var s = ((Scope)p).resolve(id_name);
+                    if (s != null)
+                    {
+                        _symbols[c] = s;
+                        _symbols[context] = s;
+                    }
+                }
+            }
+            base.ExitFieldAccess(context);
         }
     }
 }
