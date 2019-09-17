@@ -662,5 +662,10 @@ namespace AntlrVSIX.GrammarDescription.Java
             }
             base.ExitFieldAccess(context);
         }
+
+        public override void EnterFieldAccess_lf_primary([NotNull] Java9Parser.FieldAccess_lf_primaryContext context)
+        {
+            base.EnterFieldAccess_lf_primary(context);
+        }
     }
 }
