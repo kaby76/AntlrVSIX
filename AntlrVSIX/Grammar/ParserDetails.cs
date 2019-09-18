@@ -60,7 +60,14 @@ namespace AntlrVSIX.Grammar
                 foreach (var t in it)
                 {
                     var itoken = (t as TerminalNodeImpl).Symbol;
-                    pd._ant_defining_occurrence_classes.Add(itoken, classification);
+                    try
+                    {
+                        pd._ant_defining_occurrence_classes.Add(itoken, classification);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        // Duplicate
+                    }
                 }
             }
             for (int classification = 0; classification < gd.Identify.Count; ++classification)
@@ -71,7 +78,14 @@ namespace AntlrVSIX.Grammar
                 foreach (var t in it)
                 {
                     var itoken = (t as TerminalNodeImpl).Symbol;
-                    pd._ant_applied_occurrence_classes.Add(itoken, classification);
+                    try
+                    {
+                        pd._ant_applied_occurrence_classes.Add(itoken, classification);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        // Duplicate
+                    }
                 }
             }
 

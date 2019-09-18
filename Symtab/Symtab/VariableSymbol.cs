@@ -3,7 +3,7 @@
 
     public class VariableSymbol : BaseSymbol, TypedSymbol
     {
-        protected VariableSymbol(string name) : base(name)
+        public VariableSymbol(string name) : base(name)
         {
         }
 

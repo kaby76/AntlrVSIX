@@ -697,6 +697,84 @@ namespace AntlrVSIX.GrammarDescription.Java
                         _symbols[context] = f;
                     }
                 }
+            } else if (parent is Java9Parser.ClassInstanceCreationExpressionContext)
+            {
+                var p = (Antlr4.Runtime.ParserRuleContext)parent;
+                var index = p.children.IndexOf(context);
+                int rule_index = parent.RuleIndex;
+                var first = p.GetChild(0);
+                if ((first as TerminalNodeImpl)?.Symbol.Type == Java9Lexer.NEW)
+                {
+                    var id = context.GetText();
+                    int i;
+                    for (i = index - 1; i >= 0; i--)
+                    {
+                        if (p.GetChild(i) is Java9Parser.IdentifierContext)
+                            break;
+                    }
+                    if (i < 0)
+                    {
+                        var sc = _current_scope.Peek();
+                        var f = sc.resolve(id);
+                        if (f != null)
+                        {
+                            _symbols[context] = f;
+                        }
+                    }
+                    else
+                    {
+                        var c = p.GetChild(i);
+                        var s = _symbols[c];
+                        var sc = s as Scope;
+                        if (sc != null)
+                        {
+                            var f = sc.resolve(id);
+                            if (f != null)
+                            {
+                                _symbols[context] = f;
+                            }
+                        }
+                    }
+                }
+            } else if (parent is Java9Parser.ClassInstanceCreationExpression_lfno_primaryContext)
+            {
+                var p = (Antlr4.Runtime.ParserRuleContext)parent;
+                var index = p.children.IndexOf(context);
+                int rule_index = parent.RuleIndex;
+                var first = p.GetChild(0);
+                if ((first as TerminalNodeImpl)?.Symbol.Type == Java9Lexer.NEW)
+                {
+                    var id = context.GetText();
+                    int i;
+                    for (i = index - 1; i >= 0; i--)
+                    {
+                        if (p.GetChild(i) is Java9Parser.IdentifierContext)
+                            break;
+                    }
+                    if (i < 0)
+                    {
+                        var sc = _current_scope.Peek();
+                        var f = sc.resolve(id);
+                        if (f != null)
+                        {
+                            _symbols[context] = f;
+                        }
+                    }
+                    else
+                    {
+                        var c = p.GetChild(i);
+                        var s = _symbols[c];
+                        var sc = s as Scope;
+                        if (sc != null)
+                        {
+                            var f = sc.resolve(id);
+                            if (f != null)
+                            {
+                                _symbols[context] = f;
+                            }
+                        }
+                    }
+                }
             }
             base.EnterIdentifier(context);
         }

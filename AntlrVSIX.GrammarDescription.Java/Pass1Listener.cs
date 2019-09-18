@@ -328,5 +328,41 @@ namespace AntlrVSIX.GrammarDescription.Java
             _symbols[context] = literal_symbol;
             base.ExitLiteral(context);
         }
+
+        public override void EnterIdentifier([NotNull] Java9Parser.IdentifierContext context)
+        {
+            var parent = context.Parent;
+            if (parent is Java9Parser.SimpleTypeNameContext && parent.Parent is Java9Parser.ConstructorDeclaratorContext)
+            {
+                var sc = _current_scope.Peek();
+                for (; sc != null; sc = sc.EnclosingScope)
+                {
+                    if (sc is ClassSymbol) break;
+                }
+                if (sc == null)
+                {
+                    return;
+                }
+                var id = context.GetText();
+                var f = new MethodSymbol(id);
+                _symbols[context] = f;
+                _symbols[context.Parent] = f;
+                _symbols[context.Parent.Parent] = f;
+            }
+            else if (parent is Java9Parser.VariableDeclaratorIdContext && parent.Parent is Java9Parser.FormalParameterContext)
+            {
+                Symbol f = new Symtab.ParameterSymbol(context.GetText());
+                var p = (ParserRuleContext)context;
+                for (; p != null; p = (ParserRuleContext)p.Parent)
+                {
+                    if (p is Java9Parser.ConstructorDeclaratorContext)
+                        break;
+                }
+                if (p == null) return;
+                var sc = _symbols[p];
+                ((Scope)sc).define(ref f);
+                _symbols[context] = f;
+            }
+        }
     }
 }

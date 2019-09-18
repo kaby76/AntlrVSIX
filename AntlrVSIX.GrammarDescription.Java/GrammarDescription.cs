@@ -365,9 +365,12 @@ namespace AntlrVSIX.GrammarDescription.Java
                         st.TryGetValue(p, out Symtab.Symbol value);
                         if (value != null)
                         {
-                            if (value is Symtab.LocalSymbol)
+                            switch (value)
                             {
-                                return true;
+                                case Symtab.LocalSymbol ss:
+                                    return true;
+                                case Symtab.ParameterSymbol ss:
+                                    return true;
                             }
                         }
                     }
