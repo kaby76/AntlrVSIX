@@ -667,5 +667,38 @@ namespace AntlrVSIX.GrammarDescription.Java
         {
             base.EnterFieldAccess_lf_primary(context);
         }
+
+        public override void EnterIdentifier([NotNull] Java9Parser.IdentifierContext context)
+        {
+            var parent = context.Parent;
+            if (parent is Java9Parser.FieldAccess_lfno_primaryContext)
+            {
+                var super = parent.GetChild(0);
+                if (super is TerminalNodeImpl && super.GetText() == "super")
+                {
+                    var sc = _current_scope.Peek();
+                    for (; sc != null; sc = sc.EnclosingScope)
+                    {
+                        if (sc is ClassSymbol) break;
+                    }
+                    if (sc == null)
+                    {
+                        return;
+                    }
+                    var super_class = sc.EnclosingScope;
+                    if (super_class == null)
+                    {
+                        return;
+                    }
+                    var id = context.GetText();
+                    var f = super_class.resolve(id);
+                    if (f != null)
+                    {
+                        _symbols[context] = f;
+                    }
+                }
+            }
+            base.EnterIdentifier(context);
+        }
     }
 }

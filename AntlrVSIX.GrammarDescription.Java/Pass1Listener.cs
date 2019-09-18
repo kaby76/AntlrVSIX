@@ -306,5 +306,13 @@ namespace AntlrVSIX.GrammarDescription.Java
             _current_scope.Peek().define(ref f);
             base.ExitResource(context);
         }
+
+        public override void ExitLiteral([NotNull] Java9Parser.LiteralContext context)
+        {
+            var literal = context.GetText();
+            var literal_symbol = new Symtab.Symtab.Literal(literal);
+            _symbols[context] = literal_symbol;
+            base.ExitLiteral(context);
+        }
     }
 }

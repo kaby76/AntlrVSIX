@@ -318,7 +318,18 @@ namespace AntlrVSIX.GrammarDescription.Java
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
-                    if (term.Symbol == null) return false;
+                    Antlr4.Runtime.Tree.IParseTree p = term;
+                    for (; p != null; p = p.Parent)
+                    {
+                        st.TryGetValue(p, out Symtab.Symbol value);
+                        if (value != null)
+                        {
+                            if (value is Symtab.Symtab.Literal)
+                            {
+                                return true;
+                            }
+                        }
+                    }
                     return false;
                 },
             (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // type = 6
