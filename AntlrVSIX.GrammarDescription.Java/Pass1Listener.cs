@@ -310,7 +310,21 @@ namespace AntlrVSIX.GrammarDescription.Java
         public override void ExitLiteral([NotNull] Java9Parser.LiteralContext context)
         {
             var literal = context.GetText();
-            var literal_symbol = new Symtab.Symtab.Literal(literal);
+            var c = context.GetChild(0);
+            var t = c as TerminalNodeImpl;
+            var s = t.Symbol;
+            string cleaned_up_literal = "";
+            switch (s.Type)
+            {
+                case Java9Lexer.IntegerLiteral:
+                case Java9Lexer.FloatingPointLiteral:
+                    cleaned_up_literal = literal.Replace("_", "");
+                    break;
+                default:
+                    cleaned_up_literal = literal;
+                    break;
+            }
+            var literal_symbol = new Symtab.Literal(literal, cleaned_up_literal, s.Type);
             _symbols[context] = literal_symbol;
             base.ExitLiteral(context);
         }

@@ -324,7 +324,7 @@ namespace AntlrVSIX.GrammarDescription.Java
                         st.TryGetValue(p, out Symtab.Symbol value);
                         if (value != null)
                         {
-                            if (value is Symtab.Symtab.Literal)
+                            if (value is Symtab.Literal)
                             {
                                 return true;
                             }

@@ -87,10 +87,15 @@ namespace AntlrVSIX
                         pd._ant_symtab.TryGetValue(p, out Symtab.Symbol value);
                         if (value != null)
                         {
+                            string show = value.Name;
+                            if (value is Symtab.Literal)
+                            {
+                                show = ((Symtab.Literal)value).Cleaned;
+                            }
                             quick_info_content.Add(
                                 _grammar_description.Map[tag_type]
                                 + "\n"
-                                + value.Name);
+                                + show);
                             found = true;
                             break;
                         }
