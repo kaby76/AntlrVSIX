@@ -3,7 +3,6 @@
 
     public class InvalidType : Type
     {
-        public Mono.Cecil.MemberReference MonoType { get; set; }
         public virtual string Name
         {
             get

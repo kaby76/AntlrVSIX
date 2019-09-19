@@ -3,7 +3,6 @@
 
     public class PrimitiveType : BaseSymbol, Type
     {
-        public Mono.Cecil.MemberReference MonoType { get; set; }
         protected internal int typeIndex;
 
         public PrimitiveType(string name) : base(name)

@@ -8,7 +8,6 @@
     /// </summary>
     public class FunctionType : Type
     {
-        public Mono.Cecil.MemberReference MonoType { get; set; }
         protected internal readonly Type returnType;
         protected internal readonly IList<Type> argumentTypes;
 

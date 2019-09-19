@@ -8,8 +8,6 @@
     /// </summary>
     public class ClassSymbol : DataAggregateSymbol
     {
-        public Mono.Cecil.MemberReference MonoType { get; set; }
-
         protected internal string superClassName; // null if this is Object
         protected internal int nextFreeMethodSlot = 0; // next slot to allocate
 

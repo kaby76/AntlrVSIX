@@ -8,7 +8,6 @@
     /// </summary>
     public class ArrayType : Type
     {
-        public Mono.Cecil.MemberReference MonoType { get; set; }
         protected internal readonly Type elemType;
         protected internal readonly int numElems; // some languages allow you to point at arrays of a specific size
 

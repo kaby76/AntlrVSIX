@@ -6,7 +6,6 @@ namespace Symtab
 {
     public class EnumSymbol : SymbolWithScope, Symbol, Type
     {
-        public Mono.Cecil.MemberReference MonoType { get; set; }
         public EnumSymbol(string name) : base(name)
         {
         }

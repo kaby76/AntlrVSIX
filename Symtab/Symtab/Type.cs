@@ -12,8 +12,6 @@
     /// </summary>
     public interface Type
     {
-        Mono.Cecil.MemberReference MonoType { get; set; }
-
         string Name {get;}
 
         /// <summary>

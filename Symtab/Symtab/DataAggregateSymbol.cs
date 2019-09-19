@@ -11,7 +11,6 @@
     /// </summary>
     public abstract class DataAggregateSymbol : SymbolWithScope, MemberSymbol, Symbol, Type
     {
-        public Mono.Cecil.MemberReference MonoType { get; set; }
         protected internal ParserRuleContext defNode;
         protected internal int nextFreeFieldSlot = 0; // next slot to allocate
         protected internal int typeIndex;

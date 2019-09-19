@@ -7,7 +7,6 @@
     /// </summary>
     public class PointerType : Type
     {
-        public Mono.Cecil.MemberReference MonoType { get; set; }
         protected internal Type targetType;
         public PointerType(Type targetType)
         {

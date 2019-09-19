@@ -5,7 +5,6 @@
     /// A "typedef int I;" in C results in a TypeAlias("I", ptrToIntegerType) </summary>
     public class TypeAlias : BaseSymbol, Type
     {
-        public Mono.Cecil.MemberReference MonoType { get; set; }
         protected internal Type targetType;
         public TypeAlias(string name, Type targetType) : base(name)
         {
