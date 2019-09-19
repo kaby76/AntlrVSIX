@@ -19,7 +19,7 @@ namespace AntlrVSIX.About
             _info.AppendText(Environment.NewLine);
             _info.AppendText("AntlrVSIX version: " + AntlrVSIX.Constants.Version);
             _info.AppendText(Environment.NewLine);
-            _info.AppendText("Runtime: " + typeof(string).Assembly.ImageRuntimeVersion);
+            _info.AppendText("NET Runtime: " + typeof(string).Assembly.ImageRuntimeVersion);
             _info.AppendText(Environment.NewLine);
             _info.AppendText("Running " + application?.Name + " " + application.Version);
             _info.AppendText(Environment.NewLine);
@@ -29,7 +29,8 @@ namespace AntlrVSIX.About
             _info.AppendText("File version: " + fileVersion.FileVersion);
             _info.AppendText(Environment.NewLine);
             var cla = application.CommandLineArguments;
-            _info.AppendText("Command line args: " + cla);
+            _info.AppendText("Command line arguments: " + cla);
+            _info.AppendText(Environment.NewLine);
             var grammar_view = AntlrLanguagePackage.Instance.GetActiveView();
             if (grammar_view != null)
             {
@@ -42,7 +43,7 @@ namespace AntlrVSIX.About
                 _info.AppendText(Environment.NewLine);
                 if (ViewCreationListener.PreviousContentType.ContainsKey(active))
                 {
-                    _info.AppendText("Old content type: " + ViewCreationListener.PreviousContentType[active].DisplayName);
+                    _info.AppendText("Overridden content type: " + ViewCreationListener.PreviousContentType[active].DisplayName);
                     _info.AppendText(Environment.NewLine);
                 }
             }
