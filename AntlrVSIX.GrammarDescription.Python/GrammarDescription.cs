@@ -17,7 +17,7 @@ namespace AntlrVSIX.GrammarDescription.Python
         public string Name { get; } = "Python";
         public System.Type Parser { get; } = typeof(Python3Parser);
         public System.Type Lexer { get; } = typeof(Python3Lexer);
-        public void Parse(string ffn, string code, out IParseTree parse_tree, out Dictionary<IParseTree, Symbol> symbols)
+        public void Parse(string ffn, string code, out IParseTree parse_tree, out Dictionary<IParseTree, CombinedScopeSymbol> symbols)
         {
             IParseTree pt = null;
 
@@ -46,7 +46,7 @@ namespace AntlrVSIX.GrammarDescription.Python
             //System.IO.File.WriteAllText(fn, sb.ToString());
 
             parse_tree = pt;
-            symbols = new Dictionary<IParseTree, Symbol>();
+            symbols = new Dictionary<IParseTree, CombinedScopeSymbol>();
         }
 
         public Dictionary<IToken, int> ExtractComments(string code)
@@ -205,9 +205,9 @@ namespace AntlrVSIX.GrammarDescription.Python
             "await",
         };
 
-        public List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.Symbol>, IParseTree, bool>> Identify { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.Symbol>, IParseTree, bool>>()
+        public List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>, IParseTree, bool>> Identify { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>, IParseTree, bool>>()
         {
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // variable = 0
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // variable = 0
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -220,12 +220,12 @@ namespace AntlrVSIX.GrammarDescription.Python
                     if (term?.Symbol.Type == Python3Parser.NAME) return true;
                     return false;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // method = 1
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // method = 1
                 {
                     return false;
                 },
             null, // comment = 2
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // keyword = 3
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // keyword = 3
                 {
                     TerminalNodeImpl nonterm = t as TerminalNodeImpl;
                     if (nonterm == null) return false;
@@ -233,7 +233,7 @@ namespace AntlrVSIX.GrammarDescription.Python
                     if (!_keywords.Contains(text)) return false;
                     return true;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // literal = 4
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // literal = 4
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -244,13 +244,13 @@ namespace AntlrVSIX.GrammarDescription.Python
                 },
         };
 
-        public List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.Symbol>, IParseTree, bool>> IdentifyDefinition { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.Symbol>, IParseTree, bool>>()
+        public List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>, IParseTree, bool>> IdentifyDefinition { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>, IParseTree, bool>>()
         {
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // variable
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // variable
                 {
                     return false;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // method
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // method
                 {
                     return false;
                 },

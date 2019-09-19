@@ -27,7 +27,7 @@
                 {
                     if (EnclosingScope != null)
                     {
-                        Symbol superClass = EnclosingScope.resolve(superClassName);
+                        Symbol superClass = EnclosingScope.LookupType(superClassName);
                         if (superClass is InterfaceSymbol)
                         {
                             return (InterfaceSymbol)superClass;
@@ -55,7 +55,7 @@
             }
         }
 
-        public override Symbol resolve(string name, bool alias = false)
+        public override Symbol LookupType(string name, bool alias = false)
         {
             Symbol s = resolveMember(name);
             if (s != null)
@@ -66,7 +66,7 @@
             Scope parent = EnclosingScope;
             if (parent != null)
             {
-                return parent.resolve(name, alias);
+                return parent.LookupType(name, alias);
             }
             return null; // not found
         }

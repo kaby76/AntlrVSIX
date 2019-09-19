@@ -84,10 +84,11 @@ namespace AntlrVSIX
                     Antlr4.Runtime.Tree.IParseTree p = pt;
                     for (; p != null; p = p.Parent)
                     {
-                        pd._ant_symtab.TryGetValue(p, out Symtab.Symbol value);
+                        pd._ant_symtab.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
                         if (value != null)
                         {
-                            string show = value.Name;
+                            var name = value as Symtab.Symbol;
+                            string show = name?.Name;
                             if (value is Symtab.Literal)
                             {
                                 show = ((Symtab.Literal)value).Cleaned;

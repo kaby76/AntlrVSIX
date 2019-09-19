@@ -11,7 +11,7 @@ namespace AntlrVSIX.GrammarDescription
         string Name { get; }
         System.Type Parser { get; }
         System.Type Lexer { get; }
-        void Parse(string ffn, string code, out IParseTree parse_tree, out Dictionary<IParseTree, Symbol> symbols);
+        void Parse(string ffn, string code, out IParseTree parse_tree, out Dictionary<IParseTree, CombinedScopeSymbol> symbols);
         Dictionary<IToken, int> ExtractComments(string code);
         bool CanNextRule { get; }
         string[] Map { get; }
@@ -23,8 +23,8 @@ namespace AntlrVSIX.GrammarDescription
         List<bool> CanGotodef { get; }
         List<bool> CanGotovisitor { get; }
         bool CanReformat { get; }
-        List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.Symbol>, IParseTree, bool>> Identify { get; }
-        List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.Symbol>, IParseTree, bool>> IdentifyDefinition { get; }
+        List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>, IParseTree, bool>> Identify { get; }
+        List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>, IParseTree, bool>> IdentifyDefinition { get; }
         bool IsFileType(string ffn);
         string FileExtension { get; }
         string StartRule { get; }

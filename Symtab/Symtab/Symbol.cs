@@ -13,10 +13,12 @@
         Scope Scope {get;set;}
         int InsertionOrderNumber {get;set;}
 
+        // Resolve a ref or def into a def symbol.
+        Symbol resolve();
+
         // to satisfy adding symbols to sets, hashtables
         int GetHashCode();
         bool Equals(object o);
-        Symbol definition { get; set; }
     }
 
 }

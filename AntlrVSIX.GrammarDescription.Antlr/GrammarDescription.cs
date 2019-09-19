@@ -19,7 +19,7 @@
         public System.Type Parser { get; } = typeof(ANTLRv4Parser);
         public System.Type Lexer { get; } = typeof(ANTLRv4Lexer);
 
-        public void Parse(string ffn, string code, out IParseTree parse_tree, out Dictionary<IParseTree, Symbol> symbols)
+        public void Parse(string ffn, string code, out IParseTree parse_tree, out Dictionary<IParseTree, CombinedScopeSymbol> symbols)
         {
             IParseTree pt = null;
 
@@ -48,7 +48,7 @@
             //System.IO.File.WriteAllText(fn, sb.ToString());
 
             parse_tree = pt;
-            symbols = new Dictionary<IParseTree, Symbol>();
+            symbols = new Dictionary<IParseTree, CombinedScopeSymbol>();
         }
 
         public Dictionary<IToken, int> ExtractComments(string code)
@@ -219,9 +219,9 @@
             "channel"
         };
 
-        public List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.Symbol>, IParseTree, bool>> Identify { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.Symbol>, IParseTree, bool>>()
+        public List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>, IParseTree, bool>> Identify { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>, IParseTree, bool>>()
         {
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree n) => // nonterminal = 0
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree n) => // nonterminal = 0
                 {
                     TerminalNodeImpl term = n as TerminalNodeImpl;
                     if (term == null) return false;
@@ -240,7 +240,7 @@
                         return true;
                     return false;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree n) => // terminal = 1
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree n) => // terminal = 1
                 {
                     TerminalNodeImpl term = n as TerminalNodeImpl;
                     if (term == null) return false;
@@ -268,7 +268,7 @@
                     return false;
                 },
             null, // comment = 2
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // keyword = 3
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // keyword = 3
                 {
                     TerminalNodeImpl nonterm = t as TerminalNodeImpl;
                     if (nonterm == null) return false;
@@ -276,7 +276,7 @@
                     if (!_antlr_keywords.Contains(text)) return false;
                     return true;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // literal = 4
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // literal = 4
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -296,7 +296,7 @@
                     }
                     return false;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // mode = 5
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // mode = 5
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -311,7 +311,7 @@
                     }
                     return false;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // channel = 6
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // channel = 6
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -330,9 +330,9 @@
                 }
         };
 
-        public List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.Symbol>, IParseTree, bool>> IdentifyDefinition { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.Symbol>, IParseTree, bool>>()
+        public List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>, IParseTree, bool>> IdentifyDefinition { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>, IParseTree, bool>>()
         {
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // nonterminal
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // nonterminal
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -350,7 +350,7 @@
                     }
                     return false;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree n) => // terminal
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree n) => // terminal
                 {
                     TerminalNodeImpl term = n as TerminalNodeImpl;
                     if (term == null) return false;
@@ -378,7 +378,7 @@
             null, // comment
             null, // keyword
             null, // literal
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree n) => // mode
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree n) => // mode
                 {
                     TerminalNodeImpl term = n as TerminalNodeImpl;
                     if (term == null) return false;
@@ -396,7 +396,7 @@
                     }
                     return false;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.Symbol> st, IParseTree t) => // channel
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // channel
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;

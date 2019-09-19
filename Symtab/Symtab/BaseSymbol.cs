@@ -9,13 +9,18 @@
     ///  You can associate a node in the parse tree that is responsible
     ///  for defining this symbol.
     /// </summary>
-    public abstract class BaseSymbol : Symbol
+    public abstract class BaseSymbol : CombinedScopeSymbol, Symbol
     {
         protected internal readonly string name; // All symbols at least have a name
         protected internal Type type; // If language statically typed, record type
         protected internal Scope scope; // All symbols know what scope contains them.
         protected internal ParserRuleContext defNode; // points at definition node in tree
         protected internal int lexicalOrder; // order seen or insertion order from 0; compilers often need this
+
+        public virtual Symbol resolve()
+        {
+            return this;
+        }
 
         public BaseSymbol(string name)
         {

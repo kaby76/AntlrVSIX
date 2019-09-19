@@ -11,13 +11,31 @@ namespace AntlrVSIX.GrammarDescription.Java
 {
     class Pass1Listener : Java9ParserBaseListener
     {
-        public Stack<Scope> _current_scope = new Stack<Scope>();
-        public Dictionary<IParseTree, Symbol> _symbols = new Dictionary<IParseTree, Symbol>();
-        public Dictionary<IParseTree, Scope> _scopes = new Dictionary<IParseTree, Scope>();
+        public Dictionary<IParseTree, CombinedScopeSymbol> _attributes = new Dictionary<IParseTree, CombinedScopeSymbol>();
+
+        public IParseTree NearestScope(IParseTree node)
+        {
+            for (; node != null; node = node.Parent)
+            {
+                if (_attributes.TryGetValue(node, out CombinedScopeSymbol value) && value is Scope)
+                    return node;
+            }
+            return null;
+        }
+
+        public Scope GetScope(IParseTree node)
+        {
+            _attributes.TryGetValue(node, out CombinedScopeSymbol value);
+            return value as Scope;
+        }
 
         public Pass1Listener()
         {
-            _current_scope.Push(new SymbolTable().GLOBALS);
+        }
+
+        public override void EnterCompilationUnit([NotNull] Java9Parser.CompilationUnitContext context)
+        {
+            _attributes[context] = (CombinedScopeSymbol)new SymbolTable().GLOBALS;
         }
 
         public override void EnterInterfaceMethodDeclaration(Java9Parser.InterfaceMethodDeclarationContext context)
@@ -35,18 +53,10 @@ namespace AntlrVSIX.GrammarDescription.Java
             var node = md.GetChild(0);
             var name = node.GetText();
             Symbol m = new Symtab.MethodSymbol(name);
-            _current_scope.Peek().define(ref m);
-            _symbols[node] = m;
-            Scope mm = (Scope)m;
-            _scopes[context] = mm;
-            _current_scope.Push(mm);
-            base.EnterInterfaceMethodDeclaration(context);
-        }
-
-        public override void ExitInterfaceMethodDeclaration(Java9Parser.InterfaceMethodDeclarationContext context)
-        {
-            _current_scope.Pop();
-            base.ExitInterfaceMethodDeclaration(context);
+            var scope = GetScope(NearestScope(context));
+            scope.define(ref m);
+            _attributes[node] = (CombinedScopeSymbol)m;
+            _attributes[context] = (CombinedScopeSymbol)m;
         }
 
         public override void EnterLocalVariableDeclaration(Java9Parser.LocalVariableDeclarationContext context)
@@ -62,10 +72,10 @@ namespace AntlrVSIX.GrammarDescription.Java
                 var node = vd.GetChild(0);
                 var name = node.GetText();
                 Symbol f = new Symtab.LocalSymbol(name);
-                _symbols[node] = f;
-                _current_scope.Peek().define(ref f);
+                var scope = GetScope(NearestScope(context));
+                scope.define(ref f);
+                _attributes[node] = (CombinedScopeSymbol)f;
             }
-            base.EnterLocalVariableDeclaration(context);
         }
 
         public override void EnterEnumDeclaration(Java9Parser.EnumDeclarationContext context)
@@ -77,54 +87,17 @@ namespace AntlrVSIX.GrammarDescription.Java
             var node = context.GetChild(i+1) as Java9Parser.IdentifierContext;
             var name = node.GetText();
             Symbol e = new Symtab.EnumSymbol(name);
-            _current_scope.Peek().define(ref e);
-            _symbols[node] = e;
-            Scope mm = (Scope)e;
-            _scopes[context] = mm;
-            _current_scope.Push(mm);
-            base.EnterEnumDeclaration(context);
-        }
-
-        public override void ExitEnumDeclaration([NotNull] Java9Parser.EnumDeclarationContext context)
-        {
-            _current_scope.Pop();
-            base.ExitEnumDeclaration(context);
+            var scope = GetScope(NearestScope(context));
+            scope.define(ref e);
+            _attributes[node] =(CombinedScopeSymbol) e;
+            _attributes[context] = (CombinedScopeSymbol) e;
         }
 
         public override void EnterBlock(Java9Parser.BlockContext context)
         {
-            var e = _current_scope.Peek();
+            var e = GetScope(NearestScope(context));
             var b = new Symtab.LocalScope(e);
-            _current_scope.Push(b);
-            _scopes[context] = b;
-            base.EnterBlock(context);
-        }
-
-        public override void ExitBlock(Java9Parser.BlockContext context)
-        {
-            _current_scope.Pop();
-            base.ExitBlock(context);
-        }
-
-        public override void EnterFormalParameter(Java9Parser.FormalParameterContext context)
-        {
-            int i;
-            for (i = 0; i < context.ChildCount; ++i)
-                if (context.GetChild(i) as Java9Parser.VariableDeclaratorIdContext != null)
-                    break;
-            var vdi = context.GetChild(i) as Java9Parser.VariableDeclaratorIdContext;
-            var node = vdi.GetChild(0);
-            var name = node.GetText();
-            Symbol v = new Symtab.MethodSymbol(name);
-            _current_scope.Peek().define(ref v);
-            _symbols[node] = v;
-            base.EnterFormalParameter(context);
-        }
-
-        public override void ExitMethodDeclaration(Java9Parser.MethodDeclarationContext context)
-        {
-            _current_scope.Pop();
-            base.ExitMethodDeclaration(context);
+            _attributes[context] = (CombinedScopeSymbol) b;
         }
 
         public override void EnterMethodDeclaration(Java9Parser.MethodDeclarationContext context)
@@ -142,32 +115,10 @@ namespace AntlrVSIX.GrammarDescription.Java
             var node = md.GetChild(0);
             var name = node.GetText();
             Symbol m = new Symtab.MethodSymbol(name);
-            _current_scope.Peek().define(ref m);
-            _symbols[node] = m;
-            Scope mm = (Scope)m;
-            _scopes[context] = mm;
-            _current_scope.Push(mm);
-            base.EnterMethodDeclaration(context);
-        }
-
-        public override void EnterFieldDeclaration(Java9Parser.FieldDeclarationContext context)
-        {
-            int i;
-            for (i = 0; i < context.ChildCount; ++i)
-                if (context.GetChild(i) as Java9Parser.UnannTypeContext != null)
-                    break;
-            int vdli = i + 1;
-            var vdl = context.GetChild(vdli) as Java9Parser.VariableDeclaratorListContext;
-            for (int j = 0; j < vdl.ChildCount; j += 2)
-            {
-                var vd = vdl.GetChild(j) as Java9Parser.VariableDeclaratorContext;
-                var node = vd.GetChild(0);
-                var name = node.GetText();
-                Symbol f = new Symtab.FieldSymbol(name);
-                _current_scope.Peek().define(ref f);
-                _symbols[node] = f;
-            }
-            base.EnterFieldDeclaration(context);
+            var scope = GetScope(NearestScope(context));
+            scope.define(ref m);
+            _attributes[node] = (CombinedScopeSymbol)m;
+            _attributes[context] = (CombinedScopeSymbol)m;
         }
 
         public override void EnterNormalClassDeclaration(Java9Parser.NormalClassDeclarationContext context)
@@ -180,18 +131,11 @@ namespace AntlrVSIX.GrammarDescription.Java
             var id_name = node.GetText();
             Symbol cs = new Symtab.ClassSymbol(id_name);
             //cs.MonoType = new Mono.Cecil.TypeDefinition(null, id_name, default(Mono.Cecil.TypeAttributes));
-            _current_scope.Peek().define(ref cs);
-            _symbols[node] = cs;
+            var scope = GetScope(NearestScope(context));
+            scope.define(ref cs);
+            _attributes[node] = (CombinedScopeSymbol)cs;
             Scope s = (Scope)cs;
-            _scopes[context] = s;
-            _current_scope.Push(s);
-            base.EnterNormalClassDeclaration(context);
-        }
-
-        public override void ExitNormalClassDeclaration(Java9Parser.NormalClassDeclarationContext context)
-        {
-            _current_scope.Pop();
-            base.ExitNormalClassDeclaration(context);
+            _attributes[context] = (CombinedScopeSymbol)s;
         }
 
         public override void EnterNormalInterfaceDeclaration(Java9Parser.NormalInterfaceDeclarationContext context)
@@ -203,93 +147,51 @@ namespace AntlrVSIX.GrammarDescription.Java
             var node = context.GetChild(i) as Java9Parser.IdentifierContext;
             var id_name = node.GetText();
             Symbol cs = new Symtab.InterfaceSymbol(id_name);
-            _current_scope.Peek().define(ref cs);
-            _symbols[node] = cs;
+            var scope = GetScope(NearestScope(context));
+            scope.define(ref cs);
+            _attributes[node] = (CombinedScopeSymbol)cs;
             Scope s = (Scope)cs;
-            _scopes[context] = s;
-            _current_scope.Push(s);
-            base.EnterNormalInterfaceDeclaration(context);
-        }
-
-        public override void ExitNormalInterfaceDeclaration(Java9Parser.NormalInterfaceDeclarationContext context)
-        {
-            _current_scope.Pop();
-            base.ExitNormalInterfaceDeclaration(context);
+            _attributes[context] = (CombinedScopeSymbol)s;
         }
 
         public override void EnterBasicForStatement([NotNull] Java9Parser.BasicForStatementContext context)
         {
-            var e = _current_scope.Peek();
+            var scope = GetScope(NearestScope(context));
+            var e = scope;
             var b = new Symtab.LocalScope(e);
-            _current_scope.Push(b);
-            _scopes[context] = b;
-            base.EnterBasicForStatement(context);
-        }
-
-        public override void ExitBasicForStatement([NotNull] Java9Parser.BasicForStatementContext context)
-        {
-            _current_scope.Pop();
-            base.ExitBasicForStatement(context);
+            _attributes[context] = b;
         }
 
         public override void EnterBasicForStatementNoShortIf([NotNull] Java9Parser.BasicForStatementNoShortIfContext context)
         {
-            var e = _current_scope.Peek();
+            var scope = GetScope(NearestScope(context));
+            var e = scope;
             var b = new Symtab.LocalScope(e);
-            _current_scope.Push(b);
-            _scopes[context] = b;
-            base.EnterBasicForStatementNoShortIf(context);
-        }
-
-        public override void ExitBasicForStatementNoShortIf([NotNull] Java9Parser.BasicForStatementNoShortIfContext context)
-        {
-            _current_scope.Pop();
-            base.ExitBasicForStatementNoShortIf(context);
+            _attributes[context] = b;
         }
 
         public override void EnterEnhancedForStatement([NotNull] Java9Parser.EnhancedForStatementContext context)
         {
-            var e = _current_scope.Peek();
+            var scope = GetScope(NearestScope(context));
+            var e = scope;
             var b = new Symtab.LocalScope(e);
-            _current_scope.Push(b);
-            _scopes[context] = b;
-            base.EnterEnhancedForStatement(context);
-        }
-
-        public override void ExitEnhancedForStatement([NotNull] Java9Parser.EnhancedForStatementContext context)
-        {
-            _current_scope.Pop();
-            base.ExitEnhancedForStatement(context);
+            _attributes[context] = b;
         }
 
         public override void EnterEnhancedForStatementNoShortIf([NotNull] Java9Parser.EnhancedForStatementNoShortIfContext context)
         {
-            var e = _current_scope.Peek();
+            var scope = GetScope(NearestScope(context));
+            var e = scope;
             var b = new Symtab.LocalScope(e);
-            _current_scope.Push(b);
-            _scopes[context] = b;
-            base.EnterEnhancedForStatementNoShortIf(context);
-        }
-
-        public override void ExitEnhancedForStatementNoShortIf([NotNull] Java9Parser.EnhancedForStatementNoShortIfContext context)
-        {
-            _current_scope.Pop();
-            base.ExitEnhancedForStatementNoShortIf(context);
+            _attributes[context] = b;
         }
 
         public override void EnterTryWithResourcesStatement([NotNull] Java9Parser.TryWithResourcesStatementContext context)
         {
-            var e = _current_scope.Peek();
+            var scope = GetScope(NearestScope(context));
+            var e = scope;
             var b = new Symtab.LocalScope(e);
-            _current_scope.Push(b);
-            _scopes[context] = b;
-            base.EnterTryWithResourcesStatement(context);
-        }
-
-        public override void ExitTryWithResourcesStatement([NotNull] Java9Parser.TryWithResourcesStatementContext context)
-        {
-            _current_scope.Pop();
-            base.ExitTryWithResourcesStatement(context);
+            _attributes[context] = b;
         }
 
         public override void ExitResource([NotNull] Java9Parser.ResourceContext context)
@@ -302,9 +204,10 @@ namespace AntlrVSIX.GrammarDescription.Java
             var node = vdi;
             var name = vdi.GetChild(0).GetText();
             Symbol f = new Symtab.LocalSymbol(name);
-            _symbols[node] = f;
-            _current_scope.Peek().define(ref f);
-            base.ExitResource(context);
+            _attributes[node] = (CombinedScopeSymbol)f;
+            var scope = GetScope(NearestScope(context));
+            scope.define(ref f);
+            _attributes[context] = (CombinedScopeSymbol)f;
         }
 
         public override void ExitLiteral([NotNull] Java9Parser.LiteralContext context)
@@ -325,8 +228,7 @@ namespace AntlrVSIX.GrammarDescription.Java
                     break;
             }
             var literal_symbol = new Symtab.Literal(literal, cleaned_up_literal, s.Type);
-            _symbols[context] = literal_symbol;
-            base.ExitLiteral(context);
+            _attributes[context] = literal_symbol;
         }
 
         public override void EnterIdentifier([NotNull] Java9Parser.IdentifierContext context)
@@ -334,7 +236,8 @@ namespace AntlrVSIX.GrammarDescription.Java
             var parent = context.Parent;
             if (parent is Java9Parser.SimpleTypeNameContext && parent.Parent is Java9Parser.ConstructorDeclaratorContext)
             {
-                var sc = _current_scope.Peek();
+                var scope = GetScope(NearestScope(context));
+                var sc = scope;
                 for (; sc != null; sc = sc.EnclosingScope)
                 {
                     if (sc is ClassSymbol) break;
@@ -344,10 +247,25 @@ namespace AntlrVSIX.GrammarDescription.Java
                     return;
                 }
                 var id = context.GetText();
-                var f = new MethodSymbol(id);
-                _symbols[context] = f;
-                _symbols[context.Parent] = f;
-                _symbols[context.Parent.Parent] = f;
+                Symbol f = new MethodSymbol(id);
+                sc.define(ref f);
+                _attributes[context] = (CombinedScopeSymbol)f;
+                _attributes[context.Parent] = (CombinedScopeSymbol)f;
+                _attributes[context.Parent.Parent] = (CombinedScopeSymbol)f;
+                _attributes[context.Parent.Parent.Parent] = (CombinedScopeSymbol)f;
+            } else if (parent is Java9Parser.MethodDeclaratorContext)
+            {
+                var scope = GetScope(NearestScope(context));
+                var sc = scope;
+                if (sc == null)
+                {
+                    return;
+                }
+                var id = context.GetText();
+                Symbol f = new MethodSymbol(id);
+                sc.define(ref f);
+                _attributes[context] = (CombinedScopeSymbol)f;
+                _attributes[parent] = (CombinedScopeSymbol)f;
             }
             else if (parent is Java9Parser.VariableDeclaratorIdContext && parent.Parent is Java9Parser.FormalParameterContext)
             {
@@ -355,13 +273,41 @@ namespace AntlrVSIX.GrammarDescription.Java
                 var p = (ParserRuleContext)context;
                 for (; p != null; p = (ParserRuleContext)p.Parent)
                 {
-                    if (p is Java9Parser.ConstructorDeclaratorContext)
+                    if (p is Java9Parser.MethodDeclaratorContext ||
+                        p is Java9Parser.ConstructorDeclaratorContext)
                         break;
                 }
                 if (p == null) return;
-                var sc = _symbols[p];
-                ((Scope)sc).define(ref f);
-                _symbols[context] = f;
+                {
+                    var sc = _attributes[p];
+                    ((Scope)sc).define(ref f);
+                    _attributes[context] = (CombinedScopeSymbol)f;
+                }
+            }
+            else if (parent is Java9Parser.VariableDeclaratorIdContext)
+            {
+                Symbol f = new Symtab.FieldSymbol(context.GetText());
+                var p = (ParserRuleContext)context;
+                for (; p != null; p = (ParserRuleContext)p.Parent)
+                {
+                    if (p is Java9Parser.FieldDeclarationContext)
+                        break;
+                }
+                if (p == null) return;
+                {
+                    var scope = GetScope(NearestScope(p));
+                    var sc = scope;
+                    for (; sc != null; sc = sc.EnclosingScope)
+                    {
+                        if (sc is ClassSymbol) break;
+                    }
+                    if (sc == null)
+                    {
+                        return;
+                    }
+                    ((Scope)sc).define(ref f);
+                    _attributes[context] = (CombinedScopeSymbol)f;
+                }
             }
         }
     }

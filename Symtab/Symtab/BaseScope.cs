@@ -5,7 +5,7 @@
 
     /// <summary>
     /// An abstract base class that houses common functionality for scopes. </summary>
-    public abstract class BaseScope : Scope
+    public abstract class BaseScope : CombinedScopeSymbol, Scope
     {
         public abstract string Name {get;}
         protected internal Scope enclosingScope; // null if this scope is the root of the scope tree
@@ -102,7 +102,7 @@
             nestedScopesNotSymbols.Add(scope);
         }
 
-        public virtual Symbol resolve(string name, bool alias = false)
+        public virtual Symbol LookupType(string name, bool alias = false)
         {
             if (!alias)
             {
@@ -115,7 +115,7 @@
                 Scope parent = EnclosingScope;
                 if (parent != null)
                 {
-                    return parent.resolve(name, alias);
+                    return parent.LookupType(name, alias);
                 }
                 return null; // not found
             }
@@ -136,7 +136,7 @@
                 Scope parent = EnclosingScope;
                 if (parent != null)
                 {
-                    return parent.resolve(name, alias);
+                    return parent.LookupType(name, alias);
                 }
                 return null; // not found
             }
@@ -210,8 +210,6 @@
             }
         }
 
-//JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in .NET:
-//ORIGINAL LINE: @Override public java.util.List<? extends Symbol> getSymbols()
         public virtual IList<Symbol> Symbols
         {
             get
@@ -226,8 +224,6 @@
             }
         }
 
-//JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in .NET:
-//ORIGINAL LINE: public java.util.List<? extends Symbol> getAllSymbols()
         public virtual IList<Symbol> AllSymbols
         {
             get
@@ -289,8 +285,6 @@
 
         public virtual string toTestString(string separator, string scopePathSeparator)
         {
-//JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in .NET:
-//ORIGINAL LINE: java.util.List<? extends Symbol> allSymbols = this.getAllSymbols();
             IList<Symbol> allSymbols = this.AllSymbols;
             IList<string> syms = Utils.map(allSymbols, s => s.Scope.Name + scopePathSeparator + s.Name);
             return Utils.join(syms, separator);

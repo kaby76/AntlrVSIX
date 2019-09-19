@@ -7,86 +7,21 @@ namespace AntlrVSIX.GrammarDescription.Java
 {
     class Pass2Listener : Java9ParserBaseListener
     {
-        Stack<Scope> _current_scope;
-        public Dictionary<IParseTree, Symbol> _symbols;
-        Dictionary<IParseTree, Scope> _scopes;
+        public Dictionary<IParseTree, CombinedScopeSymbol> _attributes;
 
-        public Pass2Listener(Stack<Scope> current_scope, Dictionary<IParseTree, Symbol> symbols, Dictionary<IParseTree, Scope> scopes)
+        public Scope NearestScope(IParseTree node)
         {
-            _current_scope = current_scope;
-            _symbols = symbols;
-            _scopes = scopes;
+            for (; node != null; node = node.Parent)
+            {
+                if (_attributes.TryGetValue(node, out CombinedScopeSymbol value) && value is Scope)
+                    return (Scope)value;
+            }
+            return null;
         }
 
-        public override void EnterInterfaceMethodDeclaration(Java9Parser.InterfaceMethodDeclarationContext context)
+        public Pass2Listener(Dictionary<IParseTree, CombinedScopeSymbol> symbols)
         {
-            var m = (Symtab.MethodSymbol)_scopes[context];
-            _current_scope.Push(m);
-            base.EnterInterfaceMethodDeclaration(context);
-        }
-
-        public override void ExitInterfaceMethodDeclaration(Java9Parser.InterfaceMethodDeclarationContext context)
-        {
-            _current_scope.Pop();
-            base.ExitInterfaceMethodDeclaration(context);
-        }
-
-        public override void EnterEnumDeclaration(Java9Parser.EnumDeclarationContext context)
-        {
-            var e = (Symtab.EnumSymbol)_scopes[context];
-            base.EnterEnumDeclaration(context);
-        }
-
-        public override void EnterBlock(Java9Parser.BlockContext context)
-        {
-            var b = (Symtab.LocalScope)_scopes[context];
-            _current_scope.Push(b);
-            base.EnterBlock(context);
-        }
-
-        public override void ExitBlock(Java9Parser.BlockContext context)
-        {
-            _current_scope.Pop();
-            base.ExitBlock(context);
-        }
-
-        public override void EnterMethodDeclaration(Java9Parser.MethodDeclarationContext context)
-        {
-            var m = (Symtab.MethodSymbol)_scopes[context];
-            _current_scope.Push(m);
-            base.EnterMethodDeclaration(context);
-        }
-
-        public override void ExitMethodDeclaration(Java9Parser.MethodDeclarationContext context)
-        {
-            _current_scope.Pop();
-            base.ExitMethodDeclaration(context);
-        }
-
-        public override void EnterNormalClassDeclaration(Java9Parser.NormalClassDeclarationContext context)
-        {
-            var m = (Symtab.ClassSymbol)_scopes[context];
-            _current_scope.Push(m);
-            base.EnterNormalClassDeclaration(context);
-        }
-
-        public override void ExitNormalClassDeclaration(Java9Parser.NormalClassDeclarationContext context)
-        {
-            _current_scope.Pop();
-            base.ExitNormalClassDeclaration(context);
-        }
-
-        public override void EnterNormalInterfaceDeclaration(Java9Parser.NormalInterfaceDeclarationContext context)
-        {
-            var m = (Symtab.InterfaceSymbol)_scopes[context];
-            _current_scope.Push(m);
-            base.EnterNormalInterfaceDeclaration(context);
-        }
-
-        public override void ExitNormalInterfaceDeclaration(Java9Parser.NormalInterfaceDeclarationContext context)
-        {
-            _current_scope.Pop();
-            base.ExitNormalInterfaceDeclaration(context);
+            _attributes = symbols;
         }
 
         public override void EnterTypeVariable(Java9Parser.TypeVariableContext context)
@@ -97,10 +32,10 @@ namespace AntlrVSIX.GrammarDescription.Java
                     break;
             var node = context.GetChild(i) as Java9Parser.IdentifierContext;
             var id_name = node.GetText();
-            var s = _current_scope.Peek().getSymbol(id_name);
+            var scope = NearestScope(context);
+            var s = scope.getSymbol(id_name);
             if (s != null)
-                _symbols[node] = s;
-            base.EnterTypeVariable(context);
+                _attributes[node] = (CombinedScopeSymbol)s;
         }
 
         public override void EnterLocalVariableDeclaration(Java9Parser.LocalVariableDeclarationContext context)
@@ -120,73 +55,18 @@ namespace AntlrVSIX.GrammarDescription.Java
             {
 
             }
-
-            base.EnterLocalVariableDeclaration(context);
         }
 
         public override void EnterMethodInvocation_lfno_primary([NotNull] Java9Parser.MethodInvocation_lfno_primaryContext context)
         {
             var name = context.GetText();
-            var s_ref = new Symtab.MethodSymbol(name);
-            var s_def = _current_scope.Peek().resolve(name);
+            var scope = NearestScope(context);
+            var s_def = scope.LookupType(name);
             if (s_def != null)
             {
-                s_ref.definition = s_def;
+                var s_ref = new Symtab.RefSymbol(s_def);
+                _attributes[context] = s_ref;
             }
-            _symbols[context] = s_ref;
-            base.EnterMethodInvocation_lfno_primary(context);
-        }
-
-        public override void EnterBasicForStatement([NotNull] Java9Parser.BasicForStatementContext context)
-        {
-            var b = (Symtab.LocalScope)_scopes[context];
-            _current_scope.Push(b);
-            base.EnterBasicForStatement(context);
-        }
-
-        public override void ExitBasicForStatement([NotNull] Java9Parser.BasicForStatementContext context)
-        {
-            _current_scope.Pop();
-            base.ExitBasicForStatement(context);
-        }
-
-        public override void EnterBasicForStatementNoShortIf([NotNull] Java9Parser.BasicForStatementNoShortIfContext context)
-        {
-            var b = (Symtab.LocalScope)_scopes[context];
-            _current_scope.Push(b);
-            base.EnterBasicForStatementNoShortIf(context);
-        }
-
-        public override void ExitBasicForStatementNoShortIf([NotNull] Java9Parser.BasicForStatementNoShortIfContext context)
-        {
-            _current_scope.Pop();
-            base.ExitBasicForStatementNoShortIf(context);
-        }
-
-        public override void EnterEnhancedForStatement([NotNull] Java9Parser.EnhancedForStatementContext context)
-        {
-            var b = (Symtab.LocalScope)_scopes[context];
-            _current_scope.Push(b);
-            base.EnterEnhancedForStatement(context);
-        }
-
-        public override void ExitEnhancedForStatement([NotNull] Java9Parser.EnhancedForStatementContext context)
-        {
-            _current_scope.Pop();
-            base.ExitEnhancedForStatement(context);
-        }
-
-        public override void EnterEnhancedForStatementNoShortIf([NotNull] Java9Parser.EnhancedForStatementNoShortIfContext context)
-        {
-            var b = (Symtab.LocalScope)_scopes[context];
-            _current_scope.Push(b);
-            base.EnterEnhancedForStatementNoShortIf(context);
-        }
-
-        public override void ExitEnhancedForStatementNoShortIf([NotNull] Java9Parser.EnhancedForStatementNoShortIfContext context)
-        {
-            _current_scope.Pop();
-            base.ExitEnhancedForStatementNoShortIf(context);
         }
 
         public override void EnterExpressionName([NotNull] Java9Parser.ExpressionNameContext context)
@@ -206,8 +86,9 @@ namespace AntlrVSIX.GrammarDescription.Java
                 if (is_statement)
                 {
                     var id_name = first.GetText();
-                    var s = _current_scope.Peek().resolve(id_name);
-                    if (s != null) _symbols[first] = s;
+                    var scope = NearestScope(context);
+                    var s = scope.LookupType(id_name);
+                    if (s != null) _attributes[first] = (CombinedScopeSymbol)new RefSymbol(s);
                 }
             }
             else if (first is Java9Parser.AmbiguousNameContext)
@@ -228,7 +109,6 @@ namespace AntlrVSIX.GrammarDescription.Java
                 //    if (s != null) _symbols[first] = s;
                 //}
             }
-            base.EnterExpressionName(context);
         }
 
         public override void ExitAmbiguousName([NotNull] Java9Parser.AmbiguousNameContext context)
@@ -251,17 +131,19 @@ namespace AntlrVSIX.GrammarDescription.Java
                     var id_name = first.GetText();
                     if (id_name == "this")
                     {
-                        var sc = _current_scope.Peek();
+                        var scope = NearestScope(context);
+                        var sc = scope;
                         for (; sc != null; sc = sc.EnclosingScope)
                         {
                             if (sc is ClassSymbol) break;
                         }
-                        if (sc != null) _symbols[first] = (Symbol)sc;
+                        if (sc != null) _attributes[first] = (CombinedScopeSymbol)sc;
                     }
                     else
                     {
-                        var s = _current_scope.Peek().resolve(id_name);
-                        if (s != null) _symbols[first] = s;
+                        var scope = NearestScope(context);
+                        var s = scope.LookupType(id_name);
+                        if (s != null) _attributes[first] = (CombinedScopeSymbol)new RefSymbol(s);
                     }
                 }
             }
@@ -278,17 +160,16 @@ namespace AntlrVSIX.GrammarDescription.Java
                 }
                 if (is_statement)
                 {
-                    _symbols.TryGetValue(first, out Symbol v);
+                    _attributes.TryGetValue(first, out CombinedScopeSymbol v);
                     if (v != null && v is SymbolWithScope)
                     {
                         var id_name = context.GetChild(2).GetText();
                         var w = v as SymbolWithScope;
-                        var s = w.resolve(id_name);
-                        if (s != null) _symbols[context] = s;
+                        var s = w.LookupType(id_name);
+                        if (s != null) _attributes[context] = (CombinedScopeSymbol)new RefSymbol(s);
                     }
                 }
             }
-            base.ExitAmbiguousName(context);
         }
 
         public override void ExitModuleName([NotNull] Java9Parser.ModuleNameContext context)
@@ -311,17 +192,19 @@ namespace AntlrVSIX.GrammarDescription.Java
                     var id_name = first.GetText();
                     if (id_name == "this")
                     {
-                        var sc = _current_scope.Peek();
+                        var scope = NearestScope(context);
+                        var sc = scope;
                         for (; sc != null; sc = sc.EnclosingScope)
                         {
                             if (sc is ClassSymbol) break;
                         }
-                        if (sc != null) _symbols[first] = (Symbol)sc;
+                        if (sc != null) _attributes[first] = (CombinedScopeSymbol)sc;
                     }
                     else
                     {
-                        var s = _current_scope.Peek().resolve(id_name);
-                        if (s != null) _symbols[first] = s;
+                        var scope = NearestScope(context);
+                        var s = scope.LookupType(id_name);
+                        if (s != null) _attributes[first] = (CombinedScopeSymbol)new RefSymbol(s);
                     }
                 }
             }
@@ -338,17 +221,16 @@ namespace AntlrVSIX.GrammarDescription.Java
                 }
                 if (is_statement)
                 {
-                    _symbols.TryGetValue(first, out Symbol v);
+                    _attributes.TryGetValue(first, out CombinedScopeSymbol v);
                     if (v != null && v is SymbolWithScope)
                     {
                         var id_name = context.GetChild(2).GetText();
                         var w = v as SymbolWithScope;
-                        var s = w.resolve(id_name);
-                        if (s != null) _symbols[context] = s;
+                        var s = w.LookupType(id_name);
+                        if (s != null) _attributes[context] = (CombinedScopeSymbol)new RefSymbol(s);
                     }
                 }
             }
-            base.ExitModuleName(context);
         }
 
         public override void ExitPackageName([NotNull] Java9Parser.PackageNameContext context)
@@ -371,17 +253,19 @@ namespace AntlrVSIX.GrammarDescription.Java
                     var id_name = first.GetText();
                     if (id_name == "this")
                     {
-                        var sc = _current_scope.Peek();
+                        var scope = NearestScope(context);
+                        var sc = scope;
                         for (; sc != null; sc = sc.EnclosingScope)
                         {
                             if (sc is ClassSymbol) break;
                         }
-                        if (sc != null) _symbols[first] = (Symbol)sc;
+                        if (sc != null) _attributes[first] = (CombinedScopeSymbol)sc;
                     }
                     else
                     {
-                        var s = _current_scope.Peek().resolve(id_name);
-                        if (s != null) _symbols[first] = s;
+                        var scope = NearestScope(context);
+                        var s = scope.LookupType(id_name);
+                        if (s != null) _attributes[first] = (CombinedScopeSymbol)new RefSymbol(s);
                     }
                 }
             }
@@ -398,17 +282,16 @@ namespace AntlrVSIX.GrammarDescription.Java
                 }
                 if (is_statement)
                 {
-                    _symbols.TryGetValue(first, out Symbol v);
+                    _attributes.TryGetValue(first, out CombinedScopeSymbol v);
                     if (v != null && v is SymbolWithScope)
                     {
                         var id_name = context.GetChild(2).GetText();
                         var w = v as SymbolWithScope;
-                        var s = w.resolve(id_name);
-                        if (s != null) _symbols[context] = s;
+                        var s = w.LookupType(id_name);
+                        if (s != null) _attributes[context] = (CombinedScopeSymbol)new RefSymbol(s);
                     }
                 }
             }
-            base.ExitPackageName(context);
         }
 
         public override void ExitTypeName([NotNull] Java9Parser.TypeNameContext context)
@@ -431,17 +314,19 @@ namespace AntlrVSIX.GrammarDescription.Java
                     var id_name = first.GetText();
                     if (id_name == "this")
                     {
-                        var sc = _current_scope.Peek();
+                        var scope = NearestScope(context);
+                        var sc = scope;
                         for (; sc != null; sc = sc.EnclosingScope)
                         {
                             if (sc is ClassSymbol) break;
                         }
-                        if (sc != null) _symbols[first] = (Symbol)sc;
+                        if (sc != null) _attributes[first] = (CombinedScopeSymbol)sc;
                     }
                     else
                     {
-                        var s = _current_scope.Peek().resolve(id_name);
-                        if (s != null) _symbols[first] = s;
+                        var scope = NearestScope(context);
+                        var s = scope.LookupType(id_name);
+                        if (s != null) _attributes[first] = (CombinedScopeSymbol)new RefSymbol(s);
                     }
                 }
             }
@@ -458,17 +343,16 @@ namespace AntlrVSIX.GrammarDescription.Java
                 }
                 if (is_statement)
                 {
-                    _symbols.TryGetValue(first, out Symbol v);
+                    _attributes.TryGetValue(first, out CombinedScopeSymbol v);
                     if (v != null && v is SymbolWithScope)
                     {
                         var id_name = context.GetChild(2).GetText();
                         var w = v as SymbolWithScope;
-                        var s = w.resolve(id_name);
-                        if (s != null) _symbols[context] = s;
+                        var s = w.LookupType(id_name);
+                        if (s != null) _attributes[context] = (CombinedScopeSymbol)new RefSymbol(s);
                     }
                 }
             }
-            base.ExitTypeName(context);
         }
 
         public override void ExitPackageOrTypeName([NotNull] Java9Parser.PackageOrTypeNameContext context)
@@ -491,17 +375,19 @@ namespace AntlrVSIX.GrammarDescription.Java
                     var id_name = first.GetText();
                     if (id_name == "this")
                     {
-                        var sc = _current_scope.Peek();
+                        var scope = NearestScope(context);
+                        var sc = scope;
                         for (; sc != null; sc = sc.EnclosingScope)
                         {
                             if (sc is ClassSymbol) break;
                         }
-                        if (sc != null) _symbols[first] = (Symbol)sc;
+                        if (sc != null) _attributes[first] = (CombinedScopeSymbol)sc;
                     }
                     else
                     {
-                        var s = _current_scope.Peek().resolve(id_name);
-                        if (s != null) _symbols[first] = s;
+                        var scope = NearestScope(context);
+                        var s = scope.LookupType(id_name);
+                        if (s != null) _attributes[first] = (CombinedScopeSymbol)new RefSymbol(s);
                     }
                 }
             }
@@ -518,17 +404,16 @@ namespace AntlrVSIX.GrammarDescription.Java
                 }
                 if (is_statement)
                 {
-                    _symbols.TryGetValue(first, out Symbol v);
+                    _attributes.TryGetValue(first, out CombinedScopeSymbol v);
                     if (v != null && v is SymbolWithScope)
                     {
                         var id_name = context.GetChild(2).GetText();
                         var w = v as SymbolWithScope;
-                        var s = w.resolve(id_name);
-                        if (s != null) _symbols[context] = s;
+                        var s = w.LookupType(id_name);
+                        if (s != null) _attributes[context] = (CombinedScopeSymbol)new RefSymbol(s);
                     }
                 }
             }
-            base.ExitPackageOrTypeName(context);
         }
 
         public override void ExitExpressionName([NotNull] Java9Parser.ExpressionNameContext context)
@@ -556,17 +441,19 @@ namespace AntlrVSIX.GrammarDescription.Java
                     var id_name = first.GetText();
                     if (id_name == "this")
                     {
-                        var sc = _current_scope.Peek();
+                        var scope = NearestScope(context);
+                        var sc = scope;
                         for (; sc != null; sc = sc.EnclosingScope)
                         {
                             if (sc is ClassSymbol) break;
                         }
-                        if (sc != null) _symbols[first] = (Symbol)sc;
+                        if (sc != null) _attributes[first] = (CombinedScopeSymbol)sc;
                     }
                     else
                     {
-                        var s = _current_scope.Peek().resolve(id_name);
-                        if (s != null) _symbols[first] = s;
+                        var scope = NearestScope(context);
+                        var s = scope.LookupType(id_name);
+                        if (s != null) _attributes[first] = (CombinedScopeSymbol)new RefSymbol(s);
                     }
                 }
             }
@@ -588,17 +475,16 @@ namespace AntlrVSIX.GrammarDescription.Java
                 }
                 if (is_statement)
                 {
-                    _symbols.TryGetValue(first, out Symbol v);
+                    _attributes.TryGetValue(first, out CombinedScopeSymbol v);
                     if (v != null && v is SymbolWithScope)
                     {
                         var id_name = context.GetChild(2).GetText();
                         var w = v as SymbolWithScope;
-                        var s = w.resolve(id_name);
-                        if (s != null) _symbols[context] = s;
+                        var s = w.LookupType(id_name);
+                        if (s != null) _attributes[context] = (CombinedScopeSymbol)new RefSymbol(s);
                     }
                 }
             }
-            base.ExitExpressionName(context);
         }
 
         public override void ExitPrimaryNoNewArray_lfno_primary([NotNull] Java9Parser.PrimaryNoNewArray_lfno_primaryContext context)
@@ -626,46 +512,30 @@ namespace AntlrVSIX.GrammarDescription.Java
                     var id_name = first.GetText();
                     if (id_name == "this")
                     {
-                        var sc = _current_scope.Peek();
+                        var scope = NearestScope(context);
+                        var sc = scope;
                         for (; sc != null; sc = sc.EnclosingScope)
                         {
                             if (sc is ClassSymbol) break;
                         }
-                        if (sc != null) _symbols[first] = (Symbol)sc;
-                    } else
+                        if (sc != null)
+                        {
+                            _attributes[first] = (CombinedScopeSymbol)sc;
+                            _attributes[context] = (CombinedScopeSymbol)sc;
+                        }
+                    }
+                    else
                     {
-                        var s = _current_scope.Peek().resolve(id_name);
-                        if (s != null) _symbols[first] = s;
+                        var scope = NearestScope(context);
+                        var s = scope.LookupType(id_name);
+                        if (s != null)
+                        {
+                            _attributes[first] = (CombinedScopeSymbol)new RefSymbol(s);
+                            _attributes[context] = (CombinedScopeSymbol)new RefSymbol(s);
+                        }
                     }
                 }
             }
-            base.ExitPrimaryNoNewArray_lfno_primary(context);
-        }
-
-        public override void ExitFieldAccess([NotNull] Java9Parser.FieldAccessContext context)
-        {
-            var first = context.GetChild(0);
-            if (first is Java9Parser.PrimaryContext)
-            {
-                var c = context.GetChild(2);
-                var id_name = c.GetText();
-                _symbols.TryGetValue(first, out Symbol p);
-                if (p != null)
-                {
-                    var s = ((Scope)p).resolve(id_name);
-                    if (s != null)
-                    {
-                        _symbols[c] = s;
-                        _symbols[context] = s;
-                    }
-                }
-            }
-            base.ExitFieldAccess(context);
-        }
-
-        public override void EnterFieldAccess_lf_primary([NotNull] Java9Parser.FieldAccess_lf_primaryContext context)
-        {
-            base.EnterFieldAccess_lf_primary(context);
         }
 
         public override void EnterIdentifier([NotNull] Java9Parser.IdentifierContext context)
@@ -676,7 +546,8 @@ namespace AntlrVSIX.GrammarDescription.Java
                 var super = parent.GetChild(0);
                 if (super is TerminalNodeImpl && super.GetText() == "super")
                 {
-                    var sc = _current_scope.Peek();
+                    var scope = NearestScope(context);
+                    var sc = scope;
                     for (; sc != null; sc = sc.EnclosingScope)
                     {
                         if (sc is ClassSymbol) break;
@@ -691,10 +562,10 @@ namespace AntlrVSIX.GrammarDescription.Java
                         return;
                     }
                     var id = context.GetText();
-                    var f = super_class.resolve(id);
+                    var f = super_class.LookupType(id);
                     if (f != null)
                     {
-                        _symbols[context] = f;
+                        _attributes[context] = (CombinedScopeSymbol)new RefSymbol(f);
                     }
                 }
             } else if (parent is Java9Parser.ClassInstanceCreationExpressionContext)
@@ -714,24 +585,25 @@ namespace AntlrVSIX.GrammarDescription.Java
                     }
                     if (i < 0)
                     {
-                        var sc = _current_scope.Peek();
-                        var f = sc.resolve(id);
+                        var scope = NearestScope(context);
+                        var sc = scope;
+                        var f = sc.LookupType(id);
                         if (f != null)
                         {
-                            _symbols[context] = f;
+                            _attributes[context] = (CombinedScopeSymbol)new RefSymbol(f);
                         }
                     }
                     else
                     {
                         var c = p.GetChild(i);
-                        var s = _symbols[c];
+                        var s = _attributes[c];
                         var sc = s as Scope;
                         if (sc != null)
                         {
-                            var f = sc.resolve(id);
+                            var f = sc.LookupType(id);
                             if (f != null)
                             {
-                                _symbols[context] = f;
+                                _attributes[context] = (CombinedScopeSymbol)new RefSymbol(f);
                             }
                         }
                     }
@@ -753,30 +625,66 @@ namespace AntlrVSIX.GrammarDescription.Java
                     }
                     if (i < 0)
                     {
-                        var sc = _current_scope.Peek();
-                        var f = sc.resolve(id);
+                        var scope = NearestScope(context);
+                        var sc = scope;
+                        var f = sc.LookupType(id);
                         if (f != null)
                         {
-                            _symbols[context] = f;
+                            _attributes[context] = (CombinedScopeSymbol)new RefSymbol(f);
                         }
                     }
                     else
                     {
                         var c = p.GetChild(i);
-                        var s = _symbols[c];
+                        var s = _attributes[c];
                         var sc = s as Scope;
                         if (sc != null)
                         {
-                            var f = sc.resolve(id);
+                            var f = sc.LookupType(id);
                             if (f != null)
                             {
-                                _symbols[context] = f;
+                                _attributes[context] = (CombinedScopeSymbol)new RefSymbol(f);
                             }
                         }
                     }
                 }
+            } else if (parent is Java9Parser.FieldAccessContext)
+            {
+                var p = (Antlr4.Runtime.ParserRuleContext)parent;
+                var index = p.children.IndexOf(context);
+                var id_name = context.GetText();
+                var sc = parent.GetChild(index-2);
+                _attributes.TryGetValue(sc, out CombinedScopeSymbol ss);
+                if (ss != null)
+                {
+                    var s = ((Scope)ss).LookupType(id_name);
+                    if (s != null)
+                    {
+                        _attributes[parent] = (CombinedScopeSymbol)new RefSymbol(s);
+                        _attributes[context] = (CombinedScopeSymbol)new RefSymbol(s);
+                    }
+                }
+            } else if (parent is Java9Parser.ExpressionNameContext)
+            {
+                var scope = NearestScope(context);
+                var sc = scope;
+                var id = context.GetText();
+                var s = sc.LookupType(id);
+                if (s != null)
+                {
+                    _attributes[context] = (CombinedScopeSymbol)new RefSymbol(s);
+                }
             }
-            base.EnterIdentifier(context);
+        }
+
+        public override void ExitPrimary([NotNull] Java9Parser.PrimaryContext context)
+        {
+            var last = context.GetChild(context.ChildCount - 1);
+            _attributes.TryGetValue(last, out CombinedScopeSymbol v);
+            if (v != null)
+            {
+                _attributes[context] = v;
+            }
         }
     }
 }

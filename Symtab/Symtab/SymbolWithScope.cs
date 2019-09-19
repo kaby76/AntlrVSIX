@@ -114,7 +114,10 @@
             return name.GetHashCode();
         }
 
-        public Symbol definition { get; set; }
+        public Symbol resolve()
+        {
+            return this;
+        }
     }
 
 }
