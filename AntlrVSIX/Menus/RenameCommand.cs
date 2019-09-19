@@ -120,7 +120,7 @@ namespace AntlrVSIX.Rename
             ITextSnapshot cc = wpftv.TextBuffer.CurrentSnapshot;
             SnapshotSpan ss = new SnapshotSpan(cc, span.Start.Position, 1);
             SnapshotPoint sp = ss.Start;
-            SnapshotSpan? currentWord = RenameHighlightTagger.CurrentWord;
+            SnapshotSpan? currentWord = HighlightTagger.CurrentWord;
 
             var results = new List<Entry>();
             for (int i = 0; i < where.Count; ++i)

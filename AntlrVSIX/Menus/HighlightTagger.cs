@@ -22,7 +22,7 @@ namespace AntlrVSIX.Rename
         public HighlightWordTag() : base("blue") { }
     }
 
-    public class RenameHighlightTagger : ITagger<HighlightWordTag>
+    public class HighlightTagger : ITagger<HighlightWordTag>
     {
         private object updateLock = new object();
         private IClassifier _aggregator;
@@ -35,9 +35,9 @@ namespace AntlrVSIX.Rename
         private NormalizedSnapshotSpanCollection WordSpans { get; set; }
         public static SnapshotSpan? CurrentWord { get; set; }
         public SnapshotPoint RequestedPoint { get; set; }
-        private static Dictionary<ITextView, RenameHighlightTagger> _view_to_tagger = new Dictionary<ITextView, RenameHighlightTagger>();
+        private static Dictionary<ITextView, HighlightTagger> _view_to_tagger = new Dictionary<ITextView, HighlightTagger>();
 
-        public RenameHighlightTagger(ITextView view, ITextBuffer sourceBuffer, ITextSearchService textSearchService,
+        public HighlightTagger(ITextView view, ITextBuffer sourceBuffer, ITextSearchService textSearchService,
                                    ITextStructureNavigator textStructureNavigator,
                                    IClassifier aggregator)
         {

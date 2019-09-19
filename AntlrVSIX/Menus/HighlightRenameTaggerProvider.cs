@@ -26,7 +26,7 @@
         {
             if (textView.TextBuffer != buffer)
                 return null;
-            return new RenameHighlightTagger(textView, buffer, TextSearchService,
+            return new HighlightTagger(textView, buffer, TextSearchService,
                 TextStructureNavigatorSelector.GetTextStructureNavigator(buffer),
                 AggregatorFactory.GetClassifier(buffer)) as ITagger<T>;
         }

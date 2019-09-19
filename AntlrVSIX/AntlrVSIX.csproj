@@ -114,7 +114,7 @@
     <Compile Include="Menus\RenameDialogBox.xaml.cs">
       <DependentUpon>RenameDialogBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Menus\RenameHighlightTagger.cs" />
+    <Compile Include="Menus\HighlightTagger.cs" />
     <Compile Include="Taggers\AntlrTokenTagProvider.cs" />
     <Compile Include="Taggers\AntlrClassifierProvider.cs" />
     <Compile Include="Grammar\DFSVisitor.cs" />
