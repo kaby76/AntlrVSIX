@@ -1,10 +1,13 @@
 ﻿
 namespace AntlrVSIX.Options
 {
+    using Microsoft.VisualStudio.Settings;
     using Microsoft.VisualStudio.Shell;
-    using System.ComponentModel.Design;
-    using System.Windows;
+    using Microsoft.VisualStudio.Shell.Settings;
     using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.Design;
+    using System.Linq;
 
     public class OptionsCommand
     {
@@ -52,7 +55,8 @@ namespace AntlrVSIX.Options
             OverrideJavaPluggins = true;
             OverridePythonPluggins = true;
             OverrideRustPluggins = true;
-            CorpusLocation = System.Environment.GetEnvironmentVariable("CORPUS_LOCATION");
+            var s = System.Environment.GetEnvironmentVariable("CORPUS_LOCATION");
+            CorpusLocation = s == null ? "" : s;
         }
         public static OptionsCommand Instance { get; private set; }
 
@@ -68,7 +72,40 @@ namespace AntlrVSIX.Options
 
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            Application.Current.Dispatcher.Invoke((Action)delegate {
+            System.Windows.Application.Current.Dispatcher.Invoke((Action)delegate {
+
+                SettingsManager settingsManager = new ShellSettingsManager(ServiceProvider);
+                WritableSettingsStore userSettingsStore = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
+                try
+                {
+                    IEnumerable<string> collection = userSettingsStore.GetSubCollectionNames("AntlrVSIX");
+                }
+                catch (Exception _)
+                {
+                    userSettingsStore.CreateCollection("AntlrVSIX");
+                    IEnumerable<string> collection = userSettingsStore.GetSubCollectionNames("AntlrVSIX");
+                    {
+                        userSettingsStore.SetBoolean("AntlrVSIX", "RestrictedDirectory", RestrictedDirectory);
+                        userSettingsStore.SetBoolean("AntlrVSIX", "NonInteractiveParse", NonInteractiveParse);
+                        userSettingsStore.SetBoolean("AntlrVSIX", "GenerateVisitorListener", GenerateVisitorListener);
+                        userSettingsStore.SetString("AntlrVSIX", "CorpusLocation", CorpusLocation);
+                        userSettingsStore.SetBoolean("AntlrVSIX", "IncrementalReformat", IncrementalReformat);
+                        userSettingsStore.SetBoolean("AntlrVSIX", "OverrideAntlrPluggins", OverrideAntlrPluggins);
+                        userSettingsStore.SetBoolean("AntlrVSIX", "OverrideJavaPluggins", OverrideJavaPluggins);
+                        userSettingsStore.SetBoolean("AntlrVSIX", "OverridePythonPluggins", OverridePythonPluggins);
+                        userSettingsStore.SetBoolean("AntlrVSIX", "OverrideRustPluggins", OverrideRustPluggins);
+                    }
+                }
+
+                RestrictedDirectory = userSettingsStore.GetBoolean("AntlrVSIX", "RestrictedDirectory", RestrictedDirectory);
+                NonInteractiveParse = userSettingsStore.GetBoolean("AntlrVSIX", "NonInteractiveParse", NonInteractiveParse);
+                GenerateVisitorListener = userSettingsStore.GetBoolean("AntlrVSIX", "GenerateVisitorListener", GenerateVisitorListener);
+                CorpusLocation = userSettingsStore.GetString("AntlrVSIX", "CorpusLocation", CorpusLocation);
+                IncrementalReformat = userSettingsStore.GetBoolean("AntlrVSIX", "IncrementalReformat", IncrementalReformat);
+                OverrideAntlrPluggins = userSettingsStore.GetBoolean("AntlrVSIX", "OverrideAntlrPluggins", OverrideAntlrPluggins);
+                OverrideJavaPluggins = userSettingsStore.GetBoolean("AntlrVSIX", "OverrideJavaPluggins", OverrideJavaPluggins);
+                OverridePythonPluggins = userSettingsStore.GetBoolean("AntlrVSIX", "OverridePythonPluggins", OverridePythonPluggins);
+                OverrideRustPluggins = userSettingsStore.GetBoolean("AntlrVSIX", "OverrideRustPluggins", OverrideRustPluggins);
 
                 OptionsBox inputDialog = new OptionsBox();
                 inputDialog.restricted_directory.IsChecked = RestrictedDirectory;
@@ -91,6 +128,16 @@ namespace AntlrVSIX.Options
                     OverrideJavaPluggins = inputDialog.override_java.IsChecked ?? false;
                     OverridePythonPluggins = inputDialog.override_python.IsChecked ?? false;
                     OverrideRustPluggins = inputDialog.override_rust.IsChecked ?? false;
+
+                    userSettingsStore.SetBoolean("AntlrVSIX", "RestrictedDirectory", RestrictedDirectory);
+                    userSettingsStore.SetBoolean("AntlrVSIX", "NonInteractiveParse", NonInteractiveParse);
+                    userSettingsStore.SetBoolean("AntlrVSIX", "GenerateVisitorListener", GenerateVisitorListener);
+                    userSettingsStore.SetString("AntlrVSIX", "CorpusLocation", CorpusLocation);
+                    userSettingsStore.SetBoolean("AntlrVSIX", "IncrementalReformat", IncrementalReformat);
+                    userSettingsStore.SetBoolean("AntlrVSIX", "OverrideAntlrPluggins", OverrideAntlrPluggins);
+                    userSettingsStore.SetBoolean("AntlrVSIX", "OverrideJavaPluggins", OverrideJavaPluggins);
+                    userSettingsStore.SetBoolean("AntlrVSIX", "OverridePythonPluggins", OverridePythonPluggins);
+                    userSettingsStore.SetBoolean("AntlrVSIX", "OverrideRustPluggins", OverrideRustPluggins);
                 }
             });
         }
