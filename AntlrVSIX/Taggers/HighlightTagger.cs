@@ -287,10 +287,8 @@ namespace AntlrVSIX.Taggers
             {
                 if (currentRequest != RequestedPoint)
                     return;
-
                 WordSpans = newSpans;
                 CurrentWord = newCurrentWord;
-
                 var tempEvent = TagsChanged;
                 if (tempEvent != null)
                     tempEvent(this, new SnapshotSpanEventArgs(new SnapshotSpan(_buffer.CurrentSnapshot, 0, _buffer.CurrentSnapshot.Length)));
@@ -311,8 +309,6 @@ namespace AntlrVSIX.Taggers
                     wordSpans.Select(span => span.TranslateTo(spans[0].Snapshot, SpanTrackingMode.EdgeExclusive)));
                 currentWord = currentWord.TranslateTo(spans[0].Snapshot, SpanTrackingMode.EdgeExclusive);
             }
-            //if (spans.OverlapsWith(new NormalizedSnapshotSpanCollection(currentWord)))
-            //    yield return new TagSpan<HighlightWordTag>(currentWord, new HighlightWordTag());
             foreach (SnapshotSpan span in NormalizedSnapshotSpanCollection.Overlap(spans, wordSpans))
             {
                 yield return new TagSpan<HighlightWordTag>(span, new HighlightWordTag());

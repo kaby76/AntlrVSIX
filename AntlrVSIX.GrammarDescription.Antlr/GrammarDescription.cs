@@ -42,13 +42,17 @@
             }
 
             //StringBuilder sb = new StringBuilder();
-            //Foobar.ParenthesizedAST(_ant_tree, sb, "", cts);
+            //TreeSerializer.ParenthesizedAST(pt, sb, "", cts);
             //string fn = System.IO.Path.GetFileName(ffn);
             //fn = "c:\\temp\\" + fn;
             //System.IO.File.WriteAllText(fn, sb.ToString());
 
             parse_tree = pt;
-            symbols = new Dictionary<IParseTree, CombinedScopeSymbol>();
+            var pass1 = new Pass1Listener();
+            ParseTreeWalker.Default.Walk(pass1, parse_tree);
+            var pass2 = new Pass2Listener(pass1._attributes, pass1._root);
+            ParseTreeWalker.Default.Walk(pass2, parse_tree);
+            symbols = pass2._attributes;
         }
 
         public Dictionary<IToken, int> ExtractComments(string code)
@@ -221,49 +225,41 @@
 
         public List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>, IParseTree, bool>> Identify { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>, IParseTree, bool>>()
         {
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree n) => // nonterminal = 0
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // nonterminal = 0
                 {
-                    TerminalNodeImpl term = n as TerminalNodeImpl;
+                    TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
-                    var text = term.GetText();
-                    // Make sure it's not a def.
-                    var is_def = gd.IdentifyDefinition[0](gd, st, term);
-                    if (is_def) return false;
-                    if (_antlr_keywords.Contains(text)) return false;
-                    if (n.Parent as ANTLRv4Parser.RulerefContext != null &&
-                        term?.Symbol.Type == ANTLRv4Parser.RULE_REF)
-                        return true;
-                    if (n.Parent as ANTLRv4Parser.ActionBlockContext != null)
-                        return false;
-                    if (n.Parent as ANTLRv4Parser.ParserRuleSpecContext != null &&
-                        term?.Symbol.Type == ANTLRv4Parser.RULE_REF)
-                        return true;
+                    Antlr4.Runtime.Tree.IParseTree p = term;
+                    st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
+                    if (value != null)
+                    {
+                        if (value is Symtab.RefSymbol && ((Symtab.RefSymbol)value).Def is Symtab.ClassSymbol)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
                     return false;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree n) => // terminal = 1
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // terminal = 1
                 {
-                    TerminalNodeImpl term = n as TerminalNodeImpl;
+                    TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
-                    var text = term.GetText();
-                    if (!Char.IsUpper(text[0])) return false;
-                    // Make sure it's not a def.
-                    var is_def = gd.IdentifyDefinition[1](gd, st, term);
-                    if (is_def) return false;
-                       // special case--channels get their own classification.
-                    var is_channel = gd.IdentifyDefinition[6](gd, st, term);
-                    if (is_channel) return false;
-                    if (gd.Identify[5](gd, st, term)) return false;
-                    if (gd.Identify[6](gd, st, term)) return false;
-                    if (term.Parent as ANTLRv4Parser.TerminalContext != null)
-                        return true;
-                    if (term.Parent as ANTLRv4Parser.LexerRuleSpecContext != null)
-                        return true;
-                    if (term.Parent?.Parent as ANTLRv4Parser.LexerCommandExprContext != null)
+                    Antlr4.Runtime.Tree.IParseTree p = term;
+                    st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
+                    if (value != null)
                     {
-                        var p = term.Parent.Parent.Parent;
-                        if (!(p is ANTLRv4Parser.LexerCommandContext)) return false;
-                        if (p.GetChild(0).GetText() == "type") return true;
-                        return false;
+                        if (value is Symtab.RefSymbol && ((Symtab.RefSymbol)value).Def is Symtab.Literal)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
                     }
                     return false;
                 },
