@@ -75,16 +75,20 @@ namespace AntlrVSIX.GrammarDescription.Antlr
 
         public override void EnterTerminal([NotNull] ANTLRv4Parser.TerminalContext context)
         {
-            var id = context.GetChild(0).GetText();
-            Symbol sym = _root.LookupType(id);
-            if (sym == null)
+            var first = context.GetChild(0) as TerminalNodeImpl;
+            if (first.Symbol.Type == ANTLRv4Parser.TOKEN_REF)
             {
-                sym = (Symbol)new Literal(id, id, 0);
-                _root.define(ref sym);
+                var id = first.GetText();
+                Symbol sym = _root.LookupType(id);
+                if (sym == null)
+                {
+                    sym = (Symbol)new Literal(id, id, 0);
+                    _root.define(ref sym);
+                }
+                var s = (CombinedScopeSymbol)new RefSymbol(sym);
+                _attributes[context] = s;
+                _attributes[context.GetChild(0)] = s;
             }
-            var s = (CombinedScopeSymbol)new RefSymbol(sym);
-            _attributes[context] = s;
-            _attributes[context.GetChild(0)] = s;
         }
 
         public override void EnterRuleref([NotNull] ANTLRv4Parser.RulerefContext context)
@@ -93,12 +97,14 @@ namespace AntlrVSIX.GrammarDescription.Antlr
             Symbol sym = _root.LookupType(id);
             if (sym == null)
             {
-                sym = (Symbol)new Literal(id, id, 0);
+                sym = (Symbol)new ClassSymbol(id);
                 _root.define(ref sym);
             }
             var s = (CombinedScopeSymbol)new RefSymbol(sym);
             _attributes[context] = s;
             _attributes[context.GetChild(0)] = s;
         }
+
+
     }
 }
