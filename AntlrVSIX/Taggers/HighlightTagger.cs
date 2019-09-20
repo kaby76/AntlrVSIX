@@ -107,9 +107,8 @@ namespace AntlrVSIX.Taggers
             List<SnapshotSpan> wordSpans = new List<SnapshotSpan>();
 
             SnapshotPoint start = currentRequest;
-            int curLocStart = start.Position;
+            int curLoc = start.Position;
             SnapshotPoint end = currentRequest;
-            int curLocEnd = end.Position;
             var snapshot = currentRequest.Snapshot;
 
             ITextBuffer buf = currentRequest.Snapshot.TextBuffer;
@@ -127,8 +126,8 @@ namespace AntlrVSIX.Taggers
                     var token = pair.Key;
                     int start_token_start = token.Symbol.StartIndex;
                     int end_token_end = token.Symbol.StopIndex;
-                    if (start_token_start >= curLocEnd) return false;
-                    if (end_token_end < curLocStart) return false;
+                    if (curLoc < start_token_start) return false;
+                    if (end_token_end < curLoc) return false;
                     return true;
                 }));
 
@@ -137,8 +136,8 @@ namespace AntlrVSIX.Taggers
                 var token = pair.Key;
                 int start_token_start = token.Symbol.StartIndex;
                 int end_token_end = token.Symbol.StopIndex;
-                if (start_token_start >= curLocEnd) return false;
-                if (end_token_end < curLocStart) return false;
+                if (curLoc < start_token_start) return false;
+                if (end_token_end < curLoc) return false;
                 return true;
             }));
 
@@ -161,10 +160,11 @@ namespace AntlrVSIX.Taggers
                 }
             }
             if (node == null) return;
-
-            SnapshotSpan currentWord = new SnapshotSpan(new SnapshotPoint(snapshot, the_symbol.Key.Symbol.StartIndex), the_symbol.Key.Symbol.StopIndex);
-            if (CurrentWord.HasValue && currentWord == CurrentWord)
-                return;
+            var a1 = the_symbol.Key.Symbol.StartIndex;
+            var a2 = the_symbol.Key.Symbol.StopIndex;
+            var a3 = new SnapshotPoint(snapshot, a1);
+            var a4 = new SnapshotPoint(snapshot, a2);
+            var currentWord = new SnapshotSpan(a3, a4);
             bool can_rename = _aggregator.GetClassificationSpans(currentWord).Where(
                 classification =>
                 {
