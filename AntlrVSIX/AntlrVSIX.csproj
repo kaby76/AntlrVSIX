@@ -94,7 +94,6 @@
     <Compile Include="Menus\NextSymCommand.cs" />
     <Compile Include="Menus\OptionsCommand.cs" />
     <Compile Include="Menus\ReformatCommand.cs" />
-    <Compile Include="Menus\HighlightRenameTaggerProvider.cs" />
     <Compile Include="Model\FindAntlrSymbolsModel.cs" />
     <Compile Include="Menus\FindRefsWindow.cs" />
     <Compile Include="Menus\FindRefsWindowCommand.cs" />
@@ -106,7 +105,6 @@
     <Compile Include="Menus\FindAllReferencesCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Package\AntlrLanguagePackage.cs" />
-    <Compile Include="Taggers\AntlrClassifier.cs" />
     <Compile Include="Keyboard\GoToDefKeyProcessorProvider.cs" />
     <Compile Include="Mouse\MouseHandlerProvider.cs" />
     <Compile Include="Mouse\MouseHandler.cs" />
@@ -114,7 +112,9 @@
     <Compile Include="Menus\RenameDialogBox.xaml.cs">
       <DependentUpon>RenameDialogBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Menus\HighlightTagger.cs" />
+    <Compile Include="Taggers\HighlightTaggerProvider.cs" />
+    <Compile Include="Taggers\AntlrClassifier.cs" />
+    <Compile Include="Taggers\HighlightTagger.cs" />
     <Compile Include="Taggers\AntlrTokenTagProvider.cs" />
     <Compile Include="Taggers\AntlrClassifierProvider.cs" />
     <Compile Include="Grammar\DFSVisitor.cs" />

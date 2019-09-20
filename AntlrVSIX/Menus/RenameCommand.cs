@@ -6,6 +6,7 @@ namespace AntlrVSIX.Rename
     using AntlrVSIX.Grammar;
     using AntlrVSIX.GrammarDescription;
     using AntlrVSIX.Package;
+    using AntlrVSIX.Taggers;
     using Microsoft.VisualStudio.OLE.Interop;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text;
@@ -85,7 +86,7 @@ namespace AntlrVSIX.Rename
             string path = doc.FilePath;
             IGrammarDescription grammar_description = GrammarDescriptionFactory.Create(path);
             IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(path);
-            List<IToken> where = new List<IToken>();
+            List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
             List<ParserDetails> where_details = new List<ParserDetails>();
             foreach (var kvp in ParserDetails._per_file_parser_details)
             {
@@ -102,14 +103,14 @@ namespace AntlrVSIX.Rename
                 {
                     var it = details._ant_applied_occurrence_classes.Where(
                         (t) => grammar_description.CanRename[t.Value]
-                            && t.Key.Text == span.GetText()).Select(t => t.Key);
+                            && t.Key.Symbol.Text == span.GetText()).Select(t => t.Key);
                     where.AddRange(it);
                     foreach (var i in it) where_details.Add(details);
                 }
                 {
                     var it = details._ant_defining_occurrence_classes.Where(
                         (t) => grammar_description.CanRename[t.Value]
-                            && t.Key.Text == span.GetText()).Select(t => t.Key);
+                            && t.Key.Symbol.Text == span.GetText()).Select(t => t.Key);
                     where.AddRange(it);
                     foreach (var i in it) where_details.Add(details);
                 }
@@ -125,9 +126,9 @@ namespace AntlrVSIX.Rename
             var results = new List<Entry>();
             for (int i = 0; i < where.Count; ++i)
             {
-                IToken x = where[i];
+                Antlr4.Runtime.Tree.TerminalNodeImpl x = where[i];
                 ParserDetails y = where_details[i];
-                var w = new Entry() { FileName = y.FullFileName, LineNumber = x.Line, ColumnNumber = x.Column, Token = x };
+                var w = new Entry() { FileName = y.FullFileName, LineNumber = x.Symbol.Line, ColumnNumber = x.Symbol.Column, Token = x.Symbol };
                 results.Add(w);
             }
 

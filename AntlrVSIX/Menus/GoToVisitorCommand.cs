@@ -164,16 +164,16 @@
             if (!can_gotovisitor) return;
 
             // Find defining occurrence.
-            List<IToken> where = new List<IToken>();
+            List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
             List<ParserDetails> where_details = new List<ParserDetails>();
-            IToken token = null;
+            Antlr4.Runtime.Tree.TerminalNodeImpl token = null;
             foreach (var kvp in ParserDetails._per_file_parser_details)
             {
                 string file_name = kvp.Key;
                 ParserDetails details = kvp.Value;
                 {
                     var it = details._ant_defining_occurrence_classes.Where(
-                             (t) => t.Value == cla && t.Key.Text == span.GetText()).Select(t => t.Key);
+                             (t) => t.Value == cla && t.Key.Symbol.Text == span.GetText()).Select(t => t.Key);
                     where.AddRange(it);
                     foreach (var i in it) where_details.Add(details);
                 }
@@ -188,7 +188,7 @@
             }
 
             // Get the symbol name as a string.
-            var symbol_name = token.Text;
+            var symbol_name = token.Symbol.Text;
             var capitalized_symbol_name = Capitalized(symbol_name);
 
             // Parse all the C# files in the solution.

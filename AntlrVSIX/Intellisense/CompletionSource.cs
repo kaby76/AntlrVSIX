@@ -41,8 +41,8 @@
             foreach (var s in pd._ant_applied_occurrence_classes
                 .Where(t => t.Value == 0)
                 .Select(t => t.Key)
-                .OrderBy(p => p.Text)
-                .Select(p => p.Text)
+                .OrderBy(p => p.Symbol.Text)
+                .Select(p => p.Symbol.Text)
                 .Distinct())
             {
                 completions.Add(new Completion(s));
@@ -50,8 +50,8 @@
             foreach (var s in pd._ant_applied_occurrence_classes
                 .Where(t => t.Value == 1)
                 .Select(t => t.Key)
-                .OrderBy(p => p.Text)
-                .Select(p => p.Text)
+                .OrderBy(p => p.Symbol.Text)
+                .Select(p => p.Symbol.Text)
                 .Distinct())
             {
                 completions.Add(new Completion(s));

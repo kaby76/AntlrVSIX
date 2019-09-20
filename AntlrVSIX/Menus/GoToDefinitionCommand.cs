@@ -93,9 +93,9 @@ namespace AntlrVSIX.GoToDefinition
             ITextBuffer buffer = view.TextBuffer;
             ITextDocument doc = buffer.GetTextDocument();
             string path_containing_applied_occurrence = Path.GetDirectoryName(doc.FilePath);
-            List<IToken> where = new List<IToken>();
+            List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
             List<ParserDetails> where_details = new List<ParserDetails>();
-            IToken token = null;
+            Antlr4.Runtime.Tree.TerminalNodeImpl token = null;
             foreach (var kvp in ParserDetails._per_file_parser_details)
             {
                 string file_name = kvp.Key;
@@ -103,7 +103,7 @@ namespace AntlrVSIX.GoToDefinition
                 ParserDetails details = kvp.Value;
                 {
                     var it = details._ant_defining_occurrence_classes.Where(
-                        (t) => t.Key.Text == span.GetText()
+                        (t) => t.Key.Symbol.Text == span.GetText()
                             && path_containing_applied_occurrence
                             == path_containing_defining_occurrence).Select(t => t.Key);
                     where.AddRange(it);
@@ -124,9 +124,9 @@ namespace AntlrVSIX.GoToDefinition
 
             int line_number;
             int colum_number;
-            vstv.GetLineAndColumn(token.StartIndex, out line_number, out colum_number);
+            vstv.GetLineAndColumn(token.Symbol.StartIndex, out line_number, out colum_number);
             ITextSnapshot cc = wpftv.TextBuffer.CurrentSnapshot;
-            SnapshotSpan ss = new SnapshotSpan(cc, token.StartIndex, 1);
+            SnapshotSpan ss = new SnapshotSpan(cc, token.Symbol.StartIndex, 1);
             SnapshotPoint sp = ss.Start;
             wpftv.Caret.MoveTo(sp);
             if (line_number > 0)

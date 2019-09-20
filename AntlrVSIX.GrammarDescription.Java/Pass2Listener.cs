@@ -147,7 +147,10 @@ namespace AntlrVSIX.GrammarDescription.Java
                         var id_name = context.GetChild(2).GetText();
                         var w = v as SymbolWithScope;
                         var s = w.LookupType(id_name);
-                        if (s != null) _attributes[context] = (CombinedScopeSymbol)new RefSymbol(s);
+                        if (s == null) return;
+                        var x = (CombinedScopeSymbol)new RefSymbol(s);
+                        _attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
+                        _attributes[context] = x;
                     }
                 }
             }
@@ -269,7 +272,10 @@ namespace AntlrVSIX.GrammarDescription.Java
                         var id_name = context.GetChild(2).GetText();
                         var w = v as SymbolWithScope;
                         var s = w.LookupType(id_name);
-                        if (s != null) _attributes[context] = (CombinedScopeSymbol)new RefSymbol(s);
+                        if (s == null) return;
+                        var x = (CombinedScopeSymbol)new RefSymbol(s);
+                        _attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
+                        _attributes[context] = x;
                     }
                 }
             }
@@ -330,7 +336,10 @@ namespace AntlrVSIX.GrammarDescription.Java
                         var id_name = context.GetChild(2).GetText();
                         var w = v as SymbolWithScope;
                         var s = w.LookupType(id_name);
-                        if (s != null) _attributes[context] = (CombinedScopeSymbol)new RefSymbol(s);
+                        if (s == null) return;
+                        var x = (CombinedScopeSymbol)new RefSymbol(s);
+                        _attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
+                        _attributes[context] = x;
                     }
                 }
             }
@@ -391,7 +400,10 @@ namespace AntlrVSIX.GrammarDescription.Java
                         var id_name = context.GetChild(2).GetText();
                         var w = v as SymbolWithScope;
                         var s = w.LookupType(id_name);
-                        if (s != null) _attributes[context] = (CombinedScopeSymbol)new RefSymbol(s);
+                        if (s == null) return;
+                        var x = (CombinedScopeSymbol)new RefSymbol(s);
+                        _attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
+                        _attributes[context] = x;
                     }
                 }
             }
@@ -462,7 +474,10 @@ namespace AntlrVSIX.GrammarDescription.Java
                         var id_name = context.GetChild(2).GetText();
                         var w = v as SymbolWithScope;
                         var s = w.LookupType(id_name);
-                        if (s != null) _attributes[context] = (CombinedScopeSymbol)new RefSymbol(s);
+                        if (s == null) return;
+                        var x = (CombinedScopeSymbol)new RefSymbol(s);
+                        _attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
+                        _attributes[context] = x;
                     }
                 }
             }
@@ -543,11 +558,11 @@ namespace AntlrVSIX.GrammarDescription.Java
                         return;
                     }
                     var id = context.GetText();
-                    var f = super_class.LookupType(id);
-                    if (f != null)
-                    {
-                        _attributes[context] = (CombinedScopeSymbol)new RefSymbol(f);
-                    }
+                    var s = super_class.LookupType(id);
+                    if (s == null) return;
+                    var x = (CombinedScopeSymbol)new RefSymbol(s);
+                    _attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
+                    _attributes[context] = x;
                 }
             } else if (parent is Java9Parser.ClassInstanceCreationExpressionContext)
             {
@@ -568,24 +583,23 @@ namespace AntlrVSIX.GrammarDescription.Java
                     {
                         var scope = NearestScope(context);
                         var sc = scope;
-                        var f = sc.LookupType(id);
-                        if (f != null)
-                        {
-                            _attributes[context] = (CombinedScopeSymbol)new RefSymbol(f);
-                        }
+                        var s = sc.LookupType(id);
+                        if (s == null) return;
+                        var x = (CombinedScopeSymbol)new RefSymbol(s);
+                        _attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
+                        _attributes[context] = x;
                     }
                     else
                     {
-                        var c = p.GetChild(i);
-                        var s = _attributes[c];
-                        var sc = s as Scope;
+                        var c = _attributes[p.GetChild(i)];
+                        var sc = c as Scope;
                         if (sc != null)
                         {
-                            var f = sc.LookupType(id);
-                            if (f != null)
-                            {
-                                _attributes[context] = (CombinedScopeSymbol)new RefSymbol(f);
-                            }
+                            var s = sc.LookupType(id);
+                            if (s == null) return;
+                            var x = (CombinedScopeSymbol)new RefSymbol(s);
+                            _attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
+                            _attributes[context] = x;
                         }
                     }
                 }
@@ -608,24 +622,23 @@ namespace AntlrVSIX.GrammarDescription.Java
                     {
                         var scope = NearestScope(context);
                         var sc = scope;
-                        var f = sc.LookupType(id);
-                        if (f != null)
-                        {
-                            _attributes[context] = (CombinedScopeSymbol)new RefSymbol(f);
-                        }
+                        var s = sc.LookupType(id);
+                        if (s == null) return;
+                        var x = (CombinedScopeSymbol)new RefSymbol(s);
+                        _attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
+                        _attributes[context] = x;
                     }
                     else
                     {
-                        var c = p.GetChild(i);
-                        var s = _attributes[c];
-                        var sc = s as Scope;
+                        var c = _attributes[p.GetChild(i)];
+                        var sc = c as Scope;
                         if (sc != null)
                         {
-                            var f = sc.LookupType(id);
-                            if (f != null)
-                            {
-                                _attributes[context] = (CombinedScopeSymbol)new RefSymbol(f);
-                            }
+                            var s = sc.LookupType(id);
+                            if (s == null) return;
+                            var x = (CombinedScopeSymbol)new RefSymbol(s);
+                            _attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
+                            _attributes[context] = x;
                         }
                     }
                 }
@@ -639,11 +652,11 @@ namespace AntlrVSIX.GrammarDescription.Java
                 if (ss != null)
                 {
                     var s = ((Scope)ss).LookupType(id_name);
-                    if (s != null)
-                    {
-                        _attributes[parent] = (CombinedScopeSymbol)new RefSymbol(s);
-                        _attributes[context] = (CombinedScopeSymbol)new RefSymbol(s);
-                    }
+                    if (s == null) return;
+                    var x = (CombinedScopeSymbol)new RefSymbol(s);
+                    _attributes[parent] = (CombinedScopeSymbol)x;
+                    _attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
+                    _attributes[context] = x;
                 }
             } else if (parent is Java9Parser.ExpressionNameContext)
             {
@@ -651,10 +664,10 @@ namespace AntlrVSIX.GrammarDescription.Java
                 var sc = scope;
                 var id = context.GetText();
                 var s = sc.LookupType(id);
-                if (s != null)
-                {
-                    _attributes[context] = (CombinedScopeSymbol)new RefSymbol(s);
-                }
+                if (s == null) return;
+                var x = (CombinedScopeSymbol)new RefSymbol(s);
+                _attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
+                _attributes[context] = x;
             }
         }
 

@@ -148,13 +148,13 @@
                     var t = p.Key;
                     if (forward)
                     {
-                        if (t.StartIndex > pos && t.StartIndex < next_sym)
-                            next_sym = t.StartIndex;
+                        if (t.Symbol.StartIndex > pos && t.Symbol.StartIndex < next_sym)
+                            next_sym = t.Symbol.StartIndex;
                     }
                     else
                     {
-                        if (t.StartIndex < pos && t.StartIndex > next_sym)
-                            next_sym = t.StartIndex;
+                        if (t.Symbol.StartIndex < pos && t.Symbol.StartIndex > next_sym)
+                            next_sym = t.Symbol.StartIndex;
                     }
                 }
 
@@ -164,13 +164,13 @@
                     var t = p.Key;
                     if (forward)
                     {
-                        if (t.StartIndex > pos && t.StartIndex < next_sym)
-                            next_sym = t.StartIndex;
+                        if (t.Symbol.StartIndex > pos && t.Symbol.StartIndex < next_sym)
+                            next_sym = t.Symbol.StartIndex;
                     }
                     else
                     {
-                        if (t.StartIndex < pos && t.StartIndex > next_sym)
-                            next_sym = t.StartIndex;
+                        if (t.Symbol.StartIndex < pos && t.Symbol.StartIndex > next_sym)
+                            next_sym = t.Symbol.StartIndex;
                     }
                 }
 

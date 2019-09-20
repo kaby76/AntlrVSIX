@@ -56,6 +56,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             var scope = GetScope(NearestScope(context));
             scope.define(ref m);
             _attributes[node] = (CombinedScopeSymbol)m;
+            _attributes[context.GetChild(0)] = (CombinedScopeSymbol)m;
             _attributes[context] = (CombinedScopeSymbol)m;
         }
 
@@ -90,7 +91,8 @@ namespace AntlrVSIX.GrammarDescription.Java
             var scope = GetScope(NearestScope(context));
             scope.define(ref e);
             _attributes[node] =(CombinedScopeSymbol) e;
-            _attributes[context] = (CombinedScopeSymbol) e;
+            _attributes[context.GetChild(0)] = (CombinedScopeSymbol)e;
+            _attributes[context] = (CombinedScopeSymbol)e;
         }
 
         public override void EnterBlock(Java9Parser.BlockContext context)
@@ -118,6 +120,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             var scope = GetScope(NearestScope(context));
             scope.define(ref m);
             _attributes[node] = (CombinedScopeSymbol)m;
+            _attributes[context.GetChild(0)] = (CombinedScopeSymbol)m;
             _attributes[context] = (CombinedScopeSymbol)m;
         }
 
@@ -130,11 +133,11 @@ namespace AntlrVSIX.GrammarDescription.Java
             var node = context.GetChild(i) as Java9Parser.IdentifierContext;
             var id_name = node.GetText();
             Symbol cs = new Symtab.ClassSymbol(id_name);
-            //cs.MonoType = new Mono.Cecil.TypeDefinition(null, id_name, default(Mono.Cecil.TypeAttributes));
             var scope = GetScope(NearestScope(context));
             scope.define(ref cs);
             _attributes[node] = (CombinedScopeSymbol)cs;
             Scope s = (Scope)cs;
+            _attributes[context.GetChild(0)] = (CombinedScopeSymbol)s;
             _attributes[context] = (CombinedScopeSymbol)s;
         }
 
@@ -151,6 +154,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             scope.define(ref cs);
             _attributes[node] = (CombinedScopeSymbol)cs;
             Scope s = (Scope)cs;
+            _attributes[context.GetChild(0)] = (CombinedScopeSymbol)s;
             _attributes[context] = (CombinedScopeSymbol)s;
         }
 
@@ -207,6 +211,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             _attributes[node] = (CombinedScopeSymbol)f;
             var scope = GetScope(NearestScope(context));
             scope.define(ref f);
+            _attributes[context.GetChild(0)] = (CombinedScopeSymbol)f;
             _attributes[context] = (CombinedScopeSymbol)f;
         }
 
@@ -228,6 +233,7 @@ namespace AntlrVSIX.GrammarDescription.Java
                     break;
             }
             var literal_symbol = new Symtab.Literal(literal, cleaned_up_literal, s.Type);
+            _attributes[context.GetChild(0)] = (CombinedScopeSymbol)literal_symbol;
             _attributes[context] = literal_symbol;
         }
 
@@ -249,6 +255,7 @@ namespace AntlrVSIX.GrammarDescription.Java
                 var id = context.GetText();
                 Symbol f = new MethodSymbol(id);
                 sc.define(ref f);
+                _attributes[context.GetChild(0)] = (CombinedScopeSymbol)f; 
                 _attributes[context] = (CombinedScopeSymbol)f;
                 _attributes[context.Parent] = (CombinedScopeSymbol)f;
                 _attributes[context.Parent.Parent] = (CombinedScopeSymbol)f;
@@ -264,6 +271,7 @@ namespace AntlrVSIX.GrammarDescription.Java
                 var id = context.GetText();
                 Symbol f = new MethodSymbol(id);
                 sc.define(ref f);
+                _attributes[context.GetChild(0)] = (CombinedScopeSymbol)f;
                 _attributes[context] = (CombinedScopeSymbol)f;
                 _attributes[parent] = (CombinedScopeSymbol)f;
             }
@@ -281,6 +289,7 @@ namespace AntlrVSIX.GrammarDescription.Java
                 {
                     var sc = _attributes[p];
                     ((Scope)sc).define(ref f);
+                    _attributes[context.GetChild(0)] = (CombinedScopeSymbol)f;
                     _attributes[context] = (CombinedScopeSymbol)f;
                 }
             }
@@ -306,6 +315,7 @@ namespace AntlrVSIX.GrammarDescription.Java
                         return;
                     }
                     ((Scope)sc).define(ref f);
+                    _attributes[context.GetChild(0)] = (CombinedScopeSymbol)f;
                     _attributes[context] = (CombinedScopeSymbol)f;
                 }
             }

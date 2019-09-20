@@ -63,57 +63,48 @@ namespace AntlrVSIX.Tagger
                 SnapshotPoint end = curSpan.End;
                 int curLocEnd = end.Position;
 
-                // Collect all nonterminals, terminals, ..., in this span.
-                List<KeyValuePair<IToken, int>> combined_tokens = new List<KeyValuePair<IToken, int>>();
+                List<KeyValuePair<Antlr4.Runtime.Tree.TerminalNodeImpl, int>> combined_tokens = new List<KeyValuePair<Antlr4.Runtime.Tree.TerminalNodeImpl, int>>();
 
-                {
-                    List<KeyValuePair<IToken, int>> partial = details._ant_applied_occurrence_classes.Where((pair) =>
+                combined_tokens.AddRange(
+                    details._ant_applied_occurrence_classes.Where((pair) =>
                     {
                         var token = pair.Key;
-                        int start_token_start = token.StartIndex;
-                        int end_token_end = token.StopIndex;
+                        int start_token_start = token.Symbol.StartIndex;
+                        int end_token_end = token.Symbol.StopIndex;
                         if (start_token_start >= curLocEnd) return false;
                         if (end_token_end < curLocStart) return false;
                         return true;
-                    }).ToList();
-                    combined_tokens.AddRange(partial);
-                }
+                    }));
 
-                {
-                    var partial = details._ant_defining_occurrence_classes.Where((pair) =>
+                combined_tokens.AddRange(details._ant_defining_occurrence_classes.Where((pair) =>
                     {
                         var token = pair.Key;
-                        int start_token_start = token.StartIndex;
-                        int end_token_end = token.StopIndex;
+                        int start_token_start = token.Symbol.StartIndex;
+                        int end_token_end = token.Symbol.StopIndex;
                         if (start_token_start >= curLocEnd) return false;
                         if (end_token_end < curLocStart) return false;
                         return true;
-                    }).ToList();
-                    combined_tokens.AddRange(partial);
-                }
+                    }));
 
-                {
-                    var partial = details._ant_comments.Where((pair) =>
-                    {
-                        var token = pair.Key;
-                        int start_token_start = token.StartIndex;
-                        int end_token_end = token.StopIndex;
-                        if (start_token_start >= curLocEnd) return false;
-                        if (end_token_end < curLocStart) return false;
-                        return true;
-                    }).ToList();
-                    combined_tokens.AddRange(partial);
-                }
+                //combined_tokens.AddRange(details._ant_comments.Where((pair) =>
+                //    {
+                //        var token = pair.Key;
+                //        int start_token_start = token.Symbol.StartIndex;
+                //        int end_token_end = token.Symbol.StopIndex;
+                //        if (start_token_start >= curLocEnd) return false;
+                //        if (end_token_end < curLocStart) return false;
+                //        return true;
+                //    }));
 
                 // Sort the list.
-                List<KeyValuePair<IToken, int>> sorted_combined_tokens = combined_tokens.OrderBy((t) => t.Key.StartIndex).ToList();
+                var sorted_combined_tokens = combined_tokens.OrderBy((t) => t.Key.Symbol.StartIndex);
 
-                foreach (KeyValuePair<IToken, int> p in sorted_combined_tokens)
+                foreach (KeyValuePair<Antlr4.Runtime.Tree.TerminalNodeImpl, int> p in sorted_combined_tokens)
                 {
                     var token = p.Key;
                     var type = p.Value;
-                    int start_token_start = token.StartIndex;
-                    int end_token_end = token.StopIndex;
+                    int start_token_start = token.Symbol.StartIndex;
+                    int end_token_end = token.Symbol.StopIndex;
                     int length = end_token_end - start_token_start + 1;
 
                     // Make sure the length doesn't go past the end of the current span.

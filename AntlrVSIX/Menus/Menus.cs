@@ -9,6 +9,7 @@
     using AntlrVSIX.NextSym;
     using AntlrVSIX.Reformat;
     using AntlrVSIX.Rename;
+    using AntlrVSIX.Taggers;
     using Microsoft.VisualStudio.Text.Classification;
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text.Operations;

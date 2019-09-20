@@ -320,19 +320,16 @@ namespace AntlrVSIX.GrammarDescription.Java
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
-                    for (int i = 0; p != null && i < 2; p = p.Parent, i++)
+                    st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
+                    if (value != null)
                     {
-                        st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-                        if (value != null)
+                        if (value is Symtab.RefSymbol && ((Symtab.RefSymbol)value).Def is Symtab.Literal)
                         {
-                            if (value is Symtab.RefSymbol && ((Symtab.RefSymbol)value).Def is Symtab.Literal)
-                            {
-                                return true;
-                            }
-                            else
-                            {
-                                return false;
-                            }
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
                         }
                     }
                     return false;
@@ -357,19 +354,16 @@ namespace AntlrVSIX.GrammarDescription.Java
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
-                    for (int i = 0; p != null && i < 2; p = p.Parent, i++)
+                    st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
+                    if (value != null)
                     {
-                        st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-                        if (value != null)
+                        if (value is Symtab.RefSymbol && ((Symtab.RefSymbol)value).Def is Symtab.FieldSymbol)
                         {
-                            if (value is Symtab.RefSymbol && ((Symtab.RefSymbol)value).Def is Symtab.FieldSymbol)
-                            {
-                                return true;
-                            }
-                            else
-                            {
-                                return false;
-                            }
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
                         }
                     }
                     return false;
@@ -383,20 +377,17 @@ namespace AntlrVSIX.GrammarDescription.Java
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
-                    for (int i = 0; p != null && i < 2; p = p.Parent, i++)
+                    st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
+                    if (value != null)
                     {
-                        st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-                        if (value != null)
+                        switch (value)
                         {
-                            switch (value)
-                            {
-                                case Symtab.LocalSymbol ss:
-                                    return true;
-                                case Symtab.ParameterSymbol ss:
-                                    return true;
-                                default:
-                                    return false;
-                            }
+                            case Symtab.LocalSymbol ss:
+                                return true;
+                            case Symtab.ParameterSymbol ss:
+                                return true;
+                            default:
+                                return false;
                         }
                     }
                     return false;
@@ -406,19 +397,16 @@ namespace AntlrVSIX.GrammarDescription.Java
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
-                    for (int i = 0; p != null && i < 2; p = p.Parent, i++)
+                    st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
+                    if (value != null)
                     {
-                        st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-                        if (value != null)
+                        if (value is Symtab.MethodSymbol)
                         {
-                            if (value is Symtab.MethodSymbol)
-                            {
-                                return true;
-                            }
-                            else
-                            {
-                                return false;
-                            }
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
                         }
                     }
                     return false;
@@ -433,19 +421,16 @@ namespace AntlrVSIX.GrammarDescription.Java
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
-                    for (int i = 0; p != null && i < 2; p = p.Parent, i++)
+                    st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
+                    if (value != null)
                     {
-                        st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-                        if (value != null)
+                        if (value is Symtab.ClassSymbol)
                         {
-                            if (value is Symtab.ClassSymbol)
-                            {
-                                return true;
-                            }
-                            else
-                            {
-                                return false;
-                            }
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
                         }
                     }
                     return false;
@@ -455,19 +440,16 @@ namespace AntlrVSIX.GrammarDescription.Java
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
-                    for (int i = 0; p != null && i < 2; p = p.Parent, i++)
+                    st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
+                    if (value != null)
                     {
-                        st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-                        if (value != null)
+                        if (value is Symtab.FieldSymbol)
                         {
-                            if (value is Symtab.FieldSymbol)
-                            {
-                                return true;
-                            }
-                            else
-                            {
-                                return false;
-                            }
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
                         }
                     }
                     return false;

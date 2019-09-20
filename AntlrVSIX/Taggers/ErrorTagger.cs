@@ -62,19 +62,19 @@ namespace AntlrVSIX.ErrorTagger
                 int curLocStart = start.Position;
                 SnapshotPoint end = curSpan.End;
                 int curLocEnd = end.Position;
-                List<IToken> where = new List<IToken>();
+                List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
                 List<ParserDetails> where_details = new List<ParserDetails>();
-                IEnumerable<IToken> combined_tokens = new List<IToken>();
-                List<IToken> all_term_tokens = new List<IToken>();
-                List<IToken> all_nonterm_tokens = new List<IToken>();
+                IEnumerable<Antlr4.Runtime.Tree.TerminalNodeImpl> combined_tokens = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
+                List<Antlr4.Runtime.Tree.TerminalNodeImpl> all_term_tokens = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
+                List<Antlr4.Runtime.Tree.TerminalNodeImpl> all_nonterm_tokens = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
 
                 all_nonterm_tokens = details._ant_applied_occurrence_classes.Where((pair) =>
                 {
                     var token = pair.Key;
                     var classification = pair.Value;
                     if (classification != 0) return false;
-                    int start_token_start = token.StartIndex;
-                    int end_token_end = token.StopIndex;
+                    int start_token_start = token.Symbol.StartIndex;
+                    int end_token_end = token.Symbol.StopIndex;
                     if (start_token_start >= curLocEnd) return false;
                     if (end_token_end < curLocStart) return false;
                     var is_any_definer = ParserDetails._per_file_parser_details
@@ -86,7 +86,7 @@ namespace AntlrVSIX.ErrorTagger
                                     var d = p.Key;
                                     var c = p.Value;
                                     if (c != 0) return false;
-                                    return d.Text == token.Text;
+                                    return d.Symbol.Text == token.Symbol.Text;
                                 }).Any()).Any();
                     return !is_any_definer;
                 }).Select(t => t.Key).ToList();
@@ -98,8 +98,8 @@ namespace AntlrVSIX.ErrorTagger
                     var token = pair.Key;
                     var classification = pair.Value;
                     if (classification != 1) return false;
-                    int start_token_start = token.StartIndex;
-                    int end_token_end = token.StopIndex;
+                    int start_token_start = token.Symbol.StartIndex;
+                    int end_token_end = token.Symbol.StopIndex;
                     if (start_token_start >= curLocEnd) return false;
                     if (end_token_end < curLocStart) return false;
                     var is_any_definer = ParserDetails._per_file_parser_details
@@ -111,7 +111,7 @@ namespace AntlrVSIX.ErrorTagger
                                     var d = p.Key;
                                     var c = p.Value;
                                     if (c != 1) return false;
-                                    return d.Text == token.Text;
+                                    return d.Symbol.Text == token.Symbol.Text;
                                 }).Any()).Any();
                     return !is_any_definer;
                 }).Select(t => t.Key).ToList();
@@ -119,7 +119,7 @@ namespace AntlrVSIX.ErrorTagger
                 combined_tokens = combined_tokens.Concat(all_term_tokens);
 
                 // Sort the list.
-                var sorted_combined_tokens = combined_tokens.OrderBy((t) => t.StartIndex).ToList();
+                var sorted_combined_tokens = combined_tokens.OrderBy((t) => t.Symbol.StartIndex).ToList();
 
                 // Assumption: tokens do not overlap.
 

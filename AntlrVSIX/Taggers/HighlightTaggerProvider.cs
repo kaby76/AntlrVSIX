@@ -1,4 +1,4 @@
-﻿namespace AntlrVSIX.Rename
+﻿namespace AntlrVSIX.Taggers
 {
     using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Classification;

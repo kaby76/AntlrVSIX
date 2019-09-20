@@ -92,7 +92,7 @@ namespace AntlrVSIX.FindAllReferences
             ITextDocument doc = buffer.GetTextDocument();
             string path = doc.FilePath;
             IGrammarDescription grammar_description = GrammarDescriptionFactory.Create(path);
-            List<IToken> where = new List<IToken>();
+            List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
             List<ParserDetails> where_details = new List<ParserDetails>();
             foreach (var kvp in ParserDetails._per_file_parser_details)
             {
@@ -109,14 +109,14 @@ namespace AntlrVSIX.FindAllReferences
                 {
                     var it = details._ant_applied_occurrence_classes.Where(
                         (t) => grammar_description.CanFindAllRefs[t.Value]
-                            && t.Key.Text == span.GetText()).Select(t => t.Key);
+                            && t.Key.Symbol.Text == span.GetText()).Select(t => t.Key);
                     where.AddRange(it);
                     foreach (var j in it) where_details.Add(details);
                 }
                 {
                     var it = details._ant_defining_occurrence_classes.Where(
                         (t) => grammar_description.CanFindAllRefs[t.Value]
-                            && t.Key.Text == span.GetText()).Select(t => t.Key);
+                            && t.Key.Symbol.Text == span.GetText()).Select(t => t.Key);
                     where.AddRange(it);
                     foreach (var j in it) where_details.Add(details);
                 }
@@ -125,9 +125,9 @@ namespace AntlrVSIX.FindAllReferences
             FindAntlrSymbolsModel.Instance.Results.Clear();
             for (int i = 0; i < where.Count; ++i)
             {
-                IToken x = where[i];
+                Antlr4.Runtime.Tree.TerminalNodeImpl x = where[i];
                 ParserDetails y = where_details[i];
-                var w = new Entry() { FileName = y.FullFileName, LineNumber = x.Line, ColumnNumber = x.Column, Token = x };
+                var w = new Entry() { FileName = y.FullFileName, LineNumber = x.Symbol.Line, ColumnNumber = x.Symbol.Column, Token = x.Symbol };
                 FindAntlrSymbolsModel.Instance.Results.Add(w);
             }
             FindRefsWindowCommand.Instance.Show();

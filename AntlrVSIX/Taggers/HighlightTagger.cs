@@ -1,5 +1,5 @@
 ﻿
-namespace AntlrVSIX.Rename
+namespace AntlrVSIX.Taggers
 {
     using Antlr4.Runtime;
     using AntlrVSIX.Extensions;
@@ -103,62 +103,68 @@ namespace AntlrVSIX.Rename
 
         public void Update()
         {
-            //if (!Enabled) return;
-            //Enabled = false;
-
             SnapshotPoint currentRequest = RequestedPoint;
-
             List<SnapshotSpan> wordSpans = new List<SnapshotSpan>();
 
-            // Find all words in the buffer like the one the caret is on
-            TextExtent word = TextStructureNavigator.GetExtentOfWord(currentRequest);
+            SnapshotPoint start = currentRequest;
+            int curLocStart = start.Position;
+            SnapshotPoint end = currentRequest;
+            int curLocEnd = end.Position;
+            var snapshot = currentRequest.Snapshot;
 
-            bool foundWord = true;
+            ITextBuffer buf = currentRequest.Snapshot.TextBuffer;
+            var doc = buf.GetTextDocument();
+            string file_name = doc.FilePath;
+            ParserDetails details = null;
+            bool found = ParserDetails._per_file_parser_details.TryGetValue(file_name, out details);
+            if (!found) return;
 
-            // If we've selected something not worth highlighting, we might have
-            // missed a "word" by a little bit
-            if (!WordExtentIsValid(currentRequest, word))
-            {
-                // Before we retry, make sure it is worthwhile
-                if (word.Span.Start != currentRequest ||
-                    currentRequest == currentRequest.GetContainingLine().Start ||
-                    char.IsWhiteSpace((currentRequest - 1).GetChar()))
+            List<KeyValuePair<Antlr4.Runtime.Tree.TerminalNodeImpl, int>> combined_tokens = new List<KeyValuePair<Antlr4.Runtime.Tree.TerminalNodeImpl, int>>();
+
+            combined_tokens.AddRange(
+                details._ant_applied_occurrence_classes.Where((pair) =>
                 {
-                    foundWord = false;
-                }
-                else
-                {
-                    // Try again, one character previous.  If the caret is at the end of a word, then
-                    // this will pick up the word we are at the end of.
-                    word = TextStructureNavigator.GetExtentOfWord(currentRequest - 1);
+                    var token = pair.Key;
+                    int start_token_start = token.Symbol.StartIndex;
+                    int end_token_end = token.Symbol.StopIndex;
+                    if (start_token_start >= curLocEnd) return false;
+                    if (end_token_end < curLocStart) return false;
+                    return true;
+                }));
 
-                    // If we still aren't valid the second time around, we're done
-                    if (!WordExtentIsValid(currentRequest, word))
-                        foundWord = false;
-                }
-            }
-
-            if (!foundWord)
+            combined_tokens.AddRange(details._ant_defining_occurrence_classes.Where((pair) =>
             {
-                // If we couldn't find a word, just clear out the existing markers
+                var token = pair.Key;
+                int start_token_start = token.Symbol.StartIndex;
+                int end_token_end = token.Symbol.StopIndex;
+                if (start_token_start >= curLocEnd) return false;
+                if (end_token_end < curLocStart) return false;
+                return true;
+            }));
+
+            if (combined_tokens.Count > 1 || combined_tokens.Count == 0)
+            {
                 SynchronousUpdate(currentRequest, new NormalizedSnapshotSpanCollection(), null);
                 return;
             }
 
-            SnapshotSpan currentWord = word.Span;
+            var the_symbol = combined_tokens.First();
+            
+            var node = (Antlr4.Runtime.Tree.IParseTree)the_symbol.Key;
+            Symtab.CombinedScopeSymbol value = null;
+            for (; node != null; node = node.Parent)
+            {
+                if (details._ant_symtab.TryGetValue(node, out Symtab.CombinedScopeSymbol v))
+                {
+                    value = v;
+                    break;
+                }
+            }
+            if (node == null) return;
 
-            // If this is the same word we currently have, we're done (e.g. caret moved within a word).
+            SnapshotSpan currentWord = new SnapshotSpan(new SnapshotPoint(snapshot, the_symbol.Key.Symbol.StartIndex), the_symbol.Key.Symbol.StopIndex);
             if (CurrentWord.HasValue && currentWord == CurrentWord)
                 return;
-
-            /* Find spans using simple text search....
-            FindData findData = new FindData(currentWord.GetText(), currentWord.Snapshot);
-            findData.FindOptions = FindOptions.WholeWord | FindOptions.MatchCase;
-            wordSpans.AddRange(TextSearchService.FindAll(findData));
-            */
-
-            // Verify current word is a grammar symbol.
-            //  Now, check for valid classification type.
             bool can_rename = _aggregator.GetClassificationSpans(currentWord).Where(
                 classification =>
                 {
@@ -171,47 +177,81 @@ namespace AntlrVSIX.Rename
 
             SnapshotSpan span = currentWord;
             ITextView view = this._view;
-
-            // First, find out what this view is, and what the file is.
             ITextBuffer buffer = view.TextBuffer;
-            ITextDocument doc = buffer.GetTextDocument();
             string path = doc.FilePath;
-
-            List<IToken> where = new List<IToken>();
-            List<ParserDetails> where_details = new List<ParserDetails>();
-            //foreach (var kvp in ParserDetails._per_file_parser_details)
-            {
-                //string file_name = kvp.Key;
-                //ParserDetails details = kvp.Value;
-                var file_name = path;
-                ParserDetails._per_file_parser_details.TryGetValue(file_name, out ParserDetails details);
-                if (details == null) return;
-
+            List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
+            where.AddRange(details._ant_applied_occurrence_classes.Where(
+                (t) =>
                 {
-                    var it = details._ant_applied_occurrence_classes.Where(
-                        (t) => _grammar_description.CanRename[t.Value] && t.Key.Text == span.GetText()).Select(t => t.Key);
-                    where.AddRange(it);
-                    foreach (var i in it) where_details.Add(details);
-                }
+                    if (!_grammar_description.CanRename[t.Value])
+                        return false;
+                    Antlr4.Runtime.Tree.TerminalNodeImpl x = t.Key;
+                    if (x == the_symbol.Key)
+                        return true;
+                    var nn = (Antlr4.Runtime.Tree.IParseTree)t.Key;
+                    Symtab.CombinedScopeSymbol value2 = null;
+                    for (; nn != null; nn = nn.Parent)
+                    {
+                        if (details._ant_symtab.TryGetValue(nn, out Symtab.CombinedScopeSymbol v))
+                        {
+                            value2 = v;
+                            break;
+                        }
+                    }
+                    if (nn == null)
+                        return false;
+                    if (value2 == value)
+                        return true;
+                    if (!(value2 is Symtab.Symbol))
+                        return false;
+                    if (!(value is Symtab.Symbol))
+                        return false;
+                    if ((value as Symtab.Symbol).resolve() == (value2 as Symtab.Symbol).resolve())
+                        return true;
+                    return false;
+                }).Select(t => t.Key));
+
+            where.AddRange(details._ant_defining_occurrence_classes.Where(
+                (t) =>
                 {
-                    var it = details._ant_defining_occurrence_classes.Where(
-                        (t) => _grammar_description.CanRename[t.Value] && t.Key.Text == span.GetText()).Select(t => t.Key);
-                    where.AddRange(it);
-                    foreach (var i in it) where_details.Add(details);
-                }
-            }
+                    if (!_grammar_description.CanRename[t.Value])
+                        return false;
+                    Antlr4.Runtime.Tree.TerminalNodeImpl x = t.Key;
+                    if (x == the_symbol.Key)
+                        return true;
+                    var nn = (Antlr4.Runtime.Tree.IParseTree)t.Key;
+                    Symtab.CombinedScopeSymbol value2 = null;
+                    for (; nn != null; nn = nn.Parent)
+                    {
+                        if (details._ant_symtab.TryGetValue(nn, out Symtab.CombinedScopeSymbol v))
+                        {
+                            value2 = v;
+                            break;
+                        }
+                    }
+                    if (nn == null)
+                        return false;
+                    if (value2 == value)
+                        return true;
+                    if (!(value2 is Symtab.Symbol))
+                        return false;
+                    if (!(value is Symtab.Symbol))
+                        return false;
+                    if ((value as Symtab.Symbol).resolve() == (value2 as Symtab.Symbol).resolve())
+                        return true;
+                    return false;
+                }).Select(t => t.Key));
+
             if (!where.Any()) return;
+
             var results = new List<Entry>();
             for (int i = 0; i < where.Count; ++i)
             {
-                IToken x = where[i];
-                ParserDetails y = where_details[i];
-                var w = new Entry() { FileName = y.FullFileName, LineNumber = x.Line, ColumnNumber = x.Column, Token = x };
+                Antlr4.Runtime.Tree.TerminalNodeImpl x = where[i];
+                ParserDetails y = details;
+                var w = new Entry() { FileName = y.FullFileName, LineNumber = x.Symbol.Line, ColumnNumber = x.Symbol.Column, Token = x.Symbol };
                 results.Add(w);
             }
-
-            // Now, for all entries which are in this buffer, highlight.
-            //wordSpans.Add(currentWord);
             for (int i = 0; i < results.Count; ++i)
             {
                 var w = results[i];
@@ -261,32 +301,18 @@ namespace AntlrVSIX.Rename
         {
             if (CurrentWord == null)
                 yield break;
-
-            // Hold on to a "snapshot" of the word spans and current word, so that we maintain the same
-            // collection throughout
             SnapshotSpan currentWord = CurrentWord.Value;
             NormalizedSnapshotSpanCollection wordSpans = WordSpans;
-
             if (spans.Count == 0 || WordSpans.Count == 0)
                 yield break;
-
-            // If the requested snapshot isn't the same as the one our words are on, translate our spans
-            // to the expected snapshot
             if (spans[0].Snapshot != wordSpans[0].Snapshot)
             {
                 wordSpans = new NormalizedSnapshotSpanCollection(
                     wordSpans.Select(span => span.TranslateTo(spans[0].Snapshot, SpanTrackingMode.EdgeExclusive)));
-
                 currentWord = currentWord.TranslateTo(spans[0].Snapshot, SpanTrackingMode.EdgeExclusive);
             }
-
-            // First, yield back the word the cursor is under (if it overlaps)
-            // Note that we'll yield back the same word again in the wordspans collection;
-            // the duplication here is expected.
-            if (spans.OverlapsWith(new NormalizedSnapshotSpanCollection(currentWord)))
-                yield return new TagSpan<HighlightWordTag>(currentWord, new HighlightWordTag());
-
-            // Second, yield all the other words in the file
+            //if (spans.OverlapsWith(new NormalizedSnapshotSpanCollection(currentWord)))
+            //    yield return new TagSpan<HighlightWordTag>(currentWord, new HighlightWordTag());
             foreach (SnapshotSpan span in NormalizedSnapshotSpanCollection.Overlap(spans, wordSpans))
             {
                 yield return new TagSpan<HighlightWordTag>(span, new HighlightWordTag());
