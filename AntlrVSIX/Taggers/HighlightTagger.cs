@@ -121,7 +121,7 @@ namespace AntlrVSIX.Taggers
             List<KeyValuePair<Antlr4.Runtime.Tree.TerminalNodeImpl, int>> combined_tokens = new List<KeyValuePair<Antlr4.Runtime.Tree.TerminalNodeImpl, int>>();
 
             combined_tokens.AddRange(
-                details._ant_applied_occurrence_classes.Where((pair) =>
+                details._refs.Where((pair) =>
                 {
                     var token = pair.Key;
                     int start_token_start = token.Symbol.StartIndex;
@@ -131,7 +131,7 @@ namespace AntlrVSIX.Taggers
                     return true;
                 }));
 
-            combined_tokens.AddRange(details._ant_defining_occurrence_classes.Where((pair) =>
+            combined_tokens.AddRange(details._defs.Where((pair) =>
             {
                 var token = pair.Key;
                 int start_token_start = token.Symbol.StartIndex;
@@ -180,7 +180,7 @@ namespace AntlrVSIX.Taggers
             ITextBuffer buffer = view.TextBuffer;
             string path = doc.FilePath;
             List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
-            where.AddRange(details._ant_applied_occurrence_classes.Where(
+            where.AddRange(details._refs.Where(
                 (t) =>
                 {
                     if (!_grammar_description.CanRename[t.Value])
@@ -211,7 +211,7 @@ namespace AntlrVSIX.Taggers
                     return false;
                 }).Select(t => t.Key));
 
-            where.AddRange(details._ant_defining_occurrence_classes.Where(
+            where.AddRange(details._defs.Where(
                 (t) =>
                 {
                     if (!_grammar_description.CanRename[t.Value])

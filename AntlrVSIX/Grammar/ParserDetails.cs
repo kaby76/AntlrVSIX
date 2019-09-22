@@ -13,8 +13,8 @@ namespace AntlrVSIX.Grammar
         public static Dictionary<string, ParserDetails> _per_file_parser_details = new Dictionary<string, ParserDetails>();
         public string FullFileName;
         public string Code;
-        public Dictionary<TerminalNodeImpl, int> _ant_applied_occurrence_classes = new Dictionary<TerminalNodeImpl, int>();
-        public Dictionary<TerminalNodeImpl, int> _ant_defining_occurrence_classes = new Dictionary<TerminalNodeImpl, int>();
+        public Dictionary<TerminalNodeImpl, int> _refs = new Dictionary<TerminalNodeImpl, int>();
+        public Dictionary<TerminalNodeImpl, int> _defs = new Dictionary<TerminalNodeImpl, int>();
         public Dictionary<IToken, int> _ant_comments = new Dictionary<IToken, int>();
         public Dictionary<IParseTree, Symtab.CombinedScopeSymbol> _ant_symtab = new Dictionary<IParseTree, Symtab.CombinedScopeSymbol>();
         private List<IObserver<ParserDetails>> _observers = new List<IObserver<ParserDetails>>();
@@ -48,8 +48,8 @@ namespace AntlrVSIX.Grammar
 
             pd._all_nodes = DFSVisitor.DFS(pd._ant_tree as ParserRuleContext);
 
-            pd._ant_defining_occurrence_classes = new Dictionary<TerminalNodeImpl, int>();
-            pd._ant_applied_occurrence_classes = new Dictionary<TerminalNodeImpl, int>();
+            pd._defs = new Dictionary<TerminalNodeImpl, int>();
+            pd._refs = new Dictionary<TerminalNodeImpl, int>();
 
             // Order of finding stuff dependent here. First find defs, then refs.
             for (int classification = 0; classification < gd.IdentifyDefinition.Count; ++classification)
@@ -62,7 +62,7 @@ namespace AntlrVSIX.Grammar
                     var x = (t as TerminalNodeImpl);
                     try
                     {
-                        pd._ant_defining_occurrence_classes.Add(x, classification);
+                        pd._defs.Add(x, classification);
                     }
                     catch (ArgumentException e)
                     {
@@ -80,7 +80,7 @@ namespace AntlrVSIX.Grammar
                     var x = (t as TerminalNodeImpl);
                     try
                     {
-                        pd._ant_applied_occurrence_classes.Add(x, classification);
+                        pd._refs.Add(x, classification);
                     }
                     catch (ArgumentException e)
                     {

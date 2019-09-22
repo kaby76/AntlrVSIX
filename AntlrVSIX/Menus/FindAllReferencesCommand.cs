@@ -107,14 +107,14 @@ namespace AntlrVSIX.FindAllReferences
                     if (p1 != p2) continue;
                 }
                 {
-                    var it = details._ant_applied_occurrence_classes.Where(
+                    var it = details._refs.Where(
                         (t) => grammar_description.CanFindAllRefs[t.Value]
                             && t.Key.Symbol.Text == span.GetText()).Select(t => t.Key);
                     where.AddRange(it);
                     foreach (var j in it) where_details.Add(details);
                 }
                 {
-                    var it = details._ant_defining_occurrence_classes.Where(
+                    var it = details._defs.Where(
                         (t) => grammar_description.CanFindAllRefs[t.Value]
                             && t.Key.Symbol.Text == span.GetText()).Select(t => t.Key);
                     where.AddRange(it);

@@ -68,7 +68,7 @@ namespace AntlrVSIX.ErrorTagger
                 List<Antlr4.Runtime.Tree.TerminalNodeImpl> all_term_tokens = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
                 List<Antlr4.Runtime.Tree.TerminalNodeImpl> all_nonterm_tokens = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
 
-                all_nonterm_tokens = details._ant_applied_occurrence_classes.Where((pair) =>
+                all_nonterm_tokens = details._refs.Where((pair) =>
                 {
                     var token = pair.Key;
                     var classification = pair.Value;
@@ -80,7 +80,7 @@ namespace AntlrVSIX.ErrorTagger
                     var is_any_definer = ParserDetails._per_file_parser_details
                         .Where(pd =>
                             (Path.GetDirectoryName(pd.Value.FullFileName) == path_containing_applied_occurrence)
-                            && pd.Value._ant_defining_occurrence_classes.Where(
+                            && pd.Value._defs.Where(
                                 p =>
                                 {
                                     var d = p.Key;
@@ -93,7 +93,7 @@ namespace AntlrVSIX.ErrorTagger
 
                 combined_tokens = combined_tokens.Concat(all_nonterm_tokens);
 
-                all_nonterm_tokens = details._ant_applied_occurrence_classes.Where((pair) =>
+                all_nonterm_tokens = details._refs.Where((pair) =>
                 {
                     var token = pair.Key;
                     var classification = pair.Value;
@@ -105,7 +105,7 @@ namespace AntlrVSIX.ErrorTagger
                     var is_any_definer = ParserDetails._per_file_parser_details
                         .Where(pd =>
                             (Path.GetDirectoryName(pd.Value.FullFileName) == path_containing_applied_occurrence)
-                            && pd.Value._ant_defining_occurrence_classes.Where(
+                            && pd.Value._defs.Where(
                                 p =>
                                 {
                                     var d = p.Key;

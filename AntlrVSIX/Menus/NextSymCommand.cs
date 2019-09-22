@@ -142,7 +142,7 @@
                 if (file_name != path)
                     continue;
                 ParserDetails details = kvp.Value;
-                foreach (var p in details._ant_defining_occurrence_classes)
+                foreach (var p in details._defs)
                 {
                     if (p.Value != 0) continue;
                     var t = p.Key;
@@ -158,7 +158,7 @@
                     }
                 }
 
-                foreach (var p in details._ant_defining_occurrence_classes)
+                foreach (var p in details._defs)
                 {
                     if (p.Value != 1) continue;
                     var t = p.Key;

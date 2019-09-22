@@ -38,7 +38,7 @@
             if (gd == null) return;
             List<Completion> completions = new List<Completion>();
             ParserDetails pd = ParserDetails._per_file_parser_details[doc.FilePath];
-            foreach (var s in pd._ant_applied_occurrence_classes
+            foreach (var s in pd._refs
                 .Where(t => t.Value == 0)
                 .Select(t => t.Key)
                 .OrderBy(p => p.Symbol.Text)
@@ -47,7 +47,7 @@
             {
                 completions.Add(new Completion(s));
             }
-            foreach (var s in pd._ant_applied_occurrence_classes
+            foreach (var s in pd._refs
                 .Where(t => t.Value == 1)
                 .Select(t => t.Key)
                 .OrderBy(p => p.Symbol.Text)

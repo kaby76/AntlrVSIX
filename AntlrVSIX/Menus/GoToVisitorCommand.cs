@@ -172,7 +172,7 @@
                 string file_name = kvp.Key;
                 ParserDetails details = kvp.Value;
                 {
-                    var it = details._ant_defining_occurrence_classes.Where(
+                    var it = details._defs.Where(
                              (t) => t.Value == cla && t.Key.Symbol.Text == span.GetText()).Select(t => t.Key);
                     where.AddRange(it);
                     foreach (var i in it) where_details.Add(details);

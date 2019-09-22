@@ -102,7 +102,7 @@ namespace AntlrVSIX.GoToDefinition
                 string path_containing_defining_occurrence = Path.GetDirectoryName(file_name);
                 ParserDetails details = kvp.Value;
                 {
-                    var it = details._ant_defining_occurrence_classes.Where(
+                    var it = details._defs.Where(
                         (t) => t.Key.Symbol.Text == span.GetText()
                             && path_containing_applied_occurrence
                             == path_containing_defining_occurrence).Select(t => t.Key);
