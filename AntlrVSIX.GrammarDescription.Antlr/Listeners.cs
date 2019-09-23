@@ -46,7 +46,7 @@ namespace AntlrVSIX.GrammarDescription.Antlr
             }
             if (i == context.ChildCount) return;
             var id = context.GetChild(i).GetText();
-            Symbol sym = new Symtab.ClassSymbol(id);
+            Symbol sym = new NonterminalSymbol(id);
             _root.define(ref sym);
             var s = (CombinedScopeSymbol)sym;
             _attributes[context] = s;
@@ -64,7 +64,7 @@ namespace AntlrVSIX.GrammarDescription.Antlr
             }
             if (i == context.ChildCount) return;
             var id = context.GetChild(i).GetText();
-            Symbol sym = new Symtab.Literal(id, id, 0);
+            Symbol sym = new TerminalSymbol(id);
             _root.define(ref sym);
             var s = (CombinedScopeSymbol)sym;
             _attributes[context] = s;
@@ -76,7 +76,15 @@ namespace AntlrVSIX.GrammarDescription.Antlr
             if (context.Parent is ANTLRv4Parser.ModeSpecContext)
             {
                 var id = context.GetChild(0).GetText();
-                Symbol sym = new Symtab.FieldSymbol(id);
+                Symbol sym = new ModeSymbol(id);
+                _root.define(ref sym);
+                var s = (CombinedScopeSymbol)sym;
+                _attributes[context] = s;
+                _attributes[context.GetChild(0)] = s;
+            } else if (context.Parent is ANTLRv4Parser.IdListContext && context.Parent?.Parent is ANTLRv4Parser.ChannelsSpecContext)
+            {
+                var id = context.GetChild(0).GetText();
+                Symbol sym = new ChannelSymbol(id);
                 _root.define(ref sym);
                 var s = (CombinedScopeSymbol)sym;
                 _attributes[context] = s;
@@ -105,7 +113,7 @@ namespace AntlrVSIX.GrammarDescription.Antlr
                 Symbol sym = _root.LookupType(id);
                 if (sym == null)
                 {
-                    sym = (Symbol)new Literal(id, id, 0);
+                    sym = (Symbol)new TerminalSymbol(id);
                     _root.define(ref sym);
                 }
                 var s = (CombinedScopeSymbol)new RefSymbol(sym);
@@ -120,7 +128,7 @@ namespace AntlrVSIX.GrammarDescription.Antlr
             Symbol sym = _root.LookupType(id);
             if (sym == null)
             {
-                sym = (Symbol)new ClassSymbol(id);
+                sym = (Symbol)new NonterminalSymbol(id);
                 _root.define(ref sym);
             }
             var s = (CombinedScopeSymbol)new RefSymbol(sym);
@@ -139,7 +147,20 @@ namespace AntlrVSIX.GrammarDescription.Antlr
                     Symbol sym = _root.LookupType(id);
                     if (sym == null)
                     {
-                        sym = (Symbol)new FieldSymbol(id);
+                        sym = (Symbol)new ModeSymbol(id);
+                        _root.define(ref sym);
+                    }
+                    var s = (CombinedScopeSymbol)new RefSymbol(sym);
+                    _attributes[context] = s;
+                    _attributes[context.GetChild(0)] = s;
+                }
+                else if (lc.GetChild(0)?.GetChild(0)?.GetText() == "channel")
+                {
+                    var id = context.GetText();
+                    Symbol sym = _root.LookupType(id);
+                    if (sym == null)
+                    {
+                        sym = (Symbol)new ChannelSymbol(id);
                         _root.define(ref sym);
                     }
                     var s = (CombinedScopeSymbol)new RefSymbol(sym);

@@ -231,16 +231,9 @@
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-                    if (value != null)
+                    if (value != null && value is Symtab.RefSymbol && ((Symtab.RefSymbol)value).Def is Symtab.NonterminalSymbol)
                     {
-                        if (value is Symtab.RefSymbol && ((Symtab.RefSymbol)value).Def is Symtab.ClassSymbol)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
+                        return true;
                     }
                     return false;
                 },
@@ -250,16 +243,9 @@
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-                    if (value != null)
+                    if (value != null && value is Symtab.RefSymbol && ((Symtab.RefSymbol)value).Def is Symtab.TerminalSymbol)
                     {
-                        if (value is Symtab.RefSymbol && ((Symtab.RefSymbol)value).Def is Symtab.Literal)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
+                        return true;
                     }
                     return false;
                 },
@@ -298,7 +284,7 @@
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-                    if (value != null && value is Symtab.RefSymbol && ((Symtab.RefSymbol)value).Def is Symtab.FieldSymbol)
+                    if (value != null && value is Symtab.RefSymbol && ((Symtab.RefSymbol)value).Def is Symtab.ModeSymbol)
                     {
                         return true;
                     }
@@ -329,43 +315,24 @@
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
-                    if (term.Symbol.Type != ANTLRv4Parser.RULE_REF)
-                        return false;
-                    var text = term.GetText();
-                    if (_antlr_keywords.Contains(text)) return false;
-                    IRuleNode parent = term.Parent;
-                    for (int i = 0; i < parent.ChildCount; ++i)
+                    Antlr4.Runtime.Tree.IParseTree p = term;
+                    st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
+                    if (value != null && value is Symtab.NonterminalSymbol)
                     {
-                        if (parent.GetChild(i) == term &&
-                            i + 1 < parent.ChildCount &&
-                            parent.GetChild(i + 1).GetText() == ":")
-                            return true;
+                        return true;
                     }
                     return false;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree n) => // terminal
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // terminal
                 {
-                    TerminalNodeImpl term = n as TerminalNodeImpl;
+                    TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
-                    if (term.Symbol.Type != ANTLRv4Parser.TOKEN_REF)
-                        return false;
-                    var text = term.GetText();
-                    if (_antlr_keywords.Contains(text)) return false;
-                    IRuleNode parent = term.Parent;
-                    for (int i = 0; i < parent.ChildCount; ++i)
+                    Antlr4.Runtime.Tree.IParseTree p = term;
+                    st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
+                    if (value != null && value is Symtab.TerminalSymbol)
                     {
-                        if (parent.GetChild(i) == term &&
-                            i + 1 < parent.ChildCount &&
-                            parent.GetChild(i + 1).GetText() == ":")
-                            return true;
-                    }
-                    if (term.Parent != null
-                        && term.Parent is ANTLRv4Parser.IdContext
-                        && term.Parent.Parent != null
-                        && term.Parent.Parent is ANTLRv4Parser.IdListContext
-                        && term.Parent.Parent.Parent != null
-                        && term.Parent.Parent.Parent is ANTLRv4Parser.TokensSpecContext)
                         return true;
+                    }
                     return false;
                 },
             null, // comment
@@ -377,7 +344,7 @@
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-                    if (value != null && value is Symtab.FieldSymbol)
+                    if (value != null && value is Symtab.ModeSymbol)
                     {
                         return true;
                     }
@@ -387,17 +354,11 @@
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
-                    var text = term.GetText();
-                    if (_antlr_keywords.Contains(text)) return false;
-                    if (!Char.IsUpper(text[0])) return false;
-                    IRuleNode parent = term.Parent;
-                    while (parent != null)
+                    Antlr4.Runtime.Tree.IParseTree p = term;
+                    st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
+                    if (value != null && value is Symtab.ChannelSymbol)
                     {
-                        if (parent as ANTLRv4Parser.LexerRuleSpecContext != null)
-                            return false;
-                        if (parent as ANTLRv4Parser.ChannelsSpecContext != null)
-                            return true;
-                        parent = parent.Parent;
+                        return true;
                     }
                     return false;
                 }
