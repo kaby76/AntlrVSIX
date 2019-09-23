@@ -296,14 +296,11 @@
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
-                    var text = term.GetText();
-                    if (_antlr_keywords.Contains(text)) return false;
-                    if (term.Parent?.Parent as ANTLRv4Parser.LexerCommandExprContext != null)
+                    Antlr4.Runtime.Tree.IParseTree p = term;
+                    st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
+                    if (value != null && value is Symtab.RefSymbol && ((Symtab.RefSymbol)value).Def is Symtab.FieldSymbol)
                     {
-                        var p = term.Parent.Parent.Parent;
-                        if (!(p is ANTLRv4Parser.LexerCommandContext)) return false;
-                        if (p.GetChild(0).GetText() == "pushMode") return true;
-                        return false;
+                        return true;
                     }
                     return false;
                 },
@@ -374,21 +371,15 @@
             null, // comment
             null, // keyword
             null, // literal
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree n) => // mode
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // mode
                 {
-                    TerminalNodeImpl term = n as TerminalNodeImpl;
+                    TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
-                    var text = term.GetText();
-                    if (_antlr_keywords.Contains(text)) return false;
-                    if (!Char.IsUpper(text[0])) return false;
-                    IRuleNode parent = term.Parent;
-                    while (parent != null)
+                    Antlr4.Runtime.Tree.IParseTree p = term;
+                    st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
+                    if (value != null && value is Symtab.FieldSymbol)
                     {
-                        if (parent as ANTLRv4Parser.LexerRuleSpecContext != null)
-                            return false;
-                        if (parent as ANTLRv4Parser.ModeSpecContext != null)
-                            return true;
-                        parent = parent.Parent;
+                        return true;
                     }
                     return false;
                 },

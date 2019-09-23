@@ -150,16 +150,10 @@ namespace AntlrVSIX.Taggers
             var the_symbol = combined_tokens.First();
             
             var node = (Antlr4.Runtime.Tree.IParseTree)the_symbol.Key;
-            Symtab.CombinedScopeSymbol value = null;
-            for (; node != null; node = node.Parent)
+            if (! details._ant_symtab.TryGetValue(node, out Symtab.CombinedScopeSymbol value))
             {
-                if (details._ant_symtab.TryGetValue(node, out Symtab.CombinedScopeSymbol v))
-                {
-                    value = v;
-                    break;
-                }
+                return;
             }
-            if (node == null) return;
             var a1 = the_symbol.Key.Symbol.StartIndex;
             var a2 = the_symbol.Key.Symbol.StopIndex;
             var a3 = new SnapshotPoint(snapshot, a1);
@@ -189,17 +183,10 @@ namespace AntlrVSIX.Taggers
                     if (x == the_symbol.Key)
                         return true;
                     var nn = (Antlr4.Runtime.Tree.IParseTree)t.Key;
-                    Symtab.CombinedScopeSymbol value2 = null;
-                    for (; nn != null; nn = nn.Parent)
+                    if (! details._ant_symtab.TryGetValue(nn, out Symtab.CombinedScopeSymbol value2))
                     {
-                        if (details._ant_symtab.TryGetValue(nn, out Symtab.CombinedScopeSymbol v))
-                        {
-                            value2 = v;
-                            break;
-                        }
-                    }
-                    if (nn == null)
                         return false;
+                    }
                     if (value2 == value)
                         return true;
                     if (!(value2 is Symtab.Symbol))
@@ -220,17 +207,10 @@ namespace AntlrVSIX.Taggers
                     if (x == the_symbol.Key)
                         return true;
                     var nn = (Antlr4.Runtime.Tree.IParseTree)t.Key;
-                    Symtab.CombinedScopeSymbol value2 = null;
-                    for (; nn != null; nn = nn.Parent)
+                    if (! details._ant_symtab.TryGetValue(nn, out Symtab.CombinedScopeSymbol value2))
                     {
-                        if (details._ant_symtab.TryGetValue(nn, out Symtab.CombinedScopeSymbol v))
-                        {
-                            value2 = v;
-                            break;
-                        }
-                    }
-                    if (nn == null)
                         return false;
+                    }
                     if (value2 == value)
                         return true;
                     if (!(value2 is Symtab.Symbol))

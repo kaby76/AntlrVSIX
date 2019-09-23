@@ -33,7 +33,6 @@ namespace AntlrVSIX.GrammarDescription.Antlr
             var scope = (CombinedScopeSymbol)new SymbolTable().GLOBALS;
             _attributes[context] = scope;
             _root = (Scope)scope;
-            base.EnterGrammarSpec(context);
         }
 
         public override void EnterParserRuleSpec([NotNull] ANTLRv4Parser.ParserRuleSpecContext context)
@@ -52,7 +51,37 @@ namespace AntlrVSIX.GrammarDescription.Antlr
             var s = (CombinedScopeSymbol)sym;
             _attributes[context] = s;
             _attributes[context.GetChild(i)] = s;
-            base.EnterParserRuleSpec(context);
+        }
+
+        public override void EnterLexerRuleSpec([NotNull] ANTLRv4Parser.LexerRuleSpecContext context)
+        {
+            int i;
+            for (i = 0; i < context.ChildCount; ++i)
+            {
+                if (!(context.GetChild(i) is TerminalNodeImpl)) continue;
+                var c = context.GetChild(i) as TerminalNodeImpl;
+                if (c.Symbol.Type == ANTLRv4Lexer.TOKEN_REF) break;
+            }
+            if (i == context.ChildCount) return;
+            var id = context.GetChild(i).GetText();
+            Symbol sym = new Symtab.Literal(id, id, 0);
+            _root.define(ref sym);
+            var s = (CombinedScopeSymbol)sym;
+            _attributes[context] = s;
+            _attributes[context.GetChild(i)] = s;
+        }
+
+        public override void EnterId([NotNull] ANTLRv4Parser.IdContext context)
+        {
+            if (context.Parent is ANTLRv4Parser.ModeSpecContext)
+            {
+                var id = context.GetChild(0).GetText();
+                Symbol sym = new Symtab.FieldSymbol(id);
+                _root.define(ref sym);
+                var s = (CombinedScopeSymbol)sym;
+                _attributes[context] = s;
+                _attributes[context.GetChild(0)] = s;
+            }
         }
     }
 
@@ -97,6 +126,27 @@ namespace AntlrVSIX.GrammarDescription.Antlr
             var s = (CombinedScopeSymbol)new RefSymbol(sym);
             _attributes[context] = s;
             _attributes[context.GetChild(0)] = s;
+        }
+
+        public override void EnterId([NotNull] ANTLRv4Parser.IdContext context)
+        {
+            if (context.Parent is ANTLRv4Parser.LexerCommandExprContext && context.Parent.Parent is ANTLRv4Parser.LexerCommandContext)
+            {
+                var lc = context.Parent.Parent as ANTLRv4Parser.LexerCommandContext;
+                if (lc.GetChild(0)?.GetChild(0)?.GetText() == "pushMode")
+                {
+                    var id = context.GetText();
+                    Symbol sym = _root.LookupType(id);
+                    if (sym == null)
+                    {
+                        sym = (Symbol)new FieldSymbol(id);
+                        _root.define(ref sym);
+                    }
+                    var s = (CombinedScopeSymbol)new RefSymbol(sym);
+                    _attributes[context] = s;
+                    _attributes[context.GetChild(0)] = s;
+                }
+            }
         }
     }
 }

@@ -321,16 +321,9 @@ namespace AntlrVSIX.GrammarDescription.Java
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-                    if (value != null)
+                    if (value != null && value is Symtab.RefSymbol && ((Symtab.RefSymbol)value).Def is Symtab.Literal)
                     {
-                        if (value is Symtab.RefSymbol && ((Symtab.RefSymbol)value).Def is Symtab.Literal)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
+                        return true;
                     }
                     return false;
                 },
@@ -355,16 +348,9 @@ namespace AntlrVSIX.GrammarDescription.Java
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-                    if (value != null)
+                    if (value != null && value is Symtab.RefSymbol && ((Symtab.RefSymbol)value).Def is Symtab.FieldSymbol)
                     {
-                        if (value is Symtab.RefSymbol && ((Symtab.RefSymbol)value).Def is Symtab.FieldSymbol)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
+                        return true;
                     }
                     return false;
                 },
@@ -398,16 +384,9 @@ namespace AntlrVSIX.GrammarDescription.Java
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-                    if (value != null)
+                    if (value != null && value is Symtab.MethodSymbol)
                     {
-                        if (value is Symtab.MethodSymbol)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
+                        return true;
                     }
                     return false;
                 },
@@ -422,16 +401,9 @@ namespace AntlrVSIX.GrammarDescription.Java
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-                    if (value != null)
+                    if (value != null && value is Symtab.ClassSymbol)
                     {
-                        if (value is Symtab.ClassSymbol)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
+                        return true;
                     }
                     return false;
                 },
@@ -441,16 +413,9 @@ namespace AntlrVSIX.GrammarDescription.Java
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-                    if (value != null)
+                    if (value != null && value is Symtab.FieldSymbol)
                     {
-                        if (value is Symtab.FieldSymbol)
-                        {
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
+                        return true;
                     }
                     return false;
                 },
