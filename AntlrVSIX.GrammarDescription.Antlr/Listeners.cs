@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Symtab;
-using Antlr4.Runtime;
-using Antlr4.Runtime.Tree;
 using Antlr4.Runtime.Misc;
+using Antlr4.Runtime.Tree;
+using Symtab;
+using System.Collections.Generic;
 
 namespace AntlrVSIX.GrammarDescription.Antlr
 {
@@ -104,7 +98,5 @@ namespace AntlrVSIX.GrammarDescription.Antlr
             _attributes[context] = s;
             _attributes[context.GetChild(0)] = s;
         }
-
-
     }
 }
