@@ -378,19 +378,28 @@
                     if (term == null) return null;
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-                    if (value != null && value is Symtab.NonterminalSymbol)
+                    if (value == null) return null;
+                    var sym = value as Symbol;
+                    if (sym == null) return null;
+                    if (sym is Symtab.RefSymbol)
                     {
-                        StringBuilder sb = new StringBuilder();
-                        sb.Append("<b>Nonterminal</b> ");
-                        sb.Append("defined in ");
-                        sb.Append((value as Symtab.NonterminalSymbol).file);
-                        sb.AppendLine();
-                        var node = t;
-                        for (; node != null; node = node.Parent) if (node is ANTLRv4Parser.RuleSpecContext) break;
-                        Reconstruct.Doit(sb, node);
-                        return sb.ToString();
+                        sym = sym.resolve();
                     }
-                    return null;
+                    StringBuilder sb = new StringBuilder();
+                    if (sym is Symtab.TerminalSymbol)
+                        sb.Append("Terminal ");
+                    else if (sym is Symtab.NonterminalSymbol)
+                        sb.Append("Nonterminal ");
+                    else return null;
+                    var fod = st.Where(kvp => kvp.Value == sym).Select(kvp => kvp.Key).FirstOrDefault();
+                    if (fod == null) return sb.ToString();
+                    sb.Append("defined in ");
+                    sb.Append(sym.file);
+                    sb.AppendLine();
+                    var node = fod;
+                    for (; node != null; node = node.Parent) if (node is ANTLRv4Parser.RuleSpecContext) break;
+                    Reconstruct.Doit(sb, node);
+                    return sb.ToString();
                 },
             (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // terminal
                 {
@@ -398,19 +407,28 @@
                     if (term == null) return null;
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-                    if (value != null && value is Symtab.TerminalSymbol)
+                    if (value == null) return null;
+                    var sym = value as Symbol;
+                    if (sym == null) return null;
+                    if (sym is Symtab.RefSymbol)
                     {
-                        StringBuilder sb = new StringBuilder();
-                        sb.Append("<b>Nonterminal</b> ");
-                        sb.Append("defined in ");
-                        sb.Append((value as Symtab.Symbol).file);
-                        sb.AppendLine();
-                        var node = t;
-                        for (; node != null; node = node.Parent) if (node is ANTLRv4Parser.RuleSpecContext) break;
-                        Reconstruct.Doit(sb, node);
-                        return sb.ToString();
+                        sym = sym.resolve();
                     }
-                    return null;
+                    StringBuilder sb = new StringBuilder();
+                    if (sym is Symtab.TerminalSymbol)
+                        sb.Append("Terminal ");
+                    else if (sym is Symtab.NonterminalSymbol)
+                        sb.Append("Nonterminal ");
+                    else return null;
+                    var fod = st.Where(kvp => kvp.Value == sym).Select(kvp => kvp.Key).FirstOrDefault();
+                    if (fod == null) return sb.ToString();
+                    sb.Append("defined in ");
+                    sb.Append(sym.file);
+                    sb.AppendLine();
+                    var node = fod;
+                    for (; node != null; node = node.Parent) if (node is ANTLRv4Parser.RuleSpecContext) break;
+                    Reconstruct.Doit(sb, node);
+                    return sb.ToString();
                 },
             null, // comment
             null, // keyword

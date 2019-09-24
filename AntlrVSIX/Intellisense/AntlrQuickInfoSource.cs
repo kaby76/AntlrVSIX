@@ -190,20 +190,14 @@ namespace AntlrVSIX
                             if (grammar_description.PopUpDefinition[tag_type] != null)
                             {
                                 var fun = grammar_description.PopUpDefinition[tag_type];
-                                show = fun(grammar_description, pd._ant_symtab, p);
-                                return new QuickInfoItem(
-                                    tracking_span,
-                                    show);
+                                var mess = fun(grammar_description, pd._ant_symtab, p);
+                                if (mess != null)
+                                    return new QuickInfoItem(tracking_span, mess);
                             }
-                            else
-                            {
-                                return new QuickInfoItem(
-                                   tracking_span, _grammar_description.Map[tag_type]
-                                    + "\n"
-                                    + show);
-                            }
-                            found = true;
-                            break;
+                            return new QuickInfoItem(
+                                tracking_span, _grammar_description.Map[tag_type]
+                                + "\n"
+                                + show);
                         }
                     }
                 }
