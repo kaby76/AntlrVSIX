@@ -6,7 +6,7 @@ namespace Symtab
 {
     public class TerminalSymbol : BaseSymbol, Symbol
     {
-        public TerminalSymbol(string name) : base(name)
+        public TerminalSymbol(string n, int l, int c, string f) : base(n, l, c, f)
         {
         }
     }

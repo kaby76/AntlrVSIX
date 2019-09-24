@@ -22,9 +22,12 @@
             return this;
         }
 
-        public BaseSymbol(string name)
+        public BaseSymbol(string name, int l, int c, string f)
         {
             this.name = name;
+            this.line = l;
+            this.col = c;
+            this.file = f;
         }
 
         public virtual string Name

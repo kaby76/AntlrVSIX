@@ -5,7 +5,7 @@
     {
         protected internal int typeIndex;
 
-        public PrimitiveType(string name) : base(name)
+        public PrimitiveType(string n, int l, int c, string f) : base(n, l, c, f)
         {
         }
 

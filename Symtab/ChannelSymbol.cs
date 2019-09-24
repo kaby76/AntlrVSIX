@@ -6,7 +6,7 @@ namespace Symtab
 {
     public class ChannelSymbol : BaseSymbol, Symbol
     {
-        public ChannelSymbol(string name) : base(name)
+        public ChannelSymbol(string name, int l, int c, string f) : base(name, l, c, f)
         {
         }
     }

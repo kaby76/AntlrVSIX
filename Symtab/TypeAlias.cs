@@ -6,7 +6,7 @@
     public class TypeAlias : BaseSymbol, Type
     {
         protected internal Type targetType;
-        public TypeAlias(string name, Type targetType) : base(name)
+        public TypeAlias(string name, Type targetType, int l, int c, string f) : base(name, l, c, f)
         {
             this.targetType = targetType;
         }

@@ -3,6 +3,6 @@
     // Used for variables ref and def in a code block.
     public class LocalSymbol : VariableSymbol
     {
-        public LocalSymbol(string name) : base(name) { }
+        public LocalSymbol(string n, int l, int c, string f) : base(n, l, c, f) { }
     }
 }

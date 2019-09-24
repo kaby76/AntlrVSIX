@@ -70,12 +70,15 @@ namespace AntlrVSIX.GrammarDescription.Java
             for (int j = 0; j < vdl.ChildCount; j += 2)
             {
                 var vd = vdl.GetChild(j) as Java9Parser.VariableDeclaratorContext;
-                var node = vd.GetChild(0);
-                var name = node.GetText();
-                Symbol f = new Symtab.LocalSymbol(name);
+                var vdid = vd.GetChild(0);
+                var id = vdid.GetChild(0);
+                var term = id.GetChild(0) as TerminalNodeImpl;
+                var name = term.GetText();
+                Symbol f = new Symtab.LocalSymbol(name, term.Symbol.Line, term.Symbol.Column, term.Symbol.InputStream.SourceName);
                 var scope = GetScope(NearestScope(context));
                 scope.define(ref f);
-                _attributes[node] = (CombinedScopeSymbol)f;
+                _attributes[term] = (CombinedScopeSymbol)f;
+                _attributes[id] = (CombinedScopeSymbol)f;
             }
         }
 
@@ -205,10 +208,11 @@ namespace AntlrVSIX.GrammarDescription.Java
                 if (context.GetChild(i) as Java9Parser.VariableDeclaratorIdContext != null)
                     break;
             var vdi = context.GetChild(i) as Java9Parser.VariableDeclaratorIdContext;
-            var node = vdi;
-            var name = vdi.GetChild(0).GetText();
-            Symbol f = new Symtab.LocalSymbol(name);
-            _attributes[node] = (CombinedScopeSymbol)f;
+            var id = vdi.GetChild(0);
+            var term = id.GetChild(0) as TerminalNodeImpl;
+            var name = term.GetText();
+            Symbol f = new Symtab.LocalSymbol(name, term.Symbol.Line, term.Symbol.Column, term.Symbol.InputStream.SourceName);
+            _attributes[vdi] = (CombinedScopeSymbol)f;
             var scope = GetScope(NearestScope(context));
             scope.define(ref f);
             _attributes[context.GetChild(0)] = (CombinedScopeSymbol)f;
@@ -277,7 +281,8 @@ namespace AntlrVSIX.GrammarDescription.Java
             }
             else if (parent is Java9Parser.VariableDeclaratorIdContext && parent.Parent is Java9Parser.FormalParameterContext)
             {
-                Symbol f = new Symtab.ParameterSymbol(context.GetText());
+                var term = context.GetChild(0) as TerminalNodeImpl;
+                Symbol f = new Symtab.ParameterSymbol(term.GetText(), term.Symbol.Line, term.Symbol.Column, term.Symbol.InputStream.SourceName);
                 var p = (ParserRuleContext)context;
                 for (; p != null; p = (ParserRuleContext)p.Parent)
                 {
@@ -295,7 +300,8 @@ namespace AntlrVSIX.GrammarDescription.Java
             }
             else if (parent is Java9Parser.VariableDeclaratorIdContext)
             {
-                Symbol f = new Symtab.FieldSymbol(context.GetText());
+                var term = context.GetChild(0) as TerminalNodeImpl;
+                Symbol f = new Symtab.FieldSymbol(term.GetText(), term.Symbol.Line, term.Symbol.Column, term.Symbol.InputStream.SourceName);
                 var p = (ParserRuleContext)context;
                 for (; p != null; p = (ParserRuleContext)p.Parent)
                 {

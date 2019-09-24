@@ -7,7 +7,7 @@
     /// </summary>
     public class ParameterSymbol : VariableSymbol
     {
-        public ParameterSymbol(string name) : base(name)
+        public ParameterSymbol(string n, int l, int c, string f) : base(n, l, c, f)
         {
         }
     }

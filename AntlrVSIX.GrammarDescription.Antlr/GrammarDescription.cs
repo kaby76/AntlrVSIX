@@ -25,11 +25,11 @@
 
             // Set up Antlr to parse input grammar.
             byte[] byteArray = Encoding.UTF8.GetBytes(code);
-            CommonTokenStream cts = new CommonTokenStream(
-                new ANTLRv4Lexer(
-                    new AntlrInputStream(
+            var ais = new AntlrInputStream(
                         new StreamReader(
-                            new MemoryStream(byteArray)).ReadToEnd())));
+                            new MemoryStream(byteArray)).ReadToEnd());
+            ais.name = ffn;
+            CommonTokenStream cts = new CommonTokenStream(new ANTLRv4Lexer(ais));
             var parser = new ANTLRv4Parser(cts);
 
             try

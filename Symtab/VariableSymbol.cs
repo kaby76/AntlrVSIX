@@ -3,7 +3,7 @@
 
     public class VariableSymbol : BaseSymbol, TypedSymbol
     {
-        public VariableSymbol(string name) : base(name)
+        public VariableSymbol(string n, int l, int c, string f) : base(n, l, c, f)
         {
         }
 

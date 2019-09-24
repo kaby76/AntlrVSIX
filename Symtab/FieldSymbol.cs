@@ -9,7 +9,7 @@
     {
         protected internal int slot;
 
-        public FieldSymbol(string name) : base(name)
+        public FieldSymbol(string n, int l, int c, string f) : base(n, l, c, f)
         {
         }
 
