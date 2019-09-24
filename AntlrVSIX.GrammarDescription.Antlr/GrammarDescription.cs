@@ -398,6 +398,7 @@
                     sb.AppendLine();
                     var node = fod;
                     for (; node != null; node = node.Parent) if (node is ANTLRv4Parser.RuleSpecContext) break;
+                    if (node == null) return null;
                     Reconstruct.Doit(sb, node);
                     return sb.ToString();
                 },
@@ -427,6 +428,7 @@
                     sb.AppendLine();
                     var node = fod;
                     for (; node != null; node = node.Parent) if (node is ANTLRv4Parser.RuleSpecContext) break;
+                    if (node == null) return null;
                     Reconstruct.Doit(sb, node);
                     return sb.ToString();
                 },
