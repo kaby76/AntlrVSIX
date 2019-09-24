@@ -176,7 +176,6 @@ namespace AntlrVSIX
                 if (pt != null)
                 {
                     Antlr4.Runtime.Tree.IParseTree p = pt;
-                    for (; p != null; p = p.Parent)
                     {
                         pd._ant_symtab.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
                         if (value != null)
