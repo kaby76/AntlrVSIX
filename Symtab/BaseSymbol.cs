@@ -130,6 +130,9 @@
         }
 
         public Symbol definition { get; set; }
+        public virtual int line { get; set; }
+        public virtual int col { get; set; }
+        public virtual string file { get; set; }
     }
 
 }

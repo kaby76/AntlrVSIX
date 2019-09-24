@@ -12,6 +12,9 @@
         string Name {get;}
         Scope Scope {get;set;}
         int InsertionOrderNumber {get;set;}
+        int line { get; set; }
+        int col { get; set; }
+        string file { get; set; }
 
         // Resolve a ref or def into a def symbol.
         Symbol resolve();

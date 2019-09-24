@@ -370,5 +370,53 @@
 
         public bool CanReformat { get { return true; } }
 
+        public List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>, IParseTree, string>> PopUpDefinition { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>, IParseTree, string>>()
+        {
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // nonterminal
+                {
+                    TerminalNodeImpl term = t as TerminalNodeImpl;
+                    if (term == null) return null;
+                    Antlr4.Runtime.Tree.IParseTree p = term;
+                    st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
+                    if (value != null && value is Symtab.NonterminalSymbol)
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        sb.Append("<b>Nonterminal</b> ");
+                        sb.Append("defined in ");
+                        sb.Append((value as Symtab.NonterminalSymbol).file);
+                        sb.AppendLine();
+                        var node = t;
+                        for (; node != null; node = node.Parent) if (node is ANTLRv4Parser.RuleSpecContext) break;
+                        Reconstruct.Doit(sb, node);
+                        return sb.ToString();
+                    }
+                    return null;
+                },
+            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // terminal
+                {
+                    TerminalNodeImpl term = t as TerminalNodeImpl;
+                    if (term == null) return null;
+                    Antlr4.Runtime.Tree.IParseTree p = term;
+                    st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
+                    if (value != null && value is Symtab.TerminalSymbol)
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        sb.Append("<b>Nonterminal</b> ");
+                        sb.Append("defined in ");
+                        sb.Append((value as Symtab.Symbol).file);
+                        sb.AppendLine();
+                        var node = t;
+                        for (; node != null; node = node.Parent) if (node is ANTLRv4Parser.RuleSpecContext) break;
+                        Reconstruct.Doit(sb, node);
+                        return sb.ToString();
+                    }
+                    return null;
+                },
+            null, // comment
+            null, // keyword
+            null, // literal
+            null,
+            null,
+        };
     }
 }

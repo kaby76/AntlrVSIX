@@ -40,3 +40,4 @@ tool/target/
 # ignore NuGet output folders
 /build/nuget/
 f/
+AntlrVSIX.GrammarDescription.Antlr/.antlr/

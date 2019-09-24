@@ -293,6 +293,17 @@ namespace AntlrVSIX.GrammarDescription.Rust
                 },
         };
 
+        public List<Func<IGrammarDescription, Dictionary<IParseTree, CombinedScopeSymbol>, IParseTree, string>> PopUpDefinition { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, CombinedScopeSymbol>, IParseTree, string>>()
+        {
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+        };
+
+
         public bool CanNextRule { get { return false; } }
 
         public bool DoErrorSquiggles { get { return false; } }
