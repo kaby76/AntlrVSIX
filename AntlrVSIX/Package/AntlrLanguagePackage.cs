@@ -31,8 +31,7 @@ namespace AntlrVSIX.Package
     [Guid(AntlrVSIX.Constants.PackageGuidString)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideToolWindow(typeof(FindRefsWindow))]
-    [ProvideService((typeof(IVsSolutionEvents)), IsAsyncQueryable = true)]
-    public sealed class AntlrLanguagePackage : AsyncPackage, IVsSolutionEvents
+    public sealed class AntlrLanguagePackage : AsyncPackage
     {
         public AntlrLanguagePackage()
         {
@@ -49,7 +48,7 @@ namespace AntlrVSIX.Package
             // Attach to solution events
             solution = GetService(typeof(SVsSolution)) as IVsSolution;
             //if (solution == null) Common.Log("Could not get solution");
-            solution.AdviseSolutionEvents(this, out solutionEventsCookie);
+            var re = solution.AdviseSolutionEvents(new SolutionEventListener(), out solutionEventsCookie);
 
             FindAllReferencesCommand.Initialize(this);
             FindRefsWindowCommand.Initialize(this);
@@ -106,91 +105,5 @@ namespace AntlrVSIX.Package
             return view;
         }
 
-        private void ParseAllFiles()
-        {
-            // First, open up every .g4 file in project and parse.
-            DTE application = DteExtensions.GetApplication();
-            if (application == null) return;
-
-            IEnumerable<ProjectItem> iterator = DteExtensions.SolutionFiles(application);
-            ProjectItem[] list = iterator.ToArray();
-            foreach (var item in list)
-            {
-                string file_name = item.Name;
-                if (file_name != null)
-                {
-                    var gd = GrammarDescriptionFactory.Create(file_name);
-                    if (gd == null) continue;
-                    try
-                    {
-                        if (item.Properties == null) continue;
-                        object prop = item.Properties.Item("FullPath").Value;
-                        string ffn = (string) prop;
-                        if (!ParserDetails._per_file_parser_details.ContainsKey(ffn))
-                        {
-                            StreamReader sr = new StreamReader(ffn);
-                            ParserDetails.Parse(sr.ReadToEnd(), ffn);
-                        }
-                    }
-                    catch (Exception eeks)
-                    {
-                    }
-                }
-            }
-        }
-
-
-        public int OnAfterOpenProject(IVsHierarchy aPHierarchy, int aFAdded)
-        {
-            return VSConstants.S_OK;
-        }
-
-        public int OnQueryCloseProject(IVsHierarchy aPHierarchy, int aFRemoving, ref int aPfCancel)
-        {
-            return VSConstants.S_OK;
-        }
-
-        public int OnBeforeCloseProject(IVsHierarchy aPHierarchy, int aFRemoved)
-        {
-            return VSConstants.S_OK;
-        }
-
-        public int OnAfterLoadProject(IVsHierarchy aPStubHierarchy, IVsHierarchy aPRealHierarchy)
-        {
-            return VSConstants.S_OK;
-        }
-
-        public int OnQueryUnloadProject(IVsHierarchy aPRealHierarchy, ref int aPfCancel)
-        {
-            return VSConstants.S_OK;
-        }
-
-        public int OnBeforeUnloadProject(IVsHierarchy aPRealHierarchy, IVsHierarchy aPStubHierarchy)
-        {
-            return VSConstants.S_OK;
-        }
-
-
-        public int OnAfterOpenSolution(object aPUnkReserved, int aFNewSolution)
-        {
-            ParseAllFiles();
-            return VSConstants.S_OK;
-        }
-
-
-        public int OnQueryCloseSolution(object aPUnkReserved, ref int aPfCancel)
-        {
-            return VSConstants.S_OK;
-        }
-
-        public int OnBeforeCloseSolution(object aPUnkReserved)
-        {
-            return VSConstants.S_OK;
-        }
-
-        public int OnAfterCloseSolution(object aPUnkReserved)
-        {
-            return VSConstants.S_OK;
-        }
     }
 }

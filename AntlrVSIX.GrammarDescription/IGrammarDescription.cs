@@ -30,6 +30,5 @@ namespace AntlrVSIX.GrammarDescription
         string StartRule { get; }
         bool DoErrorSquiggles { get; }
         List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>, IParseTree, string>> PopUpDefinition { get; }
-
     }
 }

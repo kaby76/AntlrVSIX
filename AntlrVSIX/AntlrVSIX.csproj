@@ -66,6 +66,7 @@
     </Compile>
     <Compile Include="Menus\AboutCommand.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Package\SolutionEventListener.cs" />
     <Compile Include="Taggers\ErrorCategory.cs" />
     <Compile Include="Taggers\ErrorFormatDefinition.cs" />
     <Compile Include="Taggers\ErrorTagger.cs" />
