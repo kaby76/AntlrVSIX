@@ -1,5 +1,5 @@
 ﻿
-namespace AntlrVSIX.Grammar
+namespace AntlrVSIX.GrammarDescription
 {
     using Antlr4.Runtime;
     using Antlr4.Runtime.Tree;
@@ -21,8 +21,10 @@ namespace AntlrVSIX.Grammar
         public IParseTree _ant_tree = null;
         private IEnumerable<IParseTree>_all_nodes = null;
 
-        public static ParserDetails Parse(string code, string ffn)
+        public static ParserDetails Parse(AntlrVSIX.GrammarDescription.Document item)
         {
+            var code = item.Code;
+            var ffn = item.FullPath;
             bool has_entry = _per_file_parser_details.ContainsKey(ffn);
             ParserDetails pd;
             if (!has_entry)

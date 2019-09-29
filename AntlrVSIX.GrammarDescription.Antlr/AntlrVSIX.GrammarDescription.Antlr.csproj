@@ -27,6 +27,7 @@
       <Version>4.7.2</Version>
     </PackageReference>
     <PackageReference Include="Antlr4BuildTasks" Version="1.0.7" />
+    <PackageReference Include="EnvDTE" Version="8.0.2" />
   </ItemGroup>
 
   <ItemGroup>

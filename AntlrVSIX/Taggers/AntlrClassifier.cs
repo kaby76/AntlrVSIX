@@ -77,7 +77,10 @@
             if (_grammar_description == null) throw new Exception();
             ITextDocument doc = _buffer.GetTextDocument();
             string f = doc.FilePath;
-            var pd = ParserDetails.Parse(_buffer.GetBufferText(), f);
+
+            var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(f);
+            item.Code = _buffer.GetBufferText();
+            var pd = ParserDetails.Parse(item);
 
             foreach (IMappingTagSpan<AntlrTokenTag> tag_span in _aggregator.GetTags(spans))
             {

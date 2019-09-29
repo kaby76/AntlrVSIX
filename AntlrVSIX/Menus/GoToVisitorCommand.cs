@@ -338,15 +338,18 @@ namespace {name_space}
 
                 class_file_path = ffn + Path.DirectorySeparatorChar + listener_class_name + ".cs";
                 System.IO.File.WriteAllText(class_file_path, clazz);
-                object item = ProjectHelpers.GetSelectedItem();
+                var item = ProjectHelpers.GetSelectedItem();
                 string folder = FindFolder(item);
                 if (string.IsNullOrEmpty(folder) || !Directory.Exists(folder))
                     return;
                 var file = new FileInfo(class_file_path);
-                var selectedItem = item as ProjectItem;
-                var selectedProject = item as Project;
-                Project project = selectedItem?.ContainingProject ?? selectedProject ?? null;
-                var projectItem = project.AddFileToProject(file);
+                var selectedItem = Workspace.Instance.FindProjectFullName(class_file_path);
+                if (selectedItem == null)
+                {
+                    //var selectedProject = item as Project;
+                    //Project project = selectedItem?.ContainingProject ?? selectedProject ?? null;
+                    //var projectItem = project.AddFileToProject(file);
+                }
                 // Redo parse.
                 try
                 {
@@ -586,14 +589,13 @@ public override void {capitalized_member_name}({capitalized_grammar_name}Parser.
             if (application.ActiveWindow is Window2 window && window.Type == vsWindowType.vsWindowTypeDocument)
             {
                 // if a document is active, use the document's containing directory
-                Document doc = application.ActiveDocument;
+                var doc = application.ActiveDocument;
                 if (doc != null && !string.IsNullOrEmpty(doc.FullName))
                 {
-                    ProjectItem docItem = application.Solution.FindProjectItem(doc.FullName);
-
-                    if (docItem != null && docItem.Properties != null)
+                    GrammarDescription.Document docItem = Workspace.Instance.FindProjectFullName(doc.FullName);
+                    if (docItem != null)
                     {
-                        string fileName = docItem.Properties.Item("FullPath").Value.ToString();
+                        string fileName = docItem.Name;
                         if (System.IO.File.Exists(fileName))
                             return Path.GetDirectoryName(fileName);
                     }
@@ -615,27 +617,27 @@ public override void {capitalized_member_name}({capitalized_grammar_name}Parser.
                     }
                 }
             }
-            else
-            {
-                var project = item as Project;
-                if (projectItem != null)
-                {
-                    string fileName = projectItem.FileNames[1];
+            //else
+            //{
+            //    var project = item as Project;
+            //    if (projectItem != null)
+            //    {
+            //        string fileName = projectItem.FileNames[1];
 
-                    if (System.IO.File.Exists(fileName))
-                    {
-                        folder = Path.GetDirectoryName(fileName);
-                    }
-                    else
-                    {
-                        folder = fileName;
-                    }
-                }
-                else if (project != null)
-                {
-                    folder = project.GetRootFolder();
-                }
-            }
+            //        if (System.IO.File.Exists(fileName))
+            //        {
+            //            folder = Path.GetDirectoryName(fileName);
+            //        }
+            //        else
+            //        {
+            //            folder = fileName;
+            //        }
+            //    }
+            //    else if (project != null)
+            //    {
+            //        folder = project.GetRootFolder();
+            //    }
+            //}
             return folder;
         }
 

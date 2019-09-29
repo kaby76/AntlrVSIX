@@ -181,7 +181,10 @@ namespace AntlrVSIX.Rename
                                 edit.Replace(ss2, new_name);
                             }
                             edit.Apply();
-                            ParserDetails.Parse(tb.GetBufferText(), f);
+                            var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(f);
+                            var code = buffer.GetBufferText();
+                            item.Code = tb.GetBufferText();
+                            ParserDetails.Parse(item);
                         }
                     }
                 }

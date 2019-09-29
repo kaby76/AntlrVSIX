@@ -2,6 +2,7 @@
 {
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Grammar;
+    using AntlrVSIX.GrammarDescription;
     using Microsoft.VisualStudio.Commanding;
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text.Editor.Commanding;
@@ -33,9 +34,11 @@
                 var grammar_description = GrammarDescriptionFactory.Create(ffn);
                 if (grammar_description != null)
                 {
+                    var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(ffn);
                     var buffer = view.TextBuffer;
                     var code = buffer.GetBufferText();
-                    ParserDetails.Parse(code, ffn);
+                    item.Code = code;
+                    ParserDetails.Parse(item);
                 }
             }
             catch (Exception ex)

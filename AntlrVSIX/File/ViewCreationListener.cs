@@ -2,6 +2,7 @@
 {
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Grammar;
+    using AntlrVSIX.GrammarDescription;
     using Microsoft.VisualStudio.Editor;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text;
@@ -55,7 +56,9 @@
             if (!PreviousContentType.ContainsKey(ffn))
                 PreviousContentType[ffn] = content_type;
             var code = buffer.GetBufferText();
-            ParserDetails pd = ParserDetails.Parse(code, ffn);
+            var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(ffn);
+            item.Code = code;
+            ParserDetails.Parse(item);
         }
 
         private void OnViewClosed(object sender, EventArgs e)

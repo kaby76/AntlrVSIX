@@ -10,6 +10,12 @@
     using System.Linq;
     using System.Text;
     using System.Windows.Media;
+    using EnvDTE;
+    using Microsoft.VisualStudio;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
 
     class GrammarDescription : IGrammarDescription
     {
@@ -438,5 +444,47 @@
             null,
             null,
         };
+
+        public void ProcessFile(ProjectItem item)
+        {
+            var r = item.ProjectItems;
+            var c = r != null ? r.Count : 0;
+            bool do_not_parse = false;
+            try
+            {
+                if (item?.Properties == null) return;
+                object prop = item?.Properties?.Item("FullPath")?.Value;
+                string ffn = (string)prop;
+                bool has_build_action = false;
+
+                try
+                {
+                    object p2 = item?.Properties?.Item("BuildAction")?.Value;
+                    has_build_action = true;
+                }
+                catch (Exception _) { }
+                try
+                {
+                    object p3 = item?.Properties?.Item("CustomToolNamespace")?.Value;
+                }
+                catch (Exception _) { }
+                try
+                {
+                    object p4 = item?.Properties?.Item("CustomTool")?.Value;
+                }
+                catch (Exception _) { }
+                if (!ParserDetails._per_file_parser_details.ContainsKey(ffn))
+                {
+                    StreamReader sr = new StreamReader(ffn);
+                    var xx = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(ffn);
+                    xx.Code = sr.ReadToEnd();
+                    var pd = ParserDetails.Parse(xx);
+                }
+            }
+            catch (Exception eeks)
+            {
+            }
+        }
+
     }
 }

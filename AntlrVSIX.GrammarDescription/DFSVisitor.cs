@@ -1,11 +1,11 @@
-﻿namespace AntlrVSIX.Grammar
+﻿namespace AntlrVSIX.GrammarDescription
 {
     using Antlr4.Runtime;
     using Antlr4.Runtime.Tree;
     using System;
     using System.Collections.Generic;
 
-    internal class DFSVisitor
+    public class DFSVisitor
     {
         public static IEnumerable<IParseTree> DFS(IParseTree root)
         {

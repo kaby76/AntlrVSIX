@@ -4,6 +4,7 @@ namespace AntlrVSIX.ErrorTagger
     using Antlr4.Runtime;
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Grammar;
+    using AntlrVSIX.GrammarDescription;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text.Adornments;
     using Microsoft.VisualStudio.Text.Tagging;

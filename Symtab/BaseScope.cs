@@ -186,7 +186,9 @@
             Scope s = this;
             while (s != null)
             {
+#pragma warning disable CS0253 // Possible unintended reference comparison; right hand side needs cast
                 if (s.GetType() == type)
+#pragma warning restore CS0253 // Possible unintended reference comparison; right hand side needs cast
                 {
                     return (MethodSymbol)s;
                 }

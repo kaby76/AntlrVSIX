@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace AntlrVSIX.Grammar
+namespace AntlrVSIX.GrammarDescription
 {
 
     public class ManualAssemblyResolver : IDisposable
@@ -131,19 +131,18 @@ namespace AntlrVSIX.Grammar
             {
                 if (gd.IsFileType(ffn))
                 {
-                    if (gd.Name.ToLower() == "antlr" && !Options.OptionsCommand.Instance.OverrideAntlrPluggins)
+                    if (gd.Name.ToLower() == "antlr" && XOptions.GetProperty("OverrideAntlrPluggins") != "true")
                         return null;
-                    if (gd.Name.ToLower() == "java" && !Options.OptionsCommand.Instance.OverrideJavaPluggins)
+                    if (gd.Name.ToLower() == "java" && XOptions.GetProperty("OverrideJavaPluggins") != "true")
                         return null;
-                    if (gd.Name.ToLower() == "python" && !Options.OptionsCommand.Instance.OverridePythonPluggins)
+                    if (gd.Name.ToLower() == "python" && XOptions.GetProperty("OverridePythonPluggins") != "true")
                         return null;
-                    if (gd.Name.ToLower() == "rust" && !Options.OptionsCommand.Instance.OverrideRustPluggins)
+                    if (gd.Name.ToLower() == "rust" && XOptions.GetProperty("OverrideRustPluggins") != "true")
                         return null;
                     return gd;
                 }
             }
             return null;
         }
-
     }
 }

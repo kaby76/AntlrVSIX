@@ -73,7 +73,6 @@
     <Compile Include="Taggers\ErrorTaggerProvider.cs" />
     <Compile Include="File\Class1.cs" />
     <Compile Include="Grammar\Foobar.cs" />
-    <Compile Include="Grammar\CompileGrammarDescription.cs" />
     <Compile Include="Grammar\GrammarDescriptionFactory.cs" />
     <Compile Include="Helpers\DteExtensions.cs" />
     <Compile Include="Helpers\ITextBufferExtensions.cs" />
@@ -101,7 +100,6 @@
     <Compile Include="Menus\FindRefsWindowControl.xaml.cs">
       <DependentUpon>FindRefsWindowControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Grammar\ParserDetails.cs" />
     <Compile Include="Menus\GoToDefinitionCommand.cs" />
     <Compile Include="Menus\FindAllReferencesCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -118,7 +116,6 @@
     <Compile Include="Taggers\HighlightTagger.cs" />
     <Compile Include="Taggers\AntlrTokenTagProvider.cs" />
     <Compile Include="Taggers\AntlrClassifierProvider.cs" />
-    <Compile Include="Grammar\DFSVisitor.cs" />
     <Compile Include="Intellisense\CompletionController.cs" />
     <Compile Include="Intellisense\CompletionSource.cs" />
     <Compile Include="Intellisense\AntlrQuickInfoSource.cs" />

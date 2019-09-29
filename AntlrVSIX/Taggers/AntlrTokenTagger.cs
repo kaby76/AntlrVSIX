@@ -36,7 +36,9 @@ namespace AntlrVSIX.Tagger
             ITextDocument document = _buffer.GetTextDocument();
             string file_name = document.FilePath;
             string code = _buffer.GetBufferText();
-            var pd = ParserDetails.Parse(code, file_name);
+            var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(file_name);
+            item.Code = code;
+            var pd = ParserDetails.Parse(item);
         }
 
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
