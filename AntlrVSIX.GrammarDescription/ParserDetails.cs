@@ -37,9 +37,9 @@ namespace AntlrVSIX.GrammarDescription
                 pd = _per_file_parser_details[ffn];
             }
 
-            bool has_changed = false;
-            if (pd.Code == code) return pd;
-            else if (pd.Code != null) has_changed = true;
+            bool has_changed = item.Changed;
+            item.Changed = false;
+            if (!has_changed) return pd;
 
             pd.Code = code;
             pd.FullFileName = ffn;

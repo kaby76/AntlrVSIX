@@ -8,20 +8,57 @@ namespace AntlrVSIX.Options
     using System.Collections.Generic;
     using System.ComponentModel.Design;
     using System.Linq;
+    using AntlrVSIX.GrammarDescription;
 
     public class OptionsCommand
     {
         private readonly Microsoft.VisualStudio.Shell.Package _package;
         private MenuCommand _menu_item1;
-        public bool IncrementalReformat { get; private set; }
-        public bool NonInteractiveParse { get; private set; }
-        public bool RestrictedDirectory { get; private set; }
-        public bool GenerateVisitorListener { get; private set; }
-        public string CorpusLocation { get; private set; }
-        public bool OverrideAntlrPluggins { get; private set; }
-        public bool OverrideJavaPluggins { get; private set; }
-        public bool OverridePythonPluggins { get; private set; }
-        public bool OverrideRustPluggins { get; private set; }
+        public bool IncrementalReformat
+        {
+            get { return XOptions.GetProperty("IncrementalReformat") == "true"; }
+            private set { XOptions.SetProperty("IncrementalReformat", value ? "true" : "false"); }
+        }
+        public bool NonInteractiveParse
+        {
+            get { return XOptions.GetProperty("NonInteractiveParse") == "true"; }
+            private set { XOptions.SetProperty("NonInteractiveParse", value ? "true" : "false"); }
+        }
+        public bool RestrictedDirectory
+        {
+            get { return XOptions.GetProperty("RestrictedDirectory") == "true"; }
+            private set { XOptions.SetProperty("RestrictedDirectory", value ? "true" : "false"); }
+        }
+        public bool GenerateVisitorListener
+        {
+            get { return XOptions.GetProperty("GenerateVisitorListener") == "true"; }
+            private set { XOptions.SetProperty("GenerateVisitorListener", value ? "true" : "false"); }
+        }
+        public string CorpusLocation
+        {
+            get { return XOptions.GetProperty("CorpusLocation"); }
+            private set { XOptions.SetProperty("GenerateVisitorListener", value); }
+        }
+        public bool OverrideAntlrPluggins
+        {
+            get { return XOptions.GetProperty("OverrideAntlrPluggins") == "true"; }
+            private set { XOptions.SetProperty("OverrideAntlrPluggins", value ? "true" : "false"); }
+        }
+        public bool OverrideJavaPluggins
+        {
+            get { return XOptions.GetProperty("OverrideJavaPluggins") == "true"; }
+            private set { XOptions.SetProperty("OverrideJavaPluggins", value ? "true" : "false"); }
+        }
+        public bool OverridePythonPluggins
+        {
+            get { return XOptions.GetProperty("OverridePythonPluggins") == "true"; }
+            private set { XOptions.SetProperty("OverridePythonPluggins", value ? "true" : "false"); }
+        }
+        public bool OverrideRustPluggins
+        {
+            get { return XOptions.GetProperty("OverrideRustPluggins") == "true"; }
+            private set { XOptions.SetProperty("OverrideRustPluggins", value ? "true" : "false"); }
+        }
 
         private OptionsCommand(Microsoft.VisualStudio.Shell.Package package)
         {

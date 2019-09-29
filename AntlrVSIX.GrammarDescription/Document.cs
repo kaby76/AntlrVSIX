@@ -20,11 +20,13 @@ namespace AntlrVSIX.GrammarDescription
         string _name;
         string _ffn;
         string _contents;
+        bool _changed_contents;
         Dictionary<string, string> _properties = new Dictionary<string, string>();
 
         public Document(string ffn)
         {
             _name = ffn;
+            _changed_contents = false;
             _ffn = ffn;
         }
 
@@ -40,6 +42,12 @@ namespace AntlrVSIX.GrammarDescription
             set { _ffn = value; }
         }
 
+        public bool Changed
+        {
+            get { return _changed_contents; }
+            set { _changed_contents = value; }
+        }
+
         public string Code
         {
             get
@@ -48,10 +56,19 @@ namespace AntlrVSIX.GrammarDescription
                 {
                     StreamReader sr = new StreamReader(_ffn);
                     _contents = sr.ReadToEnd();
+                    _changed_contents = true;
                 }
                 return _contents;
             }
-            set { _contents = value; }
+            set
+            {
+                if (_contents == value)
+                {
+                    return;
+                }
+                _changed_contents = true;
+                _contents = value;
+            }
         }
 
         public void AddProperty(string name, string value)
