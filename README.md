@@ -9,13 +9,21 @@ replace, go to visitor/listener, command completion, options,
 reformat. Programming language that are currently being supported to one degree or another
 are Antlr itself, Java, Python, and Rust.
 
+Unlike other Antlr extensions ([Harwell's ANTLR Language Support](https://marketplace.visualstudio.com/items?itemName=SamHarwell.ANTLRLanguageSupport) and
+[Mendes' Antlr4Code](https://marketplace.visualstudio.com/items?itemName=RamonFMendes.Antlr4Code),
+which are out of date;
+[Lischke's ANTLR4 grammar syntax support](https://marketplace.visualstudio.com/items?itemName=mike-lischke.vscode-antlr4)
+for Visual Studio Code), AntlrVSIX looks at the Visual Studio build files for extra-source file information, e.g., whether it
+is a top-level source file or an include file, whether it actually participates in the build, or in the case of Antlr grammar
+files the namespace of the generated parsers and lexers.
+
 This extension also includes project templates for compiling and running Antlr programs.
 
 The source code for the extension is open source, free of charge, and free of ads.
 
 ## Documentation
 
-For information on how to use AntlrVSIX, see the [User Guide](doc/readme.md).
+For information on how to use AntlrVSIX, see the [User Guide](doc/readme.md), which is geared specifically for Antlr programs.
 
 ## Caveats:
 
