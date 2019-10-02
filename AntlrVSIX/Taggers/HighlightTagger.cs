@@ -115,13 +115,13 @@ namespace AntlrVSIX.Taggers
             var doc = buf.GetTextDocument();
             string file_name = doc.FilePath;
             ParserDetails details = null;
-            bool found = ParserDetails._per_file_parser_details.TryGetValue(file_name, out details);
+            bool found = ParserDetailsFactory.AllParserDetails.Where(pair => pair.Key == file_name).Any();
             if (!found) return;
 
             List<KeyValuePair<Antlr4.Runtime.Tree.TerminalNodeImpl, int>> combined_tokens = new List<KeyValuePair<Antlr4.Runtime.Tree.TerminalNodeImpl, int>>();
 
             combined_tokens.AddRange(
-                details._refs.Where((pair) =>
+                details.Refs.Where((pair) =>
                 {
                     var token = pair.Key;
                     int start_token_start = token.Symbol.StartIndex;
@@ -131,7 +131,7 @@ namespace AntlrVSIX.Taggers
                     return true;
                 }));
 
-            combined_tokens.AddRange(details._defs.Where((pair) =>
+            combined_tokens.AddRange(details.Defs.Where((pair) =>
             {
                 var token = pair.Key;
                 int start_token_start = token.Symbol.StartIndex;
@@ -150,7 +150,7 @@ namespace AntlrVSIX.Taggers
             var the_symbol = combined_tokens.First();
             
             var node = (Antlr4.Runtime.Tree.IParseTree)the_symbol.Key;
-            if (! details._ant_symtab.TryGetValue(node, out Symtab.CombinedScopeSymbol value))
+            if (! details.Attributes.TryGetValue(node, out Symtab.CombinedScopeSymbol value))
             {
                 return;
             }
@@ -174,7 +174,7 @@ namespace AntlrVSIX.Taggers
             ITextBuffer buffer = view.TextBuffer;
             string path = doc.FilePath;
             List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
-            where.AddRange(details._refs.Where(
+            where.AddRange(details.Refs.Where(
                 (t) =>
                 {
                     if (!_grammar_description.CanRename[t.Value])
@@ -183,7 +183,7 @@ namespace AntlrVSIX.Taggers
                     if (x == the_symbol.Key)
                         return true;
                     var nn = (Antlr4.Runtime.Tree.IParseTree)t.Key;
-                    if (! details._ant_symtab.TryGetValue(nn, out Symtab.CombinedScopeSymbol value2))
+                    if (! details.Attributes.TryGetValue(nn, out Symtab.CombinedScopeSymbol value2))
                     {
                         return false;
                     }
@@ -198,7 +198,7 @@ namespace AntlrVSIX.Taggers
                     return false;
                 }).Select(t => t.Key));
 
-            where.AddRange(details._defs.Where(
+            where.AddRange(details.Defs.Where(
                 (t) =>
                 {
                     if (!_grammar_description.CanRename[t.Value])
@@ -207,7 +207,7 @@ namespace AntlrVSIX.Taggers
                     if (x == the_symbol.Key)
                         return true;
                     var nn = (Antlr4.Runtime.Tree.IParseTree)t.Key;
-                    if (! details._ant_symtab.TryGetValue(nn, out Symtab.CombinedScopeSymbol value2))
+                    if (! details.Attributes.TryGetValue(nn, out Symtab.CombinedScopeSymbol value2))
                     {
                         return false;
                     }

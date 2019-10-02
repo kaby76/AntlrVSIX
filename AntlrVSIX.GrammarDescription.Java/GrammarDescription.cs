@@ -17,8 +17,15 @@ namespace AntlrVSIX.GrammarDescription.Java
         public string Name { get; } = "Java";
         public System.Type Parser { get; } = typeof(Java9Parser);
         public System.Type Lexer { get; } = typeof(Java9Lexer);
-        public void Parse(string ffn, string code, out IParseTree parse_tree, out Dictionary<IParseTree, CombinedScopeSymbol> symbols)
+        public ParserDetails CreateParserDetails(Document item)
         {
+            return new JavaParserDetails();
+        }
+
+        public void Parse(ParserDetails pd)
+        {
+            string ffn = pd.FullFileName;
+            string code = pd.Code;
             IParseTree pt = null;
 
             // Set up Antlr to parse input grammar.
@@ -45,12 +52,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             //fn = "c:\\temp\\" + fn;
             //System.IO.File.WriteAllText(fn, sb.ToString());
 
-            parse_tree = pt;
-            var pass1 = new Pass1Listener();
-            ParseTreeWalker.Default.Walk(pass1, parse_tree);
-            var pass2 = new Pass2Listener(pass1._attributes);
-            ParseTreeWalker.Default.Walk(pass2, parse_tree);
-            symbols = pass2._attributes;
+            pd.ParseTree = pt;
         }
 
         public Dictionary<IToken, int> ExtractComments(string code)
@@ -421,7 +423,7 @@ namespace AntlrVSIX.GrammarDescription.Java
                 },
         };
 
-        public List<Func<IGrammarDescription, Dictionary<IParseTree, CombinedScopeSymbol>, IParseTree, string>> PopUpDefinition { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, CombinedScopeSymbol>, IParseTree, string>>()
+        public List<Func<ParserDetails, IParseTree, string>> PopUpDefinition { get; } = new List<Func<ParserDetails, IParseTree, string>>()
         {
             null,
             null,
@@ -439,6 +441,5 @@ namespace AntlrVSIX.GrammarDescription.Java
         public bool DoErrorSquiggles { get { return false; } }
 
         public bool CanReformat { get { return true; } }
-
     }
 }

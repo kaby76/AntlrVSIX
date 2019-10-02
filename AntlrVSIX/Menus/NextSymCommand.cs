@@ -137,13 +137,13 @@
             List<IToken> where = new List<IToken>();
             List<ParserDetails> where_details = new List<ParserDetails>();
             int next_sym = forward ? Int32.MaxValue : -1;
-            foreach (var kvp in ParserDetails._per_file_parser_details)
+            foreach (var kvp in ParserDetailsFactory.AllParserDetails)
             {
                 string file_name = kvp.Key;
                 if (file_name != path)
                     continue;
                 ParserDetails details = kvp.Value;
-                foreach (var p in details._defs)
+                foreach (var p in details.Defs)
                 {
                     if (p.Value != 0) continue;
                     var t = p.Key;
@@ -159,7 +159,7 @@
                     }
                 }
 
-                foreach (var p in details._defs)
+                foreach (var p in details.Defs)
                 {
                     if (p.Value != 1) continue;
                     var t = p.Key;

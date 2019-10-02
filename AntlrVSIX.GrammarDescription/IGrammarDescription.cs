@@ -9,9 +9,10 @@ namespace AntlrVSIX.GrammarDescription
     public interface IGrammarDescription
     {
         string Name { get; }
+        ParserDetails CreateParserDetails(Document item);
         System.Type Parser { get; }
         System.Type Lexer { get; }
-        void Parse(string ffn, string code, out IParseTree parse_tree, out Dictionary<IParseTree, CombinedScopeSymbol> symbols);
+        void Parse(ParserDetails pd);
         Dictionary<IToken, int> ExtractComments(string code);
         bool CanNextRule { get; }
         string[] Map { get; }
@@ -29,6 +30,6 @@ namespace AntlrVSIX.GrammarDescription
         string FileExtension { get; }
         string StartRule { get; }
         bool DoErrorSquiggles { get; }
-        List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>, IParseTree, string>> PopUpDefinition { get; }
+        List<Func<ParserDetails, IParseTree, string>> PopUpDefinition { get; }
     }
 }

@@ -56,9 +56,9 @@ namespace AntlrVSIX.ErrorTagger
                 var dd = buf.GetTextDocument();
                 string ffn = dd.FilePath;
                 string path_containing_applied_occurrence = Path.GetDirectoryName(ffn);
-                ParserDetails details = null;
-                bool found = ParserDetails._per_file_parser_details.TryGetValue(ffn, out details);
-                if (!found) continue;
+                var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(ffn);
+                var details = ParserDetailsFactory.Create(item);
+                if (details == null) continue;
                 SnapshotPoint start = curSpan.Start;
                 int curLocStart = start.Position;
                 SnapshotPoint end = curSpan.End;
@@ -69,7 +69,7 @@ namespace AntlrVSIX.ErrorTagger
                 List<Antlr4.Runtime.Tree.TerminalNodeImpl> all_term_tokens = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
                 List<Antlr4.Runtime.Tree.TerminalNodeImpl> all_nonterm_tokens = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
 
-                all_nonterm_tokens = details._refs.Where((pair) =>
+                all_nonterm_tokens = details.Refs.Where((pair) =>
                 {
                     var token = pair.Key;
                     var classification = pair.Value;
@@ -78,10 +78,10 @@ namespace AntlrVSIX.ErrorTagger
                     int end_token_end = token.Symbol.StopIndex;
                     if (start_token_start >= curLocEnd) return false;
                     if (end_token_end < curLocStart) return false;
-                    var is_any_definer = ParserDetails._per_file_parser_details
+                    var is_any_definer = ParserDetailsFactory.AllParserDetails
                         .Where(pd =>
                             (Path.GetDirectoryName(pd.Value.FullFileName) == path_containing_applied_occurrence)
-                            && pd.Value._defs.Where(
+                            && pd.Value.Defs.Where(
                                 p =>
                                 {
                                     var d = p.Key;
@@ -94,7 +94,7 @@ namespace AntlrVSIX.ErrorTagger
 
                 combined_tokens = combined_tokens.Concat(all_nonterm_tokens);
 
-                all_nonterm_tokens = details._refs.Where((pair) =>
+                all_nonterm_tokens = details.Refs.Where((pair) =>
                 {
                     var token = pair.Key;
                     var classification = pair.Value;
@@ -103,10 +103,10 @@ namespace AntlrVSIX.ErrorTagger
                     int end_token_end = token.Symbol.StopIndex;
                     if (start_token_start >= curLocEnd) return false;
                     if (end_token_end < curLocStart) return false;
-                    var is_any_definer = ParserDetails._per_file_parser_details
+                    var is_any_definer = ParserDetailsFactory.AllParserDetails
                         .Where(pd =>
                             (Path.GetDirectoryName(pd.Value.FullFileName) == path_containing_applied_occurrence)
-                            && pd.Value._defs.Where(
+                            && pd.Value.Defs.Where(
                                 p =>
                                 {
                                     var d = p.Key;

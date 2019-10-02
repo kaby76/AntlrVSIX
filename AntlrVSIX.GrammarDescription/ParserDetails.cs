@@ -8,63 +8,88 @@ namespace AntlrVSIX.GrammarDescription
     using System.Collections.Generic;
     using System.Linq;
 
-    public class ParserDetails : IObservable<ParserDetails>
+    public class ParserDetails
     {
-        public static Dictionary<string, ParserDetails> _per_file_parser_details = new Dictionary<string, ParserDetails>();
-        public string FullFileName;
-        public string Code;
-        public Dictionary<TerminalNodeImpl, int> _refs = new Dictionary<TerminalNodeImpl, int>();
-        public Dictionary<TerminalNodeImpl, int> _defs = new Dictionary<TerminalNodeImpl, int>();
-        public Dictionary<IToken, int> _ant_comments = new Dictionary<IToken, int>();
-        public Dictionary<IParseTree, Symtab.CombinedScopeSymbol> _ant_symtab = new Dictionary<IParseTree, Symtab.CombinedScopeSymbol>();
-        private List<IObserver<ParserDetails>> _observers = new List<IObserver<ParserDetails>>();
-        public IParseTree _ant_tree = null;
-        private IEnumerable<IParseTree>_all_nodes = null;
+        public virtual Document Item { get; set; }
+        public virtual string FullFileName { get; set; }
+        public virtual string Code { get; set; }
 
-        public static ParserDetails Parse(AntlrVSIX.GrammarDescription.Document item)
+        public virtual IGrammarDescription Gd { get; set; }
+
+        public virtual Dictionary<TerminalNodeImpl, int> Refs { get; set; } = new Dictionary<TerminalNodeImpl, int>();
+        
+        public virtual Dictionary<TerminalNodeImpl, int> Defs { get; set; } = new Dictionary<TerminalNodeImpl, int>();
+
+        public virtual Dictionary<IToken, int> Comments { get; set; } = new Dictionary<IToken, int>();
+
+        public virtual Dictionary<IParseTree, Symtab.CombinedScopeSymbol> Attributes { get; set; } = new Dictionary<IParseTree, Symtab.CombinedScopeSymbol>();
+
+        public virtual Symtab.Scope RootScope { get; set; }
+
+        public virtual IParseTree ParseTree { get; set; } = null;
+
+        public virtual IEnumerable<IParseTree> AllNodes { get; set; } = null;
+
+        public virtual IParseTreeListener P1Listener { get; set; } = null;
+
+        public virtual IParseTreeListener P2Listener { get; set; } = null;
+
+        public virtual void Parse(Document item)
         {
+            Item = item;
             var code = item.Code;
             var ffn = item.FullPath;
-            bool has_entry = _per_file_parser_details.ContainsKey(ffn);
-            ParserDetails pd;
-            if (!has_entry)
-            {
-                pd = new ParserDetails();
-                _per_file_parser_details[ffn] = pd;
-            }
-            else
-            {
-                pd = _per_file_parser_details[ffn];
-            }
-
+            ParserDetails pd = ParserDetailsFactory.Create(item);
             bool has_changed = item.Changed;
             item.Changed = false;
-            if (!has_changed) return pd;
+            if (!has_changed) return;
 
             pd.Code = code;
             pd.FullFileName = ffn;
 
+            //if (item.GetProperty("BuildAction") == "prjBuildActionNone")
+            //    return null;
+
             IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);
             if (gd == null) throw new Exception();
-            gd.Parse(ffn, code, out pd._ant_tree, out pd._ant_symtab);
+            gd.Parse(pd);
 
-            pd._all_nodes = DFSVisitor.DFS(pd._ant_tree as ParserRuleContext);
+            pd.AllNodes = DFSVisitor.DFS(pd.ParseTree as ParserRuleContext);
+            pd.Comments = gd.ExtractComments(code);
+            pd.Defs = new Dictionary<TerminalNodeImpl, int>();
+            pd.Refs = new Dictionary<TerminalNodeImpl, int>();
+        }
 
-            pd._defs = new Dictionary<TerminalNodeImpl, int>();
-            pd._refs = new Dictionary<TerminalNodeImpl, int>();
+        public void Pass1(ParserDetails pd)
+        {
+            var pass1 = pd.P1Listener;
+            ParseTreeWalker.Default.Walk(pass1, pd.ParseTree);
+        }
 
-            // Order of finding stuff dependent here. First find defs, then refs.
+        public void Pass2(ParserDetails pd)
+        {
+            var pass1 = pd.P1Listener;
+            var pass2 = pd.P2Listener;
+            ParseTreeWalker.Default.Walk(pass2, pd.ParseTree);
+        }
+
+        public virtual void GatherDefs(Document item)
+        {
+            var ffn = item.FullPath;
+            ParserDetails pd = ParserDetailsFactory.Create(item);
+            IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);
+            if (gd == null) throw new Exception();
             for (int classification = 0; classification < gd.IdentifyDefinition.Count; ++classification)
             {
                 var fun = gd.IdentifyDefinition[classification];
                 if (fun == null) continue;
-                var it = pd._all_nodes.Where(t => fun(gd, pd._ant_symtab, t));
+                var it = pd.AllNodes.Where(t => fun(gd, pd.Attributes, t));
                 foreach (var t in it)
                 {
                     var x = (t as TerminalNodeImpl);
                     try
                     {
-                        pd._defs.Add(x, classification);
+                        pd.Defs.Add(x, classification);
                     }
                     catch (ArgumentException e)
                     {
@@ -72,60 +97,31 @@ namespace AntlrVSIX.GrammarDescription
                     }
                 }
             }
+        }
+
+        public virtual void GatherRefs(Document item)
+        {
+            var ffn = item.FullPath;
+            ParserDetails pd = ParserDetailsFactory.Create(item);
+            IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);
+            if (gd == null) throw new Exception();
             for (int classification = 0; classification < gd.Identify.Count; ++classification)
             {
                 var fun = gd.Identify[classification];
                 if (fun == null) continue;
-                var it = pd._all_nodes.Where(t => fun(gd, pd._ant_symtab, t));
+                var it = pd.AllNodes.Where(t => fun(gd, pd.Attributes, t));
                 foreach (var t in it)
                 {
                     var x = (t as TerminalNodeImpl);
                     try
                     {
-                        pd._refs.Add(x, classification);
+                        pd.Refs.Add(x, classification);
                     }
                     catch (ArgumentException e)
                     {
                         // Duplicate
                     }
                 }
-            }
-
-            pd._ant_comments = gd.ExtractComments(code);
-
-            if (has_changed)
-            {
-                foreach (var observer in pd._observers)
-                {
-                    observer.OnNext(pd);
-                }
-            }
-
-            return pd;
-        }
-
-        public IDisposable Subscribe(IObserver<ParserDetails> observer)
-        {
-            if (!_observers.Contains(observer))
-                _observers.Add(observer);
-            return new Unsubscriber(_observers, observer);
-        }
-
-        private class Unsubscriber : IDisposable
-        {
-            private List<IObserver<ParserDetails>> _observers;
-            private IObserver<ParserDetails> _observer;
-
-            public Unsubscriber(List<IObserver<ParserDetails>> observers, IObserver<ParserDetails> observer)
-            {
-                this._observers = observers;
-                this._observer = observer;
-            }
-
-            public void Dispose()
-            {
-                if (_observer != null && _observers.Contains(_observer))
-                    _observers.Remove(_observer);
             }
         }
     }

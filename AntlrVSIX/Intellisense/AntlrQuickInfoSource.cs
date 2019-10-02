@@ -164,7 +164,8 @@ namespace AntlrVSIX
             string file_path = doc.FilePath;
             IGrammarDescription grammar_description = GrammarDescriptionFactory.Create(file_path);
             if (!grammar_description.IsFileType(file_path)) return null;
-            ParserDetails pd = ParserDetails._per_file_parser_details[file_path];
+            var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(file_path);
+            var pd = ParserDetailsFactory.Create(item);
 
             foreach (IMappingTagSpan<AntlrTokenTag> cur_tag in _aggregator.GetTags(span))
             {
@@ -177,7 +178,7 @@ namespace AntlrVSIX
                 {
                     Antlr4.Runtime.Tree.IParseTree p = pt;
                     {
-                        pd._ant_symtab.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
+                        pd.Attributes.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
                         if (value != null)
                         {
                             var name = value as Symtab.Symbol;
@@ -189,7 +190,7 @@ namespace AntlrVSIX
                             if (grammar_description.PopUpDefinition[tag_type] != null)
                             {
                                 var fun = grammar_description.PopUpDefinition[tag_type];
-                                var mess = fun(grammar_description, pd._ant_symtab, p);
+                                var mess = fun(pd, p);
                                 if (mess != null)
                                     return new QuickInfoItem(tracking_span, mess);
                             }

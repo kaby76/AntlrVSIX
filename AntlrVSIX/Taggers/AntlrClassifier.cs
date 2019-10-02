@@ -80,7 +80,8 @@
 
             var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(f);
             item.Code = _buffer.GetBufferText();
-            var pd = ParserDetails.Parse(item);
+            var pd = ParserDetailsFactory.Create(item);
+            pd.Parse(item);
 
             foreach (IMappingTagSpan<AntlrTokenTag> tag_span in _aggregator.GetTags(spans))
             {

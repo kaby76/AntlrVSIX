@@ -5,18 +5,20 @@ using System.Collections.Generic;
 
 namespace AntlrVSIX.GrammarDescription.Antlr
 {
-    class Pass1Listener : ANTLRv4ParserBaseListener
+    public class Pass1Listener : ANTLRv4ParserBaseListener
     {
-        public Dictionary<IParseTree, CombinedScopeSymbol> _attributes = new Dictionary<IParseTree, CombinedScopeSymbol>();
-        public Scope _root;
+        private AntlrParserDetails _pd;
 
-        public Pass1Listener() { }
+        public Pass1Listener(AntlrParserDetails pd)
+        {
+            _pd = pd;
+        }
 
         public IParseTree NearestScope(IParseTree node)
         {
             for (; node != null; node = node.Parent)
             {
-                if (_attributes.TryGetValue(node, out CombinedScopeSymbol value) && value is Scope)
+                if (_pd.Attributes.TryGetValue(node, out CombinedScopeSymbol value) && value is Scope)
                     return node;
             }
             return null;
@@ -24,15 +26,13 @@ namespace AntlrVSIX.GrammarDescription.Antlr
 
         public Scope GetScope(IParseTree node)
         {
-            _attributes.TryGetValue(node, out CombinedScopeSymbol value);
+            _pd.Attributes.TryGetValue(node, out CombinedScopeSymbol value);
             return value as Scope;
         }
 
         public override void EnterGrammarSpec([NotNull] ANTLRv4Parser.GrammarSpecContext context)
         {
-            var scope = (CombinedScopeSymbol)new SymbolTable().GLOBALS;
-            _attributes[context] = scope;
-            _root = (Scope)scope;
+            _pd.Attributes[context] = (CombinedScopeSymbol)_pd.RootScope;
         }
 
         public override void EnterParserRuleSpec([NotNull] ANTLRv4Parser.ParserRuleSpecContext context)
@@ -48,10 +48,10 @@ namespace AntlrVSIX.GrammarDescription.Antlr
             var rule_ref = context.GetChild(i) as TerminalNodeImpl;
             var id = rule_ref.GetText();
             Symbol sym = new NonterminalSymbol(id, rule_ref.Symbol.Line, rule_ref.Symbol.Column, rule_ref.Symbol.InputStream.SourceName);
-            _root.define(ref sym);
+            _pd.RootScope.define(ref sym);
             var s = (CombinedScopeSymbol)sym;
-            _attributes[context] = s;
-            _attributes[context.GetChild(i)] = s;
+            _pd.Attributes[context] = s;
+            _pd.Attributes[context.GetChild(i)] = s;
         }
 
         public override void EnterLexerRuleSpec([NotNull] ANTLRv4Parser.LexerRuleSpecContext context)
@@ -67,10 +67,10 @@ namespace AntlrVSIX.GrammarDescription.Antlr
             var token_ref = context.GetChild(i) as TerminalNodeImpl;
             var id = token_ref.GetText();
             Symbol sym = new TerminalSymbol(id, token_ref.Symbol.Line, token_ref.Symbol.Column, token_ref.Symbol.InputStream.SourceName);
-            _root.define(ref sym);
+            _pd.RootScope.define(ref sym);
             var s = (CombinedScopeSymbol)sym;
-            _attributes[context] = s;
-            _attributes[context.GetChild(i)] = s;
+            _pd.Attributes[context] = s;
+            _pd.Attributes[context.GetChild(i)] = s;
         }
 
         public override void EnterId([NotNull] ANTLRv4Parser.IdContext context)
@@ -80,32 +80,30 @@ namespace AntlrVSIX.GrammarDescription.Antlr
                 var term = context.GetChild(0) as TerminalNodeImpl;
                 var id = term.GetText();
                 Symbol sym = new ModeSymbol(id, term.Symbol.Line, term.Symbol.Column, term.Symbol.InputStream.SourceName);
-                _root.define(ref sym);
+                _pd.RootScope.define(ref sym);
                 var s = (CombinedScopeSymbol)sym;
-                _attributes[context] = s;
-                _attributes[context.GetChild(0)] = s;
+                _pd.Attributes[context] = s;
+                _pd.Attributes[context.GetChild(0)] = s;
             } else if (context.Parent is ANTLRv4Parser.IdListContext && context.Parent?.Parent is ANTLRv4Parser.ChannelsSpecContext)
             {
                 var term = context.GetChild(0) as TerminalNodeImpl;
                 var id = term.GetText();
                 Symbol sym = new ChannelSymbol(id, term.Symbol.Line, term.Symbol.Column, term.Symbol.InputStream.SourceName);
-                _root.define(ref sym);
+                _pd.RootScope.define(ref sym);
                 var s = (CombinedScopeSymbol)sym;
-                _attributes[context] = s;
-                _attributes[term] = s;
+                _pd.Attributes[context] = s;
+                _pd.Attributes[term] = s;
             }
         }
     }
 
-    class Pass2Listener : ANTLRv4ParserBaseListener
+    public class Pass2Listener : ANTLRv4ParserBaseListener
     {
-        public Dictionary<IParseTree, CombinedScopeSymbol> _attributes;
-        private Scope _root;
+        AntlrParserDetails _pd;
 
-        public Pass2Listener(Dictionary<IParseTree, CombinedScopeSymbol> attributes, Scope root)
+        public Pass2Listener(AntlrParserDetails pd)
         {
-            _attributes = attributes;
-            _root = root;
+            _pd = pd;
         }
 
         public override void EnterTerminal([NotNull] ANTLRv4Parser.TerminalContext context)
@@ -114,30 +112,30 @@ namespace AntlrVSIX.GrammarDescription.Antlr
             if (first.Symbol.Type == ANTLRv4Parser.TOKEN_REF)
             {
                 var id = first.GetText();
-                Symbol sym = _root.LookupType(id);
+                Symbol sym = _pd.RootScope.LookupType(id);
                 if (sym == null)
                 {
                     sym = (Symbol)new TerminalSymbol(id, first.Symbol.Line, first.Symbol.Column, first.Symbol.InputStream.SourceName);
-                    _root.define(ref sym);
+                    _pd.RootScope.define(ref sym);
                 }
                 var s = (CombinedScopeSymbol)new RefSymbol(sym);
-                _attributes[context] = s;
-                _attributes[context.GetChild(0)] = s;
+                _pd.Attributes[context] = s;
+                _pd.Attributes[context.GetChild(0)] = s;
             }
         }
 
         public override void EnterRuleref([NotNull] ANTLRv4Parser.RulerefContext context)
         {
             var id = context.GetChild(0).GetText();
-            Symbol sym = _root.LookupType(id);
+            Symbol sym = _pd.RootScope.LookupType(id);
             if (sym == null)
             {
                 sym = (Symbol)new NonterminalSymbol(id, 0, 0, null);
-                _root.define(ref sym);
+                _pd.RootScope.define(ref sym);
             }
             var s = (CombinedScopeSymbol)new RefSymbol(sym);
-            _attributes[context] = s;
-            _attributes[context.GetChild(0)] = s;
+            _pd.Attributes[context] = s;
+            _pd.Attributes[context.GetChild(0)] = s;
         }
 
         public override void EnterId([NotNull] ANTLRv4Parser.IdContext context)
@@ -149,29 +147,29 @@ namespace AntlrVSIX.GrammarDescription.Antlr
                 {
                     var term = context.GetChild(0) as TerminalNodeImpl;
                     var id = term.GetText();
-                    Symbol sym = _root.LookupType(id);
+                    Symbol sym = _pd.RootScope.LookupType(id);
                     if (sym == null)
                     {
                         sym = (Symbol)new ModeSymbol(id, 0, 0, null);
-                        _root.define(ref sym);
+                        _pd.RootScope.define(ref sym);
                     }
                     var s = (CombinedScopeSymbol)new RefSymbol(sym);
-                    _attributes[context] = s;
-                    _attributes[context.GetChild(0)] = s;
+                    _pd.Attributes[context] = s;
+                    _pd.Attributes[context.GetChild(0)] = s;
                 }
                 else if (lc.GetChild(0)?.GetChild(0)?.GetText() == "channel")
                 {
                     var term = context.GetChild(0) as TerminalNodeImpl;
                     var id = term.GetText();
-                    Symbol sym = _root.LookupType(id);
+                    Symbol sym = _pd.RootScope.LookupType(id);
                     if (sym == null)
                     {
                         sym = (Symbol)new ChannelSymbol(id, 0, 0, null);
-                        _root.define(ref sym);
+                        _pd.RootScope.define(ref sym);
                     }
                     var s = (CombinedScopeSymbol)new RefSymbol(sym);
-                    _attributes[context] = s;
-                    _attributes[context.GetChild(0)] = s;
+                    _pd.Attributes[context] = s;
+                    _pd.Attributes[context.GetChild(0)] = s;
                 }
             }
         }

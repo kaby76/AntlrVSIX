@@ -19,8 +19,9 @@
         {
             ITextBuffer tb = point.Snapshot.TextBuffer;
             string ffn = tb.GetFilePath();
-            var pd = ParserDetails._per_file_parser_details[ffn];
-            foreach (var node in DFSVisitor.DFS(pd._ant_tree as ParserRuleContext))
+            var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(ffn);
+            var pd = ParserDetailsFactory.Create(item);
+            foreach (var node in DFSVisitor.DFS(pd.ParseTree as ParserRuleContext))
             {
                 if (node as TerminalNodeImpl == null)
                     continue;

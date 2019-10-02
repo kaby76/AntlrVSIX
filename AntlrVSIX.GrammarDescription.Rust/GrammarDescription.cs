@@ -16,8 +16,10 @@ namespace AntlrVSIX.GrammarDescription.Rust
         public string Name { get; } = "Rust";
         public System.Type Parser { get; } = typeof(RustParser);
         public System.Type Lexer { get; } = typeof(RustLexer);
-        public void Parse(string ffn, string code, out IParseTree parse_tree, out Dictionary<IParseTree, CombinedScopeSymbol> symbols)
+        public void Parse(ParserDetails pd)
         {
+            string ffn = pd.FullFileName;
+            string code = pd.Code;
             IParseTree pt = null;
 
             // Set up Antlr to parse input grammar.
@@ -45,8 +47,7 @@ namespace AntlrVSIX.GrammarDescription.Rust
             //fn = "c:\\temp\\" + fn;
             //System.IO.File.WriteAllText(fn, sb.ToString());
 
-            parse_tree = pt;
-            symbols = new Dictionary<IParseTree, CombinedScopeSymbol>();
+            pd.ParseTree = pt;
         }
 
         public Dictionary<IToken, int> ExtractComments(string code)
@@ -87,6 +88,12 @@ namespace AntlrVSIX.GrammarDescription.Rust
                     return true;
             return false;
         }
+
+        public ParserDetails CreateParserDetails(Document item)
+        {
+            throw new NotImplementedException();
+        }
+
 
         /* Tagging and classification types. */
         private const string ClassificationNameVariable = "Rust - variable";
@@ -293,7 +300,7 @@ namespace AntlrVSIX.GrammarDescription.Rust
                 },
         };
 
-        public List<Func<IGrammarDescription, Dictionary<IParseTree, CombinedScopeSymbol>, IParseTree, string>> PopUpDefinition { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, CombinedScopeSymbol>, IParseTree, string>>()
+        public List<Func<ParserDetails, IParseTree, string>> PopUpDefinition { get; } = new List<Func<ParserDetails, IParseTree, string>>()
         {
             null,
             null,

@@ -94,7 +94,7 @@ namespace AntlrVSIX.FindAllReferences
             IGrammarDescription grammar_description = GrammarDescriptionFactory.Create(path);
             List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
             List<ParserDetails> where_details = new List<ParserDetails>();
-            foreach (var kvp in ParserDetails._per_file_parser_details)
+            foreach (var kvp in ParserDetailsFactory.AllParserDetails)
             {
                 string file_name = kvp.Key;
                 ParserDetails details = kvp.Value;
@@ -107,14 +107,14 @@ namespace AntlrVSIX.FindAllReferences
                     if (p1 != p2) continue;
                 }
                 {
-                    var it = details._refs.Where(
+                    var it = details.Refs.Where(
                         (t) => grammar_description.CanFindAllRefs[t.Value]
                             && t.Key.Symbol.Text == span.GetText()).Select(t => t.Key);
                     where.AddRange(it);
                     foreach (var j in it) where_details.Add(details);
                 }
                 {
-                    var it = details._defs.Where(
+                    var it = details.Defs.Where(
                         (t) => grammar_description.CanFindAllRefs[t.Value]
                             && t.Key.Symbol.Text == span.GetText()).Select(t => t.Key);
                     where.AddRange(it);

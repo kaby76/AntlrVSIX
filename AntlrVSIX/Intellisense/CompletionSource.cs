@@ -38,8 +38,9 @@
             var gd = GrammarDescriptionFactory.Create(ffn);
             if (gd == null) return;
             List<Completion> completions = new List<Completion>();
-            ParserDetails pd = ParserDetails._per_file_parser_details[doc.FilePath];
-            foreach (var s in pd._refs
+            var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(doc.FilePath);
+            var pd = ParserDetailsFactory.Create(item);
+            foreach (var s in pd.Refs
                 .Where(t => t.Value == 0)
                 .Select(t => t.Key)
                 .OrderBy(p => p.Symbol.Text)
@@ -48,7 +49,7 @@
             {
                 completions.Add(new Completion(s));
             }
-            foreach (var s in pd._refs
+            foreach (var s in pd.Refs
                 .Where(t => t.Value == 1)
                 .Select(t => t.Key)
                 .OrderBy(p => p.Symbol.Text)

@@ -167,12 +167,12 @@
             List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
             List<ParserDetails> where_details = new List<ParserDetails>();
             Antlr4.Runtime.Tree.TerminalNodeImpl token = null;
-            foreach (var kvp in ParserDetails._per_file_parser_details)
+            foreach (var kvp in ParserDetailsFactory.AllParserDetails)
             {
                 string file_name = kvp.Key;
                 ParserDetails details = kvp.Value;
                 {
-                    var it = details._defs.Where(
+                    var it = details.Defs.Where(
                              (t) => t.Value == cla && t.Key.Symbol.Text == span.GetText()).Select(t => t.Key);
                     where.AddRange(it);
                     foreach (var i in it) where_details.Add(details);

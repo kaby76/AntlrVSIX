@@ -17,8 +17,10 @@ namespace AntlrVSIX.GrammarDescription.Python
         public string Name { get; } = "Python";
         public System.Type Parser { get; } = typeof(Python3Parser);
         public System.Type Lexer { get; } = typeof(Python3Lexer);
-        public void Parse(string ffn, string code, out IParseTree parse_tree, out Dictionary<IParseTree, CombinedScopeSymbol> symbols)
+        public void Parse(ParserDetails pd)
         {
+            var code = pd.Code;
+            var ffn = pd.FullFileName;
             IParseTree pt = null;
 
             // Set up Antlr to parse input grammar.
@@ -45,8 +47,7 @@ namespace AntlrVSIX.GrammarDescription.Python
             //fn = "c:\\temp\\" + fn;
             //System.IO.File.WriteAllText(fn, sb.ToString());
 
-            parse_tree = pt;
-            symbols = new Dictionary<IParseTree, CombinedScopeSymbol>();
+            pd.ParseTree = pt;
         }
 
         public Dictionary<IToken, int> ExtractComments(string code)
@@ -84,6 +85,11 @@ namespace AntlrVSIX.GrammarDescription.Python
                 if (suffix == s)
                     return true;
             return false;
+        }
+
+        public ParserDetails CreateParserDetails(Document item)
+        {
+            throw new NotImplementedException();
         }
 
         /* Tagging and classification types. */
@@ -259,7 +265,7 @@ namespace AntlrVSIX.GrammarDescription.Python
             null, // literal
         };
 
-        public List<Func<IGrammarDescription, Dictionary<IParseTree, CombinedScopeSymbol>, IParseTree, string>> PopUpDefinition { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, CombinedScopeSymbol>, IParseTree, string>>()
+        public List<Func<ParserDetails, IParseTree, string>> PopUpDefinition { get; } = new List<Func<ParserDetails, IParseTree, string>>()
         {
             null,
             null,

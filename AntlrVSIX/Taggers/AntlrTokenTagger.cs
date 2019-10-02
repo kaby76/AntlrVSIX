@@ -38,7 +38,8 @@ namespace AntlrVSIX.Tagger
             string code = _buffer.GetBufferText();
             var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(file_name);
             item.Code = code;
-            var pd = ParserDetails.Parse(item);
+            var pd = ParserDetailsFactory.Create(item);
+            pd.Parse(item);
         }
 
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
@@ -55,11 +56,8 @@ namespace AntlrVSIX.Tagger
                 ITextBuffer buf = curSpan.Snapshot.TextBuffer;
                 var doc = buf.GetTextDocument();
                 string file_name = doc.FilePath;
-
-                ParserDetails details = null;
-                bool found = ParserDetails._per_file_parser_details.TryGetValue(file_name, out details);
-                if (!found) continue;
-
+                var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(file_name);
+                var details = ParserDetailsFactory.Create(item);
                 SnapshotPoint start = curSpan.Start;
                 int curLocStart = start.Position;
                 SnapshotPoint end = curSpan.End;
@@ -68,7 +66,7 @@ namespace AntlrVSIX.Tagger
                 var combined_tokens = new List<KeyValuePair<IToken, int>>();
 
                 combined_tokens.AddRange(
-                    details._refs.Where((pair) =>
+                    details.Refs.Where((pair) =>
                     {
                         var token = pair.Key;
                         int start_token_start = token.Symbol.StartIndex;
@@ -78,7 +76,7 @@ namespace AntlrVSIX.Tagger
                         return true;
                     }).Select( (pair) => new KeyValuePair<IToken, int>(pair.Key.Symbol, pair.Value)));
 
-                combined_tokens.AddRange(details._defs.Where((pair) =>
+                combined_tokens.AddRange(details.Defs.Where((pair) =>
                     {
                         var token = pair.Key;
                         int start_token_start = token.Symbol.StartIndex;
@@ -88,7 +86,7 @@ namespace AntlrVSIX.Tagger
                         return true;
                     }).Select((pair) => new KeyValuePair<IToken, int>(pair.Key.Symbol, pair.Value)));
 
-                combined_tokens.AddRange(details._ant_comments.Where((pair) =>
+                combined_tokens.AddRange(details.Comments.Where((pair) =>
                     {
                         var token = pair.Key;
                         int start_token_start = token.StartIndex;

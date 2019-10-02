@@ -88,7 +88,7 @@ namespace AntlrVSIX.Rename
             IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(path);
             List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
             List<ParserDetails> where_details = new List<ParserDetails>();
-            foreach (var kvp in ParserDetails._per_file_parser_details)
+            foreach (var kvp in ParserDetailsFactory.AllParserDetails)
             {
                 string file_name = kvp.Key;
                 ParserDetails details = kvp.Value;
@@ -101,14 +101,14 @@ namespace AntlrVSIX.Rename
                     if (p1 != p2) continue;
                 }
                 {
-                    var it = details._refs.Where(
+                    var it = details.Refs.Where(
                         (t) => grammar_description.CanRename[t.Value]
                             && t.Key.Symbol.Text == span.GetText()).Select(t => t.Key);
                     where.AddRange(it);
                     foreach (var i in it) where_details.Add(details);
                 }
                 {
-                    var it = details._defs.Where(
+                    var it = details.Defs.Where(
                         (t) => grammar_description.CanRename[t.Value]
                             && t.Key.Symbol.Text == span.GetText()).Select(t => t.Key);
                     where.AddRange(it);
@@ -161,7 +161,8 @@ namespace AntlrVSIX.Rename
                     {
                         var per_file_results = results.Where(r => r.FileName == f);
                         per_file_results.Reverse();
-                        var pd = ParserDetails._per_file_parser_details[f];
+                        var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(f);
+                        var pd = ParserDetailsFactory.Create(item);
                         IVsTextView vstv2 = IVsTextViewExtensions.FindTextViewFor(f);
                         if (vstv2 == null)
                         {
@@ -181,10 +182,10 @@ namespace AntlrVSIX.Rename
                                 edit.Replace(ss2, new_name);
                             }
                             edit.Apply();
-                            var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(f);
                             var code = buffer.GetBufferText();
                             item.Code = tb.GetBufferText();
-                            ParserDetails.Parse(item);
+                            var pdx = ParserDetailsFactory.Create(item);
+                            pdx.Parse(item);
                         }
                     }
                 }

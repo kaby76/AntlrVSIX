@@ -34,11 +34,12 @@
                 var grammar_description = GrammarDescriptionFactory.Create(ffn);
                 if (grammar_description != null)
                 {
-                    var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(ffn);
+                    Document item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(ffn);
                     var buffer = view.TextBuffer;
                     var code = buffer.GetBufferText();
                     item.Code = code;
-                    ParserDetails.Parse(item);
+                    var pd = ParserDetailsFactory.Create(item);
+                    pd.Parse(item);
                 }
             }
             catch (Exception ex)

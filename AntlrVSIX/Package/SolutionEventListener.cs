@@ -1,15 +1,14 @@
-﻿using AntlrVSIX.Extensions;
+﻿using Antlr4.Runtime.Tree;
+using AntlrVSIX.Extensions;
 using AntlrVSIX.Grammar;
-using Antlr4.Runtime;
-using Antlr4.Runtime.Tree;
+using AntlrVSIX.GrammarDescription;
 using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using VSLangProj;
+using Project = EnvDTE.Project;
 
 namespace AntlrVSIX.Package
 {
@@ -91,7 +90,20 @@ namespace AntlrVSIX.Package
                 }
             }
 
-            // Parse.
+            foreach (var project in ws.Projects)
+            {
+                foreach (var document in project.Documents)
+                {
+                    string file_name = document.FullPath;
+                    if (file_name == null) continue;
+                    var gd = GrammarDescriptionFactory.Create(file_name);
+                    if (gd == null) continue;
+                    if (!System.IO.File.Exists(file_name)) continue;
+                    var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(file_name);
+                    var pd = ParserDetailsFactory.Create(item);
+                    pd.Parse(document);
+                }
+            }
 
             foreach (var project in ws.Projects)
             {
@@ -102,13 +114,57 @@ namespace AntlrVSIX.Package
                     var gd = GrammarDescriptionFactory.Create(file_name);
                     if (gd == null) continue;
                     if (!System.IO.File.Exists(file_name)) continue;
-
-
-                    gd.Parse(file_name, document.Code,
-                        out IParseTree parse_tree,
-                        out Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st);
+                    var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(file_name);
+                    var pd = ParserDetailsFactory.Create(item);
+                    pd.Pass1(pd);
                 }
             }
+
+            foreach (var project in ws.Projects)
+            {
+                foreach (var document in project.Documents)
+                {
+                    string file_name = document.FullPath;
+                    if (file_name == null) continue;
+                    var gd = GrammarDescriptionFactory.Create(file_name);
+                    if (gd == null) continue;
+                    if (!System.IO.File.Exists(file_name)) continue;
+                    var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(file_name);
+                    var pd = ParserDetailsFactory.Create(item);
+                    pd.Pass2(pd);
+                }
+            }
+
+            foreach (var project in ws.Projects)
+            {
+                foreach (var document in project.Documents)
+                {
+                    string file_name = document.FullPath;
+                    if (file_name == null) continue;
+                    var gd = GrammarDescriptionFactory.Create(file_name);
+                    if (gd == null) continue;
+                    if (!System.IO.File.Exists(file_name)) continue;
+                    var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(file_name);
+                    var pd = ParserDetailsFactory.Create(item);
+                    pd.GatherDefs(document);
+                }
+            }
+
+            foreach (var project in ws.Projects)
+            {
+                foreach (var document in project.Documents)
+                {
+                    string file_name = document.FullPath;
+                    if (file_name == null) continue;
+                    var gd = GrammarDescriptionFactory.Create(file_name);
+                    if (gd == null) continue;
+                    if (!System.IO.File.Exists(file_name)) continue;
+                    var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(file_name);
+                    var pd = ParserDetailsFactory.Create(item);
+                    pd.GatherRefs(document);
+                }
+            }
+
         }
 
         public int OnAfterOpenProject(IVsHierarchy aPHierarchy, int aFAdded)

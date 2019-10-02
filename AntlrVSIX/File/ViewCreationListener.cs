@@ -58,7 +58,8 @@
             var code = buffer.GetBufferText();
             var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(ffn);
             item.Code = code;
-            ParserDetails.Parse(item);
+            var pd = ParserDetailsFactory.Create(item);
+            pd.Parse(item);
         }
 
         private void OnViewClosed(object sender, EventArgs e)

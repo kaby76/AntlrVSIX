@@ -10,23 +10,22 @@
     using System.Linq;
     using System.Text;
     using System.Windows.Media;
-    using EnvDTE;
-    using Microsoft.VisualStudio;
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
 
     class GrammarDescription : IGrammarDescription
     {
-        IParseTree _parse_tree;
-
         public string Name { get; } = "Antlr";
         public System.Type Parser { get; } = typeof(ANTLRv4Parser);
         public System.Type Lexer { get; } = typeof(ANTLRv4Lexer);
-
-        public void Parse(string ffn, string code, out IParseTree parse_tree, out Dictionary<IParseTree, CombinedScopeSymbol> symbols)
+        public ParserDetails CreateParserDetails(Document item)
         {
+            return new AntlrParserDetails(item);
+        }
+
+        public void Parse(ParserDetails pd)
+        {
+            string ffn = pd.FullFileName;
+            string code = pd.Code;
+
             IParseTree pt = null;
 
             // Set up Antlr to parse input grammar.
@@ -53,12 +52,7 @@
             //fn = "c:\\temp\\" + fn;
             //System.IO.File.WriteAllText(fn, sb.ToString());
 
-            parse_tree = pt;
-            var pass1 = new Pass1Listener();
-            ParseTreeWalker.Default.Walk(pass1, parse_tree);
-            var pass2 = new Pass2Listener(pass1._attributes, pass1._root);
-            ParseTreeWalker.Default.Walk(pass2, parse_tree);
-            symbols = pass2._attributes;
+            pd.ParseTree = pt;
         }
 
         public Dictionary<IToken, int> ExtractComments(string code)
@@ -376,14 +370,15 @@
 
         public bool CanReformat { get { return true; } }
 
-        public List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>, IParseTree, string>> PopUpDefinition { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>, IParseTree, string>>()
+        public List<Func<ParserDetails, IParseTree, string>> PopUpDefinition { get; } = new List<Func<ParserDetails, IParseTree, string>>()
         {
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // nonterminal
+            (ParserDetails pd, IParseTree t) => // nonterminal
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return null;
                     Antlr4.Runtime.Tree.IParseTree p = term;
-                    st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
+                    var dir = System.IO.Path.GetDirectoryName(pd.Item.FullPath);
+                    pd.Attributes.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
                     if (value == null) return null;
                     var sym = value as Symbol;
                     if (sym == null) return null;
@@ -397,7 +392,7 @@
                     else if (sym is Symtab.NonterminalSymbol)
                         sb.Append("Nonterminal ");
                     else return null;
-                    var fod = st.Where(kvp => kvp.Value == sym).Select(kvp => kvp.Key).FirstOrDefault();
+                    var fod = pd.Attributes.Where(kvp => kvp.Value == sym).Select(kvp => kvp.Key).FirstOrDefault();
                     if (fod == null) return sb.ToString();
                     sb.Append("defined in ");
                     sb.Append(sym.file);
@@ -408,12 +403,12 @@
                     Reconstruct.Doit(sb, node);
                     return sb.ToString();
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // terminal
+            (ParserDetails pd, IParseTree t) => // terminal
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return null;
                     Antlr4.Runtime.Tree.IParseTree p = term;
-                    st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
+                    pd.Attributes.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
                     if (value == null) return null;
                     var sym = value as Symbol;
                     if (sym == null) return null;
@@ -427,7 +422,7 @@
                     else if (sym is Symtab.NonterminalSymbol)
                         sb.Append("Nonterminal ");
                     else return null;
-                    var fod = st.Where(kvp => kvp.Value == sym).Select(kvp => kvp.Key).FirstOrDefault();
+                    var fod = pd.Attributes.Where(kvp => kvp.Value == sym).Select(kvp => kvp.Key).FirstOrDefault();
                     if (fod == null) return sb.ToString();
                     sb.Append("defined in ");
                     sb.Append(sym.file);
@@ -444,47 +439,5 @@
             null,
             null,
         };
-
-        public void ProcessFile(ProjectItem item)
-        {
-            var r = item.ProjectItems;
-            var c = r != null ? r.Count : 0;
-            bool do_not_parse = false;
-            try
-            {
-                if (item?.Properties == null) return;
-                object prop = item?.Properties?.Item("FullPath")?.Value;
-                string ffn = (string)prop;
-                bool has_build_action = false;
-
-                try
-                {
-                    object p2 = item?.Properties?.Item("BuildAction")?.Value;
-                    has_build_action = true;
-                }
-                catch (Exception _) { }
-                try
-                {
-                    object p3 = item?.Properties?.Item("CustomToolNamespace")?.Value;
-                }
-                catch (Exception _) { }
-                try
-                {
-                    object p4 = item?.Properties?.Item("CustomTool")?.Value;
-                }
-                catch (Exception _) { }
-                if (!ParserDetails._per_file_parser_details.ContainsKey(ffn))
-                {
-                    StreamReader sr = new StreamReader(ffn);
-                    var xx = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(ffn);
-                    xx.Code = sr.ReadToEnd();
-                    var pd = ParserDetails.Parse(xx);
-                }
-            }
-            catch (Exception eeks)
-            {
-            }
-        }
-
     }
 }
