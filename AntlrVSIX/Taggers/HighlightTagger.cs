@@ -114,9 +114,9 @@ namespace AntlrVSIX.Taggers
             ITextBuffer buf = currentRequest.Snapshot.TextBuffer;
             var doc = buf.GetTextDocument();
             string file_name = doc.FilePath;
-            ParserDetails details = null;
-            bool found = ParserDetailsFactory.AllParserDetails.Where(pair => pair.Key == file_name).Any();
-            if (!found) return;
+            Document item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(file_name);
+            var details = ParserDetailsFactory.Create(item);
+            if (details == null) return;
 
             List<KeyValuePair<Antlr4.Runtime.Tree.TerminalNodeImpl, int>> combined_tokens = new List<KeyValuePair<Antlr4.Runtime.Tree.TerminalNodeImpl, int>>();
 
