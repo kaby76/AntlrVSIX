@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Antlr4.Runtime;
 
 namespace Symtab
 {
@@ -15,8 +16,8 @@ namespace Symtab
             return this.Def;
         }
 
-        public RefSymbol(Symbol def)
-            : base(def.Name, def.Token)
+        public RefSymbol(IToken t, Symbol def)
+            : base(def.Name, t)
         {
             Def = def;
         }

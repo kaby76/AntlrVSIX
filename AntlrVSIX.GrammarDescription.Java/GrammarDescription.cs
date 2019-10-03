@@ -41,7 +41,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             {
                 pt = parser.compilationUnit();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // Parsing error.
             }

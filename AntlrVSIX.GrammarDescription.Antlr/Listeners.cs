@@ -118,7 +118,7 @@ namespace AntlrVSIX.GrammarDescription.Antlr
                     sym = (Symbol)new TerminalSymbol(id, first.Symbol);
                     _pd.RootScope.define(ref sym);
                 }
-                var s = (CombinedScopeSymbol)new RefSymbol(sym);
+                var s = (CombinedScopeSymbol)new RefSymbol(first.Symbol, sym);
                 _pd.Attributes[context] = s;
                 _pd.Attributes[context.GetChild(0)] = s;
             }
@@ -126,6 +126,7 @@ namespace AntlrVSIX.GrammarDescription.Antlr
 
         public override void EnterRuleref([NotNull] ANTLRv4Parser.RulerefContext context)
         {
+            var sy = context.GetChild(0) as TerminalNodeImpl;
             var id = context.GetChild(0).GetText();
             Symbol sym = _pd.RootScope.LookupType(id);
             if (sym == null)
@@ -133,7 +134,7 @@ namespace AntlrVSIX.GrammarDescription.Antlr
                 sym = (Symbol)new NonterminalSymbol(id, null);
                 _pd.RootScope.define(ref sym);
             }
-            var s = (CombinedScopeSymbol)new RefSymbol(sym);
+            var s = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, sym);
             _pd.Attributes[context] = s;
             _pd.Attributes[context.GetChild(0)] = s;
         }
@@ -153,7 +154,7 @@ namespace AntlrVSIX.GrammarDescription.Antlr
                         sym = (Symbol)new ModeSymbol(id, null);
                         _pd.RootScope.define(ref sym);
                     }
-                    var s = (CombinedScopeSymbol)new RefSymbol(sym);
+                    var s = (CombinedScopeSymbol)new RefSymbol(term.Symbol, sym);
                     _pd.Attributes[context] = s;
                     _pd.Attributes[context.GetChild(0)] = s;
                 }
@@ -167,7 +168,7 @@ namespace AntlrVSIX.GrammarDescription.Antlr
                         sym = (Symbol)new ChannelSymbol(id, null);
                         _pd.RootScope.define(ref sym);
                     }
-                    var s = (CombinedScopeSymbol)new RefSymbol(sym);
+                    var s = (CombinedScopeSymbol)new RefSymbol(term.Symbol, sym);
                     _pd.Attributes[context] = s;
                     _pd.Attributes[context.GetChild(0)] = s;
                 }

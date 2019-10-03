@@ -85,49 +85,32 @@ namespace AntlrVSIX.FindAllReferences
             // Find all references..
             ////////////////////////
 
-            string classification = AntlrLanguagePackage.Instance.Classification;
             SnapshotSpan span = AntlrLanguagePackage.Instance.Span;
             ITextView view = AntlrLanguagePackage.Instance.View;
             ITextBuffer buffer = view.TextBuffer;
             ITextDocument doc = buffer.GetTextDocument();
-            string path = doc.FilePath;
-            IGrammarDescription grammar_description = GrammarDescriptionFactory.Create(path);
-            List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
-            List<ParserDetails> where_details = new List<ParserDetails>();
-            foreach (var kvp in ParserDetailsFactory.AllParserDetails)
-            {
-                string file_name = kvp.Key;
-                ParserDetails details = kvp.Value;
-                var gd = GrammarDescriptionFactory.Create(file_name);
-                if (gd != grammar_description) continue;
-                if (Options.OptionsCommand.Instance.RestrictedDirectory)
-                {
-                    string p1 = System.IO.Path.GetDirectoryName(file_name);
-                    string p2 = System.IO.Path.GetDirectoryName(path);
-                    if (p1 != p2) continue;
-                }
-                {
-                    var it = details.Refs.Where(
-                        (t) => grammar_description.CanFindAllRefs[t.Value]
-                            && t.Key.Symbol.Text == span.GetText()).Select(t => t.Key);
-                    where.AddRange(it);
-                    foreach (var j in it) where_details.Add(details);
-                }
-                {
-                    var it = details.Defs.Where(
-                        (t) => grammar_description.CanFindAllRefs[t.Value]
-                            && t.Key.Symbol.Text == span.GetText()).Select(t => t.Key);
-                    where.AddRange(it);
-                    foreach (var j in it) where_details.Add(details);
-                }
-            }
-            if (!where.Any()) return;
+            var file_name = doc.FilePath;
+            var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(file_name);
+            var ref_pd = ParserDetailsFactory.Create(item);
+            Antlr4.Runtime.Tree.IParseTree ref_pt = span.Start.Find();
+            if (ref_pt == null) return;
+            ref_pd.Attributes.TryGetValue(ref_pt, out Symtab.CombinedScopeSymbol value);
+            if (value == null) return;
+            var @ref = value as Symtab.Symbol;
+            if (@ref == null) return;
+            var def = @ref.resolve();
+            if (def == null) return;
+            var def_file = def.file;
+            if (def_file == null) return;
+            var def_item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(def_file);
+            if (def_item == null) return;
             FindAntlrSymbolsModel.Instance.Results.Clear();
-            for (int i = 0; i < where.Count; ++i)
+            foreach (KeyValuePair<Antlr4.Runtime.Tree.IParseTree, Symtab.CombinedScopeSymbol> attr in ref_pd.Attributes)
             {
-                Antlr4.Runtime.Tree.TerminalNodeImpl x = where[i];
-                ParserDetails y = where_details[i];
-                var w = new Entry() { FileName = y.FullFileName, LineNumber = x.Symbol.Line, ColumnNumber = x.Symbol.Column, Token = x.Symbol };
+                if (!(attr.Value is Symtab.Symbol)) continue;
+                var symbol = attr.Value as Symtab.Symbol;
+                if (symbol.resolve() != def) continue;
+                var w = new Entry() { FileName = symbol.Token.InputStream.SourceName, LineNumber = symbol.line, ColumnNumber = symbol.col, Token = symbol.Token };
                 FindAntlrSymbolsModel.Instance.Results.Add(w);
             }
             FindRefsWindowCommand.Instance.Show();

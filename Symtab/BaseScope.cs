@@ -147,7 +147,7 @@
             if (symbols.ContainsKey(sym.Name))
             {
                 System.Type t = sym.GetType();
-                var s = System.Activator.CreateInstance(t, new object[] { "_generated_" + new System.Random().Next() } );
+                var s = System.Activator.CreateInstance(t, new object[] { "_generated_" + new System.Random().Next(), null } );
                 sym = s as Symbol;
                 // throw new System.ArgumentException("duplicate symbol " + sym.Name);
             }

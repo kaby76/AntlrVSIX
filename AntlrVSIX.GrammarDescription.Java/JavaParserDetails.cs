@@ -8,7 +8,7 @@ namespace AntlrVSIX.GrammarDescription.Java
 {
     class JavaParserDetails : ParserDetails
     {
-        public Pass1Listener _pass1;
-        public Pass2Listener _pass2;
+        //public Pass1Listener _pass1;
+        //public Pass2Listener _pass2;
     }
 }

@@ -91,7 +91,9 @@ namespace AntlrVSIX.GrammarDescription
                     {
                         pd.Defs.Add(x, classification);
                     }
-                    catch (ArgumentException e)
+#pragma warning disable CS0168 // Variable is declared but never used
+                    catch (ArgumentException _)
+#pragma warning restore CS0168 // Variable is declared but never used
                     {
                         // Duplicate
                     }
@@ -117,7 +119,9 @@ namespace AntlrVSIX.GrammarDescription
                     {
                         pd.Refs.Add(x, classification);
                     }
-                    catch (ArgumentException e)
+#pragma warning disable CS0168 // Variable is declared but never used
+                    catch (ArgumentException _)
+#pragma warning restore CS0168 // Variable is declared but never used
                     {
                         // Duplicate
                     }

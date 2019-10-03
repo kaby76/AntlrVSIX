@@ -105,120 +105,52 @@ namespace AntlrVSIX.Taggers
         {
             SnapshotPoint currentRequest = RequestedPoint;
             List<SnapshotSpan> wordSpans = new List<SnapshotSpan>();
-
             SnapshotPoint start = currentRequest;
             int curLoc = start.Position;
             SnapshotPoint end = currentRequest;
             var snapshot = currentRequest.Snapshot;
-
             ITextBuffer buf = currentRequest.Snapshot.TextBuffer;
             var doc = buf.GetTextDocument();
             string file_name = doc.FilePath;
             Document item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(file_name);
-            var details = ParserDetailsFactory.Create(item);
-            if (details == null) return;
-
-            List<KeyValuePair<Antlr4.Runtime.Tree.TerminalNodeImpl, int>> combined_tokens = new List<KeyValuePair<Antlr4.Runtime.Tree.TerminalNodeImpl, int>>();
-
-            combined_tokens.AddRange(
-                details.Refs.Where((pair) =>
-                {
-                    var token = pair.Key;
-                    int start_token_start = token.Symbol.StartIndex;
-                    int end_token_end = token.Symbol.StopIndex;
-                    if (curLoc < start_token_start) return false;
-                    if (end_token_end < curLoc) return false;
-                    return true;
-                }));
-
-            combined_tokens.AddRange(details.Defs.Where((pair) =>
-            {
-                var token = pair.Key;
-                int start_token_start = token.Symbol.StartIndex;
-                int end_token_end = token.Symbol.StopIndex;
-                if (curLoc < start_token_start) return false;
-                if (end_token_end < curLoc) return false;
-                return true;
-            }));
-
-            if (combined_tokens.Count > 1 || combined_tokens.Count == 0)
-            {
-                SynchronousUpdate(currentRequest, new NormalizedSnapshotSpanCollection(), null);
-                return;
-            }
-
-            var the_symbol = combined_tokens.First();
-            
-            var node = (Antlr4.Runtime.Tree.IParseTree)the_symbol.Key;
-            if (! details.Attributes.TryGetValue(node, out Symtab.CombinedScopeSymbol value))
-            {
-                return;
-            }
-            var a1 = the_symbol.Key.Symbol.StartIndex;
-            var a2 = the_symbol.Key.Symbol.StopIndex;
-            var a3 = new SnapshotPoint(snapshot, a1);
-            var a4 = new SnapshotPoint(snapshot, a2);
-            var currentWord = new SnapshotSpan(a3, a4);
-            bool can_rename = _aggregator.GetClassificationSpans(currentWord).Where(
-                classification =>
-                {
-                    var name = classification.ClassificationType.Classification;
-                    if (!_grammar_description.InverseMap.TryGetValue(name, out int type))
-                        return false;
-                    return _grammar_description.CanRename[type];
-                }).Any();
-            if (! can_rename) return;
-
-            SnapshotSpan span = currentWord;
-            ITextView view = this._view;
-            ITextBuffer buffer = view.TextBuffer;
-            string path = doc.FilePath;
+            var ref_pd = ParserDetailsFactory.Create(item);
+            if (ref_pd == null) return;
+            SnapshotSpan span = new SnapshotSpan(start, 0);
+            Antlr4.Runtime.Tree.IParseTree ref_pt = span.Start.Find();
+            if (ref_pt == null) return;
+            ref_pd.Attributes.TryGetValue(ref_pt, out Symtab.CombinedScopeSymbol value);
+            if (value == null) return;
+            var @ref = value as Symtab.Symbol;
+            if (@ref == null) return;
+            var def = @ref.resolve();
+            if (def == null) return;
+            var def_file = def.file;
+            if (def_file == null) return;
+            var def_item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(def_file);
+            if (def_item == null) return;
+            var def_pd = ParserDetailsFactory.Create(def_item);
             List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
-            where.AddRange(details.Refs.Where(
+            where.AddRange(ref_pd.Refs.Where(
                 (t) =>
                 {
-                    if (!_grammar_description.CanRename[t.Value])
-                        return false;
                     Antlr4.Runtime.Tree.TerminalNodeImpl x = t.Key;
-                    if (x == the_symbol.Key)
-                        return true;
-                    var nn = (Antlr4.Runtime.Tree.IParseTree)t.Key;
-                    if (! details.Attributes.TryGetValue(nn, out Symtab.CombinedScopeSymbol value2))
-                    {
-                        return false;
-                    }
-                    if (value2 == value)
-                        return true;
-                    if (!(value2 is Symtab.Symbol))
-                        return false;
-                    if (!(value is Symtab.Symbol))
-                        return false;
-                    if ((value as Symtab.Symbol).resolve() == (value2 as Symtab.Symbol).resolve())
-                        return true;
+                    if (x == @ref.Token) return true;
+                    ref_pd.Attributes.TryGetValue(x, out Symtab.CombinedScopeSymbol v);
+                    var vv = v as Symtab.Symbol;
+                    if (vv == null) return false;
+                    if (vv.resolve() == def) return true;
                     return false;
                 }).Select(t => t.Key));
 
-            where.AddRange(details.Defs.Where(
+            where.AddRange(ref_pd.Defs.Where(
                 (t) =>
                 {
-                    if (!_grammar_description.CanRename[t.Value])
-                        return false;
                     Antlr4.Runtime.Tree.TerminalNodeImpl x = t.Key;
-                    if (x == the_symbol.Key)
-                        return true;
-                    var nn = (Antlr4.Runtime.Tree.IParseTree)t.Key;
-                    if (! details.Attributes.TryGetValue(nn, out Symtab.CombinedScopeSymbol value2))
-                    {
-                        return false;
-                    }
-                    if (value2 == value)
-                        return true;
-                    if (!(value2 is Symtab.Symbol))
-                        return false;
-                    if (!(value is Symtab.Symbol))
-                        return false;
-                    if ((value as Symtab.Symbol).resolve() == (value2 as Symtab.Symbol).resolve())
-                        return true;
+                    if (x == @ref.Token) return true;
+                    ref_pd.Attributes.TryGetValue(x, out Symtab.CombinedScopeSymbol v);
+                    var vv = v as Symtab.Symbol;
+                    if (vv == null) return false;
+                    if (vv.resolve() == def) return true;
                     return false;
                 }).Select(t => t.Key));
 
@@ -228,26 +160,23 @@ namespace AntlrVSIX.Taggers
             for (int i = 0; i < where.Count; ++i)
             {
                 Antlr4.Runtime.Tree.TerminalNodeImpl x = where[i];
-                ParserDetails y = details;
+                ParserDetails y = ref_pd;
                 var w = new Entry() { FileName = y.FullFileName, LineNumber = x.Symbol.Line, ColumnNumber = x.Symbol.Column, Token = x.Symbol };
                 results.Add(w);
             }
             for (int i = 0; i < results.Count; ++i)
             {
                 var w = results[i];
-                if (w.FileName == path)
-                {
-                    // Create new span in the appropriate view.
-                    ITextSnapshot cc = buffer.CurrentSnapshot;
-                    SnapshotSpan ss = new SnapshotSpan(cc, w.Token.StartIndex, 1 + w.Token.StopIndex - w.Token.StartIndex);
-                    SnapshotPoint sp = ss.Start;
-                    wordSpans.Add(ss);
-                }
+                // Create new span in the appropriate view.
+                ITextSnapshot cc = buf.CurrentSnapshot;
+                SnapshotSpan ss = new SnapshotSpan(cc, w.Token.StartIndex, 1 + w.Token.StopIndex - w.Token.StartIndex);
+                SnapshotPoint sp = ss.Start;
+                wordSpans.Add(ss);
             }
 
             // If we are still up-to-date (another change hasn't happened yet), do a real update
             if (currentRequest == RequestedPoint)
-                SynchronousUpdate(currentRequest, new NormalizedSnapshotSpanCollection(wordSpans), currentWord);
+                SynchronousUpdate(currentRequest, new NormalizedSnapshotSpanCollection(wordSpans), span);
 
         }
 

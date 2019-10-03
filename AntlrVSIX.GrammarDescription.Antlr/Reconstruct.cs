@@ -1,18 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Antlr4.Runtime.Tree;
 using System.Text;
-using System.Threading.Tasks;
-using Antlr4.Runtime;
-using Antlr4.Runtime.Tree;
-using AntlrVSIX.GrammarDescription;
-using Symtab;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Windows.Media;
 
 
 namespace AntlrVSIX.GrammarDescription.Antlr
