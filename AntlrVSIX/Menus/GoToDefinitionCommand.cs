@@ -93,41 +93,35 @@ namespace AntlrVSIX.GoToDefinition
             ITextView view = AntlrLanguagePackage.Instance.View;
             ITextBuffer buffer = view.TextBuffer;
             ITextDocument doc = buffer.GetTextDocument();
-            string path_containing_applied_occurrence = Path.GetDirectoryName(doc.FilePath);
-            List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
-            List<ParserDetails> where_details = new List<ParserDetails>();
-            Antlr4.Runtime.Tree.TerminalNodeImpl token = null;
-            foreach (var kvp in ParserDetailsFactory.AllParserDetails)
-            {
-                string file_name = kvp.Key;
-                string path_containing_defining_occurrence = Path.GetDirectoryName(file_name);
-                ParserDetails details = kvp.Value;
-                {
-                    var it = details.Defs.Where(
-                        (t) => t.Key.Symbol.Text == span.GetText()
-                            && path_containing_applied_occurrence
-                            == path_containing_defining_occurrence).Select(t => t.Key);
-                    where.AddRange(it);
-                    foreach (var i in it) where_details.Add(details);
-                }
-            }
-            if (where.Any()) token = where.First();
-            else return;
-            ParserDetails where_token = where_details.First();
-            string full_file_name = where_token.FullFileName;
+            var file_name = doc.FilePath;
+            var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(file_name);
+            var ref_pd = ParserDetailsFactory.Create(item);
+            Antlr4.Runtime.Tree.IParseTree ref_pt = span.Start.Find();
+            if (ref_pt == null) return;
+            ref_pd.Attributes.TryGetValue(ref_pt, out Symtab.CombinedScopeSymbol value);
+            if (value == null) return;
+            var @ref = value as Symtab.Symbol;
+            if (@ref == null) return;
+            var def = @ref.resolve();
+            if (def == null) return;
+            var def_file = def.file;
+            if (def_file == null) return;
+            var def_item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(def_file);
+            if (def_item == null) return;
+            var def_pd = ParserDetailsFactory.Create(def_item);
+            string full_file_name = def_pd.FullFileName;
             IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(full_file_name);
             {
                 IVsTextViewExtensions.ShowFrame(full_file_name);
-                vstv = IVsTextViewExtensions.FindTextViewFor(where_token.FullFileName);
+                vstv = IVsTextViewExtensions.FindTextViewFor(def_pd.FullFileName);
             }
             IWpfTextView wpftv = vstv.GetIWpfTextView();
             if (wpftv == null) return;
-
-            int line_number;
-            int colum_number;
-            vstv.GetLineAndColumn(token.Symbol.StartIndex, out line_number, out colum_number);
+            int line_number = def.line;
+            int column_number = def.col;
+            vstv.GetLineAndColumn(def.Token.StartIndex, out line_number, out column_number);
             ITextSnapshot cc = wpftv.TextBuffer.CurrentSnapshot;
-            SnapshotSpan ss = new SnapshotSpan(cc, token.Symbol.StartIndex, 1);
+            SnapshotSpan ss = new SnapshotSpan(cc, def.Token.StartIndex, 1);
             SnapshotPoint sp = ss.Start;
             wpftv.Caret.MoveTo(sp);
             if (line_number > 0)

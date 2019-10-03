@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Antlr4.Runtime;
 
     /// <summary>
     /// An abstract base class that houses common functionality for
@@ -96,9 +97,10 @@
             }
         }
 
-        public virtual int line { get; set; }
-        public virtual int col { get; set; }
-        public virtual string file { get; set; }
+        public virtual int line { get; }
+        public virtual int col { get; }
+        public virtual string file { get; }
+        public virtual IToken Token { get; }
 
         public override bool Equals(object obj)
         {

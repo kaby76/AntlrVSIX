@@ -22,12 +22,10 @@
             return this;
         }
 
-        public BaseSymbol(string name, int l, int c, string f)
+        public BaseSymbol(string name, IToken token)
         {
             this.name = name;
-            this.line = l;
-            this.col = c;
-            this.file = f;
+            this.Token = token;
         }
 
         public virtual string Name
@@ -133,9 +131,10 @@
         }
 
         public Symbol definition { get; set; }
-        public virtual int line { get; set; }
-        public virtual int col { get; set; }
-        public virtual string file { get; set; }
+        public virtual int line { get { return Token != null ? Token.Line : 0; } }
+        public virtual int col { get { return Token != null ? Token.Column : 0; } }
+        public virtual string file { get { return Token != null ? Token.InputStream.SourceName : ""; } }
+        public virtual IToken Token { get; protected set; }
     }
 
 }

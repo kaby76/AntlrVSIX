@@ -1,11 +1,12 @@
 ﻿namespace Symtab
 {
+    using Antlr4.Runtime;
 
     public class PrimitiveType : BaseSymbol, Type
     {
         protected internal int typeIndex;
 
-        public PrimitiveType(string n, int l, int c, string f) : base(n, l, c, f)
+        public PrimitiveType(string n, IToken t) : base(n, t)
         {
         }
 

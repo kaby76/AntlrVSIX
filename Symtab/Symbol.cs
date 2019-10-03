@@ -1,5 +1,6 @@
 ﻿namespace Symtab
 {
+    using Antlr4.Runtime;
 
     /// <summary>
     /// A generic programming language symbol. A symbol has to have a name and
@@ -12,9 +13,10 @@
         string Name {get;}
         Scope Scope {get;set;}
         int InsertionOrderNumber {get;set;}
-        int line { get; set; }
-        int col { get; set; }
-        string file { get; set; }
+        int line { get; }
+        int col { get; }
+        string file { get; }
+        IToken Token { get; }
 
         // Resolve a ref or def into a def symbol.
         Symbol resolve();

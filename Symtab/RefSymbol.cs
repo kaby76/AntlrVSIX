@@ -16,7 +16,7 @@ namespace Symtab
         }
 
         public RefSymbol(Symbol def)
-            : base(def.Name, def.line, def.col, def.file)
+            : base(def.Name, def.Token)
         {
             Def = def;
         }

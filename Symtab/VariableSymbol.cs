@@ -1,9 +1,10 @@
 ﻿namespace Symtab
 {
+    using Antlr4.Runtime;
 
     public class VariableSymbol : BaseSymbol, TypedSymbol
     {
-        public VariableSymbol(string n, int l, int c, string f) : base(n, l, c, f)
+        public VariableSymbol(string n, IToken t) : base(n, t)
         {
         }
 

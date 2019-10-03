@@ -74,7 +74,7 @@ namespace AntlrVSIX.GrammarDescription.Java
                 var id = vdid.GetChild(0);
                 var term = id.GetChild(0) as TerminalNodeImpl;
                 var name = term.GetText();
-                Symbol f = new Symtab.LocalSymbol(name, term.Symbol.Line, term.Symbol.Column, term.Symbol.InputStream.SourceName);
+                Symbol f = new Symtab.LocalSymbol(name, term.Symbol);
                 var scope = GetScope(NearestScope(context));
                 scope.define(ref f);
                 _attributes[term] = (CombinedScopeSymbol)f;
@@ -211,7 +211,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             var id = vdi.GetChild(0);
             var term = id.GetChild(0) as TerminalNodeImpl;
             var name = term.GetText();
-            Symbol f = new Symtab.LocalSymbol(name, term.Symbol.Line, term.Symbol.Column, term.Symbol.InputStream.SourceName);
+            Symbol f = new Symtab.LocalSymbol(name, term.Symbol);
             _attributes[vdi] = (CombinedScopeSymbol)f;
             var scope = GetScope(NearestScope(context));
             scope.define(ref f);
@@ -282,7 +282,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             else if (parent is Java9Parser.VariableDeclaratorIdContext && parent.Parent is Java9Parser.FormalParameterContext)
             {
                 var term = context.GetChild(0) as TerminalNodeImpl;
-                Symbol f = new Symtab.ParameterSymbol(term.GetText(), term.Symbol.Line, term.Symbol.Column, term.Symbol.InputStream.SourceName);
+                Symbol f = new Symtab.ParameterSymbol(term.GetText(), term.Symbol);
                 var p = (ParserRuleContext)context;
                 for (; p != null; p = (ParserRuleContext)p.Parent)
                 {
@@ -301,7 +301,7 @@ namespace AntlrVSIX.GrammarDescription.Java
             else if (parent is Java9Parser.VariableDeclaratorIdContext)
             {
                 var term = context.GetChild(0) as TerminalNodeImpl;
-                Symbol f = new Symtab.FieldSymbol(term.GetText(), term.Symbol.Line, term.Symbol.Column, term.Symbol.InputStream.SourceName);
+                Symbol f = new Symtab.FieldSymbol(term.GetText(), term.Symbol);
                 var p = (ParserRuleContext)context;
                 for (; p != null; p = (ParserRuleContext)p.Parent)
                 {

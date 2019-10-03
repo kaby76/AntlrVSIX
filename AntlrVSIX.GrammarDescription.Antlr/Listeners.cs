@@ -47,7 +47,7 @@ namespace AntlrVSIX.GrammarDescription.Antlr
             if (i == context.ChildCount) return;
             var rule_ref = context.GetChild(i) as TerminalNodeImpl;
             var id = rule_ref.GetText();
-            Symbol sym = new NonterminalSymbol(id, rule_ref.Symbol.Line, rule_ref.Symbol.Column, rule_ref.Symbol.InputStream.SourceName);
+            Symbol sym = new NonterminalSymbol(id, rule_ref.Symbol);
             _pd.RootScope.define(ref sym);
             var s = (CombinedScopeSymbol)sym;
             _pd.Attributes[context] = s;
@@ -66,7 +66,7 @@ namespace AntlrVSIX.GrammarDescription.Antlr
             if (i == context.ChildCount) return;
             var token_ref = context.GetChild(i) as TerminalNodeImpl;
             var id = token_ref.GetText();
-            Symbol sym = new TerminalSymbol(id, token_ref.Symbol.Line, token_ref.Symbol.Column, token_ref.Symbol.InputStream.SourceName);
+            Symbol sym = new TerminalSymbol(id, token_ref.Symbol);
             _pd.RootScope.define(ref sym);
             var s = (CombinedScopeSymbol)sym;
             _pd.Attributes[context] = s;
@@ -79,7 +79,7 @@ namespace AntlrVSIX.GrammarDescription.Antlr
             {
                 var term = context.GetChild(0) as TerminalNodeImpl;
                 var id = term.GetText();
-                Symbol sym = new ModeSymbol(id, term.Symbol.Line, term.Symbol.Column, term.Symbol.InputStream.SourceName);
+                Symbol sym = new ModeSymbol(id, term.Symbol);
                 _pd.RootScope.define(ref sym);
                 var s = (CombinedScopeSymbol)sym;
                 _pd.Attributes[context] = s;
@@ -88,7 +88,7 @@ namespace AntlrVSIX.GrammarDescription.Antlr
             {
                 var term = context.GetChild(0) as TerminalNodeImpl;
                 var id = term.GetText();
-                Symbol sym = new ChannelSymbol(id, term.Symbol.Line, term.Symbol.Column, term.Symbol.InputStream.SourceName);
+                Symbol sym = new ChannelSymbol(id, term.Symbol);
                 _pd.RootScope.define(ref sym);
                 var s = (CombinedScopeSymbol)sym;
                 _pd.Attributes[context] = s;
@@ -115,7 +115,7 @@ namespace AntlrVSIX.GrammarDescription.Antlr
                 Symbol sym = _pd.RootScope.LookupType(id);
                 if (sym == null)
                 {
-                    sym = (Symbol)new TerminalSymbol(id, first.Symbol.Line, first.Symbol.Column, first.Symbol.InputStream.SourceName);
+                    sym = (Symbol)new TerminalSymbol(id, first.Symbol);
                     _pd.RootScope.define(ref sym);
                 }
                 var s = (CombinedScopeSymbol)new RefSymbol(sym);
@@ -130,7 +130,7 @@ namespace AntlrVSIX.GrammarDescription.Antlr
             Symbol sym = _pd.RootScope.LookupType(id);
             if (sym == null)
             {
-                sym = (Symbol)new NonterminalSymbol(id, 0, 0, null);
+                sym = (Symbol)new NonterminalSymbol(id, null);
                 _pd.RootScope.define(ref sym);
             }
             var s = (CombinedScopeSymbol)new RefSymbol(sym);
@@ -150,7 +150,7 @@ namespace AntlrVSIX.GrammarDescription.Antlr
                     Symbol sym = _pd.RootScope.LookupType(id);
                     if (sym == null)
                     {
-                        sym = (Symbol)new ModeSymbol(id, 0, 0, null);
+                        sym = (Symbol)new ModeSymbol(id, null);
                         _pd.RootScope.define(ref sym);
                     }
                     var s = (CombinedScopeSymbol)new RefSymbol(sym);
@@ -164,7 +164,7 @@ namespace AntlrVSIX.GrammarDescription.Antlr
                     Symbol sym = _pd.RootScope.LookupType(id);
                     if (sym == null)
                     {
-                        sym = (Symbol)new ChannelSymbol(id, 0, 0, null);
+                        sym = (Symbol)new ChannelSymbol(id, null);
                         _pd.RootScope.define(ref sym);
                     }
                     var s = (CombinedScopeSymbol)new RefSymbol(sym);
