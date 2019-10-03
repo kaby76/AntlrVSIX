@@ -107,6 +107,7 @@ namespace AntlrVSIX.FindAllReferences
             FindAntlrSymbolsModel.Instance.Results.Clear();
             foreach (KeyValuePair<Antlr4.Runtime.Tree.IParseTree, Symtab.CombinedScopeSymbol> attr in ref_pd.Attributes)
             {
+                if (!(attr.Key is Antlr4.Runtime.Tree.TerminalNodeImpl)) continue;
                 if (!(attr.Value is Symtab.Symbol)) continue;
                 var symbol = attr.Value as Symtab.Symbol;
                 if (symbol.resolve() != def) continue;
