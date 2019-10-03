@@ -398,7 +398,9 @@
                     sb.Append(sym.file);
                     sb.AppendLine();
                     var node = fod;
-                    for (; node != null; node = node.Parent) if (node is ANTLRv4Parser.RuleSpecContext) break;
+                    for (; node != null; node = node.Parent)
+                        if (node is ANTLRv4Parser.LexerRuleSpecContext ||
+                            node is ANTLRv4Parser.ParserRuleSpecContext) break;
                     if (node == null) return null;
                     Reconstruct.Doit(sb, node);
                     return sb.ToString();
@@ -428,7 +430,9 @@
                     sb.Append(sym.file);
                     sb.AppendLine();
                     var node = fod;
-                    for (; node != null; node = node.Parent) if (node is ANTLRv4Parser.RuleSpecContext) break;
+                    for (; node != null; node = node.Parent)
+                        if (node is ANTLRv4Parser.LexerRuleSpecContext ||
+                            node is ANTLRv4Parser.ParserRuleSpecContext) break;
                     if (node == null) return null;
                     Reconstruct.Doit(sb, node);
                     return sb.ToString();
