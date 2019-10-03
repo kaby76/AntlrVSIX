@@ -6,8 +6,8 @@ for languages that are based in Antlr v4 grammars.
 Each language is described by the grammar along with mappings of syntax
 to support tagging, go to def, find all refs,
 replace, go to visitor/listener, command completion, options,
-reformat. Programming language that are currently being supported to one degree or another
-are Antlr itself, Java, Python, and Rust.
+reformat. Programming languages that are currently supported to one degree or another
+are: Antlr, Java, Python, and Rust.
 
 This extension also includes project templates for compiling and running Antlr programs.
 
