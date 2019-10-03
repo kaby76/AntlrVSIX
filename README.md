@@ -42,6 +42,10 @@ just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio
 
 * Use Visual Studio 2019 to build the extension.
 
+## New in v4.0:
+
+* Compiler symbol table implementation added. Workspace implementation added. Intellisense pop-up gives definitions.
+
 ## New in v3.0:
 
 * Supports Java, Python, Rust, Antlr in various stages. Description of languages abstracted into a "Grammar Description".
