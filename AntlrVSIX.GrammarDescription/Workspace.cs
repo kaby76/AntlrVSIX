@@ -12,6 +12,8 @@ namespace AntlrVSIX.GrammarDescription
         string _name;
         string _ffn;
         List<Project> _projects = new List<Project>();
+        Func<string, object, string> _get_property;
+        object _get_property_data;
 
         public static Workspace Instance
         {
@@ -46,12 +48,22 @@ namespace AntlrVSIX.GrammarDescription
             return project;
         }
 
-        public Document FindProjectFullName(string ffn)
+        public Document FindDocumentFullName(string ffn)
         {
-            foreach (var proj in _projects)
+            foreach (Project proj in _projects)
                 foreach (var doc in proj.Documents)
                     if (doc.FullPath == ffn)
                         return doc;
+            if (System.IO.File.Exists(ffn))
+            {
+                foreach (var proj in _projects)
+                    if (proj.Name == "Miscellaneous Files")
+                    {
+                        var doc = new Document(ffn, null, null);
+                        proj.AddDocument(doc);
+                        return doc;
+                    }
+            }
             return null;
         }
     }

@@ -13,8 +13,20 @@ namespace AntlrVSIX.GrammarDescription
         List<Document> _documents = new List<Document>();
         Dictionary<string, string> _properties = new Dictionary<string, string>();
         Dictionary<string, bool> _lazy_evaluated = new Dictionary<string, bool>();
-        Func<string, object, string> _get_property;
-        object _get_property_data;
+        public Func<string, object, string> _get_property;
+        public object _get_property_data;
+
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; }
+        }
+
+        public string FullPath
+        {
+            get { return _ffn; }
+            set { _ffn = value; }
+        }
 
         public Project(string name, string ffn, Func<string, object, string> get_property, object get_property_data)
         {
@@ -46,7 +58,7 @@ namespace AntlrVSIX.GrammarDescription
         {
             _lazy_evaluated.TryGetValue(name, out bool evaluated);
             string result;
-            if (!evaluated)
+            if (_get_property != null && !evaluated)
             {
                 result = _get_property(name, _get_property_data);
                 _properties[name] = result;

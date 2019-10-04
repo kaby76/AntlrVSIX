@@ -83,7 +83,7 @@ namespace AntlrVSIX.GrammarDescription
         {
             _lazy_evaluated.TryGetValue(name, out bool evaluated);
             string result;
-            if (!evaluated)
+            if (_get_property != null && !evaluated)
             {
                 result = _get_property(name, _get_property_data);
                 _properties[name] = result;

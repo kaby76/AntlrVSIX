@@ -90,7 +90,7 @@ namespace AntlrVSIX.FindAllReferences
             ITextBuffer buffer = view.TextBuffer;
             ITextDocument doc = buffer.GetTextDocument();
             var file_name = doc.FilePath;
-            var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(file_name);
+            var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(file_name);
             var ref_pd = ParserDetailsFactory.Create(item);
             Antlr4.Runtime.Tree.IParseTree ref_pt = span.Start.Find();
             if (ref_pt == null) return;
@@ -102,7 +102,7 @@ namespace AntlrVSIX.FindAllReferences
             if (def == null) return;
             var def_file = def.file;
             if (def_file == null) return;
-            var def_item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(def_file);
+            var def_item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(def_file);
             if (def_item == null) return;
             FindAntlrSymbolsModel.Instance.Results.Clear();
             foreach (KeyValuePair<Antlr4.Runtime.Tree.IParseTree, Symtab.CombinedScopeSymbol> attr in ref_pd.Attributes)

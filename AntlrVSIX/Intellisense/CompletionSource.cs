@@ -38,7 +38,7 @@
             var gd = GrammarDescriptionFactory.Create(ffn);
             if (gd == null) return;
             List<Completion> completions = new List<Completion>();
-            var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(doc.FilePath);
+            var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(doc.FilePath);
             var pd = ParserDetailsFactory.Create(item);
             foreach (var s in pd.Refs
                 .Where(t => t.Value == 0)

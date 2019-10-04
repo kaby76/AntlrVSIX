@@ -56,7 +56,8 @@ namespace AntlrVSIX.ErrorTagger
                 var dd = buf.GetTextDocument();
                 string ffn = dd.FilePath;
                 string path_containing_applied_occurrence = Path.GetDirectoryName(ffn);
-                var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(ffn);
+                var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(ffn);
+                if (item == null) yield break;
                 var details = ParserDetailsFactory.Create(item);
                 if (details == null) continue;
                 SnapshotPoint start = curSpan.Start;

@@ -161,7 +161,7 @@ namespace AntlrVSIX.Rename
                     {
                         var per_file_results = results.Where(r => r.FileName == f);
                         per_file_results.Reverse();
-                        var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(f);
+                        var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(f);
                         var pd = ParserDetailsFactory.Create(item);
                         IVsTextView vstv2 = IVsTextViewExtensions.FindTextViewFor(f);
                         if (vstv2 == null)

@@ -127,7 +127,7 @@ namespace AntlrVSIX.Package
                         var gd = GrammarDescriptionFactory.Create(file_name);
                         if (gd == null) continue;
                         if (!System.IO.File.Exists(file_name)) continue;
-                        var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(file_name);
+                        var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(file_name);
                         var pd = ParserDetailsFactory.Create(item);
                         pd.Parse(document);
                     }
@@ -142,7 +142,7 @@ namespace AntlrVSIX.Package
                         var gd = GrammarDescriptionFactory.Create(file_name);
                         if (gd == null) continue;
                         if (!System.IO.File.Exists(file_name)) continue;
-                        var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(file_name);
+                        var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(file_name);
                         var pd = ParserDetailsFactory.Create(item);
                         pd.Pass1(pd);
                     }
@@ -157,7 +157,7 @@ namespace AntlrVSIX.Package
                         var gd = GrammarDescriptionFactory.Create(file_name);
                         if (gd == null) continue;
                         if (!System.IO.File.Exists(file_name)) continue;
-                        var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(file_name);
+                        var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(file_name);
                         var pd = ParserDetailsFactory.Create(item);
                         pd.Pass2(pd);
                     }
@@ -172,7 +172,7 @@ namespace AntlrVSIX.Package
                         var gd = GrammarDescriptionFactory.Create(file_name);
                         if (gd == null) continue;
                         if (!System.IO.File.Exists(file_name)) continue;
-                        var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(file_name);
+                        var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(file_name);
                         var pd = ParserDetailsFactory.Create(item);
                         pd.GatherDefs(document);
                     }
@@ -187,7 +187,7 @@ namespace AntlrVSIX.Package
                         var gd = GrammarDescriptionFactory.Create(file_name);
                         if (gd == null) continue;
                         if (!System.IO.File.Exists(file_name)) continue;
-                        var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(file_name);
+                        var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(file_name);
                         var pd = ParserDetailsFactory.Create(item);
                         pd.GatherRefs(document);
                     }

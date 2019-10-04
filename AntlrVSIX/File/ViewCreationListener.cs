@@ -56,7 +56,7 @@
             if (!PreviousContentType.ContainsKey(ffn))
                 PreviousContentType[ffn] = content_type;
             var code = buffer.GetBufferText();
-            var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(ffn);
+            var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(ffn);
             if (item == null) return;
             item.Code = code;
             var pd = ParserDetailsFactory.Create(item);

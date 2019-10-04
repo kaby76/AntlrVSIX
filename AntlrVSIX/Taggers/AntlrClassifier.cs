@@ -78,7 +78,7 @@
             ITextDocument doc = _buffer.GetTextDocument();
             string f = doc.FilePath;
 
-            var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(f);
+            var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(f);
             if (item == null) yield break;
             item.Code = _buffer.GetBufferText();
             var pd = ParserDetailsFactory.Create(item);

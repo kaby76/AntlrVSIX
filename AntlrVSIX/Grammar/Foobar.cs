@@ -19,7 +19,7 @@
         {
             ITextBuffer tb = point.Snapshot.TextBuffer;
             string ffn = tb.GetFilePath();
-            var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(ffn);
+            var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(ffn);
             var pd = ParserDetailsFactory.Create(item);
             foreach (var node in DFSVisitor.DFS(pd.ParseTree as ParserRuleContext))
             {

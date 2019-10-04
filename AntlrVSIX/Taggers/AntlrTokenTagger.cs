@@ -25,7 +25,7 @@ namespace AntlrVSIX.Tagger
             var ffn = doc.FilePath;
             _grammar_description = GrammarDescriptionFactory.Create(ffn);
             if (_grammar_description == null) return;
-            var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(ffn);
+            var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(ffn);
             if (item == null) return;
 
             _antlr_tag_types = new Dictionary<string, int>();
@@ -55,7 +55,7 @@ namespace AntlrVSIX.Tagger
                 ITextBuffer buf = curSpan.Snapshot.TextBuffer;
                 var doc = buf.GetTextDocument();
                 string file_name = doc.FilePath;
-                var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(file_name);
+                var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(file_name);
                 var details = ParserDetailsFactory.Create(item);
                 SnapshotPoint start = curSpan.Start;
                 int curLocStart = start.Position;

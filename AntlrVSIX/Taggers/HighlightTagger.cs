@@ -112,7 +112,7 @@ namespace AntlrVSIX.Taggers
             ITextBuffer buf = currentRequest.Snapshot.TextBuffer;
             var doc = buf.GetTextDocument();
             string file_name = doc.FilePath;
-            Document item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(file_name);
+            Document item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(file_name);
             var ref_pd = ParserDetailsFactory.Create(item);
             if (ref_pd == null) return;
             SnapshotSpan span = new SnapshotSpan(start, 0);
@@ -126,7 +126,7 @@ namespace AntlrVSIX.Taggers
             if (def == null) return;
             var def_file = def.file;
             if (def_file == null) return;
-            var def_item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindProjectFullName(def_file);
+            var def_item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(def_file);
             if (def_item == null) return;
             var def_pd = ParserDetailsFactory.Create(def_item);
             List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
