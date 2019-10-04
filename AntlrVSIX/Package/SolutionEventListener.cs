@@ -29,6 +29,7 @@ namespace AntlrVSIX.Package
                 DTE application = DteExtensions.GetApplication();
                 if (application == null)
                 {
+                    started = false;
                     return;
                 }
 
@@ -72,6 +73,8 @@ namespace AntlrVSIX.Package
                         if (file_name == null) return;
                         var doc = new AntlrVSIX.GrammarDescription.Document(file_name);
                         ws_project.AddDocument(doc);
+                        if (AntlrVSIX.Grammar.GrammarDescriptionFactory.Create(file_name) == null)
+                            continue;
                         var properties = item.Properties;
                         if (properties == null) continue;
                         var count = properties.Count;
