@@ -59,10 +59,14 @@ namespace AntlrVSIX.Package
                             {
                                 var prop = properties.Item(i);
                                 var name = prop.Name;
-                                var value = prop.Value;
+                                object value = null;
+                                if (name == "FullPath")
+                                {
+                                    value = prop.Value;
+                                }
                                 ws_project.AddProperty(name, value == null ? null : value.ToString());
                             }
-                            catch (Exception _)
+                            catch (Exception)
                             { }
                         }
 
@@ -84,14 +88,17 @@ namespace AntlrVSIX.Package
                             {
                                 var prop = properties.Item(i);
                                 var name = prop.Name;
-                                var value = prop.Value;
+                                object value = null;
+                                if (name == "FullPath")
+                                {
+                                    value = prop.Value;
+                                }
                                 doc.AddProperty(name, value == null ? null : value.ToString());
                             }
                             catch (Exception _)
                             { }
                         }
                     }
-                    Properties project_properties = project.Properties;
                 }
 
                 foreach (var project in ws.Projects)

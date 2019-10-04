@@ -24,6 +24,7 @@ namespace AntlrVSIX.GrammarDescription
             _documents.Add(doc);
             return doc;
         }
+
         public void AddProperty(string name, string value)
         {
             _properties[name] = value;
