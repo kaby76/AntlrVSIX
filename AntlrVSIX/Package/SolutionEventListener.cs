@@ -46,7 +46,7 @@ namespace AntlrVSIX.Package
                     string project_name = project.Name;
                     string project_file_name = project.FileName;
 
-                    var ws_project = new AntlrVSIX.GrammarDescription.Project(project_name, project_file_name);
+                    var ws_project = new AntlrVSIX.GrammarDescription.Project(project_name, project_file_name, lazy_eval, project.Properties);
                     ws.AddProject(ws_project);
 
                     {
@@ -60,11 +60,15 @@ namespace AntlrVSIX.Package
                                 var prop = properties.Item(i);
                                 var name = prop.Name;
                                 object value = null;
-                                if (name == "FullPath")
+                                //if (name == "FullPath")
+                                //{
+                                //    value = prop.Value;
+                                //    doc.AddProperty(name, value == null ? null : value.ToString());
+                                //}
+                                //else
                                 {
-                                    value = prop.Value;
+                                    ws_project.AddProperty(name);
                                 }
-                                ws_project.AddProperty(name, value == null ? null : value.ToString());
                             }
                             catch (Exception)
                             { }
@@ -75,12 +79,12 @@ namespace AntlrVSIX.Package
                     {
                         string file_name = item.Name;
                         if (file_name == null) return;
-                        var doc = new AntlrVSIX.GrammarDescription.Document(file_name);
+                        var properties = item.Properties;
+                        if (properties == null) continue;
+                        var doc = new AntlrVSIX.GrammarDescription.Document(file_name, lazy_eval, properties);
                         ws_project.AddDocument(doc);
                         if (AntlrVSIX.Grammar.GrammarDescriptionFactory.Create(file_name) == null)
                             continue;
-                        var properties = item.Properties;
-                        if (properties == null) continue;
                         var count = properties.Count;
                         for (int i = 0; i < count; ++i)
                         {
@@ -89,11 +93,15 @@ namespace AntlrVSIX.Package
                                 var prop = properties.Item(i);
                                 var name = prop.Name;
                                 object value = null;
-                                if (name == "FullPath")
+                                //if (name == "FullPath")
+                                //{
+                                //    value = prop.Value;
+                                //    doc.AddProperty(name, value == null ? null : value.ToString());
+                                //}
+                                //else
                                 {
-                                    value = prop.Value;
+                                    doc.AddProperty(name);
                                 }
-                                doc.AddProperty(name, value == null ? null : value.ToString());
                             }
                             catch (Exception _)
                             { }
@@ -186,6 +194,22 @@ namespace AntlrVSIX.Package
                 }
                 finished = true;
             }
+        }
+
+        static string lazy_eval(string name, object props)
+        {
+            string result = null;
+            try
+            {
+                var properties = (Properties)props;
+                var prop = properties.Item(name);
+                object value = null;
+                value = prop.Value;
+                result = value == null ? null : value.ToString();
+            }
+            catch (Exception)
+            { }
+            return result;
         }
 
         private void ParseAllFiles()
