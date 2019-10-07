@@ -13,11 +13,41 @@ This extension also includes project templates for compiling and running Antlr p
 
 The source code for the extension is open source, free of charge, and free of ads.
 
-## Documentation
+# Installation of Prerequisites
+
+* Install Java tool chain, either [OpenJDK](https://openjdk.java.net/) or [Oracle JDK SE](https://www.oracle.com/technetwork/java/javase/downloads/index.html).
+
+* Downloaded the Java-based Antlr tool chain. [Complete ANTLR 4.7.2 Java binaries jar](https://www.antlr.org/download/antlr-4.7.2-complete.jar).
+
+* Set the environment variable "JAVA_HOME" to the directory of the java installation. See [this](https://confluence.atlassian.com/doc/setting-the-java_home-variable-in-windows-8895.html) for some instructions on how to do this
+on Windows.
+
+* Set the environment variable "Antlr4BuildTasks" to the path of the downloaded Antlr jar file. See above instructions, apply for "Antlr4BuildTasks".
+
+* Do not include the generated .cs Antlr parser files in the CSPROJ file for your program. The generated parser code is placed in the build temp output directory and automatically included.
+
+* Make sure you do not have a version skew between the Java Antlr tool and the runtime versions.
+
+# Verify Prerequisites
+
+Please verify that you have these variables set up as expected. Try
+*"$JAVA_HOME/bin/java.exe" -jar "$Antlr4ToolPath"*
+from a Git Bash or
+*"%JAVA_HOME%\bin\java.exe" -jar "%Antlr4ToolPath%"*
+from a Cmd.exe.
+That should execute the Antlr tool and print out the options expected
+for the command. If it doesn't
+work, adjust JAVA_HOME and Antlr4ToolPath. JAVA_HOME should be the full
+path of the JDK; Antlr4ToolPath should be the full path of the Antlr
+tool jar file. If you look at the generated .csproj file for the Antlr
+Console program generated, you should see what it defaults if they
+aren't set.
+
+# Documentation
 
 For information on how to use AntlrVSIX, see the [User Guide](doc/readme.md), which is geared specifically for Antlr programs.
 
-## Caveats:
+# Caveats:
 
 * Support for VS2015 and older editions has been removed.
 If you are interested in those, you can try using an older version of the extension.
