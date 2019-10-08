@@ -22,7 +22,7 @@ The source code for the extension is open source, free of charge, and free of ad
 * Set the environment variable "JAVA_HOME" to the directory of the java installation. See [this](https://confluence.atlassian.com/doc/setting-the-java_home-variable-in-windows-8895.html) for some instructions on how to do this
 on Windows.
 
-* Set the environment variable "Antlr4BuildTasks" to the path of the downloaded Antlr jar file. See above instructions, apply for "Antlr4BuildTasks".
+* Set the environment variable "Antlr4ToolPath" to the path of the downloaded Antlr jar file.
 
 * Do not include the generated .cs Antlr parser files in the CSPROJ file for your program. The generated parser code is placed in the build temp output directory and automatically included.
 
