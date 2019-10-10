@@ -5,10 +5,13 @@ namespace AntlrVSIX.Tagger
     using AntlrVSIX.Extensions;
     using LanguageServer;
     using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text.Tagging;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     internal sealed class AntlrTokenTagger : ITagger<AntlrTokenTag>
     {
@@ -38,6 +41,64 @@ namespace AntlrVSIX.Tagger
             item.Code = code;
             var pd = ParserDetailsFactory.Create(item);
             pd.Parse();
+            //buffer.Changed += new EventHandler<TextContentChangedEventArgs>(OnTextChanged);
+        }
+
+        static CancellationTokenSource source;
+        static Task<int> task;
+
+        void OnTextChanged(object sender, TextContentChangedEventArgs args)
+        {
+            if (source == null)
+            {
+                source = new CancellationTokenSource();
+                task = Task.Run(async delegate
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(1.5), source.Token);
+                    return 42;
+                });
+                try
+                {
+                    task.Wait();
+                }
+                catch (AggregateException ae)
+                {
+                }
+                if (task.Status == TaskStatus.RanToCompletion)
+                {
+                    ReparseFile(sender, args);
+                }
+                var s = source;
+                source = null;
+                s.Dispose();
+                var t = task;
+                task = null;
+                t.Dispose();
+            } else
+            {
+                source.Cancel();
+            }
+        }
+
+        void ReparseFile(object sender, TextContentChangedEventArgs args)
+        {
+            IWpfTextView view = sender as IWpfTextView;
+            if (view == null) return;
+            ITextBuffer doc = view.TextBuffer;
+            ITextSnapshot snapshot = doc.CurrentSnapshot;
+            string code = doc.GetBufferText();
+            ITextDocument document = doc.GetTextDocument();
+            string ffn = document.FilePath;
+            var item = Workspaces.Workspace.Instance.FindDocument(ffn);
+            if (item == null) return;
+            item.Code = code;
+            var pd = ParserDetailsFactory.Create(item);
+            pd.Parse();
+            SnapshotSpan span = new SnapshotSpan(_buffer.CurrentSnapshot, 0, _buffer.CurrentSnapshot.Length);
+            var temp = TagsChanged;
+            if (temp == null)
+                return;
+            temp(this, new SnapshotSpanEventArgs(span));
         }
 
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;

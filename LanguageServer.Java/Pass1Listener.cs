@@ -8,13 +8,18 @@ namespace LanguageServer.Java
 
     class Pass1Listener : Java9ParserBaseListener
     {
-        public Dictionary<IParseTree, CombinedScopeSymbol> _attributes = new Dictionary<IParseTree, CombinedScopeSymbol>();
+        private JavaParserDetails _pd;
+
+        public Pass1Listener(JavaParserDetails pd)
+        {
+            _pd = pd;
+        }
 
         public IParseTree NearestScope(IParseTree node)
         {
             for (; node != null; node = node.Parent)
             {
-                if (_attributes.TryGetValue(node, out CombinedScopeSymbol value) && value is Scope)
+                if (_pd.Attributes.TryGetValue(node, out CombinedScopeSymbol value) && value is Scope)
                     return node;
             }
             return null;
@@ -22,7 +27,9 @@ namespace LanguageServer.Java
 
         public Scope GetScope(IParseTree node)
         {
-            _attributes.TryGetValue(node, out CombinedScopeSymbol value);
+            if (node == null)
+                return null;
+            _pd.Attributes.TryGetValue(node, out CombinedScopeSymbol value);
             return value as Scope;
         }
 
@@ -32,7 +39,7 @@ namespace LanguageServer.Java
 
         public override void EnterCompilationUnit([NotNull] Java9Parser.CompilationUnitContext context)
         {
-            _attributes[context] = (CombinedScopeSymbol)new SymbolTable().GLOBALS;
+            _pd.Attributes[context] = (CombinedScopeSymbol)_pd.RootScope;
         }
 
         public override void EnterInterfaceMethodDeclaration(Java9Parser.InterfaceMethodDeclarationContext context)
@@ -52,9 +59,9 @@ namespace LanguageServer.Java
             Symbol m = new Symtab.MethodSymbol(name);
             var scope = GetScope(NearestScope(context));
             scope.define(ref m);
-            _attributes[node] = (CombinedScopeSymbol)m;
-            _attributes[context.GetChild(0)] = (CombinedScopeSymbol)m;
-            _attributes[context] = (CombinedScopeSymbol)m;
+            _pd.Attributes[node] = (CombinedScopeSymbol)m;
+            _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)m;
+            _pd.Attributes[context] = (CombinedScopeSymbol)m;
         }
 
         public override void EnterLocalVariableDeclaration(Java9Parser.LocalVariableDeclarationContext context)
@@ -74,8 +81,8 @@ namespace LanguageServer.Java
                 Symbol f = new Symtab.LocalSymbol(name, term.Symbol);
                 var scope = GetScope(NearestScope(context));
                 scope.define(ref f);
-                _attributes[term] = (CombinedScopeSymbol)f;
-                _attributes[id] = (CombinedScopeSymbol)f;
+                _pd.Attributes[term] = (CombinedScopeSymbol)f;
+                _pd.Attributes[id] = (CombinedScopeSymbol)f;
             }
         }
 
@@ -90,16 +97,16 @@ namespace LanguageServer.Java
             Symbol e = new Symtab.EnumSymbol(name);
             var scope = GetScope(NearestScope(context));
             scope.define(ref e);
-            _attributes[node] =(CombinedScopeSymbol) e;
-            _attributes[context.GetChild(0)] = (CombinedScopeSymbol)e;
-            _attributes[context] = (CombinedScopeSymbol)e;
+            _pd.Attributes[node] =(CombinedScopeSymbol) e;
+            _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)e;
+            _pd.Attributes[context] = (CombinedScopeSymbol)e;
         }
 
         public override void EnterBlock(Java9Parser.BlockContext context)
         {
             var e = GetScope(NearestScope(context));
             var b = new Symtab.LocalScope(e);
-            _attributes[context] = (CombinedScopeSymbol) b;
+            _pd.Attributes[context] = (CombinedScopeSymbol) b;
         }
 
         public override void EnterMethodDeclaration(Java9Parser.MethodDeclarationContext context)
@@ -119,9 +126,9 @@ namespace LanguageServer.Java
             Symbol m = new Symtab.MethodSymbol(name);
             var scope = GetScope(NearestScope(context));
             scope.define(ref m);
-            _attributes[node] = (CombinedScopeSymbol)m;
-            _attributes[context.GetChild(0)] = (CombinedScopeSymbol)m;
-            _attributes[context] = (CombinedScopeSymbol)m;
+            _pd.Attributes[node] = (CombinedScopeSymbol)m;
+            _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)m;
+            _pd.Attributes[context] = (CombinedScopeSymbol)m;
         }
 
         public override void EnterNormalClassDeclaration(Java9Parser.NormalClassDeclarationContext context)
@@ -135,10 +142,10 @@ namespace LanguageServer.Java
             Symbol cs = new Symtab.ClassSymbol(id_name);
             var scope = GetScope(NearestScope(context));
             scope.define(ref cs);
-            _attributes[node] = (CombinedScopeSymbol)cs;
+            _pd.Attributes[node] = (CombinedScopeSymbol)cs;
             Scope s = (Scope)cs;
-            _attributes[context.GetChild(0)] = (CombinedScopeSymbol)s;
-            _attributes[context] = (CombinedScopeSymbol)s;
+            _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)s;
+            _pd.Attributes[context] = (CombinedScopeSymbol)s;
         }
 
         public override void EnterNormalInterfaceDeclaration(Java9Parser.NormalInterfaceDeclarationContext context)
@@ -152,10 +159,10 @@ namespace LanguageServer.Java
             Symbol cs = new Symtab.InterfaceSymbol(id_name);
             var scope = GetScope(NearestScope(context));
             scope.define(ref cs);
-            _attributes[node] = (CombinedScopeSymbol)cs;
+            _pd.Attributes[node] = (CombinedScopeSymbol)cs;
             Scope s = (Scope)cs;
-            _attributes[context.GetChild(0)] = (CombinedScopeSymbol)s;
-            _attributes[context] = (CombinedScopeSymbol)s;
+            _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)s;
+            _pd.Attributes[context] = (CombinedScopeSymbol)s;
         }
 
         public override void EnterBasicForStatement([NotNull] Java9Parser.BasicForStatementContext context)
@@ -163,7 +170,7 @@ namespace LanguageServer.Java
             var scope = GetScope(NearestScope(context));
             var e = scope;
             var b = new Symtab.LocalScope(e);
-            _attributes[context] = b;
+            _pd.Attributes[context] = b;
         }
 
         public override void EnterBasicForStatementNoShortIf([NotNull] Java9Parser.BasicForStatementNoShortIfContext context)
@@ -171,7 +178,7 @@ namespace LanguageServer.Java
             var scope = GetScope(NearestScope(context));
             var e = scope;
             var b = new Symtab.LocalScope(e);
-            _attributes[context] = b;
+            _pd.Attributes[context] = b;
         }
 
         public override void EnterEnhancedForStatement([NotNull] Java9Parser.EnhancedForStatementContext context)
@@ -179,7 +186,7 @@ namespace LanguageServer.Java
             var scope = GetScope(NearestScope(context));
             var e = scope;
             var b = new Symtab.LocalScope(e);
-            _attributes[context] = b;
+            _pd.Attributes[context] = b;
         }
 
         public override void EnterEnhancedForStatementNoShortIf([NotNull] Java9Parser.EnhancedForStatementNoShortIfContext context)
@@ -187,7 +194,7 @@ namespace LanguageServer.Java
             var scope = GetScope(NearestScope(context));
             var e = scope;
             var b = new Symtab.LocalScope(e);
-            _attributes[context] = b;
+            _pd.Attributes[context] = b;
         }
 
         public override void EnterTryWithResourcesStatement([NotNull] Java9Parser.TryWithResourcesStatementContext context)
@@ -195,7 +202,7 @@ namespace LanguageServer.Java
             var scope = GetScope(NearestScope(context));
             var e = scope;
             var b = new Symtab.LocalScope(e);
-            _attributes[context] = b;
+            _pd.Attributes[context] = b;
         }
 
         public override void ExitResource([NotNull] Java9Parser.ResourceContext context)
@@ -209,11 +216,11 @@ namespace LanguageServer.Java
             var term = id.GetChild(0) as TerminalNodeImpl;
             var name = term.GetText();
             Symbol f = new Symtab.LocalSymbol(name, term.Symbol);
-            _attributes[vdi] = (CombinedScopeSymbol)f;
+            _pd.Attributes[vdi] = (CombinedScopeSymbol)f;
             var scope = GetScope(NearestScope(context));
             scope.define(ref f);
-            _attributes[context.GetChild(0)] = (CombinedScopeSymbol)f;
-            _attributes[context] = (CombinedScopeSymbol)f;
+            _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)f;
+            _pd.Attributes[context] = (CombinedScopeSymbol)f;
         }
 
         public override void ExitLiteral([NotNull] Java9Parser.LiteralContext context)
@@ -234,8 +241,8 @@ namespace LanguageServer.Java
                     break;
             }
             var literal_symbol = new Symtab.Literal(literal, cleaned_up_literal, s.Type);
-            _attributes[context.GetChild(0)] = (CombinedScopeSymbol)literal_symbol;
-            _attributes[context] = literal_symbol;
+            _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)literal_symbol;
+            _pd.Attributes[context] = literal_symbol;
         }
 
         public override void EnterIdentifier([NotNull] Java9Parser.IdentifierContext context)
@@ -256,11 +263,11 @@ namespace LanguageServer.Java
                 var id = context.GetText();
                 Symbol f = new MethodSymbol(id);
                 sc.define(ref f);
-                _attributes[context.GetChild(0)] = (CombinedScopeSymbol)f; 
-                _attributes[context] = (CombinedScopeSymbol)f;
-                _attributes[context.Parent] = (CombinedScopeSymbol)f;
-                _attributes[context.Parent.Parent] = (CombinedScopeSymbol)f;
-                _attributes[context.Parent.Parent.Parent] = (CombinedScopeSymbol)f;
+                _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)f;
+                _pd.Attributes[context] = (CombinedScopeSymbol)f;
+                _pd.Attributes[context.Parent] = (CombinedScopeSymbol)f;
+                _pd.Attributes[context.Parent.Parent] = (CombinedScopeSymbol)f;
+                _pd.Attributes[context.Parent.Parent.Parent] = (CombinedScopeSymbol)f;
             } else if (parent is Java9Parser.MethodDeclaratorContext)
             {
                 var scope = GetScope(NearestScope(context));
@@ -272,9 +279,9 @@ namespace LanguageServer.Java
                 var id = context.GetText();
                 Symbol f = new MethodSymbol(id);
                 sc.define(ref f);
-                _attributes[context.GetChild(0)] = (CombinedScopeSymbol)f;
-                _attributes[context] = (CombinedScopeSymbol)f;
-                _attributes[parent] = (CombinedScopeSymbol)f;
+                _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)f;
+                _pd.Attributes[context] = (CombinedScopeSymbol)f;
+                _pd.Attributes[parent] = (CombinedScopeSymbol)f;
             }
             else if (parent is Java9Parser.VariableDeclaratorIdContext && parent.Parent is Java9Parser.FormalParameterContext)
             {
@@ -289,10 +296,10 @@ namespace LanguageServer.Java
                 }
                 if (p == null) return;
                 {
-                    var sc = _attributes[p];
+                    var sc = _pd.Attributes[p];
                     ((Scope)sc).define(ref f);
-                    _attributes[context.GetChild(0)] = (CombinedScopeSymbol)f;
-                    _attributes[context] = (CombinedScopeSymbol)f;
+                    _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)f;
+                    _pd.Attributes[context] = (CombinedScopeSymbol)f;
                 }
             }
             else if (parent is Java9Parser.VariableDeclaratorIdContext)
@@ -318,8 +325,8 @@ namespace LanguageServer.Java
                         return;
                     }
                     ((Scope)sc).define(ref f);
-                    _attributes[context.GetChild(0)] = (CombinedScopeSymbol)f;
-                    _attributes[context] = (CombinedScopeSymbol)f;
+                    _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)f;
+                    _pd.Attributes[context] = (CombinedScopeSymbol)f;
                 }
             }
         }

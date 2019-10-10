@@ -7,21 +7,21 @@
 
     class Pass2Listener : Java9ParserBaseListener
     {
-        public Dictionary<IParseTree, CombinedScopeSymbol> _attributes;
+        private JavaParserDetails _pd;
+
+        public Pass2Listener(JavaParserDetails pd)
+        {
+            _pd = pd;
+        }
 
         public Scope NearestScope(IParseTree node)
         {
             for (; node != null; node = node.Parent)
             {
-                if (_attributes.TryGetValue(node, out CombinedScopeSymbol value) && value is Scope)
+                if (_pd.Attributes.TryGetValue(node, out CombinedScopeSymbol value) && value is Scope)
                     return (Scope)value;
             }
             return null;
-        }
-
-        public Pass2Listener(Dictionary<IParseTree, CombinedScopeSymbol> symbols)
-        {
-            _attributes = symbols;
         }
 
         public override void EnterTypeVariable(Java9Parser.TypeVariableContext context)
@@ -35,7 +35,7 @@
             var scope = NearestScope(context);
             var s = scope.getSymbol(id_name);
             if (s != null)
-                _attributes[node] = (CombinedScopeSymbol)s;
+                _pd.Attributes[node] = (CombinedScopeSymbol)s;
         }
 
         public override void EnterMethodInvocation_lfno_primary([NotNull] Java9Parser.MethodInvocation_lfno_primaryContext context)
@@ -70,7 +70,7 @@
                     var id_name = sy.GetText();
                     var scope = NearestScope(context);
                     var s = scope.LookupType(id_name);
-                    if (s != null) _attributes[first] = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
+                    if (s != null) _pd.Attributes[first] = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
                 }
             }
             else if (first is Java9Parser.AmbiguousNameContext)
@@ -120,13 +120,13 @@
                         {
                             if (sc is ClassSymbol) break;
                         }
-                        if (sc != null) _attributes[first] = (CombinedScopeSymbol)sc;
+                        if (sc != null) _pd.Attributes[first] = (CombinedScopeSymbol)sc;
                     }
                     else
                     {
                         var scope = NearestScope(context);
                         var s = scope.LookupType(id_name);
-                        if (s != null) _attributes[first] = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
+                        if (s != null) _pd.Attributes[first] = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
                     }
                 }
             }
@@ -143,7 +143,7 @@
                 }
                 if (is_statement)
                 {
-                    _attributes.TryGetValue(first, out CombinedScopeSymbol v);
+                    _pd.Attributes.TryGetValue(first, out CombinedScopeSymbol v);
                     if (v != null && v is SymbolWithScope)
                     {
                         var sy = context.GetChild(2) as TerminalNodeImpl;
@@ -152,8 +152,8 @@
                         var s = w.LookupType(id_name);
                         if (s == null) return;
                         var x = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
-                        _attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
-                        _attributes[context] = x;
+                        _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
+                        _pd.Attributes[context] = x;
                     }
                 }
             }
@@ -186,13 +186,13 @@
                         {
                             if (sc is ClassSymbol) break;
                         }
-                        if (sc != null) _attributes[first] = (CombinedScopeSymbol)sc;
+                        if (sc != null) _pd.Attributes[first] = (CombinedScopeSymbol)sc;
                     }
                     else
                     {
                         var scope = NearestScope(context);
                         var s = scope.LookupType(id_name);
-                        if (s != null) _attributes[first] = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
+                        if (s != null) _pd.Attributes[first] = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
                     }
                 }
             }
@@ -209,14 +209,14 @@
                 }
                 if (is_statement)
                 {
-                    _attributes.TryGetValue(first, out CombinedScopeSymbol v);
+                    _pd.Attributes.TryGetValue(first, out CombinedScopeSymbol v);
                     if (v != null && v is SymbolWithScope)
                     {
                         var sy = context.GetChild(2).GetChild(0) as TerminalNodeImpl;
                         var id_name = context.GetChild(2).GetText();
                         var w = v as SymbolWithScope;
                         var s = w.LookupType(id_name);
-                        if (s != null) _attributes[context] = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
+                        if (s != null) _pd.Attributes[context] = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
                     }
                 }
             }
@@ -249,13 +249,13 @@
                         {
                             if (sc is ClassSymbol) break;
                         }
-                        if (sc != null) _attributes[first] = (CombinedScopeSymbol)sc;
+                        if (sc != null) _pd.Attributes[first] = (CombinedScopeSymbol)sc;
                     }
                     else
                     {
                         var scope = NearestScope(context);
                         var s = scope.LookupType(id_name);
-                        if (s != null) _attributes[first] = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
+                        if (s != null) _pd.Attributes[first] = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
                     }
                 }
             }
@@ -272,7 +272,7 @@
                 }
                 if (is_statement)
                 {
-                    _attributes.TryGetValue(first, out CombinedScopeSymbol v);
+                    _pd.Attributes.TryGetValue(first, out CombinedScopeSymbol v);
                     if (v != null && v is SymbolWithScope)
                     {
                         var sy = context.GetChild(2).GetChild(0) as TerminalNodeImpl;
@@ -281,8 +281,8 @@
                         var s = w.LookupType(id_name);
                         if (s == null) return;
                         var x = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
-                        _attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
-                        _attributes[context] = x;
+                        _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
+                        _pd.Attributes[context] = x;
                     }
                 }
             }
@@ -315,13 +315,13 @@
                         {
                             if (sc is ClassSymbol) break;
                         }
-                        if (sc != null) _attributes[first] = (CombinedScopeSymbol)sc;
+                        if (sc != null) _pd.Attributes[first] = (CombinedScopeSymbol)sc;
                     }
                     else
                     {
                         var scope = NearestScope(context);
                         var s = scope.LookupType(id_name);
-                        if (s != null) _attributes[first] = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
+                        if (s != null) _pd.Attributes[first] = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
                     }
                 }
             }
@@ -338,7 +338,7 @@
                 }
                 if (is_statement)
                 {
-                    _attributes.TryGetValue(first, out CombinedScopeSymbol v);
+                    _pd.Attributes.TryGetValue(first, out CombinedScopeSymbol v);
                     if (v != null && v is SymbolWithScope)
                     {
                         var sy = context.GetChild(2) as TerminalNodeImpl;
@@ -347,8 +347,8 @@
                         var s = w.LookupType(id_name);
                         if (s == null) return;
                         var x = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
-                        _attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
-                        _attributes[context] = x;
+                        _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
+                        _pd.Attributes[context] = x;
                     }
                 }
             }
@@ -381,13 +381,13 @@
                         {
                             if (sc is ClassSymbol) break;
                         }
-                        if (sc != null) _attributes[first] = (CombinedScopeSymbol)sc;
+                        if (sc != null) _pd.Attributes[first] = (CombinedScopeSymbol)sc;
                     }
                     else
                     {
                         var scope = NearestScope(context);
                         var s = scope.LookupType(id_name);
-                        if (s != null) _attributes[first] = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
+                        if (s != null) _pd.Attributes[first] = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
                     }
                 }
             }
@@ -404,7 +404,7 @@
                 }
                 if (is_statement)
                 {
-                    _attributes.TryGetValue(first, out CombinedScopeSymbol v);
+                    _pd.Attributes.TryGetValue(first, out CombinedScopeSymbol v);
                     if (v != null && v is SymbolWithScope)
                     {
                         var sy = context.GetChild(2) as TerminalNodeImpl;
@@ -413,8 +413,8 @@
                         var s = w.LookupType(id_name);
                         if (s == null) return;
                         var x = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
-                        _attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
-                        _attributes[context] = x;
+                        _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
+                        _pd.Attributes[context] = x;
                     }
                 }
             }
@@ -451,14 +451,14 @@
                         {
                             if (sc is ClassSymbol) break;
                         }
-                        if (sc != null) _attributes[first] = (CombinedScopeSymbol)sc;
+                        if (sc != null) _pd.Attributes[first] = (CombinedScopeSymbol)sc;
                     }
                     else
                     {
                         var scope = NearestScope(context);
                         var s = scope.LookupType(id_name);
                         var sy = first.GetChild(0) as TerminalNodeImpl;
-                        if (s != null) _attributes[first] = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
+                        if (s != null) _pd.Attributes[first] = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
                     }
                 }
             }
@@ -480,7 +480,7 @@
                 }
                 if (is_statement)
                 {
-                    _attributes.TryGetValue(first, out CombinedScopeSymbol v);
+                    _pd.Attributes.TryGetValue(first, out CombinedScopeSymbol v);
                     if (v != null && v is SymbolWithScope)
                     {
                         var sy = context.GetChild(2) as TerminalNodeImpl;
@@ -489,8 +489,8 @@
                         var s = w.LookupType(id_name);
                         if (s == null) return;
                         var x = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
-                        _attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
-                        _attributes[context] = x;
+                        _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
+                        _pd.Attributes[context] = x;
                     }
                 }
             }
@@ -530,8 +530,8 @@
                         }
                         if (sc != null)
                         {
-                            _attributes[first] = (CombinedScopeSymbol)sc;
-                            _attributes[context] = (CombinedScopeSymbol)sc;
+                            _pd.Attributes[first] = (CombinedScopeSymbol)sc;
+                            _pd.Attributes[context] = (CombinedScopeSymbol)sc;
                         }
                     }
                     else
@@ -540,8 +540,8 @@
                         var s = scope.LookupType(id_name);
                         if (s != null)
                         {
-                            _attributes[first] = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
-                            _attributes[context] = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
+                            _pd.Attributes[first] = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
+                            _pd.Attributes[context] = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
                         }
                     }
                 }
@@ -576,8 +576,8 @@
                     var s = super_class.LookupType(id);
                     if (s == null) return;
                     var x = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
-                    _attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
-                    _attributes[context] = x;
+                    _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
+                    _pd.Attributes[context] = x;
                 }
             } else if (parent is Java9Parser.ClassInstanceCreationExpressionContext)
             {
@@ -602,20 +602,20 @@
                         var s = sc.LookupType(id);
                         if (s == null) return;
                         var x = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
-                        _attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
-                        _attributes[context] = x;
+                        _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
+                        _pd.Attributes[context] = x;
                     }
                     else
                     {
-                        var c = _attributes[p.GetChild(i)];
+                        var c = _pd.Attributes[p.GetChild(i)];
                         var sc = c as Scope;
                         if (sc != null)
                         {
                             var s = sc.LookupType(id);
                             if (s == null) return;
                             var x = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
-                            _attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
-                            _attributes[context] = x;
+                            _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
+                            _pd.Attributes[context] = x;
                         }
                     }
                 }
@@ -642,20 +642,20 @@
                         var s = sc.LookupType(id);
                         if (s == null) return;
                         var x = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
-                        _attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
-                        _attributes[context] = x;
+                        _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
+                        _pd.Attributes[context] = x;
                     }
                     else
                     {
-                        var c = _attributes[p.GetChild(i)];
+                        var c = _pd.Attributes[p.GetChild(i)];
                         var sc = c as Scope;
                         if (sc != null)
                         {
                             var s = sc.LookupType(id);
                             if (s == null) return;
                             var x = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
-                            _attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
-                            _attributes[context] = x;
+                            _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
+                            _pd.Attributes[context] = x;
                         }
                     }
                 }
@@ -665,16 +665,16 @@
                 var index = p.children.IndexOf(context);
                 var id_name = context.GetText();
                 var sc = parent.GetChild(index-2);
-                _attributes.TryGetValue(sc, out CombinedScopeSymbol ss);
+                _pd.Attributes.TryGetValue(sc, out CombinedScopeSymbol ss);
                 if (ss != null)
                 {
                     var s = ((Scope)ss).LookupType(id_name);
                     if (s == null) return;
                     var sy = context.GetChild(0) as TerminalNodeImpl;
                     var x = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
-                    _attributes[parent] = (CombinedScopeSymbol)x;
-                    _attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
-                    _attributes[context] = x;
+                    _pd.Attributes[parent] = (CombinedScopeSymbol)x;
+                    _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
+                    _pd.Attributes[context] = x;
                 }
             } else if (parent is Java9Parser.ExpressionNameContext)
             {
@@ -685,18 +685,18 @@
                 if (s == null) return;
                 var sy = context.GetChild(0) as TerminalNodeImpl;
                 var x = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
-                _attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
-                _attributes[context] = x;
+                _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
+                _pd.Attributes[context] = x;
             }
         }
 
         public override void ExitPrimary([NotNull] Java9Parser.PrimaryContext context)
         {
             var last = context.GetChild(context.ChildCount - 1);
-            _attributes.TryGetValue(last, out CombinedScopeSymbol v);
+            _pd.Attributes.TryGetValue(last, out CombinedScopeSymbol v);
             if (v != null)
             {
-                _attributes[context] = v;
+                _pd.Attributes[context] = v;
             }
         }
     }
