@@ -9,7 +9,6 @@ namespace LanguageServer.Java
     using System.IO;
     using System.Linq;
     using System.Text;
-    using Symtab;
 
     class GrammarDescription : IGrammarDescription
     {

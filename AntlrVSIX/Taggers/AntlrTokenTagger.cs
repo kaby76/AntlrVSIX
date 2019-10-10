@@ -3,7 +3,6 @@ namespace AntlrVSIX.Tagger
 {
     using Antlr4.Runtime;
     using AntlrVSIX.Extensions;
-    using AntlrVSIX.Grammar;
     using LanguageServer;
     using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Tagging;

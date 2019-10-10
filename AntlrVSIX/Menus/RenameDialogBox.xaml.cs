@@ -1,7 +1,7 @@
 ﻿namespace AntlrVSIX.Rename
 {
-    using System.Windows;
     using System;
+    using System.Windows;
 
     public partial class RenameDialogBox : Window
     {

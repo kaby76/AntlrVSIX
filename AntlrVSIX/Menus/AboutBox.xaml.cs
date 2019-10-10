@@ -1,14 +1,14 @@
-﻿using System;
-using System.Windows;
-using AntlrVSIX.Extensions;
-using EnvDTE;
-using Window = System.Windows.Window;
-using System.Diagnostics;
-using AntlrVSIX.Package;
-using AntlrVSIX.File;
-
-namespace AntlrVSIX.About
+﻿namespace AntlrVSIX.About
 {
+    using AntlrVSIX.Extensions;
+    using AntlrVSIX.File;
+    using AntlrVSIX.Package;
+    using EnvDTE;
+    using System;
+    using System.Diagnostics;
+    using System.Windows;
+    using Window = System.Windows.Window;
+
     public partial class AboutBox : Window
     {
         public AboutBox()

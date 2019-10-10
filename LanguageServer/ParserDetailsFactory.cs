@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace LanguageServer
+﻿namespace LanguageServer
 {
+    using System.Collections.Generic;
+
     public class ParserDetailsFactory
     {
         static Dictionary<string, ParserDetails> _per_file_parser_details = new Dictionary<string, ParserDetails>();

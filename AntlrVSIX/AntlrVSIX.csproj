@@ -71,8 +71,8 @@
     <Compile Include="Taggers\ErrorFormatDefinition.cs" />
     <Compile Include="Taggers\ErrorTagger.cs" />
     <Compile Include="Taggers\ErrorTaggerProvider.cs" />
-    <Compile Include="File\Class1.cs" />
-    <Compile Include="Grammar\Foobar.cs" />
+    <Compile Include="File\FileAndContentTypeDefinitions.cs" />
+    <Compile Include="Grammar\FindSymbol.cs" />
     <Compile Include="Helpers\DteExtensions.cs" />
     <Compile Include="Helpers\ITextBufferExtensions.cs" />
     <Compile Include="Helpers\ITextViewExtensions.cs" />

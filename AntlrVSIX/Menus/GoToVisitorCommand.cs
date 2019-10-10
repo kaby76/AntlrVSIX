@@ -1,13 +1,11 @@
 ﻿namespace AntlrVSIX.GoToVisitor
 {
-    using Antlr4.Runtime;
     using AntlrVSIX.Extensions;
-    using AntlrVSIX.Grammar;
-    using LanguageServer;
     using AntlrVSIX.Keyboard;
     using AntlrVSIX.Package;
     using EnvDTE;
     using EnvDTE80;
+    using LanguageServer;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;

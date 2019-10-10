@@ -1,10 +1,10 @@
-﻿using Antlr4.Runtime;
-using Antlr4.Runtime.Tree;
-using System;
-using System.Collections.Generic;
-
-namespace LanguageServer
+﻿namespace LanguageServer
 {
+    using Antlr4.Runtime;
+    using Antlr4.Runtime.Tree;
+    using System;
+    using System.Collections.Generic;
+
     public interface IGrammarDescription
     {
         string Name { get; }

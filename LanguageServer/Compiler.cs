@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace LanguageServer
+﻿namespace LanguageServer
 {
+    using System.Collections.Generic;
+
     public class Compiler
     {
         public static void Compile()

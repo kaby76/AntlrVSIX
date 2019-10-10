@@ -1,8 +1,6 @@
-﻿
-namespace AntlrVSIX.Reformat
+﻿namespace AntlrVSIX.Reformat
 {
     using AntlrVSIX.Extensions;
-    using AntlrVSIX.Grammar;
     using AntlrVSIX.Package;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text;

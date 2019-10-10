@@ -1,13 +1,10 @@
-﻿
-namespace AntlrVSIX.Rename
+﻿namespace AntlrVSIX.Rename
 {
-    using Antlr4.Runtime;
     using AntlrVSIX.Extensions;
-    using AntlrVSIX.Grammar;
-    using LanguageServer;
+    using AntlrVSIX.Model;
     using AntlrVSIX.Package;
     using AntlrVSIX.Taggers;
-    using Microsoft.VisualStudio.OLE.Interop;
+    using LanguageServer;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Editor;
@@ -17,9 +14,6 @@ namespace AntlrVSIX.Rename
     using System.ComponentModel.Design;
     using System.Linq;
     using System.Windows;
-    using AntlrVSIX.Extensions;
-    using AntlrVSIX.Grammar;
-    using AntlrVSIX.Model;
 
     internal sealed class RenameCommand
     {

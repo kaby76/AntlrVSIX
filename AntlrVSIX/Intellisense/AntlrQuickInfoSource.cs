@@ -1,29 +1,18 @@
 ﻿
 namespace AntlrVSIX
 {
+    using AntlrVSIX.Extensions;
+    using AntlrVSIX.Grammar;
     using AntlrVSIX.Package;
     using AntlrVSIX.Tagger;
-    using AntlrVSIX.Grammar;
     using LanguageServer;
-    using AntlrVSIX.Extensions;
     using Microsoft.VisualStudio.Language.Intellisense;
-    using Microsoft.VisualStudio.Text.Editor;
-    using Microsoft.VisualStudio.Text.Operations;
-    using Microsoft.VisualStudio.Text.Tagging;
     using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.Text.Editor;
+    using Microsoft.VisualStudio.Text.Tagging;
     using Microsoft.VisualStudio.Utilities;
-    using System.Collections.Generic;
     using System.ComponentModel.Composition;
     using System.Linq;
-    using System;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Microsoft.VisualStudio.Core.Imaging;
-    using Microsoft.VisualStudio.Imaging;
-    using Microsoft.VisualStudio.Language.Intellisense;
-    using Microsoft.VisualStudio.Text;
-    using Microsoft.VisualStudio.Text.Adornments;
-    using System;
     using System.Threading;
     using System.Threading.Tasks;
 

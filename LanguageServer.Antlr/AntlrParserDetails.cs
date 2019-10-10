@@ -1,9 +1,9 @@
-﻿using Antlr4.Runtime.Tree;
-using Symtab;
-using System.Collections.Generic;
-
-namespace LanguageServer.Antlr
+﻿namespace LanguageServer.Antlr
 {
+    using Antlr4.Runtime.Tree;
+    using Symtab;
+    using System.Collections.Generic;
+
     public class AntlrParserDetails : ParserDetails
     {
         static Dictionary<string, Scope> _scopes = new Dictionary<string, Scope>();

@@ -1,13 +1,12 @@
-﻿using EnvDTE;
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using System;
-using System.IO;
-using Project = EnvDTE.Project;
-
-namespace Workspaces
+﻿namespace Workspaces
 {
+    using EnvDTE;
+    using Microsoft.VisualStudio;
+    using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Shell.Interop;
+    using System;
+    using System.IO;
+
     public class Help
     {
         public static DTE GetApplication()

@@ -1,11 +1,10 @@
-﻿using Antlr4.Runtime.Tree;
-using Microsoft.VisualStudio.Shell.Interop;
-using System.Collections.Generic;
-using System.IO;
-
-
-namespace Workspaces
+﻿namespace Workspaces
 {
+    using Antlr4.Runtime.Tree;
+    using Microsoft.VisualStudio.Shell.Interop;
+    using System.Collections.Generic;
+    using System.IO;
+
     public class Document
     {
         IVsHierarchy _ide_object;

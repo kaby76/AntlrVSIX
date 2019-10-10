@@ -1,5 +1,4 @@
-﻿
-namespace LanguageServer.Python
+﻿namespace LanguageServer.Python
 {
     using Antlr4.Runtime;
     using Antlr4.Runtime.Tree;
@@ -9,7 +8,6 @@ namespace LanguageServer.Python
     using System.IO;
     using System.Linq;
     using System.Text;
-    using Symtab;
 
     class GrammarDescription : IGrammarDescription
     {

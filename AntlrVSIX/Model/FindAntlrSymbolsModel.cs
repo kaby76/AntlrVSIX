@@ -2,13 +2,13 @@
 {
     using Antlr4.Runtime;
     using AntlrVSIX.Extensions;
-    using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.TextManager.Interop;
+    using System;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.Runtime.CompilerServices;
-    using System;
     using System.Runtime.InteropServices;
 
     internal class FindAntlrSymbolsModel : INotifyPropertyChanged

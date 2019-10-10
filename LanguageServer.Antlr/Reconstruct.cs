@@ -1,9 +1,8 @@
-﻿using Antlr4.Runtime.Tree;
-using System.Text;
-
-
-namespace LanguageServer.Antlr
+﻿namespace LanguageServer.Antlr
 {
+    using Antlr4.Runtime.Tree;
+    using System.Text;
+
     class Reconstruct
     {
         public static void Doit(StringBuilder sb, IParseTree node)

@@ -3,17 +3,16 @@ namespace AntlrVSIX.ErrorTagger
 {
     using Antlr4.Runtime;
     using AntlrVSIX.Extensions;
-    using AntlrVSIX.Grammar;
     using LanguageServer;
     using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Adornments;
     using Microsoft.VisualStudio.Text.Tagging;
-    using Microsoft.VisualStudio.Text;
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Windows.Threading;
-    using System;
 
     class ErrorTagger : ITagger<IErrorTag>
     {

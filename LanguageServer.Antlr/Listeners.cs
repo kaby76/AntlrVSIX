@@ -1,10 +1,9 @@
-using Antlr4.Runtime.Misc;
-using Antlr4.Runtime.Tree;
-using Symtab;
-using System.Collections.Generic;
-
 namespace LanguageServer.Antlr
 {
+    using Antlr4.Runtime.Misc;
+    using Antlr4.Runtime.Tree;
+    using Symtab;
+
     public class Pass1Listener : ANTLRv4ParserBaseListener
     {
         private AntlrParserDetails _pd;

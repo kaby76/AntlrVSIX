@@ -3,13 +3,13 @@
     using AntlrVSIX.Keyboard;
     using Microsoft.VisualStudio.OLE.Interop;
     using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Classification;
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text.Operations;
-    using Microsoft.VisualStudio.Text;
-    using Point = System.Windows.Point;
-    using System.Windows.Input;
     using System;
+    using System.Windows.Input;
+    using Point = System.Windows.Point;
 
     internal sealed class MouseHandler : MouseProcessorBase
     {

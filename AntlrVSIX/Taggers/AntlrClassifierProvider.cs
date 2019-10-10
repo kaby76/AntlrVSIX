@@ -3,17 +3,14 @@ namespace AntlrVSIX.AggregateTagger
 {
     using AntlrVSIX.Package;
     using AntlrVSIX.Tagger;
-    using AntlrVSIX.Extensions;
-    using AntlrVSIX.Grammar;
-    using Color = System.Drawing.Color;
     using Microsoft.VisualStudio.PlatformUI;
+    using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Classification;
     using Microsoft.VisualStudio.Text.Tagging;
-    using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Utilities;
-    using System.ComponentModel.Composition;
     using System;
-    using System.Linq;
+    using System.ComponentModel.Composition;
+    using Color = System.Drawing.Color;
 
     [Export(typeof(ITaggerProvider))]
     [ContentType("any")]

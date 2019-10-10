@@ -4,16 +4,15 @@
     using AntlrVSIX.FindAllReferences;
     using AntlrVSIX.GoToDefinition;
     using AntlrVSIX.GoToVisitor;
-    using AntlrVSIX.Grammar;
-    using LanguageServer;
     using AntlrVSIX.NextSym;
     using AntlrVSIX.Reformat;
     using AntlrVSIX.Rename;
     using AntlrVSIX.Taggers;
+    using LanguageServer;
+    using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Classification;
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text.Operations;
-    using Microsoft.VisualStudio.Text;
     using System.Linq;
 
     public class Menus

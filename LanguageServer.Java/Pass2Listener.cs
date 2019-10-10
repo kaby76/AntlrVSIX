@@ -1,10 +1,10 @@
-﻿using Antlr4.Runtime.Misc;
-using Antlr4.Runtime.Tree;
-using Symtab;
-using System.Collections.Generic;
-
-namespace LanguageServer.Java
+﻿namespace LanguageServer.Java
 {
+    using Antlr4.Runtime.Misc;
+    using Antlr4.Runtime.Tree;
+    using Symtab;
+    using System.Collections.Generic;
+
     class Pass2Listener : Java9ParserBaseListener
     {
         public Dictionary<IParseTree, CombinedScopeSymbol> _attributes;

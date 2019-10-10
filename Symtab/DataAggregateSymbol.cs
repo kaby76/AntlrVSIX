@@ -1,7 +1,7 @@
 ﻿namespace Symtab
 {
-    using System.Collections.Generic;
     using Antlr4.Runtime;
+    using System.Collections.Generic;
 
     /// <summary>
     /// A symbol representing a collection of data like a struct or class.

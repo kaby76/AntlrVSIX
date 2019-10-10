@@ -1,8 +1,8 @@
-﻿using Microsoft.VisualStudio.Shell.Interop;
-using System.Collections.Generic;
-
-namespace Workspaces
+﻿namespace Workspaces
 {
+    using Microsoft.VisualStudio.Shell.Interop;
+    using System.Collections.Generic;
+
     public class Project
     {
         public IVsHierarchy _ide_object;

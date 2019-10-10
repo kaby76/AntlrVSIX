@@ -1,8 +1,8 @@
 ﻿namespace AntlrVSIX.Keyboard
 {
     using Microsoft.VisualStudio.Text.Editor;
-    using System.Windows.Input;
     using System;
+    using System.Windows.Input;
 
     internal sealed class CtrlKeyState
     {

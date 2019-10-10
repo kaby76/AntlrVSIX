@@ -1,19 +1,18 @@
 ﻿namespace AntlrVSIX.Extensions
 {
-    using Microsoft.VisualStudio.Shell.Interop;
-    using Microsoft.VisualStudio.Shell;
-    using Microsoft.VisualStudio.Text.Editor;
-    using Microsoft.VisualStudio.Text;
-    using Microsoft.VisualStudio.TextManager.Interop;
     using Microsoft.VisualStudio;
+    using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Shell.Interop;
+    using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.Text.Editor;
+    using Microsoft.VisualStudio.TextManager.Interop;
+    using System;
+    using System.Collections.Generic;
     using System.Diagnostics.Contracts;
     using System.Runtime.InteropServices;
-    using System;
-
     using IObjectWithSite = Microsoft.VisualStudio.OLE.Interop.IObjectWithSite;
     using IOleServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
     using IServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
-    using System.Collections.Generic;
 
     public static class IVsTextViewExtensions
     {

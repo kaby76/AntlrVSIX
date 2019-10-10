@@ -1,8 +1,8 @@
 ﻿namespace AntlrVSIX.Intellisense
 {
     using Microsoft.VisualStudio.Language.Intellisense;
-    using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.Text.Editor;
     using System.Collections.Generic;
 
     internal class TemplateQuickInfoController : IIntellisenseController

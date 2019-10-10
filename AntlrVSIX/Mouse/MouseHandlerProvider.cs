@@ -1,7 +1,6 @@
 ﻿namespace AntlrVSIX.Mouse
 {
     using AntlrVSIX.Extensions;
-    using AntlrVSIX.Grammar;
     using AntlrVSIX.Keyboard;
     using Microsoft.VisualStudio.OLE.Interop;
     using Microsoft.VisualStudio.Shell;

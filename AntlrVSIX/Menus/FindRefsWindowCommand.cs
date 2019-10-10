@@ -1,9 +1,9 @@
 ﻿namespace AntlrVSIX.FindAllReferences
 {
-    using Microsoft.VisualStudio.Shell.Interop;
     using Microsoft.VisualStudio.Shell;
-    using System.ComponentModel.Design;
+    using Microsoft.VisualStudio.Shell.Interop;
     using System;
+    using System.ComponentModel.Design;
 
     internal sealed class FindRefsWindowCommand
     {

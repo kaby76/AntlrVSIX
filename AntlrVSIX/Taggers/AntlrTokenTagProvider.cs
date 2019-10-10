@@ -1,7 +1,7 @@
 ﻿namespace AntlrVSIX.Tagger
 {
-    using Microsoft.VisualStudio.Text.Tagging;
     using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.Text.Tagging;
     using Microsoft.VisualStudio.Utilities;
     using System.ComponentModel.Composition;
 

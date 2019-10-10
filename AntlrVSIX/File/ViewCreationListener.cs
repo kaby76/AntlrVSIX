@@ -1,22 +1,17 @@
 ﻿namespace AntlrVSIX.File
 {
     using AntlrVSIX.Extensions;
-    using AntlrVSIX.Grammar;
     using LanguageServer;
     using Microsoft.VisualStudio.Editor;
-    using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.TextManager.Interop;
     using Microsoft.VisualStudio.Utilities;
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel.Composition;
     using System.Diagnostics;
     using System.Linq;
-    using System.Collections.Generic;
-    using AntlrVSIX.Package;
-    using AntlrVSIX.Tagger;
-    using Microsoft.VisualStudio.Text.Classification;
 
 
     [Export(typeof(IVsTextViewCreationListener))]

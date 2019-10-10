@@ -1,9 +1,8 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Controls;
-
-namespace AntlrVSIX.Options
+﻿namespace AntlrVSIX.Options
 {
+    using System;
+    using System.Windows;
+
     public partial class OptionsBox : Window
     {
         public OptionsBox()

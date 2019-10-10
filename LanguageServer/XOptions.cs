@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LanguageServer
+﻿namespace LanguageServer
 {
+    using System.Collections.Generic;
+
     public class XOptions
     {
         private static Dictionary<string, string> _properties = new Dictionary<string, string>();

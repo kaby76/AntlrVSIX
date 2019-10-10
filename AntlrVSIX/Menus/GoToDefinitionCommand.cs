@@ -1,20 +1,16 @@
 ﻿
 namespace AntlrVSIX.GoToDefinition
 {
-    using Antlr4.Runtime;
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Grammar;
-    using LanguageServer;
     using AntlrVSIX.Package;
+    using LanguageServer;
     using Microsoft.VisualStudio.Shell;
-    using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.TextManager.Interop;
-    using System.Collections.Generic;
-    using System.ComponentModel.Design;
-    using System.IO;
-    using System.Linq;
     using System;
+    using System.ComponentModel.Design;
 
     internal sealed class GoToDefinitionCommand
     {

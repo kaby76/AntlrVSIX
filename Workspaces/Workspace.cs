@@ -1,9 +1,9 @@
-﻿using Microsoft.VisualStudio.Shell.Interop;
-using System;
-using System.Collections.Generic;
-
-namespace Workspaces
+﻿namespace Workspaces
 {
+    using Microsoft.VisualStudio.Shell.Interop;
+    using System;
+    using System.Collections.Generic;
+
     public class Workspace
     {
         IVsSolution _ide_object;

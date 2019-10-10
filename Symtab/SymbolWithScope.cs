@@ -1,8 +1,8 @@
 ﻿namespace Symtab
 {
+    using Antlr4.Runtime;
     using System.Collections.Generic;
     using System.Linq;
-    using Antlr4.Runtime;
 
     /// <summary>
     /// An abstract base class that houses common functionality for

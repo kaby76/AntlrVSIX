@@ -1,7 +1,6 @@
 ﻿namespace AntlrVSIX
 {
     using AntlrVSIX.Extensions;
-    using AntlrVSIX.Grammar;
     using LanguageServer;
     using Microsoft.VisualStudio.Language.Intellisense;
     using Microsoft.VisualStudio.Text;

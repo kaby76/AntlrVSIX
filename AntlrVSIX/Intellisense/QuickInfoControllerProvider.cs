@@ -1,8 +1,8 @@
 ﻿namespace AntlrVSIX.Intellisense
 {
     using Microsoft.VisualStudio.Language.Intellisense;
-    using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Utilities;
     using System.Collections.Generic;
     using System.ComponentModel.Composition;

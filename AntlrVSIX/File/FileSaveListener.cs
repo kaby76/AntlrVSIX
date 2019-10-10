@@ -1,7 +1,6 @@
 ﻿namespace AntlrVSIX.File
 {
     using AntlrVSIX.Extensions;
-    using AntlrVSIX.Grammar;
     using LanguageServer;
     using Microsoft.VisualStudio.Commanding;
     using Microsoft.VisualStudio.Text.Editor;
@@ -10,7 +9,6 @@
     using Microsoft.VisualStudio.Utilities;
     using System;
     using System.ComponentModel.Composition;
-    using System.IO;
 
     [Export(typeof(ICommandHandler))]
     [ContentType("any")]

@@ -1,9 +1,9 @@
 ﻿namespace AntlrVSIX.About
 {
     using Microsoft.VisualStudio.Shell;
+    using System;
     using System.ComponentModel.Design;
     using System.Windows;
-    using System;
 
     public class AboutCommand
     {

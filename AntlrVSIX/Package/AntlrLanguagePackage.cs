@@ -7,26 +7,21 @@ namespace AntlrVSIX.Package
     using AntlrVSIX.FindAllReferences;
     using AntlrVSIX.GoToDefinition;
     using AntlrVSIX.GoToVisitor;
-    using AntlrVSIX.Grammar;
     using AntlrVSIX.NextSym;
     using AntlrVSIX.Options;
     using AntlrVSIX.Reformat;
     using AntlrVSIX.Rename;
-    using EnvDTE;
-    using Microsoft.VisualStudio;
     using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Shell.Interop;
+    using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Classification;
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text.Operations;
-    using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.TextManager.Interop;
+    using System;
     using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
     using System.Runtime.InteropServices;
     using System.Threading;
-    using System;
-    using Microsoft.VisualStudio.Shell.Interop;
 
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
     [Guid(AntlrVSIX.Constants.PackageGuidString)]

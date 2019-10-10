@@ -4,8 +4,6 @@
     using Antlr4.Runtime.Misc;
     using Antlr4.Runtime.Tree;
     using System;
-    using System.CodeDom;
-    using System.CodeDom.Compiler;
     using System.IO;
     using System.Text;
     using System.Text.RegularExpressions;

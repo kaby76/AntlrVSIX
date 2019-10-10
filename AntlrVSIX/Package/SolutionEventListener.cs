@@ -1,17 +1,7 @@
-﻿using AntlrVSIX.Extensions;
-using AntlrVSIX.Grammar;
-using LanguageServer;
-using EnvDTE;
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell.Interop;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Project = EnvDTE.Project;
-using System.Reflection;
-
-namespace AntlrVSIX.Package
+﻿namespace AntlrVSIX.Package
 {
+    using Microsoft.VisualStudio;
+    using Microsoft.VisualStudio.Shell.Interop;
 
     class SolutionEventListener : IVsSolutionEvents, IVsSolutionLoadEvents
     {
