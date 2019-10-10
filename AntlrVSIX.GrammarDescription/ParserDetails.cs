@@ -13,6 +13,7 @@ namespace AntlrVSIX.GrammarDescription
         public virtual Document Item { get; set; }
         public virtual string FullFileName { get; set; }
         public virtual string Code { get; set; }
+        public virtual bool Changed { get { return Item == null ? true : Item.Changed; } }
 
         public virtual IGrammarDescription Gd { get; set; }
 
@@ -34,9 +35,15 @@ namespace AntlrVSIX.GrammarDescription
 
         public virtual IParseTreeListener P2Listener { get; set; } = null;
 
-        public virtual void Parse(Document item)
+        public ParserDetails(Document item)
         {
             Item = item;
+            Item.Changed = true;
+        }
+
+        public virtual void Parse()
+        {
+            var item = Item;
             var code = item.Code;
             var ffn = item.FullPath;
             ParserDetails pd = ParserDetailsFactory.Create(item);
@@ -60,21 +67,22 @@ namespace AntlrVSIX.GrammarDescription
             pd.Refs = new Dictionary<TerminalNodeImpl, int>();
         }
 
-        public void Pass1(ParserDetails pd)
+        public void Pass1()
         {
-            var pass1 = pd.P1Listener;
-            ParseTreeWalker.Default.Walk(pass1, pd.ParseTree);
+            var pass1 = P1Listener;
+            ParseTreeWalker.Default.Walk(pass1, ParseTree);
         }
 
-        public void Pass2(ParserDetails pd)
+        public void Pass2()
         {
-            var pass1 = pd.P1Listener;
-            var pass2 = pd.P2Listener;
-            ParseTreeWalker.Default.Walk(pass2, pd.ParseTree);
+            var pass1 = P1Listener;
+            var pass2 = P2Listener;
+            ParseTreeWalker.Default.Walk(pass2, ParseTree);
         }
 
-        public virtual void GatherDefs(Document item)
+        public virtual void GatherDefs()
         {
+            var item = Item;
             var ffn = item.FullPath;
             ParserDetails pd = ParserDetailsFactory.Create(item);
             IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);
@@ -101,8 +109,9 @@ namespace AntlrVSIX.GrammarDescription
             }
         }
 
-        public virtual void GatherRefs(Document item)
+        public virtual void GatherRefs()
         {
+            var item = Item;
             var ffn = item.FullPath;
             ParserDetails pd = ParserDetailsFactory.Create(item);
             IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);

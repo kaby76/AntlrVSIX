@@ -2,28 +2,50 @@
 using System.Collections.Generic;
 using System.IO;
 using System;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using EnvDTE;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell.Interop;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Project = EnvDTE.Project;
+using System.Reflection;
+using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.TextManager.Interop;
+using Microsoft.VisualStudio;
+using System.Diagnostics.Contracts;
+using System.Runtime.InteropServices;
+using System;
 
 
 namespace AntlrVSIX.GrammarDescription
 {
     public class Document
     {
+        IVsHierarchy _ide_object;
+        public int _hash;
         string _name;
         string _ffn;
         string _contents;
         bool _changed_contents;
         Dictionary<string, string> _properties = new Dictionary<string, string>();
         Dictionary<string, bool> _lazy_evaluated = new Dictionary<string, bool>();
-        Func<string, object, string> _get_property;
-        object _get_property_data;
 
-        public Document(string ffn, Func<string, object, string> get_property, object get_property_data)
+        public Document(IVsHierarchy ide_object, string ffn, string name)
         {
-            _get_property = get_property;
-            _get_property_data = get_property_data;
-            _name = ffn;
-            _changed_contents = false;
+            _ide_object = ide_object;
+            _hash = ide_object.GetHashCode();
             _ffn = ffn;
+            _name = name;
+            _changed_contents = false;
         }
 
         public string Name
@@ -83,17 +105,18 @@ namespace AntlrVSIX.GrammarDescription
         {
             _lazy_evaluated.TryGetValue(name, out bool evaluated);
             string result;
-            if (_get_property != null && !evaluated)
+            if (_ide_object != null && !evaluated)
             {
-                result = _get_property(name, _get_property_data);
-                _properties[name] = result;
+                object n;
+                _ide_object.GetProperty(0, (int)__VSHPROPID.VSHPROPID_Name, out n);
+                _properties[name] = null;
             }
             else
             {
                 _properties.TryGetValue(name, out string r);
                 result = r;
             }
-            return result;
+            return null;
         }
 
         public IParseTree GetParseTree()

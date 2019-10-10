@@ -52,7 +52,7 @@ namespace AntlrVSIX.GrammarDescription
         }
     }
 
-    class GrammarDescriptionFactory
+    public class GrammarDescriptionFactory
     {
         private static List<IGrammarDescription> _list_of_languages = new List<IGrammarDescription>();
 

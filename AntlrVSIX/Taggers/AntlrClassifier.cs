@@ -42,7 +42,7 @@
             if (doc == null) return;
             var ffn = doc.FilePath;
             if (ffn == null) return;
-            _grammar_description = GrammarDescriptionFactory.Create(ffn);
+            _grammar_description = AntlrVSIX.GrammarDescription.GrammarDescriptionFactory.Create(ffn);
             if (_grammar_description == null) return;
             _antlrtype_to_classifiertype = new Dictionary<int, IClassificationType>();
 
@@ -82,7 +82,7 @@
             if (item == null) yield break;
             item.Code = _buffer.GetBufferText();
             var pd = ParserDetailsFactory.Create(item);
-            pd.Parse(item);
+            pd.Parse();
 
             foreach (IMappingTagSpan<AntlrTokenTag> tag_span in _aggregator.GetTags(spans))
             {

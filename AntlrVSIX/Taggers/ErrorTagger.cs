@@ -23,7 +23,7 @@ namespace AntlrVSIX.ErrorTagger
         {
             _buffer = buffer;
             var doc = _buffer.GetFilePath();
-            var gd = GrammarDescriptionFactory.Create(doc);
+            var gd = AntlrVSIX.GrammarDescription.GrammarDescriptionFactory.Create(doc);
             if (gd == null) return;
             if (!gd.DoErrorSquiggles) return;
 
@@ -43,7 +43,7 @@ namespace AntlrVSIX.ErrorTagger
         public IEnumerable<ITagSpan<IErrorTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
             var doc = _buffer.GetFilePath();
-            var gd = GrammarDescriptionFactory.Create(doc);
+            var gd = AntlrVSIX.GrammarDescription.GrammarDescriptionFactory.Create(doc);
             if (gd == null) yield break;
             if (!gd.DoErrorSquiggles) yield break;
 

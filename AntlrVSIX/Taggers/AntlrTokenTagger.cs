@@ -23,7 +23,7 @@ namespace AntlrVSIX.Tagger
             var doc = _buffer.GetTextDocument();
             if (doc == null) return;
             var ffn = doc.FilePath;
-            _grammar_description = GrammarDescriptionFactory.Create(ffn);
+            _grammar_description = AntlrVSIX.GrammarDescription.GrammarDescriptionFactory.Create(ffn);
             if (_grammar_description == null) return;
             var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(ffn);
             if (item == null) return;
@@ -38,7 +38,7 @@ namespace AntlrVSIX.Tagger
             string code = _buffer.GetBufferText();
             item.Code = code;
             var pd = ParserDetailsFactory.Create(item);
-            pd.Parse(item);
+            pd.Parse();
         }
 
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;

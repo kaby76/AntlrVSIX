@@ -33,7 +33,7 @@
             ITextBuffer buffer = view.TextBuffer;
             ITextDocument doc = buffer.GetTextDocument();
             string path = doc.FilePath;
-            IGrammarDescription grammar_description = GrammarDescriptionFactory.Create(path);
+            IGrammarDescription grammar_description = AntlrVSIX.GrammarDescription.GrammarDescriptionFactory.Create(path);
 
             // Whack any old values that cursor points to.
             GoToDefinitionCommand.Instance.Enabled = false;
@@ -52,7 +52,7 @@
             var fp = view.GetFilePath();
             if (fp != null)
             {
-                var gd = GrammarDescriptionFactory.Create(fp);
+                var gd = AntlrVSIX.GrammarDescription.GrammarDescriptionFactory.Create(fp);
                 if (gd != null && gd.CanNextRule)
                 {
                     NextSymCommand.Instance.Enabled = true;

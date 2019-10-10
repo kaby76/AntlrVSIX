@@ -45,6 +45,8 @@ Project("{778DAE3C-4631-46EA-AA77-85C1314464D9}") = "AntlrVSIX.GrammarDescriptio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Symtab", "Symtab\Symtab.csproj", "{95FAB63B-1FE9-41F9-A875-49556E5E6B8A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassLibrary1", "ClassLibrary1\ClassLibrary1.csproj", "{E138159B-E61C-4CB7-ABBC-7C57DC9BDD79}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{95FAB63B-1FE9-41F9-A875-49556E5E6B8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{95FAB63B-1FE9-41F9-A875-49556E5E6B8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95FAB63B-1FE9-41F9-A875-49556E5E6B8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E138159B-E61C-4CB7-ABBC-7C57DC9BDD79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E138159B-E61C-4CB7-ABBC-7C57DC9BDD79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E138159B-E61C-4CB7-ABBC-7C57DC9BDD79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E138159B-E61C-4CB7-ABBC-7C57DC9BDD79}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

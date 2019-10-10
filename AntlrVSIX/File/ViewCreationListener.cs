@@ -44,7 +44,7 @@
             view.Closed += OnViewClosed;
             ITextBuffer doc = view.TextBuffer;
             string ffn = doc.GetFilePath();
-            var grammar_description = GrammarDescriptionFactory.Create(ffn);
+            var grammar_description = AntlrVSIX.GrammarDescription.GrammarDescriptionFactory.Create(ffn);
             if (grammar_description == null) return;
             var buffer = view.TextBuffer;
             var content_type = buffer.ContentType;
@@ -60,7 +60,7 @@
             if (item == null) return;
             item.Code = code;
             var pd = ParserDetailsFactory.Create(item);
-            pd.Parse(item);
+            pd.Parse();
         }
 
         private void OnViewClosed(object sender, EventArgs e)

@@ -48,13 +48,5 @@
             }
         }
 
-        internal static DTE GetApplication()
-        {
-            DTE dte = (DTE)Microsoft.VisualStudio.Shell.Package.GetGlobalService(typeof(DTE));
-            DTE application = null;
-            if (dte != null)
-                application = dte.Application;
-            return application;
-        }
     }
 }

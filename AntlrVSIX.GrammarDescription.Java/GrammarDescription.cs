@@ -19,7 +19,7 @@ namespace AntlrVSIX.GrammarDescription.Java
         public System.Type Lexer { get; } = typeof(Java9Lexer);
         public ParserDetails CreateParserDetails(Document item)
         {
-            return new JavaParserDetails();
+            return new JavaParserDetails(item);
         }
 
         public void Parse(ParserDetails pd)

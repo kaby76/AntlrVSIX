@@ -31,7 +31,7 @@
             {
                 var view = args.TextView;
                 var ffn = view.GetFilePath();
-                var grammar_description = GrammarDescriptionFactory.Create(ffn);
+                var grammar_description = AntlrVSIX.GrammarDescription.GrammarDescriptionFactory.Create(ffn);
                 if (grammar_description != null)
                 {
                     Document item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(ffn);
@@ -39,7 +39,7 @@
                     var code = buffer.GetBufferText();
                     item.Code = code;
                     var pd = ParserDetailsFactory.Create(item);
-                    pd.Parse(item);
+                    pd.Parse();
                 }
             }
             catch (Exception ex)

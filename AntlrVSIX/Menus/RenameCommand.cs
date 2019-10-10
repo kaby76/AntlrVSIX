@@ -84,7 +84,7 @@ namespace AntlrVSIX.Rename
             ITextBuffer buffer = view.TextBuffer;
             ITextDocument doc = buffer.GetTextDocument();
             string path = doc.FilePath;
-            IGrammarDescription grammar_description = GrammarDescriptionFactory.Create(path);
+            IGrammarDescription grammar_description = AntlrVSIX.GrammarDescription.GrammarDescriptionFactory.Create(path);
             IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(path);
             List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
             List<ParserDetails> where_details = new List<ParserDetails>();
@@ -92,7 +92,7 @@ namespace AntlrVSIX.Rename
             {
                 string file_name = kvp.Key;
                 ParserDetails details = kvp.Value;
-                var gd = GrammarDescriptionFactory.Create(file_name);
+                var gd = AntlrVSIX.GrammarDescription.GrammarDescriptionFactory.Create(file_name);
                 if (gd != grammar_description) continue;
                 if (Options.OptionsCommand.Instance.RestrictedDirectory)
                 {
@@ -185,7 +185,7 @@ namespace AntlrVSIX.Rename
                             var code = buffer.GetBufferText();
                             item.Code = tb.GetBufferText();
                             var pdx = ParserDetailsFactory.Create(item);
-                            pdx.Parse(item);
+                            pdx.Parse();
                         }
                     }
                 }

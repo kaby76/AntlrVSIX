@@ -11,6 +11,7 @@ namespace AntlrVSIX.GrammarDescription.Antlr
         static Scope _global_scope = new SymbolTable().GLOBALS;
 
         public AntlrParserDetails(Document item)
+            : base(item)
         {
             P2Listener = new Pass2Listener(this);
             P1Listener = new Pass1Listener(this);

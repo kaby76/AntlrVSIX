@@ -14,7 +14,7 @@ namespace AntlrVSIX.About
         public AboutBox()
         {
             InitializeComponent();
-            DTE application = DteExtensions.GetApplication();
+            DTE application = ClassLibrary1.Help.GetApplication();
             _info.Text = "Author: Ken Domino";
             _info.AppendText(Environment.NewLine);
             _info.AppendText("AntlrVSIX version: " + AntlrVSIX.Constants.Version);

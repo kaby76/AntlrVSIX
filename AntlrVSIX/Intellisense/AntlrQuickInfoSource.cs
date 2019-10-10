@@ -68,7 +68,7 @@ namespace AntlrVSIX
             var doc = buffer.GetTextDocument();
             view = AntlrLanguagePackage.Instance.GetActiveView();
             var path = doc.FilePath;
-            _grammar_description = GrammarDescriptionFactory.Create(path);
+            _grammar_description = AntlrVSIX.GrammarDescription.GrammarDescriptionFactory.Create(path);
         }
 
         //public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quick_info_content, out ITrackingSpan tracking_span)
@@ -162,7 +162,7 @@ namespace AntlrVSIX
             ITextDocument doc = _buffer.GetTextDocument();
             SnapshotSpan span = new SnapshotSpan(vv.TextSnapshot, new Span(asdf, 0));
             string file_path = doc.FilePath;
-            IGrammarDescription grammar_description = GrammarDescriptionFactory.Create(file_path);
+            IGrammarDescription grammar_description = AntlrVSIX.GrammarDescription.GrammarDescriptionFactory.Create(file_path);
             if (!grammar_description.IsFileType(file_path)) return null;
             var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(file_path);
             var pd = ParserDetailsFactory.Create(item);

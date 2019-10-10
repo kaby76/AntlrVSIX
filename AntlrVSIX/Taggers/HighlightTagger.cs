@@ -45,7 +45,7 @@ namespace AntlrVSIX.Taggers
             _buffer = sourceBuffer;
             var doc = _buffer.GetTextDocument();
             var ffn = doc.FilePath;
-            _grammar_description = GrammarDescriptionFactory.Create(ffn);
+            _grammar_description = AntlrVSIX.GrammarDescription.GrammarDescriptionFactory.Create(ffn);
             TextSearchService = textSearchService;
             TextStructureNavigator = textStructureNavigator;
             _aggregator = aggregator;

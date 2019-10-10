@@ -1,4 +1,5 @@
 ﻿
+
 namespace AntlrVSIX.Package
 {
     using AntlrVSIX.About;
@@ -47,7 +48,6 @@ namespace AntlrVSIX.Package
 
             // Attach to solution events
             solution = GetService(typeof(SVsSolution)) as IVsSolution;
-            //if (solution == null) Common.Log("Could not get solution");
             var re = solution.AdviseSolutionEvents(new SolutionEventListener(), out solutionEventsCookie);
 
             FindAllReferencesCommand.Initialize(this);

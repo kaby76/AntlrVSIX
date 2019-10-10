@@ -287,6 +287,10 @@
       <Project>{9600baec-e51a-4f80-9251-2306a7a84d44}</Project>
       <Name>AntlrVSIX.GrammarDescription</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ClassLibrary1\ClassLibrary1.csproj">
+      <Project>{e138159b-e61c-4cb7-abbc-7c57dc9bdd79}</Project>
+      <Name>ClassLibrary1</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Symtab\Symtab.csproj">
       <Project>{95fab63b-1fe9-41f9-a875-49556e5e6b8a}</Project>
       <Name>Symtab</Name>

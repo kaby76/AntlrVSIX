@@ -35,7 +35,7 @@
             ITextDocument doc = _buffer.GetTextDocument();
             if (doc == null) return;
             var ffn = doc.FilePath;
-            var gd = GrammarDescriptionFactory.Create(ffn);
+            var gd = AntlrVSIX.GrammarDescription.GrammarDescriptionFactory.Create(ffn);
             if (gd == null) return;
             List<Completion> completions = new List<Completion>();
             var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(doc.FilePath);
