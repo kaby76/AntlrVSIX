@@ -93,7 +93,7 @@ namespace AntlrVSIX.Reformat
                 // Get reformated text.
                 string text = buffer.GetBufferText();
                 string ffn = buffer.GetFilePath();
-                var grammar_description = GrammarDescriptionFactory.Create(ffn);
+                var grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
                 if (grammar_description == null) return;
                 org.antlr.codebuff.Tool.unformatted_input = text;
                 try

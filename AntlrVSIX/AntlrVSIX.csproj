@@ -73,7 +73,6 @@
     <Compile Include="Taggers\ErrorTaggerProvider.cs" />
     <Compile Include="File\Class1.cs" />
     <Compile Include="Grammar\Foobar.cs" />
-    <Compile Include="Grammar\GrammarDescriptionFactory.cs" />
     <Compile Include="Helpers\DteExtensions.cs" />
     <Compile Include="Helpers\ITextBufferExtensions.cs" />
     <Compile Include="Helpers\ITextViewExtensions.cs" />
@@ -267,29 +266,29 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
-    <ProjectReference Include="..\AntlrVSIX.GrammarDescription.Antlr\AntlrVSIX.GrammarDescription.Antlr.csproj">
+    <ProjectReference Include="..\LanguageServer.Antlr\LanguageServer.Antlr.csproj">
       <Project>{1b4ad20d-e4fa-40ba-bc63-8eec48d0ced5}</Project>
-      <Name>AntlrVSIX.GrammarDescription.Antlr</Name>
+      <Name>LanguageServer.Antlr</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AntlrVSIX.GrammarDescription.Java\AntlrVSIX.GrammarDescription.Java.csproj">
+    <ProjectReference Include="..\LanguageServer.Java\LanguageServer.Java.csproj">
       <Project>{1a59abf4-e066-4e4b-b8f9-ed83a8b2cd93}</Project>
-      <Name>AntlrVSIX.GrammarDescription.Java</Name>
+      <Name>LanguageServer.Java</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AntlrVSIX.GrammarDescription.Python\AntlrVSIX.GrammarDescription.Python.csproj">
+    <ProjectReference Include="..\LanguageServer.Python\LanguageServer.Python.csproj">
       <Project>{080bebb7-17bd-4714-bebc-47db13774ad9}</Project>
-      <Name>AntlrVSIX.GrammarDescription.Python</Name>
+      <Name>LanguageServer.Python</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AntlrVSIX.GrammarDescription.Rust\AntlrVSIX.GrammarDescription.Rust.csproj">
+    <ProjectReference Include="..\LanguageServer.Rust\LanguageServer.Rust.csproj">
       <Project>{39fe4f32-9ca9-46da-8f5a-f51a70c40829}</Project>
-      <Name>AntlrVSIX.GrammarDescription.Rust</Name>
+      <Name>LanguageServer.Rust</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AntlrVSIX.GrammarDescription\AntlrVSIX.GrammarDescription.csproj">
+    <ProjectReference Include="..\LanguageServer\LanguageServer.csproj">
       <Project>{9600baec-e51a-4f80-9251-2306a7a84d44}</Project>
-      <Name>AntlrVSIX.GrammarDescription</Name>
+      <Name>LanguageServer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ClassLibrary1\ClassLibrary1.csproj">
+    <ProjectReference Include="..\Workspaces\Workspaces.csproj">
       <Project>{e138159b-e61c-4cb7-abbc-7c57dc9bdd79}</Project>
-      <Name>ClassLibrary1</Name>
+      <Name>Workspaces</Name>
     </ProjectReference>
     <ProjectReference Include="..\Symtab\Symtab.csproj">
       <Project>{95fab63b-1fe9-41f9-a875-49556e5e6b8a}</Project>

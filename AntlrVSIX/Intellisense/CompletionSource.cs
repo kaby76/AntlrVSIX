@@ -2,7 +2,7 @@
 {
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Grammar;
-    using AntlrVSIX.GrammarDescription;
+    using LanguageServer;
     using Microsoft.VisualStudio.Language.Intellisense;
     using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Utilities;
@@ -35,10 +35,10 @@
             ITextDocument doc = _buffer.GetTextDocument();
             if (doc == null) return;
             var ffn = doc.FilePath;
-            var gd = AntlrVSIX.GrammarDescription.GrammarDescriptionFactory.Create(ffn);
+            var gd = LanguageServer.GrammarDescriptionFactory.Create(ffn);
             if (gd == null) return;
             List<Completion> completions = new List<Completion>();
-            var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(doc.FilePath);
+            var item = Workspaces.Workspace.Instance.FindDocumentFullName(doc.FilePath);
             var pd = ParserDetailsFactory.Create(item);
             foreach (var s in pd.Refs
                 .Where(t => t.Value == 0)

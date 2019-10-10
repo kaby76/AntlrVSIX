@@ -2,7 +2,7 @@
 {
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Grammar;
-    using AntlrVSIX.GrammarDescription;
+    using LanguageServer;
     using AntlrVSIX.Package;
     using AntlrVSIX.Tagger;
     using Microsoft.VisualStudio.PlatformUI;
@@ -42,7 +42,7 @@
             if (doc == null) return;
             var ffn = doc.FilePath;
             if (ffn == null) return;
-            _grammar_description = AntlrVSIX.GrammarDescription.GrammarDescriptionFactory.Create(ffn);
+            _grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
             if (_grammar_description == null) return;
             _antlrtype_to_classifiertype = new Dictionary<int, IClassificationType>();
 
@@ -78,7 +78,7 @@
             ITextDocument doc = _buffer.GetTextDocument();
             string f = doc.FilePath;
 
-            var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(f);
+            var item = Workspaces.Workspace.Instance.FindDocumentFullName(f);
             if (item == null) yield break;
             item.Code = _buffer.GetBufferText();
             var pd = ParserDetailsFactory.Create(item);

@@ -46,7 +46,7 @@
             if (project == null)
                 return null;
 
-            DTE application = ClassLibrary1.Help.GetApplication();
+            DTE application = Workspaces.Help.GetApplication();
             if (application == null) return null;
 
             if (project.IsKind("{66A26720-8FB5-11D2-AA7E-00C04F688DDE}")) //ProjectKinds.vsProjectKindSolutionFolder

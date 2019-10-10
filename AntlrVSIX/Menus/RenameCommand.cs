@@ -4,7 +4,7 @@ namespace AntlrVSIX.Rename
     using Antlr4.Runtime;
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Grammar;
-    using AntlrVSIX.GrammarDescription;
+    using LanguageServer;
     using AntlrVSIX.Package;
     using AntlrVSIX.Taggers;
     using Microsoft.VisualStudio.OLE.Interop;
@@ -84,7 +84,7 @@ namespace AntlrVSIX.Rename
             ITextBuffer buffer = view.TextBuffer;
             ITextDocument doc = buffer.GetTextDocument();
             string path = doc.FilePath;
-            IGrammarDescription grammar_description = AntlrVSIX.GrammarDescription.GrammarDescriptionFactory.Create(path);
+            IGrammarDescription grammar_description = LanguageServer.GrammarDescriptionFactory.Create(path);
             IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(path);
             List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
             List<ParserDetails> where_details = new List<ParserDetails>();
@@ -92,7 +92,7 @@ namespace AntlrVSIX.Rename
             {
                 string file_name = kvp.Key;
                 ParserDetails details = kvp.Value;
-                var gd = AntlrVSIX.GrammarDescription.GrammarDescriptionFactory.Create(file_name);
+                var gd = LanguageServer.GrammarDescriptionFactory.Create(file_name);
                 if (gd != grammar_description) continue;
                 if (Options.OptionsCommand.Instance.RestrictedDirectory)
                 {
@@ -161,7 +161,7 @@ namespace AntlrVSIX.Rename
                     {
                         var per_file_results = results.Where(r => r.FileName == f);
                         per_file_results.Reverse();
-                        var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(f);
+                        var item = Workspaces.Workspace.Instance.FindDocumentFullName(f);
                         var pd = ParserDetailsFactory.Create(item);
                         IVsTextView vstv2 = IVsTextViewExtensions.FindTextViewFor(f);
                         if (vstv2 == null)

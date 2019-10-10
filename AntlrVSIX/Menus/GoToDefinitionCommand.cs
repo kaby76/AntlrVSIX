@@ -4,7 +4,7 @@ namespace AntlrVSIX.GoToDefinition
     using Antlr4.Runtime;
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Grammar;
-    using AntlrVSIX.GrammarDescription;
+    using LanguageServer;
     using AntlrVSIX.Package;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text.Editor;
@@ -94,7 +94,7 @@ namespace AntlrVSIX.GoToDefinition
             ITextBuffer buffer = view.TextBuffer;
             ITextDocument doc = buffer.GetTextDocument();
             var file_name = doc.FilePath;
-            var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(file_name);
+            var item = Workspaces.Workspace.Instance.FindDocumentFullName(file_name);
             var ref_pd = ParserDetailsFactory.Create(item);
             Antlr4.Runtime.Tree.IParseTree ref_pt = span.Start.Find();
             if (ref_pt == null) return;
@@ -106,7 +106,7 @@ namespace AntlrVSIX.GoToDefinition
             if (def == null) return;
             var def_file = def.file;
             if (def_file == null) return;
-            var def_item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(def_file);
+            var def_item = Workspaces.Workspace.Instance.FindDocumentFullName(def_file);
             if (def_item == null) return;
             var def_pd = ParserDetailsFactory.Create(def_item);
             string full_file_name = def_pd.FullFileName;

@@ -4,7 +4,7 @@ namespace AntlrVSIX.ErrorTagger
     using Antlr4.Runtime;
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Grammar;
-    using AntlrVSIX.GrammarDescription;
+    using LanguageServer;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text.Adornments;
     using Microsoft.VisualStudio.Text.Tagging;
@@ -23,7 +23,7 @@ namespace AntlrVSIX.ErrorTagger
         {
             _buffer = buffer;
             var doc = _buffer.GetFilePath();
-            var gd = AntlrVSIX.GrammarDescription.GrammarDescriptionFactory.Create(doc);
+            var gd = LanguageServer.GrammarDescriptionFactory.Create(doc);
             if (gd == null) return;
             if (!gd.DoErrorSquiggles) return;
 
@@ -43,7 +43,7 @@ namespace AntlrVSIX.ErrorTagger
         public IEnumerable<ITagSpan<IErrorTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
             var doc = _buffer.GetFilePath();
-            var gd = AntlrVSIX.GrammarDescription.GrammarDescriptionFactory.Create(doc);
+            var gd = LanguageServer.GrammarDescriptionFactory.Create(doc);
             if (gd == null) yield break;
             if (!gd.DoErrorSquiggles) yield break;
 
@@ -56,7 +56,7 @@ namespace AntlrVSIX.ErrorTagger
                 var dd = buf.GetTextDocument();
                 string ffn = dd.FilePath;
                 string path_containing_applied_occurrence = Path.GetDirectoryName(ffn);
-                var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(ffn);
+                var item = Workspaces.Workspace.Instance.FindDocumentFullName(ffn);
                 if (item == null) yield break;
                 var details = ParserDetailsFactory.Create(item);
                 if (details == null) continue;

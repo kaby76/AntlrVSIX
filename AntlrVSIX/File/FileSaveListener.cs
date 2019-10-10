@@ -2,7 +2,7 @@
 {
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Grammar;
-    using AntlrVSIX.GrammarDescription;
+    using LanguageServer;
     using Microsoft.VisualStudio.Commanding;
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text.Editor.Commanding;
@@ -31,10 +31,10 @@
             {
                 var view = args.TextView;
                 var ffn = view.GetFilePath();
-                var grammar_description = AntlrVSIX.GrammarDescription.GrammarDescriptionFactory.Create(ffn);
+                var grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
                 if (grammar_description != null)
                 {
-                    Document item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(ffn);
+                    Workspaces.Document item = Workspaces.Workspace.Instance.FindDocumentFullName(ffn);
                     var buffer = view.TextBuffer;
                     var code = buffer.GetBufferText();
                     item.Code = code;

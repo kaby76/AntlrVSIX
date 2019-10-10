@@ -2,7 +2,7 @@
 {
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Grammar;
-    using AntlrVSIX.GrammarDescription;
+    using LanguageServer;
     using Microsoft.VisualStudio.Editor;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text;
@@ -44,7 +44,7 @@
             view.Closed += OnViewClosed;
             ITextBuffer doc = view.TextBuffer;
             string ffn = doc.GetFilePath();
-            var grammar_description = AntlrVSIX.GrammarDescription.GrammarDescriptionFactory.Create(ffn);
+            var grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
             if (grammar_description == null) return;
             var buffer = view.TextBuffer;
             var content_type = buffer.ContentType;
@@ -56,7 +56,7 @@
             if (!PreviousContentType.ContainsKey(ffn))
                 PreviousContentType[ffn] = content_type;
             var code = buffer.GetBufferText();
-            var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(ffn);
+            var item = Workspaces.Workspace.Instance.FindDocumentFullName(ffn);
             if (item == null) return;
             item.Code = code;
             var pd = ParserDetailsFactory.Create(item);

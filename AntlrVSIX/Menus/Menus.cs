@@ -5,7 +5,7 @@
     using AntlrVSIX.GoToDefinition;
     using AntlrVSIX.GoToVisitor;
     using AntlrVSIX.Grammar;
-    using AntlrVSIX.GrammarDescription;
+    using LanguageServer;
     using AntlrVSIX.NextSym;
     using AntlrVSIX.Reformat;
     using AntlrVSIX.Rename;
@@ -33,7 +33,7 @@
             ITextBuffer buffer = view.TextBuffer;
             ITextDocument doc = buffer.GetTextDocument();
             string path = doc.FilePath;
-            IGrammarDescription grammar_description = AntlrVSIX.GrammarDescription.GrammarDescriptionFactory.Create(path);
+            IGrammarDescription grammar_description = LanguageServer.GrammarDescriptionFactory.Create(path);
 
             // Whack any old values that cursor points to.
             GoToDefinitionCommand.Instance.Enabled = false;
@@ -52,7 +52,7 @@
             var fp = view.GetFilePath();
             if (fp != null)
             {
-                var gd = AntlrVSIX.GrammarDescription.GrammarDescriptionFactory.Create(fp);
+                var gd = LanguageServer.GrammarDescriptionFactory.Create(fp);
                 if (gd != null && gd.CanNextRule)
                 {
                     NextSymCommand.Instance.Enabled = true;

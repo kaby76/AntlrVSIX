@@ -34,7 +34,7 @@
             ITextBuffer buffer = view.TextBuffer;
             if (buffer == null) return null;
             string ffn = buffer.GetFilePath();
-            var grammar_description = GrammarDescriptionFactory.Create(ffn);
+            var grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
             if (grammar_description == null) return null;
             IOleCommandTarget shellCommandDispatcher = GetShellCommandDispatcher(view);
             if (shellCommandDispatcher == null) return null;

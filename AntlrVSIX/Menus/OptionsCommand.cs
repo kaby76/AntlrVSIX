@@ -8,7 +8,7 @@ namespace AntlrVSIX.Options
     using System.Collections.Generic;
     using System.ComponentModel.Design;
     using System.Linq;
-    using AntlrVSIX.GrammarDescription;
+    using LanguageServer;
 
     public class OptionsCommand
     {

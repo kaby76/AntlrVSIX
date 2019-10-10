@@ -1,17 +1,10 @@
 ﻿namespace AntlrVSIX.Grammar
 {
     using Antlr4.Runtime;
-    using Antlr4.Runtime.Misc;
     using Antlr4.Runtime.Tree;
-    using AntlrVSIX.GrammarDescription;
-    using Microsoft.VisualStudio.Text;
-    using System;
-    using System.CodeDom;
-    using System.CodeDom.Compiler;
-    using System.IO;
-    using System.Text;
-    using System.Text.RegularExpressions;
     using AntlrVSIX.Extensions;
+    using LanguageServer;
+    using Microsoft.VisualStudio.Text;
 
     static class Foobar
     {
@@ -19,7 +12,7 @@
         {
             ITextBuffer tb = point.Snapshot.TextBuffer;
             string ffn = tb.GetFilePath();
-            var item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(ffn);
+            var item = Workspaces.Workspace.Instance.FindDocumentFullName(ffn);
             var pd = ParserDetailsFactory.Create(item);
             foreach (var node in DFSVisitor.DFS(pd.ParseTree as ParserRuleContext))
             {

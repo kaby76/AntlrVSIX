@@ -1,6 +1,6 @@
 ﻿using AntlrVSIX.Extensions;
 using AntlrVSIX.Grammar;
-using AntlrVSIX.GrammarDescription;
+using LanguageServer;
 using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -49,8 +49,8 @@ namespace AntlrVSIX.Package
 
         public int OnAfterOpenSolution(object aPUnkReserved, int aFNewSolution)
         {
-            ClassLibrary1.Class1.Load();
-            AntlrVSIX.GrammarDescription.Compiler.Compile();
+            Workspaces.Loader.Load();
+            LanguageServer.Compiler.Compile();
             return VSConstants.S_OK;
         }
 
@@ -98,8 +98,8 @@ namespace AntlrVSIX.Package
 
         public int OnAfterBackgroundSolutionLoadComplete()
         {
-            ClassLibrary1.Class1.Load();
-            AntlrVSIX.GrammarDescription.Compiler.Compile();
+            Workspaces.Loader.Load();
+            LanguageServer.Compiler.Compile();
             return VSConstants.S_OK;
         }
     }

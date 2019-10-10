@@ -4,7 +4,7 @@ namespace AntlrVSIX.Taggers
     using Antlr4.Runtime;
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Grammar;
-    using AntlrVSIX.GrammarDescription;
+    using LanguageServer;
     using AntlrVSIX.Model;
     using Microsoft.VisualStudio.Text.Classification;
     using Microsoft.VisualStudio.Text.Editor;
@@ -45,7 +45,7 @@ namespace AntlrVSIX.Taggers
             _buffer = sourceBuffer;
             var doc = _buffer.GetTextDocument();
             var ffn = doc.FilePath;
-            _grammar_description = AntlrVSIX.GrammarDescription.GrammarDescriptionFactory.Create(ffn);
+            _grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
             TextSearchService = textSearchService;
             TextStructureNavigator = textStructureNavigator;
             _aggregator = aggregator;
@@ -112,7 +112,7 @@ namespace AntlrVSIX.Taggers
             ITextBuffer buf = currentRequest.Snapshot.TextBuffer;
             var doc = buf.GetTextDocument();
             string file_name = doc.FilePath;
-            Document item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(file_name);
+            Workspaces.Document item = Workspaces.Workspace.Instance.FindDocumentFullName(file_name);
             var ref_pd = ParserDetailsFactory.Create(item);
             if (ref_pd == null) return;
             SnapshotSpan span = new SnapshotSpan(start, 0);
@@ -126,7 +126,7 @@ namespace AntlrVSIX.Taggers
             if (def == null) return;
             var def_file = def.file;
             if (def_file == null) return;
-            var def_item = AntlrVSIX.GrammarDescription.Workspace.Instance.FindDocumentFullName(def_file);
+            var def_item = Workspaces.Workspace.Instance.FindDocumentFullName(def_file);
             if (def_item == null) return;
             var def_pd = ParserDetailsFactory.Create(def_item);
             List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
