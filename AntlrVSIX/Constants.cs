@@ -1,7 +1,5 @@
 ﻿namespace AntlrVSIX
 {
-    using System.Windows.Media;
-
     internal static class Constants
     {
         /* Current version of the AntlrVSIX extension. Note, I don't know
