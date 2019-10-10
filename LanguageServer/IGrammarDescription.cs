@@ -16,8 +16,8 @@ namespace LanguageServer
         bool CanNextRule { get; }
         string[] Map { get; }
         Dictionary<string, int> InverseMap { get; }
-        List<System.Windows.Media.Color> MapColor { get; }
-        List<System.Windows.Media.Color> MapInvertedColor { get; }
+        List<System.Drawing.Color> MapColor { get; }
+        List<System.Drawing.Color> MapInvertedColor { get; }
         List<bool> CanFindAllRefs { get; }
         List<bool> CanRename { get; }
         List<bool> CanGotodef { get; }

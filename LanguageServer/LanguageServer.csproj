@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/kaby76/AntlrVSIX</PackageProjectUrl>
     <RepositoryUrl>https://github.com/kaby76/AntlrVSIX</RepositoryUrl>
@@ -13,11 +13,6 @@
     <Company>Domem Technologies, Inc.</Company>
     <Version>1.0.1</Version>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard">

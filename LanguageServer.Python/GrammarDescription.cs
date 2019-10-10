@@ -9,7 +9,6 @@ namespace LanguageServer.Python
     using System.IO;
     using System.Linq;
     using System.Text;
-    using System.Windows.Media;
     using Symtab;
 
     class GrammarDescription : IGrammarDescription
@@ -118,22 +117,22 @@ namespace LanguageServer.Python
         };
 
         /* Color scheme for the tagging. */
-        public List<System.Windows.Media.Color> MapColor { get; } = new List<System.Windows.Media.Color>()
+        public List<System.Drawing.Color> MapColor { get; } = new List<System.Drawing.Color>()
         {
-            Colors.Purple,
-            Colors.Orange,
-            Color.FromRgb(0, 128, 0), //ClassificationNameComment
-            Color.FromRgb(0, 0, 255), //ClassificationNameKeyword
-            Color.FromRgb(163, 21, 21), //ClassificationNameLiteral
+            System.Drawing.Color.Purple,
+            System.Drawing.Color.Orange,
+            System.Drawing.Color.FromArgb(0, 128, 0), //ClassificationNameComment
+            System.Drawing.Color.FromArgb(0, 0, 255), //ClassificationNameKeyword
+            System.Drawing.Color.FromArgb(163, 21, 21), //ClassificationNameLiteral
         };
 
-        public List<System.Windows.Media.Color> MapInvertedColor { get; } = new List<System.Windows.Media.Color>()
+        public List<System.Drawing.Color> MapInvertedColor { get; } = new List<System.Drawing.Color>()
         {
-            Colors.LightPink,
-            Colors.LightYellow,
-            Colors.LightGreen,
-            Colors.LightBlue,
-            Colors.Red,
+            System.Drawing.Color.LightPink,
+            System.Drawing.Color.LightYellow,
+            System.Drawing.Color.LightGreen,
+            System.Drawing.Color.LightBlue,
+            System.Drawing.Color.Red,
         };
 
         public List<bool> CanFindAllRefs { get; } = new List<bool>()

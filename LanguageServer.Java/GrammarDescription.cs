@@ -9,7 +9,6 @@ namespace LanguageServer.Java
     using System.IO;
     using System.Linq;
     using System.Text;
-    using System.Windows.Media;
     using Symtab;
 
     class GrammarDescription : IGrammarDescription
@@ -131,26 +130,26 @@ namespace LanguageServer.Java
         };
 
         /* Color scheme for the tagging. */
-        public List<Color> MapColor { get; } = new List<Color>()
+        public List<System.Drawing.Color> MapColor { get; } = new List<System.Drawing.Color>()
         {
-            Colors.Purple, //ClassificationNameVariable
-            Colors.Orange, //ClassificationNameMethod
-            Color.FromRgb(0, 128, 0), //ClassificationNameComment
-            Color.FromRgb(0, 0, 255), //ClassificationNameKeyword
-            Color.FromRgb(189, 8, 196), //ClassificationNameKeywordControl
-            Color.FromRgb(163, 21, 21), //ClassificationNameLiteral
-            Color.FromRgb(43, 145, 175), //ClassificationNameType
-            Color.FromRgb(43, 145, 175), //ClassificationNameClass
-            Color.FromRgb(43, 145, 175), //ClassificationNameField
+            System.Drawing.Color.Purple, //ClassificationNameVariable
+            System.Drawing.Color.Orange, //ClassificationNameMethod
+            System.Drawing.Color.FromArgb(0, 128, 0), //ClassificationNameComment
+            System.Drawing.Color.FromArgb(0, 0, 255), //ClassificationNameKeyword
+            System.Drawing.Color.FromArgb(189, 8, 196), //ClassificationNameKeywordControl
+            System.Drawing.Color.FromArgb(163, 21, 21), //ClassificationNameLiteral
+            System.Drawing.Color.FromArgb(43, 145, 175), //ClassificationNameType
+            System.Drawing.Color.FromArgb(43, 145, 175), //ClassificationNameClass
+            System.Drawing.Color.FromArgb(43, 145, 175), //ClassificationNameField
         };
 
-        public List<Color> MapInvertedColor { get; } = new List<Color>()
+        public List<System.Drawing.Color> MapInvertedColor { get; } = new List<System.Drawing.Color>()
         {
-            Colors.LightPink,
-            Colors.LightYellow,
-            Colors.LightGreen,
-            Colors.LightBlue,
-            Colors.Red,
+            System.Drawing.Color.LightPink,
+            System.Drawing.Color.LightYellow,
+            System.Drawing.Color.LightGreen,
+            System.Drawing.Color.LightBlue,
+            System.Drawing.Color.Red,
         };
 
         public List<bool> CanFindAllRefs { get; } = new List<bool>()

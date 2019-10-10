@@ -58,7 +58,8 @@
                     .GetExplicitTextProperties(classificationType);
                 var color =  ! Themes.IsInvertedTheme() ? _grammar_description.MapColor[key]
                     : _grammar_description.MapInvertedColor[key];
-                var newProperties = identifierProperties.SetForeground(color);
+                System.Windows.Media.Color newColor = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+                var newProperties = identifierProperties.SetForeground(newColor);
                 classificationFormatMap.AddExplicitTextProperties(classificationType, newProperties);
             }
             
