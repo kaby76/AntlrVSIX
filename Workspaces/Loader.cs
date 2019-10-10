@@ -35,8 +35,8 @@ namespace Workspaces
         {
             int result;
             IntPtr nestedHiearchyValue = IntPtr.Zero;
-            uint nestedItemIdValue = 0;
-            object value = null;
+            uint nestedItemIdValue;
+            object value;
             uint visibleChildNode;
             Guid nestedHierarchyGuid;
             IVsHierarchy nestedHierarchy;
@@ -106,11 +106,7 @@ namespace Workspaces
             int result;
             object value = null;
             string n1 = "";
-            string c1 = "";
-            string n2 = "";
-            string c2 = "";
-            string n3 = "";
-            string c3 = "";
+            string c1;
 
             IVsSolution t1 = hierarchy as IVsSolution;
             IVsProject t2 = hierarchy as IVsProject;
@@ -155,22 +151,20 @@ namespace Workspaces
                     ws.AddProject(ws_project);
                     find_project = ws_project;
                 }
+                var properties = as_project.Properties;
+                if (properties != null)
                 {
-                    var properties = as_project.Properties;
-                    if (properties != null)
+                    var count = properties.Count;
+                    for (int i = 0; i < count; ++i)
                     {
-                        var count = properties.Count;
-                        for (int i = 0; i < count; ++i)
+                        try
                         {
-                            try
-                            {
-                                var prop = properties.Item(i);
-                                var name = prop.Name;
-                                find_project.AddProperty(name);
-                            }
-                            catch (Exception)
-                            { }
+                            var prop = properties.Item(i);
+                            var name = prop.Name;
+                            find_project.AddProperty(name);
                         }
+                        catch (Exception)
+                        { }
                     }
                 }
             }
@@ -198,22 +192,20 @@ namespace Workspaces
                     find_project.AddDocument(doc);
                     find_document = doc;
                 }
-                {
                     var properties = as_projectitem.Properties;
-                    if (properties != null)
+                if (properties != null)
+                {
+                    var count = properties.Count;
+                    for (int i = 0; i < count; ++i)
                     {
-                        var count = properties.Count;
-                        for (int i = 0; i < count; ++i)
+                        try
                         {
-                            try
-                            {
-                                var prop = properties.Item(i);
-                                var pname = prop.Name;
-                                find_document.AddProperty(pname);
-                            }
-                            catch (Exception _)
-                            { }
+                            var prop = properties.Item(i);
+                            var pname = prop.Name;
+                            find_document.AddProperty(pname);
                         }
+                        catch (Exception)
+                        { }
                     }
                 }
             }
