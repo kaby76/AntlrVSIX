@@ -5,7 +5,7 @@
     using System.Collections.Generic;
     using System.IO;
 
-    public class Document
+    public class Document : Container
     {
         IVsHierarchy _ide_object;
         public int _hash;
@@ -111,6 +111,13 @@
         {
             get;
             set;
+        }
+
+        public override Document FindDocument(string ffn)
+        {
+            if (this.FullPath.ToLower() == ffn.ToLower())
+                return this;
+            return null;
         }
     }
 }

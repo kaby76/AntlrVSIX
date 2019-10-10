@@ -32,7 +32,7 @@
                 var grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
                 if (grammar_description != null)
                 {
-                    Workspaces.Document item = Workspaces.Workspace.Instance.FindDocumentFullName(ffn);
+                    Workspaces.Document item = Workspaces.Workspace.Instance.FindDocument(ffn);
                     var buffer = view.TextBuffer;
                     var code = buffer.GetBufferText();
                     item.Code = code;

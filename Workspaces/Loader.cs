@@ -24,13 +24,13 @@
         private static bool finished = false;
         private static bool started = false;
 
-        private static void ProcessHierarchy(IVsHierarchy parent, IVsHierarchy hierarchy)
+        private static void ProcessHierarchy(Container parent, IVsHierarchy hierarchy)
         {
             // Traverse the nodes of the hierarchy from the root node
             ProcessHierarchyNodeRecursively(parent, hierarchy, VSConstants.VSITEMID_ROOT);
         }
 
-        private static void ProcessHierarchyNodeRecursively(IVsHierarchy parent, IVsHierarchy hierarchy, uint itemId)
+        private static void ProcessHierarchyNodeRecursively(Container parent, IVsHierarchy hierarchy, uint itemId)
         {
             int result;
             IntPtr nestedHiearchyValue = IntPtr.Zero;
@@ -52,12 +52,12 @@
 
                 if (nestedHierarchy != null)
                 {
-                    ProcessHierarchy(hierarchy, nestedHierarchy);
+                    ProcessHierarchy(parent, nestedHierarchy);
                 }
             }
             else // The node is not the root of another hierarchy, it is a regular node
             {
-                ShowNodeName(parent, hierarchy, itemId);
+                var new_container = ShowNodeName(parent, hierarchy, itemId);
 
                 result = hierarchy.GetProperty(itemId, (int)__VSHPROPID.VSHPROPID_FirstChild, out value);
 
@@ -73,11 +73,11 @@
                         visibleChildNode = Convert.ToUInt32(value);
 
                         // Enter in recursion
-                        ProcessHierarchyNodeRecursively(parent, hierarchy, visibleChildNode);
+                        ProcessHierarchyNodeRecursively(new_container, hierarchy, visibleChildNode);
 
                         // Get the next visible sibling node
                         value = null;
-                        result = hierarchy.GetProperty(visibleChildNode, (int)__VSHPROPID.VSHPROPID_NextVisibleSibling, out value);
+                        result = hierarchy.GetProperty(visibleChildNode, (int)__VSHPROPID.VSHPROPID_NextSibling, out value);
                     }
                 }
             }
@@ -96,11 +96,14 @@
         {
             FileInfo fileInfo = new FileInfo(filename);
             DirectoryInfo dirInfo = fileInfo.Directory;
-            return Path.Combine(GetProperDirectoryCapitalization(dirInfo),
+            if (dirInfo.GetFiles(fileInfo.Name).Length != 0)
+                return Path.Combine(GetProperDirectoryCapitalization(dirInfo),
                                 dirInfo.GetFiles(fileInfo.Name)[0].Name);
+            else
+                return GetProperDirectoryCapitalization(dirInfo);
         }
         
-        private static void ShowNodeName(IVsHierarchy parent, IVsHierarchy hierarchy, uint itemId)
+        private static Container ShowNodeName(Container parent, IVsHierarchy hierarchy, uint itemId)
         {
             int result;
             object value = null;
@@ -130,26 +133,23 @@
 
             if (as_solution != null)
             {
-                Workspaces.Workspace.Initialize(t1,
+                return Workspaces.Workspace.Initialize(t1,
                     as_solution.FullName,
                     as_solution.FileName);
-            } else if (as_project != null)
+            }
+            else if (as_project != null)
             {
                 var ws = Workspaces.Workspace.Instance;
                 var j_name = as_project.Name;
                 var j_fullname = as_project.FullName;
                 var j_uniquename = as_project.UniqueName;
                 var j_filename = as_project.FileName;
-                var find_project = ws.FindProject(j_filename, j_uniquename);
-                if (find_project == null)
-                {
-                    var ws_project = new Workspaces.Project(hierarchy, itemId,
-                        as_project.UniqueName,
-                        as_project.Name,
-                        as_project.FileName);
-                    ws.AddProject(ws_project);
-                    find_project = ws_project;
-                }
+                var ws_project = new Workspaces.Project(hierarchy, itemId,
+                    as_project.UniqueName,
+                    as_project.Name,
+                    as_project.FileName);
+                parent.AddChild(ws_project);
+                var find_project = ws_project;
                 var properties = as_project.Properties;
                 if (properties != null)
                 {
@@ -166,14 +166,11 @@
                         { }
                     }
                 }
+                return find_project;
             }
             else if (as_projectitem != null)
             {
                 var ws = Workspaces.Workspace.Instance;
-                EnvDTE.Project containing_project = as_projectitem.ContainingProject;
-                Workspaces.Project find_project = ws.FindProject(
-                    containing_project.FileName,
-                    containing_project.Name);
                 if (c1 != null)
                 {
                     try
@@ -184,30 +181,41 @@
                     catch (Exception)
                     { }
                 }
-                var find_document = find_project.FindDocument(c1, n1);
-                if (find_document == null)
+                if (System.IO.Directory.Exists(c1))
+                {
+                    var project = new Workspaces.Project(hierarchy, itemId,
+                        c1,
+                        c1,
+                        c1);
+                    parent.AddChild(project);
+                    return project;
+                }
+                else
                 {
                     var doc = new Workspaces.Document(hierarchy, c1, n1);
-                    find_project.AddDocument(doc);
-                    find_document = doc;
-                }
+                    parent.AddChild(doc);
+                    var find_document = doc;
                     var properties = as_projectitem.Properties;
-                if (properties != null)
-                {
-                    var count = properties.Count;
-                    for (int i = 0; i < count; ++i)
+                    if (properties != null)
                     {
-                        try
+                        var count = properties.Count;
+                        for (int i = 0; i < count; ++i)
                         {
-                            var prop = properties.Item(i);
-                            var pname = prop.Name;
-                            find_document.AddProperty(pname);
+                            try
+                            {
+                                var prop = properties.Item(i);
+                                var pname = prop.Name;
+                                find_document.AddProperty(pname);
+                            }
+                            catch (Exception)
+                            { }
                         }
-                        catch (Exception)
-                        { }
                     }
+                    return find_document;
                 }
             }
+            else
+                return null;
         }
 
         public static void Load()

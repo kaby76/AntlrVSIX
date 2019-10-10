@@ -155,7 +155,7 @@
                     {
                         var per_file_results = results.Where(r => r.FileName == f);
                         per_file_results.Reverse();
-                        var item = Workspaces.Workspace.Instance.FindDocumentFullName(f);
+                        var item = Workspaces.Workspace.Instance.FindDocument(f);
                         var pd = ParserDetailsFactory.Create(item);
                         IVsTextView vstv2 = IVsTextViewExtensions.FindTextViewFor(f);
                         if (vstv2 == null)

@@ -76,7 +76,7 @@
             ITextDocument doc = _buffer.GetTextDocument();
             string f = doc.FilePath;
 
-            var item = Workspaces.Workspace.Instance.FindDocumentFullName(f);
+            var item = Workspaces.Workspace.Instance.FindDocument(f);
             if (item == null) yield break;
             item.Code = _buffer.GetBufferText();
             var pd = ParserDetailsFactory.Create(item);

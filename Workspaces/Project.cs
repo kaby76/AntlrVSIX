@@ -3,7 +3,7 @@
     using Microsoft.VisualStudio.Shell.Interop;
     using System.Collections.Generic;
 
-    public class Project
+    public class Project : Container
     {
         public IVsHierarchy _ide_object;
         public uint _id;
@@ -11,7 +11,7 @@
         string _canonical_name;
         string _name;
         string _ffn;
-        List<Document> _documents = new List<Document>();
+        List<Container> _contents = new List<Container>();
         Dictionary<string, string> _properties = new Dictionary<string, string>();
         Dictionary<string, bool> _lazy_evaluated = new Dictionary<string, bool>();
 
@@ -39,7 +39,8 @@
 
         public Document AddDocument(Document doc)
         {
-            _documents.Add(doc);
+            _contents.Add(doc);
+            doc.Parent = this;
             return doc;
         }
 
@@ -72,17 +73,39 @@
             return result;
         }
 
-        public Document FindDocument(string ffn, string name)
+        public override Project FindProject(string ffn)
         {
-            foreach (var doc in _documents)
-                if (doc.FullPath.ToLower() == ffn.ToLower() && doc.Name.ToLower() == name.ToLower())
-                    return doc;
+            if (this.FullPath.ToLower() == ffn.ToLower())
+                return this;
+            foreach (var proj in _contents)
+            {
+                var found = proj.FindProject(ffn);
+                if (found != null) return found;
+            }
             return null;
         }
 
-        public IEnumerable<Document> Documents
+        public override Document FindDocument(string ffn)
         {
-            get { return _documents; }
+            foreach (var doc in _contents)
+            {
+                var found = doc.FindDocument(ffn);
+                if (found != null) return found;
+            }
+            return null;
         }
+
+        public IEnumerable<Container> Children
+        {
+            get { return _contents; }
+        }
+        public override Container AddChild(Container doc)
+        {
+            _contents.Add(doc);
+            doc.Parent = this;
+            return doc;
+        }
+
+
     }
 }

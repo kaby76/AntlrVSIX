@@ -153,7 +153,7 @@ namespace AntlrVSIX
             string file_path = doc.FilePath;
             IGrammarDescription grammar_description = LanguageServer.GrammarDescriptionFactory.Create(file_path);
             if (!grammar_description.IsFileType(file_path)) return null;
-            var item = Workspaces.Workspace.Instance.FindDocumentFullName(file_path);
+            var item = Workspaces.Workspace.Instance.FindDocument(file_path);
             var pd = ParserDetailsFactory.Create(item);
 
             foreach (IMappingTagSpan<AntlrTokenTag> cur_tag in _aggregator.GetTags(span))

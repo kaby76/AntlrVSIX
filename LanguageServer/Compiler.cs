@@ -9,20 +9,17 @@
             var ws = Workspaces.Workspace.Instance;
             List<ParserDetails> to_do = new List<ParserDetails>();
 
-            foreach (var project in ws.Projects)
+            foreach (var document in Workspaces.DFSContainer.DFS(ws))
             {
-                foreach (var document in project.Documents)
-                {
-                    string file_name = document.FullPath;
-                    if (file_name == null) continue;
-                    var gd = LanguageServer.GrammarDescriptionFactory.Create(file_name);
-                    if (gd == null) continue;
-                    if (!System.IO.File.Exists(file_name)) continue;
-                    var item = Workspaces.Workspace.Instance.FindDocumentFullName(file_name);
-                    var pd = ParserDetailsFactory.Create(item);
-                    if (!pd.Changed) continue;
-                    to_do.Add(pd);
-                }
+                string file_name = document.FullPath;
+                if (file_name == null) continue;
+                var gd = LanguageServer.GrammarDescriptionFactory.Create(file_name);
+                if (gd == null) continue;
+                if (!System.IO.File.Exists(file_name)) continue;
+                var item = Workspaces.Workspace.Instance.FindDocument(file_name);
+                var pd = ParserDetailsFactory.Create(item);
+                if (!pd.Changed) continue;
+                to_do.Add(pd);
             }
 
             foreach (var pd in to_do)

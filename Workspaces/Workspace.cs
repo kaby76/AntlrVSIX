@@ -4,22 +4,23 @@
     using System;
     using System.Collections.Generic;
 
-    public class Workspace
+    public class Workspace : Container
     {
         IVsSolution _ide_object;
         uint _id;
         static Workspace _instance;
         string _name;
         string _ffn;
-        List<Project> _projects = new List<Project>();
+        List<Container> _contents = new List<Container>();
 
-        public static void Initialize(IVsSolution ide_object, string name, string ffn)
+        public static Workspace Initialize(IVsSolution ide_object, string name, string ffn)
         {
-            if (_instance != null) return;
+            if (_instance != null) return _instance;
             var i = Instance;
             i._ide_object = ide_object;
             i._name = name;
             i._ffn = ffn;
+            return i;
         }
 
         public static Workspace Instance
@@ -44,32 +45,35 @@
             set { _ffn = value; }
         }
 
-        public IEnumerable<Project> Projects
+        public IEnumerable<Container> Children
         {
-            get { return _projects; }
+            get { return _contents; }
         }
 
-        public Project AddProject(Project project)
+        public override Container AddChild(Container doc)
         {
-            if (project == null) throw new Exception();
-            _projects.Add(project);
-            return project;
+            _contents.Add(doc);
+            doc.Parent = this;
+            return doc;
         }
 
-        public Document FindDocumentFullName(string ffn)
+        public Document FindDocument(string ffn)
         {
-            foreach (Project proj in _projects)
-                foreach (var doc in proj.Documents)
-                    if (doc.FullPath.ToLower() == ffn.ToLower())
-                        return doc;
+            foreach (var doc in _contents)
+            {
+                var found = doc.FindDocument(ffn);
+                if (found != null) return found;
+            }
             return null;
         }
 
-        public Project FindProject(string ffn, string name)
+        public Project FindProject(string ffn)
         {
-            foreach (Project proj in _projects)
-                if (proj.FullPath.ToLower() == ffn.ToLower() && proj.Name.ToLower() == name.ToLower())
-                    return proj;
+            foreach (var doc in _contents)
+            {
+                var found = doc.FindProject(ffn);
+                if (found != null) return found;
+            }
             return null;
         }
     }

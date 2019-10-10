@@ -10,7 +10,7 @@
         {
             ITextBuffer tb = point.Snapshot.TextBuffer;
             string ffn = tb.GetFilePath();
-            var item = Workspaces.Workspace.Instance.FindDocumentFullName(ffn);
+            var item = Workspaces.Workspace.Instance.FindDocument(ffn);
             return LanguageServer.Util.Find(point.Position, item);
         }
     }

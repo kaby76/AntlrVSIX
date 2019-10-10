@@ -341,7 +341,7 @@ namespace {name_space}
                 if (string.IsNullOrEmpty(folder) || !Directory.Exists(folder))
                     return;
                 var file = new FileInfo(class_file_path);
-                var selectedItem = Workspaces.Workspace.Instance.FindDocumentFullName(class_file_path);
+                var selectedItem = Workspaces.Workspace.Instance.FindDocument(class_file_path);
                 if (selectedItem == null)
                 {
                     //var selectedProject = item as Project;
@@ -590,7 +590,7 @@ public override void {capitalized_member_name}({capitalized_grammar_name}Parser.
                 var doc = application.ActiveDocument;
                 if (doc != null && !string.IsNullOrEmpty(doc.FullName))
                 {
-                    Workspaces.Document docItem = Workspaces.Workspace.Instance.FindDocumentFullName(doc.FullName);
+                    Workspaces.Document docItem = Workspaces.Workspace.Instance.FindDocument(doc.FullName);
                     if (docItem != null)
                     {
                         string fileName = docItem.Name;
