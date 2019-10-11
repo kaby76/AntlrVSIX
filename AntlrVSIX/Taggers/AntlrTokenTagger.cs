@@ -118,8 +118,8 @@ namespace AntlrVSIX.Tagger
                 int curLocStart = start.Position;
                 SnapshotPoint end = curSpan.End;
                 int curLocEnd = end.Position;
-                var dpc_sym = LanguageServer.Tag.GetDocumentSymbol(curLocStart, item);
-                var sorted_combined_tokens = LanguageServer.Tag.Get(
+                var dpc_sym = LanguageServer.Module.GetDocumentSymbol(curLocStart, item);
+                var sorted_combined_tokens = LanguageServer.Module.Get(
                     new Range(start.Position, end.Position),
                     item);
                 foreach (DocumentSymbol p in sorted_combined_tokens)

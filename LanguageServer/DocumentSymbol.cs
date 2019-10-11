@@ -4,7 +4,7 @@
     using System.Collections;
     using System.Collections.Generic;
 
-    public struct DocumentSymbol
+    public class DocumentSymbol
     {
         /**
 	     * The name of this symbol. Will be displayed in the user interface and therefore must not be

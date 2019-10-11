@@ -160,7 +160,7 @@ namespace AntlrVSIX
                 var tracking_span = _buffer.CurrentSnapshot.CreateTrackingSpan(tag_span, SpanTrackingMode.EdgeExclusive);
                 var point = tag_span.Start;
                 var index = point.Position;
-                var info = LanguageServer.QuickInfo.Get(index, item);
+                var info = LanguageServer.Module.GetQuickInfo(index, item);
                 if (info != null)
                     return new QuickInfoItem(tracking_span, info);
             }

@@ -92,32 +92,23 @@ namespace AntlrVSIX.GoToDefinition
             var file_name = doc.FilePath;
             var item = Workspaces.Workspace.Instance.FindDocument(file_name);
             var ref_pd = ParserDetailsFactory.Create(item);
-            Antlr4.Runtime.Tree.IParseTree ref_pt = span.Start.Find();
-            if (ref_pt == null) return;
-            ref_pd.Attributes.TryGetValue(ref_pt, out Symtab.CombinedScopeSymbol value);
-            if (value == null) return;
-            var @ref = value as Symtab.Symbol;
-            if (@ref == null) return;
-            var def = @ref.resolve();
-            if (def == null) return;
-            var def_file = def.file;
-            if (def_file == null) return;
-            var def_item = Workspaces.Workspace.Instance.FindDocument(def_file);
-            if (def_item == null) return;
-            var def_pd = ParserDetailsFactory.Create(def_item);
-            string full_file_name = def_pd.FullFileName;
+            var location = LanguageServer.Module.FindDef(span.Start.Position, item);
+            if (location == null) return;
+            var sym = LanguageServer.Module.GetDocumentSymbol(location.range.Start.Value, location.uri);
+            if (sym == null) return;
+            string full_file_name = location.uri.FullPath;
             IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(full_file_name);
+            if (vstv == null)
             {
                 IVsTextViewExtensions.ShowFrame(full_file_name);
-                vstv = IVsTextViewExtensions.FindTextViewFor(def_pd.FullFileName);
+                vstv = IVsTextViewExtensions.FindTextViewFor(full_file_name);
             }
+            if (vstv == null) return;
             IWpfTextView wpftv = vstv.GetIWpfTextView();
             if (wpftv == null) return;
-            int line_number = def.line;
-            int column_number = def.col;
-            vstv.GetLineAndColumn(def.Token.StartIndex, out line_number, out column_number);
+            vstv.GetLineAndColumn(sym.range.Start.Value, out int line_number, out int column_number);
             ITextSnapshot cc = wpftv.TextBuffer.CurrentSnapshot;
-            SnapshotSpan ss = new SnapshotSpan(cc, def.Token.StartIndex, 1);
+            SnapshotSpan ss = new SnapshotSpan(cc, sym.range.Start.Value, 1);
             SnapshotPoint sp = ss.Start;
             wpftv.Caret.MoveTo(sp);
             if (line_number > 0)

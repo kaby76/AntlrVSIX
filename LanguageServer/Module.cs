@@ -5,9 +5,41 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class Tag
+    public class Module
     {
-        public static int Get(int index, Document doc)
+        public static string GetQuickInfo(int index, Document doc)
+        {
+            var pd = ParserDetailsFactory.Create(doc);
+            Antlr4.Runtime.Tree.IParseTree pt = LanguageServer.Util.Find(index, doc);
+            var gd = GrammarDescriptionFactory.Create(doc.FullPath);
+            if (pt == null) return null;
+            Antlr4.Runtime.Tree.IParseTree p = pt;
+            pd.Attributes.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
+            var q = p as Antlr4.Runtime.Tree.TerminalNodeImpl;
+            pd.Tags.TryGetValue(q, out int tag_type);
+            if (value != null)
+            {
+                var name = value as Symtab.Symbol;
+                string show = name?.Name;
+                if (value is Symtab.Literal)
+                {
+                    show = ((Symtab.Literal)value).Cleaned;
+                }
+                if (gd.PopUpDefinition[tag_type] != null)
+                {
+                    var fun = gd.PopUpDefinition[tag_type];
+                    var mess = fun(pd, p);
+                    if (mess != null)
+                        return mess;
+                }
+                return gd.Map[tag_type]
+                    + "\n"
+                    + show;
+            }
+            return gd.Map[tag_type];
+        }
+
+        public static int GetTag(int index, Document doc)
         {
             var pd = ParserDetailsFactory.Create(doc);
             Antlr4.Runtime.Tree.IParseTree pt = LanguageServer.Util.Find(index, doc);
@@ -33,7 +65,7 @@
             pd.Attributes.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
             var q = p as Antlr4.Runtime.Tree.TerminalNodeImpl;
             var found = pd.Tags.TryGetValue(q, out int tag_type);
-            if (found) return default(DocumentSymbol);
+            if (!found) return default(DocumentSymbol);
             return new DocumentSymbol()
             {
                 name = q.Symbol.Text,
@@ -110,6 +142,29 @@
             var sorted_combined_tokens = combined.OrderBy(t => t.range.Start.Value).ThenBy(t => t.range.End.Value);
             result = sorted_combined_tokens;
             return result;
+        }
+
+        public static Location FindDef(int index, Document doc)
+        {
+            var ref_pt = Util.Find(index, doc);
+            if (ref_pt == null) return default(Location);
+            var ref_pd = ParserDetailsFactory.Create(doc);
+            ref_pd.Attributes.TryGetValue(ref_pt, out Symtab.CombinedScopeSymbol value);
+            if (value == null) return default(Location);
+            var @ref = value as Symtab.Symbol;
+            if (@ref == null) return default(Location);
+            var def = @ref.resolve();
+            if (def == null) return default(Location);
+            var def_file = def.file;
+            if (def_file == null) return default(Location);
+            var def_item = Workspaces.Workspace.Instance.FindDocument(def_file);
+            if (def_item == null) return default(Location);
+            return new Location()
+            {
+                range = new Range(def.Token.StartIndex, def.Token.StopIndex),
+                uri = def_item
+            };
+
         }
     }
 }
