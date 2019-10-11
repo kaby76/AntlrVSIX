@@ -176,10 +176,6 @@
                                 edit.Replace(ss2, new_name);
                             }
                             edit.Apply();
-                            var code = buffer.GetBufferText();
-                            item.Code = tb.GetBufferText();
-                            var pdx = ParserDetailsFactory.Create(item);
-                            pdx.Parse();
                         }
                     }
                 }

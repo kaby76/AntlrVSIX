@@ -39,7 +39,7 @@
 
         public int OnAfterOpenSolution(object aPUnkReserved, int aFNewSolution)
         {
-            Workspaces.Loader.Load();
+            AntlrVSIX.File.Loader.Load();
             LanguageServer.Compiler.Compile();
             return VSConstants.S_OK;
         }
@@ -88,7 +88,7 @@
 
         public int OnAfterBackgroundSolutionLoadComplete()
         {
-            Workspaces.Loader.Load();
+            AntlrVSIX.File.Loader.Load();
             LanguageServer.Compiler.Compile();
             return VSConstants.S_OK;
         }

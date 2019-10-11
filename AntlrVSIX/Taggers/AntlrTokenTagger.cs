@@ -41,7 +41,7 @@ namespace AntlrVSIX.Tagger
             item.Code = code;
             var pd = ParserDetailsFactory.Create(item);
             pd.Parse();
-            //buffer.Changed += new EventHandler<TextContentChangedEventArgs>(OnTextChanged);
+            buffer.Changed += new EventHandler<TextContentChangedEventArgs>(ReparseFile);
         }
 
         static CancellationTokenSource source;
@@ -82,9 +82,7 @@ namespace AntlrVSIX.Tagger
 
         void ReparseFile(object sender, TextContentChangedEventArgs args)
         {
-            IWpfTextView view = sender as IWpfTextView;
-            if (view == null) return;
-            ITextBuffer doc = view.TextBuffer;
+            ITextBuffer doc = sender as ITextBuffer;
             ITextSnapshot snapshot = doc.CurrentSnapshot;
             string code = doc.GetBufferText();
             ITextDocument document = doc.GetTextDocument();
@@ -92,8 +90,7 @@ namespace AntlrVSIX.Tagger
             var item = Workspaces.Workspace.Instance.FindDocument(ffn);
             if (item == null) return;
             item.Code = code;
-            var pd = ParserDetailsFactory.Create(item);
-            pd.Parse();
+            LanguageServer.Compiler.Compile();
             SnapshotSpan span = new SnapshotSpan(_buffer.CurrentSnapshot, 0, _buffer.CurrentSnapshot.Length);
             var temp = TagsChanged;
             if (temp == null)

@@ -61,6 +61,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Diff\Diff.cs" />
+    <Compile Include="File\Loader.cs" />
     <Compile Include="Menus\AboutBox.xaml.cs">
       <DependentUpon>AboutBox.xaml</DependentUpon>
     </Compile>
@@ -81,7 +82,6 @@
     <Compile Include="Helpers\ProjectHelpers.cs" />
     <Compile Include="Helpers\VsTextViewCreationListener.cs" />
     <Compile Include="File\ViewCreationListener.cs" />
-    <Compile Include="File\FileSaveListener.cs" />
     <Compile Include="Menus\GoToVisitorCommand.cs" />
     <Compile Include="Keyboard\CtrlKeyState.cs" />
     <Compile Include="Keyboard\GoToDefKeyProcessor.cs" />

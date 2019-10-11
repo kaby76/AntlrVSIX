@@ -50,12 +50,12 @@
             buffer.ChangeContentType(new_content_type, null);
             if (!PreviousContentType.ContainsKey(ffn))
                 PreviousContentType[ffn] = content_type;
-            var code = buffer.GetBufferText();
-            var item = Workspaces.Workspace.Instance.FindDocument(ffn);
-            if (item == null) return;
-            item.Code = code;
-            var pd = ParserDetailsFactory.Create(item);
-            pd.Parse();
+            //var code = buffer.GetBufferText();
+            //var item = Workspaces.Workspace.Instance.FindDocument(ffn);
+            //if (item == null) return;
+            //item.Code = code;
+            //var pd = ParserDetailsFactory.Create(item);
+            //pd.Parse();
         }
 
         private void OnViewClosed(object sender, EventArgs e)
