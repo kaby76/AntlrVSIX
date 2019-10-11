@@ -154,46 +154,15 @@ namespace AntlrVSIX
             IGrammarDescription grammar_description = LanguageServer.GrammarDescriptionFactory.Create(file_path);
             if (!grammar_description.IsFileType(file_path)) return null;
             var item = Workspaces.Workspace.Instance.FindDocument(file_path);
-            var pd = ParserDetailsFactory.Create(item);
-
             foreach (IMappingTagSpan<AntlrTokenTag> cur_tag in _aggregator.GetTags(span))
             {
-                int tag_type = (int)cur_tag.Tag.TagType;
                 SnapshotSpan tag_span = cur_tag.Span.GetSpans(_buffer).First();
                 var tracking_span = _buffer.CurrentSnapshot.CreateTrackingSpan(tag_span, SpanTrackingMode.EdgeExclusive);
-                Antlr4.Runtime.Tree.IParseTree pt = tag_span.Start.Find();
-                bool found = false;
-                if (pt != null)
-                {
-                    Antlr4.Runtime.Tree.IParseTree p = pt;
-                    {
-                        pd.Attributes.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-                        if (value != null)
-                        {
-                            var name = value as Symtab.Symbol;
-                            string show = name?.Name;
-                            if (value is Symtab.Literal)
-                            {
-                                show = ((Symtab.Literal)value).Cleaned;
-                            }
-                            if (grammar_description.PopUpDefinition[tag_type] != null)
-                            {
-                                var fun = grammar_description.PopUpDefinition[tag_type];
-                                var mess = fun(pd, p);
-                                if (mess != null)
-                                    return new QuickInfoItem(tracking_span, mess);
-                            }
-                            return new QuickInfoItem(
-                                tracking_span, _grammar_description.Map[tag_type]
-                                + "\n"
-                                + show);
-                        }
-                    }
-                }
-                if (!found)
-                    return new QuickInfoItem(
-                         tracking_span,
-                            _grammar_description.Map[tag_type]);
+                var point = tag_span.Start;
+                var index = point.Position;
+                var info = LanguageServer.QuickInfo.Get(index, item);
+                if (info != null)
+                    return new QuickInfoItem(tracking_span, info);
             }
             return null;
         }

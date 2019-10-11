@@ -118,49 +118,15 @@ namespace AntlrVSIX.Tagger
                 int curLocStart = start.Position;
                 SnapshotPoint end = curSpan.End;
                 int curLocEnd = end.Position;
-
-                var combined_tokens = new List<KeyValuePair<IToken, int>>();
-
-                combined_tokens.AddRange(
-                    details.Refs.Where((pair) =>
-                    {
-                        var token = pair.Key;
-                        int start_token_start = token.Symbol.StartIndex;
-                        int end_token_end = token.Symbol.StopIndex;
-                        if (start_token_start >= curLocEnd) return false;
-                        if (end_token_end < curLocStart) return false;
-                        return true;
-                    }).Select( (pair) => new KeyValuePair<IToken, int>(pair.Key.Symbol, pair.Value)));
-
-                combined_tokens.AddRange(details.Defs.Where((pair) =>
-                    {
-                        var token = pair.Key;
-                        int start_token_start = token.Symbol.StartIndex;
-                        int end_token_end = token.Symbol.StopIndex;
-                        if (start_token_start >= curLocEnd) return false;
-                        if (end_token_end < curLocStart) return false;
-                        return true;
-                    }).Select((pair) => new KeyValuePair<IToken, int>(pair.Key.Symbol, pair.Value)));
-
-                combined_tokens.AddRange(details.Comments.Where((pair) =>
-                    {
-                        var token = pair.Key;
-                        int start_token_start = token.StartIndex;
-                        int end_token_end = token.StopIndex;
-                        if (start_token_start >= curLocEnd) return false;
-                        if (end_token_end < curLocStart) return false;
-                        return true;
-                    }));
-
-                // Sort the list.
-                var sorted_combined_tokens = combined_tokens.OrderBy((t) => t.Key.StartIndex);
-
-                foreach (var p in sorted_combined_tokens)
+                var dpc_sym = LanguageServer.Tag.GetDocumentSymbol(curLocStart, item);
+                var sorted_combined_tokens = LanguageServer.Tag.Get(
+                    new Range(start.Position, end.Position),
+                    item);
+                foreach (DocumentSymbol p in sorted_combined_tokens)
                 {
-                    var token = p.Key;
-                    var type = p.Value;
-                    int start_token_start = token.StartIndex;
-                    int end_token_end = token.StopIndex;
+                    int start_token_start = p.range.Start.Value;
+                    int end_token_end = p.range.End.Value;
+                    int type = p.kind;
                     int length = end_token_end - start_token_start + 1;
 
                     // Make sure the length doesn't go past the end of the current span.

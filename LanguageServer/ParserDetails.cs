@@ -16,8 +16,9 @@
         public virtual IGrammarDescription Gd { get; set; }
 
         public virtual Dictionary<TerminalNodeImpl, int> Refs { get; set; } = new Dictionary<TerminalNodeImpl, int>();
-        
+
         public virtual Dictionary<TerminalNodeImpl, int> Defs { get; set; } = new Dictionary<TerminalNodeImpl, int>();
+        public virtual Dictionary<TerminalNodeImpl, int> Tags { get; set; } = new Dictionary<TerminalNodeImpl, int>();
 
         public virtual Dictionary<IToken, int> Comments { get; set; } = new Dictionary<IToken, int>();
 
@@ -96,10 +97,9 @@
                     try
                     {
                         pd.Defs.Add(x, classification);
+                        pd.Tags.Add(x, classification);
                     }
-#pragma warning disable CS0168 // Variable is declared but never used
-                    catch (ArgumentException _)
-#pragma warning restore CS0168 // Variable is declared but never used
+                    catch (ArgumentException)
                     {
                         // Duplicate
                     }
@@ -125,10 +125,9 @@
                     try
                     {
                         pd.Refs.Add(x, classification);
+                        pd.Tags.Add(x, classification);
                     }
-#pragma warning disable CS0168 // Variable is declared but never used
-                    catch (ArgumentException _)
-#pragma warning restore CS0168 // Variable is declared but never used
+                    catch (ArgumentException)
                     {
                         // Duplicate
                     }

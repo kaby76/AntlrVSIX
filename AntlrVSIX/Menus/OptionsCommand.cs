@@ -35,7 +35,7 @@
         public string CorpusLocation
         {
             get { return XOptions.GetProperty("CorpusLocation"); }
-            private set { XOptions.SetProperty("GenerateVisitorListener", value); }
+            private set { XOptions.SetProperty("CorpusLocation", value); }
         }
         public bool OverrideAntlrPluggins
         {

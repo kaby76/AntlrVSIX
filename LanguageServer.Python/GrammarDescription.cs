@@ -38,11 +38,11 @@
                 // Parsing error.
             }
 
-            //StringBuilder sb = new StringBuilder();
-            //Foobar.ParenthesizedAST(_ant_tree, sb, "", cts);
-            //string fn = System.IO.Path.GetFileName(ffn);
-            //fn = "c:\\temp\\" + fn;
-            //System.IO.File.WriteAllText(fn, sb.ToString());
+            StringBuilder sb = new StringBuilder();
+            TreeSerializer.ParenthesizedAST(pt, sb, "", cts);
+            string fn = System.IO.Path.GetFileName(ffn);
+            fn = "c:\\temp\\" + fn;
+            System.IO.File.WriteAllText(fn, sb.ToString());
 
             pd.ParseTree = pt;
         }
@@ -86,7 +86,7 @@
 
         public ParserDetails CreateParserDetails(Workspaces.Document item)
         {
-            throw new NotImplementedException();
+            return new PythonParserDetails(item);
         }
 
         /* Tagging and classification types. */
