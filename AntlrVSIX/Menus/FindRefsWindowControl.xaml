@@ -22,8 +22,8 @@
                         <ColumnDefinition SharedSizeGroup="C" Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" Margin="3" Text="{Binding FileName}" />
-                    <TextBlock Grid.Column="1" Margin="3" Text="{Binding LineNumber}" />
-                    <TextBlock Grid.Column="2" Margin="3" Text="{Binding ColumnNumber}" />
+                    <TextBlock Grid.Column="1" Margin="3" Text="{Binding Start}" />
+                    <TextBlock Grid.Column="2" Margin="3" Text="{Binding End}" />
                 </Grid>
             </DataTemplate>
         </ListBox.ItemTemplate>

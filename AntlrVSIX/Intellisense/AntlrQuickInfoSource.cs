@@ -2,7 +2,6 @@
 namespace AntlrVSIX
 {
     using AntlrVSIX.Extensions;
-    using AntlrVSIX.Grammar;
     using AntlrVSIX.Package;
     using AntlrVSIX.Tagger;
     using LanguageServer;

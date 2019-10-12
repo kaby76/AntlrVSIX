@@ -1,6 +1,5 @@
 ﻿namespace AntlrVSIX.Model
 {
-    using Antlr4.Runtime;
     using AntlrVSIX.Extensions;
     using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Editor;
@@ -48,17 +47,18 @@
                 frame?.Show();
                 IWpfTextView wpftv = vstv.GetIWpfTextView();
                 if (wpftv == null) return;
-                int line_number = _item_selected.LineNumber;
-                int colum_number = _item_selected.ColumnNumber;
-                IToken token = _item_selected.Token;
+                int start = _item_selected.Start;
+                int end = _item_selected.End;
                 // Create new span in the appropriate view.
                 ITextSnapshot cc = wpftv.TextBuffer.CurrentSnapshot;
-                SnapshotSpan ss = new SnapshotSpan(cc, token.StartIndex, 1);
+                SnapshotSpan ss = new SnapshotSpan(cc, start, 1);
                 SnapshotPoint sp = ss.Start;
                 // Put cursor on symbol.
                 wpftv.Caret.MoveTo(sp);     // This sets cursor, bot does not center.
                                             // Center on cursor.
                                             //wpftv.Caret.EnsureVisible(); // This works, sort of. It moves the scroll bar, but it does not CENTER! Does not really work!
+
+                vstv.GetLineAndColumn(start, out int line_number, out int column_number);
                 if (line_number > 0)
                     vstv.CenterLines(line_number - 1, 2);
                 else

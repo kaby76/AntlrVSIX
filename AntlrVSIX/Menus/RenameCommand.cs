@@ -3,7 +3,6 @@
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Model;
     using AntlrVSIX.Package;
-    using AntlrVSIX.Taggers;
     using LanguageServer;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text;
@@ -74,71 +73,28 @@
             // Every character changes all occurrences of the symbol.
 
             SnapshotSpan span = AntlrLanguagePackage.Instance.Span;
-            ITextView view = AntlrLanguagePackage.Instance.View;
-            ITextBuffer buffer = view.TextBuffer;
-            ITextDocument doc = buffer.GetTextDocument();
-            string path = doc.FilePath;
-            IGrammarDescription grammar_description = LanguageServer.GrammarDescriptionFactory.Create(path);
-            IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(path);
-            List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
-            List<ParserDetails> where_details = new List<ParserDetails>();
-            foreach (var kvp in ParserDetailsFactory.AllParserDetails)
+            int curLoc = span.Start.Position;
+            var buf = span.Snapshot.TextBuffer;
+            var doc = buf.GetTextDocument();
+            var file_name = doc.FilePath;
+            var item = Workspaces.Workspace.Instance.FindDocument(file_name);
+            var ref_pd = ParserDetailsFactory.Create(item);
+            if (ref_pd == null) return;
+            var sym = LanguageServer.Module.GetDocumentSymbol(curLoc, item);
+            if (sym == null) return;
+            var locations = LanguageServer.Module.FindRefsAndDefs(curLoc, item);
+            List<SnapshotSpan> wordSpans = new List<SnapshotSpan>();
+            var results = new List<Entry>();
+            foreach (var loc in locations)
             {
-                string file_name = kvp.Key;
-                ParserDetails details = kvp.Value;
-                var gd = LanguageServer.GrammarDescriptionFactory.Create(file_name);
-                if (gd != grammar_description) continue;
                 if (Options.OptionsCommand.Instance.RestrictedDirectory)
                 {
                     string p1 = System.IO.Path.GetDirectoryName(file_name);
-                    string p2 = System.IO.Path.GetDirectoryName(path);
+                    string p2 = System.IO.Path.GetDirectoryName(loc.uri.FullPath);
                     if (p1 != p2) continue;
                 }
-                {
-                    var it = details.Refs.Where(
-                        (t) => grammar_description.CanRename[t.Value]
-                            && t.Key.Symbol.Text == span.GetText()).Select(t => t.Key);
-                    where.AddRange(it);
-                    foreach (var i in it) where_details.Add(details);
-                }
-                {
-                    var it = details.Defs.Where(
-                        (t) => grammar_description.CanRename[t.Value]
-                            && t.Key.Symbol.Text == span.GetText()).Select(t => t.Key);
-                    where.AddRange(it);
-                    foreach (var i in it) where_details.Add(details);
-                }
-            }
-            if (!where.Any()) return;
-            IWpfTextView wpftv = vstv.GetIWpfTextView();
-            if (wpftv == null) return;
-            ITextSnapshot cc = wpftv.TextBuffer.CurrentSnapshot;
-            SnapshotSpan ss = new SnapshotSpan(cc, span.Start.Position, 1);
-            SnapshotPoint sp = ss.Start;
-            SnapshotSpan? currentWord = HighlightTagger.CurrentWord;
-
-            var results = new List<Entry>();
-            for (int i = 0; i < where.Count; ++i)
-            {
-                Antlr4.Runtime.Tree.TerminalNodeImpl x = where[i];
-                ParserDetails y = where_details[i];
-                var w = new Entry() { FileName = y.FullFileName, LineNumber = x.Symbol.Line, ColumnNumber = x.Symbol.Column, Token = x.Symbol };
+                var w = new Entry() { FileName = loc.uri.FullPath, Start = loc.range.Start.Value, End = loc.range.End.Value };
                 results.Add(w);
-            }
-
-            List<SnapshotSpan> wordSpans = new List<SnapshotSpan>();
-
-            for (int i = 0; i < results.Count; ++i)
-            {
-                var w = results[i];
-                if (w.FileName == path)
-                {
-                    // Create new span in the appropriate view.
-                    ITextSnapshot cc2 = buffer.CurrentSnapshot;
-                    SnapshotSpan ss2 = new SnapshotSpan(cc2, w.Token.StartIndex, 1 + w.Token.StopIndex - w.Token.StartIndex);
-                    SnapshotPoint sp2 = ss2.Start;
-                    wordSpans.Add(ss2);
-                }
             }
 
             // Call up the rename dialog box. In another thread because
@@ -146,7 +102,7 @@
             // error.
             Application.Current.Dispatcher.Invoke((Action)delegate {
 
-                RenameDialogBox inputDialog = new RenameDialogBox(currentWord?.GetText());
+                RenameDialogBox inputDialog = new RenameDialogBox(sym.name);
                 if (inputDialog.ShowDialog() == true)
                 {
                     var new_name = inputDialog.Answer;
@@ -155,8 +111,8 @@
                     {
                         var per_file_results = results.Where(r => r.FileName == f);
                         per_file_results.Reverse();
-                        var item = Workspaces.Workspace.Instance.FindDocument(f);
-                        var pd = ParserDetailsFactory.Create(item);
+                        var fitem = Workspaces.Workspace.Instance.FindDocument(f);
+                        var pd = ParserDetailsFactory.Create(fitem);
                         IVsTextView vstv2 = IVsTextViewExtensions.FindTextViewFor(f);
                         if (vstv2 == null)
                         {
@@ -164,14 +120,14 @@
                             IVsTextViewExtensions.ShowFrame(f);
                             vstv2 = IVsTextViewExtensions.FindTextViewFor(f);
                         }
-                        IWpfTextView wpftv2 = vstv.GetIWpfTextView();
+                        IWpfTextView wpftv2 = vstv2.GetIWpfTextView();
                         ITextBuffer tb = wpftv2.TextBuffer;
                         using (var edit = tb.CreateEdit())
                         {
                             ITextSnapshot cc2 = tb.CurrentSnapshot;
                             foreach (var e2 in per_file_results)
                             {
-                                SnapshotSpan ss2 = new SnapshotSpan(cc2, e2.Token.StartIndex, 1 + e2.Token.StopIndex - e2.Token.StartIndex);
+                                SnapshotSpan ss2 = new SnapshotSpan(cc2, e2.Start, 1 + e2.End - e2.Start);
                                 SnapshotPoint sp2 = ss2.Start;
                                 edit.Replace(ss2, new_name);
                             }

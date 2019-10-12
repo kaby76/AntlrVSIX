@@ -166,5 +166,50 @@
             };
 
         }
+
+        public static IEnumerable<Location> FindRefsAndDefs(int index, Document doc)
+        {
+            var result = new List<Location>();
+            var ref_pt = Util.Find(index, doc);
+            if (ref_pt == null) return result;
+            var ref_pd = ParserDetailsFactory.Create(doc);
+            ref_pd.Attributes.TryGetValue(ref_pt, out Symtab.CombinedScopeSymbol value);
+            if (value == null) return result;
+            var @ref = value as Symtab.Symbol;
+            if (@ref == null) return result;
+            var def = @ref.resolve();
+            List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
+            var refs = ref_pd.Refs.Where(
+                (t) =>
+                {
+                    Antlr4.Runtime.Tree.TerminalNodeImpl x = t.Key;
+                    if (x == @ref.Token) return true;
+                    ref_pd.Attributes.TryGetValue(x, out Symtab.CombinedScopeSymbol v);
+                    var vv = v as Symtab.Symbol;
+                    if (vv == null) return false;
+                    if (vv.resolve() == def) return true;
+                    return false;
+                }).Select(t => t.Key);
+            if (def != null)
+            {
+                if (def.file == @ref.file)
+                    result.Add(
+                        new Location()
+                        {
+                            range = new Range(def.Token.StartIndex, def.Token.StopIndex),
+                            uri = Workspaces.Workspace.Instance.FindDocument(def.file)
+                        });
+            }
+            foreach (var r in refs)
+            {
+                result.Add(
+                        new Location()
+                        {
+                            range = new Range(r.Symbol.StartIndex, r.Symbol.StopIndex),
+                            uri = Workspaces.Workspace.Instance.FindDocument(r.Symbol.InputStream.SourceName)
+                        });
+            }
+            return result;
+        }
     }
 }

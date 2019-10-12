@@ -1,7 +1,6 @@
 ﻿namespace AntlrVSIX.File
 {
     using AntlrVSIX.Extensions;
-    using LanguageServer;
     using Microsoft.VisualStudio.Editor;
     using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Editor;

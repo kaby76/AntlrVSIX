@@ -2,13 +2,11 @@
 namespace AntlrVSIX.FindAllReferences
 {
     using AntlrVSIX.Extensions;
-    using AntlrVSIX.Grammar;
     using AntlrVSIX.Model;
     using AntlrVSIX.Package;
     using LanguageServer;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text;
-    using Microsoft.VisualStudio.Text.Editor;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.Design;
@@ -84,32 +82,19 @@ namespace AntlrVSIX.FindAllReferences
             ////////////////////////
 
             SnapshotSpan span = AntlrLanguagePackage.Instance.Span;
-            ITextView view = AntlrLanguagePackage.Instance.View;
-            ITextBuffer buffer = view.TextBuffer;
-            ITextDocument doc = buffer.GetTextDocument();
+            int curLoc = span.Start.Position;
+            var buf = span.Snapshot.TextBuffer;
+            var doc = buf.GetTextDocument();
             var file_name = doc.FilePath;
             var item = Workspaces.Workspace.Instance.FindDocument(file_name);
             var ref_pd = ParserDetailsFactory.Create(item);
-            Antlr4.Runtime.Tree.IParseTree ref_pt = span.Start.Find();
-            if (ref_pt == null) return;
-            ref_pd.Attributes.TryGetValue(ref_pt, out Symtab.CombinedScopeSymbol value);
-            if (value == null) return;
-            var @ref = value as Symtab.Symbol;
-            if (@ref == null) return;
-            var def = @ref.resolve();
-            if (def == null) return;
-            var def_file = def.file;
-            if (def_file == null) return;
-            var def_item = Workspaces.Workspace.Instance.FindDocument(def_file);
-            if (def_item == null) return;
+            if (ref_pd == null) return;
+            var locations = LanguageServer.Module.FindRefsAndDefs(curLoc, item);
+            List<SnapshotSpan> wordSpans = new List<SnapshotSpan>();
             FindAntlrSymbolsModel.Instance.Results.Clear();
-            foreach (KeyValuePair<Antlr4.Runtime.Tree.IParseTree, Symtab.CombinedScopeSymbol> attr in ref_pd.Attributes)
+            foreach (var loc in locations)
             {
-                if (!(attr.Key is Antlr4.Runtime.Tree.TerminalNodeImpl)) continue;
-                if (!(attr.Value is Symtab.Symbol)) continue;
-                var symbol = attr.Value as Symtab.Symbol;
-                if (symbol.resolve() != def) continue;
-                var w = new Entry() { FileName = symbol.Token.InputStream.SourceName, LineNumber = symbol.line, ColumnNumber = symbol.col, Token = symbol.Token };
+                var w = new Entry() { FileName = loc.uri.FullPath, Start = loc.range.Start.Value, End = loc.range.End.Value };
                 FindAntlrSymbolsModel.Instance.Results.Add(w);
             }
             FindRefsWindowCommand.Instance.Show();

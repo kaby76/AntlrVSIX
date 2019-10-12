@@ -2,7 +2,6 @@
 namespace AntlrVSIX.GoToDefinition
 {
     using AntlrVSIX.Extensions;
-    using AntlrVSIX.Grammar;
     using AntlrVSIX.Package;
     using LanguageServer;
     using Microsoft.VisualStudio.Shell;
