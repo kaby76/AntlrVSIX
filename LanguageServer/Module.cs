@@ -177,7 +177,10 @@
             if (value == null) return result;
             var @ref = value as Symtab.Symbol;
             if (@ref == null) return result;
+            if (@ref.Token == null) return result;
             var def = @ref.resolve();
+            if (def == null) return result;
+            if (def.Token == null) return result;
             List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
             var refs = ref_pd.Refs.Where(
                 (t) =>
@@ -193,7 +196,7 @@
             if (def != null)
             {
                 if (def.file == @ref.file)
-                    result.Add(
+                     result.Add(
                         new Location()
                         {
                             range = new Range(def.Token.StartIndex, def.Token.StopIndex),

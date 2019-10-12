@@ -38,7 +38,7 @@ namespace AntlrVSIX.Tagger
             item.Code = code;
             var pd = ParserDetailsFactory.Create(item);
             pd.Parse();
-            buffer.Changed += new EventHandler<TextContentChangedEventArgs>(ReparseFile);
+            buffer.Changed += new EventHandler<TextContentChangedEventArgs>(OnTextChanged);
         }
 
         static CancellationTokenSource source;
@@ -46,12 +46,14 @@ namespace AntlrVSIX.Tagger
 
         void OnTextChanged(object sender, TextContentChangedEventArgs args)
         {
-            if (source == null)
+            var s = source;
+            var t = task;
+            if (s == null)
             {
                 source = new CancellationTokenSource();
                 task = Task.Run(async delegate
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(1.5), source.Token);
+                    await Task.Delay(TimeSpan.FromSeconds(5), source.Token);
                     return 42;
                 });
                 try
@@ -65,15 +67,17 @@ namespace AntlrVSIX.Tagger
                 {
                     ReparseFile(sender, args);
                 }
-                var s = source;
+                s = source;
+                t = task;
+                if (s != null) s.Dispose();
+                if (t != null) t.Dispose();
                 source = null;
-                s.Dispose();
-                var t = task;
                 task = null;
-                t.Dispose();
-            } else
+            }
+            else
             {
-                source.Cancel();
+                s.Cancel();
+                OnTextChanged(sender, args);
             }
         }
 
