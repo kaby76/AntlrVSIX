@@ -122,7 +122,7 @@
 
                 item.Properties.Item("ItemType").Value = itemType;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }

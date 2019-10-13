@@ -40,7 +40,7 @@
             {
                 pt = parser.grammarSpec();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // Parsing error.
             }

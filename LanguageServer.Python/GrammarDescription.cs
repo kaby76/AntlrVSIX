@@ -33,7 +33,7 @@
             {
                 pt = parser.file_input();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // Parsing error.
             }

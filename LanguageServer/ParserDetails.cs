@@ -9,8 +9,8 @@
     public class ParserDetails
     {
         public virtual Workspaces.Document Item { get; set; }
-        public virtual string FullFileName { get; set; }
-        public virtual string Code { get; set; }
+        public virtual string FullFileName { get { return this.Item?.FullPath; } }
+        public virtual string Code { get { return this.Item?.Code; } }
         public virtual bool Changed { get { return Item == null ? true : Item.Changed; } }
 
         public virtual IGrammarDescription Gd { get; set; }
@@ -40,30 +40,31 @@
             Item.Changed = true;
         }
 
+
+        public virtual void GatherDependencies()
+        {
+        }
+
         public virtual void Parse()
         {
             var item = Item;
             var code = item.Code;
             var ffn = item.FullPath;
-            ParserDetails pd = ParserDetailsFactory.Create(item);
             bool has_changed = item.Changed;
             item.Changed = false;
             if (!has_changed) return;
-
-            pd.Code = code;
-            pd.FullFileName = ffn;
 
             //if (item.GetProperty("BuildAction") == "prjBuildActionNone")
             //    return null;
 
             IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);
             if (gd == null) throw new Exception();
-            gd.Parse(pd);
+            gd.Parse(this);
 
-            pd.AllNodes = DFSVisitor.DFS(pd.ParseTree as ParserRuleContext);
-            pd.Comments = gd.ExtractComments(code);
-            pd.Defs = new Dictionary<TerminalNodeImpl, int>();
-            pd.Refs = new Dictionary<TerminalNodeImpl, int>();
+            this.AllNodes = DFSVisitor.DFS(this.ParseTree as ParserRuleContext);
+            this.Comments = gd.ExtractComments(code);
+            this.Defs = new Dictionary<TerminalNodeImpl, int>();
+            this.Refs = new Dictionary<TerminalNodeImpl, int>();
         }
 
         public void Pass1()
@@ -83,21 +84,20 @@
         {
             var item = Item;
             var ffn = item.FullPath;
-            ParserDetails pd = ParserDetailsFactory.Create(item);
             IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);
             if (gd == null) throw new Exception();
             for (int classification = 0; classification < gd.IdentifyDefinition.Count; ++classification)
             {
                 var fun = gd.IdentifyDefinition[classification];
                 if (fun == null) continue;
-                var it = pd.AllNodes.Where(t => fun(gd, pd.Attributes, t));
+                var it = this.AllNodes.Where(t => fun(gd, this.Attributes, t));
                 foreach (var t in it)
                 {
                     var x = (t as TerminalNodeImpl);
                     try
                     {
-                        pd.Defs.Add(x, classification);
-                        pd.Tags.Add(x, classification);
+                        this.Defs.Add(x, classification);
+                        this.Tags.Add(x, classification);
                     }
                     catch (ArgumentException)
                     {
@@ -111,21 +111,20 @@
         {
             var item = Item;
             var ffn = item.FullPath;
-            ParserDetails pd = ParserDetailsFactory.Create(item);
             IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);
             if (gd == null) throw new Exception();
             for (int classification = 0; classification < gd.Identify.Count; ++classification)
             {
                 var fun = gd.Identify[classification];
                 if (fun == null) continue;
-                var it = pd.AllNodes.Where(t => fun(gd, pd.Attributes, t));
+                var it = this.AllNodes.Where(t => fun(gd, this.Attributes, t));
                 foreach (var t in it)
                 {
                     var x = (t as TerminalNodeImpl);
                     try
                     {
-                        pd.Refs.Add(x, classification);
-                        pd.Tags.Add(x, classification);
+                        this.Refs.Add(x, classification);
+                        this.Tags.Add(x, classification);
                     }
                     catch (ArgumentException)
                     {

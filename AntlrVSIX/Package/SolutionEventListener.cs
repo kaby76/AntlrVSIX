@@ -40,7 +40,7 @@
         public int OnAfterOpenSolution(object aPUnkReserved, int aFNewSolution)
         {
             AntlrVSIX.File.Loader.Load();
-            LanguageServer.Compiler.Compile();
+            LanguageServer.Module.Compile();
             return VSConstants.S_OK;
         }
 
@@ -89,7 +89,7 @@
         public int OnAfterBackgroundSolutionLoadComplete()
         {
             AntlrVSIX.File.Loader.Load();
-            LanguageServer.Compiler.Compile();
+            LanguageServer.Module.Compile();
             return VSConstants.S_OK;
         }
     }

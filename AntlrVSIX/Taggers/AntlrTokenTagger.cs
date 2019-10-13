@@ -33,11 +33,6 @@ namespace AntlrVSIX.Tagger
                 string name = _grammar_description.Map[i];
                 _antlr_tag_types[name] = i;
             }
-
-            string code = _buffer.GetBufferText();
-            item.Code = code;
-            var pd = ParserDetailsFactory.Create(item);
-            pd.Parse();
             buffer.Changed += new EventHandler<TextContentChangedEventArgs>(OnTextChanged);
         }
 
@@ -60,7 +55,7 @@ namespace AntlrVSIX.Tagger
                 {
                     task.Wait();
                 }
-                catch (AggregateException ae)
+                catch (AggregateException)
                 {
                 }
                 if (task.Status == TaskStatus.RanToCompletion)
@@ -91,7 +86,7 @@ namespace AntlrVSIX.Tagger
             var item = Workspaces.Workspace.Instance.FindDocument(ffn);
             if (item == null) return;
             item.Code = code;
-            LanguageServer.Compiler.Compile();
+            LanguageServer.Module.Compile();
             SnapshotSpan span = new SnapshotSpan(_buffer.CurrentSnapshot, 0, _buffer.CurrentSnapshot.Length);
             var temp = TagsChanged;
             if (temp == null)

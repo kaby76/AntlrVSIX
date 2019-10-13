@@ -1,13 +1,11 @@
 ﻿namespace Workspaces
 {
     using Microsoft.VisualStudio.Shell.Interop;
-    using System;
     using System.Collections.Generic;
 
     public class Workspace : Container
     {
         IVsSolution _ide_object;
-        uint _id;
         static Workspace _instance;
         string _name;
         string _ffn;
@@ -57,7 +55,7 @@
             return doc;
         }
 
-        public Document FindDocument(string ffn)
+        public override Document FindDocument(string ffn)
         {
             foreach (var doc in _contents)
             {
@@ -67,7 +65,7 @@
             return null;
         }
 
-        public Project FindProject(string ffn)
+        public override Project FindProject(string ffn)
         {
             foreach (var doc in _contents)
             {

@@ -25,7 +25,6 @@
         private static bool finished = false;
         private static bool started = false;
         public static Loader Instance = new Loader();
-        private uint _cookie;
 
         private static void ProcessHierarchy(Container parent, IVsHierarchy hierarchy)
         {
@@ -296,7 +295,7 @@
         public int OnBeforeSave(uint docCookie)
         {
             AntlrVSIX.File.Loader.Load();
-            LanguageServer.Compiler.Compile();
+            LanguageServer.Module.Compile();
             return VSConstants.S_OK;
         }
     }

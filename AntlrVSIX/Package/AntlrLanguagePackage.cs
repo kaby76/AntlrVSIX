@@ -29,8 +29,12 @@ namespace AntlrVSIX.Package
     [ProvideToolWindow(typeof(FindRefsWindow))]
     public sealed class AntlrLanguagePackage : AsyncPackage
     {
+        static int _times = 0;
         public AntlrLanguagePackage()
         {
+            _times++;
+            if (_instance != null) throw new Exception("AntlrLanguagePackage constructor called at least twice.");
+            _instance = this;
         }
 
         private IVsSolution solution;

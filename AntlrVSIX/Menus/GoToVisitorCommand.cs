@@ -207,7 +207,7 @@
                         SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
                         trees[ffn] = tree;
                     }
-                    catch (Exception eeks)
+                    catch (Exception)
                     {
                     }
                 }
@@ -289,7 +289,7 @@
                                 break;
                             }
                         }
-                        catch (Exception eeks)
+                        catch (Exception)
                         {
                         }
                     }
@@ -356,7 +356,7 @@ namespace {name_space}
                     SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
                     trees[class_file_path] = tree;
                 }
-                catch (Exception eeks)
+                catch (Exception)
                 {
                 }
                 // Redo find class.
@@ -484,7 +484,7 @@ public override void {capitalized_member_name}({capitalized_grammar_name}Parser.
                     SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
                     trees[class_file_path] = tree;
                 }
-                catch (Exception eeks)
+                catch (Exception)
                 {
                 }
                 // Redo find class.

@@ -166,7 +166,7 @@
                     }
                     edit.Apply();
                 }
-                catch (Exception eeks)
+                catch (Exception)
                 {
                     var result = org.antlr.codebuff.Log.Message();
                     System.Windows.Forms.MessageBox.Show(result);

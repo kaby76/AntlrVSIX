@@ -5,7 +5,7 @@
     using System;
     using System.Collections.Generic;
 
-    public class DFSVisitor
+    class DFSVisitor
     {
         public static IEnumerable<IParseTree> DFS(IParseTree root)
         {

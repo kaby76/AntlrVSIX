@@ -80,7 +80,6 @@
             if (item == null) yield break;
             item.Code = _buffer.GetBufferText();
             var pd = ParserDetailsFactory.Create(item);
-            pd.Parse();
 
             foreach (IMappingTagSpan<AntlrTokenTag> tag_span in _aggregator.GetTags(spans))
             {
@@ -91,6 +90,8 @@
             }
         }
 
+#pragma warning disable CS0067
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
+#pragma warning restore CS0067
     }
 }

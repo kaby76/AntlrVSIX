@@ -34,7 +34,7 @@ namespace LanguageServer.Rust
             {
                 pt = parser.crate();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // Parsing error.
             }

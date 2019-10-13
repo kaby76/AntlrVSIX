@@ -115,7 +115,7 @@
                 {
                     IEnumerable<string> collection = userSettingsStore.GetSubCollectionNames("AntlrVSIX");
                 }
-                catch (Exception _)
+                catch (Exception)
                 {
                     userSettingsStore.CreateCollection("AntlrVSIX");
                     IEnumerable<string> collection = userSettingsStore.GetSubCollectionNames("AntlrVSIX");

@@ -90,14 +90,13 @@
             {
                 wpftv = VsTextViewCreationListener.to_wpftextview[vstv];
             }
-            catch (Exception eeks) { }
+            catch (Exception) { }
             return wpftv;
         }
 
         internal static IVsTextView GetIVsTextView(string full_file_name)
         {
             throw new Exception();
-            return FindTextViewFor(full_file_name);
         }
 
         internal static IVsTextView OpenStupidFile(string full_file_name)
