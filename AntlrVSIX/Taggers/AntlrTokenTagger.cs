@@ -109,6 +109,7 @@ namespace AntlrVSIX.Tagger
                 var doc = buf.GetTextDocument();
                 string file_name = doc.FilePath;
                 var item = Workspaces.Workspace.Instance.FindDocument(file_name);
+                if (item == null) continue;
                 var details = ParserDetailsFactory.Create(item);
                 SnapshotPoint start = curSpan.Start;
                 int curLocStart = start.Position;

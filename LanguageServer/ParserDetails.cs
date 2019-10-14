@@ -6,7 +6,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class ParserDetails
+    public class ParserDetails : ICloneable
     {
         public virtual Workspaces.Document Item { get; set; }
         public virtual string FullFileName { get { return this.Item?.FullPath; } }
@@ -16,7 +16,7 @@
         public virtual IGrammarDescription Gd { get; set; }
 
         public virtual Dictionary<TerminalNodeImpl, int> Refs { get; set; } = new Dictionary<TerminalNodeImpl, int>();
-
+        public virtual HashSet<string> Dependencies { get; set; } = new HashSet<string>();
         public virtual Dictionary<TerminalNodeImpl, int> Defs { get; set; } = new Dictionary<TerminalNodeImpl, int>();
         public virtual Dictionary<TerminalNodeImpl, int> Tags { get; set; } = new Dictionary<TerminalNodeImpl, int>();
 
@@ -40,10 +40,6 @@
             Item.Changed = true;
         }
 
-
-        public virtual void GatherDependencies()
-        {
-        }
 
         public virtual void Parse()
         {
@@ -123,6 +119,16 @@
                     var x = (t as TerminalNodeImpl);
                     try
                     {
+                        var attr = this.Attributes[t];
+                        var sym = attr as Symtab.Symbol;
+                        var def = sym.resolve();
+                        if (def != null && def.file != null && def.file != ""
+                            && def.file != ffn)
+                        {
+                            var def_item = Workspaces.Workspace.Instance.FindDocument(def.file);
+                            var def_pd = ParserDetailsFactory.Create(def_item);
+                            def_pd.Dependencies.Add(ffn);
+                        }
                         this.Refs.Add(x, classification);
                         this.Tags.Add(x, classification);
                     }
@@ -132,6 +138,11 @@
                     }
                 }
             }
+        }
+
+        public object Clone()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -4,6 +4,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Graphs;
 
     public class Module
     {
@@ -215,11 +216,64 @@
             return result;
         }
 
+        private static List<ParserDetails> DependentFiles(ParserDetails pd)
+        {
+            var result = new List<ParserDetails>();
+            foreach (var dep_file in pd.Dependencies)
+            {
+                var dep_doc = Workspaces.Workspace.Instance.FindDocument(dep_file);
+                var dpd = ParserDetailsFactory.Create(dep_doc);
+                result.Add(dpd);
+            }
+            return result;
+        }
+
+        private static Digraph<ParserDetails> ConstructGraph(List<ParserDetails> to_do)
+        {
+            Digraph<ParserDetails> g = new Digraph<ParserDetails>();
+            HashSet<ParserDetails> done = new HashSet<ParserDetails>();
+            Stack<ParserDetails> stack = new Stack<ParserDetails>();
+            foreach (var f in to_do)
+            {
+                stack.Push(f);
+            }
+
+            while (stack.Count > 0)
+            {
+                var f = stack.Pop();
+                g.AddVertex(f);
+                done.Add(f);
+                foreach (var d in f.Dependencies)
+                {
+                    var d_doc = Workspace.Instance.FindDocument(d);
+                    var d_pd = ParserDetailsFactory.Create(d_doc);
+                    if (!done.Contains(d_pd)) continue;
+                    stack.Push(d_pd);
+                }
+            }
+
+            foreach (var v in g.Vertices)
+            {
+                var deps = v.Dependencies;
+                var doc = Workspace.Instance.FindDocument(v.FullFileName);
+                var pd = ParserDetailsFactory.Create(doc);
+                foreach (var d in deps)
+                {
+                    var d_doc = Workspace.Instance.FindDocument(d);
+                    var d_pd = ParserDetailsFactory.Create(d_doc);
+                    g.AddEdge(new DirectedEdge<ParserDetails>(pd, d_pd));
+                }
+            }
+
+            return g;
+        }
+
         public static void Compile()
         {
             var ws = Workspaces.Workspace.Instance;
-            List<ParserDetails> to_do = new List<ParserDetails>();
 
+            // Get all changed files.
+            List<ParserDetails> to_do = new List<ParserDetails>();
             foreach (var document in Workspaces.DFSContainer.DFS(ws))
             {
                 string file_name = document.FullPath;
@@ -233,25 +287,30 @@
                 to_do.Add(pd);
             }
 
-            foreach (var pd in to_do)
+            Digraph<ParserDetails> g = ConstructGraph(to_do);
+            var ordered_list = new TarjanNoBackEdges<ParserDetails, DirectedEdge<ParserDetails>>(
+                g, to_do).ToList();
+            ordered_list.Reverse();
+
+            foreach (var v in ordered_list)
             {
-                pd.Parse();
+                v.Parse();
             }
-            foreach (var pd in to_do)
+            foreach (var v in ordered_list)
             {
-                pd.Pass1();
+                v.Pass1();
             }
-            foreach (var pd in to_do)
+            foreach (var v in ordered_list)
             {
-                pd.Pass2();
+                v.Pass2();
             }
-            foreach (var pd in to_do)
+            foreach (var v in ordered_list)
             {
-                pd.GatherDefs();
+                v.GatherDefs();
             }
-            foreach (var pd in to_do)
+            foreach (var v in ordered_list)
             {
-                pd.GatherRefs();
+                v.GatherRefs();
             }
         }
     }

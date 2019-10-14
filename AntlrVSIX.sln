@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntlrVSIX", "AntlrVSIX\AntlrVSIX.csproj", "{36897A0A-D67A-4F7F-84F4-87C1C351FA9C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{227BB0F6-9DF1-4782-B8C2-77C76E6824AE} = {227BB0F6-9DF1-4782-B8C2-77C76E6824AE}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "corpus-for-codebuff", "corpus-for-codebuff", "{4F7C6D69-5535-480F-8EFC-86813686E2E7}"
 	ProjectSection(SolutionItems) = preProject
@@ -34,6 +37,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntlrFAProject", "AntlrFAProject\AntlrFAProject.csproj", "{BC3EBEF2-6EFA-472B-9AC9-3A11DCC46E1C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LanguageServer", "LanguageServer\LanguageServer.csproj", "{9600BAEC-E51A-4F80-9251-2306A7A84D44}"
+	ProjectSection(ProjectDependencies) = postProject
+		{227BB0F6-9DF1-4782-B8C2-77C76E6824AE} = {227BB0F6-9DF1-4782-B8C2-77C76E6824AE}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LanguageServer.Java", "LanguageServer.Java\LanguageServer.Java.csproj", "{1A59ABF4-E066-4E4B-B8F9-ED83A8B2CD93}"
 EndProject
@@ -46,6 +52,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Symtab", "Symtab\Symtab.csproj", "{95FAB63B-1FE9-41F9-A875-49556E5E6B8A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workspaces", "Workspaces\Workspaces.csproj", "{E138159B-E61C-4CB7-ABBC-7C57DC9BDD79}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Graphs", "Graphs\Graphs.csproj", "{227BB0F6-9DF1-4782-B8C2-77C76E6824AE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -93,6 +101,10 @@ Global
 		{E138159B-E61C-4CB7-ABBC-7C57DC9BDD79}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E138159B-E61C-4CB7-ABBC-7C57DC9BDD79}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E138159B-E61C-4CB7-ABBC-7C57DC9BDD79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{227BB0F6-9DF1-4782-B8C2-77C76E6824AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{227BB0F6-9DF1-4782-B8C2-77C76E6824AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{227BB0F6-9DF1-4782-B8C2-77C76E6824AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{227BB0F6-9DF1-4782-B8C2-77C76E6824AE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

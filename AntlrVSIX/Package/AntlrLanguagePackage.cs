@@ -29,6 +29,10 @@ namespace AntlrVSIX.Package
     [ProvideToolWindow(typeof(FindRefsWindow))]
     public sealed class AntlrLanguagePackage : AsyncPackage
     {
+
+        // The package must have a public, parameterless constructor, or else
+        // you get wierd error messages from Visual Studio that do not point anywhere
+        // near to this problem!
         static int _times = 0;
         public AntlrLanguagePackage()
         {
