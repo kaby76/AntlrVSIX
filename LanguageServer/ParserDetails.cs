@@ -123,8 +123,10 @@
                     if (x.Symbol == null) continue;
                     try
                     {
-                        var attr = this.Attributes[t];
+                        this.Attributes.TryGetValue(x, out Symtab.CombinedScopeSymbol attr);
+                        if (attr == null) continue;
                         var sym = attr as Symtab.Symbol;
+                        if (sym == null) continue;
                         var def = sym.resolve();
                         if (def != null && def.file != null && def.file != ""
                             && def.file != ffn)

@@ -72,6 +72,7 @@ namespace AntlrVSIX.Tagger
             else
             {
                 s.Cancel();
+                t.Wait();
                 OnTextChanged(sender, args);
             }
         }
