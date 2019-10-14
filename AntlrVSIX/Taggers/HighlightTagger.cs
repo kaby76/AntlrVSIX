@@ -105,6 +105,7 @@ namespace AntlrVSIX.Taggers
             var doc = buf.GetTextDocument();
             var file_name = doc.FilePath;
             var item = Workspaces.Workspace.Instance.FindDocument(file_name);
+            if (item == null) return;
             var ref_pd = ParserDetailsFactory.Create(item);
             if (ref_pd == null) return;
             var location = LanguageServer.Module.GetDocumentSymbol(curLoc, item);

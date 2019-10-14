@@ -124,10 +124,12 @@ namespace AntlrVSIX.ErrorTagger
 
                 // Assumption: tokens do not overlap.
 
-                foreach (IToken token in sorted_combined_tokens)
+                foreach (Antlr4.Runtime.Tree.TerminalNodeImpl token in sorted_combined_tokens)
                 {
-                    int start_token_start = token.StartIndex;
-                    int end_token_end = token.StopIndex;
+                    var tt = token.Symbol;
+                    if (tt == null) continue;
+                    int start_token_start = tt.StartIndex;
+                    int end_token_end = tt.StopIndex;
                     int length = end_token_end - start_token_start + 1;
 
                     // Make sure the length doesn't go past the end of the current span.
