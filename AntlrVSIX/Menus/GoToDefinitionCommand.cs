@@ -97,7 +97,6 @@ namespace AntlrVSIX.GoToDefinition
             if (sym == null) return;
             string full_file_name = location.uri.FullPath;
             IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(full_file_name);
-            if (vstv == null)
             {
                 IVsTextViewExtensions.ShowFrame(full_file_name);
                 vstv = IVsTextViewExtensions.FindTextViewFor(full_file_name);

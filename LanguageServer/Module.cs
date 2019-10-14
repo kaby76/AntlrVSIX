@@ -251,7 +251,7 @@
                 {
                     var d_doc = Workspace.Instance.FindDocument(d);
                     var d_pd = ParserDetailsFactory.Create(d_doc);
-                    if (!done.Contains(d_pd)) continue;
+                    if (done.Contains(d_pd)) continue;
                     stack.Push(d_pd);
                 }
             }
