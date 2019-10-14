@@ -7,7 +7,7 @@
     ///  elements in memory, for example, or keep overridden method slots
     ///  in sync for vtables.
     /// </summary>
-    public interface MemberSymbol : Symbol
+    public interface IMemberSymbol : ISymbol
     {
         int getSlotNumber();
     }

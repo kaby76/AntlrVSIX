@@ -10,7 +10,7 @@
     ///  There is some common cut and paste functionality with <seealso cref="BaseSymbol"/>
     ///  because of a lack of multiple inheritance in Java but it is minimal.
     /// </summary>
-    public abstract class SymbolWithScope : BaseScope, Symbol, Scope
+    public abstract class SymbolWithScope : BaseScope, ISymbol, IScope
     {
         protected internal readonly string name; // All symbols at least have a name
         protected internal int index; // insertion order from 0; compilers often need this
@@ -27,7 +27,7 @@
                 return name;
             }
         }
-        public virtual Scope Scope
+        public virtual IScope Scope
         {
             get
             {
@@ -38,7 +38,7 @@
                 EnclosingScope = value;
             }
         }
-        public override Scope EnclosingScope
+        public override IScope EnclosingScope
         {
             get
             {
@@ -71,7 +71,7 @@
         /// </summary>
         public virtual string getFullyQualifiedName(string scopePathSeparator)
         {
-            IList<Scope> path = EnclosingPathToRoot;
+            IList<IScope> path = EnclosingPathToRoot;
             path.Reverse();
             return Utils.joinScopeNames(path, scopePathSeparator);
         }
@@ -104,7 +104,7 @@
 
         public override bool Equals(object obj)
         {
-            if (!(obj is Symbol))
+            if (!(obj is ISymbol))
             {
                 return false;
             }
@@ -112,7 +112,7 @@
             {
                 return true;
             }
-            return name.Equals(((Symbol)obj).Name);
+            return name.Equals(((ISymbol)obj).Name);
         }
 
         public override int GetHashCode()
@@ -120,7 +120,7 @@
             return name.GetHashCode();
         }
 
-        public Symbol resolve()
+        public ISymbol resolve()
         {
             return this;
         }

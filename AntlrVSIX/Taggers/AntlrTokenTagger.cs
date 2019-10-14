@@ -39,7 +39,7 @@ namespace AntlrVSIX.Tagger
         static CancellationTokenSource source;
         static Task<int> task;
 
-        void OnTextChanged(object sender, TextContentChangedEventArgs args)
+        async void OnTextChanged(object sender, TextContentChangedEventArgs args)
         {
             var s = source;
             var t = task;
@@ -53,9 +53,9 @@ namespace AntlrVSIX.Tagger
                 });
                 try
                 {
-                    task.Wait();
+                    await task;
                 }
-                catch (AggregateException)
+                catch (Exception)
                 {
                 }
                 if (task.Status == TaskStatus.RanToCompletion)
@@ -72,7 +72,13 @@ namespace AntlrVSIX.Tagger
             else
             {
                 s.Cancel();
-                t.Wait();
+                try
+                {
+                    await t;
+                }
+                catch (Exception)
+                {
+                }
                 OnTextChanged(sender, args);
             }
         }

@@ -12,7 +12,7 @@
             GLOBALS = new GlobalScope(PREDEFINED);
         }
 
-        public static readonly Type INVALID_TYPE = new InvalidType();
+        public static readonly IType INVALID_TYPE = new InvalidType();
 
         public BaseScope PREDEFINED = new PredefinedScope();
         public GlobalScope GLOBALS = new GlobalScope(null);
@@ -30,12 +30,12 @@
         {
         }
 
-        public virtual void definePredefinedSymbol(ref Symbol s)
+        public virtual void definePredefinedSymbol(ref ISymbol s)
         {
             PREDEFINED.define(ref s);
         }
 
-        public virtual void defineGlobalSymbol(ref Symbol s)
+        public virtual void defineGlobalSymbol(ref ISymbol s)
         {
             GLOBALS.define(ref s);
         }

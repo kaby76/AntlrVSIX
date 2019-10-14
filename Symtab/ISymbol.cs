@@ -8,10 +8,10 @@
     ///  symbols are added to a scope because this often translates to
     ///  register or parameter numbers.
     /// </summary>
-    public interface Symbol
+    public interface ISymbol
     {
         string Name {get;}
-        Scope Scope {get;set;}
+        IScope Scope {get;set;}
         int InsertionOrderNumber {get;set;}
         int line { get; }
         int col { get; }
@@ -19,7 +19,7 @@
         IToken Token { get; }
 
         // Resolve a ref or def into a def symbol.
-        Symbol resolve();
+        ISymbol resolve();
 
         // to satisfy adding symbols to sets, hashtables
         int GetHashCode();

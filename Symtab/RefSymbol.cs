@@ -6,14 +6,14 @@
     // contains a pointer to the def. When the symbol is resolved, the def is returned.
     public class RefSymbol : BaseSymbol
     {
-        public Symbol Def { get; protected set; }
+        public ISymbol Def { get; protected set; }
 
-        public override Symbol resolve()
+        public override ISymbol resolve()
         {
             return this.Def;
         }
 
-        public RefSymbol(IToken t, Symbol def)
+        public RefSymbol(IToken t, ISymbol def)
             : base(def.Name, t)
         {
             Def = def;

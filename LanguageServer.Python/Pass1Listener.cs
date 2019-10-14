@@ -19,18 +19,18 @@ namespace LanguageServer.Python
         {
             for (; node != null; node = node.Parent)
             {
-                if (_pd.Attributes.TryGetValue(node, out CombinedScopeSymbol value) && value is Scope)
+                if (_pd.Attributes.TryGetValue(node, out CombinedScopeSymbol value) && value is IScope)
                     return node;
             }
             return null;
         }
 
-        public Scope GetScope(IParseTree node)
+        public IScope GetScope(IParseTree node)
         {
             if (node == null)
                 return null;
             _pd.Attributes.TryGetValue(node, out CombinedScopeSymbol value);
-            return value as Scope;
+            return value as IScope;
         }
 
         public Pass1Listener()

@@ -14,12 +14,12 @@
             _pd = pd;
         }
 
-        public Scope NearestScope(IParseTree node)
+        public IScope NearestScope(IParseTree node)
         {
             for (; node != null; node = node.Parent)
             {
-                if (_pd.Attributes.TryGetValue(node, out CombinedScopeSymbol value) && value is Scope)
-                    return (Scope)value;
+                if (_pd.Attributes.TryGetValue(node, out CombinedScopeSymbol value) && value is IScope)
+                    return (IScope)value;
             }
             return null;
         }
@@ -608,7 +608,7 @@
                     else
                     {
                         var c = _pd.Attributes[p.GetChild(i)];
-                        var sc = c as Scope;
+                        var sc = c as IScope;
                         if (sc != null)
                         {
                             var s = sc.LookupType(id);
@@ -648,7 +648,7 @@
                     else
                     {
                         var c = _pd.Attributes[p.GetChild(i)];
-                        var sc = c as Scope;
+                        var sc = c as IScope;
                         if (sc != null)
                         {
                             var s = sc.LookupType(id);
@@ -668,7 +668,7 @@
                 _pd.Attributes.TryGetValue(sc, out CombinedScopeSymbol ss);
                 if (ss != null)
                 {
-                    var s = ((Scope)ss).LookupType(id_name);
+                    var s = ((IScope)ss).LookupType(id_name);
                     if (s == null) return;
                     var sy = context.GetChild(0) as TerminalNodeImpl;
                     var x = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);

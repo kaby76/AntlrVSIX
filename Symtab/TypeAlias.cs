@@ -4,10 +4,10 @@
 
     /// <summary>
     /// A "typedef int I;" in C results in a TypeAlias("I", ptrToIntegerType) </summary>
-    public class TypeAlias : BaseSymbol, Type
+    public class TypeAlias : BaseSymbol, IType
     {
-        protected internal Type targetType;
-        public TypeAlias(string name, Type targetType, IToken token) : base(name, token)
+        protected internal IType targetType;
+        public TypeAlias(string name, IType targetType, IToken token) : base(name, token)
         {
             this.targetType = targetType;
         }
@@ -20,7 +20,7 @@
             }
         }
 
-        public virtual Type TargetType
+        public virtual IType TargetType
         {
             get
             {

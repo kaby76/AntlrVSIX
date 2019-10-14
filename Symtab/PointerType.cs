@@ -5,10 +5,10 @@
     /// An element in a type tree that represents a pointer to some type,
     ///  such as we need for C.  "int *" would need a PointerType(intType) object.
     /// </summary>
-    public class PointerType : Type
+    public class PointerType : IType
     {
-        protected internal Type targetType;
-        public PointerType(Type targetType)
+        protected internal IType targetType;
+        public PointerType(IType targetType)
         {
             this.targetType = targetType;
         }

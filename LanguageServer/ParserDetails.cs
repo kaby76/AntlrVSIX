@@ -12,11 +12,11 @@
         public virtual string FullFileName { get { return this.Item?.FullPath; } }
         public virtual string Code { get { return this.Item?.Code; } }
         public virtual bool Changed { get { return Item == null ? true : Item.Changed; } }
-
+        public virtual void Cleanup() { }
         public virtual IGrammarDescription Gd { get; set; }
 
         public virtual Dictionary<TerminalNodeImpl, int> Refs { get; set; } = new Dictionary<TerminalNodeImpl, int>();
-        public virtual HashSet<string> Dependencies { get; set; } = new HashSet<string>();
+        public virtual HashSet<string> PropagateChangesTo { get; set; } = new HashSet<string>();
         public virtual Dictionary<TerminalNodeImpl, int> Defs { get; set; } = new Dictionary<TerminalNodeImpl, int>();
         public virtual Dictionary<TerminalNodeImpl, int> Tags { get; set; } = new Dictionary<TerminalNodeImpl, int>();
 
@@ -24,7 +24,7 @@
 
         public virtual Dictionary<IParseTree, Symtab.CombinedScopeSymbol> Attributes { get; set; } = new Dictionary<IParseTree, Symtab.CombinedScopeSymbol>();
 
-        public virtual Symtab.Scope RootScope { get; set; }
+        public virtual Symtab.IScope RootScope { get; set; }
 
         public virtual IParseTree ParseTree { get; set; } = null;
 
@@ -125,7 +125,7 @@
                     {
                         this.Attributes.TryGetValue(x, out Symtab.CombinedScopeSymbol attr);
                         if (attr == null) continue;
-                        var sym = attr as Symtab.Symbol;
+                        var sym = attr as Symtab.ISymbol;
                         if (sym == null) continue;
                         var def = sym.resolve();
                         if (def != null && def.file != null && def.file != ""
@@ -133,7 +133,7 @@
                         {
                             var def_item = Workspaces.Workspace.Instance.FindDocument(def.file);
                             var def_pd = ParserDetailsFactory.Create(def_item);
-                            def_pd.Dependencies.Add(ffn);
+                            def_pd.PropagateChangesTo.Add(ffn);
                         }
                         this.Refs.Add(x, classification);
                         this.Tags.Add(x, classification);

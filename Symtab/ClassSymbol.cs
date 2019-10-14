@@ -27,7 +27,7 @@
                 {
                     if (EnclosingScope != null)
                     {
-                        Symbol superClass = EnclosingScope.LookupType(superClassName);
+                        ISymbol superClass = EnclosingScope.LookupType(superClassName);
                         if (superClass is ClassSymbol)
                         {
                             return (ClassSymbol)superClass;
@@ -55,15 +55,15 @@
             }
         }
 
-        public override Symbol LookupType(string name, bool alias = false)
+        public override ISymbol LookupType(string name, bool alias = false)
         {
-            Symbol s = resolveMember(name);
+            ISymbol s = resolveMember(name);
             if (s != null)
             {
                 return s;
             }
             // if not a member, check any enclosing scope. it might be a global variable for example
-            Scope parent = EnclosingScope;
+            IScope parent = EnclosingScope;
             if (parent != null)
             {
                 return parent.LookupType(name, alias);
@@ -75,10 +75,10 @@
         /// Look for a member with this name in this scope or any super class.
         ///  Return null if no member found.
         /// </summary>
-        public override Symbol resolveMember(string name)
+        public override ISymbol resolveMember(string name)
         {
-            symbols.TryGetValue(name, out Symbol s);
-            if (s is MemberSymbol)
+            symbols.TryGetValue(name, out ISymbol s);
+            if (s is IMemberSymbol)
             {
                 return s;
             }
@@ -89,7 +89,7 @@
                 foreach (ClassSymbol sup in superClassScopes)
                 {
                     s = sup.resolveMember(name);
-                    if (s is MemberSymbol)
+                    if (s is IMemberSymbol)
                     {
                         return s;
                     }
@@ -102,9 +102,9 @@
         /// Look for a field with this name in this scope or any super class.
         ///  Return null if no field found.
         /// </summary>
-        public override Symbol resolveField(string name)
+        public override ISymbol resolveField(string name)
         {
-            Symbol s = resolveMember(name);
+            ISymbol s = resolveMember(name);
             if (s is FieldSymbol)
             {
                 return s;
@@ -118,7 +118,7 @@
         /// </summary>
         public virtual MethodSymbol resolveMethod(string name)
         {
-            Symbol s = resolveMember(name);
+            ISymbol s = resolveMember(name);
             if (s is MethodSymbol)
             {
                 return (MethodSymbol)s;
@@ -143,7 +143,7 @@
             }
         }
 
-        public override void setSlotNumber(Symbol sym)
+        public override void setSlotNumber(ISymbol sym)
         {
             {
                 if (sym is MethodSymbol)
@@ -179,7 +179,7 @@
             get
             {
                 ISet<MethodSymbol> methods = new LinkedHashSet<MethodSymbol>();
-                foreach (MemberSymbol s in Symbols)
+                foreach (IMemberSymbol s in Symbols)
                 {
                     if (s is MethodSymbol)
                     {
@@ -233,7 +233,7 @@
             get
             {
                 int n = 0;
-                foreach (MemberSymbol s in Symbols)
+                foreach (IMemberSymbol s in Symbols)
                 {
                     if (s is MethodSymbol)
                     {

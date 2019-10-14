@@ -7,10 +7,10 @@
     ///  You can associate a node in the parse tree that is responsible
     ///  for defining this symbol.
     /// </summary>
-    public class FunctionSymbol : SymbolWithScope, TypedSymbol
+    public class FunctionSymbol : SymbolWithScope, ITypedSymbol
     {
         protected internal ParserRuleContext defNode;
-        protected internal Type retType;
+        protected internal IType retType;
 
         public FunctionSymbol(string name) : base(name)
         {
@@ -29,7 +29,7 @@
         }
 
 
-        public virtual Type Type
+        public virtual IType Type
         {
             get
             {

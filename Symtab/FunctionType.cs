@@ -6,12 +6,12 @@
     /// For C types like "void (*)(int)", we need that to be a pointer to a function
     ///  taking a single integer argument returning void.
     /// </summary>
-    public class FunctionType : Type
+    public class FunctionType : IType
     {
-        protected internal readonly Type returnType;
-        protected internal readonly IList<Type> argumentTypes;
+        protected internal readonly IType returnType;
+        protected internal readonly IList<IType> argumentTypes;
 
-        public FunctionType(Type returnType, IList<Type> argumentTypes)
+        public FunctionType(IType returnType, IList<IType> argumentTypes)
         {
             this.returnType = returnType;
             this.argumentTypes = argumentTypes;
@@ -33,7 +33,7 @@
             }
         }
 
-        public virtual IList<Type> ArgumentTypes
+        public virtual IList<IType> ArgumentTypes
         {
             get
             {

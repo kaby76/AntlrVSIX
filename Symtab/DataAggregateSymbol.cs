@@ -9,7 +9,7 @@
     ///  and methods with different slot sequences. A DataAggregateSymbol
     ///  can also be a member of an aggregate itself (nested structs, ...).
     /// </summary>
-    public abstract class DataAggregateSymbol : SymbolWithScope, MemberSymbol, Symbol, Type
+    public abstract class DataAggregateSymbol : SymbolWithScope, IMemberSymbol, ISymbol, IType
     {
         protected internal ParserRuleContext defNode;
         protected internal int nextFreeFieldSlot = 0; // next slot to allocate
@@ -32,9 +32,9 @@
         }
 
 
-        public override void define(ref Symbol sym)
+        public override void define(ref ISymbol sym)
         {
-            if (!(sym is MemberSymbol))
+            if (!(sym is IMemberSymbol))
             {
                 throw new System.ArgumentException("sym is " + sym.GetType().Name + " not MemberSymbol");
             }
@@ -42,7 +42,7 @@
             setSlotNumber(sym);
         }
 
-        public override IList<Symbol> Symbols
+        public override IList<ISymbol> Symbols
         {
             get
             {
@@ -52,7 +52,7 @@
 
 //JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in .NET:
 //ORIGINAL LINE: @Override public java.util.Map<String, ? extends MemberSymbol> getMembers()
-        public override IDictionary<string, Symbol> Members
+        public override IDictionary<string, ISymbol> Members
         {
             get
             {
@@ -66,10 +66,10 @@
         /// Look up name within this scope only. Return any kind of MemberSymbol found
         ///  or null if nothing with this name found as MemberSymbol.
         /// </summary>
-        public virtual Symbol resolveMember(string name)
+        public virtual ISymbol resolveMember(string name)
         {
-            Symbol s = symbols[name];
-            if (s is MemberSymbol)
+            ISymbol s = symbols[name];
+            if (s is IMemberSymbol)
             {
                 return s;
             }
@@ -80,9 +80,9 @@
         /// Look for a field with this name in this scope only.
         ///  Return null if no field found.
         /// </summary>
-        public virtual Symbol resolveField(string name)
+        public virtual ISymbol resolveField(string name)
         {
-            Symbol s = resolveMember(name);
+            ISymbol s = resolveMember(name);
             if (s is FieldSymbol)
             {
                 return s;
@@ -97,7 +97,7 @@
             get
             {
                 int n = 0;
-                foreach (MemberSymbol s in Symbols)
+                foreach (IMemberSymbol s in Symbols)
                 {
                     if (s is FieldSymbol)
                     {
@@ -127,7 +127,7 @@
             get
             {
                 IList<FieldSymbol> fields = new List<FieldSymbol>();
-                foreach (MemberSymbol s in Symbols)
+                foreach (IMemberSymbol s in Symbols)
                 {
                     if (s is FieldSymbol)
                     {
@@ -148,7 +148,7 @@
             }
         }
 
-        public virtual void setSlotNumber(Symbol sym)
+        public virtual void setSlotNumber(ISymbol sym)
         {
             if (sym is FieldSymbol)
             {

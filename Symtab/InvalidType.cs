@@ -1,7 +1,7 @@
 ﻿namespace Symtab
 {
 
-    public class InvalidType : Type
+    public class InvalidType : IType
     {
         public virtual string Name
         {

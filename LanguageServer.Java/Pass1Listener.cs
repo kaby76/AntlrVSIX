@@ -19,18 +19,18 @@ namespace LanguageServer.Java
         {
             for (; node != null; node = node.Parent)
             {
-                if (_pd.Attributes.TryGetValue(node, out CombinedScopeSymbol value) && value is Scope)
+                if (_pd.Attributes.TryGetValue(node, out CombinedScopeSymbol value) && value is IScope)
                     return node;
             }
             return null;
         }
 
-        public Scope GetScope(IParseTree node)
+        public IScope GetScope(IParseTree node)
         {
             if (node == null)
                 return null;
             _pd.Attributes.TryGetValue(node, out CombinedScopeSymbol value);
-            return value as Scope;
+            return value as IScope;
         }
 
         public Pass1Listener()
@@ -56,7 +56,7 @@ namespace LanguageServer.Java
             var md = mh.GetChild(j) as Java9Parser.MethodDeclaratorContext;
             var node = md.GetChild(0);
             var name = node.GetText();
-            Symbol m = new Symtab.MethodSymbol(name);
+            ISymbol m = new Symtab.MethodSymbol(name);
             var scope = GetScope(NearestScope(context));
             scope.define(ref m);
             _pd.Attributes[node] = (CombinedScopeSymbol)m;
@@ -78,7 +78,7 @@ namespace LanguageServer.Java
                 var id = vdid.GetChild(0);
                 var term = id.GetChild(0) as TerminalNodeImpl;
                 var name = term.GetText();
-                Symbol f = new Symtab.LocalSymbol(name, term.Symbol);
+                ISymbol f = new Symtab.LocalSymbol(name, term.Symbol);
                 var scope = GetScope(NearestScope(context));
                 scope.define(ref f);
                 _pd.Attributes[term] = (CombinedScopeSymbol)f;
@@ -94,7 +94,7 @@ namespace LanguageServer.Java
                     break;
             var node = context.GetChild(i+1) as Java9Parser.IdentifierContext;
             var name = node.GetText();
-            Symbol e = new Symtab.EnumSymbol(name);
+            ISymbol e = new Symtab.EnumSymbol(name);
             var scope = GetScope(NearestScope(context));
             scope.define(ref e);
             _pd.Attributes[node] =(CombinedScopeSymbol) e;
@@ -123,7 +123,7 @@ namespace LanguageServer.Java
             var md = mh.GetChild(j) as Java9Parser.MethodDeclaratorContext;
             var node = md.GetChild(0);
             var name = node.GetText();
-            Symbol m = new Symtab.MethodSymbol(name);
+            ISymbol m = new Symtab.MethodSymbol(name);
             var scope = GetScope(NearestScope(context));
             scope.define(ref m);
             _pd.Attributes[node] = (CombinedScopeSymbol)m;
@@ -139,11 +139,11 @@ namespace LanguageServer.Java
                     break;
             var node = context.GetChild(i) as Java9Parser.IdentifierContext;
             var id_name = node.GetText();
-            Symbol cs = new Symtab.ClassSymbol(id_name);
+            ISymbol cs = new Symtab.ClassSymbol(id_name);
             var scope = GetScope(NearestScope(context));
             scope.define(ref cs);
             _pd.Attributes[node] = (CombinedScopeSymbol)cs;
-            Scope s = (Scope)cs;
+            IScope s = (IScope)cs;
             _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)s;
             _pd.Attributes[context] = (CombinedScopeSymbol)s;
         }
@@ -156,11 +156,11 @@ namespace LanguageServer.Java
                     break;
             var node = context.GetChild(i) as Java9Parser.IdentifierContext;
             var id_name = node.GetText();
-            Symbol cs = new Symtab.InterfaceSymbol(id_name);
+            ISymbol cs = new Symtab.InterfaceSymbol(id_name);
             var scope = GetScope(NearestScope(context));
             scope.define(ref cs);
             _pd.Attributes[node] = (CombinedScopeSymbol)cs;
-            Scope s = (Scope)cs;
+            IScope s = (IScope)cs;
             _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)s;
             _pd.Attributes[context] = (CombinedScopeSymbol)s;
         }
@@ -215,7 +215,7 @@ namespace LanguageServer.Java
             var id = vdi.GetChild(0);
             var term = id.GetChild(0) as TerminalNodeImpl;
             var name = term.GetText();
-            Symbol f = new Symtab.LocalSymbol(name, term.Symbol);
+            ISymbol f = new Symtab.LocalSymbol(name, term.Symbol);
             _pd.Attributes[vdi] = (CombinedScopeSymbol)f;
             var scope = GetScope(NearestScope(context));
             scope.define(ref f);
@@ -261,7 +261,7 @@ namespace LanguageServer.Java
                     return;
                 }
                 var id = context.GetText();
-                Symbol f = new MethodSymbol(id);
+                ISymbol f = new MethodSymbol(id);
                 sc.define(ref f);
                 _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)f;
                 _pd.Attributes[context] = (CombinedScopeSymbol)f;
@@ -277,7 +277,7 @@ namespace LanguageServer.Java
                     return;
                 }
                 var id = context.GetText();
-                Symbol f = new MethodSymbol(id);
+                ISymbol f = new MethodSymbol(id);
                 sc.define(ref f);
                 _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)f;
                 _pd.Attributes[context] = (CombinedScopeSymbol)f;
@@ -286,7 +286,7 @@ namespace LanguageServer.Java
             else if (parent is Java9Parser.VariableDeclaratorIdContext && parent.Parent is Java9Parser.FormalParameterContext)
             {
                 var term = context.GetChild(0) as TerminalNodeImpl;
-                Symbol f = new Symtab.ParameterSymbol(term.GetText(), term.Symbol);
+                ISymbol f = new Symtab.ParameterSymbol(term.GetText(), term.Symbol);
                 var p = (ParserRuleContext)context;
                 for (; p != null; p = (ParserRuleContext)p.Parent)
                 {
@@ -297,7 +297,7 @@ namespace LanguageServer.Java
                 if (p == null) return;
                 {
                     var sc = _pd.Attributes[p];
-                    ((Scope)sc).define(ref f);
+                    ((IScope)sc).define(ref f);
                     _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)f;
                     _pd.Attributes[context] = (CombinedScopeSymbol)f;
                 }
@@ -305,7 +305,7 @@ namespace LanguageServer.Java
             else if (parent is Java9Parser.VariableDeclaratorIdContext)
             {
                 var term = context.GetChild(0) as TerminalNodeImpl;
-                Symbol f = new Symtab.FieldSymbol(term.GetText(), term.Symbol);
+                ISymbol f = new Symtab.FieldSymbol(term.GetText(), term.Symbol);
                 var p = (ParserRuleContext)context;
                 for (; p != null; p = (ParserRuleContext)p.Parent)
                 {
@@ -324,7 +324,7 @@ namespace LanguageServer.Java
                     {
                         return;
                     }
-                    ((Scope)sc).define(ref f);
+                    ((IScope)sc).define(ref f);
                     _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)f;
                     _pd.Attributes[context] = (CombinedScopeSymbol)f;
                 }

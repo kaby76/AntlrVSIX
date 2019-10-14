@@ -20,7 +20,7 @@
             pd.Tags.TryGetValue(q, out int tag_type);
             if (value != null)
             {
-                var name = value as Symtab.Symbol;
+                var name = value as Symtab.ISymbol;
                 string show = name?.Name;
                 if (value is Symtab.Literal)
                 {
@@ -156,7 +156,7 @@
             var ref_pd = ParserDetailsFactory.Create(doc);
             ref_pd.Attributes.TryGetValue(ref_pt, out Symtab.CombinedScopeSymbol value);
             if (value == null) return default(Location);
-            var @ref = value as Symtab.Symbol;
+            var @ref = value as Symtab.ISymbol;
             if (@ref == null) return default(Location);
             var def = @ref.resolve();
             if (def == null) return default(Location);
@@ -180,7 +180,7 @@
             var ref_pd = ParserDetailsFactory.Create(doc);
             ref_pd.Attributes.TryGetValue(ref_pt, out Symtab.CombinedScopeSymbol value);
             if (value == null) return result;
-            var @ref = value as Symtab.Symbol;
+            var @ref = value as Symtab.ISymbol;
             if (@ref == null) return result;
             if (@ref.Token == null) return result;
             var def = @ref.resolve();
@@ -193,7 +193,7 @@
                     Antlr4.Runtime.Tree.TerminalNodeImpl x = t.Key;
                     if (x == @ref.Token) return true;
                     ref_pd.Attributes.TryGetValue(x, out Symtab.CombinedScopeSymbol v);
-                    var vv = v as Symtab.Symbol;
+                    var vv = v as Symtab.ISymbol;
                     if (vv == null) return false;
                     if (vv.resolve() == def) return true;
                     return false;
@@ -220,18 +220,6 @@
             return result;
         }
 
-        private static List<ParserDetails> DependentFiles(ParserDetails pd)
-        {
-            var result = new List<ParserDetails>();
-            foreach (var dep_file in pd.Dependencies)
-            {
-                var dep_doc = Workspaces.Workspace.Instance.FindDocument(dep_file);
-                var dpd = ParserDetailsFactory.Create(dep_doc);
-                result.Add(dpd);
-            }
-            return result;
-        }
-
         private static Digraph<ParserDetails> ConstructGraph(List<ParserDetails> to_do)
         {
             Digraph<ParserDetails> g = new Digraph<ParserDetails>();
@@ -247,7 +235,7 @@
                 var f = stack.Pop();
                 g.AddVertex(f);
                 done.Add(f);
-                foreach (var d in f.Dependencies)
+                foreach (var d in f.PropagateChangesTo)
                 {
                     var d_doc = Workspace.Instance.FindDocument(d);
                     var d_pd = ParserDetailsFactory.Create(d_doc);
@@ -258,7 +246,7 @@
 
             foreach (var v in g.Vertices)
             {
-                var deps = v.Dependencies;
+                var deps = v.PropagateChangesTo;
                 var doc = Workspace.Instance.FindDocument(v.FullFileName);
                 var pd = ParserDetailsFactory.Create(doc);
                 foreach (var d in deps)
@@ -292,27 +280,23 @@
             }
 
             Digraph<ParserDetails> g = ConstructGraph(to_do);
-            var ordered_list = new TarjanNoBackEdges<ParserDetails, DirectedEdge<ParserDetails>>(
-                g, to_do).ToList();
-            ordered_list.Reverse();
-
-            foreach (var v in ordered_list)
+            foreach (var v in g.Vertices)
             {
                 v.Parse();
             }
-            foreach (var v in ordered_list)
+            foreach (var v in g.Vertices)
             {
                 v.Pass1();
             }
-            foreach (var v in ordered_list)
+            foreach (var v in g.Vertices)
             {
                 v.Pass2();
             }
-            foreach (var v in ordered_list)
+            foreach (var v in g.Vertices)
             {
                 v.GatherDefs();
             }
-            foreach (var v in ordered_list)
+            foreach (var v in g.Vertices)
             {
                 v.GatherRefs();
             }

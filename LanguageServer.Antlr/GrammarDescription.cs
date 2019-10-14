@@ -93,9 +93,9 @@
             return false;
         }
 
-        public Dictionary<IParseTree, Symbol> GetSymbolTable()
+        public Dictionary<IParseTree, ISymbol> GetSymbolTable()
         {
-            return new Dictionary<IParseTree, Symbol>();
+            return new Dictionary<IParseTree, ISymbol>();
         }
 
 
@@ -379,7 +379,7 @@
                     var dir = System.IO.Path.GetDirectoryName(pd.Item.FullPath);
                     pd.Attributes.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
                     if (value == null) return null;
-                    var sym = value as Symbol;
+                    var sym = value as ISymbol;
                     if (sym == null) return null;
                     if (sym is Symtab.RefSymbol)
                     {
@@ -411,7 +411,7 @@
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     pd.Attributes.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
                     if (value == null) return null;
-                    var sym = value as Symbol;
+                    var sym = value as ISymbol;
                     if (sym == null) return null;
                     if (sym is Symtab.RefSymbol)
                     {

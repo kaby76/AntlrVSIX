@@ -1,6 +1,6 @@
 ﻿namespace Symtab
 {
-    public class EnumSymbol : SymbolWithScope, Symbol, Type
+    public class EnumSymbol : SymbolWithScope, ISymbol, IType
     {
         public EnumSymbol(string name) : base(name)
         {

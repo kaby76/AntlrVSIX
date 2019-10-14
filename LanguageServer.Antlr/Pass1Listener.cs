@@ -17,16 +17,16 @@ namespace LanguageServer.Antlr
         {
             for (; node != null; node = node.Parent)
             {
-                if (_pd.Attributes.TryGetValue(node, out CombinedScopeSymbol value) && value is Scope)
+                if (_pd.Attributes.TryGetValue(node, out CombinedScopeSymbol value) && value is IScope)
                     return node;
             }
             return null;
         }
 
-        public Scope GetScope(IParseTree node)
+        public IScope GetScope(IParseTree node)
         {
             _pd.Attributes.TryGetValue(node, out CombinedScopeSymbol value);
-            return value as Scope;
+            return value as IScope;
         }
 
         public override void EnterGrammarSpec([NotNull] ANTLRv4Parser.GrammarSpecContext context)
@@ -46,7 +46,7 @@ namespace LanguageServer.Antlr
             if (i == context.ChildCount) return;
             var rule_ref = context.GetChild(i) as TerminalNodeImpl;
             var id = rule_ref.GetText();
-            Symbol sym = new NonterminalSymbol(id, rule_ref.Symbol);
+            ISymbol sym = new NonterminalSymbol(id, rule_ref.Symbol);
             _pd.RootScope.define(ref sym);
             var s = (CombinedScopeSymbol)sym;
             _pd.Attributes[context] = s;
@@ -65,7 +65,7 @@ namespace LanguageServer.Antlr
             if (i == context.ChildCount) return;
             var token_ref = context.GetChild(i) as TerminalNodeImpl;
             var id = token_ref.GetText();
-            Symbol sym = new TerminalSymbol(id, token_ref.Symbol);
+            ISymbol sym = new TerminalSymbol(id, token_ref.Symbol);
             _pd.RootScope.define(ref sym);
             var s = (CombinedScopeSymbol)sym;
             _pd.Attributes[context] = s;
@@ -78,7 +78,7 @@ namespace LanguageServer.Antlr
             {
                 var term = context.GetChild(0) as TerminalNodeImpl;
                 var id = term.GetText();
-                Symbol sym = new ModeSymbol(id, term.Symbol);
+                ISymbol sym = new ModeSymbol(id, term.Symbol);
                 _pd.RootScope.define(ref sym);
                 var s = (CombinedScopeSymbol)sym;
                 _pd.Attributes[context] = s;
@@ -87,7 +87,7 @@ namespace LanguageServer.Antlr
             {
                 var term = context.GetChild(0) as TerminalNodeImpl;
                 var id = term.GetText();
-                Symbol sym = new ChannelSymbol(id, term.Symbol);
+                ISymbol sym = new ChannelSymbol(id, term.Symbol);
                 _pd.RootScope.define(ref sym);
                 var s = (CombinedScopeSymbol)sym;
                 _pd.Attributes[context] = s;

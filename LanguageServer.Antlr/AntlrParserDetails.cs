@@ -6,9 +6,9 @@
 
     public class AntlrParserDetails : ParserDetails
     {
-        static Dictionary<string, Scope> _scopes = new Dictionary<string, Scope>();
+        static Dictionary<string, IScope> _scopes = new Dictionary<string, IScope>();
         static Dictionary<string, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>> _attributes = new Dictionary<string, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>>();
-        static Scope _global_scope = new SymbolTable().GLOBALS;
+        static IScope _global_scope = new SymbolTable().GLOBALS;
 
         public AntlrParserDetails(Workspaces.Document item)
             : base(item)
@@ -17,10 +17,11 @@
             P1Listener = new Pass1Listener(this);
             var dir = item.FullPath;
             dir = System.IO.Path.GetDirectoryName(dir);
-            _scopes.TryGetValue(dir, out Scope value);
+            _scopes.TryGetValue(dir, out IScope value);
             if (value == null)
             {
                 value = new LocalScope(_global_scope);
+                _global_scope.nest(value);
                 _scopes[dir] = value;
             }
             this.RootScope = value;
@@ -31,6 +32,33 @@
                 _attributes[dir] = at;
             }
             this.Attributes = at;
+        }
+
+        private void Nuke(IScope scope)
+        {
+            foreach (var c in scope.NestedScopes)
+            {
+                Nuke(c);
+            }
+            foreach (var s in scope.Symbols)
+            {
+            }
+        }
+
+        private void Nuke(ISymbol s)
+        { }
+
+        public override void Cleanup()
+        {
+            var dir = Item.FullPath;
+            dir = System.IO.Path.GetDirectoryName(dir);
+            _scopes.TryGetValue(dir, out IScope value);
+            Nuke(value);
+            foreach (var s in value.NestedScopes)
+            {
+                // Nuke all symbols in this scope.
+                
+            }
         }
     }
 }

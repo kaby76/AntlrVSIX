@@ -5,35 +5,35 @@
 
     /// <summary>
     /// An abstract base class that houses common functionality for scopes. </summary>
-    public abstract class BaseScope : CombinedScopeSymbol, Scope
+    public abstract class BaseScope : CombinedScopeSymbol, IScope
     {
         public abstract string Name {get;}
-        protected internal Scope enclosingScope; // null if this scope is the root of the scope tree
+        protected internal IScope enclosingScope; // null if this scope is the root of the scope tree
 
         /// <summary>
         /// All symbols defined in this scope; can include classes, functions,
         ///  variables, or anything else that is a Symbol impl. It does NOT
         ///  include non-Symbol-based things like LocalScope. See nestedScopes.
         /// </summary>
-        internal Dictionary<string, Symbol> symbols = new Dictionary<string, Symbol>();
+        internal Dictionary<string, ISymbol> symbols = new Dictionary<string, ISymbol>();
 
         /// <summary>
         /// All directly contained scopes, typically LocalScopes within a
         ///  LocalScope or a LocalScope within a FunctionSymbol. This does not
         ///  include SymbolWithScope objects.
         /// </summary>
-        protected internal IList<Scope> nestedScopesNotSymbols = new List<Scope>();
+        protected internal IList<IScope> nestedScopesNotSymbols = new List<IScope>();
 
         public BaseScope()
         {
         }
 
-        public BaseScope(Scope enclosingScope)
+        public BaseScope(IScope enclosingScope)
         {
             EnclosingScope = enclosingScope;
         }
 
-        public virtual IDictionary<string, Symbol> Members
+        public virtual IDictionary<string, ISymbol> Members
         {
             get
             {
@@ -41,13 +41,13 @@
             }
         }
 
-        public virtual Symbol getSymbol(string name)
+        public virtual ISymbol getSymbol(string name)
         {
-            symbols.TryGetValue(name, out Symbol result);
+            symbols.TryGetValue(name, out ISymbol result);
             return result;
         }
 
-        public virtual Scope EnclosingScope
+        public virtual IScope EnclosingScope
         {
             set
             {
@@ -59,30 +59,30 @@
             }
         }
 
-        public virtual IList<Scope> AllNestedScopedSymbols
+        public virtual IList<IScope> AllNestedScopedSymbols
         {
             get
             {
-                IList<Scope> scopes = new List<Scope>();
+                IList<IScope> scopes = new List<IScope>();
                 Utils.getAllNestedScopedSymbols(this, scopes);
                 return scopes;
             }
         }
 
-        public virtual IList<Scope> NestedScopedSymbols
+        public virtual IList<IScope> NestedScopedSymbols
         {
             get
             {
-                IList<Symbol> scopes = Utils.filter(Symbols, s => s is Scope);
-                return (IList<Scope>)scopes; // force it to cast
+                IList<ISymbol> scopes = Utils.filter(Symbols, s => s is IScope);
+                return (IList<IScope>)scopes; // force it to cast
             }
         }
 
-        public virtual IList<Scope> NestedScopes
+        public virtual IList<IScope> NestedScopes
         {
             get
             {
-                List<Scope> all = new List<Scope>();
+                List<IScope> all = new List<IScope>();
                 all.AddRange(NestedScopedSymbols);
                 all.AddRange(nestedScopesNotSymbols);
                 return all;
@@ -93,7 +93,7 @@
         /// Add a nested scope to this scope; could also be a FunctionSymbol
         ///  if your language allows nested functions.
         /// </summary>
-        public virtual void nest(Scope scope)
+        public virtual void nest(IScope scope)
         {
             if (scope is SymbolWithScope)
             {
@@ -102,17 +102,17 @@
             nestedScopesNotSymbols.Add(scope);
         }
 
-        public virtual Symbol LookupType(string name, bool alias = false)
+        public virtual ISymbol LookupType(string name, bool alias = false)
         {
             if (!alias)
             {
-                symbols.TryGetValue(name, out Symbol s);
+                symbols.TryGetValue(name, out ISymbol s);
                 if (s != null)
                 {
                     return s;
                 }
                 // if not here, check any enclosing scope
-                Scope parent = EnclosingScope;
+                IScope parent = EnclosingScope;
                 if (parent != null)
                 {
                     return parent.LookupType(name, alias);
@@ -133,7 +133,7 @@
                 if (list.Count() > 1) return null;
                 if (list.Count() == 1) return list.First().Value;
                 // if not here, check any enclosing scope
-                Scope parent = EnclosingScope;
+                IScope parent = EnclosingScope;
                 if (parent != null)
                 {
                     return parent.LookupType(name, alias);
@@ -142,13 +142,13 @@
             }
         }
 
-        public virtual void define(ref Symbol sym)
+        public virtual void define(ref ISymbol sym)
         {
             if (symbols.ContainsKey(sym.Name))
             {
                 System.Type t = sym.GetType();
                 var s = System.Activator.CreateInstance(t, new object[] { "_generated_" + new System.Random().Next(), null } );
-                sym = s as Symbol;
+                sym = s as ISymbol;
                 // throw new System.ArgumentException("duplicate symbol " + sym.Name);
             }
             sym.Scope = this;
@@ -162,11 +162,11 @@
         ///  enclosing scope not necessarily parent. This will usually be
         ///  a global scope or something, depending on your scope tree.
         /// </summary>
-        public virtual Scope OuterMostEnclosingScope
+        public virtual IScope OuterMostEnclosingScope
         {
             get
             {
-                Scope s = this;
+                IScope s = this;
                 while (s.EnclosingScope != null)
                 {
                     s = s.EnclosingScope;
@@ -181,9 +181,9 @@
         ///  MethodSymbol.class, unless of course you have created a subclass for
         ///  your language implementation.
         /// </summary>
-        public virtual MethodSymbol getEnclosingScopeOfType(Type type)
+        public virtual MethodSymbol getEnclosingScopeOfType(IType type)
         {
-            Scope s = this;
+            IScope s = this;
             while (s != null)
             {
 #pragma warning disable CS0253 // Possible unintended reference comparison; right hand side needs cast
@@ -197,12 +197,12 @@
             return null;
         }
 
-        public virtual IList<Scope> EnclosingPathToRoot
+        public virtual IList<IScope> EnclosingPathToRoot
         {
             get
             {
-                IList<Scope> scopes = new List<Scope>();
-                Scope s = this;
+                IList<IScope> scopes = new List<IScope>();
+                IScope s = this;
                 while (s != null)
                 {
                     scopes.Add(s);
@@ -212,12 +212,12 @@
             }
         }
 
-        public virtual IList<Symbol> Symbols
+        public virtual IList<ISymbol> Symbols
         {
             get
             {
-                Dictionary<string, Symbol>.ValueCollection list = symbols.Values;
-                IList<Symbol> result = new List<Symbol>();
+                Dictionary<string, ISymbol>.ValueCollection list = symbols.Values;
+                IList<ISymbol> result = new List<ISymbol>();
                 foreach (var l in list)
                 {
                     result.Add(l);
@@ -226,18 +226,18 @@
             }
         }
 
-        public virtual IList<Symbol> AllSymbols
+        public virtual IList<ISymbol> AllSymbols
         {
             get
             {
-                IList<Symbol> syms = new List<Symbol>();
-                ((List<Symbol>)syms).AddRange(Symbols);
-                foreach (Symbol s in symbols.Values)
+                IList<ISymbol> syms = new List<ISymbol>();
+                ((List<ISymbol>)syms).AddRange(Symbols);
+                foreach (ISymbol s in symbols.Values)
                 {
-                    if (s is Scope)
+                    if (s is IScope)
                     {
-                        Scope scope = (Scope)s;
-                        ((List<Symbol>)syms).AddRange(scope.AllSymbols);
+                        IScope scope = (IScope)s;
+                        ((List<ISymbol>)syms).AddRange(scope.AllSymbols);
                     }
                 }
                 return syms;
@@ -287,7 +287,7 @@
 
         public virtual string toTestString(string separator, string scopePathSeparator)
         {
-            IList<Symbol> allSymbols = this.AllSymbols;
+            IList<ISymbol> allSymbols = this.AllSymbols;
             IList<string> syms = Utils.map(allSymbols, s => s.Scope.Name + scopePathSeparator + s.Name);
             return Utils.join(syms, separator);
         }

@@ -9,15 +9,15 @@
     ///  You can associate a node in the parse tree that is responsible
     ///  for defining this symbol.
     /// </summary>
-    public abstract class BaseSymbol : CombinedScopeSymbol, Symbol
+    public abstract class BaseSymbol : CombinedScopeSymbol, ISymbol
     {
         protected internal readonly string name; // All symbols at least have a name
-        protected internal Type type; // If language statically typed, record type
-        protected internal Scope scope; // All symbols know what scope contains them.
+        protected internal IType type; // If language statically typed, record type
+        protected internal IScope scope; // All symbols know what scope contains them.
         protected internal ParserRuleContext defNode; // points at definition node in tree
         protected internal int lexicalOrder; // order seen or insertion order from 0; compilers often need this
 
-        public virtual Symbol resolve()
+        public virtual ISymbol resolve()
         {
             return this;
         }
@@ -35,7 +35,7 @@
                 return name;
             }
         }
-        public virtual Scope Scope
+        public virtual IScope Scope
         {
             get
             {
@@ -47,7 +47,7 @@
             }
         }
 
-        public virtual Type Type
+        public virtual IType Type
         {
             get
             {
@@ -74,7 +74,7 @@
 
         public override bool Equals(object obj)
         {
-            if (!(obj is Symbol))
+            if (!(obj is ISymbol))
             {
                 return false;
             }
@@ -82,7 +82,7 @@
             {
                 return true;
             }
-            return name.Equals(((Symbol)obj).Name);
+            return name.Equals(((ISymbol)obj).Name);
         }
 
         public override int GetHashCode()
@@ -105,7 +105,7 @@
 
         public virtual string getFullyQualifiedName(string scopePathSeparator)
         {
-            IList<Scope> path = scope.EnclosingPathToRoot;
+            IList<IScope> path = scope.EnclosingPathToRoot;
             path.Reverse();
             string qualifier = Utils.joinScopeNames(path, scopePathSeparator);
             return qualifier + scopePathSeparator + name;
@@ -130,7 +130,7 @@
             return s + Name;
         }
 
-        public Symbol definition { get; set; }
+        public ISymbol definition { get; set; }
         public virtual int line { get { return Token != null ? Token.Line : 0; } }
         public virtual int col { get { return Token != null ? Token.Column : 0; } }
         public virtual string file { get { return Token != null ? Token.InputStream.SourceName : ""; } }

@@ -38,7 +38,7 @@
         /// Return first ancestor node up the chain towards the root that is clazz.
         ///  Search includes the current node.
         /// </summary>
-        public static ParserRuleContext getFirstAncestorOfType(ParserRuleContext t, Type clazz)
+        public static ParserRuleContext getFirstAncestorOfType(ParserRuleContext t, IType clazz)
         {
             while (t != null)
             {
@@ -57,10 +57,10 @@
         /// Order of scopes not guaranteed but is currently breadth-first according
         ///  to nesting depth. Gets ScopedSymbols only.
         /// </summary>
-        public static void getAllNestedScopedSymbols(Scope scope, IList<Scope> scopes)
+        public static void getAllNestedScopedSymbols(IScope scope, IList<IScope> scopes)
         {
-            ((List<Scope>)scopes).AddRange(scope.NestedScopedSymbols);
-            foreach (Scope s in scope.NestedScopedSymbols)
+            ((List<IScope>)scopes).AddRange(scope.NestedScopedSymbols);
+            foreach (IScope s in scope.NestedScopedSymbols)
             {
                 getAllNestedScopedSymbols(s, scopes);
             }
@@ -70,10 +70,10 @@
         /// Order of scopes not guaranteed but is currently breadth-first according
         ///  to nesting depth. Gets ScopedSymbols and non-ScopedSymbols.
         /// </summary>
-        public static void getAllNestedScopes(Scope scope, IList<Scope> scopes)
+        public static void getAllNestedScopes(IScope scope, IList<IScope> scopes)
         {
-            ((List<Scope>)scopes).AddRange(scope.NestedScopes);
-            foreach (Scope s in scope.NestedScopes)
+            ((List<IScope>)scopes).AddRange(scope.NestedScopes);
+            foreach (IScope s in scope.NestedScopes)
             {
                 getAllNestedScopes(s, scopes);
             }
@@ -84,9 +84,9 @@
         ///  E.g., myblock:mymethod:myclass.
         ///  String includes arg scope in string.
         /// </summary>
-        public static string toScopeStackString(Scope scope, string separator)
+        public static string toScopeStackString(IScope scope, string separator)
         {
-            IList<Scope> scopes = scope.EnclosingPathToRoot;
+            IList<IScope> scopes = scope.EnclosingPathToRoot;
             return joinScopeNames(scopes, separator);
         }
 
@@ -95,14 +95,14 @@
         ///  E.g., myclass:mymethod:myblock.
         ///  String includes arg scope in string.
         /// </summary>
-        public static string toQualifierString(Scope scope, string separator)
+        public static string toQualifierString(IScope scope, string separator)
         {
-            IList<Scope> scopes = scope.EnclosingPathToRoot;
+            IList<IScope> scopes = scope.EnclosingPathToRoot;
             scopes.Reverse();
             return joinScopeNames(scopes, separator);
         }
 
-        public static string ToString(Scope s, int level)
+        public static string ToString(IScope s, int level)
         {
             if (s == null)
             {
@@ -113,23 +113,23 @@
             buf.Append(s.Name);
             buf.Append("\n");
             level++;
-            foreach (Symbol sym in s.Symbols)
+            foreach (ISymbol sym in s.Symbols)
             { // print out all symbols but not scopes
-                if (!(sym is Scope))
+                if (!(sym is IScope))
                 {
                     buf.Append(tab(level));
                     buf.Append(sym);
                     buf.Append("\n");
                 }
             }
-            foreach (Scope nested in s.NestedScopes)
+            foreach (IScope nested in s.NestedScopes)
             { // includes named scopes and local scopes
                 buf.Append(ToString(nested, level));
             }
             return buf.ToString();
         }
 
-        public static string ToString(Scope s)
+        public static string ToString(IScope s)
         {
             return ToString(s, 0);
         }
@@ -259,7 +259,7 @@
             return buf.ToString();
         }
 
-        public static string joinScopeNames(IList<Scope> scopes, string separator)
+        public static string joinScopeNames(IList<IScope> scopes, string separator)
         {
             if (scopes == null || scopes.Count == 0)
             {
@@ -269,7 +269,7 @@
             buf.Append(scopes[0].Name);
             for (int i = 1; i < scopes.Count; i++)
             {
-                Scope s = scopes[i];
+                IScope s = scopes[i];
                 buf.Append(separator);
                 buf.Append(s.Name);
             }

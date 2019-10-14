@@ -19,10 +19,10 @@
             if (first.Symbol.Type == ANTLRv4Parser.TOKEN_REF)
             {
                 var id = first.GetText();
-                Symbol sym = _pd.RootScope.LookupType(id);
+                ISymbol sym = _pd.RootScope.LookupType(id);
                 if (sym == null)
                 {
-                    sym = (Symbol)new TerminalSymbol(id, first.Symbol);
+                    sym = (ISymbol)new TerminalSymbol(id, first.Symbol);
                     _pd.RootScope.define(ref sym);
                 }
                 var s = (CombinedScopeSymbol)new RefSymbol(first.Symbol, sym);
@@ -35,10 +35,10 @@
         {
             var sy = context.GetChild(0) as TerminalNodeImpl;
             var id = context.GetChild(0).GetText();
-            Symbol sym = _pd.RootScope.LookupType(id);
+            ISymbol sym = _pd.RootScope.LookupType(id);
             if (sym == null)
             {
-                sym = (Symbol)new NonterminalSymbol(id, null);
+                sym = (ISymbol)new NonterminalSymbol(id, null);
                 _pd.RootScope.define(ref sym);
             }
             var s = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, sym);
@@ -55,10 +55,10 @@
                 {
                     var term = context.GetChild(0) as TerminalNodeImpl;
                     var id = term.GetText();
-                    Symbol sym = _pd.RootScope.LookupType(id);
+                    ISymbol sym = _pd.RootScope.LookupType(id);
                     if (sym == null)
                     {
-                        sym = (Symbol)new ModeSymbol(id, null);
+                        sym = (ISymbol)new ModeSymbol(id, null);
                         _pd.RootScope.define(ref sym);
                     }
                     var s = (CombinedScopeSymbol)new RefSymbol(term.Symbol, sym);
@@ -69,10 +69,10 @@
                 {
                     var term = context.GetChild(0) as TerminalNodeImpl;
                     var id = term.GetText();
-                    Symbol sym = _pd.RootScope.LookupType(id);
+                    ISymbol sym = _pd.RootScope.LookupType(id);
                     if (sym == null)
                     {
-                        sym = (Symbol)new ChannelSymbol(id, null);
+                        sym = (ISymbol)new ChannelSymbol(id, null);
                         _pd.RootScope.define(ref sym);
                     }
                     var s = (CombinedScopeSymbol)new RefSymbol(term.Symbol, sym);

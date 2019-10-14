@@ -10,7 +10,7 @@
     ///  The types are typically things like struct or classes and primitive types,
     ///  as well as the type trees used for languages like C.
     /// </summary>
-    public interface Type
+    public interface IType
     {
         string Name {get;}
 

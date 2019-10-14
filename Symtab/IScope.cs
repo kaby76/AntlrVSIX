@@ -20,7 +20,7 @@
     ///  methods one can use to get lots of useful information from a scope, but
     ///  they don't necessarily define what a scope is.
     /// </summary>
-    public interface Scope
+    public interface IScope
     {
         /// <summary>
         /// Often scopes have names like function or class names. For
@@ -30,7 +30,7 @@
 
         /// <summary>
         /// Scope in which this scope defined. null if no enclosing scope </summary>
-        Scope EnclosingScope {get;set;}
+        IScope EnclosingScope {get;set;}
 
 
         /// <summary>
@@ -43,15 +43,15 @@
         ///  The order in which symbols are defined must be preserved so that
         ///  <seealso cref="#getSymbols()"/> returns the list in definition order.
         /// </summary>
-        void define(ref Symbol sym);
+        void define(ref ISymbol sym);
 
         /// <summary>
         /// Look up name in this scope or recursively in parent scope if not here </summary>
-        Symbol LookupType(string name, bool alias = false);
+        ISymbol LookupType(string name, bool alias = false);
 
         /// <summary>
         /// Get symbol if name defined within this specific scope </summary>
-        Symbol getSymbol(string name);
+        ISymbol getSymbol(string name);
 
         /// <summary>
         /// Add a nested local scope to this scope; it's like define() but
@@ -59,7 +59,7 @@
         ///  add a LocalScope for its block via this method.
         /// </summary>
         ///  <exception cref="IllegalArgumentException"> if you pass in a SymbolWithScope. </exception>
-        void nest(Scope scope);
+        void nest(IScope scope);
 
         /// <summary>
         /// Return a list of scopes nested within this scope. It has both
@@ -68,7 +68,7 @@
         ///  ScopedSymbols come first then all non-ScopedSymbols Scope objects.
         ///  Insertion order is used within each sublist.
         /// </summary>
-        IList<Scope> NestedScopes {get;}
+        IList<IScope> NestedScopes {get;}
 
         // ------------ Convenience methods --------------------------------
 
@@ -76,7 +76,7 @@
         /// Return (inclusive) list of all scopes on path to root scope.
         ///  The first element is the current scope and the last is the root scope.
         /// </summary>
-        IList<Scope> EnclosingPathToRoot {get;}
+        IList<IScope> EnclosingPathToRoot {get;}
 
         /// <summary>
         /// Return all immediately enclosed scoped symbols in insertion order.
@@ -88,13 +88,13 @@
         ///  scope. E.g., does not get local scopes within a function.
         ///  This returns a subset or same set as <seealso cref="#getNestedScopes"/>.
         /// </summary>
-        IList<Scope> NestedScopedSymbols {get;}
+        IList<IScope> NestedScopedSymbols {get;}
 
         /// <summary>
         /// Return the symbols defined within this scope. The order of insertion
         ///  into the scope is the order returned in this list.
         /// </summary>
-        IList<Symbol> Symbols {get;}
+        IList<ISymbol> Symbols {get;}
 
         /// <summary>
         /// Return all symbols found in all nested scopes. The order
@@ -102,7 +102,7 @@
         ///  list for each scope.  The scopes are traversed in the
         ///  order in which they are encountered in the input.
         /// </summary>
-        IList<Symbol> AllSymbols {get;}
+        IList<ISymbol> AllSymbols {get;}
 
         /// <summary>
         /// Return the set of names associated with all symbols in the scope. </summary>

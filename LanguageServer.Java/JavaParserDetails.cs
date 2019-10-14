@@ -6,9 +6,9 @@
 
     class JavaParserDetails : ParserDetails
     {
-        static Dictionary<string, Scope> _scopes = new Dictionary<string, Scope>();
+        static Dictionary<string, IScope> _scopes = new Dictionary<string, IScope>();
         static Dictionary<string, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>> _attributes = new Dictionary<string, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>>();
-        static Scope _global_scope = new SymbolTable().GLOBALS;
+        static IScope _global_scope = new SymbolTable().GLOBALS;
 
         public JavaParserDetails(Workspaces.Document item)
             : base(item)
@@ -17,7 +17,7 @@
             P2Listener = new Pass2Listener(this);
             var dir = item.FullPath;
             dir = System.IO.Path.GetDirectoryName(dir);
-            _scopes.TryGetValue(dir, out Scope value);
+            _scopes.TryGetValue(dir, out IScope value);
             if (value == null)
             {
                 value = new LocalScope(_global_scope);

@@ -3,7 +3,7 @@
 
     /// <summary>
     /// A method symbol is a function that lives within an aggregate/class and has a slot number. </summary>
-    public class MethodSymbol : FunctionSymbol, MemberSymbol
+    public class MethodSymbol : FunctionSymbol, IMemberSymbol
     {
         protected internal int slot = -1;
 

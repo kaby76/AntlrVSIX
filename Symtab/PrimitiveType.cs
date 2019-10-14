@@ -2,7 +2,7 @@
 {
     using Antlr4.Runtime;
 
-    public class PrimitiveType : BaseSymbol, Type
+    public class PrimitiveType : BaseSymbol, IType
     {
         protected internal int typeIndex;
 
