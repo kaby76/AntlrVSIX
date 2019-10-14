@@ -90,6 +90,8 @@
                 foreach (var t in it)
                 {
                     var x = (t as TerminalNodeImpl);
+                    if (x == null) continue;
+                    if (x.Symbol == null) continue;
                     try
                     {
                         this.Defs.Add(x, classification);
@@ -117,6 +119,8 @@
                 foreach (var t in it)
                 {
                     var x = (t as TerminalNodeImpl);
+                    if (x == null) continue;
+                    if (x.Symbol == null) continue;
                     try
                     {
                         var attr = this.Attributes[t];

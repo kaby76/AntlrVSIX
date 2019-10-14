@@ -120,7 +120,7 @@ namespace AntlrVSIX.ErrorTagger
                 combined_tokens = combined_tokens.Concat(all_term_tokens);
 
                 // Sort the list.
-                var sorted_combined_tokens = combined_tokens.OrderBy((t) => t.Symbol.StartIndex).ToList();
+                List<Antlr4.Runtime.Tree.TerminalNodeImpl> sorted_combined_tokens = combined_tokens.OrderBy((t) => t.Symbol.StartIndex).ToList();
 
                 // Assumption: tokens do not overlap.
 

@@ -51,6 +51,7 @@
             var q = p as Antlr4.Runtime.Tree.TerminalNodeImpl;
             var found = pd.Tags.TryGetValue(q, out int tag_type);
             if (found) return tag_type;
+            if (q.Symbol == null) return -1;
             var found2 = pd.Comments.TryGetValue(q.Symbol, out int tag2);
             if (found2) return tag2;
             return -1;
@@ -66,7 +67,8 @@
             pd.Attributes.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
             var q = p as Antlr4.Runtime.Tree.TerminalNodeImpl;
             var found = pd.Tags.TryGetValue(q, out int tag_type);
-            if (!found) return default(DocumentSymbol);
+            if (!found) return null;
+            if (q.Symbol == null) return null;
             return new DocumentSymbol()
             {
                 name = q.Symbol.Text,
@@ -81,6 +83,7 @@
             var combined = new System.Collections.Generic.List<DocumentSymbol>();
             foreach (var p in pd.Tags)
             {
+                if (p.Key.Symbol == null) continue;
                 combined.Add(
                     new DocumentSymbol()
                     {
@@ -111,6 +114,7 @@
             var combined = new System.Collections.Generic.List<DocumentSymbol>();
             foreach (var p in pd.Tags)
             {
+                if (p.Key.Symbol == null) continue;
                 int start_token_start = p.Key.Symbol.StartIndex;
                 int end_token_end = p.Key.Symbol.StopIndex;
                 if (start_token_start >= range.End.Value) continue;
