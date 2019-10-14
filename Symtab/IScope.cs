@@ -44,6 +44,7 @@
         ///  <seealso cref="#getSymbols()"/> returns the list in definition order.
         /// </summary>
         void define(ref ISymbol sym);
+        void remove(ISymbol sym);
 
         /// <summary>
         /// Look up name in this scope or recursively in parent scope if not here </summary>

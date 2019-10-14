@@ -50,14 +50,10 @@
             }
         }
 
-//JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in .NET:
-//ORIGINAL LINE: @Override public java.util.Map<String, ? extends MemberSymbol> getMembers()
         public override IDictionary<string, ISymbol> Members
         {
             get
             {
-    //JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in .NET:
-    //ORIGINAL LINE: return (java.util.Map<String, ? extends MemberSymbol>)super.getMembers();
                 return base.Members;
             }
         }

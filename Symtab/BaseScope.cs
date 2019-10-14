@@ -156,6 +156,18 @@
             symbols[sym.Name] = sym;
         }
 
+        public virtual void remove(ISymbol sym)
+        {
+
+            if (symbols.ContainsKey(sym.Name))
+            {
+                symbols.Remove(sym.Name);
+            }
+            sym.Scope = null;
+            sym.InsertionOrderNumber = 0;
+            symbols[sym.Name] = sym;
+        }
+
 
         /// <summary>
         /// Walk up enclosingScope until we find topmost. Note this is
