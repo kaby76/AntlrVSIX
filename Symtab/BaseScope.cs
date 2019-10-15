@@ -73,8 +73,14 @@
         {
             get
             {
-                IList<ISymbol> scopes = Utils.filter(Symbols, s => s is IScope);
-                return (IList<IScope>)scopes; // force it to cast
+                var result = new List<IScope>();
+                foreach (var sym in Symbols)
+                {
+                    var s = sym as IScope;
+                    if (s == null) continue;
+                    result.Add(s);
+                }
+                return (IList<IScope>)result;
             }
         }
 
@@ -158,14 +164,12 @@
 
         public virtual void remove(ISymbol sym)
         {
-
             if (symbols.ContainsKey(sym.Name))
             {
                 symbols.Remove(sym.Name);
             }
             sym.Scope = null;
-            sym.InsertionOrderNumber = 0;
-            symbols[sym.Name] = sym;
+            sym.InsertionOrderNumber = -1;
         }
 
 

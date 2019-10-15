@@ -40,13 +40,13 @@
             {
                 Nuke(c);
             }
-            foreach (var s in scope.Symbols)
+            var copy = scope.Symbols;
+            foreach (var s in copy)
             {
+                if (s.file == Item.FullPath)
+                    scope.remove(s);
             }
         }
-
-        private void Nuke(ISymbol s)
-        { }
 
         public override void Cleanup()
         {
@@ -57,7 +57,7 @@
             foreach (var s in value.NestedScopes)
             {
                 // Nuke all symbols in this scope.
-                
+                Nuke(s);
             }
         }
     }

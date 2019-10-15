@@ -11,6 +11,7 @@
         public static string GetQuickInfo(int index, Document doc)
         {
             var pd = ParserDetailsFactory.Create(doc);
+            if (pd.ParseTree == null) return null;
             Antlr4.Runtime.Tree.IParseTree pt = LanguageServer.Util.Find(index, doc);
             var gd = GrammarDescriptionFactory.Create(doc.FullPath);
             if (pt == null) return null;
@@ -43,6 +44,7 @@
         public static int GetTag(int index, Document doc)
         {
             var pd = ParserDetailsFactory.Create(doc);
+            if (pd.ParseTree == null) return -1;
             Antlr4.Runtime.Tree.IParseTree pt = LanguageServer.Util.Find(index, doc);
             var gd = GrammarDescriptionFactory.Create(doc.FullPath);
             if (pt == null) return -1;
@@ -60,6 +62,7 @@
         public static DocumentSymbol GetDocumentSymbol(int index, Document doc)
         {
             var pd = ParserDetailsFactory.Create(doc);
+            if (pd.ParseTree == null) return null;
             Antlr4.Runtime.Tree.IParseTree pt = LanguageServer.Util.Find(index, doc);
             var gd = GrammarDescriptionFactory.Create(doc.FullPath);
             if (pt == null) return default(DocumentSymbol);
@@ -80,7 +83,8 @@
         public static IEnumerable<DocumentSymbol> Get(Document doc)
         {
             var pd = ParserDetailsFactory.Create(doc);
-            var combined = new System.Collections.Generic.List<DocumentSymbol>();
+            if (pd.ParseTree == null) return new List<DocumentSymbol>();
+            var combined = new List<DocumentSymbol>();
             foreach (var p in pd.Tags)
             {
                 if (p.Key.Symbol == null) continue;
@@ -111,6 +115,7 @@
         public static IEnumerable<DocumentSymbol> Get(Range range, Document doc)
         {
             var pd = ParserDetailsFactory.Create(doc);
+            if (pd.ParseTree == null) return new List<DocumentSymbol>();
             var combined = new System.Collections.Generic.List<DocumentSymbol>();
             foreach (var p in pd.Tags)
             {

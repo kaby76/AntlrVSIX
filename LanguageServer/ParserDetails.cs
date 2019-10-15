@@ -61,6 +61,7 @@
             this.Comments = gd.ExtractComments(code);
             this.Defs = new Dictionary<TerminalNodeImpl, int>();
             this.Refs = new Dictionary<TerminalNodeImpl, int>();
+            this.Cleanup();
         }
 
         public void Pass1()

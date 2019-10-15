@@ -10,6 +10,7 @@
         public static IParseTree Find(int index, Document document)
         {
             var pd = ParserDetailsFactory.Create(document);
+            if (pd.ParseTree == null) return null;
             foreach (var node in DFSVisitor.DFS(pd.ParseTree as ParserRuleContext))
             {
                 if (node as TerminalNodeImpl == null)
