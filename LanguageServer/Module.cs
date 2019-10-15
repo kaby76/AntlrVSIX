@@ -287,6 +287,7 @@
             Digraph<ParserDetails> g = ConstructGraph(to_do);
             foreach (var v in g.Vertices)
             {
+                v.Item.Changed = true; // Force.
                 v.Parse();
             }
             foreach (var v in g.Vertices)

@@ -48,7 +48,7 @@ namespace AntlrVSIX.Tagger
                 source = new CancellationTokenSource();
                 task = Task.Run(async delegate
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(5), source.Token);
+                    await Task.Delay(TimeSpan.FromSeconds(3), source.Token);
                     return 42;
                 });
                 try
