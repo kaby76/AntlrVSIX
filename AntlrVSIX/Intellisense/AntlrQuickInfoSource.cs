@@ -59,111 +59,35 @@ namespace AntlrVSIX
             _grammar_description = LanguageServer.GrammarDescriptionFactory.Create(path);
         }
 
-        //public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quick_info_content, out ITrackingSpan tracking_span)
-        //{
-        //    tracking_span = null;
-
-        //    if (_disposed)
-        //        throw new ObjectDisposedException("TestQuickInfoSource");
-
-        //    var trigger_point = (SnapshotPoint) session.GetTriggerPoint(_buffer.CurrentSnapshot);
-
-        //    if (trigger_point == null)
-        //        return;
-
-        //    IWpfTextView view = AntlrLanguagePackage.Instance.GetActiveView();
-        //    if (view == null) return;
-
-        //    TextExtent extent = AntlrVSIX.Package.AntlrLanguagePackage.Instance.Navigator[view].GetExtentOfWord(trigger_point);
-        //    SnapshotSpan span = extent.Span;
-        //    ITextBuffer buffer = view.TextBuffer;
-        //    ITextDocument doc = buffer.GetTextDocument();
-        //    string file_path = doc.FilePath;
-        //    IGrammarDescription grammar_description = GrammarDescriptionFactory.Create(file_path);
-        //    if (!grammar_description.IsFileType(file_path)) return;
-        //    ParserDetails pd = ParserDetails._per_file_parser_details[file_path];
-
-        //    foreach (IMappingTagSpan<AntlrTokenTag> cur_tag in _aggregator.GetTags(span))
-        //    {
-        //        int tag_type = (int)cur_tag.Tag.TagType;
-        //        SnapshotSpan tag_span = cur_tag.Span.GetSpans(_buffer).First();
-        //        tracking_span = _buffer.CurrentSnapshot.CreateTrackingSpan(tag_span, SpanTrackingMode.EdgeExclusive);
-        //        Antlr4.Runtime.Tree.IParseTree pt = tag_span.Start.Find();
-        //        bool found = false;
-        //        if (pt != null)
-        //        {
-        //            Antlr4.Runtime.Tree.IParseTree p = pt;
-        //            for (; p != null; p = p.Parent)
-        //            {
-        //                pd._ant_symtab.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-        //                if (value != null)
-        //                {
-        //                    var name = value as Symtab.Symbol;
-        //                    string show = name?.Name;
-        //                    if (value is Symtab.Literal)
-        //                    {
-        //                        show = ((Symtab.Literal)value).Cleaned;
-        //                    }
-        //                    if (grammar_description.PopUpDefinition[tag_type] != null)
-        //                    {
-        //                        var fun = grammar_description.PopUpDefinition[tag_type];
-        //                        show = fun(grammar_description, pd._ant_symtab, p);
-        //                        quick_info_content.Add(
-        //                          show);
-        //                    }
-        //                    else
-        //                    {
-        //                        quick_info_content.Add(
-        //                            _grammar_description.Map[tag_type]
-        //                            + "\n"
-        //                            + show);
-        //                    }
-        //                    found = true;
-        //                    break;
-        //                }
-        //            }
-        //        }
-        //        if (! found)
-        //            quick_info_content.Add(
-        //            _grammar_description.Map[tag_type]);
-        //    }
-        //}
-
         public void Dispose()
         {
             _disposed = true;
         }
 
-        public async Task<QuickInfoItem> GetQuickInfoItemAsync(IAsyncQuickInfoSession session, CancellationToken cancellationToken)
+        public Task<QuickInfoItem> GetQuickInfoItemAsync(IAsyncQuickInfoSession session, CancellationToken cancellationToken)
         {
-            if (_curSession != null && _curSession.State != QuickInfoSessionState.Dismissed)
-            {
-                await _curSession.DismissAsync();
-                _curSession = null;
-            }
-            _curSession = session;
-            _curSession.StateChanged += CurSessionStateChanged;
             var trigger_point = (SnapshotPoint)session.GetTriggerPoint(_buffer.CurrentSnapshot);
-            if (trigger_point == null) return null;
-            ITextView vv = session.TextView;
-            int asdf = trigger_point.Position;
+            if (trigger_point == null) return Task.FromResult<QuickInfoItem>(null);
             ITextDocument doc = _buffer.GetTextDocument();
-            SnapshotSpan span = new SnapshotSpan(vv.TextSnapshot, new Span(asdf, 0));
             string file_path = doc.FilePath;
             IGrammarDescription grammar_description = LanguageServer.GrammarDescriptionFactory.Create(file_path);
-            if (!grammar_description.IsFileType(file_path)) return null;
+            if (!grammar_description.IsFileType(file_path)) Task.FromResult<QuickInfoItem>(null);
             var item = Workspaces.Workspace.Instance.FindDocument(file_path);
-            foreach (IMappingTagSpan<AntlrTokenTag> cur_tag in _aggregator.GetTags(span))
+            if (item == null) return Task.FromResult<QuickInfoItem>(null);
+            int index = trigger_point.Position;
+            var sym = LanguageServer.Module.GetDocumentSymbol(index, item);
+            if (sym == null) return Task.FromResult<QuickInfoItem>(null);
+            var info = LanguageServer.Module.GetQuickInfo(index, item);
+            if (info != null)
             {
-                SnapshotSpan tag_span = cur_tag.Span.GetSpans(_buffer).First();
-                var tracking_span = _buffer.CurrentSnapshot.CreateTrackingSpan(tag_span, SpanTrackingMode.EdgeExclusive);
-                var point = tag_span.Start;
-                var index = point.Position;
-                var info = LanguageServer.Module.GetQuickInfo(index, item);
-                if (info != null)
-                    return new QuickInfoItem(tracking_span, info);
+                ITextView view = session.TextView;
+                var len = 1 + sym.range.End.Value - sym.range.Start.Value;
+                var start = sym.range.Start.Value;
+                SnapshotSpan span = new SnapshotSpan(view.TextSnapshot, new Span(start, len));
+                var tracking_span = _buffer.CurrentSnapshot.CreateTrackingSpan(span, SpanTrackingMode.EdgeInclusive);
+                return Task.FromResult(new QuickInfoItem(tracking_span, info));
             }
-            return null;
+            return Task.FromResult<QuickInfoItem>(null);
         }
 
         private void CurSessionStateChanged(object sender, QuickInfoSessionStateChangedEventArgs e)

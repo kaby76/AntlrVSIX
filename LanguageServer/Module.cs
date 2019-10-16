@@ -121,8 +121,8 @@
             {
                 if (p.Key.Symbol == null) continue;
                 int start_token_start = p.Key.Symbol.StartIndex;
-                int end_token_end = p.Key.Symbol.StopIndex;
-                if (start_token_start >= range.End.Value) continue;
+                int end_token_end = p.Key.Symbol.StopIndex + 1;
+                if (start_token_start > range.End.Value) continue;
                 if (end_token_end < range.Start.Value) continue;
                 combined.Add(
                     new DocumentSymbol()
@@ -135,8 +135,8 @@
             foreach (var p in pd.Comments)
             {
                 int start_token_start = p.Key.StartIndex;
-                int end_token_end = p.Key.StopIndex;
-                if (start_token_start >= range.End.Value) continue;
+                int end_token_end = p.Key.StopIndex + 1;
+                if (start_token_start > range.End.Value) continue;
                 if (end_token_end < range.Start.Value) continue;
                 combined.Add(
                     new DocumentSymbol()

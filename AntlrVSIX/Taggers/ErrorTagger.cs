@@ -1,7 +1,5 @@
-﻿
-namespace AntlrVSIX.ErrorTagger
+﻿namespace AntlrVSIX.ErrorTagger
 {
-    using Antlr4.Runtime;
     using AntlrVSIX.Extensions;
     using LanguageServer;
     using Microsoft.VisualStudio.Shell;
