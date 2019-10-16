@@ -46,22 +46,18 @@ namespace AntlrVSIX
         private ITextBuffer _buffer;
         private IGrammarDescription _grammar_description;
         private bool _disposed = false;
-        private volatile IAsyncQuickInfoSession _curSession;
-        IWpfTextView view;
 
         public AntlrQuickInfoSource(ITextBuffer buffer, ITagAggregator<AntlrTokenTag> aggregator)
         {
             _aggregator = aggregator;
             _buffer = buffer;
             var doc = buffer.GetTextDocument();
-            view = AntlrLanguagePackage.Instance.GetActiveView();
             var path = doc.FilePath;
             _grammar_description = LanguageServer.GrammarDescriptionFactory.Create(path);
         }
 
         public void Dispose()
         {
-            _disposed = true;
         }
 
         public Task<QuickInfoItem> GetQuickInfoItemAsync(IAsyncQuickInfoSession session, CancellationToken cancellationToken)
@@ -70,8 +66,8 @@ namespace AntlrVSIX
             if (trigger_point == null) return Task.FromResult<QuickInfoItem>(null);
             ITextDocument doc = _buffer.GetTextDocument();
             string file_path = doc.FilePath;
-            IGrammarDescription grammar_description = LanguageServer.GrammarDescriptionFactory.Create(file_path);
-            if (!grammar_description.IsFileType(file_path)) Task.FromResult<QuickInfoItem>(null);
+            if (_grammar_description == null) return Task.FromResult<QuickInfoItem>(null);
+            if (!_grammar_description.IsFileType(file_path)) Task.FromResult<QuickInfoItem>(null);
             var item = Workspaces.Workspace.Instance.FindDocument(file_path);
             if (item == null) return Task.FromResult<QuickInfoItem>(null);
             int index = trigger_point.Position;
@@ -89,10 +85,6 @@ namespace AntlrVSIX
             }
             return Task.FromResult<QuickInfoItem>(null);
         }
-
-        private void CurSessionStateChanged(object sender, QuickInfoSessionStateChangedEventArgs e)
-            => _curSession = null;
-        
     }
 }
 
