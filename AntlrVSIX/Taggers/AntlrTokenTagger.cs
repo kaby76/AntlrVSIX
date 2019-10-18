@@ -14,24 +14,10 @@ namespace AntlrVSIX.Tagger
     {
         private ITextBuffer _buffer;
         private IGrammarDescription _grammar_description;
-        private IDictionary<string, int> _antlr_tag_types;
 
         internal AntlrTokenTagger(ITextBuffer buffer)
         {
             _buffer = buffer;
-            var ffn = _buffer.GetFFN().Result;
-            if (ffn == null) return;
-            _grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
-            if (_grammar_description == null) return;
-            var item = Workspaces.Workspace.Instance.FindDocument(ffn);
-            if (item == null) return;
-
-            _antlr_tag_types = new Dictionary<string, int>();
-            for (int i = 0; i < _grammar_description.Map.Length; ++i)
-            {
-                string name = _grammar_description.Map[i];
-                _antlr_tag_types[name] = i;
-            }
             buffer.Changed += new EventHandler<TextContentChangedEventArgs>(OnTextChanged);
         }
 
@@ -112,17 +98,17 @@ namespace AntlrVSIX.Tagger
 
         public IEnumerable<ITagSpan<AntlrTokenTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
+            var ffn = _buffer.GetFFN().Result;
+            if (ffn == null) yield break;
+            _grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
             if (_grammar_description == null) yield break;
-            if (_grammar_description == null) throw new Exception();
+            var item = Workspaces.Workspace.Instance.FindDocument(ffn);
+            if (item == null) yield break;
             foreach (SnapshotSpan curSpan in spans)
             {
                 ITextSnapshotLine containingLine = curSpan.Start.GetContainingLine();
                 int curLoc = containingLine.Start.Position;
                 string text = curSpan.GetText();
-                ITextBuffer buf = curSpan.Snapshot.TextBuffer;
-                var file_name = buf.GetFFN().Result;
-                var item = Workspaces.Workspace.Instance.FindDocument(file_name);
-                if (item == null) continue;
                 var details = ParserDetailsFactory.Create(item);
                 SnapshotPoint start = curSpan.Start;
                 int curLocStart = start.Position;
