@@ -27,7 +27,7 @@
         [Import]
         internal IContentTypeRegistryService ContentTypeRegistryService { get; set; }
 
-        public void VsTextViewCreated(IVsTextView textViewAdapter)
+        public async void VsTextViewCreated(IVsTextView textViewAdapter)
         {
             IWpfTextView view = AdaptersFactory.GetWpfTextView(textViewAdapter);
             if (view == null)
@@ -37,7 +37,7 @@
             }
             view.Closed += OnViewClosed;
             ITextBuffer doc = view.TextBuffer;
-            string ffn = doc.GetFilePath();
+            string ffn = await doc.GetFFN();
             var grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
             if (grammar_description == null) return;
             var buffer = view.TextBuffer;

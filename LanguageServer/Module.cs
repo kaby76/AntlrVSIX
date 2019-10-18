@@ -156,6 +156,7 @@
 
         public static Location FindDef(int index, Document doc)
         {
+            if (doc == null) return null;
             var ref_pt = Util.Find(index, doc);
             if (ref_pt == null) return default(Location);
             var ref_pd = ParserDetailsFactory.Create(doc);
@@ -265,7 +266,7 @@
             return g;
         }
 
-        public static void Compile()
+        public static List<ParserDetails> Compile()
         {
             var ws = Workspaces.Workspace.Instance;
 
@@ -306,6 +307,7 @@
             {
                 v.GatherRefs();
             }
+            return g.Vertices.ToList();
         }
     }
 }

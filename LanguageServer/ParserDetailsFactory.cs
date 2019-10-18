@@ -13,6 +13,7 @@
 
         public static ParserDetails Create(Workspaces.Document item)
         {
+            if (item == null) return null;
             string ffn = item.FullPath;
             foreach (var pd in _per_file_parser_details)
             {

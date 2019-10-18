@@ -35,9 +35,7 @@
             var xxx = System.Windows.Media.Colors.Red;
             _buffer = buffer;
             _aggregator = aggregator;
-            var doc = _buffer.GetTextDocument();
-            if (doc == null) return;
-            var ffn = doc.FilePath;
+            var ffn = _buffer.GetFFN().Result;
             if (ffn == null) return;
             _grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
             if (_grammar_description == null) return;
@@ -73,9 +71,7 @@
         {
             if (_grammar_description == null) yield break;
             if (_grammar_description == null) throw new Exception();
-            ITextDocument doc = _buffer.GetTextDocument();
-            string f = doc.FilePath;
-
+            string f = _buffer.GetFFN().Result;
             var item = Workspaces.Workspace.Instance.FindDocument(f);
             if (item == null) yield break;
             item.Code = _buffer.GetBufferText();

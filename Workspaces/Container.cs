@@ -8,6 +8,7 @@
     {
         public virtual Document FindDocument(string ffn) { return null; }
         public virtual Project FindProject(string ffn) { return null; }
+        public virtual Project FindProject(string canonical_name, string name, string ffn) { return null; }
         public virtual Container Parent
         {
             get;

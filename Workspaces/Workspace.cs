@@ -57,6 +57,7 @@
 
         public override Document FindDocument(string ffn)
         {
+            if (ffn == null) return null;
             foreach (var doc in _contents)
             {
                 var found = doc.FindDocument(ffn);
@@ -70,6 +71,16 @@
             foreach (var doc in _contents)
             {
                 var found = doc.FindProject(ffn);
+                if (found != null) return found;
+            }
+            return null;
+        }
+
+        public override Project FindProject(string canonical_name, string name, string ffn)
+        {
+            foreach (var doc in _contents)
+            {
+                var found = doc.FindProject(canonical_name, name, ffn);
                 if (found != null) return found;
             }
             return null;

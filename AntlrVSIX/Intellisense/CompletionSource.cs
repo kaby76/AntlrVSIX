@@ -31,13 +31,11 @@
 
         public void AugmentCompletionSession(ICompletionSession session, IList<CompletionSet> completionSets)
         {
-            ITextDocument doc = _buffer.GetTextDocument();
-            if (doc == null) return;
-            var ffn = doc.FilePath;
+            var ffn = _buffer.GetFFN().Result;
             var gd = LanguageServer.GrammarDescriptionFactory.Create(ffn);
             if (gd == null) return;
             List<Completion> completions = new List<Completion>();
-            var item = Workspaces.Workspace.Instance.FindDocument(doc.FilePath);
+            var item = Workspaces.Workspace.Instance.FindDocument(ffn);
             var pd = ParserDetailsFactory.Create(item);
             foreach (var s in pd.Refs
                 .Where(t => t.Value == 0)

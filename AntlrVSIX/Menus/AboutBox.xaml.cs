@@ -35,7 +35,7 @@
             if (grammar_view != null)
             {
                 var buf = grammar_view.TextBuffer;
-                var active = buf.GetFilePath();
+                var active = buf.GetFFN().Result;
                 var content_type = buf.ContentType;
                 _info.AppendText("Active view: " + active);
                 _info.AppendText(Environment.NewLine);

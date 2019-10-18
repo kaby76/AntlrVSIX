@@ -77,8 +77,7 @@
 
             // First, find out what this view is, and what the file is.
             ITextBuffer buffer = view.TextBuffer;
-            ITextDocument doc = buffer.GetTextDocument();
-            string path = doc.FilePath;
+            var path = buffer.GetFFN();
 
             string corpus_location = Options.OptionsCommand.Instance.CorpusLocation;
             if (corpus_location == null)
@@ -90,7 +89,7 @@
             {
                 // Get reformated text.
                 string text = buffer.GetBufferText();
-                string ffn = buffer.GetFilePath();
+                string ffn = buffer.GetFFN().Result;
                 var grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
                 if (grammar_description == null) return;
                 org.antlr.codebuff.Tool.unformatted_input = text;

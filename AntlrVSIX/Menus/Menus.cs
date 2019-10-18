@@ -30,8 +30,7 @@
 
             // First, find out what this view is, and what the file is.
             ITextBuffer buffer = view.TextBuffer;
-            ITextDocument doc = buffer.GetTextDocument();
-            string path = doc.FilePath;
+            string path = buffer.GetFFN().Result;
             IGrammarDescription grammar_description = LanguageServer.GrammarDescriptionFactory.Create(path);
 
             // Whack any old values that cursor points to.
@@ -48,7 +47,7 @@
 
             if (grammar_description == null) return;
 
-            var fp = view.GetFilePath();
+            var fp = view.GetFilePath().Result;
             if (fp != null)
             {
                 var gd = LanguageServer.GrammarDescriptionFactory.Create(fp);

@@ -19,7 +19,7 @@
         public ErrorTagger(ITextBuffer buffer)
         {
             _buffer = buffer;
-            var doc = _buffer.GetFilePath();
+            var doc = _buffer.GetFFN().Result;
             var gd = LanguageServer.GrammarDescriptionFactory.Create(doc);
             if (gd == null) return;
             if (!gd.DoErrorSquiggles) return;
@@ -39,7 +39,7 @@
 
         public IEnumerable<ITagSpan<IErrorTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
-            var doc = _buffer.GetFilePath();
+            var doc = _buffer.GetFFN().Result;
             var gd = LanguageServer.GrammarDescriptionFactory.Create(doc);
             if (gd == null) yield break;
             if (!gd.DoErrorSquiggles) yield break;
@@ -50,8 +50,7 @@
                 int curLoc = containingLine.Start.Position;
                 string text = curSpan.GetText();
                 ITextBuffer buf = curSpan.Snapshot.TextBuffer;
-                var dd = buf.GetTextDocument();
-                string ffn = dd.FilePath;
+                var ffn = buf.GetFFN().Result;
                 string path_containing_applied_occurrence = Path.GetDirectoryName(ffn);
                 var item = Workspaces.Workspace.Instance.FindDocument(ffn);
                 if (item == null) yield break;

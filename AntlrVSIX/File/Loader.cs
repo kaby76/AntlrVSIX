@@ -1,9 +1,13 @@
 ﻿namespace AntlrVSIX.File
 {
+    using AntlrVSIX.Extensions;
+    using AntlrVSIX.Tagger;
     using EnvDTE;
     using Microsoft.VisualStudio;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Shell.Interop;
+    using Microsoft.VisualStudio.Text.Editor;
+    using Microsoft.VisualStudio.TextManager.Interop;
     using System;
     using System.IO;
     using Workspaces;
@@ -146,10 +150,14 @@
                 var j_fullname = as_project.FullName;
                 var j_uniquename = as_project.UniqueName;
                 var j_filename = as_project.FileName;
+                var fou = Workspace.Instance.FindProject(j_uniquename, j_name, j_filename);
+                if (fou != null)
+                    return fou;
                 var ws_project = new Workspaces.Project(hierarchy, itemId,
                     as_project.UniqueName,
                     as_project.Name,
                     as_project.FileName);
+                hierarchy.AdviseHierarchyEvents(new DoProjectEvents(), out uint cook_project);
                 parent.AddChild(ws_project);
                 var find_project = ws_project;
                 var properties = as_project.Properties;
@@ -185,15 +193,22 @@
                 }
                 if (System.IO.Directory.Exists(c1))
                 {
+                    var fou = Workspace.Instance.FindProject(c1, c1, c1);
+                    if (fou != null)
+                        return fou;
                     var project = new Workspaces.Project(hierarchy, itemId,
                         c1,
                         c1,
                         c1);
                     parent.AddChild(project);
+                    hierarchy.AdviseHierarchyEvents(new DoProjectEvents(), out uint cook_project);
                     return project;
                 }
                 else
                 {
+                    var fou = Workspace.Instance.FindDocument(c1);
+                    if (fou != null)
+                        return fou;
                     var doc = new Workspaces.Document(hierarchy, c1, n1);
                     parent.AddChild(doc);
                     var find_document = doc;
@@ -220,8 +235,56 @@
                 return null;
         }
 
-        public static void Load()
+        private class DoProjectEvents : IVsHierarchyEvents
         {
+            public int OnItemAdded(uint itemidParent, uint itemidSiblingPrev, uint itemidAdded)
+            {
+                AntlrVSIX.File.Loader.LoadAsync().Wait();
+                var to_do = LanguageServer.Module.Compile();
+                foreach (var t in to_do)
+                {
+                    var w = t.FullFileName;
+                    IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(w);
+                    if (vstv == null) continue;
+                    IWpfTextView wpftv = vstv.GetIWpfTextView();
+                    if (wpftv == null) continue;
+                    var buffer = wpftv.TextBuffer;
+                    var att = buffer.Properties.GetOrCreateSingletonProperty(() => new AntlrTokenTagger(buffer));
+                    att.Raise();
+                }
+                return VSConstants.S_OK;
+            }
+
+            public int OnItemsAppended(uint itemidParent)
+            {
+                return VSConstants.S_OK;
+            }
+
+            public int OnItemDeleted(uint itemid)
+            {
+                return VSConstants.S_OK;
+            }
+
+            public int OnPropertyChanged(uint itemid, int propid, uint flags)
+            {
+                return VSConstants.S_OK;
+            }
+
+            public int OnInvalidateItems(uint itemidParent)
+            {
+                return VSConstants.S_OK;
+            }
+
+            public int OnInvalidateIcon(IntPtr hicon)
+            {
+                return VSConstants.S_OK;
+            }
+        }
+
+        public static async System.Threading.Tasks.Task LoadAsync()
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
             started = true;
 
             // Convert the entire solution into Project/Document workspace.
@@ -294,8 +357,8 @@
 
         public int OnBeforeSave(uint docCookie)
         {
-            AntlrVSIX.File.Loader.Load();
-            LanguageServer.Module.Compile();
+            AntlrVSIX.File.Loader.LoadAsync().Wait();
+            var to_do = LanguageServer.Module.Compile();
             return VSConstants.S_OK;
         }
     }

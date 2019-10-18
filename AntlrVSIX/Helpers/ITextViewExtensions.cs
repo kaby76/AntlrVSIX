@@ -1,12 +1,13 @@
 ﻿namespace AntlrVSIX.Extensions
 {
     using Microsoft.VisualStudio.Text.Editor;
+    using System.Threading.Tasks;
 
     internal static class ITextViewExtensions
     {
-        public static string GetFilePath(this ITextView textView)
+        public static async Task<string> GetFilePath(this ITextView textView)
         {
-            return textView.TextBuffer.GetFilePath();
+            return await textView.TextBuffer.GetFFN();
         }
     }
 }

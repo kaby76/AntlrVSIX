@@ -84,8 +84,7 @@ namespace AntlrVSIX.FindAllReferences
             SnapshotSpan span = AntlrLanguagePackage.Instance.Span;
             int curLoc = span.Start.Position;
             var buf = span.Snapshot.TextBuffer;
-            var doc = buf.GetTextDocument();
-            var file_name = doc.FilePath;
+            var file_name = buf.GetFFN().Result;
             var item = Workspaces.Workspace.Instance.FindDocument(file_name);
             var ref_pd = ParserDetailsFactory.Create(item);
             if (ref_pd == null) return;

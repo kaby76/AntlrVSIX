@@ -87,8 +87,7 @@ namespace AntlrVSIX.GoToDefinition
             SnapshotSpan span = AntlrLanguagePackage.Instance.Span;
             ITextView view = AntlrLanguagePackage.Instance.View;
             ITextBuffer buffer = view.TextBuffer;
-            ITextDocument doc = buffer.GetTextDocument();
-            var file_name = doc.FilePath;
+            var file_name = buffer.GetFFN().Result;
             var item = Workspaces.Workspace.Instance.FindDocument(file_name);
             var ref_pd = ParserDetailsFactory.Create(item);
             var location = LanguageServer.Module.FindDef(span.Start.Position, item);

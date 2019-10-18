@@ -1,7 +1,11 @@
 ﻿namespace AntlrVSIX.Package
 {
+    using AntlrVSIX.Extensions;
+    using AntlrVSIX.Tagger;
     using Microsoft.VisualStudio;
     using Microsoft.VisualStudio.Shell.Interop;
+    using Microsoft.VisualStudio.Text.Editor;
+    using Microsoft.VisualStudio.TextManager.Interop;
 
     class SolutionEventListener : IVsSolutionEvents, IVsSolutionLoadEvents
     {
@@ -39,8 +43,19 @@
 
         public int OnAfterOpenSolution(object aPUnkReserved, int aFNewSolution)
         {
-            AntlrVSIX.File.Loader.Load();
-            LanguageServer.Module.Compile();
+            AntlrVSIX.File.Loader.LoadAsync().Wait();
+            var to_do = LanguageServer.Module.Compile();
+            foreach (var t in to_do)
+            {
+                var w = t.FullFileName;
+                IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(w);
+                if (vstv == null) continue;
+                IWpfTextView wpftv = vstv.GetIWpfTextView();
+                if (wpftv == null) continue;
+                var buffer = wpftv.TextBuffer;
+                var att = buffer.Properties.GetOrCreateSingletonProperty(() => new AntlrTokenTagger(buffer));
+                att.Raise();
+            }
             return VSConstants.S_OK;
         }
 
@@ -88,8 +103,19 @@
 
         public int OnAfterBackgroundSolutionLoadComplete()
         {
-            AntlrVSIX.File.Loader.Load();
-            LanguageServer.Module.Compile();
+            AntlrVSIX.File.Loader.LoadAsync().Wait();
+            var to_do = LanguageServer.Module.Compile();
+            foreach (var t in to_do)
+            {
+                var w = t.FullFileName;
+                IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(w);
+                if (vstv == null) continue;
+                IWpfTextView wpftv = vstv.GetIWpfTextView();
+                if (wpftv == null) continue;
+                var buffer = wpftv.TextBuffer;
+                var att = buffer.Properties.GetOrCreateSingletonProperty(() => new AntlrTokenTagger(buffer));
+                att.Raise();
+            }
             return VSConstants.S_OK;
         }
     }

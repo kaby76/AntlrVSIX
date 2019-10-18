@@ -19,9 +19,8 @@ namespace AntlrVSIX.Tagger
         internal AntlrTokenTagger(ITextBuffer buffer)
         {
             _buffer = buffer;
-            var doc = _buffer.GetTextDocument();
-            if (doc == null) return;
-            var ffn = doc.FilePath;
+            var ffn = _buffer.GetFFN().Result;
+            if (ffn == null) return;
             _grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
             if (_grammar_description == null) return;
             var item = Workspaces.Workspace.Instance.FindDocument(ffn);
@@ -88,14 +87,22 @@ namespace AntlrVSIX.Tagger
             ITextBuffer doc = sender as ITextBuffer;
             ITextSnapshot snapshot = doc.CurrentSnapshot;
             string code = doc.GetBufferText();
-            ITextDocument document = doc.GetTextDocument();
-            string ffn = document.FilePath;
+            string ffn = doc.GetFFN().Result;
             var item = Workspaces.Workspace.Instance.FindDocument(ffn);
             if (item == null) return;
             item.Code = code;
-            LanguageServer.Module.Compile();
+            var to_do = LanguageServer.Module.Compile();
             SnapshotSpan span = new SnapshotSpan(_buffer.CurrentSnapshot, 0, _buffer.CurrentSnapshot.Length);
-            var temp = TagsChanged;
+            EventHandler<SnapshotSpanEventArgs> temp = TagsChanged;
+            if (temp == null)
+                return;
+            temp(this, new SnapshotSpanEventArgs(span));
+        }
+
+        public void Raise()
+        {
+            SnapshotSpan span = new SnapshotSpan(_buffer.CurrentSnapshot, 0, _buffer.CurrentSnapshot.Length);
+            EventHandler<SnapshotSpanEventArgs> temp = TagsChanged;
             if (temp == null)
                 return;
             temp(this, new SnapshotSpanEventArgs(span));
@@ -113,8 +120,7 @@ namespace AntlrVSIX.Tagger
                 int curLoc = containingLine.Start.Position;
                 string text = curSpan.GetText();
                 ITextBuffer buf = curSpan.Snapshot.TextBuffer;
-                var doc = buf.GetTextDocument();
-                string file_name = doc.FilePath;
+                var file_name = buf.GetFFN().Result;
                 var item = Workspaces.Workspace.Instance.FindDocument(file_name);
                 if (item == null) continue;
                 var details = ParserDetailsFactory.Create(item);

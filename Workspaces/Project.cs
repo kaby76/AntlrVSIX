@@ -21,6 +21,12 @@
             set { _name = value; }
         }
 
+        public string CanonicalName
+        {
+            get { return _canonical_name; }
+            set { _canonical_name = value; }
+        }
+
         public string FullPath
         {
             get { return _ffn; }
@@ -80,6 +86,20 @@
             foreach (var proj in _contents)
             {
                 var found = proj.FindProject(ffn);
+                if (found != null) return found;
+            }
+            return null;
+        }
+
+        public override Project FindProject(string canonical_name, string name, string ffn)
+        {
+            if (this.CanonicalName == canonical_name &&
+                this.Name == name &&
+                this.FullPath.ToLower() == ffn.ToLower())
+                return this;
+            foreach (var proj in _contents)
+            {
+                var found = proj.FindProject(canonical_name, name, ffn);
                 if (found != null) return found;
             }
             return null;

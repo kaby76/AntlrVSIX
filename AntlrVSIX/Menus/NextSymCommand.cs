@@ -126,8 +126,7 @@
 
             // First, find out what this view is, and what the file is.
             ITextBuffer buffer = view.TextBuffer;
-            ITextDocument doc = buffer.GetTextDocument();
-            string path = doc.FilePath;
+            string path = buffer.GetFFN().Result;
 
             //ParserDetails details = null;
             //bool found = ParserDetails._per_file_parser_details.TryGetValue(path, out details);
