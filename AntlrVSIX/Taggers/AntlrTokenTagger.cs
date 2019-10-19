@@ -9,6 +9,7 @@ namespace AntlrVSIX.Tagger
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.Linq;
 
     internal sealed class AntlrTokenTagger : ITagger<AntlrTokenTag>
     {
@@ -28,33 +29,7 @@ namespace AntlrVSIX.Tagger
         {
             var s = source;
             var t = task;
-            if (s == null)
-            {
-                source = new CancellationTokenSource();
-                task = Task.Run(async delegate
-                {
-                    await Task.Delay(TimeSpan.FromSeconds(3), source.Token);
-                    return 42;
-                });
-                try
-                {
-                    await task;
-                }
-                catch (Exception)
-                {
-                }
-                if (task.Status == TaskStatus.RanToCompletion)
-                {
-                    ReparseFile(sender, args);
-                }
-                s = source;
-                t = task;
-                if (s != null) s.Dispose();
-                if (t != null) t.Dispose();
-                source = null;
-                task = null;
-            }
-            else
+            if (s != null)
             {
                 s.Cancel();
                 try
@@ -64,16 +39,38 @@ namespace AntlrVSIX.Tagger
                 catch (Exception)
                 {
                 }
-                OnTextChanged(sender, args);
+            }
+            {
+                s = new CancellationTokenSource();
+                t = Task.Run(async delegate
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(3), source.Token);
+                    return 42;
+                });
+                source = s;
+                task = t;
+                try
+                {
+                    await t;
+                }
+                catch (Exception)
+                {
+                }
+                if (t.Status == TaskStatus.RanToCompletion)
+                {
+                    ReparseFile(sender, args);
+                }
+                source = null;
+                task = null;
             }
         }
 
         void ReparseFile(object sender, TextContentChangedEventArgs args)
         {
-            ITextBuffer doc = sender as ITextBuffer;
-            ITextSnapshot snapshot = doc.CurrentSnapshot;
-            string code = doc.GetBufferText();
-            string ffn = doc.GetFFN().Result;
+            ITextBuffer buffer = sender as ITextBuffer;
+            ITextSnapshot snapshot = buffer.CurrentSnapshot;
+            string code = buffer.GetBufferText();
+            string ffn = buffer.GetFFN().Result;
             var item = Workspaces.Workspace.Instance.FindDocument(ffn);
             if (item == null) return;
             item.Code = code;

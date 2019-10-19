@@ -10,11 +10,17 @@
             return buffer.CurrentSnapshot.GetText();
         }
 
-        public static async Task<string> GetFFN(this ITextBuffer text_buffer)
+        public static async Task<string> GetFFN(this ITextBuffer buffer)
         {
-            if (text_buffer == null) return null;
+            if (buffer == null) return null;
+            var projection = buffer as Microsoft.VisualStudio.Text.Projection.IElisionBuffer;
+            if (projection != null)
+            {
+                ITextBuffer source_buffer = projection.SourceBuffer;
+                return await source_buffer.GetFFN();
+            }
             Microsoft.VisualStudio.TextManager.Interop.IVsTextBuffer bufferAdapter;
-            text_buffer.Properties.TryGetProperty(typeof(Microsoft.VisualStudio.TextManager.Interop.IVsTextBuffer), out bufferAdapter);
+            buffer.Properties.TryGetProperty(typeof(Microsoft.VisualStudio.TextManager.Interop.IVsTextBuffer), out bufferAdapter);
             if (bufferAdapter != null)
             {
                 await Microsoft.VisualStudio.Shell.ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
