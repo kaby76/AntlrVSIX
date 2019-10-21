@@ -19,7 +19,7 @@ namespace AntlrVSIX.Tagger
         internal AntlrTokenTagger(ITextBuffer buffer)
         {
             _buffer = buffer;
-            buffer.Changed += new EventHandler<TextContentChangedEventArgs>(OnTextChanged);
+          //  buffer.Changed += new EventHandler<TextContentChangedEventArgs>(OnTextChanged);
         }
 
         static CancellationTokenSource source;
@@ -89,6 +89,7 @@ namespace AntlrVSIX.Tagger
 
         public void Raise()
         {
+            return;
             lock (updateLock)
             {
                 SnapshotSpan span = new SnapshotSpan(_buffer.CurrentSnapshot, 0, _buffer.CurrentSnapshot.Length);

@@ -10,6 +10,8 @@
     using Microsoft.VisualStudio.Text.Tagging;
     using System;
     using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     class Themes
     {
@@ -34,6 +36,7 @@
         {
             var xxx = System.Windows.Media.Colors.Red;
             _buffer = buffer;
+            _buffer.Changed += new EventHandler<TextContentChangedEventArgs>(OnTextChanged);
             _aggregator = aggregator;
             var ffn = _buffer.GetFFN().Result;
             if (ffn == null) return;
@@ -96,5 +99,84 @@
 #pragma warning disable CS0067
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 #pragma warning restore CS0067
+
+        static CancellationTokenSource source;
+        static Task<int> task;
+
+        async void OnTextChanged(object sender, TextContentChangedEventArgs args)
+        {
+            var s = source;
+            var t = task;
+            if (s != null)
+            {
+                s.Cancel();
+            }
+            {
+                s = source = new CancellationTokenSource();
+                t = task = Task.Run(async delegate
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(3), s.Token);
+                    return 42;
+                });
+                try
+                {
+                    await t;
+                }
+                catch (Exception)
+                {
+                }
+                if (t.Status == TaskStatus.RanToCompletion)
+                {
+                    ReparseFile(sender, args);
+                }
+                source = null;
+                task = null;
+            }
+        }
+
+        void ReparseFile(object sender, TextContentChangedEventArgs args)
+        {
+            ITextBuffer buffer = sender as ITextBuffer;
+            ITextSnapshot snapshot = buffer.CurrentSnapshot;
+            string code = buffer.GetBufferText();
+            string ffn = buffer.GetFFN().Result;
+            var item = Workspaces.Workspace.Instance.FindDocument(ffn);
+            if (item == null) return;
+            item.Code = code;
+            var to_do = LanguageServer.Module.Compile();
+            lock (updateLock)
+            {
+                SnapshotSpan span = new SnapshotSpan(_buffer.CurrentSnapshot, 0, _buffer.CurrentSnapshot.Length);
+                EventHandler<SnapshotSpanEventArgs> temp = TagsChanged;
+                var i = _buffer as Microsoft.VisualStudio.Text.Projection.IElisionBuffer;
+                if (i != null)
+                {
+                    var j = i.SourceBuffer;
+                }
+                else
+                {
+
+                }
+                if (temp == null)
+                    return;
+                temp(this, new SnapshotSpanEventArgs(span));
+            }
+        }
+
+        object updateLock = new object();
+
+        public void Raise()
+        {
+            lock (updateLock)
+            {
+                SnapshotSpan span = new SnapshotSpan(_buffer.CurrentSnapshot, 0, _buffer.CurrentSnapshot.Length);
+                EventHandler<SnapshotSpanEventArgs> temp = TagsChanged;
+                if (temp == null)
+                    return;
+                temp(this, new SnapshotSpanEventArgs(span));
+            }
+        }
+
+
     }
 }
