@@ -39,6 +39,13 @@
             if (ffn == null) return;
             _grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
             if (_grammar_description == null) return;
+            var item = Workspaces.Workspace.Instance.FindDocument(ffn);
+            if (item == null)
+            {
+                AntlrVSIX.File.Loader.LoadAsync().Wait();
+                var to_do = LanguageServer.Module.Compile();
+                item = Workspaces.Workspace.Instance.FindDocument(ffn);
+            }
             _antlrtype_to_classifiertype = new Dictionary<int, IClassificationType>();
 
             for (int i = 0; i < _grammar_description.Map.Length; ++i)

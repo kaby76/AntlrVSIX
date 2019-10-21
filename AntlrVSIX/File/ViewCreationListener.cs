@@ -1,6 +1,7 @@
 ﻿namespace AntlrVSIX.File
 {
     using AntlrVSIX.Extensions;
+    using AntlrVSIX.Tagger;
     using Microsoft.VisualStudio.Editor;
     using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Editor;
@@ -36,11 +37,10 @@
                 return;
             }
             view.Closed += OnViewClosed;
-            ITextBuffer doc = view.TextBuffer;
-            string ffn = await doc.GetFFN();
+            var buffer = view.TextBuffer;
+            string ffn = await buffer.GetFFN();
             var grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
             if (grammar_description == null) return;
-            var buffer = view.TextBuffer;
             var content_type = buffer.ContentType;
             System.Collections.Generic.List<IContentType> content_types = ContentTypeRegistryService.ContentTypes.ToList();
             var new_content_type = content_types.Find(ct => ct.TypeName == "Antlr");
@@ -49,6 +49,9 @@
             buffer.ChangeContentType(new_content_type, null);
             if (!PreviousContentType.ContainsKey(ffn))
                 PreviousContentType[ffn] = content_type;
+            var att = buffer.Properties.GetOrCreateSingletonProperty(() => new AntlrTokenTagger(buffer));
+            att.Raise();
+            
         }
 
         private void OnViewClosed(object sender, EventArgs e)
