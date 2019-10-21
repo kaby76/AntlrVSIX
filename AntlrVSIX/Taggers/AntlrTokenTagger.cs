@@ -104,8 +104,6 @@ namespace AntlrVSIX.Tagger
         public IEnumerable<ITagSpan<AntlrTokenTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
             // Note that this buffer is likely an ElisionBuffer.
-
-            if (source != null) yield break;
             var ffn = _buffer.GetFFN().Result;
             if (ffn == null) yield break;
             _grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
