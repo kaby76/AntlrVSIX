@@ -28,16 +28,6 @@ namespace AntlrVSIX
         {
              return new AntlrQuickInfoSource(textBuffer, aggService.CreateTagAggregator<AntlrTokenTag>(textBuffer));
         }
-
-        //public IQuickInfoSource TryCreateQuickInfoSource(ITextBuffer textBuffer)
-        //{
-        //    return new AntlrQuickInfoSource(textBuffer, aggService.CreateTagAggregator<AntlrTokenTag>(textBuffer));
-        //}
-
-        //IAsyncQuickInfoSource IAsyncQuickInfoSourceProvider.TryCreateQuickInfoSource(ITextBuffer textBuffer)
-        //{
-        //    return new AntlrQuickInfoSource(textBuffer, aggService.CreateTagAggregator<AntlrTokenTag>(textBuffer));
-        //}
     }
 
     class AntlrQuickInfoSource : IAsyncQuickInfoSource
@@ -69,19 +59,14 @@ namespace AntlrVSIX
             var document = Workspaces.Workspace.Instance.FindDocument(file_path);
             if (document == null) return Task.FromResult<QuickInfoItem>(null);
             int index = trigger_point.Position;
-            var sym = LanguageServer.Module.GetDocumentSymbol(index, document);
-            if (sym == null) return Task.FromResult<QuickInfoItem>(null);
             var info = LanguageServer.Module.GetQuickInfo(index, document);
-            if (info != null)
-            {
-                ITextView view = session.TextView;
-                var len = 1 + sym.range.End.Value - sym.range.Start.Value;
-                var start = sym.range.Start.Value;
-                SnapshotSpan span = new SnapshotSpan(view.TextSnapshot, new Span(start, len));
-                var tracking_span = _buffer.CurrentSnapshot.CreateTrackingSpan(span, SpanTrackingMode.EdgeInclusive);
-                return Task.FromResult(new QuickInfoItem(tracking_span, info));
-            }
-            return Task.FromResult<QuickInfoItem>(null);
+            if (info == null || info.Display == null || info.Display == "") return Task.FromResult<QuickInfoItem>(null);
+            ITextView view = session.TextView;
+            var len = 1 + info.Range.End.Value - info.Range.Start.Value;
+            var start = info.Range.Start.Value;
+            SnapshotSpan span = new SnapshotSpan(view.TextSnapshot, new Span(start, len));
+            var tracking_span = _buffer.CurrentSnapshot.CreateTrackingSpan(span, SpanTrackingMode.EdgeInclusive);
+            return Task.FromResult(new QuickInfoItem(tracking_span, info.Display));
         }
     }
 }

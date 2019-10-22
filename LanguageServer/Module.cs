@@ -1,14 +1,13 @@
 ﻿namespace LanguageServer
 {
-    using Workspaces;
-    using System;
+    using Graphs;
     using System.Collections.Generic;
     using System.Linq;
-    using Graphs;
+    using Workspaces;
 
     public class Module
     {
-        public static string GetQuickInfo(int index, Document doc)
+        public static QuickInfo GetQuickInfo(int index, Document doc)
         {
             var pd = ParserDetailsFactory.Create(doc);
             if (pd.ParseTree == null) return null;
@@ -18,27 +17,32 @@
             Antlr4.Runtime.Tree.IParseTree p = pt;
             pd.Attributes.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
             var q = p as Antlr4.Runtime.Tree.TerminalNodeImpl;
-            pd.Tags.TryGetValue(q, out int tag_type);
-            if (value != null)
+            var range = new Range(new Index(q.Symbol.StartIndex), new Index(q.Symbol.StopIndex + 1));
+            var found = pd.Tags.TryGetValue(q, out int tag_type);
+            if (!found) return null;
+            if (value == null)
             {
-                var name = value as Symtab.ISymbol;
-                string show = name?.Name;
-                if (value is Symtab.Literal)
-                {
-                    show = ((Symtab.Literal)value).Cleaned;
-                }
-                if (gd.PopUpDefinition[tag_type] != null)
-                {
-                    var fun = gd.PopUpDefinition[tag_type];
-                    var mess = fun(pd, p);
-                    if (mess != null)
-                        return mess;
-                }
-                return gd.Map[tag_type]
-                    + "\n"
-                    + show;
+                return new QuickInfo() { Display = gd.Map[tag_type], Range = range };
             }
-            return gd.Map[tag_type];
+            var name = value as Symtab.ISymbol;
+            string show = name?.Name;
+            if (value is Symtab.Literal)
+            {
+                show = ((Symtab.Literal)value).Cleaned;
+            }
+            if (gd.PopUpDefinition[tag_type] != null)
+            {
+                var fun = gd.PopUpDefinition[tag_type];
+                var mess = fun(pd, p);
+                if (mess != null)
+                {
+                    return new QuickInfo() { Display = mess, Range = range };
+                }
+            }
+            var display = gd.Map[tag_type]
+                + "\n"
+                + show;
+            return new QuickInfo() { Display = display, Range = range };
         }
 
         public static int GetTag(int index, Document doc)
@@ -314,13 +318,19 @@
                 v.Item.Changed = true; // Force.
                 v.Parse();
             }
-            foreach (var v in g.Vertices)
+            bool changes = true;
+            for (int pass = 0; changes; pass++)
             {
-                v.Pass1();
-            }
-            foreach (var v in g.Vertices)
-            {
-                v.Pass2();
+                changes = false;
+                foreach (var v in g.Vertices)
+                {
+                    int number_of_passes = v.Passes.Count;
+                    if (pass < number_of_passes)
+                    {
+                        v.Pass(pass);
+                        changes = true;
+                    }
+                }
             }
             foreach (var v in g.Vertices)
             {

@@ -32,10 +32,6 @@
 
         public virtual IEnumerable<IParseTree> AllNodes { get; set; } = null;
 
-        public virtual IParseTreeListener P1Listener { get; set; } = null;
-
-        public virtual IParseTreeListener P2Listener { get; set; } = null;
-
         public ParserDetails(Workspaces.Document item)
         {
             Item = item;
@@ -68,17 +64,11 @@
             this.Cleanup();
         }
 
-        public void Pass1()
-        {
-            var pass1 = P1Listener;
-            ParseTreeWalker.Default.Walk(pass1, ParseTree);
-        }
+        public virtual List<Action> Passes { get; } = new List<Action>();
 
-        public void Pass2()
+        public void Pass(int pass_number)
         {
-            var pass1 = P1Listener;
-            var pass2 = P2Listener;
-            ParseTreeWalker.Default.Walk(pass2, ParseTree);
+            Passes[pass_number]();
         }
 
         public virtual void GatherDefs()

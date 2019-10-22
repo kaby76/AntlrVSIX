@@ -13,24 +13,34 @@
         public JavaParserDetails(Workspaces.Document item)
             : base(item)
         {
-            P1Listener = new Pass1Listener(this);
-            P2Listener = new Pass2Listener(this);
-            var dir = item.FullPath;
-            dir = System.IO.Path.GetDirectoryName(dir);
-            _scopes.TryGetValue(dir, out IScope value);
-            if (value == null)
+            // Passes executed in order for all files.
+            Passes.Add(() =>
             {
-                value = new LocalScope(_global_scope);
-                _scopes[dir] = value;
-            }
-            this.RootScope = value;
-            _attributes.TryGetValue(dir, out Dictionary<IParseTree, CombinedScopeSymbol> at);
-            if (at == null)
+                var dir = item.FullPath;
+                dir = System.IO.Path.GetDirectoryName(dir);
+                _scopes.TryGetValue(dir, out IScope value);
+                if (value == null)
+                {
+                    value = new LocalScope(_global_scope);
+                    _scopes[dir] = value;
+                }
+                this.RootScope = value;
+                _attributes.TryGetValue(dir, out Dictionary<IParseTree, CombinedScopeSymbol> at);
+                if (at == null)
+                {
+                    at = new Dictionary<IParseTree, CombinedScopeSymbol>();
+                    _attributes[dir] = at;
+                }
+                this.Attributes = at;
+            });
+            Passes.Add(() =>
             {
-                at = new Dictionary<IParseTree, CombinedScopeSymbol>();
-                _attributes[dir] = at;
-            }
-            this.Attributes = at;
+                ParseTreeWalker.Default.Walk(new Pass1Listener(this), ParseTree);
+            });
+            Passes.Add(() =>
+            {
+                ParseTreeWalker.Default.Walk(new Pass2Listener(this), ParseTree);
+            });
         }
     }
 }
