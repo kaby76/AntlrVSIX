@@ -249,7 +249,7 @@
                     IWpfTextView wpftv = vstv.GetIWpfTextView();
                     if (wpftv == null) continue;
                     var buffer = wpftv.TextBuffer;
-                    var att = buffer.Properties.GetOrCreateSingletonProperty(() => new AntlrTokenTagger(buffer));
+                    var att = buffer.Properties.GetOrCreateSingletonProperty(() => new AntlrVSIX.AggregateTagger.AntlrClassifier(buffer));
                     att.Raise();
                 }
                 return VSConstants.S_OK;

@@ -207,12 +207,12 @@
             if (def != null)
             {
                 if (def.file == @ref.file)
-                     result.Add(
-                        new Location()
-                        {
-                            range = new Range(def.Token.StartIndex, def.Token.StopIndex),
-                            uri = Workspaces.Workspace.Instance.FindDocument(def.file)
-                        });
+                    result.Add(
+                       new Location()
+                       {
+                           range = new Range(def.Token.StartIndex, def.Token.StopIndex),
+                           uri = Workspaces.Workspace.Instance.FindDocument(def.file)
+                       });
             }
             foreach (var r in refs)
             {

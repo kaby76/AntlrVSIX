@@ -30,12 +30,11 @@ namespace AntlrVSIX.AggregateTagger
         {
             AntlrLanguagePackage package = AntlrLanguagePackage.Instance;
             VSColorTheme.ThemeChanged += UpdateTheme;
-            var antlrTagAggregator = aggregatorFactory.CreateTagAggregator<AntlrTokenTag>(buffer);
-            return new AntlrClassifier(
-                buffer,
-                antlrTagAggregator,
-                ClassificationTypeRegistry,
-                ClassificationFormatMapService) as ITagger<T>;
+            var result = buffer.Properties.GetOrCreateSingletonProperty(() => new AntlrClassifier(buffer)) as ITagger<T>;
+            var classifier = result as AntlrClassifier;
+            classifier.Initialize(aggregatorFactory,
+                ClassificationTypeRegistry, ClassificationFormatMapService);
+            return result;
         }
 
         private void UpdateTheme(EventArgs e)

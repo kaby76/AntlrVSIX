@@ -23,21 +23,50 @@
 
     internal sealed class AntlrClassifier : ITagger<ClassificationTag>
     {
+        private bool initialized = false;
         private ITextBuffer _buffer;
         private IGrammarDescription _grammar_description;
         private ITagAggregator<AntlrTokenTag> _aggregator;
         private IDictionary<int, IClassificationType> _antlrtype_to_classifiertype;
 
-        internal AntlrClassifier(
-            ITextBuffer buffer,
-            ITagAggregator<AntlrTokenTag> aggregator,
+        internal void Initialize(
+            IBufferTagAggregatorFactoryService aggregatorFactory,
             IClassificationTypeRegistryService service,
             IClassificationFormatMapService ClassificationFormatMapService)
         {
-            var xxx = System.Windows.Media.Colors.Red;
+            if (initialized) return;
+            initialized = true;
+            _aggregator = aggregatorFactory.CreateTagAggregator<AntlrTokenTag>(_buffer);
+            _antlrtype_to_classifiertype = new Dictionary<int, IClassificationType>();
+            for (int i = 0; i < _grammar_description.Map.Length; ++i)
+            {
+                var key = i;
+                var val = _grammar_description.Map[i];
+                var identiferClassificationType = service.GetClassificationType(val);
+                var classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
+                        : identiferClassificationType;
+                var classificationFormatMap = ClassificationFormatMapService.GetClassificationFormatMap(category: "text");
+                var identifierProperties = classificationFormatMap
+                    .GetExplicitTextProperties(classificationType);
+                var color = !Themes.IsInvertedTheme() ? _grammar_description.MapColor[key]
+                    : _grammar_description.MapInvertedColor[key];
+                System.Windows.Media.Color newColor = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+                var newProperties = identifierProperties.SetForeground(newColor);
+                classificationFormatMap.AddExplicitTextProperties(classificationType, newProperties);
+            }
+            for (int i = 0; i < _grammar_description.Map.Length; ++i)
+            {
+                var key = i;
+                var val = _grammar_description.Map[i];
+                _antlrtype_to_classifiertype[key] = service.GetClassificationType(val);
+            }
+        }
+
+        internal AntlrClassifier(ITextBuffer buffer)
+        {
             _buffer = buffer;
             _buffer.Changed += new EventHandler<TextContentChangedEventArgs>(OnTextChanged);
-            _aggregator = aggregator;
+
             var ffn = _buffer.GetFFN().Result;
             if (ffn == null) return;
             _grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
@@ -49,31 +78,6 @@
                 var to_do = LanguageServer.Module.Compile();
                 item = Workspaces.Workspace.Instance.FindDocument(ffn);
             }
-            _antlrtype_to_classifiertype = new Dictionary<int, IClassificationType>();
-
-            for (int i = 0; i < _grammar_description.Map.Length; ++i)
-            {
-                var key = i;
-                var val = _grammar_description.Map[i];
-                var identiferClassificationType = service.GetClassificationType(val);
-                var classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
-                        : identiferClassificationType;
-                var classificationFormatMap = ClassificationFormatMapService.GetClassificationFormatMap(category: "text");
-                var identifierProperties = classificationFormatMap
-                    .GetExplicitTextProperties(classificationType);
-                var color =  ! Themes.IsInvertedTheme() ? _grammar_description.MapColor[key]
-                    : _grammar_description.MapInvertedColor[key];
-                System.Windows.Media.Color newColor = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
-                var newProperties = identifierProperties.SetForeground(newColor);
-                classificationFormatMap.AddExplicitTextProperties(classificationType, newProperties);
-            }
-            
-            for (int i = 0; i < _grammar_description.Map.Length; ++i)
-            {
-                var key = i;
-                var val = _grammar_description.Map[i];
-                _antlrtype_to_classifiertype[key] = service.GetClassificationType(val);
-            }            
             AntlrLanguagePackage package = AntlrLanguagePackage.Instance;
         }
 

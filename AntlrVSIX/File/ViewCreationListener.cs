@@ -49,7 +49,7 @@
             buffer.ChangeContentType(new_content_type, null);
             if (!PreviousContentType.ContainsKey(ffn))
                 PreviousContentType[ffn] = content_type;
-            var att = buffer.Properties.GetOrCreateSingletonProperty(() => new AntlrTokenTagger(buffer));
+            var att = buffer.Properties.GetOrCreateSingletonProperty(() => new AntlrVSIX.AggregateTagger.AntlrClassifier(buffer));
             att.Raise();
             
         }
