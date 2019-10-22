@@ -14,7 +14,6 @@ namespace AntlrVSIX.Tagger
     internal sealed class AntlrTokenTagger : ITagger<AntlrTokenTag>
     {
         private ITextBuffer _buffer;
-        private IGrammarDescription _grammar_description;
 
         internal AntlrTokenTagger(ITextBuffer buffer)
         {
@@ -28,8 +27,8 @@ namespace AntlrVSIX.Tagger
             // Note that this buffer is likely an ElisionBuffer.
             var ffn = _buffer.GetFFN().Result;
             if (ffn == null) yield break;
-            _grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
-            if (_grammar_description == null) yield break;
+            var grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
+            if (grammar_description == null) yield break;
             var item = Workspaces.Workspace.Instance.FindDocument(ffn);
             if (item == null) yield break;
             var details = ParserDetailsFactory.Create(item);

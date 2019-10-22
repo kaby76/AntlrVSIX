@@ -126,6 +126,7 @@
                     try
                     {
                         this.Attributes.TryGetValue(x, out Symtab.CombinedScopeSymbol attr);
+                        this.Tags.Add(x, classification);
                         if (attr == null) continue;
                         var sym = attr as Symtab.ISymbol;
                         if (sym == null) continue;
@@ -138,7 +139,6 @@
                             def_pd.PropagateChangesTo.Add(ffn);
                         }
                         this.Refs.Add(x, classification);
-                        this.Tags.Add(x, classification);
                     }
                     catch (ArgumentException)
                     {
