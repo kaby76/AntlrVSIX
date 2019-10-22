@@ -71,12 +71,12 @@
             if (ffn == null) return;
             _grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
             if (_grammar_description == null) return;
-            var item = Workspaces.Workspace.Instance.FindDocument(ffn);
-            if (item == null)
+            var document = Workspaces.Workspace.Instance.FindDocument(ffn);
+            if (document == null)
             {
                 AntlrVSIX.File.Loader.LoadAsync().Wait();
                 var to_do = LanguageServer.Module.Compile();
-                item = Workspaces.Workspace.Instance.FindDocument(ffn);
+                document = Workspaces.Workspace.Instance.FindDocument(ffn);
             }
             AntlrLanguagePackage package = AntlrLanguagePackage.Instance;
         }
@@ -86,10 +86,10 @@
             if (_grammar_description == null) yield break;
             if (_grammar_description == null) throw new Exception();
             string f = _buffer.GetFFN().Result;
-            var item = Workspaces.Workspace.Instance.FindDocument(f);
-            if (item == null) yield break;
-            item.Code = _buffer.GetBufferText();
-            var pd = ParserDetailsFactory.Create(item);
+            var document = Workspaces.Workspace.Instance.FindDocument(f);
+            if (document == null) yield break;
+            document.Code = _buffer.GetBufferText();
+            var pd = ParserDetailsFactory.Create(document);
 
             foreach (IMappingTagSpan<AntlrTokenTag> tag_span in _aggregator.GetTags(spans))
             {
@@ -144,9 +144,9 @@
             ITextSnapshot snapshot = buffer.CurrentSnapshot;
             string code = buffer.GetBufferText();
             string ffn = buffer.GetFFN().Result;
-            var item = Workspaces.Workspace.Instance.FindDocument(ffn);
-            if (item == null) return;
-            item.Code = code;
+            var document = Workspaces.Workspace.Instance.FindDocument(ffn);
+            if (document == null) return;
+            document.Code = code;
             var to_do = LanguageServer.Module.Compile();
             lock (updateLock)
             {

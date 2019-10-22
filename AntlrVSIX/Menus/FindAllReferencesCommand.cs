@@ -85,10 +85,10 @@ namespace AntlrVSIX.FindAllReferences
             int curLoc = span.Start.Position;
             var buf = span.Snapshot.TextBuffer;
             var file_name = buf.GetFFN().Result;
-            var item = Workspaces.Workspace.Instance.FindDocument(file_name);
-            var ref_pd = ParserDetailsFactory.Create(item);
+            var document = Workspaces.Workspace.Instance.FindDocument(file_name);
+            var ref_pd = ParserDetailsFactory.Create(document);
             if (ref_pd == null) return;
-            var locations = LanguageServer.Module.FindRefsAndDefs(curLoc, item);
+            var locations = LanguageServer.Module.FindRefsAndDefs(curLoc, document);
             List<SnapshotSpan> wordSpans = new List<SnapshotSpan>();
             FindAntlrSymbolsModel.Instance.Results.Clear();
             foreach (var loc in locations)

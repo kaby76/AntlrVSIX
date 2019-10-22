@@ -7,8 +7,6 @@ namespace AntlrVSIX.Tagger
     using Microsoft.VisualStudio.Text.Tagging;
     using System;
     using System.Collections.Generic;
-    using System.Threading;
-    using System.Threading.Tasks;
     using System.Linq;
 
     internal sealed class AntlrTokenTagger : ITagger<AntlrTokenTag>
@@ -29,9 +27,9 @@ namespace AntlrVSIX.Tagger
             if (ffn == null) yield break;
             var grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
             if (grammar_description == null) yield break;
-            var item = Workspaces.Workspace.Instance.FindDocument(ffn);
-            if (item == null) yield break;
-            var details = ParserDetailsFactory.Create(item);
+            var document = Workspaces.Workspace.Instance.FindDocument(ffn);
+            if (document == null) yield break;
+            var details = ParserDetailsFactory.Create(document);
             foreach (SnapshotSpan curSpan in spans)
             {
                 SnapshotPoint start = curSpan.Start;
@@ -39,10 +37,10 @@ namespace AntlrVSIX.Tagger
                 var text = curSpan.GetText();
                 int curLocStart = start.Position;
                 int curLocEnd = end.Position;
-                var dpc_sym = LanguageServer.Module.GetDocumentSymbol(curLocStart, item);
+                var dpc_sym = LanguageServer.Module.GetDocumentSymbol(curLocStart, document);
                 var sorted_combined_tokens = LanguageServer.Module.Get(
                     new Range(curLocStart, curLocEnd - 1),
-                    item);
+                    document);
                 var list = sorted_combined_tokens.ToList();
                 foreach (DocumentSymbol p in sorted_combined_tokens)
                 {

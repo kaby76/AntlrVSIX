@@ -154,6 +154,30 @@
             return result;
         }
 
+        public static IEnumerable<Range> GetErrors(Range range, Document doc)
+        {
+            var pd = ParserDetailsFactory.Create(doc);
+            if (pd.ParseTree == null) return new List<Range>();
+            var result = new List<Range>();
+            foreach (var p in pd.Errors)
+            {
+                var q = p as Antlr4.Runtime.Tree.ErrorNodeImpl;
+                if (q == null) continue;
+                if (q.Payload == null) continue;
+                var y = q.Payload.StartIndex;
+                var z = q.Payload.StopIndex;
+                var a = y;
+                var b = z + 1;
+                int start_token_start = a;
+                int end_token_end = b;
+                if (start_token_start > range.End.Value) continue;
+                if (end_token_end < range.Start.Value) continue;
+                var r = new Range(new Index(a), new Index(b));
+                result.Add(r);
+            }
+            return result;
+        }
+
         public static Location FindDef(int index, Document doc)
         {
             if (doc == null) return null;
@@ -279,8 +303,7 @@
                 var gd = LanguageServer.GrammarDescriptionFactory.Create(file_name);
                 if (gd == null) continue;
                 if (!System.IO.File.Exists(file_name)) continue;
-                var item = Workspaces.Workspace.Instance.FindDocument(file_name);
-                var pd = ParserDetailsFactory.Create(item);
+                var pd = ParserDetailsFactory.Create(document);
                 if (!pd.Changed) continue;
                 to_do.Add(pd);
             }
@@ -306,6 +329,10 @@
             foreach (var v in g.Vertices)
             {
                 v.GatherRefs();
+            }
+            foreach (var v in g.Vertices)
+            {
+                v.GatherErrors();
             }
             return g.Vertices.ToList();
         }

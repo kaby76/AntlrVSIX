@@ -102,17 +102,17 @@ namespace AntlrVSIX.Taggers
             int curLoc = currentRequest.Position;
             var buf = currentRequest.Snapshot.TextBuffer;
             var file_name = buf.GetFFN().Result;
-            var item = Workspaces.Workspace.Instance.FindDocument(file_name);
-            if (item == null) return;
-            var ref_pd = ParserDetailsFactory.Create(item);
+            var document = Workspaces.Workspace.Instance.FindDocument(file_name);
+            if (document == null) return;
+            var ref_pd = ParserDetailsFactory.Create(document);
             if (ref_pd == null) return;
-            var location = LanguageServer.Module.GetDocumentSymbol(curLoc, item);
+            var location = LanguageServer.Module.GetDocumentSymbol(curLoc, document);
             if (location == null) return;
-            var locations = LanguageServer.Module.FindRefsAndDefs(curLoc, item);
+            var locations = LanguageServer.Module.FindRefsAndDefs(curLoc, document);
             List<SnapshotSpan> wordSpans = new List<SnapshotSpan>();
             foreach (var loc in locations)
             {
-                if (loc.uri != item) continue;
+                if (loc.uri != document) continue;
                 ITextSnapshot cc = buf.CurrentSnapshot;
                 SnapshotSpan ss = new SnapshotSpan(cc, loc.range.Start.Value,
                     1 + loc.range.End.Value - loc.range.Start.Value);

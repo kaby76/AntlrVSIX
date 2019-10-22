@@ -66,12 +66,12 @@ namespace AntlrVSIX
             string file_path = _buffer.GetFFN().Result;
             if (_grammar_description == null) return Task.FromResult<QuickInfoItem>(null);
             if (!_grammar_description.IsFileType(file_path)) Task.FromResult<QuickInfoItem>(null);
-            var item = Workspaces.Workspace.Instance.FindDocument(file_path);
-            if (item == null) return Task.FromResult<QuickInfoItem>(null);
+            var document = Workspaces.Workspace.Instance.FindDocument(file_path);
+            if (document == null) return Task.FromResult<QuickInfoItem>(null);
             int index = trigger_point.Position;
-            var sym = LanguageServer.Module.GetDocumentSymbol(index, item);
+            var sym = LanguageServer.Module.GetDocumentSymbol(index, document);
             if (sym == null) return Task.FromResult<QuickInfoItem>(null);
-            var info = LanguageServer.Module.GetQuickInfo(index, item);
+            var info = LanguageServer.Module.GetQuickInfo(index, document);
             if (info != null)
             {
                 ITextView view = session.TextView;

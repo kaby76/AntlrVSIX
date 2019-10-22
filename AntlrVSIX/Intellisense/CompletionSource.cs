@@ -35,8 +35,8 @@
             var gd = LanguageServer.GrammarDescriptionFactory.Create(ffn);
             if (gd == null) return;
             List<Completion> completions = new List<Completion>();
-            var item = Workspaces.Workspace.Instance.FindDocument(ffn);
-            var pd = ParserDetailsFactory.Create(item);
+            var document = Workspaces.Workspace.Instance.FindDocument(ffn);
+            var pd = ParserDetailsFactory.Create(document);
             foreach (var s in pd.Refs
                 .Where(t => t.Value == 0)
                 .Select(t => t.Key)

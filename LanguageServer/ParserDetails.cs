@@ -20,6 +20,8 @@
         public virtual Dictionary<TerminalNodeImpl, int> Defs { get; set; } = new Dictionary<TerminalNodeImpl, int>();
         public virtual Dictionary<TerminalNodeImpl, int> Tags { get; set; } = new Dictionary<TerminalNodeImpl, int>();
 
+        public virtual HashSet<IParseTree> Errors { get; set; } = new HashSet<IParseTree>();
+
         public virtual Dictionary<IToken, int> Comments { get; set; } = new Dictionary<IToken, int>();
 
         public virtual Dictionary<IParseTree, Symtab.CombinedScopeSymbol> Attributes { get; set; } = new Dictionary<IParseTree, Symtab.CombinedScopeSymbol>();
@@ -62,6 +64,7 @@
             this.Defs = new Dictionary<TerminalNodeImpl, int>();
             this.Refs = new Dictionary<TerminalNodeImpl, int>();
             this.Tags = new Dictionary<TerminalNodeImpl, int>();
+            this.Errors = new HashSet<IParseTree>();
             this.Cleanup();
         }
 
@@ -144,6 +147,21 @@
                     {
                         // Duplicate
                     }
+                }
+            }
+        }
+
+        public virtual void GatherErrors()
+        {
+            var item = Item;
+            var ffn = item.FullPath;
+            IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);
+            if (gd == null) throw new Exception();
+            {
+                var it = this.AllNodes.Where(t => t as Antlr4.Runtime.Tree.ErrorNodeImpl != null);
+                foreach (var t in it)
+                {
+                    this.Errors.Add(t);
                 }
             }
         }
