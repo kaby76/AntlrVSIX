@@ -7,7 +7,8 @@
     /// An abstract base class that houses common functionality for scopes. </summary>
     public abstract class BaseScope : CombinedScopeSymbol, IScope
     {
-        public abstract string Name {get;}
+        public virtual string Name { get; set; }
+
         protected internal IScope enclosingScope; // null if this scope is the root of the scope tree
 
         /// <summary>

@@ -7,13 +7,5 @@
     /// </summary>
     public class PredefinedScope : BaseScope
     {
-        public override string Name
-        {
-            get
-            {
-                return "predefined";
-            }
-        }
     }
-
 }

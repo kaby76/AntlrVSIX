@@ -12,21 +12,15 @@
     /// </summary>
     public abstract class SymbolWithScope : BaseScope, ISymbol, IScope
     {
-        protected internal readonly string name; // All symbols at least have a name
         protected internal int index; // insertion order from 0; compilers often need this
 
         public SymbolWithScope(string name)
         {
-            this.name = name;
+            this.Name = name;
         }
 
-        public override string Name
-        {
-            get
-            {
-                return name;
-            }
-        }
+        public override string Name { get; set; }
+
         public virtual IScope Scope
         {
             get
@@ -54,7 +48,7 @@
         {
             get
             {
-                return enclosingScope.Name + "." + name;
+                return enclosingScope.Name + "." + Name;
             }
         }
 
@@ -62,7 +56,7 @@
         /// Return the name prefixed with the name of its enclosing scope. </summary>
         public virtual string getQualifiedName(string scopePathSeparator)
         {
-            return enclosingScope.Name + scopePathSeparator + name;
+            return enclosingScope.Name + scopePathSeparator + Name;
         }
 
         /// <summary>
@@ -112,12 +106,12 @@
             {
                 return true;
             }
-            return name.Equals(((ISymbol)obj).Name);
+            return Name.Equals(((ISymbol)obj).Name);
         }
 
         public override int GetHashCode()
         {
-            return name.GetHashCode();
+            return Name.GetHashCode();
         }
 
         public ISymbol resolve()

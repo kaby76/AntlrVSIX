@@ -8,13 +8,5 @@
         public GlobalScope(IScope scope) : base(scope)
         {
         }
-        public override string Name
-        {
-            get
-            {
-                return "global";
-            }
-        }
     }
-
 }

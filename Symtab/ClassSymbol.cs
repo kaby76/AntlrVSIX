@@ -202,15 +202,12 @@
                 {
                     methods.UnionWith(superClassScope.Methods);
                 }
-    //JAVA TO C# CONVERTER TODO TASK: There is no .NET equivalent to the java.util.Collection 'removeAll' method:
                 methods.Clear(); // override method from superclass
                 methods.UnionWith(DefinedMethods);
                 return methods;
             }
         }
 
-//JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in .NET:
-//ORIGINAL LINE: @Override public java.util.List<? extends FieldSymbol> getFields()
         public override IList<FieldSymbol> Fields
         {
             get
@@ -278,7 +275,7 @@
 
         public override string ToString()
         {
-            return name + ":" + base.ToString();
+            return Name + ":" + base.ToString();
         }
     }
 

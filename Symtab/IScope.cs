@@ -26,11 +26,11 @@
         /// Often scopes have names like function or class names. For
         ///  unnamed scopes like code blocks, you can just return "local" or something.
         /// </summary>
-        string Name {get;}
+        string Name { get; set; }
 
         /// <summary>
         /// Scope in which this scope defined. null if no enclosing scope </summary>
-        IScope EnclosingScope {get;set;}
+        IScope EnclosingScope { get; set; }
 
 
         /// <summary>

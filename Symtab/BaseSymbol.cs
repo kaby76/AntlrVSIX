@@ -11,7 +11,6 @@
     /// </summary>
     public abstract class BaseSymbol : CombinedScopeSymbol, ISymbol
     {
-        protected internal readonly string name; // All symbols at least have a name
         protected internal IType type; // If language statically typed, record type
         protected internal IScope scope; // All symbols know what scope contains them.
         protected internal ParserRuleContext defNode; // points at definition node in tree
@@ -24,17 +23,12 @@
 
         public BaseSymbol(string name, IToken token)
         {
-            this.name = name;
+            this.Name = name;
             this.Token = token;
         }
 
-        public virtual string Name
-        {
-            get
-            {
-                return name;
-            }
-        }
+        public virtual string Name { get; set; }
+
         public virtual IScope Scope
         {
             get
@@ -82,12 +76,12 @@
             {
                 return true;
             }
-            return name.Equals(((ISymbol)obj).Name);
+            return Name.Equals(((ISymbol)obj).Name);
         }
 
         public override int GetHashCode()
         {
-            return name.GetHashCode();
+            return Name.GetHashCode();
         }
 
         public virtual int InsertionOrderNumber
@@ -108,7 +102,7 @@
             IList<IScope> path = scope.EnclosingPathToRoot;
             path.Reverse();
             string qualifier = Utils.joinScopeNames(path, scopePathSeparator);
-            return qualifier + scopePathSeparator + name;
+            return qualifier + scopePathSeparator + Name;
         }
 
         public override string ToString()

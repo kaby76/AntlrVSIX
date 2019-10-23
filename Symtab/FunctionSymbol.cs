@@ -65,7 +65,7 @@
 
         public override string ToString()
         {
-            return name + ":" + base.ToString();
+            return Name + ":" + base.ToString();
         }
     }
 

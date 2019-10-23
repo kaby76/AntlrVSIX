@@ -21,15 +21,5 @@
                 this.typeIndex = value;
             }
         }
-
-
-        public override string Name
-        {
-            get
-            {
-                return name;
-            }
-        }
     }
-
 }

@@ -8,14 +8,5 @@
         public LocalScope(IScope enclosingScope) : base(enclosingScope)
         {
         }
-
-        public override string Name
-        {
-            get
-            {
-                return "local";
-            }
-        }
     }
-
 }
