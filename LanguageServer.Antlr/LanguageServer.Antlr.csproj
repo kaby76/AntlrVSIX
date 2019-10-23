@@ -30,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Graphs\Graphs.csproj" />
     <ProjectReference Include="..\LanguageServer\LanguageServer.csproj" />
     <ProjectReference Include="..\Symtab\Symtab.csproj" />
     <ProjectReference Include="..\Workspaces\Workspaces.csproj" />

@@ -88,26 +88,6 @@
                 }
             }
         }
-
-        private static string GetProperDirectoryCapitalization(DirectoryInfo dirInfo)
-        {
-            DirectoryInfo parentDirInfo = dirInfo.Parent;
-            if (null == parentDirInfo)
-                return dirInfo.Name.ToUpper();
-            return Path.Combine(GetProperDirectoryCapitalization(parentDirInfo),
-                                parentDirInfo.GetDirectories(dirInfo.Name)[0].Name);
-        }
-
-        private static string GetProperFilePathCapitalization(string filename)
-        {
-            FileInfo fileInfo = new FileInfo(filename);
-            DirectoryInfo dirInfo = fileInfo.Directory;
-            if (dirInfo.GetFiles(fileInfo.Name).Length != 0)
-                return Path.Combine(GetProperDirectoryCapitalization(dirInfo),
-                                dirInfo.GetFiles(fileInfo.Name)[0].Name);
-            else
-                return GetProperDirectoryCapitalization(dirInfo);
-        }
         
         private static Container ShowNodeName(Container parent, IVsHierarchy hierarchy, uint itemId)
         {
@@ -185,7 +165,7 @@
                 {
                     try
                     {
-                        var real_name = GetProperFilePathCapitalization(c1);
+                        var real_name = Workspaces.Util.GetProperFilePathCapitalization(c1);
                         c1 = real_name == null ? c1 : real_name;
                     }
                     catch (Exception)

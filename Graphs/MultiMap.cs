@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Utils
+namespace Graphs.Utils
 {
     /// <summary>
     /// Represents a collection of keys and values.

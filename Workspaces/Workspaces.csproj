@@ -45,6 +45,7 @@
     <Compile Include="Document.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util.cs" />
     <Compile Include="Workspace.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -35,7 +35,17 @@
             IClassificationFormatMapService ClassificationFormatMapService)
         {
             if (initialized) return;
-            initialized = true;
+            var ffn = _buffer.GetFFN().Result;
+            if (ffn == null) return;
+            _grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
+            if (_grammar_description == null) return;
+            var document = Workspaces.Workspace.Instance.FindDocument(ffn);
+            if (document == null)
+            {
+                AntlrVSIX.File.Loader.LoadAsync().Wait();
+                var to_do = LanguageServer.Module.Compile();
+                document = Workspaces.Workspace.Instance.FindDocument(ffn);
+            }
             _aggregator = aggregatorFactory.CreateTagAggregator<AntlrTokenTag>(_buffer);
             _antlrtype_to_classifiertype = new Dictionary<int, IClassificationType>();
             for (int i = 0; i < _grammar_description.Map.Length; ++i)
@@ -60,6 +70,7 @@
                 var val = _grammar_description.Map[i];
                 _antlrtype_to_classifiertype[key] = service.GetClassificationType(val);
             }
+            initialized = true;
         }
 
         internal AntlrClassifier(ITextBuffer buffer)

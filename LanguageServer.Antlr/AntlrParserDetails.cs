@@ -3,6 +3,7 @@
     using Antlr4.Runtime.Tree;
     using Symtab;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class AntlrParserDetails : ParserDetails
     {
@@ -10,7 +11,7 @@
         static Dictionary<string, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>> _attributes = new Dictionary<string, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>>();
         static IScope _global_scope = new SymbolTable().GLOBALS;
 
-        private List<string> _dependent_grammars = new List<string>();
+        public static Graphs.Utils.MultiMap<string, string> _dependent_grammars = new Graphs.Utils.MultiMap<string, string>();
 
         public AntlrParserDetails(Workspaces.Document item)
             : base(item)
@@ -23,22 +24,30 @@
             });
             Passes.Add(() =>
             {
-                // Set up symbol table.
-                var dir = item.FullPath;
-                dir = System.IO.Path.GetDirectoryName(dir);
-                _scopes.TryGetValue(dir, out IScope value);
+                // A grammar gets its own symbol table if it's not included by any other file.
+                // Otherwise, the grammar gets the symbol table of the grammar derived by
+                // the transitive closure of the owner relationship.
+                var dependent_grammars = _dependent_grammars;
+                var file = this.Item.FullPath;
+                for (; ; )
+                {
+                    dependent_grammars.TryGetValue(file, out List<string> dg);
+                    if (dg == null) break;
+                    file = dg.First();
+                }
+                _scopes.TryGetValue(file, out IScope value);
                 if (value == null)
                 {
                     value = new LocalScope(_global_scope);
                     _global_scope.nest(value);
-                    _scopes[dir] = value;
+                    _scopes[file] = value;
                 }
                 this.RootScope = value;
-                _attributes.TryGetValue(dir, out Dictionary<IParseTree, CombinedScopeSymbol> at);
+                _attributes.TryGetValue(file, out Dictionary<IParseTree, CombinedScopeSymbol> at);
                 if (at == null)
                 {
                     at = new Dictionary<IParseTree, CombinedScopeSymbol>();
-                    _attributes[dir] = at;
+                    _attributes[file] = at;
                 }
                 this.Attributes = at;
             });
