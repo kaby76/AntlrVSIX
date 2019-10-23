@@ -42,7 +42,7 @@
             var document = Workspaces.Workspace.Instance.FindDocument(ffn);
             if (document == null)
             {
-                AntlrVSIX.File.Loader.LoadAsync().Wait();
+                Workspaces.Loader.LoadAsync().Wait();
                 var to_do = LanguageServer.Module.Compile();
                 document = Workspaces.Workspace.Instance.FindDocument(ffn);
             }
@@ -85,7 +85,7 @@
             var document = Workspaces.Workspace.Instance.FindDocument(ffn);
             if (document == null)
             {
-                AntlrVSIX.File.Loader.LoadAsync().Wait();
+                Workspaces.Loader.LoadAsync().Wait();
                 var to_do = LanguageServer.Module.Compile();
                 document = Workspaces.Workspace.Instance.FindDocument(ffn);
             }

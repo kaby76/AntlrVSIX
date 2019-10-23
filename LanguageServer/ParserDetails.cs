@@ -48,9 +48,6 @@
             item.Changed = false;
             if (!has_changed) return;
 
-            //if (item.GetProperty("BuildAction") == "prjBuildActionNone")
-            //    return null;
-
             IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);
             if (gd == null) throw new Exception();
             gd.Parse(this);
@@ -64,11 +61,11 @@
             this.Cleanup();
         }
 
-        public virtual List<Action> Passes { get; } = new List<Action>();
+        public virtual List<Func<bool>> Passes { get; } = new List<Func<bool>>();
 
-        public void Pass(int pass_number)
+        public bool Pass(int pass_number)
         {
-            Passes[pass_number]();
+            return Passes[pass_number]();
         }
 
         public virtual void GatherDefs()

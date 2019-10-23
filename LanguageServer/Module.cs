@@ -254,7 +254,7 @@
             return result;
         }
 
-        private static Digraph<ParserDetails> ConstructGraph(List<ParserDetails> to_do)
+        private static Digraph<ParserDetails> ConstructGraph(IEnumerable<ParserDetails> to_do)
         {
             Digraph<ParserDetails> g = new Digraph<ParserDetails>();
             HashSet<ParserDetails> done = new HashSet<ParserDetails>();
@@ -299,7 +299,11 @@
             var ws = Workspaces.Workspace.Instance;
 
             // Get all changed files.
-            List<ParserDetails> to_do = new List<ParserDetails>();
+            HashSet<ParserDetails> to_do = new HashSet<ParserDetails>();
+
+            DoAgain:
+
+            Workspaces.Loader.LoadAsync().Wait();
             foreach (var document in Workspaces.DFSContainer.DFS(ws))
             {
                 string file_name = document.FullPath;
@@ -311,24 +315,27 @@
                 if (!pd.Changed) continue;
                 to_do.Add(pd);
             }
-
             Digraph<ParserDetails> g = ConstructGraph(to_do);
             foreach (var v in g.Vertices)
             {
                 v.Item.Changed = true; // Force.
                 v.Parse();
             }
-            bool changes = true;
-            for (int pass = 0; changes; pass++)
+            var changed = true;
+            for (int pass = 0; changed; pass++)
             {
-                changes = false;
+                changed = false;
                 foreach (var v in g.Vertices)
                 {
                     int number_of_passes = v.Passes.Count;
                     if (pass < number_of_passes)
                     {
-                        v.Pass(pass);
-                        changes = true;
+                        var reset = v.Pass(pass);
+                        if (reset)
+                        {
+                            goto DoAgain;
+                        }
+                        changed = true;
                     }
                 }
             }

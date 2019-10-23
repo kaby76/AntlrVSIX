@@ -43,7 +43,7 @@
 
         public int OnAfterOpenSolution(object aPUnkReserved, int aFNewSolution)
         {
-            AntlrVSIX.File.Loader.LoadAsync().Wait();
+            Workspaces.Loader.LoadAsync().Wait();
             var to_do = LanguageServer.Module.Compile();
             foreach (var t in to_do)
             {
@@ -103,7 +103,7 @@
 
         public int OnAfterBackgroundSolutionLoadComplete()
         {
-            AntlrVSIX.File.Loader.LoadAsync().Wait();
+            Workspaces.Loader.LoadAsync().Wait();
             var to_do = LanguageServer.Module.Compile();
             foreach (var t in to_do)
             {

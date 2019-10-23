@@ -66,7 +66,12 @@ just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio
 
 ## New in v4.0:
 
-* Symbol table implementation added. Workspace implementation added. Symbol definitions added to Intellisense pop-ups.
+* Major changes to architecture, focusing on separation of GUI from a backend that works like Language Server Protocol (LSP).
+* In the GUI, tagging was improved in quality and speed.
+* In the backend, a symbol table was added to represent all symbols in a project and solution.
+* For Antlr grammars, imports and tokenVocab are now used to determine the scope of the symbol table.
+* For Antlr grammars, Intellisense pop-ups now give the rule definition and location of the file defining the symbol.
+* No specific improvements were made for Python, Rust, and Java support, in favor of focusing on the improved overall design and implementation of the extension.
 
 ## New in v3.0:
 

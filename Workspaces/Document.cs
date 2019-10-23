@@ -8,40 +8,24 @@
     public class Document : Container
     {
         IVsHierarchy _ide_object;
-        public int _hash;
-        string _name;
-        string _ffn;
         string _contents;
-        bool _changed_contents;
         Dictionary<string, string> _properties = new Dictionary<string, string>();
         Dictionary<string, bool> _lazy_evaluated = new Dictionary<string, bool>();
 
-        public Document(IVsHierarchy ide_object, string ffn, string name)
+        public Document(object obj, string ffn, string name)
         {
+            IVsHierarchy ide_object = obj as IVsHierarchy;
             _ide_object = ide_object;
-            _hash = ide_object.GetHashCode();
-            _ffn = ffn;
-            _name = name;
-            _changed_contents = false;
+            FullPath = ffn;
+            Name = name;
+            Changed = false;
         }
 
-        public string Name
-        {
-            get { return _name; }
-            set { _name = value; }
-        }
+        public string Name { get; set; }
 
-        public string FullPath
-        {
-            get { return _ffn; }
-            set { _ffn = value; }
-        }
+        public string FullPath { get; set; }
 
-        public bool Changed
-        {
-            get { return _changed_contents; }
-            set { _changed_contents = value; }
-        }
+        public bool Changed { get; set; }
 
         public string Code
         {
@@ -49,9 +33,9 @@
             {
                 if (_contents == null)
                 {
-                    StreamReader sr = new StreamReader(_ffn);
+                    StreamReader sr = new StreamReader(FullPath);
                     _contents = sr.ReadToEnd();
-                    _changed_contents = true;
+                    Changed = true;
                 }
                 return _contents;
             }
@@ -61,7 +45,7 @@
                 {
                     return;
                 }
-                _changed_contents = true;
+                Changed = true;
                 _contents = value;
             }
         }

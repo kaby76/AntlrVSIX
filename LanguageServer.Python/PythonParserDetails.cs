@@ -35,14 +35,17 @@ namespace LanguageServer.Python
                     _attributes[dir] = at;
                 }
                 this.Attributes = at;
+                return false;
             });
             Passes.Add(() =>
             {
                 ParseTreeWalker.Default.Walk(new Pass1Listener(this), ParseTree);
+                return false;
             });
             Passes.Add(() =>
             {
                 ParseTreeWalker.Default.Walk(new Pass2Listener(this), ParseTree);
+                return false;
             });
         }
     }

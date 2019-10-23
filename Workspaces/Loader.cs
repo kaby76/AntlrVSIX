@@ -1,7 +1,5 @@
-﻿namespace AntlrVSIX.File
+﻿namespace Workspaces
 {
-    using AntlrVSIX.Extensions;
-    using AntlrVSIX.Tagger;
     using EnvDTE;
     using Microsoft.VisualStudio;
     using Microsoft.VisualStudio.Shell;
@@ -9,8 +7,6 @@
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.TextManager.Interop;
     using System;
-    using System.IO;
-    using Workspaces;
 
     public class Help
     {
@@ -24,7 +20,7 @@
         }
     }
 
-    public class Loader : IVsRunningDocTableEvents3
+    public class Loader
     {
         private static bool finished = false;
         private static bool started = false;
@@ -137,7 +133,7 @@
                     as_project.UniqueName,
                     as_project.Name,
                     as_project.FileName);
-                hierarchy.AdviseHierarchyEvents(new DoProjectEvents(), out uint cook_project);
+                //hierarchy.AdviseHierarchyEvents(new DoProjectEvents(), out uint cook_project);
                 parent.AddChild(ws_project);
                 var find_project = ws_project;
                 var properties = as_project.Properties;
@@ -181,7 +177,7 @@
                         c1,
                         c1);
                     parent.AddChild(project);
-                    hierarchy.AdviseHierarchyEvents(new DoProjectEvents(), out uint cook_project);
+                    //hierarchy.AdviseHierarchyEvents(new DoProjectEvents(), out uint cook_project);
                     return project;
                 }
                 else
@@ -215,51 +211,51 @@
                 return null;
         }
 
-        private class DoProjectEvents : IVsHierarchyEvents
-        {
-            public int OnItemAdded(uint itemidParent, uint itemidSiblingPrev, uint itemidAdded)
-            {
-                AntlrVSIX.File.Loader.LoadAsync().Wait();
-                var to_do = LanguageServer.Module.Compile();
-                foreach (var t in to_do)
-                {
-                    var w = t.FullFileName;
-                    IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(w);
-                    if (vstv == null) continue;
-                    IWpfTextView wpftv = vstv.GetIWpfTextView();
-                    if (wpftv == null) continue;
-                    var buffer = wpftv.TextBuffer;
-                    var att = buffer.Properties.GetOrCreateSingletonProperty(() => new AntlrVSIX.AggregateTagger.AntlrClassifier(buffer));
-                    att.Raise();
-                }
-                return VSConstants.S_OK;
-            }
+        //private class DoProjectEvents : IVsHierarchyEvents
+        //{
+        //    public int OnItemAdded(uint itemidParent, uint itemidSiblingPrev, uint itemidAdded)
+        //    {
+        //        Workspaces.Loader.LoadAsync().Wait();
+        //        var to_do = LanguageServer.Module.Compile();
+        //        foreach (var t in to_do)
+        //        {
+        //            var w = t.FullFileName;
+        //            IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(w);
+        //            if (vstv == null) continue;
+        //            IWpfTextView wpftv = vstv.GetIWpfTextView();
+        //            if (wpftv == null) continue;
+        //            var buffer = wpftv.TextBuffer;
+        //            var att = buffer.Properties.GetOrCreateSingletonProperty(() => new AntlrVSIX.AggregateTagger.AntlrClassifier(buffer));
+        //            att.Raise();
+        //        }
+        //        return VSConstants.S_OK;
+        //    }
 
-            public int OnItemsAppended(uint itemidParent)
-            {
-                return VSConstants.S_OK;
-            }
+        //    public int OnItemsAppended(uint itemidParent)
+        //    {
+        //        return VSConstants.S_OK;
+        //    }
 
-            public int OnItemDeleted(uint itemid)
-            {
-                return VSConstants.S_OK;
-            }
+        //    public int OnItemDeleted(uint itemid)
+        //    {
+        //        return VSConstants.S_OK;
+        //    }
 
-            public int OnPropertyChanged(uint itemid, int propid, uint flags)
-            {
-                return VSConstants.S_OK;
-            }
+        //    public int OnPropertyChanged(uint itemid, int propid, uint flags)
+        //    {
+        //        return VSConstants.S_OK;
+        //    }
 
-            public int OnInvalidateItems(uint itemidParent)
-            {
-                return VSConstants.S_OK;
-            }
+        //    public int OnInvalidateItems(uint itemidParent)
+        //    {
+        //        return VSConstants.S_OK;
+        //    }
 
-            public int OnInvalidateIcon(IntPtr hicon)
-            {
-                return VSConstants.S_OK;
-            }
-        }
+        //    public int OnInvalidateIcon(IntPtr hicon)
+        //    {
+        //        return VSConstants.S_OK;
+        //    }
+        //}
 
         public static async System.Threading.Tasks.Task LoadAsync()
         {
@@ -269,7 +265,6 @@
 
             // Convert the entire solution into Project/Document workspace.
 
-            // First, open up every .g4 file in project and parse.
             DTE application = Help.GetApplication();
             if (application == null)
             {
@@ -282,64 +277,6 @@
             ProcessHierarchy(null, ivs_solution as IVsHierarchy);
 
             finished = true;
-        }
-
-        public static string lazy_eval(string name, object props)
-        {
-            string result = null;
-            try
-            {
-                var properties = (Properties)props;
-                var prop = properties.Item(name);
-                object value = null;
-                value = prop.Value;
-                result = value == null ? null : value.ToString();
-            }
-            catch (Exception)
-            { }
-            return result;
-        }
-
-        public int OnAfterFirstDocumentLock(uint docCookie, uint dwRDTLockType, uint dwReadLocksRemaining, uint dwEditLocksRemaining)
-        {
-            return VSConstants.S_OK;
-        }
-
-        public int OnBeforeLastDocumentUnlock(uint docCookie, uint dwRDTLockType, uint dwReadLocksRemaining, uint dwEditLocksRemaining)
-        {
-            return VSConstants.S_OK;
-        }
-
-        public int OnAfterSave(uint docCookie)
-        {
-            return VSConstants.S_OK;
-        }
-
-        public int OnAfterAttributeChange(uint docCookie, uint grfAttribs)
-        {
-            return VSConstants.S_OK;
-        }
-
-        public int OnBeforeDocumentWindowShow(uint docCookie, int fFirstShow, IVsWindowFrame pFrame)
-        {
-            return VSConstants.S_OK;
-        }
-
-        public int OnAfterDocumentWindowHide(uint docCookie, IVsWindowFrame pFrame)
-        {
-            return VSConstants.S_OK;
-        }
-
-        public int OnAfterAttributeChangeEx(uint docCookie, uint grfAttribs, IVsHierarchy pHierOld, uint itemidOld, string pszMkDocumentOld, IVsHierarchy pHierNew, uint itemidNew, string pszMkDocumentNew)
-        {
-            return VSConstants.S_OK;
-        }
-
-        public int OnBeforeSave(uint docCookie)
-        {
-            AntlrVSIX.File.Loader.LoadAsync().Wait();
-            var to_do = LanguageServer.Module.Compile();
-            return VSConstants.S_OK;
         }
     }
 }

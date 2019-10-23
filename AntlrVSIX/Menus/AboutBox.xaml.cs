@@ -14,7 +14,7 @@
         public AboutBox()
         {
             InitializeComponent();
-            DTE application = AntlrVSIX.File.Help.GetApplication();
+            DTE application = Workspaces.Help.GetApplication();
             _info.Text = "Author: Ken Domino";
             _info.AppendText(Environment.NewLine);
             _info.AppendText("AntlrVSIX version: " + AntlrVSIX.Constants.Version);

@@ -61,7 +61,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Diff\Diff.cs" />
-    <Compile Include="File\Loader.cs" />
     <Compile Include="Menus\AboutBox.xaml.cs">
       <DependentUpon>AboutBox.xaml</DependentUpon>
     </Compile>

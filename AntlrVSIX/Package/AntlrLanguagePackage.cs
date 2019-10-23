@@ -53,9 +53,6 @@ namespace AntlrVSIX.Package
             solution = GetService(typeof(SVsSolution)) as IVsSolution;
             var re = solution.AdviseSolutionEvents(new SolutionEventListener(), out solutionEventsCookie);
             
-            var rdt = (IVsRunningDocumentTable)Package.GetGlobalService(typeof(SVsRunningDocumentTable));
-            rdt.AdviseRunningDocTableEvents(AntlrVSIX.File.Loader.Instance, out uint cookie);
-
             FindAllReferencesCommand.Initialize(this);
             FindRefsWindowCommand.Initialize(this);
             GoToDefinitionCommand.Initialize(this);

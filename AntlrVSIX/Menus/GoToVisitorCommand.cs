@@ -119,7 +119,7 @@
         private void MenuItemCallback(object sender, EventArgs e, bool visitor)
         {
             // Return if I can't determine what application this is.
-            DTE application = AntlrVSIX.File.Help.GetApplication();
+            DTE application = Workspaces.Help.GetApplication();
             if (application == null) return;
 
             // Get active view and determine if it's a grammar file.
@@ -581,7 +581,7 @@ public override void {capitalized_member_name}({capitalized_grammar_name}Parser.
         {
             if (item == null)
                 return null;
-            DTE application = AntlrVSIX.File.Help.GetApplication();
+            DTE application = Workspaces.Help.GetApplication();
             if (application == null) return "";
             if (application.ActiveWindow is Window2 window && window.Type == vsWindowType.vsWindowTypeDocument)
             {

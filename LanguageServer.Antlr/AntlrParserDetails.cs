@@ -21,6 +21,7 @@
             {
                 // Gather dependent grammars.
                 ParseTreeWalker.Default.Walk(new Pass3Listener(this), ParseTree);
+                return false;
             });
             Passes.Add(() =>
             {
@@ -35,6 +36,34 @@
                     if (dg == null) break;
                     file = dg.First();
                 }
+
+                // For all imported grammars, add in these to do if not in the workspace, and restart.
+                foreach (KeyValuePair<string, List<string>> dep in dependent_grammars)
+                {
+                    var name = dep.Key;
+                    var x = Workspaces.Workspace.Instance.FindDocument(name);
+                    if (x == null)
+                    {
+                        // Add document.
+                        var proj = this.Item.Parent;
+                        var new_doc = new Workspaces.Document(null, name, name);
+                        proj.AddChild(new_doc);
+                        return true;
+                    }
+                    foreach (var y in dep.Value)
+                    {
+                        var z = Workspaces.Workspace.Instance.FindDocument(y);
+                        if (z == null)
+                        {
+                            // Add document.
+                            var proj = this.Item.Parent;
+                            var new_doc = new Workspaces.Document(null, y, y);
+                            proj.AddChild(new_doc);
+                            return true;
+                        }
+                    }
+                }
+
                 _scopes.TryGetValue(file, out IScope value);
                 if (value == null)
                 {
@@ -50,14 +79,19 @@
                     _attributes[file] = at;
                 }
                 this.Attributes = at;
+
+
+                return false;
             });
             Passes.Add(() =>
             {
                 ParseTreeWalker.Default.Walk(new Pass1Listener(this), ParseTree);
+                return false;
             });
             Passes.Add(() =>
             {
                 ParseTreeWalker.Default.Walk(new Pass2Listener(this), ParseTree);
+                return false;
             });
         }
 

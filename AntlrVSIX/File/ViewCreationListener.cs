@@ -39,6 +39,7 @@
             view.Closed += OnViewClosed;
             var buffer = view.TextBuffer;
             string ffn = await buffer.GetFFN();
+            Workspaces.Loader.LoadAsync().Wait();
             var grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
             if (grammar_description == null) return;
             var content_type = buffer.ContentType;
@@ -49,9 +50,9 @@
             buffer.ChangeContentType(new_content_type, null);
             if (!PreviousContentType.ContainsKey(ffn))
                 PreviousContentType[ffn] = content_type;
+            var to_do = LanguageServer.Module.Compile();
             var att = buffer.Properties.GetOrCreateSingletonProperty(() => new AntlrVSIX.AggregateTagger.AntlrClassifier(buffer));
             att.Raise();
-            
         }
 
         private void OnViewClosed(object sender, EventArgs e)
