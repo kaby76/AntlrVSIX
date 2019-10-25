@@ -64,6 +64,12 @@ just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio
 
 * Use Visual Studio 2019 to build the extension.
 
+## Working on for next release:
+
+* Update symbol table with new classes to represent files, directories, and search paths. This will help
+support for better modeling of Java's ClassPath, Antlr's imports, etc., so that scopes can be cleared out quickly and
+easily when the sources have changed.
+
 ## New in v4.0:
 
 * Major changes to architecture, focusing on separation of GUI from a backend that works like Language Server Protocol (LSP).
