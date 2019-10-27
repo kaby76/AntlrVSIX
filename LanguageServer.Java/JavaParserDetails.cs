@@ -7,10 +7,7 @@
     class JavaParserDetails : ParserDetails
     {
         static Dictionary<string, IScope> _scopes = new Dictionary<string, IScope>();
-        static Dictionary<string, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>> _attributes = new Dictionary<string, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>>();
-        static IScope _global_scope = new SymbolTable().GLOBALS;
-
-        public static Graphs.Utils.MultiMap<string, string> imports = new Graphs.Utils.MultiMap<string, string>();
+        public static Graphs.Utils.MultiMap<string, string> _dependent_grammars = new Graphs.Utils.MultiMap<string, string>();
 
         public JavaParserDetails(Workspaces.Document item)
             : base(item)
@@ -18,14 +15,17 @@
             // Passes executed in order for all files.
             Passes.Add(() =>
             {
-                // Gather dependent grammars.
+                // Gather Imports from grammars.
+                // Gather _dependent_grammars map.
                 ParseTreeWalker.Default.Walk(new Pass3Listener(this), ParseTree);
                 return false;
             });
             Passes.Add(() =>
             {
-                // For all imported grammars, add in these to do if not in the workspace, and restart.
-                foreach (KeyValuePair<string, List<string>> dep in imports)
+                // For all imported grammars across the entire universe,
+                // make sure all are loaded in the workspace,
+                // then restart.
+                foreach (KeyValuePair<string, List<string>> dep in _dependent_grammars)
                 {
                     var name = dep.Key;
                     var x = Workspaces.Workspace.Instance.FindDocument(name);
@@ -51,24 +51,27 @@
                     }
                 }
 
-                var dir = item.FullPath;
-                dir = System.IO.Path.GetDirectoryName(dir);
-                _scopes.TryGetValue(dir, out IScope value);
-                if (value == null)
+                // The workspace is completely loaded. Create scopes for all files in workspace
+                // if they don't already exist.
+                foreach (KeyValuePair<string, List<string>> dep in _dependent_grammars)
                 {
-                    value = new LocalScope(_global_scope);
-                    _scopes[dir] = value;
+                    var name = dep.Key;
+                    _scopes.TryGetValue(name, out IScope file_scope);
+                    if (file_scope != null) continue;
+                    _scopes[name] = new FileScope(name, null);
                 }
 
-
-                this.RootScope = value;
-                _attributes.TryGetValue(dir, out Dictionary<IParseTree, CombinedScopeSymbol> at);
-                if (at == null)
+                // Set up search path scopes for Imports relationship.
+                var root = _scopes[this.FullFileName];
+                foreach (var dep in this.Imports)
                 {
-                    at = new Dictionary<IParseTree, CombinedScopeSymbol>();
-                    _attributes[dir] = at;
+                    var import = new SearchPathScope(root);
+                    var dep_scope = _scopes[dep];
+                    import.nest(dep_scope);
+                    root.nest(import);
                 }
-                this.Attributes = at;
+                root.empty();
+                this.RootScope = root;
                 return false;
             });
             Passes.Add(() =>
