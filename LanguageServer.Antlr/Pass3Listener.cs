@@ -9,6 +9,7 @@
         public Pass3Listener(AntlrParserDetails pd)
         {
             _pd = pd;
+            AntlrParserDetails._dependent_grammars.Add(_pd.FullFileName);
         }
 
         public override void EnterOption([NotNull] ANTLRv4Parser.OptionContext context)
@@ -22,6 +23,7 @@
             var dep = dir + System.IO.Path.DirectorySeparatorChar + dep_grammar + ".g4";
             dep = Workspaces.Util.GetProperFilePathCapitalization(dep);
             if (dep == null) return;
+            _pd.Imports.Add(dep);
             AntlrParserDetails._dependent_grammars.Add(dep, file);
         }
 
@@ -35,6 +37,7 @@
             var dep = dir + System.IO.Path.DirectorySeparatorChar + dep_grammar + ".g4";
             dep = Workspaces.Util.GetProperFilePathCapitalization(dep);
             if (dep == null) return;
+            _pd.Imports.Add(dep);
             AntlrParserDetails._dependent_grammars.Add(dep, file);
         }
     }

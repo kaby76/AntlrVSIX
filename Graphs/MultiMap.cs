@@ -63,6 +63,20 @@ namespace Graphs.Utils
             }
         }
 
+        public void Add(TKey key)
+        {
+            List<TValue> valueList;
+            //System.Console.WriteLine("In Add of MultiMap " + key);
+            if (TryGetValue(key, out valueList))
+            {
+            }
+            else
+            {
+                valueList = new List<TValue>();
+                Add(key, valueList);
+            }
+        }
+
         /// <summary>
         /// Removes first occurence of an element with a specified key and value.
         /// </summary>

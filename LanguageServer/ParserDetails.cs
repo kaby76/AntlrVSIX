@@ -19,6 +19,7 @@
         public virtual HashSet<string> PropagateChangesTo { get; set; } = new HashSet<string>();
         public virtual Dictionary<TerminalNodeImpl, int> Defs { get; set; } = new Dictionary<TerminalNodeImpl, int>();
         public virtual Dictionary<TerminalNodeImpl, int> Tags { get; set; } = new Dictionary<TerminalNodeImpl, int>();
+        public virtual HashSet<string> Imports { get; set; } = new HashSet<string>();
 
         public virtual HashSet<IParseTree> Errors { get; set; } = new HashSet<IParseTree>();
 
@@ -58,6 +59,8 @@
             this.Refs = new Dictionary<TerminalNodeImpl, int>();
             this.Tags = new Dictionary<TerminalNodeImpl, int>();
             this.Errors = new HashSet<IParseTree>();
+            this.Imports = new HashSet<string>();
+            this.Attributes = new Dictionary<IParseTree, Symtab.CombinedScopeSymbol>();
             this.Cleanup();
         }
 

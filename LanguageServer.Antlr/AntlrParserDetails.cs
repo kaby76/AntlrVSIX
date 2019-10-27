@@ -8,9 +8,6 @@
     public class AntlrParserDetails : ParserDetails
     {
         static Dictionary<string, IScope> _scopes = new Dictionary<string, IScope>();
-        static Dictionary<string, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>> _attributes = new Dictionary<string, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>>();
-        static IScope _global_scope = new SymbolTable().GLOBALS;
-
         public static Graphs.Utils.MultiMap<string, string> _dependent_grammars = new Graphs.Utils.MultiMap<string, string>();
 
         public AntlrParserDetails(Workspaces.Document item)
@@ -19,26 +16,17 @@
             // Passes executed in order for all files.
             Passes.Add(() =>
             {
-                // Gather dependent grammars.
+                // Gather Imports from grammars.
+                // Gather _dependent_grammars map.
                 ParseTreeWalker.Default.Walk(new Pass3Listener(this), ParseTree);
                 return false;
             });
             Passes.Add(() =>
             {
-                // A grammar gets its own symbol table if it's not included by any other file.
-                // Otherwise, the grammar gets the symbol table of the grammar derived by
-                // the transitive closure of the owner relationship.
-                var dependent_grammars = _dependent_grammars;
-                var file = this.Item.FullPath;
-                for (; ; )
-                {
-                    dependent_grammars.TryGetValue(file, out List<string> dg);
-                    if (dg == null) break;
-                    file = dg.First();
-                }
-
-                // For all imported grammars, add in these to do if not in the workspace, and restart.
-                foreach (KeyValuePair<string, List<string>> dep in dependent_grammars)
+                // For all imported grammars across the entire universe,
+                // make sure all are loaded in the workspace,
+                // then restart.
+                foreach (KeyValuePair<string, List<string>> dep in _dependent_grammars)
                 {
                     var name = dep.Key;
                     var x = Workspaces.Workspace.Instance.FindDocument(name);
@@ -64,23 +52,27 @@
                     }
                 }
 
-                _scopes.TryGetValue(file, out IScope value);
-                if (value == null)
+                // The workspace is completely loaded. Create scopes for all files in workspace
+                // if they don't already exist.
+                foreach (KeyValuePair<string, List<string>> dep in _dependent_grammars)
                 {
-                    value = new LocalScope(_global_scope);
-                    _global_scope.nest(value);
-                    _scopes[file] = value;
+                    var name = dep.Key;
+                    _scopes.TryGetValue(name, out IScope file_scope);
+                    if (file_scope != null) continue;
+                    _scopes[name] = new FileScope(name, null);
                 }
-                this.RootScope = value;
-                _attributes.TryGetValue(file, out Dictionary<IParseTree, CombinedScopeSymbol> at);
-                if (at == null)
+
+                // Set up search path scopes for Imports relationship.
+                var root = _scopes[this.FullFileName];
+                foreach (var dep in this.Imports)
                 {
-                    at = new Dictionary<IParseTree, CombinedScopeSymbol>();
-                    _attributes[file] = at;
+                    var import = new SearchPathScope(root);
+                    var dep_scope = _scopes[dep];
+                    import.nest(dep_scope);
+                    root.nest(import);
                 }
-                this.Attributes = at;
-
-
+                root.empty();
+                this.RootScope = root;
                 return false;
             });
             Passes.Add(() =>

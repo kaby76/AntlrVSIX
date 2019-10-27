@@ -109,14 +109,11 @@
                 started = false;
                 return;
             }
-
             Solution solution = application.Solution;
-
             Workspaces.Workspace.Initialize(solution.FullName, solution.FileName);
             var ws = Workspace.Instance;
             ws.Name = GetPropertySolution(solution, "Name");
             ws.FFN = ws.Name;
-
             HashSet<ProjectItem> visited = new HashSet<ProjectItem>();
             Stack<Tuple<Container, ProjectItem>> stack = new Stack<Tuple<Container, ProjectItem>>();
             Projects projects = null;
@@ -129,15 +126,6 @@
             { }
             foreach (var p in projects)
             {
-                try
-                {
-                    var q = p as EnvDTE.Project;
-                }
-                catch (Exception) { }
-            }
-
-            foreach (var p in projects)
-            {
                 var q = p as ProjectItem;
                 if (q != null)
                 {
@@ -148,8 +136,6 @@
                 {
                     var r = p as EnvDTE.Project;
                     string file_name = r.Name;
-                    GetPropertyProject(r, "foobar");
-
                     var project = ws.FindProject(file_name, file_name, file_name);
                     if (project == null)
                     {
@@ -171,14 +157,10 @@
                 visited.Add(tuple.Item2);
                 var pi = tuple.Item2;
                 var parent = tuple.Item1;
-
                 string file_name = pi.Name;
                 var properties = pi.Properties;
-
                 if (pi as EnvDTE.Project != null)
                 {
-                    GetPropertyProject(pi as EnvDTE.Project, "foobar");
-
                     var project = parent.FindProject(file_name, file_name, file_name);
                     if (project == null)
                     {
@@ -205,7 +187,6 @@
                     }
                 }
             }
-
             finished = true;
         }
     }

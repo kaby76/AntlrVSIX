@@ -45,6 +45,7 @@
         /// </summary>
         void define(ref ISymbol sym);
         void remove(ISymbol sym);
+        void empty(); // Nuke entire list of symbols in this scope. May be recursive.
 
         /// <summary>
         /// Look up name in this scope or recursively in parent scope if not here </summary>

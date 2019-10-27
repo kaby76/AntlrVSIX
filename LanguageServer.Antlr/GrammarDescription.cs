@@ -391,7 +391,13 @@
                     else if (sym is Symtab.NonterminalSymbol)
                         sb.Append("Nonterminal ");
                     else return null;
-                    var fod = pd.Attributes.Where(kvp => kvp.Value == sym).Select(kvp => kvp.Key).FirstOrDefault();
+                    var def_file = sym.file;
+                    if (def_file == null) return null;
+                    var def_document = Workspaces.Workspace.Instance.FindDocument(def_file);
+                    if (def_document == null) return null;
+                    var def_pd = ParserDetailsFactory.Create(def_document);
+                    if (def_pd == null) return null;
+                    var fod = def_pd.Attributes.Where(kvp => kvp.Value == sym).Select(kvp => kvp.Key).FirstOrDefault();
                     if (fod == null) return sb.ToString();
                     sb.Append("defined in ");
                     sb.Append(sym.file);
@@ -423,7 +429,13 @@
                     else if (sym is Symtab.NonterminalSymbol)
                         sb.Append("Nonterminal ");
                     else return null;
-                    var fod = pd.Attributes.Where(kvp => kvp.Value == sym).Select(kvp => kvp.Key).FirstOrDefault();
+                    var def_file = sym.file;
+                    if (def_file == null) return null;
+                    var def_document = Workspaces.Workspace.Instance.FindDocument(def_file);
+                    if (def_document == null) return null;
+                    var def_pd = ParserDetailsFactory.Create(def_document);
+                    if (def_pd == null) return null;
+                    var fod = def_pd.Attributes.Where(kvp => kvp.Value == sym).Select(kvp => kvp.Key).FirstOrDefault();
                     if (fod == null) return sb.ToString();
                     sb.Append("defined in ");
                     sb.Append(sym.file);

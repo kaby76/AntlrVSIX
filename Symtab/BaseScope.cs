@@ -25,9 +25,7 @@
         /// </summary>
         protected internal IList<IScope> nestedScopesNotSymbols = new List<IScope>();
 
-        public BaseScope()
-        {
-        }
+        public BaseScope() { }
 
         public BaseScope(IScope enclosingScope)
         {
@@ -124,6 +122,22 @@
                 {
                     return parent.LookupType(name, alias);
                 }
+                // If not here, check enclosing "import" scopes.
+                foreach (var sc in this.nestedScopesNotSymbols)
+                {
+                    if (sc is SearchPathScope)
+                    {
+                        var spsc = sc as SearchPathScope;
+                        foreach (var sub_scope in spsc.nestedScopesNotSymbols)
+                        {
+                            var res = sub_scope.LookupType(name);
+                            if (res != null)
+                            {
+                                return res;
+                            }
+                        }
+                    }
+                }
                 return null; // not found
             }
             else
@@ -144,6 +158,22 @@
                 if (parent != null)
                 {
                     return parent.LookupType(name, alias);
+                }
+                // If not here, check enclosing "import" scopes.
+                foreach (var sc in this.nestedScopesNotSymbols)
+                {
+                    if (sc is SearchPathScope)
+                    {
+                        var spsc = sc as SearchPathScope;
+                        foreach (var sub_scope in spsc.nestedScopesNotSymbols)
+                        {
+                            var res = sub_scope.LookupType(name);
+                            if (res != null)
+                            {
+                                return res;
+                            }
+                        }
+                    }
                 }
                 return null; // not found
             }
@@ -173,6 +203,10 @@
             sym.InsertionOrderNumber = -1;
         }
 
+        public void empty()
+        {
+            symbols.Clear();
+        }
 
         /// <summary>
         /// Walk up enclosingScope until we find topmost. Note this is
@@ -203,9 +237,7 @@
             IScope s = this;
             while (s != null)
             {
-#pragma warning disable CS0253 // Possible unintended reference comparison; right hand side needs cast
-                if (s.GetType() == type)
-#pragma warning restore CS0253 // Possible unintended reference comparison; right hand side needs cast
+                if (s.GetType() == type.GetType())
                 {
                     return (MethodSymbol)s;
                 }
