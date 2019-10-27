@@ -1,12 +1,10 @@
 ﻿namespace Workspaces
 {
     using EnvDTE;
-    using Microsoft.VisualStudio;
     using Microsoft.VisualStudio.Shell;
-    using Microsoft.VisualStudio.Shell.Interop;
-    using Microsoft.VisualStudio.Text.Editor;
-    using Microsoft.VisualStudio.TextManager.Interop;
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class Help
     {
@@ -26,236 +24,76 @@
         private static bool started = false;
         public static Loader Instance = new Loader();
 
-        private static void ProcessHierarchy(Container parent, IVsHierarchy hierarchy)
+        private static string GetPropertySolution(Solution solution, string name)
         {
-            // Traverse the nodes of the hierarchy from the root node
-            ProcessHierarchyNodeRecursively(parent, hierarchy, VSConstants.VSITEMID_ROOT);
+            var count = solution.Properties.Count;
+            for (int i = 0; i < count; ++i)
+            {
+                try
+                {
+                    var prop = solution.Properties.Item(i);
+                    var prop_name = prop.Name;
+                    if (name == prop_name)
+                    {
+                        object prop_value = prop.Value;
+                        return prop_value as string;
+                    }
+                }
+                catch (Exception)
+                { }
+            }
+            return null;
         }
 
-        private static void ProcessHierarchyNodeRecursively(Container parent, IVsHierarchy hierarchy, uint itemId)
+        private static string GetPropertyProject(EnvDTE.Project project, string name)
         {
-            int result;
-            IntPtr nestedHiearchyValue = IntPtr.Zero;
-            uint nestedItemIdValue;
-            object value;
-            uint visibleChildNode;
-            Guid nestedHierarchyGuid;
-            IVsHierarchy nestedHierarchy;
-
-            // First, guess if the node is actually the root of another hierarchy (a project, for example)
-            nestedHierarchyGuid = typeof(IVsHierarchy).GUID;
-            result = hierarchy.GetNestedHierarchy(itemId, ref nestedHierarchyGuid, out nestedHiearchyValue, out nestedItemIdValue);
-
-            if (result == VSConstants.S_OK && nestedHiearchyValue != IntPtr.Zero && nestedItemIdValue == VSConstants.VSITEMID_ROOT)
+            try
             {
-                // Get the new hierarchy
-                nestedHierarchy = System.Runtime.InteropServices.Marshal.GetObjectForIUnknown(nestedHiearchyValue) as IVsHierarchy;
-                System.Runtime.InteropServices.Marshal.Release(nestedHiearchyValue);
-
-                if (nestedHierarchy != null)
-                {
-                    ProcessHierarchy(parent, nestedHierarchy);
-                }
-            }
-            else // The node is not the root of another hierarchy, it is a regular node
-            {
-                var new_container = ShowNodeName(parent, hierarchy, itemId);
-
-                result = hierarchy.GetProperty(itemId, (int)__VSHPROPID.VSHPROPID_FirstChild, out value);
-
-                while (result == VSConstants.S_OK && value != null)
-                {
-                    if (value is int && (uint)(int)value == VSConstants.VSITEMID_NIL)
-                    {
-                        // No more nodes
-                        break;
-                    }
-                    else
-                    {
-                        visibleChildNode = Convert.ToUInt32(value);
-
-                        // Enter in recursion
-                        ProcessHierarchyNodeRecursively(new_container, hierarchy, visibleChildNode);
-
-                        // Get the next visible sibling node
-                        value = null;
-                        result = hierarchy.GetProperty(visibleChildNode, (int)__VSHPROPID.VSHPROPID_NextSibling, out value);
-                    }
-                }
-            }
-        }
-        
-        private static Container ShowNodeName(Container parent, IVsHierarchy hierarchy, uint itemId)
-        {
-            int result;
-            object value = null;
-            string n1 = "";
-            string c1;
-
-            IVsSolution t1 = hierarchy as IVsSolution;
-            IVsProject t2 = hierarchy as IVsProject;
-            EnvDTE.Solution as_solution = null;
-            EnvDTE.Project as_project = null;
-            EnvDTE.ProjectItem as_projectitem = null;
-
-            result = hierarchy.GetProperty(itemId, (int)__VSHPROPID.VSHPROPID_ExtObject, out value);
-            if (result == VSConstants.S_OK && value != null)
-            {
-                as_solution = value as EnvDTE.Solution;
-                as_project = value as EnvDTE.Project;
-                as_projectitem = value as EnvDTE.ProjectItem;
-            }
-
-            result = hierarchy.GetProperty(itemId, (int)__VSHPROPID.VSHPROPID_Name, out value);
-            if (result == VSConstants.S_OK && value != null)
-            {
-                n1 = value.ToString();
-            }
-            result = hierarchy.GetCanonicalName(itemId, out c1);
-
-            if (as_solution != null)
-            {
-                return Workspaces.Workspace.Initialize(t1,
-                    as_solution.FullName,
-                    as_solution.FileName);
-            }
-            else if (as_project != null)
-            {
-                var ws = Workspaces.Workspace.Instance;
-                var j_name = as_project.Name;
-                var j_fullname = as_project.FullName;
-                var j_uniquename = as_project.UniqueName;
-                var j_filename = as_project.FileName;
-                var fou = Workspace.Instance.FindProject(j_uniquename, j_name, j_filename);
-                if (fou != null)
-                    return fou;
-                var ws_project = new Workspaces.Project(hierarchy, itemId,
-                    as_project.UniqueName,
-                    as_project.Name,
-                    as_project.FileName);
-                //hierarchy.AdviseHierarchyEvents(new DoProjectEvents(), out uint cook_project);
-                parent.AddChild(ws_project);
-                var find_project = ws_project;
-                var properties = as_project.Properties;
-                if (properties != null)
-                {
-                    var count = properties.Count;
-                    for (int i = 0; i < count; ++i)
-                    {
-                        try
-                        {
-                            var prop = properties.Item(i);
-                            var name = prop.Name;
-                            find_project.AddProperty(name);
-                        }
-                        catch (Exception)
-                        { }
-                    }
-                }
-                return find_project;
-            }
-            else if (as_projectitem != null)
-            {
-                var ws = Workspaces.Workspace.Instance;
-                if (c1 != null)
+                var count = project.Properties.Count;
+                for (int i = 0; i < count; ++i)
                 {
                     try
                     {
-                        var real_name = Workspaces.Util.GetProperFilePathCapitalization(c1);
-                        c1 = real_name == null ? c1 : real_name;
+                        var prop = project.Properties.Item(i);
+                        var prop_name = prop.Name;
+                        //if (name == prop_name)
+                        {
+                            object prop_value = prop.Value;
+                            //return prop_value as string;
+                        }
                     }
                     catch (Exception)
                     { }
                 }
-                if (System.IO.Directory.Exists(c1))
-                {
-                    var fou = Workspace.Instance.FindProject(c1, c1, c1);
-                    if (fou != null)
-                        return fou;
-                    var project = new Workspaces.Project(hierarchy, itemId,
-                        c1,
-                        c1,
-                        c1);
-                    parent.AddChild(project);
-                    //hierarchy.AdviseHierarchyEvents(new DoProjectEvents(), out uint cook_project);
-                    return project;
-                }
-                else
-                {
-                    var fou = Workspace.Instance.FindDocument(c1);
-                    if (fou != null)
-                        return fou;
-                    var doc = new Workspaces.Document(hierarchy, c1, n1);
-                    parent.AddChild(doc);
-                    var find_document = doc;
-                    var properties = as_projectitem.Properties;
-                    if (properties != null)
-                    {
-                        var count = properties.Count;
-                        for (int i = 0; i < count; ++i)
-                        {
-                            try
-                            {
-                                var prop = properties.Item(i);
-                                var pname = prop.Name;
-                                find_document.AddProperty(pname);
-                            }
-                            catch (Exception)
-                            { }
-                        }
-                    }
-                    return find_document;
-                }
             }
-            else
-                return null;
+            catch (Exception) { }
+            return null;
         }
 
-        //private class DoProjectEvents : IVsHierarchyEvents
-        //{
-        //    public int OnItemAdded(uint itemidParent, uint itemidSiblingPrev, uint itemidAdded)
-        //    {
-        //        Workspaces.Loader.LoadAsync().Wait();
-        //        var to_do = LanguageServer.Module.Compile();
-        //        foreach (var t in to_do)
-        //        {
-        //            var w = t.FullFileName;
-        //            IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(w);
-        //            if (vstv == null) continue;
-        //            IWpfTextView wpftv = vstv.GetIWpfTextView();
-        //            if (wpftv == null) continue;
-        //            var buffer = wpftv.TextBuffer;
-        //            var att = buffer.Properties.GetOrCreateSingletonProperty(() => new AntlrVSIX.AggregateTagger.AntlrClassifier(buffer));
-        //            att.Raise();
-        //        }
-        //        return VSConstants.S_OK;
-        //    }
-
-        //    public int OnItemsAppended(uint itemidParent)
-        //    {
-        //        return VSConstants.S_OK;
-        //    }
-
-        //    public int OnItemDeleted(uint itemid)
-        //    {
-        //        return VSConstants.S_OK;
-        //    }
-
-        //    public int OnPropertyChanged(uint itemid, int propid, uint flags)
-        //    {
-        //        return VSConstants.S_OK;
-        //    }
-
-        //    public int OnInvalidateItems(uint itemidParent)
-        //    {
-        //        return VSConstants.S_OK;
-        //    }
-
-        //    public int OnInvalidateIcon(IntPtr hicon)
-        //    {
-        //        return VSConstants.S_OK;
-        //    }
-        //}
+        private static string GetPropertyProjectItem(EnvDTE.ProjectItem project_item, string name)
+        {
+            try
+            {
+                var count = project_item.Properties.Count;
+                for (int i = 0; i < count; ++i)
+                {
+                    try
+                    {
+                        var prop = project_item.Properties.Item(i);
+                        var prop_name = prop.Name;
+                        //if (name == prop_name)
+                        {
+                            object prop_value = prop.Value;
+                            //return prop_value as string;
+                        }
+                    }
+                    catch (Exception)
+                    { }
+                }
+            }
+            catch (Exception) { }
+            return null;
+        }
 
         public static async System.Threading.Tasks.Task LoadAsync()
         {
@@ -272,9 +110,101 @@
                 return;
             }
 
-            IVsSolution ivs_solution = (IVsSolution)Package.GetGlobalService(typeof(SVsSolution));
+            Solution solution = application.Solution;
 
-            ProcessHierarchy(null, ivs_solution as IVsHierarchy);
+            Workspaces.Workspace.Initialize(solution.FullName, solution.FileName);
+            var ws = Workspace.Instance;
+            ws.Name = GetPropertySolution(solution, "Name");
+            ws.FFN = ws.Name;
+
+            HashSet<ProjectItem> visited = new HashSet<ProjectItem>();
+            Stack<Tuple<Container, ProjectItem>> stack = new Stack<Tuple<Container, ProjectItem>>();
+            Projects projects = null;
+            try
+            {
+                var ps = solution.Projects;
+                projects = ps as Projects;
+            }
+            catch (Exception)
+            { }
+            foreach (var p in projects)
+            {
+                try
+                {
+                    var q = p as EnvDTE.Project;
+                }
+                catch (Exception) { }
+            }
+
+            foreach (var p in projects)
+            {
+                var q = p as ProjectItem;
+                if (q != null)
+                {
+                    var tuple = new Tuple<Container, ProjectItem>(ws, q);
+                    stack.Push(tuple);
+                }
+                else if (p is EnvDTE.Project)
+                {
+                    var r = p as EnvDTE.Project;
+                    string file_name = r.Name;
+                    GetPropertyProject(r, "foobar");
+
+                    var project = ws.FindProject(file_name, file_name, file_name);
+                    if (project == null)
+                    {
+                        project = new Workspaces.Project(file_name, file_name, file_name);
+                        ws.AddChild(project);
+                    }
+                    foreach (var pi in r.ProjectItems)
+                    {
+                        var z = pi as ProjectItem;
+                        var tuple = new Tuple<Container, ProjectItem>(project, z);
+                        stack.Push(tuple);
+                    }
+                }
+            }
+            while (stack.Any())
+            {
+                var tuple = stack.Pop();
+                if (visited.Contains(tuple.Item2)) continue;
+                visited.Add(tuple.Item2);
+                var pi = tuple.Item2;
+                var parent = tuple.Item1;
+
+                string file_name = pi.Name;
+                var properties = pi.Properties;
+
+                if (pi as EnvDTE.Project != null)
+                {
+                    GetPropertyProject(pi as EnvDTE.Project, "foobar");
+
+                    var project = parent.FindProject(file_name, file_name, file_name);
+                    if (project == null)
+                    {
+                        project = new Workspaces.Project(file_name, file_name, file_name);
+                        parent.AddChild(tuple.Item1);
+                    }
+                    foreach (var p in pi.ProjectItems)
+                    {
+                        var q = p as ProjectItem;
+                        if (q == null) continue;
+                        var new_tuple = new Tuple<Container, ProjectItem>(project, q);
+                        stack.Push(new_tuple);
+                    }
+                }
+                else if (pi as EnvDTE.ProjectItem != null)
+                {
+                    try { file_name = (pi.FileCount == 1) ? pi.FileNames[1] : file_name; } catch (Exception) { }
+                    var document = parent.FindDocument(file_name);
+                    if (document == null)
+                    {
+                        document = new Document(file_name, file_name);
+                        var pr = parent as Project;
+                        pr.AddDocument(document);
+                    }
+                }
+            }
 
             finished = true;
         }

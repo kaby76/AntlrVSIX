@@ -2,20 +2,19 @@
 {
     using Microsoft.VisualStudio.Shell.Interop;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class Workspace : Container
     {
-        IVsSolution _ide_object;
         static Workspace _instance;
         string _name;
         string _ffn;
         List<Container> _contents = new List<Container>();
 
-        public static Workspace Initialize(IVsSolution ide_object, string name, string ffn)
+        public static Workspace Initialize(string name, string ffn)
         {
             if (_instance != null) return _instance;
             var i = Instance;
-            i._ide_object = ide_object;
             i._name = name;
             i._ffn = ffn;
             return i;
@@ -64,6 +63,30 @@
                 if (found != null) return found;
             }
             return null;
+        }
+
+        public IEnumerable<Document> AllDocuments()
+        {
+            HashSet<Container> visited = new HashSet<Container>();
+            Stack<Container> stack = new Stack<Container>();
+            stack.Push(this);
+            while (stack.Any())
+            {
+                var current = stack.Pop();
+                if (visited.Contains(current)) continue;
+                visited.Add(current);
+                if (current is Document)
+                {
+                    yield return current as Document;
+                }
+                else
+                {
+                    foreach (var c in this._contents)
+                    {
+                        stack.Push(c);
+                    }
+                }
+            }
         }
 
         public override Project FindProject(string ffn)

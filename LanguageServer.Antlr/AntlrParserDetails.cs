@@ -46,7 +46,7 @@
                     {
                         // Add document.
                         var proj = this.Item.Parent;
-                        var new_doc = new Workspaces.Document(null, name, name);
+                        var new_doc = new Workspaces.Document(name, name);
                         proj.AddChild(new_doc);
                         return true;
                     }
@@ -57,7 +57,7 @@
                         {
                             // Add document.
                             var proj = this.Item.Parent;
-                            var new_doc = new Workspaces.Document(null, y, y);
+                            var new_doc = new Workspaces.Document(y, y);
                             proj.AddChild(new_doc);
                             return true;
                         }

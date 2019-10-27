@@ -39,9 +39,16 @@
             view.Closed += OnViewClosed;
             var buffer = view.TextBuffer;
             string ffn = await buffer.GetFFN();
-            Workspaces.Loader.LoadAsync().Wait();
             var grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
             if (grammar_description == null) return;
+            var document = Workspaces.Workspace.Instance.FindDocument(ffn);
+            if (document == null)
+            {
+                document = new Workspaces.Document(ffn, ffn);
+                var project = Workspaces.Workspace.Instance.FindProject("Miscellaneous Files");
+                project.AddDocument(document);
+            }
+            Workspaces.Loader.LoadAsync().Wait();
             var content_type = buffer.ContentType;
             System.Collections.Generic.List<IContentType> content_types = ContentTypeRegistryService.ContentTypes.ToList();
             var new_content_type = content_types.Find(ct => ct.TypeName == "Antlr");

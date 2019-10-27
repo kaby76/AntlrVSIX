@@ -12,10 +12,8 @@
         Dictionary<string, string> _properties = new Dictionary<string, string>();
         Dictionary<string, bool> _lazy_evaluated = new Dictionary<string, bool>();
 
-        public Document(object obj, string ffn, string name)
+        public Document(string ffn, string name)
         {
-            IVsHierarchy ide_object = obj as IVsHierarchy;
-            _ide_object = ide_object;
             FullPath = ffn;
             Name = name;
             Changed = false;

@@ -33,11 +33,8 @@
             set { _ffn = value; }
         }
 
-        public Project(IVsHierarchy ide_object, uint id, string canonical_name, string name, string ffn)
+        public Project(string canonical_name, string name, string ffn)
         {
-            _ide_object = ide_object;
-            _id = id;
-            _hash = ide_object.GetHashCode();
             _canonical_name = canonical_name;
             _name = name;
             _ffn = ffn;
