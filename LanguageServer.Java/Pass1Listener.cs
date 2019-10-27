@@ -56,7 +56,22 @@ namespace LanguageServer.Java
             var md = mh.GetChild(j) as Java9Parser.MethodDeclaratorContext;
             var node = md.GetChild(0);
             var name = node.GetText();
-            ISymbol m = new Symtab.MethodSymbol(name);
+            TerminalNodeImpl term = null;
+            IParseTree t = node;
+            for (; t != null; t = t.GetChild(0))
+            {
+                if (t is TerminalNodeImpl)
+                {
+                    term = t as TerminalNodeImpl;
+                    break;
+                }
+                else if (t.ChildCount == 0)
+                {
+                    term = null;
+                    break;
+                }
+            }
+            ISymbol m = new Symtab.MethodSymbol(name, term?.Symbol);
             var scope = GetScope(NearestScope(context));
             scope.define(ref m);
             _pd.Attributes[node] = (CombinedScopeSymbol)m;
@@ -93,8 +108,23 @@ namespace LanguageServer.Java
                 if (context.GetChild(i).GetText() == "enum")
                     break;
             var node = context.GetChild(i+1) as Java9Parser.IdentifierContext;
+            TerminalNodeImpl term = null;
+            IParseTree t = node;
+            for (; t != null; t = t.GetChild(0))
+            {
+                if (t is TerminalNodeImpl)
+                {
+                    term = t as TerminalNodeImpl;
+                    break;
+                }
+                else if (t.ChildCount == 0)
+                {
+                    term = null;
+                    break;
+                }
+            }
             var name = node.GetText();
-            ISymbol e = new Symtab.EnumSymbol(name);
+            ISymbol e = new Symtab.EnumSymbol(name, term?.Symbol);
             var scope = GetScope(NearestScope(context));
             scope.define(ref e);
             _pd.Attributes[node] =(CombinedScopeSymbol) e;
@@ -123,7 +153,22 @@ namespace LanguageServer.Java
             var md = mh.GetChild(j) as Java9Parser.MethodDeclaratorContext;
             var node = md.GetChild(0);
             var name = node.GetText();
-            ISymbol m = new Symtab.MethodSymbol(name);
+            TerminalNodeImpl term = null;
+            IParseTree t = node;
+            for (; t != null; t = t.GetChild(0))
+            {
+                if (t is TerminalNodeImpl)
+                {
+                    term = t as TerminalNodeImpl;
+                    break;
+                }
+                else if (t.ChildCount == 0)
+                {
+                    term = null;
+                    break;
+                }
+            }
+            ISymbol m = new Symtab.MethodSymbol(name, term?.Symbol);
             var scope = GetScope(NearestScope(context));
             scope.define(ref m);
             _pd.Attributes[node] = (CombinedScopeSymbol)m;
@@ -139,7 +184,22 @@ namespace LanguageServer.Java
                     break;
             var node = context.GetChild(i) as Java9Parser.IdentifierContext;
             var id_name = node.GetText();
-            ISymbol cs = new Symtab.ClassSymbol(id_name);
+            TerminalNodeImpl term = null;
+            IParseTree t = node;
+            for (; t != null; t = t.GetChild(0))
+            {
+                if (t is TerminalNodeImpl)
+                {
+                    term = t as TerminalNodeImpl;
+                    break;
+                }
+                else if (t.ChildCount == 0)
+                {
+                    term = null;
+                    break;
+                }
+            }
+            ISymbol cs = new Symtab.ClassSymbol(id_name, term?.Symbol);
             var scope = GetScope(NearestScope(context));
             scope.define(ref cs);
             _pd.Attributes[node] = (CombinedScopeSymbol)cs;
@@ -156,7 +216,22 @@ namespace LanguageServer.Java
                     break;
             var node = context.GetChild(i) as Java9Parser.IdentifierContext;
             var id_name = node.GetText();
-            ISymbol cs = new Symtab.InterfaceSymbol(id_name);
+            TerminalNodeImpl term = null;
+            IParseTree t = node;
+            for (; t != null; t = t.GetChild(0))
+            {
+                if (t is TerminalNodeImpl)
+                {
+                    term = t as TerminalNodeImpl;
+                    break;
+                }
+                else if (t.ChildCount == 0)
+                {
+                    term = null;
+                    break;
+                }
+            }
+            ISymbol cs = new Symtab.InterfaceSymbol(id_name, term?.Symbol);
             var scope = GetScope(NearestScope(context));
             scope.define(ref cs);
             _pd.Attributes[node] = (CombinedScopeSymbol)cs;
@@ -240,7 +315,7 @@ namespace LanguageServer.Java
                     cleaned_up_literal = literal;
                     break;
             }
-            var literal_symbol = new Symtab.Literal(literal, cleaned_up_literal, s.Type);
+            var literal_symbol = new Symtab.Literal(literal, s, cleaned_up_literal, s.Type);
             _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)literal_symbol;
             _pd.Attributes[context] = literal_symbol;
         }
@@ -260,8 +335,23 @@ namespace LanguageServer.Java
                 {
                     return;
                 }
+                TerminalNodeImpl term = null;
+                IParseTree t = context;
+                for (; t != null; t = t.GetChild(0))
+                {
+                    if (t is TerminalNodeImpl)
+                    {
+                        term = t as TerminalNodeImpl;
+                        break;
+                    }
+                    else if (t.ChildCount == 0)
+                    {
+                        term = null;
+                        break;
+                    }
+                }
                 var id = context.GetText();
-                ISymbol f = new MethodSymbol(id);
+                ISymbol f = new MethodSymbol(id, term?.Symbol);
                 sc.define(ref f);
                 _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)f;
                 _pd.Attributes[context] = (CombinedScopeSymbol)f;
@@ -277,7 +367,22 @@ namespace LanguageServer.Java
                     return;
                 }
                 var id = context.GetText();
-                ISymbol f = new MethodSymbol(id);
+                TerminalNodeImpl term = null;
+                IParseTree t = context;
+                for (; t != null; t = t.GetChild(0))
+                {
+                    if (t is TerminalNodeImpl)
+                    {
+                        term = t as TerminalNodeImpl;
+                        break;
+                    }
+                    else if (t.ChildCount == 0)
+                    {
+                        term = null;
+                        break;
+                    }
+                }
+                ISymbol f = new MethodSymbol(id, term?.Symbol);
                 sc.define(ref f);
                 _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)f;
                 _pd.Attributes[context] = (CombinedScopeSymbol)f;

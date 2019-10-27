@@ -12,7 +12,7 @@
         protected internal ParserRuleContext defNode;
         protected internal IType retType;
 
-        public FunctionSymbol(string name) : base(name)
+        public FunctionSymbol(string n, IToken t) : base(n, t)
         {
         }
 

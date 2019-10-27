@@ -1,8 +1,10 @@
 ﻿namespace Symtab
 {
+    using Antlr4.Runtime;
+
     public class EnumSymbol : SymbolWithScope, ISymbol, IType
     {
-        public EnumSymbol(string name) : base(name)
+        public EnumSymbol(string n, IToken t) : base(n, t)
         {
         }
 

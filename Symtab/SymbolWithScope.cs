@@ -14,9 +14,10 @@
     {
         protected internal int index; // insertion order from 0; compilers often need this
 
-        public SymbolWithScope(string name)
+        public SymbolWithScope(string name, IToken token)
         {
             this.Name = name;
+            this.Token = token;
         }
 
         public override string Name { get; set; }

@@ -1,6 +1,7 @@
 ﻿namespace Symtab
 {
     using System.Collections.Generic;
+    using Antlr4.Runtime;
 
     /// <summary>
     /// A symbol representing the class. It is a kind of data aggregate
@@ -11,7 +12,7 @@
         protected internal string superClassName; // null if this is Object
         protected internal int nextFreeMethodSlot = 0; // next slot to allocate
 
-        public ClassSymbol(string name) : base(name)
+        public ClassSymbol(string n, IToken t) : base(n, t)
         {
         }
 

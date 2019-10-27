@@ -1,5 +1,6 @@
 ﻿namespace Symtab
 {
+    using Antlr4.Runtime;
 
     /// <summary>
     /// A method symbol is a function that lives within an aggregate/class and has a slot number. </summary>
@@ -7,7 +8,7 @@
     {
         protected internal int slot = -1;
 
-        public MethodSymbol(string name) : base(name)
+        public MethodSymbol(string n, IToken t) : base(n, t)
         {
         }
 
