@@ -468,7 +468,43 @@ namespace LanguageServer.Java
             null,
             null,
             null,
-            null,
+            (ParserDetails pd, IParseTree t) => // field
+                {
+                    TerminalNodeImpl term = t as TerminalNodeImpl;
+                    if (term == null) return null;
+                    Antlr4.Runtime.Tree.IParseTree p = term;
+                    var dir = System.IO.Path.GetDirectoryName(pd.Item.FullPath);
+                    pd.Attributes.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
+                    if (value == null) return null;
+                    var sym = value as ISymbol;
+                    if (sym == null) return null;
+                    if (sym is Symtab.RefSymbol)
+                    {
+                        sym = sym.resolve();
+                    }
+                    StringBuilder sb = new StringBuilder();
+                    if (sym is Symtab.FieldSymbol)
+                        sb.Append("Field ");
+                    else return null;
+                    var def_file = sym.file;
+                    if (def_file == null) return null;
+                    var def_document = Workspaces.Workspace.Instance.FindDocument(def_file);
+                    if (def_document == null) return null;
+                    var def_pd = ParserDetailsFactory.Create(def_document);
+                    if (def_pd == null) return null;
+                    var fod = def_pd.Attributes.Where(kvp => kvp.Value == sym).Select(kvp => kvp.Key).FirstOrDefault();
+                    if (fod == null) return sb.ToString();
+                    sb.Append("defined in ");
+                    sb.Append(sym.file);
+                    sb.AppendLine();
+                    var node = fod;
+                    for (; node != null; node = node.Parent)
+                        if (node is Java9Parser.FieldDeclarationContext
+                        ) break;
+                    if (node == null) return null;
+                    Reconstruct.Doit(sb, node);
+                    return sb.ToString();
+                },
         };
 
         public bool CanNextRule { get { return false; } }
