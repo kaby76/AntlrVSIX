@@ -676,7 +676,8 @@
                     _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
                     _pd.Attributes[context] = x;
                 }
-            } else if (parent is Java9Parser.ExpressionNameContext)
+            }
+            else if (parent is Java9Parser.ExpressionNameContext)
             {
                 var scope = NearestScope(context);
                 var sc = scope;
@@ -686,6 +687,17 @@
                 var sy = context.GetChild(0) as TerminalNodeImpl;
                 var x = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
                 _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol)x;
+                _pd.Attributes[context] = x;
+            } else if (parent is Java9Parser.TypeNameContext && parent.ChildCount == 1)
+            {
+                var scope = NearestScope(context);
+                var sc = scope;
+                var id = context.GetText();
+                var s = sc.LookupType(id);
+                if (s == null) return;
+                var sy = context.GetChild(0) as TerminalNodeImpl;
+                var x = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, s);
+                _pd.Attributes[context.GetChild(0)] = (CombinedScopeSymbol) x;
                 _pd.Attributes[context] = x;
             }
         }
