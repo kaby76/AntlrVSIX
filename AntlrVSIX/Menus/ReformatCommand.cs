@@ -90,6 +90,7 @@
                 // Get reformated text.
                 string text = buffer.GetBufferText();
                 string ffn = buffer.GetFFN().Result;
+                if (ffn == null) return;
                 var grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
                 if (grammar_description == null) return;
                 org.antlr.codebuff.Tool.unformatted_input = text;

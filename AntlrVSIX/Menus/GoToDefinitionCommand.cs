@@ -88,6 +88,7 @@ namespace AntlrVSIX.GoToDefinition
             ITextView view = AntlrLanguagePackage.Instance.View;
             ITextBuffer buffer = view.TextBuffer;
             var file_name = buffer.GetFFN().Result;
+            if (file_name == null) return;
             var document = Workspaces.Workspace.Instance.FindDocument(file_name);
             var ref_pd = ParserDetailsFactory.Create(document);
             var location = LanguageServer.Module.FindDef(span.Start.Position, document);

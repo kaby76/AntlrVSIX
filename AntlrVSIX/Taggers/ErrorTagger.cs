@@ -20,6 +20,7 @@
         {
             _buffer = buffer;
             var doc = _buffer.GetFFN().Result;
+            if (doc == null) return;
             var gd = LanguageServer.GrammarDescriptionFactory.Create(doc);
             if (gd == null) return;
             if (!gd.DoErrorSquiggles) return;

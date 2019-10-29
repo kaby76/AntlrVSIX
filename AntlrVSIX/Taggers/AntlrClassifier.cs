@@ -155,6 +155,7 @@
             ITextSnapshot snapshot = buffer.CurrentSnapshot;
             string code = buffer.GetBufferText();
             string ffn = buffer.GetFFN().Result;
+            if (ffn == null) return;
             var document = Workspaces.Workspace.Instance.FindDocument(ffn);
             if (document == null) return;
             document.Code = code;

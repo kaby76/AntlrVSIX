@@ -127,10 +127,7 @@
             // First, find out what this view is, and what the file is.
             ITextBuffer buffer = view.TextBuffer;
             string path = buffer.GetFFN().Result;
-
-            //ParserDetails details = null;
-            //bool found = ParserDetails._per_file_parser_details.TryGetValue(path, out details);
-            //if (!found) return;
+            if (path == null) return;
 
             List<IToken> where = new List<IToken>();
             List<ParserDetails> where_details = new List<ParserDetails>();

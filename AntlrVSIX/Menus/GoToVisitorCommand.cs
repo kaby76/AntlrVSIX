@@ -131,6 +131,7 @@
             int pos = bp.Position;
             ITextBuffer buffer = grammar_view.TextBuffer;
             var g4_file_path = buffer.GetFFN().Result;
+            if (g4_file_path == null) return;
             IGrammarDescription grammar_description = LanguageServer.GrammarDescriptionFactory.Create(g4_file_path);
             if (!grammar_description.IsFileType(g4_file_path)) return;
 

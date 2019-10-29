@@ -76,6 +76,7 @@
             int curLoc = span.Start.Position;
             var buf = span.Snapshot.TextBuffer;
             var file_name = buf.GetFFN().Result;
+            if (file_name == null) return;
             var document = Workspaces.Workspace.Instance.FindDocument(file_name);
             var ref_pd = ParserDetailsFactory.Create(document);
             if (ref_pd == null) return;

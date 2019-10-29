@@ -54,6 +54,7 @@ namespace AntlrVSIX
             var trigger_point = (SnapshotPoint)session.GetTriggerPoint(_buffer.CurrentSnapshot);
             if (trigger_point == null) return Task.FromResult<QuickInfoItem>(null);
             string file_path = _buffer.GetFFN().Result;
+            if (file_path == null) return Task.FromResult<QuickInfoItem>(null);
             if (_grammar_description == null) return Task.FromResult<QuickInfoItem>(null);
             if (!_grammar_description.IsFileType(file_path)) Task.FromResult<QuickInfoItem>(null);
             var document = Workspaces.Workspace.Instance.FindDocument(file_path);

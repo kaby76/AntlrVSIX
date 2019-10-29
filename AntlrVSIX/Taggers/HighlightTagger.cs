@@ -40,6 +40,7 @@ namespace AntlrVSIX.Taggers
             _view = view;
             _buffer = sourceBuffer;
             var ffn = _buffer.GetFFN().Result;
+            if (ffn == null) return;
             _grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
             TextSearchService = textSearchService;
             TextStructureNavigator = textStructureNavigator;
@@ -102,6 +103,7 @@ namespace AntlrVSIX.Taggers
             int curLoc = currentRequest.Position;
             var buf = currentRequest.Snapshot.TextBuffer;
             var file_name = buf.GetFFN().Result;
+            if (file_name == null) return;
             var document = Workspaces.Workspace.Instance.FindDocument(file_name);
             if (document == null) return;
             var ref_pd = ParserDetailsFactory.Create(document);

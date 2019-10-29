@@ -32,6 +32,7 @@
         public void AugmentCompletionSession(ICompletionSession session, IList<CompletionSet> completionSets)
         {
             var ffn = _buffer.GetFFN().Result;
+            if (ffn == null) return;
             var gd = LanguageServer.GrammarDescriptionFactory.Create(ffn);
             if (gd == null) return;
             List<Completion> completions = new List<Completion>();
