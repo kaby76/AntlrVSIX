@@ -1,0 +1,326 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Symtab.ArrayType" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="55" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAUAAAAQAAAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ArrayType.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Symtab.BaseScope" Collapsed="true">
+    <Position X="16.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAgwMgAwBBQQAAEAAAAQCQCIAAAAAAAAAAGABIAAgA=</HashCode>
+      <FileName>BaseScope.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Symtab.BaseSymbol" Collapsed="true">
+    <Position X="42.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAIAABAACAGgAAgAQQAAAABAKAABQAAAAABIAA=</HashCode>
+      <FileName>BaseSymbol.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Symtab.ChannelSymbol" Collapsed="true">
+    <Position X="41.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ChannelSymbol.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Symtab.ClassSymbol" Collapsed="true">
+    <Position X="27.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgEgAUAAIAAAAABCAABAAAAAEDIEAAgEg=</HashCode>
+      <FileName>ClassSymbol.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Symtab.CombinedScopeSymbol" Collapsed="true">
+    <Position X="27.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CombinedScopeSymbol.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Symtab.DataAggregateSymbol" Collapsed="true">
+    <Position X="25.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAACBAQCAQAQAAAEEABAAABAAAAAAGAAAAoAA=</HashCode>
+      <FileName>DataAggregateSymbol.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Symtab.DirectoryScope" Collapsed="true">
+    <Position X="3" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DirectoryScope.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Symtab.EnumSymbol" Collapsed="true">
+    <Position X="16.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>EnumSymbol.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Symtab.FieldSymbol" Collapsed="true">
+    <Position X="32.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>FieldSymbol.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Symtab.FileScope" Collapsed="true">
+    <Position X="9.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FileScope.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Symtab.FunctionSymbol" Collapsed="true">
+    <Position X="21" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAEAAAAIAAAAAAAAAAAASAAIAAAIAA=</HashCode>
+      <FileName>FunctionSymbol.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Symtab.FunctionType" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="56.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAEAQgAAAQIAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FunctionType.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Symtab.GlobalScope" Collapsed="true">
+    <Position X="30" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GlobalScope.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Symtab.InterfaceSymbol" Collapsed="true">
+    <Position X="23.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgEgAUAAIAAAAABCAABAAAAAEDIEAAgEg=</HashCode>
+      <FileName>InterfaceSymbol.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Symtab.InvalidType" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="58.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>InvalidType.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Symtab.LinkedHashMap&lt;T, U&gt;" Collapsed="true">
+    <Position X="55" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAAEAAAACAAIAAQAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>LinkedHashMap.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Symtab.LinkedHashSet&lt;T&gt;" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="56.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAoDAhBAACBAQBBQAAAABAQAIAAAACAEAgAAAABQIAA=</HashCode>
+      <FileName>LinkedHashSet.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Symtab.Literal" Collapsed="true">
+    <Position X="18.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>Literal.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Symtab.LocalScope" Collapsed="true">
+    <Position X="12" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>LocalScope.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Symtab.LocalSymbol" Collapsed="true">
+    <Position X="36.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>LocalSymbol.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Symtab.MethodSymbol" Collapsed="true">
+    <Position X="21" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>MethodSymbol.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Symtab.ModeSymbol" Collapsed="true">
+    <Position X="48" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ModeSymbol.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Symtab.NamespaceScope" Collapsed="true">
+    <Position X="5.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>NamespaceScope.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Symtab.NonterminalSymbol" Collapsed="true">
+    <Position X="39" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>NonterminalSymbol.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Symtab.ParameterSymbol" Collapsed="true">
+    <Position X="34.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ParameterSymbol.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Symtab.PointerType" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="58.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAEAQAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>PointerType.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Symtab.PredefinedScope" Collapsed="true">
+    <Position X="14.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>PredefinedScope.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Symtab.PrimitiveType" Collapsed="true">
+    <Position X="43.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQAAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>PrimitiveType.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Symtab.RefSymbol" Collapsed="true">
+    <Position X="50.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACAgAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>RefSymbol.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Symtab.SearchPathScope" Collapsed="true">
+    <Position X="7.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SearchPathScope.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Symtab.StringTable" Collapsed="true">
+    <Position X="55" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAABEAIAAQAAAAAIACAAAAAAABAADAAA=</HashCode>
+      <FileName>StringTable.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Symtab.StructSymbol" Collapsed="true">
+    <Position X="25.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>StructSymbol.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Symtab.SymbolTable" Collapsed="true">
+    <Position X="56.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAQCAAAAAAAAAAIAAAAQAAAAAAAAAAAAAAAABAAAE=</HashCode>
+      <FileName>SymbolTable.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Symtab.SymbolWithScope" Collapsed="true">
+    <Position X="22" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAQAAAQABACCACgAAAAQQIAAAAAIAABAAAAAABAAA=</HashCode>
+      <FileName>SymbolWithScope.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Symtab.TerminalSymbol" Collapsed="true">
+    <Position X="45.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TerminalSymbol.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Symtab.TypeAlias" Collapsed="true">
+    <Position X="52.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAQAAAAAAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>TypeAlias.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Symtab.VariableSymbol" Collapsed="true">
+    <Position X="34.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>VariableSymbol.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="Symtab.IMemberSymbol" Collapsed="true">
+    <Position X="0.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IMemberSymbol.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Symtab.IScope" Collapsed="true">
+    <Position X="55" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAgwIAAQBBAAAAEAAAAAAQCIAAAAAAAAAAGABIAAAA=</HashCode>
+      <FileName>IScope.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Symtab.ISymbol" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAACACgAAAAQQAAAAAAIAABAAAAAABAAA=</HashCode>
+      <FileName>ISymbol.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Symtab.IType" Collapsed="true">
+    <Position X="56.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IType.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Symtab.ITypedSymbol" Collapsed="true">
+    <Position X="58.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>ITypedSymbol.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
