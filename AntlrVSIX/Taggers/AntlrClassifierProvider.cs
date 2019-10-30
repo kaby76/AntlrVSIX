@@ -28,12 +28,20 @@ namespace AntlrVSIX.AggregateTagger
 
         public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
         {
-            AntlrLanguagePackage package = AntlrLanguagePackage.Instance;
-            VSColorTheme.ThemeChanged += UpdateTheme;
-            var result = buffer.Properties.GetOrCreateSingletonProperty(() => new AntlrClassifier(buffer)) as ITagger<T>;
-            var classifier = result as AntlrClassifier;
-            classifier.Initialize(aggregatorFactory,
-                ClassificationTypeRegistry, ClassificationFormatMapService);
+            ITagger<T> result = null;
+            try
+            {
+                AntlrLanguagePackage package = AntlrLanguagePackage.Instance;
+                VSColorTheme.ThemeChanged += UpdateTheme;
+                result = buffer.Properties.GetOrCreateSingletonProperty(() => new AntlrClassifier(buffer)) as ITagger<T>;
+                var classifier = result as AntlrClassifier;
+                classifier.Initialize(aggregatorFactory,
+                    ClassificationTypeRegistry, ClassificationFormatMapService);
+            }
+            catch (Exception exception)
+            {
+                Logger.Log.Notify(exception.StackTrace);
+            }
             return result;
         }
 

@@ -81,41 +81,48 @@ namespace AntlrVSIX.GoToDefinition
 
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            ////////////////////////
-            // Go to definition....
-            ////////////////////////
-
-            SnapshotSpan span = AntlrLanguagePackage.Instance.Span;
-            ITextView view = AntlrLanguagePackage.Instance.View;
-            ITextBuffer buffer = view.TextBuffer;
-            var file_name = buffer.GetFFN().Result;
-            if (file_name == null) return;
-            var document = Workspaces.Workspace.Instance.FindDocument(file_name);
-            var ref_pd = ParserDetailsFactory.Create(document);
-            var list_location = LanguageServer.Module.FindDef(span.Start.Position, document);
-            if (list_location == null || !list_location.Any()) return;
-            var location = list_location.First();
-            var sym = LanguageServer.Module.GetDocumentSymbol(location.range.Start.Value, location.uri);
-            if (sym == null) return;
-            string full_file_name = location.uri.FullPath;
-            IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(full_file_name);
+            try
             {
-                IVsTextViewExtensions.ShowFrame(full_file_name);
-                vstv = IVsTextViewExtensions.FindTextViewFor(full_file_name);
+                ////////////////////////
+                // Go to definition....
+                ////////////////////////
+
+                SnapshotSpan span = AntlrLanguagePackage.Instance.Span;
+                ITextView view = AntlrLanguagePackage.Instance.View;
+                ITextBuffer buffer = view.TextBuffer;
+                var file_name = buffer.GetFFN().Result;
+                if (file_name == null) return;
+                var document = Workspaces.Workspace.Instance.FindDocument(file_name);
+                var ref_pd = ParserDetailsFactory.Create(document);
+                var list_location = LanguageServer.Module.FindDef(span.Start.Position, document);
+                if (list_location == null || !list_location.Any()) return;
+                var location = list_location.First();
+                var sym = LanguageServer.Module.GetDocumentSymbol(location.range.Start.Value, location.uri);
+                if (sym == null) return;
+                string full_file_name = location.uri.FullPath;
+                IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(full_file_name);
+                {
+                    IVsTextViewExtensions.ShowFrame(full_file_name);
+                    vstv = IVsTextViewExtensions.FindTextViewFor(full_file_name);
+                }
+                if (vstv == null) return;
+                IWpfTextView wpftv = vstv.GetIWpfTextView();
+                if (wpftv == null) return;
+                vstv.GetLineAndColumn(sym.range.Start.Value, out int line_number, out int column_number);
+                ITextSnapshot cc = wpftv.TextBuffer.CurrentSnapshot;
+                SnapshotSpan ss = new SnapshotSpan(cc, sym.range.Start.Value, 1);
+                SnapshotPoint sp = ss.Start;
+                wpftv.Caret.MoveTo(sp);
+                if (line_number > 0)
+                    vstv.CenterLines(line_number - 1, 2);
+                else
+                    vstv.CenterLines(line_number, 1);
+                AntlrVSIX.Package.Menus.ResetMenus();
             }
-            if (vstv == null) return;
-            IWpfTextView wpftv = vstv.GetIWpfTextView();
-            if (wpftv == null) return;
-            vstv.GetLineAndColumn(sym.range.Start.Value, out int line_number, out int column_number);
-            ITextSnapshot cc = wpftv.TextBuffer.CurrentSnapshot;
-            SnapshotSpan ss = new SnapshotSpan(cc, sym.range.Start.Value, 1);
-            SnapshotPoint sp = ss.Start;
-            wpftv.Caret.MoveTo(sp);
-            if (line_number > 0)
-                vstv.CenterLines(line_number - 1, 2);
-            else
-                vstv.CenterLines(line_number, 1);
-            AntlrVSIX.Package.Menus.ResetMenus();
+            catch (Exception exception)
+            {
+                Logger.Log.Notify(exception.StackTrace);
+            }
         }
     }
 }

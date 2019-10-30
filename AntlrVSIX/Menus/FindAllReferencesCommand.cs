@@ -77,27 +77,34 @@ namespace AntlrVSIX.FindAllReferences
 
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            ////////////////////////
-            // Find all references..
-            ////////////////////////
-
-            SnapshotSpan span = AntlrLanguagePackage.Instance.Span;
-            int curLoc = span.Start.Position;
-            var buf = span.Snapshot.TextBuffer;
-            var file_name = buf.GetFFN().Result;
-            if (file_name == null) return;
-            var document = Workspaces.Workspace.Instance.FindDocument(file_name);
-            var ref_pd = ParserDetailsFactory.Create(document);
-            if (ref_pd == null) return;
-            var locations = LanguageServer.Module.FindRefsAndDefs(curLoc, document);
-            List<SnapshotSpan> wordSpans = new List<SnapshotSpan>();
-            FindAntlrSymbolsModel.Instance.Results.Clear();
-            foreach (var loc in locations)
+            try
             {
-                var w = new Entry() { FileName = loc.uri.FullPath, Start = loc.range.Start.Value, End = loc.range.End.Value };
-                FindAntlrSymbolsModel.Instance.Results.Add(w);
+                ////////////////////////
+                // Find all references..
+                ////////////////////////
+
+                SnapshotSpan span = AntlrLanguagePackage.Instance.Span;
+                int curLoc = span.Start.Position;
+                var buf = span.Snapshot.TextBuffer;
+                var file_name = buf.GetFFN().Result;
+                if (file_name == null) return;
+                var document = Workspaces.Workspace.Instance.FindDocument(file_name);
+                var ref_pd = ParserDetailsFactory.Create(document);
+                if (ref_pd == null) return;
+                var locations = LanguageServer.Module.FindRefsAndDefs(curLoc, document);
+                List<SnapshotSpan> wordSpans = new List<SnapshotSpan>();
+                FindAntlrSymbolsModel.Instance.Results.Clear();
+                foreach (var loc in locations)
+                {
+                    var w = new Entry() { FileName = loc.uri.FullPath, Start = loc.range.Start.Value, End = loc.range.End.Value };
+                    FindAntlrSymbolsModel.Instance.Results.Add(w);
+                }
+                FindRefsWindowCommand.Instance.Show();
             }
-            FindRefsWindowCommand.Instance.Show();
+            catch (Exception exception)
+            {
+                Logger.Log.Notify(exception.StackTrace);
+            }
         }
     }
 }

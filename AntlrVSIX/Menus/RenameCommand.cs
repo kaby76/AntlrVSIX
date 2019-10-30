@@ -69,75 +69,82 @@
 
         private void RenameCallback(object sender, EventArgs e)
         {
-            // Highlight the symbol, reposition it to the beginning of it.
-            // Every character changes all occurrences of the symbol.
-
-            SnapshotSpan span = AntlrLanguagePackage.Instance.Span;
-            int curLoc = span.Start.Position;
-            var buf = span.Snapshot.TextBuffer;
-            var file_name = buf.GetFFN().Result;
-            if (file_name == null) return;
-            var document = Workspaces.Workspace.Instance.FindDocument(file_name);
-            var ref_pd = ParserDetailsFactory.Create(document);
-            if (ref_pd == null) return;
-            var sym = LanguageServer.Module.GetDocumentSymbol(curLoc, document);
-            if (sym == null) return;
-            var locations = LanguageServer.Module.FindRefsAndDefs(curLoc, document);
-            List<SnapshotSpan> wordSpans = new List<SnapshotSpan>();
-            var results = new List<Entry>();
-            foreach (var loc in locations)
+            try
             {
-                if (Options.OptionsCommand.Instance.RestrictedDirectory)
-                {
-                    string p1 = System.IO.Path.GetDirectoryName(file_name);
-                    string p2 = System.IO.Path.GetDirectoryName(loc.uri.FullPath);
-                    if (p1 != p2) continue;
-                }
-                var w = new Entry() { FileName = loc.uri.FullPath, Start = loc.range.Start.Value, End = loc.range.End.Value };
-                results.Add(w);
-            }
+                // Highlight the symbol, reposition it to the beginning of it.
+                // Every character changes all occurrences of the symbol.
 
-            // Call up the rename dialog box. In another thread because
-            // of "The calling thread must be STA, because many UI components require this."
-            // error.
-            Application.Current.Dispatcher.Invoke((Action)delegate {
-
-                RenameDialogBox inputDialog = new RenameDialogBox(sym.name);
-                if (inputDialog.ShowDialog() == true)
+                SnapshotSpan span = AntlrLanguagePackage.Instance.Span;
+                int curLoc = span.Start.Position;
+                var buf = span.Snapshot.TextBuffer;
+                var file_name = buf.GetFFN().Result;
+                if (file_name == null) return;
+                var document = Workspaces.Workspace.Instance.FindDocument(file_name);
+                var ref_pd = ParserDetailsFactory.Create(document);
+                if (ref_pd == null) return;
+                var sym = LanguageServer.Module.GetDocumentSymbol(curLoc, document);
+                if (sym == null) return;
+                var locations = LanguageServer.Module.FindRefsAndDefs(curLoc, document);
+                List<SnapshotSpan> wordSpans = new List<SnapshotSpan>();
+                var results = new List<Entry>();
+                foreach (var loc in locations)
                 {
-                    var new_name = inputDialog.Answer;
-                    var files = results.Select(r => r.FileName).OrderBy(q => q).Distinct();
-                    foreach (var f in files)
+                    if (Options.OptionsCommand.Instance.RestrictedDirectory)
                     {
-                        var per_file_results = results.Where(r => r.FileName == f);
-                        per_file_results.Reverse();
-                        var fitem = Workspaces.Workspace.Instance.FindDocument(f);
-                        var pd = ParserDetailsFactory.Create(fitem);
-                        IVsTextView vstv2 = IVsTextViewExtensions.FindTextViewFor(f);
-                        if (vstv2 == null)
+                        string p1 = System.IO.Path.GetDirectoryName(file_name);
+                        string p2 = System.IO.Path.GetDirectoryName(loc.uri.FullPath);
+                        if (p1 != p2) continue;
+                    }
+                    var w = new Entry() { FileName = loc.uri.FullPath, Start = loc.range.Start.Value, End = loc.range.End.Value };
+                    results.Add(w);
+                }
+
+                // Call up the rename dialog box. In another thread because
+                // of "The calling thread must be STA, because many UI components require this."
+                // error.
+                Application.Current.Dispatcher.Invoke((Action)delegate {
+
+                    RenameDialogBox inputDialog = new RenameDialogBox(sym.name);
+                    if (inputDialog.ShowDialog() == true)
+                    {
+                        var new_name = inputDialog.Answer;
+                        var files = results.Select(r => r.FileName).OrderBy(q => q).Distinct();
+                        foreach (var f in files)
                         {
-                            // File has not been opened before! Open file in editor.
-                            IVsTextViewExtensions.ShowFrame(f);
-                            vstv2 = IVsTextViewExtensions.FindTextViewFor(f);
-                        }
-                        IWpfTextView wpftv2 = vstv2.GetIWpfTextView();
-                        ITextBuffer tb = wpftv2.TextBuffer;
-                        using (var edit = tb.CreateEdit())
-                        {
-                            ITextSnapshot cc2 = tb.CurrentSnapshot;
-                            foreach (var e2 in per_file_results)
+                            var per_file_results = results.Where(r => r.FileName == f);
+                            per_file_results.Reverse();
+                            var fitem = Workspaces.Workspace.Instance.FindDocument(f);
+                            var pd = ParserDetailsFactory.Create(fitem);
+                            IVsTextView vstv2 = IVsTextViewExtensions.FindTextViewFor(f);
+                            if (vstv2 == null)
                             {
-                                SnapshotSpan ss2 = new SnapshotSpan(cc2, e2.Start, 1 + e2.End - e2.Start);
-                                SnapshotPoint sp2 = ss2.Start;
-                                edit.Replace(ss2, new_name);
+                                // File has not been opened before! Open file in editor.
+                                IVsTextViewExtensions.ShowFrame(f);
+                                vstv2 = IVsTextViewExtensions.FindTextViewFor(f);
                             }
-                            edit.Apply();
+                            IWpfTextView wpftv2 = vstv2.GetIWpfTextView();
+                            ITextBuffer tb = wpftv2.TextBuffer;
+                            using (var edit = tb.CreateEdit())
+                            {
+                                ITextSnapshot cc2 = tb.CurrentSnapshot;
+                                foreach (var e2 in per_file_results)
+                                {
+                                    SnapshotSpan ss2 = new SnapshotSpan(cc2, e2.Start, 1 + e2.End - e2.Start);
+                                    SnapshotPoint sp2 = ss2.Start;
+                                    edit.Replace(ss2, new_name);
+                                }
+                                edit.Apply();
+                            }
                         }
                     }
-                }
-            });
+                });
 
-            //AntlrVSIX.Package.Menus.ResetMenus();
+                //AntlrVSIX.Package.Menus.ResetMenus();
+            }
+            catch (Exception exception)
+            {
+                Logger.Log.Notify(exception.StackTrace);
+            }
         }
     }
 }

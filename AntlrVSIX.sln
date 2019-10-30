@@ -5,6 +5,7 @@ VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntlrVSIX", "AntlrVSIX\AntlrVSIX.csproj", "{36897A0A-D67A-4F7F-84F4-87C1C351FA9C}"
 	ProjectSection(ProjectDependencies) = postProject
+		{A097E2D9-542E-44B7-9FC4-344E10B4E363} = {A097E2D9-542E-44B7-9FC4-344E10B4E363}
 		{227BB0F6-9DF1-4782-B8C2-77C76E6824AE} = {227BB0F6-9DF1-4782-B8C2-77C76E6824AE}
 	EndProjectSection
 EndProject
@@ -57,9 +58,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Graphs", "Graphs\Graphs.csp
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A704C218-94AE-496B-94D4-C3EE26CF7342}"
 	ProjectSection(SolutionItems) = preProject
-		README.md = README.md
 		license.txt = license.txt
+		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logger", "Logger\Logger.csproj", "{A097E2D9-542E-44B7-9FC4-344E10B4E363}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -111,6 +114,10 @@ Global
 		{227BB0F6-9DF1-4782-B8C2-77C76E6824AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{227BB0F6-9DF1-4782-B8C2-77C76E6824AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{227BB0F6-9DF1-4782-B8C2-77C76E6824AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A097E2D9-542E-44B7-9FC4-344E10B4E363}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A097E2D9-542E-44B7-9FC4-344E10B4E363}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A097E2D9-542E-44B7-9FC4-344E10B4E363}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A097E2D9-542E-44B7-9FC4-344E10B4E363}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

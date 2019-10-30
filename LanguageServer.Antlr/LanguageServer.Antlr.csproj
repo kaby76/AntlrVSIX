@@ -26,7 +26,7 @@
     <PackageReference Include="Antlr4.Runtime.Standard">
       <Version>4.7.2</Version>
     </PackageReference>
-    <PackageReference Include="Antlr4BuildTasks" Version="1.0.7" />
+    <PackageReference Include="Antlr4BuildTasks" Version="1.0.8" />
   </ItemGroup>
 
   <ItemGroup>

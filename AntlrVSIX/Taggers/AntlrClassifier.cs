@@ -12,6 +12,7 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.Linq;
 
     class Themes
     {
@@ -34,80 +35,123 @@
             IClassificationTypeRegistryService service,
             IClassificationFormatMapService ClassificationFormatMapService)
         {
-            if (initialized) return;
-            var ffn = _buffer.GetFFN().Result;
-            if (ffn == null) return;
-            _grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
-            if (_grammar_description == null) return;
-            var document = Workspaces.Workspace.Instance.FindDocument(ffn);
-            if (document == null)
+            try
             {
-                Workspaces.Loader.LoadAsync().Wait();
-                var to_do = LanguageServer.Module.Compile();
-                document = Workspaces.Workspace.Instance.FindDocument(ffn);
+                if (initialized) return;
+                var ffn = _buffer.GetFFN().Result;
+                if (ffn == null) return;
+                _grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
+                if (_grammar_description == null) return;
+                var document = Workspaces.Workspace.Instance.FindDocument(ffn);
+                if (document == null)
+                {
+                    Workspaces.Loader.LoadAsync().Wait();
+                    var to_do = LanguageServer.Module.Compile();
+                    document = Workspaces.Workspace.Instance.FindDocument(ffn);
+                }
+                _aggregator = aggregatorFactory.CreateTagAggregator<AntlrTokenTag>(_buffer);
+                _antlrtype_to_classifiertype = new Dictionary<int, IClassificationType>();
+                for (int i = 0; i < _grammar_description.Map.Length; ++i)
+                {
+                    var key = i;
+                    var val = _grammar_description.Map[i];
+                    var identiferClassificationType = service.GetClassificationType(val);
+                    var classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
+                            : identiferClassificationType;
+                    var classificationFormatMap = ClassificationFormatMapService.GetClassificationFormatMap(category: "text");
+                    var identifierProperties = classificationFormatMap
+                        .GetExplicitTextProperties(classificationType);
+                    var color = !Themes.IsInvertedTheme() ? _grammar_description.MapColor[key]
+                        : _grammar_description.MapInvertedColor[key];
+                    System.Windows.Media.Color newColor = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+                    var newProperties = identifierProperties.SetForeground(newColor);
+                    classificationFormatMap.AddExplicitTextProperties(classificationType, newProperties);
+                }
+                for (int i = 0; i < _grammar_description.Map.Length; ++i)
+                {
+                    var key = i;
+                    var val = _grammar_description.Map[i];
+                    _antlrtype_to_classifiertype[key] = service.GetClassificationType(val);
+                }
+                initialized = true;
             }
-            _aggregator = aggregatorFactory.CreateTagAggregator<AntlrTokenTag>(_buffer);
-            _antlrtype_to_classifiertype = new Dictionary<int, IClassificationType>();
-            for (int i = 0; i < _grammar_description.Map.Length; ++i)
+            catch (Exception exception)
             {
-                var key = i;
-                var val = _grammar_description.Map[i];
-                var identiferClassificationType = service.GetClassificationType(val);
-                var classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
-                        : identiferClassificationType;
-                var classificationFormatMap = ClassificationFormatMapService.GetClassificationFormatMap(category: "text");
-                var identifierProperties = classificationFormatMap
-                    .GetExplicitTextProperties(classificationType);
-                var color = !Themes.IsInvertedTheme() ? _grammar_description.MapColor[key]
-                    : _grammar_description.MapInvertedColor[key];
-                System.Windows.Media.Color newColor = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
-                var newProperties = identifierProperties.SetForeground(newColor);
-                classificationFormatMap.AddExplicitTextProperties(classificationType, newProperties);
+                Logger.Log.Notify(exception.StackTrace);
             }
-            for (int i = 0; i < _grammar_description.Map.Length; ++i)
-            {
-                var key = i;
-                var val = _grammar_description.Map[i];
-                _antlrtype_to_classifiertype[key] = service.GetClassificationType(val);
-            }
-            initialized = true;
         }
 
         internal AntlrClassifier(ITextBuffer buffer)
         {
-            _buffer = buffer;
-            _buffer.Changed += new EventHandler<TextContentChangedEventArgs>(OnTextChanged);
-
-            var ffn = _buffer.GetFFN().Result;
-            if (ffn == null) return;
-            _grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
-            if (_grammar_description == null) return;
-            var document = Workspaces.Workspace.Instance.FindDocument(ffn);
-            if (document == null)
+            try
             {
-                Workspaces.Loader.LoadAsync().Wait();
-                var to_do = LanguageServer.Module.Compile();
-                document = Workspaces.Workspace.Instance.FindDocument(ffn);
+                _buffer = buffer;
+                _buffer.Changed += new EventHandler<TextContentChangedEventArgs>(OnTextChanged);
+
+                var ffn = _buffer.GetFFN().Result;
+                if (ffn == null) return;
+                _grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
+                if (_grammar_description == null) return;
+                var document = Workspaces.Workspace.Instance.FindDocument(ffn);
+                if (document == null)
+                {
+                    Workspaces.Loader.LoadAsync().Wait();
+                    var to_do = LanguageServer.Module.Compile();
+                    document = Workspaces.Workspace.Instance.FindDocument(ffn);
+                }
+                AntlrLanguagePackage package = AntlrLanguagePackage.Instance;
             }
-            AntlrLanguagePackage package = AntlrLanguagePackage.Instance;
+            catch (Exception exception)
+            {
+                Logger.Log.Notify(exception.StackTrace);
+            }
         }
 
         public IEnumerable<ITagSpan<ClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
-            if (_grammar_description == null) yield break;
-            if (_grammar_description == null) throw new Exception();
-            string f = _buffer.GetFFN().Result;
-            var document = Workspaces.Workspace.Instance.FindDocument(f);
-            if (document == null) yield break;
-            document.Code = _buffer.GetBufferText();
-            var pd = ParserDetailsFactory.Create(document);
-
-            foreach (IMappingTagSpan<AntlrTokenTag> tag_span in _aggregator.GetTags(spans))
+            try
             {
-                NormalizedSnapshotSpanCollection tag_spans = tag_span.Span.GetSpans(spans[0].Snapshot);
-                yield return
-                    new TagSpan<ClassificationTag>(tag_spans[0],
-                        new ClassificationTag(_antlrtype_to_classifiertype[(int)tag_span.Tag.TagType]));
+                if (_grammar_description == null) yield break;
+                if (_grammar_description == null) throw new Exception();
+                string f = _buffer.GetFFN().Result;
+                var document = Workspaces.Workspace.Instance.FindDocument(f);
+                if (document == null) yield break;
+                document.Code = _buffer.GetBufferText();
+                var pd = ParserDetailsFactory.Create(document);
+            }
+            catch (Exception exception)
+            {
+                Logger.Log.Notify(exception.StackTrace);
+            }
+
+            List<IMappingTagSpan<AntlrTokenTag>> span_list = null;
+            try
+            {
+                span_list = _aggregator.GetTags(spans).ToList();
+            }
+            catch (Exception exception)
+            {
+                Logger.Log.Notify(exception.StackTrace);
+            }
+
+            if (span_list != null)
+            {
+                foreach (IMappingTagSpan<AntlrTokenTag> tag_span in span_list)
+                {
+                    TagSpan<ClassificationTag> result = null;
+                    try
+                    {
+                        NormalizedSnapshotSpanCollection tag_spans = tag_span.Span.GetSpans(spans[0].Snapshot);
+                        result = new TagSpan<ClassificationTag>(tag_spans[0],
+                                new ClassificationTag(_antlrtype_to_classifiertype[(int)tag_span.Tag.TagType]));
+                    }
+                    catch (Exception exception)
+                    {
+                        Logger.Log.Notify(exception.StackTrace);
+                    }
+                    if (result != null)
+                        yield return result;
+                }
             }
         }
 
@@ -149,9 +193,9 @@
                     source = null;
                     task = null;
                 }
-            } catch (Exception)
+            } catch (Exception exception)
             {
-                // Log errors.
+                Logger.Log.Notify(exception.StackTrace);
             }
         }
 

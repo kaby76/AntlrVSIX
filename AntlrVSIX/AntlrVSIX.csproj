@@ -214,13 +214,13 @@
       <Version>2.0.4</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp">
-      <Version>3.2.1</Version>
+      <Version>3.3.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Editor">
-      <Version>16.1.89</Version>
+      <Version>16.2.45</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Language.Intellisense">
-      <Version>16.1.89</Version>
+      <Version>16.2.45</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Package.LanguageService.14.0">
       <Version>14.3.25407</Version>
@@ -244,7 +244,7 @@
       <Version>16.2.29116.78</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VSSDK.BuildTools">
-      <Version>16.3.1066</Version>
+      <Version>16.3.2099</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -252,7 +252,7 @@
       <Version>4.6.7</Version>
     </PackageReference>
     <PackageReference Include="System.Collections.Immutable">
-      <Version>1.5.0</Version>
+      <Version>1.6.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -293,6 +293,10 @@
     <ProjectReference Include="..\LanguageServer\LanguageServer.csproj">
       <Project>{9600baec-e51a-4f80-9251-2306a7a84d44}</Project>
       <Name>LanguageServer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Logger\Logger.csproj">
+      <Project>{a097e2d9-542e-44b7-9fc4-344e10b4e363}</Project>
+      <Name>Logger</Name>
     </ProjectReference>
     <ProjectReference Include="..\Workspaces\Workspaces.csproj">
       <Project>{e138159b-e61c-4cb7-abbc-7c57dc9bdd79}</Project>
