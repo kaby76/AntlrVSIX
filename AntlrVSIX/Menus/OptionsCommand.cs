@@ -58,6 +58,12 @@
             private set { XOptions.SetProperty("OverrideRustPluggins", value ? "true" : "false"); }
         }
 
+        public bool OptInLogging
+        {
+            get { return XOptions.GetProperty("OptInLogging") == "true"; }
+            private set { XOptions.SetProperty("OptInLogging", value ? "true" : "false"); }
+        }
+
         private OptionsCommand(Microsoft.VisualStudio.Shell.Package package)
         {
             if (package == null)
@@ -90,6 +96,7 @@
             OverrideJavaPluggins = true;
             OverridePythonPluggins = true;
             OverrideRustPluggins = true;
+            OptInLogging = false;
             var s = System.Environment.GetEnvironmentVariable("CORPUS_LOCATION");
             CorpusLocation = s == null ? "" : s;
         }
@@ -129,6 +136,7 @@
                         userSettingsStore.SetBoolean("AntlrVSIX", "OverrideJavaPluggins", OverrideJavaPluggins);
                         userSettingsStore.SetBoolean("AntlrVSIX", "OverridePythonPluggins", OverridePythonPluggins);
                         userSettingsStore.SetBoolean("AntlrVSIX", "OverrideRustPluggins", OverrideRustPluggins);
+                        userSettingsStore.SetBoolean("AntlrVSIX", "OptInLogging", OptInLogging);
                     }
                 }
 
@@ -141,6 +149,7 @@
                 OverrideJavaPluggins = userSettingsStore.GetBoolean("AntlrVSIX", "OverrideJavaPluggins", OverrideJavaPluggins);
                 OverridePythonPluggins = userSettingsStore.GetBoolean("AntlrVSIX", "OverridePythonPluggins", OverridePythonPluggins);
                 OverrideRustPluggins = userSettingsStore.GetBoolean("AntlrVSIX", "OverrideRustPluggins", OverrideRustPluggins);
+                OptInLogging = userSettingsStore.GetBoolean("AntlrVSIX", "OptInLogging", OptInLogging);
 
                 OptionsBox inputDialog = new OptionsBox();
                 inputDialog.restricted_directory.IsChecked = RestrictedDirectory;
@@ -152,6 +161,7 @@
                 inputDialog.override_java.IsChecked = OverrideJavaPluggins;
                 inputDialog.override_python.IsChecked = OverridePythonPluggins;
                 inputDialog.override_rust.IsChecked = OverrideRustPluggins;
+                inputDialog.opt_in_reporting.IsChecked = OptInLogging;
                 if (inputDialog.ShowDialog() == true)
                 {
                     RestrictedDirectory = inputDialog.restricted_directory.IsChecked ?? false;
@@ -163,6 +173,7 @@
                     OverrideJavaPluggins = inputDialog.override_java.IsChecked ?? false;
                     OverridePythonPluggins = inputDialog.override_python.IsChecked ?? false;
                     OverrideRustPluggins = inputDialog.override_rust.IsChecked ?? false;
+                    OptInLogging = inputDialog.opt_in_reporting.IsChecked ?? false;
 
                     userSettingsStore.SetBoolean("AntlrVSIX", "RestrictedDirectory", RestrictedDirectory);
                     userSettingsStore.SetBoolean("AntlrVSIX", "NonInteractiveParse", NonInteractiveParse);
@@ -173,6 +184,7 @@
                     userSettingsStore.SetBoolean("AntlrVSIX", "OverrideJavaPluggins", OverrideJavaPluggins);
                     userSettingsStore.SetBoolean("AntlrVSIX", "OverridePythonPluggins", OverridePythonPluggins);
                     userSettingsStore.SetBoolean("AntlrVSIX", "OverrideRustPluggins", OverrideRustPluggins);
+                    userSettingsStore.SetBoolean("AntlrVSIX", "OptInLogging", OptInLogging);
                 }
             });
         }
