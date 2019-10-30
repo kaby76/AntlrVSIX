@@ -23,8 +23,8 @@
         List<bool> CanGotodef { get; }
         List<bool> CanGotovisitor { get; }
         bool CanReformat { get; }
-        List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>, IParseTree, bool>> Identify { get; }
-        List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>, IParseTree, bool>> IdentifyDefinition { get; }
+        List<Func<IGrammarDescription, Dictionary<IParseTree, IList<Symtab.CombinedScopeSymbol>>, IParseTree, bool>> Identify { get; }
+        List<Func<IGrammarDescription, Dictionary<IParseTree, IList<Symtab.CombinedScopeSymbol>>, IParseTree, bool>> IdentifyDefinition { get; }
         bool IsFileType(string ffn);
         string FileExtension { get; }
         string StartRule { get; }

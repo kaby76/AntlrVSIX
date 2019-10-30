@@ -3,6 +3,8 @@
     using Antlr4.Runtime.Misc;
     using Antlr4.Runtime.Tree;
     using Symtab;
+    using System.Linq;
+    using System.Collections.Generic;
 
     public class Pass2Listener : ANTLRv4ParserBaseListener
     {
@@ -19,31 +21,41 @@
             if (first.Symbol.Type == ANTLRv4Parser.TOKEN_REF)
             {
                 var id = first.GetText();
-                ISymbol sym = _pd.RootScope.LookupType(id);
-                if (sym == null)
+                var list = _pd.RootScope.LookupType(id);
+                if (! list.Any())
                 {
-                    sym = (ISymbol)new TerminalSymbol(id, first.Symbol);
+                    var sym = (ISymbol)new TerminalSymbol(id, first.Symbol);
                     _pd.RootScope.define(ref sym);
                 }
-                var s = (CombinedScopeSymbol)new RefSymbol(first.Symbol, sym);
-                _pd.Attributes[context] = s;
-                _pd.Attributes[context.GetChild(0)] = s;
+                var new_attrs = new List<CombinedScopeSymbol>();
+                foreach (var sym in list)
+                {
+                    var s = (CombinedScopeSymbol)new RefSymbol(first.Symbol, sym);
+                    new_attrs.Add(s);
+                }
+                _pd.Attributes[context] = new_attrs;
+                _pd.Attributes[context.GetChild(0)] = new_attrs;
             }
         }
 
         public override void EnterRuleref([NotNull] ANTLRv4Parser.RulerefContext context)
         {
-            var sy = context.GetChild(0) as TerminalNodeImpl;
+            var first = context.GetChild(0) as TerminalNodeImpl;
             var id = context.GetChild(0).GetText();
-            ISymbol sym = _pd.RootScope.LookupType(id);
-            if (sym == null)
+            var list = _pd.RootScope.LookupType(id);
+            if (!list.Any())
             {
-                sym = (ISymbol)new NonterminalSymbol(id, null);
+                var sym = (ISymbol)new NonterminalSymbol(id, first.Symbol);
                 _pd.RootScope.define(ref sym);
             }
-            var s = (CombinedScopeSymbol)new RefSymbol(sy.Symbol, sym);
-            _pd.Attributes[context] = s;
-            _pd.Attributes[context.GetChild(0)] = s;
+            var new_attrs = new List<CombinedScopeSymbol>();
+            foreach (var sym in list)
+            {
+                var s = (CombinedScopeSymbol)new RefSymbol(first.Symbol, sym);
+                new_attrs.Add(s);
+            }
+            _pd.Attributes[context] = new_attrs;
+            _pd.Attributes[context.GetChild(0)] = new_attrs;
         }
 
         public override void EnterId([NotNull] ANTLRv4Parser.IdContext context)
@@ -55,29 +67,39 @@
                 {
                     var term = context.GetChild(0) as TerminalNodeImpl;
                     var id = term.GetText();
-                    ISymbol sym = _pd.RootScope.LookupType(id);
-                    if (sym == null)
+                    IList<ISymbol> sym_list = _pd.RootScope.LookupType(id);
+                    if (! sym_list.Any())
                     {
-                        sym = (ISymbol)new ModeSymbol(id, null);
+                        var sym = (ISymbol)new ModeSymbol(id, null);
                         _pd.RootScope.define(ref sym);
                     }
-                    var s = (CombinedScopeSymbol)new RefSymbol(term.Symbol, sym);
-                    _pd.Attributes[context] = s;
-                    _pd.Attributes[context.GetChild(0)] = s;
+                    var ref_list = new List<CombinedScopeSymbol>();
+                    foreach (var sym in sym_list)
+                    {
+                        var s = (CombinedScopeSymbol)new RefSymbol(term.Symbol, sym);
+                        ref_list.Add(s);
+                    }
+                    _pd.Attributes[context] = ref_list;
+                    _pd.Attributes[context.GetChild(0)] = ref_list;
                 }
                 else if (lc.GetChild(0)?.GetChild(0)?.GetText() == "channel")
                 {
                     var term = context.GetChild(0) as TerminalNodeImpl;
                     var id = term.GetText();
-                    ISymbol sym = _pd.RootScope.LookupType(id);
-                    if (sym == null)
+                    IList<ISymbol> sym_list = _pd.RootScope.LookupType(id);
+                    if (!sym_list.Any())
                     {
-                        sym = (ISymbol)new ChannelSymbol(id, null);
+                        var sym = (ISymbol)new ChannelSymbol(id, null);
                         _pd.RootScope.define(ref sym);
                     }
-                    var s = (CombinedScopeSymbol)new RefSymbol(term.Symbol, sym);
-                    _pd.Attributes[context] = s;
-                    _pd.Attributes[context.GetChild(0)] = s;
+                    var ref_list = new List<CombinedScopeSymbol>();
+                    foreach (var sym in sym_list)
+                    {
+                        var s = (CombinedScopeSymbol)new RefSymbol(term.Symbol, sym);
+                        ref_list.Add(s);
+                    }
+                    _pd.Attributes[context] = ref_list;
+                    _pd.Attributes[context.GetChild(0)] = ref_list;
                 }
             }
         }

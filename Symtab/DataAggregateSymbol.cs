@@ -62,28 +62,31 @@
         /// Look up name within this scope only. Return any kind of MemberSymbol found
         ///  or null if nothing with this name found as MemberSymbol.
         /// </summary>
-        public virtual ISymbol resolveMember(string name)
+        public virtual IList<ISymbol> resolveMember(string name)
         {
+            var result = new List<ISymbol>();
             ISymbol s = symbols[name];
             if (s is IMemberSymbol)
             {
-                return s;
+                result.Add(s);
             }
-            return null;
+            return result;
         }
 
         /// <summary>
         /// Look for a field with this name in this scope only.
         ///  Return null if no field found.
         /// </summary>
-        public virtual ISymbol resolveField(string name)
+        public virtual IList<FieldSymbol> resolveField(string name)
         {
-            ISymbol s = resolveMember(name);
-            if (s is FieldSymbol)
-            {
-                return s;
-            }
-            return null;
+            var result = new List<FieldSymbol>();
+            var list = resolveMember(name);
+            foreach (var s in list)
+                if (s is FieldSymbol)
+                {
+                    result.Add(s as FieldSymbol);
+                }
+            return result;
         }
 
         /// <summary>

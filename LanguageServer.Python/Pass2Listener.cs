@@ -14,12 +14,29 @@
             _pd = pd;
         }
 
-        public IScope NearestScope(IParseTree node)
+        public IParseTree NearestScope(IParseTree node)
         {
             for (; node != null; node = node.Parent)
             {
-                if (_pd.Attributes.TryGetValue(node, out CombinedScopeSymbol value) && value is IScope)
-                    return (IScope)value;
+                _pd.Attributes.TryGetValue(node, out IList<CombinedScopeSymbol> list);
+                if (list != null)
+                {
+                    if (list.Count == 1 && list[0] is IScope)
+                        return node;
+                }
+            }
+            return null;
+        }
+
+        public IScope GetScope(IParseTree node)
+        {
+            if (node == null)
+                return null;
+            _pd.Attributes.TryGetValue(node, out IList<CombinedScopeSymbol> list);
+            if (list != null)
+            {
+                if (list.Count == 1 && list[0] is IScope)
+                    return list[0] as IScope;
             }
             return null;
         }

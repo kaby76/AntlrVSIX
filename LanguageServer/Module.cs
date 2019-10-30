@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using Workspaces;
+    using Symtab;
 
     public class Module
     {
@@ -15,34 +16,66 @@
             var gd = GrammarDescriptionFactory.Create(doc.FullPath);
             if (pt == null) return null;
             Antlr4.Runtime.Tree.IParseTree p = pt;
-            pd.Attributes.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
+            pd.Attributes.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
             var q = p as Antlr4.Runtime.Tree.TerminalNodeImpl;
             var range = new Range(new Index(q.Symbol.StartIndex), new Index(q.Symbol.StopIndex + 1));
             var found = pd.Tags.TryGetValue(q, out int tag_type);
             if (!found) return null;
-            if (value == null)
+            if (list_value == null || list_value.Count == 0)
             {
                 return new QuickInfo() { Display = gd.Map[tag_type], Range = range };
             }
-            var name = value as Symtab.ISymbol;
-            string show = name?.Name;
-            if (value is Symtab.Literal)
+            if (list_value.Count == 1)
             {
-                show = ((Symtab.Literal)value).Cleaned;
-            }
-            if (gd.PopUpDefinition[tag_type] != null)
-            {
-                var fun = gd.PopUpDefinition[tag_type];
-                var mess = fun(pd, p);
-                if (mess != null)
+                var value = list_value.First();
+                var name = value as Symtab.ISymbol;
+                string show = name?.Name;
+                if (value is Symtab.Literal)
                 {
-                    return new QuickInfo() { Display = mess, Range = range };
+                    show = ((Symtab.Literal)value).Cleaned;
                 }
+                if (gd.PopUpDefinition[tag_type] != null)
+                {
+                    var fun = gd.PopUpDefinition[tag_type];
+                    var mess = fun(pd, p);
+                    if (mess != null)
+                    {
+                        return new QuickInfo() { Display = mess, Range = range };
+                    }
+                }
+                var display = gd.Map[tag_type]
+                    + "\n"
+                    + show;
+                return new QuickInfo() { Display = display, Range = range };
             }
-            var display = gd.Map[tag_type]
-                + "\n"
-                + show;
-            return new QuickInfo() { Display = display, Range = range };
+            {
+                var display = "Ambiguous -- ";
+                foreach (var value in list_value)
+                {
+                    var name = value as Symtab.ISymbol;
+                    string show = name?.Name;
+                    if (value is Symtab.Literal)
+                    {
+                        show = ((Symtab.Literal)value).Cleaned;
+                    }
+                    if (gd.PopUpDefinition[tag_type] != null)
+                    {
+                        var fun = gd.PopUpDefinition[tag_type];
+                        var mess = fun(pd, p);
+                        if (mess != null)
+                        {
+                            display = display + mess;
+                        }
+                    }
+                    else
+                    {
+                        display = display + gd.Map[tag_type]
+                            + "\n"
+                            + show;
+                    }
+                }
+                return new QuickInfo() { Display = display, Range = range };
+            }
         }
 
         public static int GetTag(int index, Document doc)
@@ -53,7 +86,6 @@
             var gd = GrammarDescriptionFactory.Create(doc.FullPath);
             if (pt == null) return -1;
             Antlr4.Runtime.Tree.IParseTree p = pt;
-            pd.Attributes.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
             var q = p as Antlr4.Runtime.Tree.TerminalNodeImpl;
             var found = pd.Tags.TryGetValue(q, out int tag_type);
             if (found) return tag_type;
@@ -71,7 +103,6 @@
             var gd = GrammarDescriptionFactory.Create(doc.FullPath);
             if (pt == null) return default(DocumentSymbol);
             Antlr4.Runtime.Tree.IParseTree p = pt;
-            pd.Attributes.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
             var q = p as Antlr4.Runtime.Tree.TerminalNodeImpl;
             var found = pd.Tags.TryGetValue(q, out int tag_type);
             if (!found) return null;
@@ -182,28 +213,33 @@
             return result;
         }
 
-        public static Location FindDef(int index, Document doc)
+        public static IList<Location> FindDef(int index, Document doc)
         {
-            if (doc == null) return null;
+            var result = new List<Location>();
+            if (doc == null) return result;
             var ref_pt = Util.Find(index, doc);
-            if (ref_pt == null) return default(Location);
+            if (ref_pt == null) return result;
             var ref_pd = ParserDetailsFactory.Create(doc);
-            ref_pd.Attributes.TryGetValue(ref_pt, out Symtab.CombinedScopeSymbol value);
-            if (value == null) return default(Location);
-            var @ref = value as Symtab.ISymbol;
-            if (@ref == null) return default(Location);
-            var def = @ref.resolve();
-            if (def == null) return default(Location);
-            var def_file = def.file;
-            if (def_file == null) return default(Location);
-            var def_item = Workspaces.Workspace.Instance.FindDocument(def_file);
-            if (def_item == null) return default(Location);
-            return new Location()
+            ref_pd.Attributes.TryGetValue(ref_pt, out IList<Symtab.CombinedScopeSymbol> list_values);
+            foreach (var value in list_values)
             {
-                range = new Range(def.Token.StartIndex, def.Token.StopIndex),
-                uri = def_item
-            };
-
+                if (value == null) continue;
+                var @ref = value as Symtab.ISymbol;
+                if (@ref == null) continue;
+                var def = @ref.resolve();
+                if (def == null) continue;
+                var def_file = def.file;
+                if (def_file == null) continue;
+                var def_item = Workspaces.Workspace.Instance.FindDocument(def_file);
+                if (def_item == null) continue;
+                var new_loc = new Location()
+                {
+                    range = new Range(def.Token.StartIndex, def.Token.StopIndex),
+                    uri = def_item
+                };
+                result.Add(new_loc);
+            }
+            return result;
         }
 
         public static IEnumerable<Location> FindRefsAndDefs(int index, Document doc)
@@ -212,44 +248,52 @@
             var ref_pt = Util.Find(index, doc);
             if (ref_pt == null) return result;
             var ref_pd = ParserDetailsFactory.Create(doc);
-            ref_pd.Attributes.TryGetValue(ref_pt, out Symtab.CombinedScopeSymbol value);
-            if (value == null) return result;
-            var @ref = value as Symtab.ISymbol;
-            if (@ref == null) return result;
-            if (@ref.Token == null) return result;
-            var def = @ref.resolve();
-            if (def == null) return result;
-            if (def.Token == null) return result;
-            List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
-            var refs = ref_pd.Refs.Where(
-                (t) =>
-                {
-                    Antlr4.Runtime.Tree.TerminalNodeImpl x = t.Key;
-                    if (x == @ref.Token) return true;
-                    ref_pd.Attributes.TryGetValue(x, out Symtab.CombinedScopeSymbol v);
-                    var vv = v as Symtab.ISymbol;
-                    if (vv == null) return false;
-                    if (vv.resolve() == def) return true;
-                    return false;
-                }).Select(t => t.Key);
-            if (def != null)
+            ref_pd.Attributes.TryGetValue(ref_pt, out IList<Symtab.CombinedScopeSymbol> list_value);
+            foreach (var value in list_value)
             {
-                if (def.file == @ref.file)
-                    result.Add(
-                       new Location()
-                       {
-                           range = new Range(def.Token.StartIndex, def.Token.StopIndex),
-                           uri = Workspaces.Workspace.Instance.FindDocument(def.file)
-                       });
-            }
-            foreach (var r in refs)
-            {
-                result.Add(
-                        new Location()
+                if (value == null) continue;
+                var @ref = value as Symtab.ISymbol;
+                if (@ref == null) continue;
+                if (@ref.Token == null) continue;
+                var def = @ref.resolve();
+                if (def == null) continue;
+                if (def.Token == null) continue;
+                List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
+                var refs = ref_pd.Refs.Where(
+                    (t) =>
+                    {
+                        Antlr4.Runtime.Tree.TerminalNodeImpl x = t.Key;
+                        if (x == @ref.Token) return true;
+
+                        ref_pd.Attributes.TryGetValue(x, out IList<Symtab.CombinedScopeSymbol> list_v);
+                        foreach (var v in list_v)
                         {
-                            range = new Range(r.Symbol.StartIndex, r.Symbol.StopIndex),
-                            uri = Workspaces.Workspace.Instance.FindDocument(r.Symbol.InputStream.SourceName)
-                        });
+                            var vv = v as Symtab.ISymbol;
+                            if (vv == null) return false;
+                            if (vv.resolve() == def) return true;
+                            return false;
+                        }
+                        return false;
+                    }).Select(t => t.Key);
+                if (def != null)
+                {
+                    if (def.file == @ref.file)
+                        result.Add(
+                           new Location()
+                           {
+                               range = new Range(def.Token.StartIndex, def.Token.StopIndex),
+                               uri = Workspaces.Workspace.Instance.FindDocument(def.file)
+                           });
+                }
+                foreach (var r in refs)
+                {
+                    result.Add(
+                            new Location()
+                            {
+                                range = new Range(r.Symbol.StartIndex, r.Symbol.StopIndex),
+                                uri = Workspaces.Workspace.Instance.FindDocument(r.Symbol.InputStream.SourceName)
+                            });
+                }
             }
             return result;
         }

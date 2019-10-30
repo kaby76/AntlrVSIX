@@ -20,22 +20,24 @@
         /// Return the ClassSymbol associated with superClassName or null if
         ///  superclass is not resolved looking up the enclosing scope chain.
         /// </summary>
-        public virtual InterfaceSymbol SuperClassScope
+        public virtual IList<InterfaceSymbol> SuperClassScope
         {
             get
             {
+                List<InterfaceSymbol> result = new List<InterfaceSymbol>();
                 if (!string.ReferenceEquals(superClassName, null))
                 {
                     if (EnclosingScope != null)
                     {
-                        ISymbol superClass = EnclosingScope.LookupType(superClassName);
-                        if (superClass is InterfaceSymbol)
-                        {
-                            return (InterfaceSymbol)superClass;
-                        }
+                        var list = EnclosingScope.LookupType(superClassName);
+                        foreach (ISymbol superClass in list)
+                            if (superClass is InterfaceSymbol)
+                            {
+                                result.Add( (InterfaceSymbol)superClass);
+                            }
                     }
                 }
-                return null;
+                return result;
             }
         }
 
@@ -45,43 +47,36 @@
         {
             get
             {
-                InterfaceSymbol superClassScope = SuperClassScope;
-                if (superClassScope != null)
-                {
-                    IList<InterfaceSymbol> result = new List<InterfaceSymbol>();
-                    result.Add(superClassScope);
-                    return result;
-                }
-                return null;
+                return SuperClassScope;
             }
         }
 
-        public override ISymbol LookupType(string name, bool alias = false)
+        public override IList<ISymbol> LookupType(string name, bool alias = false)
         {
-            ISymbol s = resolveMember(name);
-            if (s != null)
-            {
-                return s;
-            }
+            var result = new List<ISymbol>();
+            var list = resolveMember(name);
+            result.AddRange(list);
             // if not a member, check any enclosing scope. it might be a global variable for example
             IScope parent = EnclosingScope;
             if (parent != null)
             {
-                return parent.LookupType(name, alias);
+                var another_list = parent.LookupType(name, alias);
+                result.AddRange(another_list);
             }
-            return null; // not found
+            return result;
         }
 
         /// <summary>
         /// Look for a member with this name in this scope or any super class.
         ///  Return null if no member found.
         /// </summary>
-        public override ISymbol resolveMember(string name)
+        public override IList<ISymbol> resolveMember(string name)
         {
+            var result = new List<ISymbol>();
             symbols.TryGetValue(name, out ISymbol s);
             if (s is IMemberSymbol)
             {
-                return s;
+                result.Add(s);
             }
             // walk superclass chain
             IList<InterfaceSymbol> superClassScopes = SuperClassScopes;
@@ -89,42 +84,47 @@
             {
                 foreach (InterfaceSymbol sup in superClassScopes)
                 {
-                    s = sup.resolveMember(name);
-                    if (s is IMemberSymbol)
-                    {
-                        return s;
-                    }
+                    var list = sup.resolveMember(name);
+                    foreach (var ss in list)
+                        if (ss is IMemberSymbol)
+                        {
+                            result.Add(ss);
+                        }
                 }
             }
-            return null;
+            return result;
         }
 
         /// <summary>
         /// Look for a field with this name in this scope or any super class.
         ///  Return null if no field found.
         /// </summary>
-        public override ISymbol resolveField(string name)
+        public override IList<FieldSymbol> resolveField(string name)
         {
-            ISymbol s = resolveMember(name);
-            if (s is FieldSymbol)
-            {
-                return s;
-            }
-            return null;
+            var result = new List<FieldSymbol>();
+            IList<ISymbol> list = resolveMember(name);
+            foreach (var s in list)
+                if (s is FieldSymbol)
+                {
+                    result.Add(s as FieldSymbol);
+                }
+            return result;
         }
 
         /// <summary>
         /// Look for a method with this name in this scope or any super class.
         ///  Return null if no method found.
         /// </summary>
-        public virtual MethodSymbol resolveMethod(string name)
+        public virtual IList<MethodSymbol> resolveMethod(string name)
         {
-            ISymbol s = resolveMember(name);
-            if (s is MethodSymbol)
-            {
-                return (MethodSymbol)s;
-            }
-            return null;
+            var result = new List<MethodSymbol>();
+            IList<ISymbol> list = resolveMember(name);
+            foreach (var s in list)
+                if (s is MethodSymbol)
+                {
+                    result.Add(s as MethodSymbol);
+                }
+            return result;
         }
 
         public virtual string SuperClass
@@ -152,18 +152,26 @@
                     MethodSymbol msym = (MethodSymbol)sym;
                     // handle inheritance. If not found in this scope, check superclass
                     // if any.
-                    InterfaceSymbol superClass = SuperClassScope;
-                    if (superClass != null)
+                    var list = SuperClassScope;
+                    if (list.Count == 1)
                     {
-                        MethodSymbol superMethodSym = superClass.resolveMethod(sym.Name);
-                        if (superMethodSym != null)
+                        InterfaceSymbol superClass = list[0];
+                        if (superClass != null)
                         {
-                            msym.slot = superMethodSym.slot;
+                            var list_methods = superClass.resolveMethod(sym.Name);
+                            if (list_methods.Count > 0)
+                            {
+                                MethodSymbol superMethodSym = list_methods[0];
+                                if (superMethodSym != null)
+                                {
+                                    msym.slot = superMethodSym.slot;
+                                }
+                            }
                         }
-                    }
-                    if (msym.slot == -1)
-                    {
-                        msym.slot = nextFreeMethodSlot++;
+                        if (msym.slot == -1)
+                        {
+                            msym.slot = nextFreeMethodSlot++;
+                        }
                     }
                 }
                 else
@@ -198,30 +206,35 @@
             get
             {
                 ISet<MethodSymbol> methods = new LinkedHashSet<MethodSymbol>();
-                InterfaceSymbol superClassScope = SuperClassScope;
-                if (superClassScope != null)
+                var list_supers = SuperClassScope;
+                foreach (InterfaceSymbol superClassScope in list_supers)
                 {
-                    methods.UnionWith(superClassScope.Methods);
+                    if (superClassScope != null)
+                    {
+                        methods.UnionWith(superClassScope.Methods);
+                    }
                 }
-                //JAVA TO C# CONVERTER TODO TASK: There is no .NET equivalent to the java.util.Collection 'removeAll' method:
+                throw new System.Exception("Not implemented.");
                 methods.Clear(); // override method from superclass
                 methods.UnionWith(DefinedMethods);
                 return methods;
             }
         }
 
-        //JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in .NET:
-        //ORIGINAL LINE: @Override public java.util.List<? extends FieldSymbol> getFields()
         public override IList<FieldSymbol> Fields
         {
             get
             {
-                IList<FieldSymbol> fields = new List<FieldSymbol>();
-                InterfaceSymbol superClassScope = SuperClassScope;
-                if (superClassScope != null)
+                List<FieldSymbol> fields = new List<FieldSymbol>();
+                var list_supers = SuperClassScope;
+                foreach (InterfaceSymbol superClassScope in list_supers)
                 {
-                    ((List<FieldSymbol>)fields).AddRange(superClassScope.Fields);
+                    if (superClassScope != null)
+                    {
+                        fields.AddRange(superClassScope.Fields);
+                    }
                 }
+                throw new System.Exception("Not implemented.");
                 ((List<FieldSymbol>)fields).AddRange(DefinedFields);
                 return fields;
             }
@@ -251,14 +264,15 @@
         {
             get
             {
-                int n = 0;
-                InterfaceSymbol superClassScope = SuperClassScope;
-                if (superClassScope != null)
-                {
-                    n += superClassScope.NumberOfMethods;
-                }
-                n += NumberOfDefinedMethods;
-                return n;
+                throw new System.Exception("Not implemented.");
+                //int n = 0;
+                //InterfaceSymbol superClassScope = SuperClassScope;
+                //if (superClassScope != null)
+                //{
+                //    n += superClassScope.NumberOfMethods;
+                //}
+                //n += NumberOfDefinedMethods;
+                //return n;
             }
         }
 
@@ -266,14 +280,15 @@
         {
             get
             {
-                int n = 0;
-                InterfaceSymbol superClassScope = SuperClassScope;
-                if (superClassScope != null)
-                {
-                    n += superClassScope.NumberOfFields;
-                }
-                n += NumberOfDefinedFields;
-                return n;
+                throw new System.Exception("Not implemented.");
+                //int n = 0;
+                //InterfaceSymbol superClassScope = SuperClassScope;
+                //if (superClassScope != null)
+                //{
+                //    n += superClassScope.NumberOfFields;
+                //}
+                //n += NumberOfDefinedFields;
+                //return n;
             }
         }
 

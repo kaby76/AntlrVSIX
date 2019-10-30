@@ -20,5 +20,21 @@
                 }
             }
         }
+
+        public static void Doit(StringBuilder sb, IParseTree node, int start, int end)
+        {
+            if (node is TerminalNodeImpl)
+            {
+                sb.Append(" " + node.GetText());
+            }
+            else
+            {
+                for (int i = start; i < end; ++i)
+                {
+                    var c = node.GetChild(i);
+                    Doit(sb, c);
+                }
+            }
+        }
     }
 }

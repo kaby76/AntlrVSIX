@@ -1,7 +1,5 @@
 namespace LanguageServer.Python
 {
-    using Antlr4.Runtime;
-    using Antlr4.Runtime.Misc;
     using Antlr4.Runtime.Tree;
     using Symtab;
     using System.Collections.Generic;
@@ -19,8 +17,12 @@ namespace LanguageServer.Python
         {
             for (; node != null; node = node.Parent)
             {
-                if (_pd.Attributes.TryGetValue(node, out CombinedScopeSymbol value) && value is IScope)
-                    return node;
+                _pd.Attributes.TryGetValue(node, out IList<CombinedScopeSymbol> list);
+                if (list != null)
+                {
+                    if (list.Count == 1 && list[0] is IScope)
+                        return node;
+                }
             }
             return null;
         }
@@ -29,8 +31,13 @@ namespace LanguageServer.Python
         {
             if (node == null)
                 return null;
-            _pd.Attributes.TryGetValue(node, out CombinedScopeSymbol value);
-            return value as IScope;
+            _pd.Attributes.TryGetValue(node, out IList<CombinedScopeSymbol> list);
+            if (list != null)
+            {
+                if (list.Count == 1 && list[0] is IScope)
+                    return list[0] as IScope;
+            }
+            return null;
         }
 
         public Pass1Listener()

@@ -5,6 +5,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Symtab;
 
     public class ParserDetails : ICloneable
     {
@@ -25,9 +26,9 @@
 
         public virtual Dictionary<IToken, int> Comments { get; set; } = new Dictionary<IToken, int>();
 
-        public virtual Dictionary<IParseTree, Symtab.CombinedScopeSymbol> Attributes { get; set; } = new Dictionary<IParseTree, Symtab.CombinedScopeSymbol>();
+        public virtual Dictionary<IParseTree, IList<CombinedScopeSymbol>> Attributes { get; set; } = new Dictionary<IParseTree, IList<CombinedScopeSymbol>>();
 
-        public virtual Symtab.IScope RootScope { get; set; }
+        public virtual IScope RootScope { get; set; }
 
         public virtual IParseTree ParseTree { get; set; } = null;
 
@@ -60,7 +61,7 @@
             this.Tags = new Dictionary<TerminalNodeImpl, int>();
             this.Errors = new HashSet<IParseTree>();
             this.Imports = new HashSet<string>();
-            this.Attributes = new Dictionary<IParseTree, Symtab.CombinedScopeSymbol>();
+            this.Attributes = new Dictionary<IParseTree, IList<CombinedScopeSymbol>>();
             this.Cleanup();
         }
 
@@ -118,20 +119,24 @@
                     if (x.Symbol == null) continue;
                     try
                     {
-                        this.Attributes.TryGetValue(x, out Symtab.CombinedScopeSymbol attr);
-                        this.Tags.Add(x, classification);
-                        if (attr == null) continue;
-                        var sym = attr as Symtab.ISymbol;
-                        if (sym == null) continue;
-                        var def = sym.resolve();
-                        if (def != null && def.file != null && def.file != ""
-                            && def.file != ffn)
+                        this.Attributes.TryGetValue(x, out IList<CombinedScopeSymbol> attr_list);
+                        if (attr_list == null) continue;
+                        foreach (var attr in attr_list)
                         {
-                            var def_item = Workspaces.Workspace.Instance.FindDocument(def.file);
-                            var def_pd = ParserDetailsFactory.Create(def_item);
-                            def_pd.PropagateChangesTo.Add(ffn);
+                            this.Tags.Add(x, classification);
+                            if (attr == null) continue;
+                            var sym = attr as Symtab.ISymbol;
+                            if (sym == null) continue;
+                            var def = sym.resolve();
+                            if (def != null && def.file != null && def.file != ""
+                                && def.file != ffn)
+                            {
+                                var def_item = Workspaces.Workspace.Instance.FindDocument(def.file);
+                                var def_pd = ParserDetailsFactory.Create(def_item);
+                                def_pd.PropagateChangesTo.Add(ffn);
+                            }
+                            this.Refs.Add(x, classification);
                         }
-                        this.Refs.Add(x, classification);
                     }
                     catch (ArgumentException)
                     {

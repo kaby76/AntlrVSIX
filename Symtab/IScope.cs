@@ -49,7 +49,7 @@
 
         /// <summary>
         /// Look up name in this scope or recursively in parent scope if not here </summary>
-        ISymbol LookupType(string name, bool alias = false);
+        IList<ISymbol> LookupType(string name, bool alias = false);
 
         /// <summary>
         /// Get symbol if name defined within this specific scope </summary>

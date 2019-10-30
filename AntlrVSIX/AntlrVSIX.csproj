@@ -205,7 +205,7 @@
       <Version>4.7.2</Version>
     </PackageReference>
     <PackageReference Include="Antlr4BuildTasks">
-      <Version>1.0.7</Version>
+      <Version>1.0.8</Version>
     </PackageReference>
     <PackageReference Include="cs-codebuff">
       <Version>2.0.4</Version>
@@ -244,6 +244,9 @@
       <Version>16.3.1066</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="NLog">
+      <Version>4.6.7</Version>
     </PackageReference>
     <PackageReference Include="System.Collections.Immutable">
       <Version>1.5.0</Version>

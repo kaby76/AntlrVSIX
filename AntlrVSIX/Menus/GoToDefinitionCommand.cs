@@ -10,6 +10,7 @@ namespace AntlrVSIX.GoToDefinition
     using Microsoft.VisualStudio.TextManager.Interop;
     using System;
     using System.ComponentModel.Design;
+    using System.Linq;
 
     internal sealed class GoToDefinitionCommand
     {
@@ -91,8 +92,9 @@ namespace AntlrVSIX.GoToDefinition
             if (file_name == null) return;
             var document = Workspaces.Workspace.Instance.FindDocument(file_name);
             var ref_pd = ParserDetailsFactory.Create(document);
-            var location = LanguageServer.Module.FindDef(span.Start.Position, document);
-            if (location == null) return;
+            var list_location = LanguageServer.Module.FindDef(span.Start.Position, document);
+            if (list_location == null || !list_location.Any()) return;
+            var location = list_location.First();
             var sym = LanguageServer.Module.GetDocumentSymbol(location.range.Start.Value, location.uri);
             if (sym == null) return;
             string full_file_name = location.uri.FullPath;

@@ -107,20 +107,22 @@
             nestedScopesNotSymbols.Add(scope);
         }
 
-        public virtual ISymbol LookupType(string name, bool alias = false)
+        public virtual IList<ISymbol> LookupType(string name, bool alias = false)
         {
+            List<ISymbol> result = new List<ISymbol>();
             if (!alias)
             {
                 symbols.TryGetValue(name, out ISymbol s);
                 if (s != null)
                 {
-                    return s;
+                    result.Add(s);
                 }
                 // if not here, check any enclosing scope
                 IScope parent = EnclosingScope;
                 if (parent != null)
                 {
-                    return parent.LookupType(name, alias);
+                    var possibles = parent.LookupType(name, alias);
+                    if (possibles.Any()) result.AddRange(possibles);
                 }
                 // If not here, check enclosing "import" scopes.
                 foreach (var sc in this.nestedScopesNotSymbols)
@@ -133,12 +135,11 @@
                             var res = sub_scope.LookupType(name);
                             if (res != null)
                             {
-                                return res;
+                                if (res.Any()) result.AddRange(res);
                             }
                         }
                     }
                 }
-                return null; // not found
             }
             else
             {
@@ -151,13 +152,13 @@
                     }
                     return false;
                 });
-                if (list.Count() > 1) return null;
-                if (list.Count() == 1) return list.First().Value;
+                if (list.Any()) result.AddRange(list.Select(l => l.Value));
                 // if not here, check any enclosing scope
                 IScope parent = EnclosingScope;
                 if (parent != null)
                 {
-                    return parent.LookupType(name, alias);
+                    var possibles = parent.LookupType(name, alias);
+                    if (possibles.Any()) result.AddRange(possibles);
                 }
                 // If not here, check enclosing "import" scopes.
                 foreach (var sc in this.nestedScopesNotSymbols)
@@ -170,13 +171,13 @@
                             var res = sub_scope.LookupType(name);
                             if (res != null)
                             {
-                                return res;
+                                if (res.Any()) result.AddRange(res);
                             }
                         }
                     }
                 }
-                return null; // not found
             }
+            return result;
         }
 
         public virtual void define(ref ISymbol sym)

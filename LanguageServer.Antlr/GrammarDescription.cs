@@ -222,34 +222,42 @@
             "channel"
         };
 
-        public List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>, IParseTree, bool>> Identify { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>, IParseTree, bool>>()
+        public List<Func<IGrammarDescription, Dictionary<IParseTree, IList<CombinedScopeSymbol>>, IParseTree, bool>> Identify { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, IList<CombinedScopeSymbol>>, IParseTree, bool>>()
         {
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // nonterminal = 0
+            (IGrammarDescription gd, Dictionary<IParseTree, IList<CombinedScopeSymbol>> st, IParseTree t) => // nonterminal = 0
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
-                    st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-                    if (value != null && value is Symtab.RefSymbol && ((Symtab.RefSymbol)value).Def is Symtab.NonterminalSymbol)
+                    st.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
+                    if (list_value == null) return false;
+                    foreach (var value in list_value)
                     {
-                        return true;
+                        if (value is RefSymbol && ((RefSymbol)value).Def is NonterminalSymbol)
+                        {
+                            return true;
+                        }
                     }
                     return false;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // terminal = 1
+            (IGrammarDescription gd, Dictionary<IParseTree, IList<CombinedScopeSymbol>> st, IParseTree t) => // terminal = 1
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
-                    st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-                    if (value != null && value is Symtab.RefSymbol && ((Symtab.RefSymbol)value).Def is Symtab.TerminalSymbol)
+                    st.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
+                    if (list_value == null) return false;
+                    foreach (var value in list_value)
                     {
-                        return true;
+                        if (value is RefSymbol && ((RefSymbol)value).Def is TerminalSymbol)
+                        {
+                            return true;
+                        }
                     }
                     return false;
                 },
             null, // comment = 2
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // keyword = 3
+            (IGrammarDescription gd, Dictionary<IParseTree, IList<CombinedScopeSymbol>> st, IParseTree t) => // keyword = 3
                 {
                     TerminalNodeImpl nonterm = t as TerminalNodeImpl;
                     if (nonterm == null) return false;
@@ -257,7 +265,7 @@
                     if (!_antlr_keywords.Contains(text)) return false;
                     return true;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // literal = 4
+            (IGrammarDescription gd, Dictionary<IParseTree, IList<CombinedScopeSymbol>> st, IParseTree t) => // literal = 4
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -277,19 +285,23 @@
                     }
                     return false;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // mode = 5
+            (IGrammarDescription gd, Dictionary<IParseTree, IList<CombinedScopeSymbol>> st, IParseTree t) => // mode = 5
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
-                    st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-                    if (value != null && value is Symtab.RefSymbol && ((Symtab.RefSymbol)value).Def is Symtab.ModeSymbol)
+                    st.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
+                    if (list_value == null) return false;
+                    foreach (var value in list_value)
                     {
-                        return true;
+                        if (value is RefSymbol && ((RefSymbol)value).Def is ModeSymbol)
+                        {
+                            return true;
+                        }
                     }
                     return false;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // channel = 6
+            (IGrammarDescription gd, Dictionary<IParseTree, IList<CombinedScopeSymbol>> st, IParseTree t) => // channel = 6
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
@@ -308,56 +320,72 @@
                 }
         };
 
-        public List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>, IParseTree, bool>> IdentifyDefinition { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, Symtab.CombinedScopeSymbol>, IParseTree, bool>>()
+        public List<Func<IGrammarDescription, Dictionary<IParseTree, IList<CombinedScopeSymbol>>, IParseTree, bool>> IdentifyDefinition { get; } = new List<Func<IGrammarDescription, Dictionary<IParseTree, IList<CombinedScopeSymbol>>, IParseTree, bool>>()
         {
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // nonterminal
+            (IGrammarDescription gd, Dictionary<IParseTree, IList<CombinedScopeSymbol>> st, IParseTree t) => // nonterminal
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
-                    st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-                    if (value != null && value is Symtab.NonterminalSymbol)
+                    st.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
+                    if (list_value == null) return false;
+                    foreach (var value in list_value)
                     {
-                        return true;
+                        if (value is NonterminalSymbol)
+                        {
+                            return true;
+                        }
                     }
                     return false;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // terminal
+            (IGrammarDescription gd, Dictionary<IParseTree, IList<CombinedScopeSymbol>> st, IParseTree t) => // terminal
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
-                    st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-                    if (value != null && value is Symtab.TerminalSymbol)
+                    st.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
+                    if (list_value == null) return false;
+                    foreach (var value in list_value)
                     {
-                        return true;
+                        if (value is TerminalSymbol)
+                        {
+                            return true;
+                        }
                     }
                     return false;
                 },
             null, // comment
             null, // keyword
             null, // literal
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // mode
+            (IGrammarDescription gd, Dictionary<IParseTree, IList<CombinedScopeSymbol>> st, IParseTree t) => // mode
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
-                    st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-                    if (value != null && value is Symtab.ModeSymbol)
+                    st.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
+                    if (list_value == null) return false;
+                    foreach (var value in list_value)
                     {
-                        return true;
+                        if (value is ModeSymbol)
+                        {
+                            return true;
+                        }
                     }
                     return false;
                 },
-            (IGrammarDescription gd, Dictionary<IParseTree, Symtab.CombinedScopeSymbol> st, IParseTree t) => // channel
+            (IGrammarDescription gd, Dictionary<IParseTree, IList<CombinedScopeSymbol>> st, IParseTree t) => // channel
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
-                    st.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-                    if (value != null && value is Symtab.ChannelSymbol)
+                    st.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
+                    if (list_value == null) return false;
+                    foreach (var value in list_value)
                     {
-                        return true;
+                        if (value is ChannelSymbol)
+                        {
+                            return true;
+                        }
                     }
                     return false;
                 }
@@ -377,37 +405,42 @@
                     if (term == null) return null;
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     var dir = System.IO.Path.GetDirectoryName(pd.Item.FullPath);
-                    pd.Attributes.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-                    if (value == null) return null;
-                    var sym = value as ISymbol;
-                    if (sym == null) return null;
-                    if (sym is Symtab.RefSymbol)
-                    {
-                        sym = sym.resolve();
-                    }
+                    pd.Attributes.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
                     StringBuilder sb = new StringBuilder();
-                    if (sym is Symtab.TerminalSymbol)
-                        sb.Append("Terminal ");
-                    else if (sym is Symtab.NonterminalSymbol)
-                        sb.Append("Nonterminal ");
-                    else return null;
-                    var def_file = sym.file;
-                    if (def_file == null) return null;
-                    var def_document = Workspaces.Workspace.Instance.FindDocument(def_file);
-                    if (def_document == null) return null;
-                    var def_pd = ParserDetailsFactory.Create(def_document);
-                    if (def_pd == null) return null;
-                    var fod = def_pd.Attributes.Where(kvp => kvp.Value == sym).Select(kvp => kvp.Key).FirstOrDefault();
-                    if (fod == null) return sb.ToString();
-                    sb.Append("defined in ");
-                    sb.Append(sym.file);
-                    sb.AppendLine();
-                    var node = fod;
-                    for (; node != null; node = node.Parent)
-                        if (node is ANTLRv4Parser.LexerRuleSpecContext ||
-                            node is ANTLRv4Parser.ParserRuleSpecContext) break;
-                    if (node == null) return null;
-                    Reconstruct.Doit(sb, node);
+                    foreach (var value in list_value)
+                    {
+                        if (value == null) continue;
+                        var sym = value as ISymbol;
+                        if (sym == null) continue;
+                        if (sym is RefSymbol)
+                        {
+                            sym = sym.resolve();
+                        }
+                        if (sym is TerminalSymbol)
+                            sb.Append("Terminal ");
+                        else if (sym is NonterminalSymbol)
+                            sb.Append("Nonterminal ");
+                        else continue;
+                        var def_file = sym.file;
+                        if (def_file == null) continue;
+                        var def_document = Workspaces.Workspace.Instance.FindDocument(def_file);
+                        if (def_document == null) continue;
+                        var def_pd = ParserDetailsFactory.Create(def_document);
+                        if (def_pd == null) continue;
+                        var fod = def_pd.Attributes.Where(
+                            kvp => kvp.Value.Contains(value))
+                            .Select(kvp => kvp.Key).FirstOrDefault();
+                        if (fod == null) continue;
+                        sb.Append("defined in ");
+                        sb.Append(sym.file);
+                        sb.AppendLine();
+                        var node = fod;
+                        for (; node != null; node = node.Parent)
+                            if (node is ANTLRv4Parser.LexerRuleSpecContext ||
+                                node is ANTLRv4Parser.ParserRuleSpecContext) break;
+                        if (node == null) continue;
+                        Reconstruct.Doit(sb, node);
+                    }
                     return sb.ToString();
                 },
             (ParserDetails pd, IParseTree t) => // terminal
@@ -415,37 +448,43 @@
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return null;
                     Antlr4.Runtime.Tree.IParseTree p = term;
-                    pd.Attributes.TryGetValue(p, out Symtab.CombinedScopeSymbol value);
-                    if (value == null) return null;
-                    var sym = value as ISymbol;
-                    if (sym == null) return null;
-                    if (sym is Symtab.RefSymbol)
-                    {
-                        sym = sym.resolve();
-                    }
+                    var dir = System.IO.Path.GetDirectoryName(pd.Item.FullPath);
+                    pd.Attributes.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
                     StringBuilder sb = new StringBuilder();
-                    if (sym is Symtab.TerminalSymbol)
-                        sb.Append("Terminal ");
-                    else if (sym is Symtab.NonterminalSymbol)
-                        sb.Append("Nonterminal ");
-                    else return null;
-                    var def_file = sym.file;
-                    if (def_file == null) return null;
-                    var def_document = Workspaces.Workspace.Instance.FindDocument(def_file);
-                    if (def_document == null) return null;
-                    var def_pd = ParserDetailsFactory.Create(def_document);
-                    if (def_pd == null) return null;
-                    var fod = def_pd.Attributes.Where(kvp => kvp.Value == sym).Select(kvp => kvp.Key).FirstOrDefault();
-                    if (fod == null) return sb.ToString();
-                    sb.Append("defined in ");
-                    sb.Append(sym.file);
-                    sb.AppendLine();
-                    var node = fod;
-                    for (; node != null; node = node.Parent)
-                        if (node is ANTLRv4Parser.LexerRuleSpecContext ||
-                            node is ANTLRv4Parser.ParserRuleSpecContext) break;
-                    if (node == null) return null;
-                    Reconstruct.Doit(sb, node);
+                    foreach (var value in list_value)
+                    {
+                        if (value == null) continue;
+                        var sym = value as ISymbol;
+                        if (sym == null) continue;
+                        if (sym is RefSymbol)
+                        {
+                            sym = sym.resolve();
+                        }
+                        if (sym is TerminalSymbol)
+                            sb.Append("Terminal ");
+                        else if (sym is NonterminalSymbol)
+                            sb.Append("Nonterminal ");
+                        else continue;
+                        var def_file = sym.file;
+                        if (def_file == null) continue;
+                        var def_document = Workspaces.Workspace.Instance.FindDocument(def_file);
+                        if (def_document == null) continue;
+                        var def_pd = ParserDetailsFactory.Create(def_document);
+                        if (def_pd == null) continue;
+                        var fod = def_pd.Attributes.Where(
+                            kvp => kvp.Value.Contains(value))
+                            .Select(kvp => kvp.Key).FirstOrDefault();
+                        if (fod == null) continue;
+                        sb.Append("defined in ");
+                        sb.Append(sym.file);
+                        sb.AppendLine();
+                        var node = fod;
+                        for (; node != null; node = node.Parent)
+                            if (node is ANTLRv4Parser.LexerRuleSpecContext ||
+                                node is ANTLRv4Parser.ParserRuleSpecContext) break;
+                        if (node == null) continue;
+                        Reconstruct.Doit(sb, node);
+                    }
                     return sb.ToString();
                 },
             null, // comment

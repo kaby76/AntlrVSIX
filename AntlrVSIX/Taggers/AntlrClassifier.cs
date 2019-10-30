@@ -120,32 +120,38 @@
 
         async void OnTextChanged(object sender, TextContentChangedEventArgs args)
         {
-            var s = source;
-            var t = task;
-            if (s != null)
+            try
             {
-                s.Cancel();
-            }
+                var s = source;
+                var t = task;
+                if (s != null)
+                {
+                    s.Cancel();
+                }
+                {
+                    s = source = new CancellationTokenSource();
+                    t = task = Task.Run(async delegate
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(3), s.Token);
+                        return 42;
+                    });
+                    try
+                    {
+                        await t;
+                    }
+                    catch (Exception)
+                    {
+                    }
+                    if (t.Status == TaskStatus.RanToCompletion)
+                    {
+                        ReparseFile(sender, args);
+                    }
+                    source = null;
+                    task = null;
+                }
+            } catch (Exception)
             {
-                s = source = new CancellationTokenSource();
-                t = task = Task.Run(async delegate
-                {
-                    await Task.Delay(TimeSpan.FromSeconds(3), s.Token);
-                    return 42;
-                });
-                try
-                {
-                    await t;
-                }
-                catch (Exception)
-                {
-                }
-                if (t.Status == TaskStatus.RanToCompletion)
-                {
-                    ReparseFile(sender, args);
-                }
-                source = null;
-                task = null;
+                // Log errors.
             }
         }
 

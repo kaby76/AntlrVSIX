@@ -28,10 +28,13 @@
                 {
                     if (EnclosingScope != null)
                     {
-                        ISymbol superClass = EnclosingScope.LookupType(superClassName);
-                        if (superClass is ClassSymbol)
+                        IList<ISymbol> superClasslist = EnclosingScope.LookupType(superClassName);
+                        foreach (var superClass in superClasslist)
                         {
-                            return (ClassSymbol)superClass;
+                            if (superClass is ClassSymbol)
+                            {
+                                return (ClassSymbol)superClass;
+                            }
                         }
                     }
                 }
@@ -56,9 +59,9 @@
             }
         }
 
-        public override ISymbol LookupType(string name, bool alias = false)
+        public override IList<ISymbol> LookupType(string name, bool alias = false)
         {
-            ISymbol s = resolveMember(name);
+            IList<ISymbol> s = resolveMember(name);
             if (s != null)
             {
                 return s;
@@ -76,12 +79,13 @@
         /// Look for a member with this name in this scope or any super class.
         ///  Return null if no member found.
         /// </summary>
-        public override ISymbol resolveMember(string name)
+        public override IList<ISymbol> resolveMember(string name)
         {
+            List<ISymbol> result = new List<ISymbol>();
             symbols.TryGetValue(name, out ISymbol s);
             if (s is IMemberSymbol)
             {
-                return s;
+                result.Add(s);
             }
             // walk superclass chain
             IList<ClassSymbol> superClassScopes = SuperClassScopes;
@@ -89,42 +93,53 @@
             {
                 foreach (ClassSymbol sup in superClassScopes)
                 {
-                    s = sup.resolveMember(name);
-                    if (s is IMemberSymbol)
+                    var list = sup.resolveMember(name);
+                    foreach (var ss in list)
                     {
-                        return s;
+                        if (ss is IMemberSymbol)
+                        {
+                            result.Add(ss);
+                        }
                     }
                 }
             }
-            return null;
+            return result;
         }
 
         /// <summary>
         /// Look for a field with this name in this scope or any super class.
         ///  Return null if no field found.
         /// </summary>
-        public override ISymbol resolveField(string name)
+        public override IList<FieldSymbol> resolveField(string name)
         {
-            ISymbol s = resolveMember(name);
-            if (s is FieldSymbol)
+            var result = new List<FieldSymbol>(); 
+            var list = resolveMember(name);
+            foreach (var s in list)
             {
-                return s;
+                if (s is FieldSymbol)
+                {
+                    result.Add(s as FieldSymbol);
+                }
             }
-            return null;
+            return result;
         }
 
         /// <summary>
         /// Look for a method with this name in this scope or any super class.
         ///  Return null if no method found.
         /// </summary>
-        public virtual MethodSymbol resolveMethod(string name)
+        public virtual IList<MethodSymbol> resolveMethod(string name)
         {
-            ISymbol s = resolveMember(name);
-            if (s is MethodSymbol)
+            var result = new List<MethodSymbol>();
+            var list = resolveMember(name);
+            foreach (var s in list)
             {
-                return (MethodSymbol)s;
+                if (s is MethodSymbol)
+                {
+                    result.Add(s as MethodSymbol);
+                }
             }
-            return null;
+            return result;
         }
 
         public virtual string SuperClass
@@ -155,9 +170,10 @@
                     ClassSymbol superClass = SuperClassScope;
                     if (superClass != null)
                     {
-                        MethodSymbol superMethodSym = superClass.resolveMethod(sym.Name);
-                        if (superMethodSym != null)
+                        var list = superClass.resolveMethod(sym.Name);
+                        if (list.Count == 1)
                         {
+                            MethodSymbol superMethodSym = list[0];
                             msym.slot = superMethodSym.slot;
                         }
                     }
