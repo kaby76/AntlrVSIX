@@ -9,7 +9,8 @@
         public Pass3Listener(AntlrParserDetails pd)
         {
             _pd = pd;
-            AntlrParserDetails._dependent_grammars.Add(_pd.FullFileName);
+            if (!AntlrParserDetails._dependent_grammars.ContainsKey(_pd.FullFileName))
+                AntlrParserDetails._dependent_grammars.Add(_pd.FullFileName);
         }
 
         public override void EnterOption([NotNull] ANTLRv4Parser.OptionContext context)
@@ -24,7 +25,19 @@
             dep = Workspaces.Util.GetProperFilePathCapitalization(dep);
             if (dep == null) return;
             _pd.Imports.Add(dep);
-            AntlrParserDetails._dependent_grammars.Add(dep, file);
+            if (!AntlrParserDetails._dependent_grammars.ContainsKey(dep))
+                AntlrParserDetails._dependent_grammars.Add(dep);
+            bool found = false;
+            foreach (var f in AntlrParserDetails._dependent_grammars[dep])
+            {
+                if (f == file)
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if (! found)
+                AntlrParserDetails._dependent_grammars.Add(dep, file);
         }
 
         public override void EnterDelegateGrammar([NotNull] ANTLRv4Parser.DelegateGrammarContext context)
@@ -38,7 +51,19 @@
             dep = Workspaces.Util.GetProperFilePathCapitalization(dep);
             if (dep == null) return;
             _pd.Imports.Add(dep);
-            AntlrParserDetails._dependent_grammars.Add(dep, file);
+            if (!AntlrParserDetails._dependent_grammars.ContainsKey(dep))
+                AntlrParserDetails._dependent_grammars.Add(dep);
+            bool found = false;
+            foreach (var f in AntlrParserDetails._dependent_grammars[dep])
+            {
+                if (f == file)
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+                AntlrParserDetails._dependent_grammars.Add(dep, file);
         }
     }
 }

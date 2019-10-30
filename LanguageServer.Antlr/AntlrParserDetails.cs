@@ -66,10 +66,27 @@
                 var root = _scopes[this.FullFileName];
                 foreach (var dep in this.Imports)
                 {
-                    var import = new SearchPathScope(root);
+                    // Don't add if already have this search path.
                     var dep_scope = _scopes[dep];
-                    import.nest(dep_scope);
-                    root.nest(import);
+                    bool found = false;
+                    foreach (var scope in root.NestedScopes)
+                    {
+                        if (scope is SearchPathScope)
+                        {
+                            var spc = scope as SearchPathScope;
+                            if (spc.NestedScopes.First() == dep_scope)
+                            {
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (! found)
+                    {
+                        var import = new SearchPathScope(root);
+                        import.nest(dep_scope);
+                        root.nest(import);
+                    }
                 }
                 root.empty();
                 this.RootScope = root;
