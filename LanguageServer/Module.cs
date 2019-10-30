@@ -201,6 +201,10 @@
                 if (q.Payload == null) continue;
                 var y = q.Payload.StartIndex;
                 var z = q.Payload.StopIndex;
+                if (y < 0)
+                    y = 0;
+                if (z < 0)
+                    z = 0;
                 var a = y;
                 var b = z + 1;
                 int start_token_start = a;

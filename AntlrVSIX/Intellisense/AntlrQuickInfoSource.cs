@@ -65,6 +65,8 @@ namespace AntlrVSIX
             ITextView view = session.TextView;
             var len = 1 + info.Range.End.Value - info.Range.Start.Value;
             var start = info.Range.Start.Value;
+            if (len + start > view.TextSnapshot.Length)
+                len = len - (len + start - view.TextSnapshot.Length);
             SnapshotSpan span = new SnapshotSpan(view.TextSnapshot, new Span(start, len));
             var tracking_span = _buffer.CurrentSnapshot.CreateTrackingSpan(span, SpanTrackingMode.EdgeInclusive);
             return Task.FromResult(new QuickInfoItem(tracking_span, info.Display));
