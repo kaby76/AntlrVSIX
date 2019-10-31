@@ -410,10 +410,14 @@ namespace LanguageServer.Java
                 }
                 if (p == null) return;
                 {
-                    var sc = _pd.Attributes[p];
-                    ((IScope)sc).define(ref f);
-                    _pd.Attributes[context.GetChild(0)] = new List<CombinedScopeSymbol>() { (CombinedScopeSymbol)f };
-                    _pd.Attributes[context] = new List<CombinedScopeSymbol>() { (CombinedScopeSymbol)f };
+                    var ss = _pd.Attributes[p];
+                    if (ss != null && ss.Count == 1)
+                    {
+                        var sc = ss[0];
+                        ((IScope)sc).define(ref f);
+                        _pd.Attributes[context.GetChild(0)] = new List<CombinedScopeSymbol>() { (CombinedScopeSymbol)f };
+                        _pd.Attributes[context] = new List<CombinedScopeSymbol>() { (CombinedScopeSymbol)f };
+                    }
                 }
             }
             else if (parent is Java9Parser.VariableDeclaratorIdContext)

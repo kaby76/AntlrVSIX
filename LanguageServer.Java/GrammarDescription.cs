@@ -268,6 +268,7 @@ namespace LanguageServer.Java
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     st.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
+                    if (list_value == null) return false;
                     foreach (var value in list_value)
                     {
                         if (value != null && value is RefSymbol && ((RefSymbol)value).Def is VariableSymbol)
@@ -283,6 +284,7 @@ namespace LanguageServer.Java
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     st.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
+                    if (list_value == null) return false;
                     foreach (var value in list_value)
                     {
                         if (value != null && value is RefSymbol && ((RefSymbol)value).Def is MethodSymbol)
@@ -315,6 +317,7 @@ namespace LanguageServer.Java
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     st.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
+                    if (list_value == null) return false;
                     foreach (var value in list_value)
                     {
                         if (value != null && value is RefSymbol && ((RefSymbol)value).Def is Literal)
@@ -330,6 +333,7 @@ namespace LanguageServer.Java
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     st.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
+                    if (list_value == null) return false;
                     foreach (var value in list_value)
                     {
                         if (value != null && value is RefSymbol && ((RefSymbol)value).Def is ClassSymbol)
@@ -349,6 +353,7 @@ namespace LanguageServer.Java
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     st.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
+                    if (list_value == null) return false;
                     foreach (var value in list_value)
                     {
                         if (value != null && value is RefSymbol && ((RefSymbol)value).Def is FieldSymbol)
@@ -368,6 +373,7 @@ namespace LanguageServer.Java
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     st.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
+                    if (list_value == null) return false;
                     foreach (var value in list_value)
                     {
                         if (value != null)
@@ -391,6 +397,7 @@ namespace LanguageServer.Java
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     st.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
+                    if (list_value == null) return false;
                     foreach (var value in list_value)
                     {
                         if (value != null && value is MethodSymbol)
@@ -411,6 +418,7 @@ namespace LanguageServer.Java
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     st.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
+                    if (list_value == null) return false;
                     foreach (var value in list_value)
                     {
                         if (value != null && value is ClassSymbol)
@@ -426,6 +434,7 @@ namespace LanguageServer.Java
                     if (term == null) return false;
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     st.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
+                    if (list_value == null) return false;
                     foreach (var value in list_value)
                     {
                         if (value != null && value is FieldSymbol)
@@ -446,6 +455,7 @@ namespace LanguageServer.Java
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     var dir = System.IO.Path.GetDirectoryName(pd.Item.FullPath);
                     pd.Attributes.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
+                    if (list_value == null) return null;
                     StringBuilder sb = new StringBuilder();
                     foreach (var value in list_value)
                     {
@@ -491,6 +501,7 @@ namespace LanguageServer.Java
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     var dir = System.IO.Path.GetDirectoryName(pd.Item.FullPath);
                     pd.Attributes.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
+                    if (list_value == null) return null;
                     StringBuilder sb = new StringBuilder();
                     foreach (var value in list_value)
                     {
@@ -533,6 +544,7 @@ namespace LanguageServer.Java
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     var dir = System.IO.Path.GetDirectoryName(pd.Item.FullPath);
                     pd.Attributes.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
+                    if (list_value == null) return null;
                     StringBuilder sb = new StringBuilder();
                     foreach (var value in list_value)
                     {

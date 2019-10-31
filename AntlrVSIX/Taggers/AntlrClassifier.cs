@@ -103,7 +103,7 @@
             }
             catch (Exception exception)
             {
-                Logger.Log.Notify(exception.StackTrace);
+                Logger.Log.Notify(exception.ToString());
             }
         }
 

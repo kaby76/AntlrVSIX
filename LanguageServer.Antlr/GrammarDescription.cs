@@ -406,6 +406,7 @@
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     var dir = System.IO.Path.GetDirectoryName(pd.Item.FullPath);
                     pd.Attributes.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
+                    if (list_value == null) return null;
                     StringBuilder sb = new StringBuilder();
                     foreach (var value in list_value)
                     {
@@ -450,6 +451,7 @@
                     Antlr4.Runtime.Tree.IParseTree p = term;
                     var dir = System.IO.Path.GetDirectoryName(pd.Item.FullPath);
                     pd.Attributes.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
+                    if (list_value == null) return null;
                     StringBuilder sb = new StringBuilder();
                     foreach (var value in list_value)
                     {
