@@ -59,7 +59,7 @@
         {
             Application.Current.Dispatcher.Invoke((Action)delegate {
                 AboutBox inputDialog = new AboutBox();
-                inputDialog.ShowDialog();
+                inputDialog.Show();
             });
         }
     }
