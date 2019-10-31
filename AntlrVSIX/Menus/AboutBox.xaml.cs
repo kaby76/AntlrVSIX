@@ -6,7 +6,6 @@
     using EnvDTE;
     using System;
     using System.Diagnostics;
-    using System.Windows;
     using Window = System.Windows.Window;
 
     public partial class AboutBox : Window
