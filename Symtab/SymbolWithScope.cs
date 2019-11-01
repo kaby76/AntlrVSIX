@@ -33,6 +33,7 @@
                 EnclosingScope = value;
             }
         }
+
         public override IScope EnclosingScope
         {
             get
@@ -83,7 +84,6 @@
             }
         }
 
-
         public override int NumberOfSymbols
         {
             get
@@ -92,10 +92,10 @@
             }
         }
 
-        public virtual int line { get; }
-        public virtual int col { get; }
-        public virtual string file { get; }
-        public virtual IToken Token { get; }
+        public virtual int line { get { return Token != null ? Token.Line : 0; } }
+        public virtual int col { get { return Token != null ? Token.Column : 0; } }
+        public virtual string file { get { return Token != null ? Token.InputStream.SourceName : ""; } }
+        public virtual IToken Token { get; protected set; }
 
         public override bool Equals(object obj)
         {
