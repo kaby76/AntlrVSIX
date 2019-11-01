@@ -475,14 +475,19 @@ namespace LanguageServer.Java
                         if (def_document == null) continue;
                         var def_pd = ParserDetailsFactory.Create(def_document);
                         if (def_pd == null) continue;
-                        var fod = def_pd.Attributes.Where(kvp => kvp.Value == sym).Select(kvp => kvp.Key).FirstOrDefault();
+                        // Note: Compiler fails to catch comparison of ISymbol to a IList<CombinedScopeSymbol>. How is this possible?
+                        //var fod = def_pd.Attributes.Where(kvp => kvp.Value == sym).Select(kvp => kvp.Key).FirstOrDefault();
+                        var fod = def_pd.Attributes.Where(
+                            kvp => kvp.Value.Contains(value))
+                            .Select(kvp => kvp.Key).FirstOrDefault();
                         if (fod == null) continue;
                         sb.Append("defined in ");
                         sb.Append(sym.file);
                         sb.AppendLine();
                         var node = fod;
                         for (; node != null; node = node.Parent)
-                            if (node is Java9Parser.LocalVariableDeclarationContext
+                            if (node is Java9Parser.FieldDeclarationContext
+                            || node is Java9Parser.LocalVariableDeclarationContext
                             || node is Java9Parser.FormalParameterContext) break;
                         if (node == null) continue;
                         Reconstruct.Doit(sb, node);
@@ -521,7 +526,10 @@ namespace LanguageServer.Java
                         if (def_document == null) continue;
                         var def_pd = ParserDetailsFactory.Create(def_document);
                         if (def_pd == null) continue;
-                        var fod = def_pd.Attributes.Where(kvp => kvp.Value == sym).Select(kvp => kvp.Key).FirstOrDefault();
+                        //var fod = def_pd.Attributes.Where(kvp => kvp.Value == sym).Select(kvp => kvp.Key).FirstOrDefault();
+                        var fod = def_pd.Attributes.Where(
+                            kvp => kvp.Value.Contains(value))
+                            .Select(kvp => kvp.Key).FirstOrDefault();
                         if (fod == null) continue;
                         sb.Append("defined in ");
                         sb.Append(sym.file);
@@ -564,7 +572,10 @@ namespace LanguageServer.Java
                         if (def_document == null) continue;
                         var def_pd = ParserDetailsFactory.Create(def_document);
                         if (def_pd == null) continue;
-                        var fod = def_pd.Attributes.Where(kvp => kvp.Value == sym).Select(kvp => kvp.Key).FirstOrDefault();
+                        //var fod = def_pd.Attributes.Where(kvp => kvp.Value == sym).Select(kvp => kvp.Key).FirstOrDefault();
+                        var fod = def_pd.Attributes.Where(
+                            kvp => kvp.Value.Contains(value))
+                            .Select(kvp => kvp.Key).FirstOrDefault();
                         if (fod == null) continue;
                         sb.Append("defined in ");
                         sb.Append(sym.file);
