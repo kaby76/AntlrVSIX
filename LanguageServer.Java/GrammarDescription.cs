@@ -494,7 +494,52 @@ namespace LanguageServer.Java
                     }
                     return sb.ToString();
                 },
-            null,
+            (ParserDetails pd, IParseTree t) => // method
+                {
+                    TerminalNodeImpl term = t as TerminalNodeImpl;
+                    if (term == null) return null;
+                    Antlr4.Runtime.Tree.IParseTree p = term;
+                    var dir = System.IO.Path.GetDirectoryName(pd.Item.FullPath);
+                    pd.Attributes.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
+                    if (list_value == null) return null;
+                    StringBuilder sb = new StringBuilder();
+                    foreach (var value in list_value)
+                    {
+                        if (value == null) continue;
+                        var sym = value as ISymbol;
+                        if (sym == null) continue;
+                        if (sym is RefSymbol)
+                        {
+                            sym = sym.resolve();
+                        }
+                        if (sym is MethodSymbol)
+                            sb.Append("Method ");
+                        else continue;
+                        var def_file = sym.file;
+                        if (def_file == null) continue;
+                        var def_document = Workspaces.Workspace.Instance.FindDocument(def_file);
+                        if (def_document == null) continue;
+                        var def_pd = ParserDetailsFactory.Create(def_document);
+                        if (def_pd == null) continue;
+                        // Note: Compiler fails to catch comparison of ISymbol to a IList<CombinedScopeSymbol>. How is this possible?
+                        //var fod = def_pd.Attributes.Where(kvp => kvp.Value == sym).Select(kvp => kvp.Key).FirstOrDefault();
+                        var fod = def_pd.Attributes.Where(
+                            kvp => kvp.Value.Contains(value))
+                            .Select(kvp => kvp.Key).FirstOrDefault();
+                        if (fod == null) continue;
+                        sb.Append("defined in ");
+                        sb.Append(sym.file);
+                        sb.AppendLine();
+                        var node = fod;
+                        for (; node != null; node = node.Parent)
+                            if (node is Java9Parser.MethodDeclarationContext) break;
+                        if (node == null) continue;
+                        // Take all children except class body.
+                        int end = node.ChildCount - 1;
+                        Reconstruct.Doit(sb, node, 0, end);
+                    }
+                    return sb.ToString();
+                },
             null, // comment
             null, // keyword
             null, // keyword-control
