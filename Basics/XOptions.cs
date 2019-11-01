@@ -1,4 +1,4 @@
-﻿namespace LanguageServer
+﻿namespace Basics
 {
     using System.Collections.Generic;
 

@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Basics\Basics.csproj" />
     <ProjectReference Include="..\Graphs\Graphs.csproj" />
     <ProjectReference Include="..\Symtab\Symtab.csproj" />
     <ProjectReference Include="..\Workspaces\Workspaces.csproj" />

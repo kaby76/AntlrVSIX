@@ -68,7 +68,7 @@
         <CheckBox Name="override_java" Grid.Row="7" Grid.Column="1" Margin="10,0,10,10">Override any other Java plugins.</CheckBox>
         <CheckBox Name="override_python" Grid.Row="6" Grid.Column="0" Margin="10,0,10,10">Override any other Python plugins.</CheckBox>
         <CheckBox Name="override_rust" Grid.Row="7" Grid.Column="0" Margin="10,0,10,10">Override any other Rust plugins.</CheckBox>
-        <CheckBox Name="opt_in_reporting" Grid.Row="8" Grid.Column="0" Margin="10,0,10,10" >Opt-in to help development with logging of crashes.</CheckBox>
+        <CheckBox Name="opt_in_reporting" Grid.Row="8" Grid.Column="0" Margin="10,0,10,10" IsThreeState="True" >Opt-in to help development with logging of crashes.</CheckBox>
 
         <!-- Accept or Cancel -->
         <WrapPanel Grid.Row="14" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="10,0,0,0" >

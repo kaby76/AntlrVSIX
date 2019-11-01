@@ -27,7 +27,12 @@
             _o.OverrideJavaPluggins = inputDialog.override_java.IsChecked ?? false;
             _o.OverridePythonPluggins = inputDialog.override_python.IsChecked ?? false;
             _o.OverrideRustPluggins = inputDialog.override_rust.IsChecked ?? false;
-            _o.OptInLogging = inputDialog.opt_in_reporting.IsChecked ?? false;
+            _o.OptInLogging = inputDialog.opt_in_reporting.IsChecked switch
+                {
+                    true => 1,
+                    false => 2,
+                    _ => 0
+                };
 
             _s.SetBoolean("AntlrVSIX", "RestrictedDirectory", _o.RestrictedDirectory);
             _s.SetBoolean("AntlrVSIX", "NonInteractiveParse", _o.NonInteractiveParse);
@@ -38,7 +43,7 @@
             _s.SetBoolean("AntlrVSIX", "OverrideJavaPluggins", _o.OverrideJavaPluggins);
             _s.SetBoolean("AntlrVSIX", "OverridePythonPluggins", _o.OverridePythonPluggins);
             _s.SetBoolean("AntlrVSIX", "OverrideRustPluggins", _o.OverrideRustPluggins);
-            _s.SetBoolean("AntlrVSIX", "OptInLogging", _o.OptInLogging);
+            _s.SetInt32("AntlrVSIX", "OptInLogging", _o.OptInLogging);
             this.Close();
         }
 

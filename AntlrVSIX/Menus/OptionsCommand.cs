@@ -1,6 +1,6 @@
 ﻿namespace AntlrVSIX.Options
 {
-    using LanguageServer;
+    using Basics;
     using Microsoft.VisualStudio.Settings;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Shell.Settings;
@@ -58,10 +58,24 @@
             set { XOptions.SetProperty("OverrideRustPluggins", value ? "true" : "false"); }
         }
 
-        public bool OptInLogging
+        public int OptInLogging
         {
-            get { return XOptions.GetProperty("OptInLogging") == "true"; }
-            set { XOptions.SetProperty("OptInLogging", value ? "true" : "false"); }
+            get
+            {
+                var v = XOptions.GetProperty("OptInLogging");
+                if (v == "1") return 1;
+                else if (v == "2") return 2;
+                else return 0;
+            }
+            set
+            {
+                if (value == 1)
+                    XOptions.SetProperty("OptInLogging", "1");
+                else if (value == 2)
+                    XOptions.SetProperty("OptInLogging", "2");
+                else
+                    XOptions.SetProperty("OptInLogging", "0");
+            }
         }
 
         private OptionsCommand(Microsoft.VisualStudio.Shell.Package package)
@@ -96,7 +110,7 @@
             OverrideJavaPluggins = true;
             OverridePythonPluggins = true;
             OverrideRustPluggins = true;
-            OptInLogging = false;
+            OptInLogging = 0;
             var s = System.Environment.GetEnvironmentVariable("CORPUS_LOCATION");
             CorpusLocation = s == null ? "" : s;
         }
@@ -136,7 +150,7 @@
                         userSettingsStore.SetBoolean("AntlrVSIX", "OverrideJavaPluggins", OverrideJavaPluggins);
                         userSettingsStore.SetBoolean("AntlrVSIX", "OverridePythonPluggins", OverridePythonPluggins);
                         userSettingsStore.SetBoolean("AntlrVSIX", "OverrideRustPluggins", OverrideRustPluggins);
-                        userSettingsStore.SetBoolean("AntlrVSIX", "OptInLogging", OptInLogging);
+                        userSettingsStore.SetInt32("AntlrVSIX", "OptInLogging", OptInLogging);
                     }
                 }
 
@@ -149,7 +163,7 @@
                 OverrideJavaPluggins = userSettingsStore.GetBoolean("AntlrVSIX", "OverrideJavaPluggins", OverrideJavaPluggins);
                 OverridePythonPluggins = userSettingsStore.GetBoolean("AntlrVSIX", "OverridePythonPluggins", OverridePythonPluggins);
                 OverrideRustPluggins = userSettingsStore.GetBoolean("AntlrVSIX", "OverrideRustPluggins", OverrideRustPluggins);
-                OptInLogging = userSettingsStore.GetBoolean("AntlrVSIX", "OptInLogging", OptInLogging);
+                OptInLogging = userSettingsStore.GetInt32("AntlrVSIX", "OptInLogging", OptInLogging);
 
                 OptionsBox inputDialog = new OptionsBox(this, userSettingsStore);
 
@@ -162,7 +176,9 @@
                 inputDialog.override_java.IsChecked = OverrideJavaPluggins;
                 inputDialog.override_python.IsChecked = OverridePythonPluggins;
                 inputDialog.override_rust.IsChecked = OverrideRustPluggins;
-                inputDialog.opt_in_reporting.IsChecked = OptInLogging;
+                if (OptInLogging == 1) inputDialog.opt_in_reporting.IsChecked = true;
+                else if (OptInLogging == 2) inputDialog.opt_in_reporting.IsChecked = false;
+                else inputDialog.opt_in_reporting.IsChecked = null;
                 inputDialog.Show();
             });
         }
