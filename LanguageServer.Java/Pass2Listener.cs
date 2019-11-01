@@ -682,6 +682,63 @@
             }
         }
 
+        public override void EnterPrimaryNoNewArray_lfno_primary([NotNull] Java9Parser.PrimaryNoNewArray_lfno_primaryContext context)
+        {
+            // Synthesize attributes.
+            var first = context.GetChild(0);
+            if (first is TerminalNodeImpl)
+            {
+                var sy = first as TerminalNodeImpl;
+                bool is_statement = false;
+                for (var p = first.Parent; p != null; p = p.Parent)
+                {
+                    if (p is Java9Parser.StatementContext)
+                    {
+                        is_statement = true;
+                        break;
+                    }
+                    if (p is Java9Parser.BlockStatementContext)
+                    {
+                        is_statement = true;
+                        break;
+                    }
+                }
+                if (is_statement)
+                {
+                    var id_name = first.GetText();
+                    if (id_name == "this")
+                    {
+                        var scope = GetScope(NearestScope(context));
+                        var sc = scope;
+                        for (; sc != null; sc = sc.EnclosingScope)
+                        {
+                            if (sc is ClassSymbol) break;
+                        }
+                        if (sc != null)
+                        {
+                            _pd.Attributes[first] = new List<CombinedScopeSymbol>() { (CombinedScopeSymbol)sc };
+                            _pd.Attributes[context] = new List<CombinedScopeSymbol>() { (CombinedScopeSymbol)sc };
+                        }
+                    }
+                    else
+                    {
+                        var scope = GetScope(NearestScope(context));
+                        var list_s = scope.LookupType(id_name);
+                        var ref_list = new List<CombinedScopeSymbol>();
+                        foreach (var s in list_s)
+                        {
+                            ref_list.Add((CombinedScopeSymbol)new RefSymbol(sy.Symbol, s));
+                        }
+                        if (ref_list.Any())
+                        {
+                            _pd.Attributes[first] = ref_list;
+                            _pd.Attributes[context] = ref_list;
+                        }
+                    }
+                }
+            }
+        }
+
         public override void EnterIdentifier([NotNull] Java9Parser.IdentifierContext context)
         {
             var parent = context.Parent;
@@ -890,6 +947,25 @@
                 }
             }
             else if (parent is Java9Parser.UnannClassType_lfno_unannClassOrInterfaceTypeContext)
+            {
+                var scope = GetScope(NearestScope(context));
+                var sc = scope;
+                var id = context.GetText();
+                IList<ISymbol> list_s = sc.LookupType(id);
+                if (list_s == null || !list_s.Any()) return;
+                var sy = context.GetChild(0) as TerminalNodeImpl;
+                var ref_list = new List<CombinedScopeSymbol>();
+                foreach (var s in list_s)
+                {
+                    ref_list.Add((CombinedScopeSymbol)new RefSymbol(sy.Symbol, s));
+                }
+                if (ref_list.Any())
+                {
+                    _pd.Attributes[context.GetChild(0)] = ref_list;
+                    _pd.Attributes[context] = ref_list;
+                }
+            }
+            else if (parent is Java9Parser.MethodInvocation_lf_primaryContext)
             {
                 var scope = GetScope(NearestScope(context));
                 var sc = scope;
