@@ -915,6 +915,9 @@
                 var id = context.GetText();
                 IList<ISymbol> list_s = sc.LookupType(id);
                 if (list_s == null || !list_s.Any()) return;
+                // Note we need to eliminate ambiguity here. It could be
+                // a field or parameter or local variable. Just pick the first.
+                list_s = new List<ISymbol>() { list_s.First() };
                 var sy = context.GetChild(0) as TerminalNodeImpl;
                 var ref_list = new List<CombinedScopeSymbol>();
                 foreach (var s in list_s)
