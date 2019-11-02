@@ -70,6 +70,14 @@ just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio
 support for better modeling of Java's ClassPath, Antlr's imports, etc., so that scopes can be cleared out quickly and
 easily when the sources have changed.
 
+## New in v4.0.2:
+
+* Fixing issues in stability with Antlr and Java files.
+* Fixing https://github.com/kaby76/AntlrVSIX/issues/23
+* Fixing tool tips and highlighting for Java.
+* Updated symbol table to allow ambigous code editing.
+* Changing About and Options boxes to non-modal.
+
 ## New in v4.0.1:
 
 * Fixing stability issues with Antlr and Java files.
