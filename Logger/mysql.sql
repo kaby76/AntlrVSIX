@@ -1,0 +1,5 @@
+CREATE TABLE `log` (
+  `Id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `Message` varchar(20000) DEFAULT NULL,
+  PRIMARY KEY (`Id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;

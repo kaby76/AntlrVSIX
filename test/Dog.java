@@ -1,4 +1,4 @@
-public class Dog
+public class Dog extends Animal
 { 
     // Instance Variables 
     String name; 
@@ -8,50 +8,51 @@ public class Dog
 
     // Constructor Declaration of Class 
     public Dog(String name, String breed, 
-	       int age, String color) 
-    { 
-		this.name = name; 
-		this.breed = breed; 
-		this.age = age; 
-		this.color = color; 
-    } 
+               int age, String color)
+    {
+	super("", "");
+        this.name = name;
+        this.breed = breed;
+        this.age = age;
+        this.color = color;
+    }
 
     // method 1 
-    public String getName() 
-    { 
-		return name; 
+    public String getName()
+    {
+        return name; 
     } 
 
     // method 2 
     public String getBreed() 
     { 
-		return breed; 
+        return breed; 
     } 
 
     // method 3 
     public int getAge() 
     { 
-		return age; 
+        return age; 
     } 
 
     // method 4 
     public String getColor() 
     { 
-		return color; 
+        return color; 
     } 
 
     @Override
     public String toString() 
     { 
-		return("Hi my name is "+ this.getName()+ 
-			   ".\nMy breed,age and color are " + 
-			   this.getBreed()+"," + this.getAge()+ 
-			   ","+ this.getColor()); 
+        return("Hi my name is "+ this.getName()+ 
+                   ".\nMy breed,age and color are " + 
+                   this.getBreed()+"," + this.getAge()+ 
+                   ","+ this.getColor()); 
     } 
 
     public static void main(String[] args) 
     { 
-		Dog tuffy = new Dog("tuffy","papillon", 5, "white"); 
-		System.out.println(tuffy.toString()); 
+        Dog tuffy = new Dog("tuffy","papillon", 5, "white"); 
+        System.out.println(tuffy.toString()); 
     } 
 }

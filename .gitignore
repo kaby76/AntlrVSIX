@@ -41,3 +41,4 @@ tool/target/
 /build/nuget/
 f/
 AntlrVSIX.GrammarDescription.Antlr/.antlr/
+*.class
