@@ -133,9 +133,6 @@
     <Compile Include="Taggers\AntlrTokenTagger.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="NLog.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
@@ -258,9 +255,6 @@
       <Version>16.3.2099</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="NLog">
-      <Version>4.6.7</Version>
     </PackageReference>
     <PackageReference Include="System.Collections.Immutable">
       <Version>1.6.0</Version>

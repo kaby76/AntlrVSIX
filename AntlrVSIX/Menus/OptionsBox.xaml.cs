@@ -1,18 +1,16 @@
 ﻿namespace AntlrVSIX.Options
 {
-    using System;
     using System.Windows;
+    using Basics;
 
     public partial class OptionsBox : Window
     {
         OptionsCommand _o;
-        Microsoft.VisualStudio.Settings.WritableSettingsStore _s;
 
-        public OptionsBox(OptionsCommand o, Microsoft.VisualStudio.Settings.WritableSettingsStore s)
+        public OptionsBox(OptionsCommand o)
         {
             InitializeComponent();
             _o = o;
-            _s = s;
         }
 
         private void btnDialogOk_Click(object sender, RoutedEventArgs e)
@@ -34,16 +32,16 @@
                     _ => 0
                 };
 
-            _s.SetBoolean("AntlrVSIX", "RestrictedDirectory", _o.RestrictedDirectory);
-            _s.SetBoolean("AntlrVSIX", "NonInteractiveParse", _o.NonInteractiveParse);
-            _s.SetBoolean("AntlrVSIX", "GenerateVisitorListener", _o.GenerateVisitorListener);
-            _s.SetString("AntlrVSIX", "CorpusLocation", _o.CorpusLocation);
-            _s.SetBoolean("AntlrVSIX", "IncrementalReformat", _o.IncrementalReformat);
-            _s.SetBoolean("AntlrVSIX", "OverrideAntlrPluggins", _o.OverrideAntlrPluggins);
-            _s.SetBoolean("AntlrVSIX", "OverrideJavaPluggins", _o.OverrideJavaPluggins);
-            _s.SetBoolean("AntlrVSIX", "OverridePythonPluggins", _o.OverridePythonPluggins);
-            _s.SetBoolean("AntlrVSIX", "OverrideRustPluggins", _o.OverrideRustPluggins);
-            _s.SetInt32("AntlrVSIX", "OptInLogging", _o.OptInLogging);
+            POptions.SetBoolean("RestrictedDirectory", _o.RestrictedDirectory);
+            POptions.SetBoolean("NonInteractiveParse", _o.NonInteractiveParse);
+            POptions.SetBoolean("GenerateVisitorListener", _o.GenerateVisitorListener);
+            POptions.SetString("CorpusLocation", _o.CorpusLocation);
+            POptions.SetBoolean("IncrementalReformat", _o.IncrementalReformat);
+            POptions.SetBoolean("OverrideAntlrPluggins", _o.OverrideAntlrPluggins);
+            POptions.SetBoolean("OverrideJavaPluggins", _o.OverrideJavaPluggins);
+            POptions.SetBoolean("OverridePythonPluggins", _o.OverridePythonPluggins);
+            POptions.SetBoolean("OverrideRustPluggins", _o.OverrideRustPluggins);
+            POptions.SetInt32("OptInLogging", _o.OptInLogging);
             this.Close();
         }
 

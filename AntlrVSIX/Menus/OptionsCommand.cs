@@ -130,42 +130,32 @@
         {
             System.Windows.Application.Current.Dispatcher.Invoke((Action)delegate {
 
-                SettingsManager settingsManager = new ShellSettingsManager(ServiceProvider);
-                WritableSettingsStore userSettingsStore = settingsManager.GetWritableSettingsStore(SettingsScope.UserSettings);
-                try
+                if (! POptions.EverInitialized())
                 {
-                    IEnumerable<string> collection = userSettingsStore.GetSubCollectionNames("AntlrVSIX");
-                }
-                catch (Exception)
-                {
-                    userSettingsStore.CreateCollection("AntlrVSIX");
-                    IEnumerable<string> collection = userSettingsStore.GetSubCollectionNames("AntlrVSIX");
-                    {
-                        userSettingsStore.SetBoolean("AntlrVSIX", "RestrictedDirectory", RestrictedDirectory);
-                        userSettingsStore.SetBoolean("AntlrVSIX", "NonInteractiveParse", NonInteractiveParse);
-                        userSettingsStore.SetBoolean("AntlrVSIX", "GenerateVisitorListener", GenerateVisitorListener);
-                        userSettingsStore.SetString("AntlrVSIX", "CorpusLocation", CorpusLocation);
-                        userSettingsStore.SetBoolean("AntlrVSIX", "IncrementalReformat", IncrementalReformat);
-                        userSettingsStore.SetBoolean("AntlrVSIX", "OverrideAntlrPluggins", OverrideAntlrPluggins);
-                        userSettingsStore.SetBoolean("AntlrVSIX", "OverrideJavaPluggins", OverrideJavaPluggins);
-                        userSettingsStore.SetBoolean("AntlrVSIX", "OverridePythonPluggins", OverridePythonPluggins);
-                        userSettingsStore.SetBoolean("AntlrVSIX", "OverrideRustPluggins", OverrideRustPluggins);
-                        userSettingsStore.SetInt32("AntlrVSIX", "OptInLogging", OptInLogging);
-                    }
+                    POptions.SetBoolean("RestrictedDirectory", RestrictedDirectory);
+                    POptions.SetBoolean("NonInteractiveParse", NonInteractiveParse);
+                    POptions.SetBoolean("GenerateVisitorListener", GenerateVisitorListener);
+                    POptions.SetString("CorpusLocation", CorpusLocation);
+                    POptions.SetBoolean("IncrementalReformat", IncrementalReformat);
+                    POptions.SetBoolean("OverrideAntlrPluggins", OverrideAntlrPluggins);
+                    POptions.SetBoolean("OverrideJavaPluggins", OverrideJavaPluggins);
+                    POptions.SetBoolean("OverridePythonPluggins", OverridePythonPluggins);
+                    POptions.SetBoolean("OverrideRustPluggins", OverrideRustPluggins);
+                    POptions.SetInt32("OptInLogging", OptInLogging);
                 }
 
-                RestrictedDirectory = userSettingsStore.GetBoolean("AntlrVSIX", "RestrictedDirectory", RestrictedDirectory);
-                NonInteractiveParse = userSettingsStore.GetBoolean("AntlrVSIX", "NonInteractiveParse", NonInteractiveParse);
-                GenerateVisitorListener = userSettingsStore.GetBoolean("AntlrVSIX", "GenerateVisitorListener", GenerateVisitorListener);
-                CorpusLocation = userSettingsStore.GetString("AntlrVSIX", "CorpusLocation", CorpusLocation);
-                IncrementalReformat = userSettingsStore.GetBoolean("AntlrVSIX", "IncrementalReformat", IncrementalReformat);
-                OverrideAntlrPluggins = userSettingsStore.GetBoolean("AntlrVSIX", "OverrideAntlrPluggins", OverrideAntlrPluggins);
-                OverrideJavaPluggins = userSettingsStore.GetBoolean("AntlrVSIX", "OverrideJavaPluggins", OverrideJavaPluggins);
-                OverridePythonPluggins = userSettingsStore.GetBoolean("AntlrVSIX", "OverridePythonPluggins", OverridePythonPluggins);
-                OverrideRustPluggins = userSettingsStore.GetBoolean("AntlrVSIX", "OverrideRustPluggins", OverrideRustPluggins);
-                OptInLogging = userSettingsStore.GetInt32("AntlrVSIX", "OptInLogging", OptInLogging);
+                RestrictedDirectory = POptions.GetBoolean("RestrictedDirectory", RestrictedDirectory);
+                NonInteractiveParse = POptions.GetBoolean("NonInteractiveParse", NonInteractiveParse);
+                GenerateVisitorListener = POptions.GetBoolean("GenerateVisitorListener", GenerateVisitorListener);
+                CorpusLocation = POptions.GetString("CorpusLocation", CorpusLocation);
+                IncrementalReformat = POptions.GetBoolean("IncrementalReformat", IncrementalReformat);
+                OverrideAntlrPluggins = POptions.GetBoolean("OverrideAntlrPluggins", OverrideAntlrPluggins);
+                OverrideJavaPluggins = POptions.GetBoolean("OverrideJavaPluggins", OverrideJavaPluggins);
+                OverridePythonPluggins = POptions.GetBoolean("OverridePythonPluggins", OverridePythonPluggins);
+                OverrideRustPluggins = POptions.GetBoolean("OverrideRustPluggins", OverrideRustPluggins);
+                OptInLogging = POptions.GetInt32("OptInLogging", OptInLogging);
 
-                OptionsBox inputDialog = new OptionsBox(this, userSettingsStore);
+                OptionsBox inputDialog = new OptionsBox(this);
 
                 inputDialog.restricted_directory.IsChecked = RestrictedDirectory;
                 inputDialog.noninteractive.IsChecked = NonInteractiveParse;
