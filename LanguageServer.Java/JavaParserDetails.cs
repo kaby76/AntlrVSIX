@@ -66,7 +66,12 @@
                 foreach (var dep in this.Imports)
                 {
                     var import = new SearchPathScope(root);
-                    var dep_scope = _scopes[dep];
+                    _scopes.TryGetValue(dep, out IScope dep_scope);
+                    if (dep_scope == null)
+                    {
+                        _scopes[dep] = new FileScope(dep, null);
+                    }
+                    dep_scope = _scopes[dep];
                     import.nest(dep_scope);
                     root.nest(import);
                 }
