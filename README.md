@@ -49,6 +49,11 @@ For information on how to use AntlrVSIX, see the [User Guide](doc/readme.md), wh
 
 # Caveats:
 
+* I am in the process of reviewing the collection of Java grammars in
+[Antlr's grammar github repository](https://github.com/antlr/grammars-v4). Currently,
+Antlrvsix uses the slower [Java9 grammar](https://github.com/antlr/grammars-v4/blob/master/java9/Java9.g4).
+The faster, "official" Java grammar is [here](https://github.com/antlr/grammars-v4/tree/master/java).
+
 * Support for VS2015 and older editions has been removed.
 If you are interested in those, you can try using an older version of the extension.
 
