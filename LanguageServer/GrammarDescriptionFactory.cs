@@ -130,13 +130,13 @@
             {
                 if (gd.IsFileType(ffn))
                 {
-                    if (gd.Name.ToLower() == "antlr" && XOptions.GetProperty("OverrideAntlrPluggins") != "true")
+                    if (gd.Name.ToLower() == "antlr" && !POptions.GetBoolean("OverrideAntlrPluggins"))
                         return null;
-                    if (gd.Name.ToLower() == "java" && XOptions.GetProperty("OverrideJavaPluggins") != "true")
+                    if (gd.Name.ToLower() == "java" && !POptions.GetBoolean("OverrideJavaPluggins"))
                         return null;
-                    if (gd.Name.ToLower() == "python" && XOptions.GetProperty("OverridePythonPluggins") != "true")
+                    if (gd.Name.ToLower() == "python" && !POptions.GetBoolean("OverridePythonPluggins"))
                         return null;
-                    if (gd.Name.ToLower() == "rust" && XOptions.GetProperty("OverrideRustPluggins") != "true")
+                    if (gd.Name.ToLower() == "rust" && !POptions.GetBoolean("OverrideRustPluggins"))
                         return null;
                     return gd;
                 }

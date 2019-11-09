@@ -261,7 +261,7 @@
 
                 if (found_class.Count == 0)
                 {
-                    if (!Options.OptionsCommand.Instance.GenerateVisitorListener)
+                    if (!Basics.POptions.GetBoolean("GenerateVisitorListener"))
                         return;
 
                     // Look in grammar directory for any C# files.
@@ -429,7 +429,7 @@ namespace {name_space}
                 }
                 if (found_member == null)
                 {
-                    if (!Options.OptionsCommand.Instance.GenerateVisitorListener)
+                    if (!Basics.POptions.GetBoolean("GenerateVisitorListener") )
                         return;
 
                     // Find point for edit.

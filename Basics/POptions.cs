@@ -35,27 +35,65 @@
             persistent_settings.SetInt32("AntlrVSIX", option, value);
         }
 
-        public static bool GetBoolean(string option, bool default_value)
+        public static bool GetBoolean(string option)
         {
             Initialize();
+            bool default_value = false;
+            defaults.TryGetValue(option, out object value);
+            if (value == null)
+                default_value = false;
+            else if (value is bool)
+            {
+                default_value = (bool)value;
+            }
             return persistent_settings.GetBoolean("AntlrVSIX", option, default_value);
         }
 
-        public static string GetString(string option, string default_value)
+        public static string GetString(string option)
         {
             Initialize();
+            string default_value = "";
+            defaults.TryGetValue(option, out object value);
+            if (value == null)
+                default_value = "";
+            else if (value is string)
+            {
+                default_value = (string)value;
+            }
             return persistent_settings.GetString("AntlrVSIX", option, default_value);
         }
 
-        public static int GetInt32(string option, int default_value)
+        private static string s = System.Environment.GetEnvironmentVariable("CORPUS_LOCATION");
+        private static string CorpusLocation = s == null ? "" : s;
+
+        private static Dictionary<string, object> defaults = new Dictionary<string, object>()
+        {
+            {"IncrementalReformat", true },
+            {"NonInteractiveParse", false },
+            {"RestrictedDirectory", true },
+            {"GenerateVisitorListener", false },
+            {"OverrideAntlrPluggins", true },
+            {"OverrideJavaPluggins", true },
+            {"OverridePythonPluggins", true },
+            {"OverrideRustPluggins", true },
+            {"OptInLogging", 0 },
+            {"CorpusLocation", CorpusLocation },
+        };
+
+
+
+        public static int GetInt32(string option)
         {
             Initialize();
+            int default_value = 0;
+            defaults.TryGetValue(option, out object value);
+            if (value == null)
+                default_value = 0;
+            else if (value is Int32)
+            {
+                default_value = (int)value;
+            }
             return persistent_settings.GetInt32("AntlrVSIX", option, default_value);
-        }
-
-        public static bool EverInitialized()
-        {
-            return persistent_store_initialized;
         }
 
         private static void Initialize()
@@ -75,6 +113,38 @@
             {
                 persistent_settings.CreateCollection("AntlrVSIX");
                 persistent_store_initialized = false;
+            }
+            if (!persistent_store_initialized)
+            {
+                defaults.TryGetValue("RestrictedDirectory", out object RestrictedDirectory);
+                POptions.SetBoolean("RestrictedDirectory", (bool)RestrictedDirectory);
+
+                defaults.TryGetValue("NonInteractiveParse", out object NonInteractiveParse);
+                POptions.SetBoolean("NonInteractiveParse", (bool)NonInteractiveParse);
+
+                defaults.TryGetValue("GenerateVisitorListener", out object GenerateVisitorListener);
+                POptions.SetBoolean("GenerateVisitorListener", (bool)GenerateVisitorListener);
+
+                defaults.TryGetValue("CorpusLocation", out object CorpusLocation);
+                POptions.SetString("CorpusLocation", (string)CorpusLocation);
+
+                defaults.TryGetValue("IncrementalReformat", out object IncrementalReformat);
+                POptions.SetBoolean("IncrementalReformat", (bool)IncrementalReformat);
+
+                defaults.TryGetValue("OverrideAntlrPluggins", out object OverrideAntlrPluggins);
+                POptions.SetBoolean("OverrideAntlrPluggins", (bool)OverrideAntlrPluggins);
+
+                defaults.TryGetValue("OverrideJavaPluggins", out object OverrideJavaPluggins);
+                POptions.SetBoolean("OverrideJavaPluggins", (bool)OverrideJavaPluggins);
+
+                defaults.TryGetValue("OverridePythonPluggins", out object OverridePythonPluggins);
+                POptions.SetBoolean("OverridePythonPluggins", (bool)OverridePythonPluggins);
+
+                defaults.TryGetValue("OverrideRustPluggins", out object OverrideRustPluggins);
+                POptions.SetBoolean("OverrideRustPluggins", (bool)OverrideRustPluggins);
+
+                defaults.TryGetValue("OptInLogging", out object OptInLogging);
+                POptions.SetInt32("OptInLogging", (int)OptInLogging);
             }
             initialized = true;
         }
