@@ -21,6 +21,7 @@ namespace $safeprojectname$
             else
             {
                 System.Console.WriteLine("parse completed.");
+                System.Console.WriteLine(tokens.OutputTokens());
                 System.Console.WriteLine(tree.OutputTree(tokens));
             }
         }

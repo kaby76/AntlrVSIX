@@ -15,6 +15,16 @@ namespace $safeprojectname$
         private static int changed = 0;
         private static bool first_time = true;
 
+        public static StringBuilder OutputTokens(this System.Collections.Generic.IList<IToken> tokens)
+        {
+            var sb = new StringBuilder();
+            foreach (var token in tokens)
+            {
+                sb.AppendLine("Token " + token.TokenIndex + " " + token.Type + " " + Output.PerformEscapes(token.Text));
+            }
+            return sb;
+        }
+
         public static StringBuilder OutputTree(this IParseTree tree, CommonTokenStream stream)
         {
             var sb = new StringBuilder();
@@ -90,13 +100,16 @@ namespace $safeprojectname$
         {
             using (var writer = new StringWriter())
             {
-                using (var provider = CodeDomProvider.CreateProvider("CSharp"))
-                {
-                    provider.GenerateCodeFromExpression(new CodePrimitiveExpression(input), writer, new CodeGeneratorOptions { IndentString = "\t" });
-                    var literal = writer.ToString();
-                    literal = literal.Replace(string.Format("\" +{0}\t\"", Environment.NewLine), "");
-                    return literal;
-                }
+                var literal = input;
+                literal = literal.Replace("\\", "\\\\");
+                literal = input.Replace("\b", "\\b");
+                literal = literal.Replace("\n", "\\n");
+                literal = literal.Replace("\t", "\\t");
+                literal = literal.Replace("\r", "\\r");
+                literal = literal.Replace("\f", "\\f");
+                literal = literal.Replace("\"", "\\\"");
+                literal = literal.Replace(string.Format("\" +{0}\t\"", Environment.NewLine), "");
+                return literal;
             }
         }
 
