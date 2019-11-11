@@ -23,9 +23,6 @@ namespace LanguageServer.Java
 
         public void Parse(ParserDetails pd)
         {
-            int x = 0;
-            int y = 1 / x;
-
             string ffn = pd.FullFileName;
             string code = pd.Code;
             IParseTree pt = null;
