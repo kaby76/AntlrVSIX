@@ -78,6 +78,15 @@ guide me on what changes to make it more efficient.
 However, the best solution is to add to this extension code to automatic rewrite grammars to eliminate all
 left recursion and common left factors, then use that to rewrite the Java grammar directly from the language spec.
 
+## New in v4.0.4:
+
+* Fixing solution loading crash.
+* Removing parse tree print code from Python--it was used for debugging and should not have been there.
+* Stubbing out Python and Rust targets because they could interfere with (currently) much better extensions. Will add them
+back once they are up to snuff.
+
+A shout out to all those folks using this extension and have opted-in to the automatic reporting!!
+
 ## New in v4.0.3:
 
 * Restructuring the code for options.
