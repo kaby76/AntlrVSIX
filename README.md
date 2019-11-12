@@ -72,11 +72,17 @@ just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio
 ## Working on for next release:
 
 * Restructuring the code as a Language Server Protocol implementation with extensions for VS 2019 and VS Code.
+* Note, after some testing, I realized I chose the wrong grammar
+for recognizing Java. I am now researching where to focus a grammar rewrite using a library of 50,000+ files to help
+guide me on what changes to make it more efficient.
+However, the best solution is to add to this extension code to automatic rewrite grammars to eliminate all
+left recursion and common left factors, then use that to rewrite the Java grammar directly from the language spec.
 
 ## New in v4.0.3:
 
 * Restructuring the code for options.
 * Adding in reporting of caught exceptions to server.
+* Some changes for the stability for Java soruce.
 
 ## New in v4.0.2:
 
