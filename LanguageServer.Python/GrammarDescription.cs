@@ -39,11 +39,11 @@
                 // Parsing error.
             }
 
-            StringBuilder sb = new StringBuilder();
-            TreeSerializer.ParenthesizedAST(pt, sb, "", cts);
-            string fn = System.IO.Path.GetFileName(ffn);
-            fn = "c:\\temp\\" + fn;
-            System.IO.File.WriteAllText(fn, sb.ToString());
+            //StringBuilder sb = new StringBuilder();
+            //TreeSerializer.ParenthesizedAST(pt, sb, "", cts);
+            //string fn = System.IO.Path.GetFileName(ffn);
+            //fn = "c:\\temp\\" + fn;
+            //System.IO.File.WriteAllText(fn, sb.ToString());
 
             pd.ParseTree = pt;
         }

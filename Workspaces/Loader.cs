@@ -165,7 +165,7 @@
                     if (project == null)
                     {
                         project = new Workspaces.Project(file_name, file_name, file_name);
-                        parent.AddChild(tuple.Item1);
+                        parent.AddChild(project);
                     }
                     foreach (var p in pi.ProjectItems)
                     {
