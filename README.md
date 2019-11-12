@@ -71,12 +71,18 @@ just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio
 
 ## Working on for next release:
 
-* Update symbol table with new classes to represent files, directories, and search paths. This will help
-support for better modeling of Java's ClassPath, Antlr's imports, etc., so that scopes can be cleared out quickly and
-easily when the sources have changed.
+* Restructuring the code as a Language Server Protocol implementation with extensions for VS 2019 and VS Code.
+
+## New in v4.0.3:
+
+* Restructuring the code for options.
+* Adding in reporting of caught exceptions to server.
 
 ## New in v4.0.2:
 
+* Updated symbol table with new classes to represent files, directories, and search paths. This will help
+support for better modeling of Java's ClassPath, Antlr's imports, etc., so that scopes can be cleared out quickly and
+easily when the sources have changed.
 * Fixing issues in stability with Antlr and Java files.
 * Fixing https://github.com/kaby76/AntlrVSIX/issues/23
 * Fixing tool tips and highlighting for Java.
