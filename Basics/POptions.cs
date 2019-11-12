@@ -74,8 +74,8 @@
             {"GenerateVisitorListener", false },
             {"OverrideAntlrPluggins", true },
             {"OverrideJavaPluggins", true },
-            {"OverridePythonPluggins", true },
-            {"OverrideRustPluggins", true },
+            {"OverridePythonPluggins", false },
+            {"OverrideRustPluggins", false },
             {"OptInLogging", 0 },
             {"CorpusLocation", CorpusLocation },
         };
