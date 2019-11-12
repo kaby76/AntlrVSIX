@@ -202,8 +202,10 @@
         void ReparseFile(object sender, TextContentChangedEventArgs args)
         {
             ITextBuffer buffer = sender as ITextBuffer;
+            if (buffer == null) return;
             ITextSnapshot snapshot = buffer.CurrentSnapshot;
             string code = buffer.GetBufferText();
+            if (code == null) return;
             string ffn = buffer.GetFFN().Result;
             if (ffn == null) return;
             var document = Workspaces.Workspace.Instance.FindDocument(ffn);

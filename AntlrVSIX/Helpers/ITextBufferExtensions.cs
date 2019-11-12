@@ -7,6 +7,7 @@
     {
         public static string GetBufferText(this ITextBuffer buffer)
         {
+            if (buffer.CurrentSnapshot == null) return null;
             return buffer.CurrentSnapshot.GetText();
         }
 
