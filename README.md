@@ -69,7 +69,7 @@ just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio
 
 * Use Visual Studio 2019 to build the extension.
 
-## Working on for next release:
+## Work in progress for next release:
 
 * Restructuring the code as a Language Server Protocol implementation with extensions for VS 2019 and VS Code.
 * Note, after some testing, I realized I chose the wrong grammar
@@ -78,7 +78,11 @@ guide me on what changes to make it more efficient.
 However, the best solution is to add to this extension code to automatic rewrite grammars to eliminate all
 left recursion and common left factors, then use that to rewrite the Java grammar directly from the language spec.
 
-## New in v4.0.4:
+## Release notes for v4.0.5:
+
+* Fixing #26.
+
+## Release notes for v4.0.4:
 
 * Fixing solution loading crash.
 * Removing parse tree print code from Python--it was used for debugging and should not have been there.
@@ -87,13 +91,13 @@ back once they are up to snuff.
 
 A shout out to all those folks using this extension and have opted-in to the automatic reporting!!
 
-## New in v4.0.3:
+## Release notes for v4.0.3:
 
 * Restructuring the code for options.
 * Adding in reporting of caught exceptions to server.
 * Some changes for the stability for Java soruce.
 
-## New in v4.0.2:
+## Release notes for v4.0.2:
 
 * Updated symbol table with new classes to represent files, directories, and search paths. This will help
 support for better modeling of Java's ClassPath, Antlr's imports, etc., so that scopes can be cleared out quickly and
@@ -104,11 +108,11 @@ easily when the sources have changed.
 * Updated symbol table to allow ambigous code editing.
 * Changing About and Options boxes to non-modal.
 
-## New in v4.0.1:
+## Release notes for v4.0.1:
 
 * Fixing stability issues with Antlr and Java files.
 
-## New in v4.0:
+## Release notes for v4.0:
 
 * Major changes to architecture, focusing on separation of GUI from a backend that works like Language Server Protocol (LSP).
 * In the GUI, tagging was improved in quality and speed.
@@ -117,11 +121,11 @@ easily when the sources have changed.
 * For Antlr grammars, Intellisense pop-ups now give the rule definition and location of the file defining the symbol.
 * No specific improvements were made for Python, Rust, and Java support, in favor of focusing on the improved overall design and implementation of the extension.
 
-## New in v3.0:
+## Release notes for v3.0:
 
 * Supports Java, Python, Rust, Antlr in various stages. Description of languages abstracted into a "Grammar Description".
 
-## New in v2.0:
+## Release notes for v2.0:
 
 * The extension will support VS 2019 and VS 2017.
 
@@ -145,13 +149,13 @@ select the Enter method.
 * An options menu is provided to turn on incremental parsing. By default, incremental
 * parsing is off because it is very slow.
 
-## New in v1.2.4:
+## Release notes for v1.2.4:
 
 * The extension is now both VS 2017 and 2015 compatible.
 
 * The results windows of Antlr Find All References is now "Antlr Find Results".
 
-## New in v1.2.3:
+## Release notes for v1.2.3:
 
 * Color selection through VS Options/Environment/Fonts and Colors. Look for "Antlr ..." named items.
 
