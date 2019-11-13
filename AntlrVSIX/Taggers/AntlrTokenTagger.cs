@@ -39,7 +39,7 @@ namespace AntlrVSIX.Tagger
                 int curLocEnd = end.Position;
                 var dpc_sym = LanguageServer.Module.GetDocumentSymbol(curLocStart, document);
                 var sorted_combined_tokens = LanguageServer.Module.Get(
-                    new Range(curLocStart, curLocEnd - 1),
+                    new Workspaces.Range(curLocStart, curLocEnd - 1),
                     document);
                 var list = sorted_combined_tokens.ToList();
                 foreach (DocumentSymbol p in sorted_combined_tokens)

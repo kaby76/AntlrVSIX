@@ -114,10 +114,10 @@ namespace AntlrVSIX.Taggers
             List<SnapshotSpan> wordSpans = new List<SnapshotSpan>();
             foreach (var loc in locations)
             {
-                if (loc.uri != document) continue;
+                if (loc.Uri != document) continue;
                 ITextSnapshot cc = buf.CurrentSnapshot;
-                SnapshotSpan ss = new SnapshotSpan(cc, loc.range.Start.Value,
-                    1 + loc.range.End.Value - loc.range.Start.Value);
+                SnapshotSpan ss = new SnapshotSpan(cc, loc.Range.Start.Value,
+                    1 + loc.Range.End.Value - loc.Range.Start.Value);
                 SnapshotPoint sp = ss.Start;
                 wordSpans.Add(ss);
             }

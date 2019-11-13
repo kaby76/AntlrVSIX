@@ -4,8 +4,7 @@
 
     public class Location
     {
-        public Document uri;
-
-        public Range range;
+        public Document Uri;
+        public Range Range;
     }
 }

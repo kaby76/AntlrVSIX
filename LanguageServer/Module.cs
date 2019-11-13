@@ -8,6 +8,77 @@
 
     public class Module
     {
+
+        public static int GetIndex(int line, int column, Document doc)
+        {
+            var pd = ParserDetailsFactory.Create(doc);
+            if (pd.ParseTree == null) return 0;
+            int index = 0;
+            var buffer = pd.Code;
+            if (buffer == null) return 0;
+            int cur_line = 1;
+            int cur_col = 0;
+            for (; ;)
+            {
+                if (line == cur_line && cur_col == column) break;
+                var ch = buffer[index];
+                if (ch == '\r')
+                {
+                    if (buffer[index + 1] == '\n')
+                    {
+                        cur_line++;
+                        cur_col = 0;
+                        index += 2;
+                    }
+                }
+                else if (ch == '\n')
+                {
+                    cur_line++;
+                    cur_col = 0;
+                    index += 1;
+                }
+                else index += 1;
+                if (index >= buffer.Length) break;
+            }
+            return index;
+        }
+
+        public static (int, int) GetLineColumn(int index, Document doc)
+        {
+            var pd = ParserDetailsFactory.Create(doc);
+            if (pd.ParseTree == null) return (0, 0);
+            int cur_index = 0;
+            var buffer = pd.Code;
+            if (buffer == null) return (0, 0);
+            int cur_line = 1;
+            int cur_col = 0;
+            for (; ; )
+            {
+                if (cur_index >= buffer.Length) break;
+                if (cur_index >= cur_index) break;
+
+                var ch = buffer[cur_index];
+                if (ch == '\r')
+                {
+                    if (buffer[cur_index + 1] == '\n')
+                    {
+                        cur_line++;
+                        cur_col = 0;
+                        cur_index += 2;
+                    }
+                }
+                else if (ch == '\n')
+                {
+                    cur_line++;
+                    cur_col = 0;
+                    cur_index += 1;
+                }
+                else cur_index += 1;
+                if (cur_index >= buffer.Length) break;
+            }
+            return (cur_line, cur_col);
+        }
+
         public static QuickInfo GetQuickInfo(int index, Document doc)
         {
             var pd = ParserDetailsFactory.Create(doc);
@@ -238,8 +309,8 @@
                 if (def_item == null) continue;
                 var new_loc = new Location()
                 {
-                    range = new Range(def.Token.StartIndex, def.Token.StopIndex),
-                    uri = def_item
+                    Range = new Range(def.Token.StartIndex, def.Token.StopIndex),
+                    Uri = def_item
                 };
                 result.Add(new_loc);
             }
@@ -285,8 +356,8 @@
                         result.Add(
                            new Location()
                            {
-                               range = new Range(def.Token.StartIndex, def.Token.StopIndex),
-                               uri = Workspaces.Workspace.Instance.FindDocument(def.file)
+                               Range = new Range(def.Token.StartIndex, def.Token.StopIndex),
+                               Uri = Workspaces.Workspace.Instance.FindDocument(def.file)
                            });
                 }
                 foreach (var r in refs)
@@ -294,8 +365,8 @@
                     result.Add(
                             new Location()
                             {
-                                range = new Range(r.Symbol.StartIndex, r.Symbol.StopIndex),
-                                uri = Workspaces.Workspace.Instance.FindDocument(r.Symbol.InputStream.SourceName)
+                                Range = new Range(r.Symbol.StartIndex, r.Symbol.StopIndex),
+                                Uri = Workspaces.Workspace.Instance.FindDocument(r.Symbol.InputStream.SourceName)
                             });
                 }
             }

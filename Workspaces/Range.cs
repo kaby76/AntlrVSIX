@@ -1,4 +1,4 @@
-﻿namespace LanguageServer
+﻿namespace Workspaces
 {
     using System;
 

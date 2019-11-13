@@ -22,6 +22,6 @@
 	     * like comments. This information is typically used to determine if the clients cursor is
 	     * inside the symbol to reveal in the symbol in the UI.
 	     */
-        public Range range;
+        public Workspaces.Range range;
     }
 }

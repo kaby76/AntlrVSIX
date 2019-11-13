@@ -92,10 +92,10 @@
                     if (Basics.POptions.GetBoolean("RestrictedDirectory"))
                     {
                         string p1 = System.IO.Path.GetDirectoryName(file_name);
-                        string p2 = System.IO.Path.GetDirectoryName(loc.uri.FullPath);
+                        string p2 = System.IO.Path.GetDirectoryName(loc.Uri.FullPath);
                         if (p1 != p2) continue;
                     }
-                    var w = new Entry() { FileName = loc.uri.FullPath, Start = loc.range.Start.Value, End = loc.range.End.Value };
+                    var w = new Entry() { FileName = loc.Uri.FullPath, Start = loc.Range.Start.Value, End = loc.Range.End.Value };
                     results.Add(w);
                 }
 

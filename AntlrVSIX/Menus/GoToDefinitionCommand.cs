@@ -97,9 +97,9 @@ namespace AntlrVSIX.GoToDefinition
                 var list_location = LanguageServer.Module.FindDef(span.Start.Position, document);
                 if (list_location == null || !list_location.Any()) return;
                 var location = list_location.First();
-                var sym = LanguageServer.Module.GetDocumentSymbol(location.range.Start.Value, location.uri);
+                var sym = LanguageServer.Module.GetDocumentSymbol(location.Range.Start.Value, location.Uri);
                 if (sym == null) return;
-                string full_file_name = location.uri.FullPath;
+                string full_file_name = location.Uri.FullPath;
                 IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(full_file_name);
                 {
                     IVsTextViewExtensions.ShowFrame(full_file_name);

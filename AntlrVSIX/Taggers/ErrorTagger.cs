@@ -56,7 +56,7 @@
                 int curLocStart = start.Position;
                 int curLocEnd = end.Position;
                 var sorted_combined_tokens = LanguageServer.Module.GetErrors(
-                    new Range(curLocStart, curLocEnd),
+                    new Workspaces.Range(curLocStart, curLocEnd),
                     document);
                 var list = sorted_combined_tokens.ToList();
                 foreach (var p in sorted_combined_tokens)

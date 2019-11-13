@@ -3,6 +3,6 @@
     public class QuickInfo
     {
         public string Display;
-        public Range Range;
+        public Workspaces.Range Range;
     }
 }

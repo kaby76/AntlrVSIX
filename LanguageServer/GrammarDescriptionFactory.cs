@@ -60,6 +60,26 @@
         private static IGrammarDescription _python = Register("LanguageServer.Python.dll");
         private static IGrammarDescription _rust = Register("LanguageServer.Rust.dll");
         private static ManualAssemblyResolver _resolver;
+        public static List<string> AllLanguages
+        {
+            get
+            {
+                List<string> result = new List<string>();
+                foreach (var gd in _list_of_languages)
+                {
+                    if (POptions.GetBoolean("OverrideAntlrPluggins"))
+                        result.Add(gd.Name);
+                    if (POptions.GetBoolean("OverrideJavaPluggins"))
+                        result.Add(gd.Name);
+                    if (POptions.GetBoolean("OverridePythonPluggins"))
+                        result.Add(gd.Name);
+                    if (POptions.GetBoolean("OverrideRustPluggins"))
+                        result.Add(gd.Name);
+                }
+                return result;
+            }
+        }
+        
 
         public static IGrammarDescription Register(string assembly_ffn)
         {
