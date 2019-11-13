@@ -177,7 +177,16 @@
                 }
                 else if (pi as EnvDTE.ProjectItem != null)
                 {
-                    try { file_name = (pi.FileCount == 1) ? pi.FileNames[1] : file_name; } catch (Exception) { }
+                    string fn = null;
+                    try
+                    {
+                        if (pi.FileCount == 1)
+                            fn = pi.FileNames[1];
+                        if (fn != null && fn != "")
+                            file_name = fn;
+                    } catch (Exception) { }
+                    if (file_name == null) // Cannot do jack with this.
+                        continue;
                     var document = parent.FindDocument(file_name);
                     if (document == null)
                     {
