@@ -275,7 +275,7 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
-    <ProjectReference Include="..\Basics\Basics.csproj">
+    <ProjectReference Include="..\Options\Options.csproj">
       <Project>{b11cb730-fe6f-44e8-953c-5b9e92e7a026}</Project>
       <Name>Basics</Name>
     </ProjectReference>

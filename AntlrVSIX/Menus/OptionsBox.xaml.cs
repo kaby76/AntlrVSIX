@@ -1,7 +1,7 @@
 ﻿namespace AntlrVSIX.Options
 {
     using System.Windows;
-    using Basics;
+    using global::Options;
 
     public partial class OptionsBox : Window
     {

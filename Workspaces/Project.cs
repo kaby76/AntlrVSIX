@@ -42,6 +42,7 @@
 
         public Document AddDocument(Document doc)
         {
+            if (doc == null) throw new System.Exception("Trying to add null document.");
             _contents.Add(doc);
             doc.Parent = this;
             return doc;
@@ -78,6 +79,7 @@
 
         public override Project FindProject(string ffn)
         {
+            if (ffn == null && this.FullPath == null) return null;
             if (this.FullPath.ToLower() == ffn.ToLower())
                 return this;
             foreach (var proj in _contents)
@@ -118,6 +120,7 @@
         }
         public override Container AddChild(Container doc)
         {
+            if (doc == null) throw new System.Exception("Trying to add null document.");
             _contents.Add(doc);
             doc.Parent = this;
             return doc;

@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     x:Class="AntlrVSIX.About.AboutBox"
     xmlns:local="clr-namespace:AntlrVSIX.About"
-    Title="About"
+    Title="About - Antlrvsix"
     Height="307.334"
     Width="650"
     MinHeight="10"

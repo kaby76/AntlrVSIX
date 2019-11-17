@@ -5,6 +5,7 @@
     using System.Linq;
     using Workspaces;
     using Symtab;
+    using System;
 
     public class Module
     {
@@ -415,62 +416,70 @@
 
         public static List<ParserDetails> Compile()
         {
-            var ws = Workspaces.Workspace.Instance;
+            try
+            {
+                var ws = Workspaces.Workspace.Instance;
 
-            // Get all changed files.
-            HashSet<ParserDetails> to_do = new HashSet<ParserDetails>();
+                // Get all changed files.
+                HashSet<ParserDetails> to_do = new HashSet<ParserDetails>();
 
             DoAgain:
 
-            Workspaces.Loader.LoadAsync().Wait();
-            foreach (var document in Workspaces.DFSContainer.DFS(ws))
-            {
-                string file_name = document.FullPath;
-                if (file_name == null) continue;
-                var gd = LanguageServer.GrammarDescriptionFactory.Create(file_name);
-                if (gd == null) continue;
-                if (!System.IO.File.Exists(file_name)) continue;
-                var pd = ParserDetailsFactory.Create(document);
-                if (!pd.Changed) continue;
-                to_do.Add(pd);
-            }
-            Digraph<ParserDetails> g = ConstructGraph(to_do);
-            foreach (var v in g.Vertices)
-            {
-                v.Item.Changed = true; // Force.
-                v.Parse();
-            }
-            var changed = true;
-            for (int pass = 0; changed; pass++)
-            {
-                changed = false;
+                Workspaces.Loader.LoadAsync().Wait();
+                foreach (var document in Workspaces.DFSContainer.DFS(ws))
+                {
+                    string file_name = document.FullPath;
+                    if (file_name == null) continue;
+                    var gd = LanguageServer.GrammarDescriptionFactory.Create(file_name);
+                    if (gd == null) continue;
+                    if (!System.IO.File.Exists(file_name)) continue;
+                    var pd = ParserDetailsFactory.Create(document);
+                    if (!pd.Changed) continue;
+                    to_do.Add(pd);
+                }
+                Digraph<ParserDetails> g = ConstructGraph(to_do);
                 foreach (var v in g.Vertices)
                 {
-                    int number_of_passes = v.Passes.Count;
-                    if (pass < number_of_passes)
+                    v.Item.Changed = true; // Force.
+                    v.Parse();
+                }
+                var changed = true;
+                for (int pass = 0; changed; pass++)
+                {
+                    changed = false;
+                    foreach (var v in g.Vertices)
                     {
-                        var reset = v.Pass(pass);
-                        if (reset)
+                        int number_of_passes = v.Passes.Count;
+                        if (pass < number_of_passes)
                         {
-                            goto DoAgain;
+                            var reset = v.Pass(pass);
+                            if (reset)
+                            {
+                                goto DoAgain;
+                            }
+                            changed = true;
                         }
-                        changed = true;
                     }
                 }
+                foreach (var v in g.Vertices)
+                {
+                    v.GatherDefs();
+                }
+                foreach (var v in g.Vertices)
+                {
+                    v.GatherRefs();
+                }
+                foreach (var v in g.Vertices)
+                {
+                    v.GatherErrors();
+                }
+                return g.Vertices.ToList();
             }
-            foreach (var v in g.Vertices)
+            catch (Exception e)
             {
-                v.GatherDefs();
+                Logger.Log.Notify(e.ToString());
             }
-            foreach (var v in g.Vertices)
-            {
-                v.GatherRefs();
-            }
-            foreach (var v in g.Vertices)
-            {
-                v.GatherErrors();
-            }
-            return g.Vertices.ToList();
+            return new List<ParserDetails>();
         }
     }
 }

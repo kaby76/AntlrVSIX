@@ -42,3 +42,4 @@ tool/target/
 f/
 AntlrVSIX.GrammarDescription.Antlr/.antlr/
 *.class
+test/.metadata/

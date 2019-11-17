@@ -81,7 +81,7 @@
                 ITextBuffer buffer = view.TextBuffer;
                 var path = buffer.GetFFN();
 
-                string corpus_location = Basics.POptions.GetString("CorpusLocation");
+                string corpus_location = global::Options.POptions.GetString("CorpusLocation");
                 if (corpus_location == null)
                 {
                     System.Windows.Forms.MessageBox.Show(
@@ -112,7 +112,7 @@
                             });
 
                         var edit = buffer.CreateEdit();
-                        if (Basics.POptions.GetBoolean("IncrementalReformat"))
+                        if (global::Options.POptions.GetBoolean("IncrementalReformat"))
                         {
                             var diff = new Diff.diff_match_patch();
                             var diffs = diff.diff_main(text, org.antlr.codebuff.Tool.formatted_output);

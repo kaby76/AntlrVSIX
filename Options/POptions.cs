@@ -1,4 +1,4 @@
-﻿namespace Basics
+﻿namespace Options
 {
     using Microsoft.VisualStudio.Settings;
     using Microsoft.VisualStudio.Shell;

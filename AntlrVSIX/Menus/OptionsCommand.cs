@@ -1,6 +1,6 @@
 ﻿namespace AntlrVSIX.Options
 {
-    using Basics;
+    using global::Options;
     using Microsoft.VisualStudio.Settings;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Shell.Settings;

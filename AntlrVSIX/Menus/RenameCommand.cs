@@ -89,7 +89,7 @@
                 var results = new List<Entry>();
                 foreach (var loc in locations)
                 {
-                    if (Basics.POptions.GetBoolean("RestrictedDirectory"))
+                    if (global::Options.POptions.GetBoolean("RestrictedDirectory"))
                     {
                         string p1 = System.IO.Path.GetDirectoryName(file_name);
                         string p2 = System.IO.Path.GetDirectoryName(loc.Uri.FullPath);
