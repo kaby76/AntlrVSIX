@@ -13,6 +13,9 @@ using System.Runtime.InteropServices;
 using System.IO.Compression;
 using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.Tar;
+using System.ComponentModel;
+using System.Windows.Forms;
+
 
 namespace VSIXProject1
 {
@@ -65,40 +68,15 @@ namespace VSIXProject1
                 string cache_location = System.IO.Path.GetTempPath();
                 string compressed_server_jar_name = "jdt-language-server-0.47.0-201911150945.tar.gz";
                 string compressed_server_jar_full_path = cache_location + compressed_server_jar_name;
+                string decompressed_location = cache_location + "jdt-language-server\\";
                 if (!System.IO.File.Exists(compressed_server_jar_full_path))
                 {
-                    using (var client = new WebClient())
-                    {
-                        client.DownloadFile("http://download.eclipse.org/jdtls/snapshots/" + compressed_server_jar_name, compressed_server_jar_full_path);
-                    }
-                }
-
-                string decompressed_location = cache_location + "jdt-language-server\\";
-                if (!System.IO.Directory.Exists(decompressed_location))
-                {
-                    FileInfo file_to_decompress = new FileInfo(compressed_server_jar_full_path);
-                    using (FileStream originalFileStream = file_to_decompress.OpenRead())
-                    {
-                        string gzArchiveName = file_to_decompress.FullName;
-                        Stream inStream = File.OpenRead(gzArchiveName);
-                        Stream gzipStream = new GZipInputStream(inStream);
-                        TarArchive tarArchive = TarArchive.CreateInputTarArchive(gzipStream);
-                        tarArchive.ExtractContents(decompressed_location);
-                        tarArchive.Close();
-                        gzipStream.Close();
-                        inStream.Close();
-
-
-                        //string newFileName = currentFileName.Remove(currentFileName.Length - file_to_decompress.Extension.Length);
-                        //using (FileStream decompressedFileStream = File.Create(newFileName))
-                        //{
-                        //    using (DeflateStream decompressionStream = new DeflateStream(originalFileStream, CompressionMode.Decompress))
-                        //    {
-                        //        decompressionStream.CopyTo(decompressedFileStream);
-                        //        Console.WriteLine("Decompressed: {0}", file_to_decompress.Name);
-                        //    }
-                        //}
-                    }
+                    GetJar w = new GetJar();
+                    w.Download("http://download.eclipse.org/jdtls/snapshots/" + compressed_server_jar_name,
+                        compressed_server_jar_full_path,
+                        decompressed_location);
+                    w.ShowDialog();
+                    w.Close();
                 }
                 string relative_path_eclipse_jar = "./plugins/org.eclipse.equinox.launcher_1.5.600.v20191014-2022.jar";
                 ProcessStartInfo info = new ProcessStartInfo();
