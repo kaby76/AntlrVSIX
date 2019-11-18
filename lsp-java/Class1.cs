@@ -7,6 +7,12 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Net;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.IO.Compression;
+using ICSharpCode.SharpZipLib.GZip;
+using ICSharpCode.SharpZipLib.Tar;
 
 namespace VSIXProject1
 {
@@ -31,13 +37,77 @@ namespace VSIXProject1
 
             try
             {
+                // Find JAVA_HOME. This could throw an exception with error message.
+                string javaHome = System.Environment.GetEnvironmentVariable("JAVA_HOME");
+                if (!Directory.Exists(javaHome))
+                    throw new Exception("Cannot find Java home, currently set to "
+                                        + "'" + javaHome + "'"
+                                        + " Please set either the JAVA_HOME environment variable, "
+                                        + "or set a property for JAVA_HOME in your CSPROJ file.");
+
+                // Find Java.
+                string java_executable = null;
+                string java_name = "";
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                    java_name = "java";
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    java_name = "java.exe";
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                    java_name = "java";
+                else
+                    throw new Exception("Yo, I haven't a clue what OS this is. Crashing...");
+                java_executable = Path.Combine(Path.Combine(javaHome, "bin"), java_name);
+                if (!File.Exists(java_executable))
+                    throw new Exception("Yo, I haven't a clue where Java is on this system. Crashing...");
+
                 // See https://github.com/eclipse/eclipse.jdt.ls for information on the server.
                 // Executable in the form of a jar from https://download.eclipse.org/jdtls/snapshots/?d
+                string cache_location = System.IO.Path.GetTempPath();
+                string compressed_server_jar_name = "jdt-language-server-0.47.0-201911150945.tar.gz";
+                string compressed_server_jar_full_path = cache_location + compressed_server_jar_name;
+                if (!System.IO.File.Exists(compressed_server_jar_full_path))
+                {
+                    using (var client = new WebClient())
+                    {
+                        client.DownloadFile("http://download.eclipse.org/jdtls/snapshots/" + compressed_server_jar_name, compressed_server_jar_full_path);
+                    }
+                }
+
+                string decompressed_location = cache_location + "jdt-language-server\\";
+                if (!System.IO.Directory.Exists(decompressed_location))
+                {
+                    FileInfo file_to_decompress = new FileInfo(compressed_server_jar_full_path);
+                    using (FileStream originalFileStream = file_to_decompress.OpenRead())
+                    {
+                        string gzArchiveName = file_to_decompress.FullName;
+                        Stream inStream = File.OpenRead(gzArchiveName);
+                        Stream gzipStream = new GZipInputStream(inStream);
+                        TarArchive tarArchive = TarArchive.CreateInputTarArchive(gzipStream);
+                        tarArchive.ExtractContents(decompressed_location);
+                        tarArchive.Close();
+                        gzipStream.Close();
+                        inStream.Close();
+
+
+                        //string newFileName = currentFileName.Remove(currentFileName.Length - file_to_decompress.Extension.Length);
+                        //using (FileStream decompressedFileStream = File.Create(newFileName))
+                        //{
+                        //    using (DeflateStream decompressionStream = new DeflateStream(originalFileStream, CompressionMode.Decompress))
+                        //    {
+                        //        decompressionStream.CopyTo(decompressedFileStream);
+                        //        Console.WriteLine("Decompressed: {0}", file_to_decompress.Name);
+                        //    }
+                        //}
+                    }
+                }
+                string relative_path_eclipse_jar = "./plugins/org.eclipse.equinox.launcher_1.5.600.v20191014-2022.jar";
                 ProcessStartInfo info = new ProcessStartInfo();
-                info.FileName = "c:\\Program Files\\Java\\jdk-11.0.4\\bin\\java.exe";
-                info.WorkingDirectory = "c:\\Users\\kenne\\Downloads\\jls";
+                info.FileName = java_executable;
+                info.WorkingDirectory = decompressed_location;
                 var workspace_path = "c:\\Users\\kenne\\Documents\\test";
-                info.Arguments = "-Declipse.application=org.eclipse.jdt.ls.core.id1 -Dosgi.bundles.defaultStartLevel=4 -Declipse.product=org.eclipse.jdt.ls.core.product -Dlog.level=ALL -noverify -Xmx1G -jar ./plugins/org.eclipse.equinox.launcher_1.5.600.v20191014-2022.jar -configuration ./config_win -data "
+                info.Arguments = "-Declipse.application=org.eclipse.jdt.ls.core.id1 -Dosgi.bundles.defaultStartLevel=4 -Declipse.product=org.eclipse.jdt.ls.core.product -Dlog.level=ALL -noverify -Xmx1G -jar "
+                    + relative_path_eclipse_jar
+                    + " -configuration ./config_win -data "
                     + workspace_path
                     + " --add-modules=ALL-SYSTEM --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED";
                 info.RedirectStandardInput = true;
