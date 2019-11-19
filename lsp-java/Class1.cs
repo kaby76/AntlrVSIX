@@ -78,11 +78,18 @@ namespace VSIXProject1
                     w.ShowDialog();
                     w.Close();
                 }
+
+                var w2 = new SetWorkspace();
+                w2.ShowDialog();
+                w2.Close();
+                var workspace_path = w2.workspace_path.Text;
+                if (workspace_path == null || workspace_path == "")
+                    workspace_path = cache_location;
+
                 string relative_path_eclipse_jar = "./plugins/org.eclipse.equinox.launcher_1.5.600.v20191014-2022.jar";
                 ProcessStartInfo info = new ProcessStartInfo();
                 info.FileName = java_executable;
                 info.WorkingDirectory = decompressed_location;
-                var workspace_path = "c:\\Users\\kenne\\Documents\\test";
                 info.Arguments = "-Declipse.application=org.eclipse.jdt.ls.core.id1 -Dosgi.bundles.defaultStartLevel=4 -Declipse.product=org.eclipse.jdt.ls.core.product -Dlog.level=ALL -noverify -Xmx1G -jar "
                     + relative_path_eclipse_jar
                     + " -configuration ./config_win -data "

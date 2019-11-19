@@ -50,6 +50,9 @@
     <Compile Include="GetJar.xaml.cs">
       <DependentUpon>GetJar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SetWorkspace.xaml.cs">
+      <DependentUpon>SetWorkspace.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="source.extension.vsixmanifest">
@@ -82,6 +85,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="GetJar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SetWorkspace.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
