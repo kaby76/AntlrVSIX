@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Forms;
 
-namespace VSIXProject1
+namespace LspClangd
 {
     public partial class SetWorkspace : Window
     {

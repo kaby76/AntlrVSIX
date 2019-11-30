@@ -1,43 +1,43 @@
-﻿using System.Collections.Immutable;
-using System.Threading;
-using System.Threading.Tasks;
-using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
-using OmniSharp.Extensions.LanguageServer.Protocol.Models;
-using OmniSharp.Extensions.LanguageServer.Protocol.Server;
+﻿//using System.Collections.Immutable;
+//using System.Threading;
+//using System.Threading.Tasks;
+//using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
+//using OmniSharp.Extensions.LanguageServer.Protocol.Models;
+//using OmniSharp.Extensions.LanguageServer.Protocol.Server;
 
-namespace LanguageServer.Handlers
-{
-    internal sealed class DocumentSymbolsHandler : IDocumentSymbolHandler
-    {
-        private readonly LanguageServer.Exec.LanguageServerWorkspace _workspace;
-        private readonly TextDocumentRegistrationOptions _registrationOptions;
+//namespace LanguageServer.Handlers
+//{
+//    internal sealed class DocumentSymbolsHandler : IDocumentSymbolHandler
+//    {
+//        private readonly LanguageServer.Exec.LanguageServerWorkspace _workspace;
+//        private readonly TextDocumentRegistrationOptions _registrationOptions;
 
-        public DocumentSymbolsHandler(LanguageServer.Exec.LanguageServerWorkspace workspace, TextDocumentRegistrationOptions registrationOptions)
-        {
-            _workspace = workspace;
-            _registrationOptions = registrationOptions;
-        }
+//        public DocumentSymbolsHandler(LanguageServer.Exec.LanguageServerWorkspace workspace, TextDocumentRegistrationOptions registrationOptions)
+//        {
+//            _workspace = workspace;
+//            _registrationOptions = registrationOptions;
+//        }
 
-        public TextDocumentRegistrationOptions GetRegistrationOptions() => _registrationOptions;
+//        public TextDocumentRegistrationOptions GetRegistrationOptions() => _registrationOptions;
 
-        public async Task<SymbolInformationOrDocumentSymbolContainer> Handle(DocumentSymbolParams request, CancellationToken token)
-        {
-            var document = _workspace.GetDocument(request.TextDocument.Uri);
-            return new SymbolInformationOrDocumentSymbolContainer();
+//        public async Task<SymbolInformationOrDocumentSymbolContainer> Handle(DocumentSymbolParams request, CancellationToken token)
+//        {
+//            var document = _workspace.GetDocument(request.TextDocument.Uri);
+//            return new SymbolInformationOrDocumentSymbolContainer();
 
-            //var searchService = _workspace.Services.GetService<INavigateToSearchService>();
+//            //var searchService = _workspace.Services.GetService<INavigateToSearchService>();
 
-            //var symbols = ImmutableArray.CreateBuilder<SymbolInformation>();
+//            //var symbols = ImmutableArray.CreateBuilder<SymbolInformation>();
 
-            //await Helpers.FindSymbolsInDocument(searchService, document, string.Empty, token, symbols);
+//            //await Helpers.FindSymbolsInDocument(searchService, document, string.Empty, token, symbols);
 
-            //var symbolsResult = ImmutableArray.CreateRange(
-            //    symbols.ToImmutable(), 
-            //    x => new SymbolInformationOrDocumentSymbol(x));
+//            //var symbolsResult = ImmutableArray.CreateRange(
+//            //    symbols.ToImmutable(), 
+//            //    x => new SymbolInformationOrDocumentSymbol(x));
 
-            //return new SymbolInformationOrDocumentSymbolContainer(symbolsResult);
-        }
+//            //return new SymbolInformationOrDocumentSymbolContainer(symbolsResult);
+//        }
 
-        public void SetCapability(DocumentSymbolCapability capability) { }
-    }
-}
+//        public void SetCapability(DocumentSymbolCapability capability) { }
+//    }
+//}

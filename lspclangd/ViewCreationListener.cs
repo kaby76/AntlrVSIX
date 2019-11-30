@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace VSIXProject1
+namespace LspClangd
 {
     using Microsoft.VisualStudio.Editor;
     using Microsoft.VisualStudio.Text.Editor;

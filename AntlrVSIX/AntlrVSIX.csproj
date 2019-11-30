@@ -277,7 +277,7 @@
     </ProjectReference>
     <ProjectReference Include="..\Options\Options.csproj">
       <Project>{b11cb730-fe6f-44e8-953c-5b9e92e7a026}</Project>
-      <Name>Basics</Name>
+      <Name>Options</Name>
     </ProjectReference>
     <ProjectReference Include="..\Graphs\Graphs.csproj">
       <Project>{227bb0f6-9df1-4782-b8c2-77c76e6824ae}</Project>

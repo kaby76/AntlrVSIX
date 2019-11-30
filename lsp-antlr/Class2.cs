@@ -4,16 +4,16 @@ using System.ComponentModel.Composition;
 
 namespace VSIXProject1
 {
-    public class ContentDefinition
+    public class JavaContentDefinition
     {
         [Export]
-        [Name("clangd")]
+        [Name("antlr")]
         [BaseDefinition(CodeRemoteContentDefinition.CodeRemoteContentTypeName)]
-        internal static ContentTypeDefinition ContentTypeDefinition;
+        internal static ContentTypeDefinition JavaContentTypeDefinition;
 
         [Export]
-        [FileExtension(".cpp")]
-        [ContentType("clangd")]
-        internal static FileExtensionToContentTypeDefinition FileExtensionDefinition;
+        [FileExtension(".g4")]
+        [ContentType("antlr")]
+        internal static FileExtensionToContentTypeDefinition JavaFileExtensionDefinition;
     }
 }

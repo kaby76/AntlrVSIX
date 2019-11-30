@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.Text;
 
-namespace VSIXProject1
+namespace LspClangd
 {
-    public static class Class4
+    public static class Helpers
     {
         public static async Task<string> GetFFN(this ITextBuffer buffer)
         {
