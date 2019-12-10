@@ -28,8 +28,6 @@ namespace LanguageServer.Exec
             this.rpc = JsonRpc.Attach(sender, reader, this.target);
             this.rpc.Disconnected += OnRpcDisconnected;
             this.diagnostics = initialDiagnostics;
-            this.target.Initialized += OnInitialized;
-            rpc.StartListening();
         }
 
         public string CustomText
@@ -116,11 +114,6 @@ namespace LanguageServer.Exec
 
         public void SendDiagnostics(string uri, string text)
         {
-            if (this.diagnostics == null)
-            {
-                return;
-            }
-
             string[] lines = text.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
 
             List<Diagnostic> diagnostics = new List<Diagnostic>();

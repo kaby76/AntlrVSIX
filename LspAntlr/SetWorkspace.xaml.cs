@@ -4,19 +4,20 @@ using System.Windows;
 using System.Windows.Forms;
 using Path = System.IO.Path;
 
-namespace VSIXProject1
+namespace LspAntlr
 {
     public partial class SetWorkspace : Window
     {
         public string _java_home = null;
         public string _java_executable = null;
 
-        public SetWorkspace()
+        public SetWorkspace(string workspacep, string lsp)
         {
             InitializeComponent();
+            this.workspace_path.Text = workspacep;
             string javaHome = System.Environment.GetEnvironmentVariable("JAVA_HOME");
             this.java_home_path.Text = javaHome == null || javaHome == "" ? "not set" : javaHome;
-            this.eclipse_jdt.Text = "jdt-language-server-0.47.0-201911150945.tar.gz";
+            this.lspserver.Text = lsp;
         }
 
         private void btnOK_click(object sender, RoutedEventArgs e)

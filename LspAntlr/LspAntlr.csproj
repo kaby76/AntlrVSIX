@@ -13,8 +13,8 @@
     <ProjectGuid>{99377F57-EC77-4949-A670-F97989990A3C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>VSIXProject1</RootNamespace>
-    <AssemblyName>VSIXProject1</AssemblyName>
+    <RootNamespace>LspAntlr</RootNamespace>
+    <AssemblyName>LspAntlr</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
     <IncludeAssemblyInVSIXContainer>true</IncludeAssemblyInVSIXContainer>
@@ -44,8 +44,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
-    <Compile Include="Class2.cs" />
+    <Compile Include="AntlrLanguageClient.cs" />
+    <Compile Include="AntlrContentDefinition.cs" />
+    <Compile Include="Helpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GetJar.xaml.cs">
       <DependentUpon>GetJar.xaml</DependentUpon>
@@ -53,6 +54,7 @@
     <Compile Include="SetWorkspace.xaml.cs">
       <DependentUpon>SetWorkspace.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewCreationListener.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="source.extension.vsixmanifest">
@@ -92,6 +94,12 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LspHelpers\LspHelpers.csproj">
+      <Project>{dfff91e8-3e09-49cf-84b5-f5566826ee1a}</Project>
+      <Name>LspHelpers</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />

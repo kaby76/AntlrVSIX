@@ -2,18 +2,18 @@
 using Microsoft.VisualStudio.Utilities;
 using System.ComponentModel.Composition;
 
-namespace VSIXProject1
+namespace LspAntlr
 {
-    public class JavaContentDefinition
+    public class AntlrContentDefinition
     {
         [Export]
-        [Name("antlr")]
+        [Name("Antlr")]
         [BaseDefinition(CodeRemoteContentDefinition.CodeRemoteContentTypeName)]
         internal static ContentTypeDefinition JavaContentTypeDefinition;
 
         [Export]
         [FileExtension(".g4")]
-        [ContentType("antlr")]
+        [ContentType("Antlr")]
         internal static FileExtensionToContentTypeDefinition JavaFileExtensionDefinition;
     }
 }

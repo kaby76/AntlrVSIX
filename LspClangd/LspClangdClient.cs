@@ -5,8 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Covidimus.IO;
 
 
 namespace LspClangd
@@ -15,6 +18,9 @@ namespace LspClangd
     [Export(typeof(ILanguageClient))]
     public class LspClangdClient : ILanguageClient
     {
+        public static MemoryStream _log_to_server = new MemoryStream();
+        public static MemoryStream _log_from_server = new MemoryStream();
+
         string ILanguageClient.Name => "Clangd language extension";
 
         IEnumerable<string> ILanguageClient.ConfigurationSections => null;
@@ -40,17 +46,21 @@ namespace LspClangd
                 if (workspace_path == null || workspace_path == "")
                     workspace_path = cache_location;
                 var clangd_executable = w2._clangd_executable;
-                //clangd_executable = @"E:\clang-llvm\build\Debug\bin\clangd.exe";
                 clangd_executable = @"E:\build9\Debug\bin\clangd.exe";
+                var executable = @"C:\Users\kenne\source\repos\ProxyLsp\ProxyLsp\bin\Debug\netcoreapp3.0\ProxyLsp.exe";
+                //executable = @"E:\build9\Debug\bin\clangd.exe";
+                //executable = @"C:\Program Files\LLVM\bin\clangd.exe";
                 workspace_path = "C:/Users/kenne/source/repos/ConsoleApplication2/ConsoleApplication2";
                 ProcessStartInfo info = new ProcessStartInfo();
-                info.FileName = clangd_executable;
+                info.FileName = executable;
                 info.WorkingDirectory = workspace_path;
-                info.Arguments = " --compile-commands-dir=\""
-                                 + @"C:\Users\kenne\source\repos\ConsoleApplication2\ConsoleApplication2"
+                info.Arguments = "" 
+                                 + clangd_executable
+                                 // + " --compile-commands-dir=\""
+                                 //  + @"C:\Users\kenne\source\repos\ConsoleApplication2\ConsoleApplication2"
                                  //   + workspace_path //+ "/compile_commands.json"
-                                 + "\" --log=verbose"
-                                 + " --index-file=\"C:/Users/kenne/source/repos/ConsoleApplication2/ConsoleApplication2/clangd.dex\""
+                                 + " --log=verbose"
+                    //+ " --index-file=\"C:/Users/kenne/source/repos/ConsoleApplication2/ConsoleApplication2/clangd.dex\""
                     ;
                 //  + " --compile_args_from=filesystem";
                 info.RedirectStandardInput = true;
@@ -61,7 +71,13 @@ namespace LspClangd
                 process.StartInfo = info;
                 if (process.Start())
                 {
-                    return new Connection(process.StandardOutput.BaseStream, process.StandardInput.BaseStream);
+                    var @out = process.StandardOutput.BaseStream;
+                    var eout = new Covidimus.IO.EchoStream(@out, _log_from_server, EchoStream.StreamOwnership.OwnNone);
+
+                    var @in = process.StandardInput.BaseStream;
+                    var ein = new Covidimus.IO.EchoStream(@in, _log_to_server, EchoStream.StreamOwnership.OwnNone);
+                    
+                    return new Connection(eout, ein);
                 }
             }
             catch (Exception e)

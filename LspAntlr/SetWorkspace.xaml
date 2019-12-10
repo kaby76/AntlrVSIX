@@ -1,4 +1,4 @@
-﻿<Window x:Class="VSIXProject1.SetWorkspace"
+﻿<Window x:Class="LspAntlr.SetWorkspace"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Set up defaults for Eclipse Java LSP server" Height="200" Width="600">
@@ -16,7 +16,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TextBox Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0">
+        <TextBox Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" IsReadOnly="False" BorderThickness="0" >
             Workspace directory path
         </TextBox>
         <TextBox Name="workspace_path" Grid.Row="0" Grid.Column="1" Margin="10,0,10,10">Not set</TextBox>
@@ -29,9 +29,9 @@
         <Button Name="btnBrowseJava" Grid.Row="1" Grid.Column="2" Click="btnBrowse_Click" Margin="0,0,0,0">Browse</Button>
 
         <TextBox  Grid.Row="2" Grid.Column="0" TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0">
-            Eclipse JDT Language Server
+            Language Server Location
         </TextBox>
-        <TextBox Name="eclipse_jdt" Grid.Row="2" Grid.Column="1" Margin="10,0,10,10">Not set</TextBox>
+        <TextBox Name="lspserver" Grid.Row="2" Grid.Column="1" Margin="10,0,10,10">Not set</TextBox>
 
         <WrapPanel Grid.Row="3" Grid.ColumnSpan="3" HorizontalAlignment="Center" Margin="10,0,0,0" >
             <Button IsDefault="True" Name="btnDialogOk" Click="btnOK_click" MinWidth="60" Margin="0,0,10,0">Ok</Button>

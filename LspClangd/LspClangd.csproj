@@ -44,6 +44,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Debug.cs" />
+    <Compile Include="EchoStream.cs" />
     <Compile Include="LspClangdClient.cs" />
     <Compile Include="ContentDefinition.cs" />
     <Compile Include="ViewCreationListener.cs" />

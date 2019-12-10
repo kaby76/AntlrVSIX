@@ -1,10 +1,13 @@
-﻿using Microsoft.VisualStudio.LanguageServer.Protocol;
+﻿using System;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO.Pipes;
 using System.Linq;
 using System.Net.Mime;
+using System.Threading;
 using System.Threading.Tasks;
+using StreamJsonRpc;
 
 
 namespace LanguageServer.Exec
@@ -20,35 +23,25 @@ namespace LanguageServer.Exec
 
         public static void Main(string[] args)
         {
-            var d = new Program();
-            d.Driver(args);
+            TimeSpan delay = new TimeSpan(0, 0, 0, 20);
+            Console.Error.WriteLine("Waiting " + delay + " seconds...");
+            Thread.Sleep((int)delay.TotalMilliseconds);
+            Console.Error.WriteLine("Starting");
+            var program = new Program();
+            program.MainAsync(args).GetAwaiter().GetResult();
         }
 
-        private void Driver(string[] args)
-        { 
-            var stdInPipeName = @"input";
-            var stdOutPipeName = @"output";
-
-            var pipeAccessRule = new PipeAccessRule("Everyone", PipeAccessRights.ReadWrite, System.Security.AccessControl.AccessControlType.Allow);
-            var pipeSecurity = new PipeSecurity();
-            pipeSecurity.AddAccessRule(pipeAccessRule);
-
-            var readerPipe = new NamedPipeClientStream(stdInPipeName);
-            var writerPipe = new NamedPipeClientStream(stdOutPipeName);
-
-            readerPipe.Connect();
-            writerPipe.Connect();
-
-            this.languageServer = new LSPServer(writerPipe, readerPipe);
-
+        async Task MainAsync(string[] args)
+        {
+            var stdin = Console.OpenStandardInput();
+            var stdout = Console.OpenStandardOutput();
+            this.languageServer = new LSPServer(stdout, stdin);
             this.languageServer.Disconnected += OnDisconnected;
             this.languageServer.PropertyChanged += OnLanguageServerPropertyChanged;
-
             Tags.Add(new DiagnosticTag());
             this.LogMessage = string.Empty;
             this.ResponseText = string.Empty;
-
-            this.languageServer.WaitForExit();
+            await Task.Delay(-1);
         }
 
         private void OnLanguageServerPropertyChanged(object sender, PropertyChangedEventArgs e)
