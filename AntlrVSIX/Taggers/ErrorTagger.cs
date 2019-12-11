@@ -58,7 +58,6 @@
                 var sorted_combined_tokens = LanguageServer.Module.GetErrors(
                     new Workspaces.Range(curLocStart, curLocEnd),
                     document);
-                var list = sorted_combined_tokens.ToList();
                 foreach (var p in sorted_combined_tokens)
                 {
                     int start_token_start = p.Start.Value;

@@ -99,6 +99,9 @@
         {
             try
             {
+                if (true)
+                    return;
+
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
                 started = true;

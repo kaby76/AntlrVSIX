@@ -53,6 +53,7 @@
 
     public class GrammarDescriptionFactory
     {
+        private int x;
         private static List<IGrammarDescription> _list_of_languages = new List<IGrammarDescription>();
 
         private static IGrammarDescription _antlr  = Register("LanguageServer.Antlr.dll");
@@ -146,18 +147,20 @@
 
         public static IGrammarDescription Create(string ffn)
         {
+            if (_list_of_languages.Count == 0)
+                new GrammarDescriptionFactory();
             foreach (var gd in _list_of_languages)
             {
                 if (gd.IsFileType(ffn))
                 {
-                    if (gd.Name.ToLower() == "antlr" && !POptions.GetBoolean("OverrideAntlrPluggins"))
-                        return null;
-                    if (gd.Name.ToLower() == "java" && !POptions.GetBoolean("OverrideJavaPluggins"))
-                        return null;
-                    if (gd.Name.ToLower() == "python") // && !POptions.GetBoolean("OverridePythonPluggins"))
-                        return null;
-                    if (gd.Name.ToLower() == "rust") // && !POptions.GetBoolean("OverrideRustPluggins"))
-                        return null;
+                    //if (gd.Name.ToLower() == "antlr" && !POptions.GetBoolean("OverrideAntlrPluggins"))
+                    //    return null;
+                    //if (gd.Name.ToLower() == "java" && !POptions.GetBoolean("OverrideJavaPluggins"))
+                    //    return null;
+                    //if (gd.Name.ToLower() == "python") // && !POptions.GetBoolean("OverridePythonPluggins"))
+                    //    return null;
+                    //if (gd.Name.ToLower() == "rust") // && !POptions.GetBoolean("OverrideRustPluggins"))
+                    //    return null;
                     return gd;
                 }
             }

@@ -17,11 +17,12 @@
             int index = 0;
             var buffer = pd.Code;
             if (buffer == null) return 0;
-            int cur_line = 1;
+            int cur_line = 0;
             int cur_col = 0;
             for (; ;)
             {
-                if (line == cur_line && cur_col == column) break;
+                if (cur_line > line) break;
+                if (cur_line >= line && cur_col >= column) break;
                 var ch = buffer[index];
                 if (ch == '\r')
                 {
@@ -38,7 +39,11 @@
                     cur_col = 0;
                     index += 1;
                 }
-                else index += 1;
+                else
+                {
+                    cur_col += 1;
+                    index += 1;
+                }
                 if (index >= buffer.Length) break;
             }
             return index;
@@ -51,13 +56,12 @@
             int cur_index = 0;
             var buffer = pd.Code;
             if (buffer == null) return (0, 0);
-            int cur_line = 1;
-            int cur_col = 0;
+            int cur_line = 0; // zero based LSP.
+            int cur_col = 0; // zero based LSP.
             for (; ; )
             {
                 if (cur_index >= buffer.Length) break;
-                if (cur_index >= cur_index) break;
-
+                if (cur_index >= index) break;
                 var ch = buffer[cur_index];
                 if (ch == '\r')
                 {
@@ -74,7 +78,11 @@
                     cur_col = 0;
                     cur_index += 1;
                 }
-                else cur_index += 1;
+                else
+                {
+                    cur_col += 1;
+                    cur_index += 1;
+                }
                 if (cur_index >= buffer.Length) break;
             }
             return (cur_line, cur_col);
@@ -215,7 +223,7 @@
             }
 
             // Sort the list.
-            var sorted_combined_tokens = combined.OrderBy((t) => t.range.Start);
+            var sorted_combined_tokens = combined.OrderBy(t => t.range.Start.Value).ThenBy(t => t.range.End.Value);
             return sorted_combined_tokens;
         }
 

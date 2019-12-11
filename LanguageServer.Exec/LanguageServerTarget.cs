@@ -3,6 +3,8 @@ using Newtonsoft.Json.Linq;
 using StreamJsonRpc;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using Newtonsoft.Json;
 using Workspaces;
 
@@ -17,7 +19,7 @@ namespace LanguageServer.Exec
         public LanguageServerTarget(LSPServer server)
         {
             this.server = server;
-            this._workspace = new Workspace();
+            this._workspace = Workspaces.Workspace.Instance;
         }
 
         [JsonRpcMethod(Methods.InitializeName)]
@@ -180,6 +182,9 @@ namespace LanguageServer.Exec
                     _workspace.AddChild(project);
                 }
                 project.AddDocument(document);
+                document.Changed = true;
+                var pd = ParserDetailsFactory.Create(document);
+                var to_do = LanguageServer.Module.Compile();
             }
             server.SendDiagnostics(request.TextDocument.Uri.AbsoluteUri, "");
         }
@@ -284,14 +289,63 @@ namespace LanguageServer.Exec
         }
 
         [JsonRpcMethod(Methods.TextDocumentHoverName)]
-        public async System.Threading.Tasks.Task<JToken> TextDocumentHoverName(JToken arg)
+        public async System.Threading.Tasks.Task<object> TextDocumentHoverName(JToken arg)
         {
             if (trace)
             {
                 System.Console.Error.WriteLine("<-- TextDocumentHover");
                 System.Console.Error.WriteLine(arg.ToString());
             }
-            return null;
+            var request = arg.ToObject<TextDocumentPositionParams>();
+            var document = _workspace.FindDocument(request.TextDocument.Uri.AbsolutePath);
+            if (document == null)
+            {
+                document = new Workspaces.Document(request.TextDocument.Uri.AbsolutePath,
+                    request.TextDocument.Uri.AbsolutePath);
+                try
+                {   // Open the text file using a stream reader.
+                    using (StreamReader sr = new StreamReader(request.TextDocument.Uri.AbsolutePath))
+                    {
+                        // Read the stream to a string, and write the string to the console.
+                        String str = sr.ReadToEnd();
+                        document.Code = str;
+                    }
+                }
+                catch (IOException e)
+                {
+                }
+                var project = _workspace.FindProject("Misc");
+                if (project == null)
+                {
+                    project = new Project("Misc", "Misc", "Misc");
+                    _workspace.AddChild(project);
+                }
+                project.AddDocument(document);
+                document.Changed = true;
+                var pd = ParserDetailsFactory.Create(document);
+                var to_do = LanguageServer.Module.Compile();
+            }
+            var position = request.Position;
+            var line = position.Line;
+            var character = position.Character;
+            var index = LanguageServer.Module.GetIndex(line, character, document);
+            QuickInfo quick_info = LanguageServer.Module.GetQuickInfo(index, document);
+            if (quick_info == null) return null;
+            var hover = new Hover();
+            hover.Contents = new MarkupContent
+            {
+                Kind = MarkupKind.PlainText,
+                Value = quick_info.Display
+            };
+            var index_start = quick_info.Range.Start.Value;
+            var index_end = quick_info.Range.End.Value;
+            var lcs = LanguageServer.Module.GetLineColumn(index_start, document);
+            var lce = LanguageServer.Module.GetLineColumn(index_end, document);
+            hover.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
+            hover.Range.Start = new Position(lcs.Item1, lcs.Item2);
+            hover.Range.End = new Position(lce.Item1, lce.Item2);
+            System.Console.Error.WriteLine("returning " + quick_info.Display.ToString());
+            return hover;
         }
 
         [JsonRpcMethod(Methods.TextDocumentSignatureHelpName)]
@@ -370,6 +424,33 @@ namespace LanguageServer.Exec
             }
             var request = arg.ToObject<DocumentSymbolParams>();
             var document = _workspace.FindDocument(request.TextDocument.Uri.AbsolutePath);
+            if (document == null)
+            {
+                document = new Workspaces.Document(request.TextDocument.Uri.AbsolutePath,
+                    request.TextDocument.Uri.AbsolutePath);
+                try
+                {   // Open the text file using a stream reader.
+                    using (StreamReader sr = new StreamReader(request.TextDocument.Uri.AbsolutePath))
+                    {
+                        // Read the stream to a string, and write the string to the console.
+                        String str = sr.ReadToEnd();
+                        document.Code = str;
+                    }
+                }
+                catch (IOException e)
+                {
+                }
+                var project = _workspace.FindProject("Misc");
+                if (project == null)
+                {
+                    project = new Project("Misc", "Misc", "Misc");
+                    _workspace.AddChild(project);
+                }
+                project.AddDocument(document);
+                document.Changed = true;
+                var pd = ParserDetailsFactory.Create(document);
+                var to_do = LanguageServer.Module.Compile();
+            }
             var r = LanguageServer.Module.Get(document);
             var symbols = new List<object>();
             foreach (var s in r)
@@ -382,10 +463,24 @@ namespace LanguageServer.Exec
                 var lcs = LanguageServer.Module.GetLineColumn(s.range.Start.Value, document);
                 var lce = LanguageServer.Module.GetLineColumn(s.range.End.Value, document);
                 si.Location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
-                si.Location.Range.Start.Line = lcs.Item1;
-                si.Location.Range.Start.Character = lcs.Item2;
-                si.Location.Range.End.Line = lce.Item1;
-                si.Location.Range.End.Character = lce.Item2;
+                si.Location.Range.Start = new Position(lcs.Item1, lcs.Item2);
+                si.Location.Range.End = new Position(lce.Item1, lce.Item2);
+                if (s.kind == 0)
+                    si.Kind = SymbolKind.Variable; // Nonterminal
+                else if (s.kind == 1)
+                    si.Kind = SymbolKind.Enum; // Terminal
+                else if (s.kind == 2)
+                    si.Kind = 0; // Comment
+                else if (s.kind == 3)
+                    si.Kind = 0; // Keyword
+                else if (s.kind == 4)
+                    si.Kind = SymbolKind.Number; // Literal
+                else if (s.kind == 5)
+                    si.Kind = 0; // Mode
+                else if (s.kind == 6)
+                    si.Kind = SymbolKind.Enum; // Channel
+                else
+                    si.Kind = 0; // Default.
                 symbols.Add(si);
             }
             var result = symbols.ToArray();

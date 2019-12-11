@@ -1,4 +1,7 @@
-﻿namespace LanguageServer
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace LanguageServer
 {
     using Antlr4.Runtime;
     using Antlr4.Runtime.Tree;
