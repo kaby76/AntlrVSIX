@@ -128,12 +128,12 @@ LSP version 3.14. This LSP server uses this C# API, so will be behind the curren
 | textDocument/hover | yes (Dec 10, '19) |
 | textDocument/signatureHelp | no |
 | textDocument/declaration | no |
-| textDocument/definition | no |
+| textDocument/definition | yes (Dec 11, '19) |
 | textDocument/typeDefinition | no |
 | textDocument/implementation | no |
 | textDocument/references | no |
-| textDocument/documentHighlight | no |
-| textDocument/documentSymbol | no |
+| textDocument/documentHighlight | yes (Dec 11, '19) |
+| textDocument/documentSymbol | yes (Dec 10, '19) |
 | textDocument/codeAction | no |
 | textDocument/codeLens | no |
 | codeLens/resolve | no |
