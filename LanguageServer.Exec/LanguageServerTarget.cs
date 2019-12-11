@@ -49,7 +49,7 @@ namespace LanguageServer.Exec
 
             capabilities.ImplementationProvider = false;
 
-            capabilities.DocumentHighlightProvider = false;
+            capabilities.DocumentHighlightProvider = true;
 
             capabilities.DocumentSymbolProvider = false;
 
@@ -453,14 +453,63 @@ namespace LanguageServer.Exec
         }
 
         [JsonRpcMethod(Methods.TextDocumentDocumentHighlightName)]
-        public async System.Threading.Tasks.Task<JToken> TextDocumentDocumentHighlightName(JToken arg)
+        public async System.Threading.Tasks.Task<object[]> TextDocumentDocumentHighlightName(JToken arg)
         {
             if (trace)
             {
                 System.Console.Error.WriteLine("<-- TextDocumentDocumentHighlight");
                 System.Console.Error.WriteLine(arg.ToString());
             }
-            return null;
+            var request = arg.ToObject<TextDocumentPositionParams>();
+            var document = _workspace.FindDocument(request.TextDocument.Uri.AbsolutePath);
+            if (document == null)
+            {
+                document = new Workspaces.Document(request.TextDocument.Uri.AbsolutePath,
+                    request.TextDocument.Uri.AbsolutePath);
+                try
+                {   // Open the text file using a stream reader.
+                    using (StreamReader sr = new StreamReader(request.TextDocument.Uri.AbsolutePath))
+                    {
+                        // Read the stream to a string, and write the string to the console.
+                        String str = sr.ReadToEnd();
+                        document.Code = str;
+                    }
+                }
+                catch (IOException e)
+                {
+                }
+                var project = _workspace.FindProject("Misc");
+                if (project == null)
+                {
+                    project = new Project("Misc", "Misc", "Misc");
+                    _workspace.AddChild(project);
+                }
+                project.AddDocument(document);
+                document.Changed = true;
+                var pd = ParserDetailsFactory.Create(document);
+                var to_do = LanguageServer.Module.Compile();
+            }
+            var position = request.Position;
+            var line = position.Line;
+            var character = position.Character;
+            var index = LanguageServer.Module.GetIndex(line, character, document);
+            var bug = LanguageServer.Module.GetLineColumn(index, document);
+            var found = LanguageServer.Module.FindRefsAndDefs(index, document);
+            var locations = new List<object>();
+            foreach (var f in found)
+            {
+                var location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location();
+                location.Uri = new Uri(f.Uri.FullPath);
+                var def_document = _workspace.FindDocument(f.Uri.FullPath);
+                location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
+                var lcs = LanguageServer.Module.GetLineColumn(f.Range.Start.Value, def_document);
+                var lce = LanguageServer.Module.GetLineColumn(f.Range.End.Value + 1, def_document);
+                location.Range.Start = new Position(lcs.Item1, lcs.Item2);
+                location.Range.End = new Position(lce.Item1, lce.Item2);
+                locations.Add(location);
+            }
+            var result = locations.ToArray();
+            return result;
         }
 
         [JsonRpcMethod(Methods.TextDocumentDocumentSymbolName)]

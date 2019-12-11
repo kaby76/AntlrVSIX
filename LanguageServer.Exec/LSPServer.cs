@@ -224,6 +224,7 @@ namespace LanguageServer.Exec
         {
             this.disconnectEvent.Set();
             Disconnected?.Invoke(this, new EventArgs());
+            System.Environment.Exit(0);
         }
 
         private Diagnostic GetDiagnostic(string line, int lineOffset, ref int characterOffset, string wordToMatch, DiagnosticSeverity severity)

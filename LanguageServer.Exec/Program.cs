@@ -1,14 +1,10 @@
-﻿using System;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
+﻿using Microsoft.VisualStudio.LanguageServer.Protocol;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO.Pipes;
 using System.Linq;
-using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
-using StreamJsonRpc;
-
 
 namespace LanguageServer.Exec
 {
@@ -24,8 +20,8 @@ namespace LanguageServer.Exec
         public static void Main(string[] args)
         {
             TimeSpan delay = new TimeSpan(0, 0, 0, 20);
-            Console.Error.WriteLine("Waiting " + delay + " seconds...");
-            Thread.Sleep((int)delay.TotalMilliseconds);
+            //Console.Error.WriteLine("Waiting " + delay + " seconds...");
+            //Thread.Sleep((int)delay.TotalMilliseconds);
             Console.Error.WriteLine("Starting");
             var program = new Program();
             program.MainAsync(args).GetAwaiter().GetResult();
