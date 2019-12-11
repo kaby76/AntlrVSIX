@@ -45,21 +45,21 @@ namespace LanguageServer.Exec
 
             capabilities.DefinitionProvider = true;
 
-            capabilities.TypeDefinitionProvider = true;
+            capabilities.TypeDefinitionProvider = false;
 
-            capabilities.ImplementationProvider = true;
+            capabilities.ImplementationProvider = false;
 
-            capabilities.DocumentHighlightProvider = true;
+            capabilities.DocumentHighlightProvider = false;
 
-            capabilities.DocumentSymbolProvider = true;
+            capabilities.DocumentSymbolProvider = false;
 
             capabilities.WorkspaceSymbolProvider = false;
 
-            capabilities.DocumentFormattingProvider = true;
+            capabilities.DocumentFormattingProvider = false;
 
             capabilities.DocumentRangeFormattingProvider = false;
 
-            capabilities.RenameProvider = true;
+            capabilities.RenameProvider = false;
 
             var result = new InitializeResult();
             result.Capabilities = capabilities;
@@ -360,14 +360,61 @@ namespace LanguageServer.Exec
         }
 
         [JsonRpcMethod(Methods.TextDocumentDefinitionName)]
-        public async System.Threading.Tasks.Task<JToken> TextDocumentDefinitionName(JToken arg)
+        public async System.Threading.Tasks.Task<object[]> TextDocumentDefinitionName(JToken arg)
         {
             if (trace)
             {
                 System.Console.Error.WriteLine("<-- TextDocumentDefinition");
                 System.Console.Error.WriteLine(arg.ToString());
             }
-            return null;
+            var request = arg.ToObject<TextDocumentPositionParams>();
+            var document = _workspace.FindDocument(request.TextDocument.Uri.AbsolutePath);
+            if (document == null)
+            {
+                document = new Workspaces.Document(request.TextDocument.Uri.AbsolutePath,
+                    request.TextDocument.Uri.AbsolutePath);
+                try
+                {   // Open the text file using a stream reader.
+                    using (StreamReader sr = new StreamReader(request.TextDocument.Uri.AbsolutePath))
+                    {
+                        // Read the stream to a string, and write the string to the console.
+                        String str = sr.ReadToEnd();
+                        document.Code = str;
+                    }
+                }
+                catch (IOException e)
+                {
+                }
+                var project = _workspace.FindProject("Misc");
+                if (project == null)
+                {
+                    project = new Project("Misc", "Misc", "Misc");
+                    _workspace.AddChild(project);
+                }
+                project.AddDocument(document);
+                document.Changed = true;
+                var pd = ParserDetailsFactory.Create(document);
+                var to_do = LanguageServer.Module.Compile();
+            }
+            var position = request.Position;
+            var line = position.Line;
+            var character = position.Character;
+            var index = LanguageServer.Module.GetIndex(line, character, document);
+            IList<Location> found = LanguageServer.Module.FindDef(index, document);
+            var locations = new List<object>();
+            foreach (var f in found)
+            {
+                var location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location();
+                location.Uri = new Uri(f.Uri.FullPath);
+                location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
+                var lcs = LanguageServer.Module.GetLineColumn(f.Range.Start.Value, document);
+                var lce = LanguageServer.Module.GetLineColumn(f.Range.End.Value, document);
+                location.Range.Start = new Position(lcs.Item1, lcs.Item2);
+                location.Range.End = new Position(lce.Item1, lce.Item2);
+                locations.Add(location);
+            }
+            var result = locations.ToArray();
+            return result;
         }
 
         [JsonRpcMethod(Methods.TextDocumentTypeDefinitionName)]
@@ -451,7 +498,7 @@ namespace LanguageServer.Exec
                 var pd = ParserDetailsFactory.Create(document);
                 var to_do = LanguageServer.Module.Compile();
             }
-            var r = LanguageServer.Module.Get(document);
+            IEnumerable<DocumentSymbol> r = LanguageServer.Module.Get(document);
             var symbols = new List<object>();
             foreach (var s in r)
             {

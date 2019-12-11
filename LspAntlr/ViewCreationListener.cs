@@ -47,6 +47,7 @@ namespace LspAntlr
                 buffer.ChangeContentType(new_content_type, null);
                 if (!PreviousContentType.ContainsKey(ffn))
                     PreviousContentType[ffn] = content_type;
+                
             }
             catch (Exception e)
             {
