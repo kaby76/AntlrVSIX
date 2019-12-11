@@ -43,11 +43,13 @@ namespace LanguageServer.Exec
             capabilities.CompletionProvider.ResolveProvider = false;
             capabilities.CompletionProvider.TriggerCharacters = new string[] { ",", "." };
 
+            capabilities.ReferencesProvider = true;
+
             capabilities.DefinitionProvider = true;
 
-            capabilities.TypeDefinitionProvider = false;
+            capabilities.TypeDefinitionProvider = false; // Does not make sense for Antlr.
 
-            capabilities.ImplementationProvider = false;
+            capabilities.ImplementationProvider = false; // Does not make sense for Antlr.
 
             capabilities.DocumentHighlightProvider = true;
 
@@ -442,14 +444,63 @@ namespace LanguageServer.Exec
         }
 
         [JsonRpcMethod(Methods.TextDocumentReferencesName)]
-        public async System.Threading.Tasks.Task<JToken> TextDocumentReferencesName(JToken arg)
+        public async System.Threading.Tasks.Task<object[]> TextDocumentReferencesName(JToken arg)
         {
             if (trace)
             {
                 System.Console.Error.WriteLine("<-- TextDocumentReferences");
                 System.Console.Error.WriteLine(arg.ToString());
             }
-            return null;
+            var request = arg.ToObject<TextDocumentPositionParams>();
+            var document = _workspace.FindDocument(request.TextDocument.Uri.AbsolutePath);
+            if (document == null)
+            {
+                document = new Workspaces.Document(request.TextDocument.Uri.AbsolutePath,
+                    request.TextDocument.Uri.AbsolutePath);
+                try
+                {   // Open the text file using a stream reader.
+                    using (StreamReader sr = new StreamReader(request.TextDocument.Uri.AbsolutePath))
+                    {
+                        // Read the stream to a string, and write the string to the console.
+                        String str = sr.ReadToEnd();
+                        document.Code = str;
+                    }
+                }
+                catch (IOException e)
+                {
+                }
+                var project = _workspace.FindProject("Misc");
+                if (project == null)
+                {
+                    project = new Project("Misc", "Misc", "Misc");
+                    _workspace.AddChild(project);
+                }
+                project.AddDocument(document);
+                document.Changed = true;
+                var pd = ParserDetailsFactory.Create(document);
+                var to_do = LanguageServer.Module.Compile();
+            }
+            var position = request.Position;
+            var line = position.Line;
+            var character = position.Character;
+            var index = LanguageServer.Module.GetIndex(line, character, document);
+            var bug = LanguageServer.Module.GetLineColumn(index, document);
+            var found = LanguageServer.Module.FindRefsAndDefs(index, document);
+            var locations = new List<object>();
+            foreach (var f in found)
+            {
+                var location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location();
+                location.Uri = new Uri(f.Uri.FullPath);
+                var def_document = _workspace.FindDocument(f.Uri.FullPath);
+                location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
+                var lcs = LanguageServer.Module.GetLineColumn(f.Range.Start.Value, def_document);
+                var lce = LanguageServer.Module.GetLineColumn(f.Range.End.Value + 1, def_document);
+                location.Range.Start = new Position(lcs.Item1, lcs.Item2);
+                location.Range.End = new Position(lce.Item1, lce.Item2);
+                locations.Add(location);
+            }
+            var result = locations.ToArray();
+            return result;
         }
 
         [JsonRpcMethod(Methods.TextDocumentDocumentHighlightName)]
@@ -554,6 +605,28 @@ namespace LanguageServer.Exec
             foreach (var s in r)
             {
                 var si = new SymbolInformation();
+                if (s.kind == 0)
+                    si.Kind = SymbolKind.Variable; // Nonterminal
+                else if (s.kind == 1)
+                    si.Kind = SymbolKind.Enum; // Terminal
+                else if (s.kind == 2)
+                    //si.Kind = 0; // Comment
+                    continue;
+                else if (s.kind == 3)
+                    // si.Kind = 0; // Keyword
+                    continue;
+                else if (s.kind == 4)
+                    // si.Kind = SymbolKind.Number; // Literal
+                    continue;
+                else if (s.kind == 5)
+                    // si.Kind = 0; // Mode
+                    continue;
+                else if (s.kind == 6)
+                    // si.Kind = SymbolKind.Enum; // Channel
+                    continue;
+                else
+                    // si.Kind = 0; // Default.
+                    continue;
                 si.Name = s.name;
                 si.Kind = (SymbolKind) si.Kind;
                 si.Location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location();
@@ -563,22 +636,6 @@ namespace LanguageServer.Exec
                 si.Location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
                 si.Location.Range.Start = new Position(lcs.Item1, lcs.Item2);
                 si.Location.Range.End = new Position(lce.Item1, lce.Item2);
-                if (s.kind == 0)
-                    si.Kind = SymbolKind.Variable; // Nonterminal
-                else if (s.kind == 1)
-                    si.Kind = SymbolKind.Enum; // Terminal
-                else if (s.kind == 2)
-                    si.Kind = 0; // Comment
-                else if (s.kind == 3)
-                    si.Kind = 0; // Keyword
-                else if (s.kind == 4)
-                    si.Kind = SymbolKind.Number; // Literal
-                else if (s.kind == 5)
-                    si.Kind = 0; // Mode
-                else if (s.kind == 6)
-                    si.Kind = SymbolKind.Enum; // Channel
-                else
-                    si.Kind = 0; // Default.
                 symbols.Add(si);
             }
             var result = symbols.ToArray();

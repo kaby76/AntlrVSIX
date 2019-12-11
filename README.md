@@ -131,7 +131,7 @@ LSP version 3.14. This LSP server uses this C# API, so will be behind the curren
 | textDocument/definition | yes (Dec 11, '19) |
 | textDocument/typeDefinition | no |
 | textDocument/implementation | no |
-| textDocument/references | no |
+| textDocument/references | yes (Dec 11, '19) |
 | textDocument/documentHighlight | yes (Dec 11, '19) |
 | textDocument/documentSymbol | yes (Dec 10, '19) |
 | textDocument/codeAction | no |
