@@ -83,10 +83,10 @@ LSP version 3.14. This LSP server uses this C# API, so will be behind the curren
 | Message  | Support |
 | ---- | ---- |
 | General | |
-| initialize | yes |
-| initiialized | yes |
-| shutdown | yes |
-| exit | yes |
+| initialize | yes (Dec 10, '19) |
+| initiialized | yes (Dec 10, '19) |
+| shutdown | yes (Dec 10, '19) |
+| exit | yes (Dec 10, '19) |
 | $/cancelRequest | no |
 | ---- | ---- |
 | Window | |
@@ -112,7 +112,7 @@ LSP version 3.14. This LSP server uses this C# API, so will be behind the curren
 | workspace/applyEdit | no |
 | ---- | ---- |
 | Text Synchronization | |
-| textDocument/didOpen | yes |
+| textDocument/didOpen | yes (Dec 10, '19) |
 | textDocument/didChange | no |
 | textDocument/willSave | no |
 | textDocument/willSaveWaitUntil | no |
@@ -120,12 +120,12 @@ LSP version 3.14. This LSP server uses this C# API, so will be behind the curren
 | textDocument/didClose | no |
 | ---- | ---- |
 | Diagnostics | |
-| textDocument/publishDiagnostics | yes |
+| textDocument/publishDiagnostics | yes (Dec 10, '19) |
 | ---- | ---- |
 | Language Features | |
 | textDocument/completion | no |
 | completionItem/resolve | no |
-| textDocument/hover | yes |
+| textDocument/hover | yes (Dec 10, '19) |
 | textDocument/signatureHelp | no |
 | textDocument/declaration | no |
 | textDocument/definition | no |
