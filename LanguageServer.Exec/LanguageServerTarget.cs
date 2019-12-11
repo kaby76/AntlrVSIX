@@ -400,15 +400,17 @@ namespace LanguageServer.Exec
             var line = position.Line;
             var character = position.Character;
             var index = LanguageServer.Module.GetIndex(line, character, document);
+            var bug = LanguageServer.Module.GetLineColumn(index, document);
             IList<Location> found = LanguageServer.Module.FindDef(index, document);
             var locations = new List<object>();
             foreach (var f in found)
             {
                 var location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location();
                 location.Uri = new Uri(f.Uri.FullPath);
+                var def_document = _workspace.FindDocument(f.Uri.FullPath);
                 location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
-                var lcs = LanguageServer.Module.GetLineColumn(f.Range.Start.Value, document);
-                var lce = LanguageServer.Module.GetLineColumn(f.Range.End.Value, document);
+                var lcs = LanguageServer.Module.GetLineColumn(f.Range.Start.Value, def_document);
+                var lce = LanguageServer.Module.GetLineColumn(f.Range.End.Value, def_document);
                 location.Range.Start = new Position(lcs.Item1, lcs.Item2);
                 location.Range.End = new Position(lce.Item1, lce.Item2);
                 locations.Add(location);
@@ -588,6 +590,65 @@ namespace LanguageServer.Exec
             }
             return null;
         }
+
+        struct DocumentColorParams
+        {
+            /**
+             * The text document.
+             */
+            TextDocumentIdentifier textDocument;
+        }
+
+        struct ColorInformation
+        {
+            /**
+             * The range in the document where this color appears.
+             */
+            Microsoft.VisualStudio.LanguageServer.Protocol.Range range;
+
+            /**
+             * The actual color value for this color range.
+             */
+            Color color;
+        }
+
+        /**
+         * Represents a color in RGBA space.
+         */
+        struct Color
+        {
+
+            /**
+             * The red component of this color in the range [0-1].
+             */
+            float red;
+
+            /**
+             * The green component of this color in the range [0-1].
+             */
+            float green;
+
+            /**
+             * The blue component of this color in the range [0-1].
+             */
+            float blue;
+
+            /**
+             * The alpha component of this color in the range [0-1].
+             */
+            float alpha;
+        }
+
+        [JsonRpcMethod("textDocument/documentColor")]
+        public async System.Threading.Tasks.Task<object[]> DocumentColor(JToken arg)
+        {
+            var list = new List<object>();
+            list.Add(new ColorInformation()
+                {});
+            var result = list.ToArray();
+            return result;
+        }
+
 
         [JsonRpcMethod(Methods.TextDocumentFormattingName)]
         public async System.Threading.Tasks.Task<JToken> TextDocumentFormattingName(JToken arg)
