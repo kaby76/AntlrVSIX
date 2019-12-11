@@ -77,6 +77,76 @@ for recognizing Java. I am now researching where to focus a grammar rewrite usin
 guide me on what changes to make it more efficient.
 However, the best solution is to add to this extension code to automatic rewrite grammars to eliminate all
 left recursion and common left factors, then use that to rewrite the Java grammar directly from the language spec.
+* Currently implemented LSP features. Note, Midrosoft.VisualStudio.LanguageServer.Protocol does not yet implement
+LSP version 3.14. This LSP server uses this C# API, so will be behind the current version.
+
+| Message  | Support |
+| ---- | ---- |
+| General | |
+| initialize | yes |
+| initiialized | yes |
+| shutdown | yes |
+| exit | yes |
+| $/cancelRequest | no |
+| ---- | ---- |
+| Window | |
+| window/showMessage | no |
+| window/showMessageRequest | no |
+| window/logMessage | no |
+| ---- | ---- |
+| Telemetry | |
+| telemetry/event | no |
+| ---- | ---- |
+| Client | |
+| client/registerCapability | no |
+| client/unregisterCapability | no |
+| ---- | ---- |
+| Workspace | |
+| workspace/workspaceFolders | no |
+| workspace/didChangeWorkspaceFolders | no |
+| workspace/didChangeConfiguration | no |
+| workspace/configuration | no |
+| workspace/didChangeWatchedFiles | no |
+| workspace/symbol | no |
+| workspace/executeCommand | no |
+| workspace/applyEdit | no |
+| ---- | ---- |
+| Text Synchronization | |
+| textDocument/didOpen | yes |
+| textDocument/didChange | no |
+| textDocument/willSave | no |
+| textDocument/willSaveWaitUntil | no |
+| textDocument/didSave | no |
+| textDocument/didClose | no |
+| ---- | ---- |
+| Diagnostics | |
+| textDocument/publishDiagnostics | yes |
+| ---- | ---- |
+| Language Features | |
+| textDocument/completion | no |
+| completionItem/resolve | no |
+| textDocument/hover | yes |
+| textDocument/signatureHelp | no |
+| textDocument/declaration | no |
+| textDocument/definition | no |
+| textDocument/typeDefinition | no |
+| textDocument/implementation | no |
+| textDocument/references | no |
+| textDocument/documentHighlight | no |
+| textDocument/documentSymbol | no |
+| textDocument/codeAction | no |
+| textDocument/codeLens | no |
+| codeLens/resolve | no |
+| textDocument/documentLink | no |
+| documentLink/resolve | no |
+| textDocument/documentColor | no |
+| textDocument/colorPresentation | no |
+| textDocument/formatting | no |
+| textDocument/rangeFormatting | no |
+| textDocument/onTypeFormatting | no |
+| textDocument/rename | no |
+| textDocument/prepareRename | no |
+| textDocument/foldingRange | no |
 
 ## Release notes for v4.0.5:
 
