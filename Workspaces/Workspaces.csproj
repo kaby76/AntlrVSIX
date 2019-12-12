@@ -46,6 +46,7 @@
     <Compile Include="DocumentId.cs" />
     <Compile Include="Index.cs" />
     <Compile Include="Loader.cs" />
+    <Compile Include="NewLoader.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Range.cs" />
@@ -90,19 +91,25 @@
       <Version>4.7.2</Version>
     </PackageReference>
     <PackageReference Include="Antlr4BuildTasks">
-      <Version>1.0.7</Version>
+      <Version>1.0.8</Version>
     </PackageReference>
     <PackageReference Include="cs-codebuff">
       <Version>2.0.4</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp">
-      <Version>3.2.1</Version>
+      <Version>3.4.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces">
+      <Version>3.4.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild">
+      <Version>3.4.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Editor">
-      <Version>16.1.89</Version>
+      <Version>16.2.45</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Language.Intellisense">
-      <Version>16.1.89</Version>
+      <Version>16.2.45</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Package.LanguageService.14.0">
       <Version>14.3.25407</Version>
@@ -126,12 +133,12 @@
       <Version>16.2.29116.78</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VSSDK.BuildTools">
-      <Version>16.3.1066</Version>
+      <Version>16.4.1057</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="System.Collections.Immutable">
-      <Version>1.5.0</Version>
+      <Version>1.7.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

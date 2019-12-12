@@ -261,13 +261,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AntlrCAProject\AntlrCAProject.csproj">
-      <Project>{9F91F144-0200-415F-9136-FE386DDA7FB9}</Project>
-      <Name>AntlrCAProject</Name>
-      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
-    </ProjectReference>
     <ProjectReference Include="..\AntlrFAProject\AntlrFAProject.csproj">
       <Project>{BC3EBEF2-6EFA-472B-9AC9-3A11DCC46E1C}</Project>
       <Name>AntlrFAProject</Name>
