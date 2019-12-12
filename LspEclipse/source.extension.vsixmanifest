@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="lsp-java.35915f88-0e65-4727-8331-314dc2157625" Version="1.0" Language="en-US" Publisher="Ken Domino" />
-        <DisplayName>lsp-java</DisplayName>
+        <Identity Id="LspEclipse.35915f88-0e65-4727-8331-314dc2157625" Version="1.0" Language="en-US" Publisher="Ken Domino" />
+        <DisplayName>LspEclipse</DisplayName>
         <Description xml:space="preserve">VSIX for Java using Eclipse LSP server.</Description>
     </Metadata>
     <Installation>

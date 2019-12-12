@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Forms;
 using Path = System.IO.Path;
 
-namespace VSIXProject1
+namespace LspEclipse
 {
     public partial class SetWorkspace : Window
     {

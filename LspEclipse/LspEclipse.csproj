@@ -13,8 +13,8 @@
     <ProjectGuid>{267F61C9-7DB9-41D3-A22A-EE6B710477CA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>VSIXProject1</RootNamespace>
-    <AssemblyName>VSIXProject1</AssemblyName>
+    <RootNamespace>LspEclipse</RootNamespace>
+    <AssemblyName>LspEclipse</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
     <IncludeAssemblyInVSIXContainer>true</IncludeAssemblyInVSIXContainer>
@@ -44,8 +44,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
-    <Compile Include="Class2.cs" />
+    <Compile Include="LspEclipseClient.cs" />
+    <Compile Include="JavaContentDefinition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GetJar.xaml.cs">
       <DependentUpon>GetJar.xaml</DependentUpon>

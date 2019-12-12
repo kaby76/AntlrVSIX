@@ -10,11 +10,11 @@ using System.Threading;
 using System.Threading.Tasks;
 
 
-namespace VSIXProject1
+namespace LspEclipse
 {
     [ContentType("java")]
     [Export(typeof(ILanguageClient))]
-    public class Class1 : ILanguageClient
+    public class LspEclipseClient : ILanguageClient
     {
         string ILanguageClient.Name => "Java language extension";
 

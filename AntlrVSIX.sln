@@ -68,7 +68,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Options", "Options\Options.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LanguageServer.Exec", "LanguageServer.Exec\LanguageServer.Exec.csproj", "{E912AE6C-996B-46A9-9F55-C823EB9B4F47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lsp-java", "lsp-java\lsp-java.csproj", "{267F61C9-7DB9-41D3-A22A-EE6B710477CA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LspEclipse", "LspEclipse\LspEclipse.csproj", "{267F61C9-7DB9-41D3-A22A-EE6B710477CA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LspClangd", "LspClangd\LspClangd.csproj", "{89ED278C-CF2F-4887-A5EB-18EF153DE4C5}"
 EndProject

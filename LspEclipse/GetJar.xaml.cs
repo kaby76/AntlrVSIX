@@ -7,7 +7,7 @@ using System.Net;
 using System.Threading;
 using System.Windows;
 
-namespace VSIXProject1
+namespace LspEclipse
 {
     public partial class GetJar : Window
     {

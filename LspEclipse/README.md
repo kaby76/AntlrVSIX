@@ -1,4 +1,4 @@
-# lsp-java
+# LspEclipse
 
 This is a very simple extension for VS2019 to run the Eclipse LSP server. I provide it because
 MS does not seem to provide a generic LSP client extension. It uses

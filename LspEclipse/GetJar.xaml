@@ -1,4 +1,4 @@
-﻿<Window x:Class="VSIXProject1.GetJar"
+﻿<Window x:Class="LspEclipse.GetJar"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Download of Eclipse LSP for Java" Height="100" Width="300">

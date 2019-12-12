@@ -2,7 +2,7 @@
 using Microsoft.VisualStudio.Utilities;
 using System.ComponentModel.Composition;
 
-namespace VSIXProject1
+namespace LspEclipse
 {
     public class JavaContentDefinition
     {
