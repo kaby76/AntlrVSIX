@@ -59,8 +59,8 @@ export function activate(context: vscode.ExtensionContext) {
     const syncFileEvents = getConfig<boolean>('syncFileEvents', true);
 
     const antlr: vscodelc.Executable = {
-        command: getConfig<string>('path'),
-        args: getConfig<string[]>('arguments')
+        command: 'C:/Users/kenne/Documents/AntlrVSIX/LanguageServer.Exec/bin/Debug/netcoreapp3.0/LanguageServer.Exec.exe',
+        args: []
     };
     const traceFile = getConfig<string>('trace');
     if (!!traceFile) {

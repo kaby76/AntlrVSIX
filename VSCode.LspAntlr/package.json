@@ -20,10 +20,15 @@
 		"vscode": "^1.33.0"
 	},
 	"activationEvents": [
-		"onLanguage:plaintext"
+		"onLanguage:g4"
 	],
 	"main": "./client/out/extension",
 	"contributes": {
+		"languages": [
+			{
+				"id": "g4"
+			}
+		],
 		"configuration": {
 			"type": "object",
 			"title": "Example configuration",
@@ -60,5 +65,33 @@
 		"@types/node": "^12.11.7",
 		"tslint": "^5.16.0",
 		"typescript": "^3.6.4"
+	},
+	"configuration": {
+		"type": "object",
+		"title": "clangd configuration",
+		"properties": {
+			"antlr.path": {
+				"type": "string",
+				"default": "clangd",
+				"description": "The path to clangd executable, e.g.: /usr/bin/clangd"
+			},
+			"antlr.arguments": {
+				"type": "array",
+				"default": [],
+				"items": {
+					"type": "string"
+				},
+				"description": "Arguments for clangd server"
+			},
+			"antlr.syncFileEvents": {
+				"type": "boolean",
+				"default": true,
+				"description": "Whether or not to send file events to clangd (File created, changed or deleted). This can be disabled for performance consideration."
+			},
+			"antlr.trace": {
+				"type": "string",
+				"description": "Names a file that clangd should log a performance trace to, in chrome trace-viewer JSON format."
+			}
+		}
 	}
 }
