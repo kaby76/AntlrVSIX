@@ -43,3 +43,6 @@ f/
 AntlrVSIX.GrammarDescription.Antlr/.antlr/
 *.class
 test/.metadata/
+VSCode.LspAntlr/client/node_modules/
+VSCode.LspAntlr/client/out/
+VSCode.LspAntlr/node_modules/
