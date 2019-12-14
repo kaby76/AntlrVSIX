@@ -440,7 +440,8 @@
                     if (file_name == null) continue;
                     var gd = LanguageServer.GrammarDescriptionFactory.Create(file_name);
                     if (gd == null) continue;
-                    if (!System.IO.File.Exists(file_name)) continue;
+                    // file_name can be a URI, so this doesn't make sense.
+                    //if (!System.IO.File.Exists(file_name)) continue;
                     var pd = ParserDetailsFactory.Create(document);
                     if (!pd.Changed) continue;
                     to_do.Add(pd);
