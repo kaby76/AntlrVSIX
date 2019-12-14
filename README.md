@@ -1,4 +1,3 @@
-
 # AntlrVSIX
 
 AntlrVSIX is a package of Visual Studio 2019 and Visual Studio Code extensions for programming language support
@@ -69,14 +68,16 @@ just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio
 
 ## Work in progress for next release:
 
-* Restructuring the code as a Language Server Protocol implementation with extensions for VS 2019 and VS Code.
+* Restructuring the code as a Language Server Protocol implementation with extensions for VS 2019 and VS Code. As of
+Dec 14, both extensions are now working but require some polishing.
 * Note, after some testing, I realized I chose the wrong grammar
-for recognizing Java. I am now researching where to focus a grammar rewrite using a library of 50,000+ files to help
+for recognizing Java--the documentation in the Antlr grammars is very poor. I am now researching where to focus a grammar rewrite using a library of 50,000+ files to help
 guide me on what changes to make it more efficient.
 However, the best solution is to add to this extension code to automatic rewrite grammars to eliminate all
 left recursion and common left factors, then use that to rewrite the Java grammar directly from the language spec.
-* Currently implemented LSP features. Note, Midrosoft.VisualStudio.LanguageServer.Protocol does not yet implement
-LSP version 3.14. This LSP server uses this C# API, so will be behind the current version.
+* Currently implemented LSP features. Note, Midrosoft.VisualStudio.LanguageServer.Protocol does not implement
+LSP version 3.14, rather something around version 3.6. What is missing is color tagging. I'm not sure how to deal with this
+other than pitch the inferior API, then use OmniSharp's API, or as usual write everything myself.
 
 | Message  | Support |
 | ---- | ---- |
