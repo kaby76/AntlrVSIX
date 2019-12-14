@@ -1,7 +1,9 @@
 # AntlrVSIX
 
 AntlrVSIX is a package of Visual Studio 2019 and Visual Studio Code extensions for programming language support
-of languages that are based in Antlr v4 grammars.
+of languages that are based in Antlr v4 grammars, and implemented with a
+[Language Server Protocol (LSP)](https://langserver.org/)
+client and server architecture.
 Each language is described by the grammar along with mappings of syntax
 to support tagging, go to def, find all refs,
 replace, go to visitor/listener, command completion, options,
