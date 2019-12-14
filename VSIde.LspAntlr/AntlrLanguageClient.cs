@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Pipes;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -37,7 +36,12 @@ namespace LspAntlr
             try
             {
                 string cache_location = System.IO.Path.GetTempPath();
-                var antlr_executable = @"c:\Users\kenne\Documents\AntlrVSIX\LanguageServer.Exec\bin\Debug\netcoreapp3.0\LanguageServer.Exec.exe";
+                var t = typeof(AntlrLanguageClient);
+                var a = t.Assembly;
+                var f = System.IO.Path.GetFullPath(a.Location);
+                var p = System.IO.Path.GetDirectoryName(f);
+                var antlr_executable = p + System.IO.Path.DirectorySeparatorChar
+                                         + @"LanguageServer.Exec\bin\Debug\netcoreapp3.0\LanguageServer.Exec.exe";
                 var w2 = new SetWorkspace(cache_location, antlr_executable);
                 w2.ShowDialog();
                 w2.Close();
