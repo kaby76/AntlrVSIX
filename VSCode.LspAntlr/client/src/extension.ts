@@ -57,7 +57,7 @@ class FileStatus {
  */
 export function activate(context: vscode.ExtensionContext) {
     const syncFileEvents = getConfig<boolean>('syncFileEvents', true);
-
+    
     const antlr: vscodelc.Executable = {
         command: 'C:/Users/kenne/Documents/AntlrVSIX/LanguageServer.Exec/bin/Debug/netcoreapp3.0/LanguageServer.Exec.exe',
         args: []
@@ -85,8 +85,8 @@ export function activate(context: vscode.ExtensionContext) {
         revealOutputChannelOn: vscodelc.RevealOutputChannelOn.Never
     };
 
-    const antlrClient = new vscodelc.LanguageClient('Clang Language Server',serverOptions, clientOptions);
-    console.log('Clang Language Server is now active!');
+    const antlrClient = new vscodelc.LanguageClient('Antlr Language Server',serverOptions, clientOptions);
+    console.log('Antlr Language Server is now active!');
     context.subscriptions.push(antlrClient.start());
     context.subscriptions.push(vscode.commands.registerCommand(
         'LspAntlr.switchheadersource', async () => {
