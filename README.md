@@ -116,7 +116,7 @@ myself.
 | ---- | ---- |
 | Text Synchronization | |
 | textDocument/didOpen | yes (Dec 10, '19) |
-| textDocument/didChange | no |
+| textDocument/didChange | yes (Dec 15, '19) |
 | textDocument/willSave | no |
 | textDocument/willSaveWaitUntil | no |
 | textDocument/didSave | no |
