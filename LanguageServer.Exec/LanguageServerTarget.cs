@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Web;
 using Newtonsoft.Json;
 using Workspaces;
 
@@ -202,14 +203,16 @@ namespace LanguageServer.Exec
             }
             var request = arg.ToObject<DidChangeTextDocumentParams>();
             var version = request.TextDocument.Version;
-            var document = _workspace.FindDocument(request.TextDocument.Uri.AbsolutePath);
+            var uri = request.TextDocument.Uri;
+            var decoded = HttpUtility.UrlDecode(uri.AbsoluteUri);
+            var file_name = new Uri(decoded).LocalPath;
+            var document = _workspace.FindDocument(file_name);
             if (document == null)
             {
-                document = new Workspaces.Document(request.TextDocument.Uri.AbsolutePath,
-                    request.TextDocument.Uri.AbsolutePath);
+                document = new Workspaces.Document(file_name, file_name);
                 try
                 {   // Open the text file using a stream reader.
-                    using (StreamReader sr = new StreamReader(request.TextDocument.Uri.AbsolutePath))
+                    using (StreamReader sr = new StreamReader(file_name))
                     {
                         // Read the stream to a string, and write the string to the console.
                         String str = sr.ReadToEnd();
@@ -360,14 +363,16 @@ namespace LanguageServer.Exec
                 System.Console.Error.WriteLine(arg.ToString());
             }
             var request = arg.ToObject<TextDocumentPositionParams>();
-            var document = _workspace.FindDocument(request.TextDocument.Uri.AbsolutePath);
+            var uri = request.TextDocument.Uri;
+            var decoded = HttpUtility.UrlDecode(uri.AbsoluteUri);
+            var file_name = new Uri(decoded).LocalPath;
+            var document = _workspace.FindDocument(file_name);
             if (document == null)
             {
-                document = new Workspaces.Document(request.TextDocument.Uri.AbsolutePath,
-                    request.TextDocument.Uri.AbsolutePath);
+                document = new Workspaces.Document(file_name, file_name);
                 try
                 {   // Open the text file using a stream reader.
-                    using (StreamReader sr = new StreamReader(request.TextDocument.Uri.AbsolutePath))
+                    using (StreamReader sr = new StreamReader(file_name))
                     {
                         // Read the stream to a string, and write the string to the console.
                         String str = sr.ReadToEnd();
@@ -431,14 +436,16 @@ namespace LanguageServer.Exec
                 System.Console.Error.WriteLine(arg.ToString());
             }
             var request = arg.ToObject<TextDocumentPositionParams>();
-            var document = _workspace.FindDocument(request.TextDocument.Uri.AbsolutePath);
+            var uri = request.TextDocument.Uri;
+            var decoded = HttpUtility.UrlDecode(uri.AbsoluteUri);
+            var file_name = new Uri(decoded).LocalPath;
+            var document = _workspace.FindDocument(file_name);
             if (document == null)
             {
-                document = new Workspaces.Document(request.TextDocument.Uri.AbsolutePath,
-                    request.TextDocument.Uri.AbsolutePath);
+                document = new Workspaces.Document(file_name, file_name);
                 try
                 {   // Open the text file using a stream reader.
-                    using (StreamReader sr = new StreamReader(request.TextDocument.Uri.AbsolutePath))
+                    using (StreamReader sr = new StreamReader(file_name))
                     {
                         // Read the stream to a string, and write the string to the console.
                         String str = sr.ReadToEnd();
@@ -513,14 +520,16 @@ namespace LanguageServer.Exec
                 System.Console.Error.WriteLine(arg.ToString());
             }
             var request = arg.ToObject<TextDocumentPositionParams>();
-            var document = _workspace.FindDocument(request.TextDocument.Uri.AbsolutePath);
+            var uri = request.TextDocument.Uri;
+            var decoded = HttpUtility.UrlDecode(uri.AbsoluteUri);
+            var file_name = new Uri(decoded).LocalPath;
+            var document = _workspace.FindDocument(file_name);
             if (document == null)
             {
-                document = new Workspaces.Document(request.TextDocument.Uri.AbsolutePath,
-                    request.TextDocument.Uri.AbsolutePath);
+                document = new Workspaces.Document(file_name, file_name);
                 try
                 {   // Open the text file using a stream reader.
-                    using (StreamReader sr = new StreamReader(request.TextDocument.Uri.AbsolutePath))
+                    using (StreamReader sr = new StreamReader(file_name))
                     {
                         // Read the stream to a string, and write the string to the console.
                         String str = sr.ReadToEnd();
@@ -573,14 +582,16 @@ namespace LanguageServer.Exec
                 System.Console.Error.WriteLine(arg.ToString());
             }
             var request = arg.ToObject<TextDocumentPositionParams>();
-            var document = _workspace.FindDocument(request.TextDocument.Uri.AbsolutePath);
+            var uri = request.TextDocument.Uri;
+            var decoded = HttpUtility.UrlDecode(uri.AbsoluteUri);
+            var file_name = new Uri(decoded).LocalPath;
+            var document = _workspace.FindDocument(file_name);
             if (document == null)
             {
-                document = new Workspaces.Document(request.TextDocument.Uri.AbsolutePath,
-                    request.TextDocument.Uri.AbsolutePath);
+                document = new Workspaces.Document(file_name, file_name);
                 try
                 {   // Open the text file using a stream reader.
-                    using (StreamReader sr = new StreamReader(request.TextDocument.Uri.AbsolutePath))
+                    using (StreamReader sr = new StreamReader(file_name))
                     {
                         // Read the stream to a string, and write the string to the console.
                         String str = sr.ReadToEnd();
@@ -633,14 +644,16 @@ namespace LanguageServer.Exec
                 System.Console.Error.WriteLine(arg.ToString());
             }
             var request = arg.ToObject<DocumentSymbolParams>();
-            var document = _workspace.FindDocument(request.TextDocument.Uri.AbsolutePath);
+            var uri = request.TextDocument.Uri;
+            var decoded = HttpUtility.UrlDecode(uri.AbsoluteUri);
+            var file_name = new Uri(decoded).LocalPath;
+            var document = _workspace.FindDocument(file_name);
             if (document == null)
             {
-                document = new Workspaces.Document(request.TextDocument.Uri.AbsolutePath,
-                    request.TextDocument.Uri.AbsolutePath);
+                document = new Workspaces.Document(file_name, file_name);
                 try
                 {   // Open the text file using a stream reader.
-                    using (StreamReader sr = new StreamReader(request.TextDocument.Uri.AbsolutePath))
+                    using (StreamReader sr = new StreamReader(file_name))
                     {
                         // Read the stream to a string, and write the string to the console.
                         String str = sr.ReadToEnd();
