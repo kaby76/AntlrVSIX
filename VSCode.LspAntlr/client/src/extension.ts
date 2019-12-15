@@ -57,9 +57,9 @@ class FileStatus {
  */
 export function activate(context: vscode.ExtensionContext) {
     const syncFileEvents = getConfig<boolean>('syncFileEvents', true);
-    
+    const extPath = vscode.extensions.getExtension("KenDomino.LspAntlr").extensionPath;
     const antlr: vscodelc.Executable = {
-        command: 'C:/Users/kenne/Documents/AntlrVSIX/LanguageServer.Exec/bin/Debug/netcoreapp3.0/LanguageServer.Exec.exe',
+        command: `${extPath}/server/netcoreapp3.0/LanguageServer.Exec.exe`,
         args: []
     };
     const traceFile = getConfig<string>('trace');

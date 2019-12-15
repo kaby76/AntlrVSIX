@@ -11,7 +11,7 @@
 	"bugs": {
 		"url": "https://github.com/kaby76/AntlrVSIX/issues"
 	},
-	"publisher": "Ken Domino",
+	"publisher": "KenDomino",
 	"categories": [],
 	"keywords": [
 		"multi-root ready"
@@ -68,12 +68,12 @@
 	},
 	"configuration": {
 		"type": "object",
-		"title": "clangd configuration",
+		"title": "server configuration",
 		"properties": {
 			"antlr.path": {
 				"type": "string",
-				"default": "clangd",
-				"description": "The path to clangd executable, e.g.: /usr/bin/clangd"
+				"default": "antlr",
+				"description": "The path to server executable"
 			},
 			"antlr.arguments": {
 				"type": "array",
@@ -81,16 +81,16 @@
 				"items": {
 					"type": "string"
 				},
-				"description": "Arguments for clangd server"
+				"description": "Arguments for server"
 			},
 			"antlr.syncFileEvents": {
 				"type": "boolean",
 				"default": true,
-				"description": "Whether or not to send file events to clangd (File created, changed or deleted). This can be disabled for performance consideration."
+				"description": "Whether or not to send file events to server (File created, changed or deleted). This can be disabled for performance consideration."
 			},
 			"antlr.trace": {
 				"type": "string",
-				"description": "Names a file that clangd should log a performance trace to, in chrome trace-viewer JSON format."
+				"description": "Names a file that server should log a performance trace to, in chrome trace-viewer JSON format."
 			}
 		}
 	}

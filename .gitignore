@@ -46,3 +46,6 @@ test/.metadata/
 VSCode.LspAntlr/client/node_modules/
 VSCode.LspAntlr/client/out/
 VSCode.LspAntlr/node_modules/
+VSCode.LspAntlr/server/netcoreapp3.0/
+VSIde.LspAntlr/y
+*.vsix
