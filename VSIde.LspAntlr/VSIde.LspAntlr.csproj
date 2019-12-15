@@ -70,33 +70,43 @@
     </Content>
     <Content Include="..\LanguageServer.Exec\bin\Debug\netcoreapp3.0\Antlr4BuildTasks.dll">
       <IncludeInVSIX>true</IncludeInVSIX>
+      <Link>NewFolder1\Antlr4BuildTasks.dll</Link>
     </Content>
     <Content Include="..\LanguageServer.Exec\bin\Debug\netcoreapp3.0\cs\Microsoft.CodeAnalysis.resources.dll">
       <IncludeInVSIX>true</IncludeInVSIX>
+      <Link>NewFolder1\Microsoft.CodeAnalysis.resources.dll</Link>
     </Content>
     <Content Include="..\LanguageServer.Exec\bin\Debug\netcoreapp3.0\cs\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll">
       <IncludeInVSIX>true</IncludeInVSIX>
+      <Link>NewFolder1\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll</Link>
     </Content>
     <Content Include="..\LanguageServer.Exec\bin\Debug\netcoreapp3.0\cs\Microsoft.CodeAnalysis.Workspaces.resources.dll">
       <IncludeInVSIX>true</IncludeInVSIX>
+      <Link>NewFolder1\Microsoft.CodeAnalysis.Workspaces.resources.dll</Link>
     </Content>
     <Content Include="..\LanguageServer.Exec\bin\Debug\netcoreapp3.0\cs\Microsoft.VisualStudio.LanguageServer.Protocol.resources.dll">
       <IncludeInVSIX>true</IncludeInVSIX>
+      <Link>NewFolder1\Microsoft.VisualStudio.LanguageServer.Protocol.resources.dll</Link>
     </Content>
     <Content Include="..\LanguageServer.Exec\bin\Debug\netcoreapp3.0\cs\Microsoft.VisualStudio.Threading.resources.dll">
       <IncludeInVSIX>true</IncludeInVSIX>
+      <Link>NewFolder1\Microsoft.VisualStudio.Threading.resources.dll</Link>
     </Content>
     <Content Include="..\LanguageServer.Exec\bin\Debug\netcoreapp3.0\cs\Microsoft.VisualStudio.Validation.resources.dll">
       <IncludeInVSIX>true</IncludeInVSIX>
+      <Link>NewFolder1\Microsoft.VisualStudio.Validation.resources.dll</Link>
     </Content>
     <Content Include="..\LanguageServer.Exec\bin\Debug\netcoreapp3.0\cs\StreamJsonRpc.resources.dll">
       <IncludeInVSIX>true</IncludeInVSIX>
+      <Link>NewFolder1\StreamJsonRpc.resources.dll</Link>
     </Content>
     <Content Include="..\LanguageServer.Exec\bin\Debug\netcoreapp3.0\de\Microsoft.CodeAnalysis.resources.dll">
       <IncludeInVSIX>true</IncludeInVSIX>
+      <Link>NewFolder1\Microsoft.CodeAnalysis.resources.dll</Link>
     </Content>
     <Content Include="..\LanguageServer.Exec\bin\Debug\netcoreapp3.0\de\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll">
       <IncludeInVSIX>true</IncludeInVSIX>
+      <Link>NewFolder1\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll</Link>
     </Content>
     <Content Include="..\LanguageServer.Exec\bin\Debug\netcoreapp3.0\de\Microsoft.CodeAnalysis.Workspaces.resources.dll">
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -522,30 +532,6 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="..\LanguageServer.Exec\bin\Debug\netcoreapp3.0\zh-Hant\StreamJsonRpc.resources.dll">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="..\LanguageServer.Exec\Handlers\CompletionHandler.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="..\LanguageServer.Exec\Handlers\DefinitionHandler.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="..\LanguageServer.Exec\Handlers\DocumentHighlightHandler.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="..\LanguageServer.Exec\Handlers\DocumentSymbolsHandler.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="..\LanguageServer.Exec\Handlers\HoverHandler.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="..\LanguageServer.Exec\Handlers\SignatureHelpHandler.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="..\LanguageServer.Exec\Handlers\TextDocumentSyncHandler.cs">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="..\LanguageServer.Exec\Handlers\WorkspaceSymbolsHandler.cs">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="..\LanguageServer.Exec\LanguageServer.Exec.csproj">
