@@ -15,6 +15,7 @@ namespace LanguageServer.Exec
         private readonly LSPServer server;
         private bool trace = true;
         private readonly Workspaces.Workspace _workspace;
+        static readonly object _object = new object();
 
         public LanguageServerTarget(LSPServer server)
         {
@@ -199,8 +200,68 @@ namespace LanguageServer.Exec
                 System.Console.Error.WriteLine("<-- TextDocumentDidChange");
                 System.Console.Error.WriteLine(arg.ToString());
             }
-            //var parameter = arg.ToObject<DidChangeTextDocumentParams>();
-            //server.SendDiagnostics(parameter.TextDocument.Uri.ToString(), parameter.ContentChanges[0].Text);
+            var request = arg.ToObject<DidChangeTextDocumentParams>();
+            var version = request.TextDocument.Version;
+            var document = _workspace.FindDocument(request.TextDocument.Uri.AbsolutePath);
+            if (document == null)
+            {
+                document = new Workspaces.Document(request.TextDocument.Uri.AbsolutePath,
+                    request.TextDocument.Uri.AbsolutePath);
+                try
+                {   // Open the text file using a stream reader.
+                    using (StreamReader sr = new StreamReader(request.TextDocument.Uri.AbsolutePath))
+                    {
+                        // Read the stream to a string, and write the string to the console.
+                        String str = sr.ReadToEnd();
+                        document.Code = str;
+                    }
+                }
+                catch (IOException e)
+                {
+                }
+                var project = _workspace.FindProject("Misc");
+                if (project == null)
+                {
+                    project = new Project("Misc", "Misc", "Misc");
+                    _workspace.AddChild(project);
+                }
+                project.AddDocument(document);
+                document.Changed = true;
+                var pd = ParserDetailsFactory.Create(document);
+                var to_do = LanguageServer.Module.Compile();
+            }
+            lock (_object)
+            {
+                var pd = ParserDetailsFactory.Create(document);
+                var code = pd.Code;
+                var start_index = 0;
+                var end_index = 0;
+                foreach (var change in request.ContentChanges)
+                {
+                    var range = change.Range;
+                    var length = change.RangeLength; // Why? range encodes start and end => length!
+                    var text = change.Text;
+                    {
+                        var line = range.Start.Line;
+                        var character = range.Start.Character;
+                        start_index = LanguageServer.Module.GetIndex(line, character, document);
+                    }
+                    {
+                        var line = range.End.Line;
+                        var character = range.End.Character;
+                        end_index = LanguageServer.Module.GetIndex(line, character, document);
+                    }
+                    var bs = LanguageServer.Module.GetLineColumn(start_index, document);
+                    var be = LanguageServer.Module.GetLineColumn(end_index, document);
+                    var original = code.Substring(start_index, end_index - start_index);
+                    var n = code.Substring(0, start_index)
+                            + text
+                            + code.Substring(0 + start_index + end_index - start_index);
+                    code = n;
+                }
+                document.Code = code;
+                var to_do = LanguageServer.Module.Compile();
+            }
         }
 
         [JsonRpcMethod(Methods.TextDocumentWillSaveName)]
