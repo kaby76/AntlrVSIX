@@ -173,23 +173,7 @@ namespace LanguageServer.Exec
                 System.Console.Error.WriteLine(arg.ToString());
             }
             var request = arg.ToObject<DidOpenTextDocumentParams>();
-            var document = _workspace.FindDocument(request.TextDocument.Uri.AbsolutePath);
-            if (document == null)
-            {
-                document = new Workspaces.Document(request.TextDocument.Uri.AbsolutePath,
-                    request.TextDocument.Uri.AbsolutePath);
-                document.Code = request.TextDocument.Text;
-                var project = _workspace.FindProject("Misc");
-                if (project == null)
-                {
-                    project = new Project("Misc", "Misc", "Misc");
-                    _workspace.AddChild(project);
-                }
-                project.AddDocument(document);
-                document.Changed = true;
-                var pd = ParserDetailsFactory.Create(document);
-                var to_do = LanguageServer.Module.Compile();
-            }
+            var document = CheckDoc(request.TextDocument.Uri);
             server.SendDiagnostics(request.TextDocument.Uri.AbsoluteUri, "");
         }
 
@@ -203,36 +187,7 @@ namespace LanguageServer.Exec
             }
             var request = arg.ToObject<DidChangeTextDocumentParams>();
             var version = request.TextDocument.Version;
-            var uri = request.TextDocument.Uri;
-            var decoded = HttpUtility.UrlDecode(uri.AbsoluteUri);
-            var file_name = new Uri(decoded).LocalPath;
-            var document = _workspace.FindDocument(file_name);
-            if (document == null)
-            {
-                document = new Workspaces.Document(file_name, file_name);
-                try
-                {   // Open the text file using a stream reader.
-                    using (StreamReader sr = new StreamReader(file_name))
-                    {
-                        // Read the stream to a string, and write the string to the console.
-                        String str = sr.ReadToEnd();
-                        document.Code = str;
-                    }
-                }
-                catch (IOException e)
-                {
-                }
-                var project = _workspace.FindProject("Misc");
-                if (project == null)
-                {
-                    project = new Project("Misc", "Misc", "Misc");
-                    _workspace.AddChild(project);
-                }
-                project.AddDocument(document);
-                document.Changed = true;
-                var pd = ParserDetailsFactory.Create(document);
-                var to_do = LanguageServer.Module.Compile();
-            }
+            var document = CheckDoc(request.TextDocument.Uri);
             lock (_object)
             {
                 var pd = ParserDetailsFactory.Create(document);
@@ -354,16 +309,8 @@ namespace LanguageServer.Exec
             return null;
         }
 
-        [JsonRpcMethod(Methods.TextDocumentHoverName)]
-        public async System.Threading.Tasks.Task<object> TextDocumentHoverName(JToken arg)
+        Document CheckDoc(System.Uri uri)
         {
-            if (trace)
-            {
-                System.Console.Error.WriteLine("<-- TextDocumentHover");
-                System.Console.Error.WriteLine(arg.ToString());
-            }
-            var request = arg.ToObject<TextDocumentPositionParams>();
-            var uri = request.TextDocument.Uri;
             var decoded = HttpUtility.UrlDecode(uri.AbsoluteUri);
             var file_name = new Uri(decoded).LocalPath;
             var document = _workspace.FindDocument(file_name);
@@ -393,6 +340,19 @@ namespace LanguageServer.Exec
                 var pd = ParserDetailsFactory.Create(document);
                 var to_do = LanguageServer.Module.Compile();
             }
+            return document;
+        }
+
+        [JsonRpcMethod(Methods.TextDocumentHoverName)]
+        public async System.Threading.Tasks.Task<object> TextDocumentHoverName(JToken arg)
+        {
+            if (trace)
+            {
+                System.Console.Error.WriteLine("<-- TextDocumentHover");
+                System.Console.Error.WriteLine(arg.ToString());
+            }
+            var request = arg.ToObject<TextDocumentPositionParams>();
+            var document = CheckDoc(request.TextDocument.Uri);
             var position = request.Position;
             var line = position.Line;
             var character = position.Character;
@@ -436,36 +396,7 @@ namespace LanguageServer.Exec
                 System.Console.Error.WriteLine(arg.ToString());
             }
             var request = arg.ToObject<TextDocumentPositionParams>();
-            var uri = request.TextDocument.Uri;
-            var decoded = HttpUtility.UrlDecode(uri.AbsoluteUri);
-            var file_name = new Uri(decoded).LocalPath;
-            var document = _workspace.FindDocument(file_name);
-            if (document == null)
-            {
-                document = new Workspaces.Document(file_name, file_name);
-                try
-                {   // Open the text file using a stream reader.
-                    using (StreamReader sr = new StreamReader(file_name))
-                    {
-                        // Read the stream to a string, and write the string to the console.
-                        String str = sr.ReadToEnd();
-                        document.Code = str;
-                    }
-                }
-                catch (IOException e)
-                {
-                }
-                var project = _workspace.FindProject("Misc");
-                if (project == null)
-                {
-                    project = new Project("Misc", "Misc", "Misc");
-                    _workspace.AddChild(project);
-                }
-                project.AddDocument(document);
-                document.Changed = true;
-                var pd = ParserDetailsFactory.Create(document);
-                var to_do = LanguageServer.Module.Compile();
-            }
+            var document = CheckDoc(request.TextDocument.Uri);
             var position = request.Position;
             var line = position.Line;
             var character = position.Character;
@@ -520,36 +451,7 @@ namespace LanguageServer.Exec
                 System.Console.Error.WriteLine(arg.ToString());
             }
             var request = arg.ToObject<TextDocumentPositionParams>();
-            var uri = request.TextDocument.Uri;
-            var decoded = HttpUtility.UrlDecode(uri.AbsoluteUri);
-            var file_name = new Uri(decoded).LocalPath;
-            var document = _workspace.FindDocument(file_name);
-            if (document == null)
-            {
-                document = new Workspaces.Document(file_name, file_name);
-                try
-                {   // Open the text file using a stream reader.
-                    using (StreamReader sr = new StreamReader(file_name))
-                    {
-                        // Read the stream to a string, and write the string to the console.
-                        String str = sr.ReadToEnd();
-                        document.Code = str;
-                    }
-                }
-                catch (IOException e)
-                {
-                }
-                var project = _workspace.FindProject("Misc");
-                if (project == null)
-                {
-                    project = new Project("Misc", "Misc", "Misc");
-                    _workspace.AddChild(project);
-                }
-                project.AddDocument(document);
-                document.Changed = true;
-                var pd = ParserDetailsFactory.Create(document);
-                var to_do = LanguageServer.Module.Compile();
-            }
+            var document = CheckDoc(request.TextDocument.Uri);
             var position = request.Position;
             var line = position.Line;
             var character = position.Character;
@@ -582,36 +484,7 @@ namespace LanguageServer.Exec
                 System.Console.Error.WriteLine(arg.ToString());
             }
             var request = arg.ToObject<TextDocumentPositionParams>();
-            var uri = request.TextDocument.Uri;
-            var decoded = HttpUtility.UrlDecode(uri.AbsoluteUri);
-            var file_name = new Uri(decoded).LocalPath;
-            var document = _workspace.FindDocument(file_name);
-            if (document == null)
-            {
-                document = new Workspaces.Document(file_name, file_name);
-                try
-                {   // Open the text file using a stream reader.
-                    using (StreamReader sr = new StreamReader(file_name))
-                    {
-                        // Read the stream to a string, and write the string to the console.
-                        String str = sr.ReadToEnd();
-                        document.Code = str;
-                    }
-                }
-                catch (IOException e)
-                {
-                }
-                var project = _workspace.FindProject("Misc");
-                if (project == null)
-                {
-                    project = new Project("Misc", "Misc", "Misc");
-                    _workspace.AddChild(project);
-                }
-                project.AddDocument(document);
-                document.Changed = true;
-                var pd = ParserDetailsFactory.Create(document);
-                var to_do = LanguageServer.Module.Compile();
-            }
+            var document = CheckDoc(request.TextDocument.Uri);
             var position = request.Position;
             var line = position.Line;
             var character = position.Character;
@@ -644,36 +517,7 @@ namespace LanguageServer.Exec
                 System.Console.Error.WriteLine(arg.ToString());
             }
             var request = arg.ToObject<DocumentSymbolParams>();
-            var uri = request.TextDocument.Uri;
-            var decoded = HttpUtility.UrlDecode(uri.AbsoluteUri);
-            var file_name = new Uri(decoded).LocalPath;
-            var document = _workspace.FindDocument(file_name);
-            if (document == null)
-            {
-                document = new Workspaces.Document(file_name, file_name);
-                try
-                {   // Open the text file using a stream reader.
-                    using (StreamReader sr = new StreamReader(file_name))
-                    {
-                        // Read the stream to a string, and write the string to the console.
-                        String str = sr.ReadToEnd();
-                        document.Code = str;
-                    }
-                }
-                catch (IOException e)
-                {
-                }
-                var project = _workspace.FindProject("Misc");
-                if (project == null)
-                {
-                    project = new Project("Misc", "Misc", "Misc");
-                    _workspace.AddChild(project);
-                }
-                project.AddDocument(document);
-                document.Changed = true;
-                var pd = ParserDetailsFactory.Create(document);
-                var to_do = LanguageServer.Module.Compile();
-            }
+            var document = CheckDoc(request.TextDocument.Uri);
             IEnumerable<DocumentSymbol> r = LanguageServer.Module.Get(document);
             var symbols = new List<object>();
             foreach (var s in r)
@@ -770,65 +614,6 @@ namespace LanguageServer.Exec
             }
             return null;
         }
-
-        struct DocumentColorParams
-        {
-            /**
-             * The text document.
-             */
-            TextDocumentIdentifier textDocument;
-        }
-
-        struct ColorInformation
-        {
-            /**
-             * The range in the document where this color appears.
-             */
-            Microsoft.VisualStudio.LanguageServer.Protocol.Range range;
-
-            /**
-             * The actual color value for this color range.
-             */
-            Color color;
-        }
-
-        /**
-         * Represents a color in RGBA space.
-         */
-        struct Color
-        {
-
-            /**
-             * The red component of this color in the range [0-1].
-             */
-            float red;
-
-            /**
-             * The green component of this color in the range [0-1].
-             */
-            float green;
-
-            /**
-             * The blue component of this color in the range [0-1].
-             */
-            float blue;
-
-            /**
-             * The alpha component of this color in the range [0-1].
-             */
-            float alpha;
-        }
-
-        [JsonRpcMethod("textDocument/documentColor")]
-        public async System.Threading.Tasks.Task<object[]> DocumentColor(JToken arg)
-        {
-            var list = new List<object>();
-            list.Add(new ColorInformation()
-                {});
-            var result = list.ToArray();
-            return result;
-        }
-
 
         [JsonRpcMethod(Methods.TextDocumentFormattingName)]
         public async System.Threading.Tasks.Task<JToken> TextDocumentFormattingName(JToken arg)
