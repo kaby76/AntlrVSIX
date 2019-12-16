@@ -71,6 +71,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VSIde.LspClangd", "VSIde.LspClangd\VSIde.LspClangd.csproj", "{89ED278C-CF2F-4887-A5EB-18EF153DE4C5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VSIde.LspAntlr", "VSIde.LspAntlr\VSIde.LspAntlr.csproj", "{99377F57-EC77-4949-A670-F97989990A3C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E912AE6C-996B-46A9-9F55-C823EB9B4F47} = {E912AE6C-996B-46A9-9F55-C823EB9B4F47}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LspHelpers", "LspHelpers\LspHelpers.csproj", "{DFFF91E8-3E09-49CF-84B5-F5566826EE1A}"
 EndProject
