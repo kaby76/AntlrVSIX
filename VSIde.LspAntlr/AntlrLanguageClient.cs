@@ -61,11 +61,17 @@ namespace LspAntlr
                 process.StartInfo = info;
                 if (process.Start())
                 {
+                    bool debug = false;
                     var @out = process.StandardOutput.BaseStream;
-                    var eout = new LspTools.LspHelpers.EchoStream(@out, _log_from_server, LspTools.LspHelpers.EchoStream.StreamOwnership.OwnNone);
-
+                    var eout = debug
+                        ? new LspTools.LspHelpers.EchoStream(@out, _log_from_server,
+                            LspTools.LspHelpers.EchoStream.StreamOwnership.OwnNone)
+                        : @out;
                     var @in = process.StandardInput.BaseStream;
-                    var ein = new LspTools.LspHelpers.EchoStream(@in, _log_to_server, LspTools.LspHelpers.EchoStream.StreamOwnership.OwnNone);
+                    var ein = debug
+                        ? new LspTools.LspHelpers.EchoStream(@in, _log_to_server,
+                            LspTools.LspHelpers.EchoStream.StreamOwnership.OwnNone)
+                        : @in;
 
                     return new Connection(eout, ein);
                 }
