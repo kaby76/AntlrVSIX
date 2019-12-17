@@ -62,7 +62,7 @@ namespace LanguageServer.Exec
 
             capabilities.DocumentRangeFormattingProvider = false;
 
-            capabilities.RenameProvider = false;
+            capabilities.RenameProvider = true;
 
             var result = new InitializeResult();
             result.Capabilities = capabilities;
@@ -743,14 +743,50 @@ namespace LanguageServer.Exec
         }
 
         [JsonRpcMethod(Methods.TextDocumentRenameName)]
-        public async System.Threading.Tasks.Task<JToken> TextDocumentRenameName(JToken arg)
+        public async System.Threading.Tasks.Task<WorkspaceEdit> TextDocumentRenameName(JToken arg)
         {
             if (trace)
             {
                 System.Console.Error.WriteLine("<-- TextDocumentRename");
                 System.Console.Error.WriteLine(arg.ToString());
             }
-            return null;
+            var request = arg.ToObject<RenameParams>();
+            var document = CheckDoc(request.TextDocument.Uri);
+            var position = request.Position;
+            var line = position.Line;
+            var character = position.Character;
+            var index = LanguageServer.Module.GetIndex(line, character, document);
+            if (trace)
+            {
+                System.Console.Error.WriteLine("position index = " + index);
+                var back = LanguageServer.Module.GetLineColumn(index, document);
+                System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
+            }
+            var new_name = request.NewName;
+            var changes = LanguageServer.Module.Rename(index, new_name, document);
+            var edit = new WorkspaceEdit();
+            int count = 0;
+            var edit_changes_array = new Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]>();
+            foreach (var pair in changes)
+            {
+                var doc = pair.Key;
+                var val = pair.Value;
+                var new_list = new List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit>();
+                foreach (var v in val)
+                {
+                    var new_edit = new Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit();
+                    new_edit.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
+                    var lcs = LanguageServer.Module.GetLineColumn(v.range.Start.Value, document);
+                    var lce = LanguageServer.Module.GetLineColumn(v.range.End.Value, document);
+                    new_edit.Range.Start = new Position(lcs.Item1, lcs.Item2);
+                    new_edit.Range.End = new Position(lce.Item1, lce.Item2);
+                    new_edit.NewText = v.NewText;
+                    new_list.Add(new_edit);
+                    count++;
+                }
+                edit_changes_array.Add(doc, new_list.ToArray());
+            }
+            return edit;
         }
 
         [JsonRpcMethod(Methods.TextDocumentFoldingRangeName)]

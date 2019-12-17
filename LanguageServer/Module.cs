@@ -599,5 +599,28 @@ namespace LanguageServer
                 return result;
             }
         }
+
+        public static Dictionary<string, List<TextEdit>> Rename(int index, string new_text, Document doc)
+        {
+            var locations = LanguageServer.Module.FindRefsAndDefs(index, doc);
+            var result = new Dictionary<string, List<TextEdit>>();
+            foreach (var l in locations)
+            {
+                var d = l.Uri;
+                var fn = d.FullPath;
+                var r = l.Range;
+                if (!result.ContainsKey(fn))
+                {
+                    result[fn] = new List<TextEdit>();
+                }
+                var list = result[fn];
+                list.Add(new TextEdit()
+                {
+                    range = r,
+                    NewText = new_text
+                });
+            }
+            return result;
+        }
     }
 }
