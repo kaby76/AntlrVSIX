@@ -130,10 +130,10 @@ myself.
 | completionItem/resolve | no |
 | textDocument/hover | yes (Dec 10, '19) |
 | textDocument/signatureHelp | no |
-| textDocument/declaration | no |
+| textDocument/declaration | no (unavail. in API) |
 | textDocument/definition | yes (Dec 11, '19) |
-| textDocument/typeDefinition | no |
-| textDocument/implementation | no |
+| textDocument/typeDefinition | yes (same as "definition") |
+| textDocument/implementation | yes (same as "definition") |
 | textDocument/references | yes (Dec 11, '19) |
 | textDocument/documentHighlight | yes (Dec 11, '19) |
 | textDocument/documentSymbol | yes (Dec 10, '19) |
