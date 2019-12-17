@@ -144,7 +144,7 @@ myself.
 | documentLink/resolve | no |
 | textDocument/documentColor | no |
 | textDocument/colorPresentation | no |
-| textDocument/formatting | no |
+| textDocument/formatting | yes (Dec 17, '19) |
 | textDocument/rangeFormatting | no |
 | textDocument/onTypeFormatting | no |
 | textDocument/rename | no |
