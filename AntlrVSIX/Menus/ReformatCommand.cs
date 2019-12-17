@@ -1,4 +1,6 @@
-﻿namespace AntlrVSIX.Reformat
+﻿using LanguageServer;
+
+namespace AntlrVSIX.Reformat
 {
     using AntlrVSIX.Extensions;
     using AntlrVSIX.Package;
@@ -114,7 +116,7 @@
                         var edit = buffer.CreateEdit();
                         if (global::Options.POptions.GetBoolean("IncrementalReformat"))
                         {
-                            var diff = new Diff.diff_match_patch();
+                            var diff = new diff_match_patch();
                             var diffs = diff.diff_main(text, org.antlr.codebuff.Tool.formatted_output);
                             var patch = diff.patch_make(diffs);
                             //patch.Reverse();
@@ -130,7 +132,7 @@
                                 var offset = 0;
                                 foreach (var ed in p.diffs)
                                 {
-                                    if (ed.operation == Diff.Operation.EQUAL)
+                                    if (ed.operation == Operation.EQUAL)
                                     {
                                         // Let's verify that.
                                         var len = ed.text.Length;
@@ -141,7 +143,7 @@
                                         { }
                                         offset = offset + len;
                                     }
-                                    else if (ed.operation == Diff.Operation.DELETE)
+                                    else if (ed.operation == Operation.DELETE)
                                     {
                                         var len = ed.text.Length;
                                         var tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
@@ -153,7 +155,7 @@
                                         offset = offset + len;
                                         edit.Delete(sp);
                                     }
-                                    else if (ed.operation == Diff.Operation.INSERT)
+                                    else if (ed.operation == Operation.INSERT)
                                     {
                                         var len = ed.text.Length;
                                         edit.Insert(start + offset, ed.text);
