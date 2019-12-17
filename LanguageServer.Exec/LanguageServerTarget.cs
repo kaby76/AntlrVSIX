@@ -58,7 +58,7 @@ namespace LanguageServer.Exec
 
             capabilities.WorkspaceSymbolProvider = false;
 
-            capabilities.DocumentFormattingProvider = false;
+            capabilities.DocumentFormattingProvider = true;
 
             capabilities.DocumentRangeFormattingProvider = false;
 
@@ -356,6 +356,12 @@ namespace LanguageServer.Exec
             var line = position.Line;
             var character = position.Character;
             var index = LanguageServer.Module.GetIndex(line, character, document);
+            if (trace)
+            {
+                System.Console.Error.WriteLine("position index = " + index);
+                var back = LanguageServer.Module.GetLineColumn(index, document);
+                System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
+            }
             QuickInfo quick_info = LanguageServer.Module.GetQuickInfo(index, document);
             if (quick_info == null) return null;
             var hover = new Hover();
@@ -386,6 +392,9 @@ namespace LanguageServer.Exec
             return null;
         }
 
+        // TextDocumentDeclaration does not exist in Microsoft.VisualStudio.LanguageServer.Protocol 16.3.57
+        // but does in version 3.14 of LSP.
+
         [JsonRpcMethod(Methods.TextDocumentDefinitionName)]
         public async System.Threading.Tasks.Task<object[]> TextDocumentDefinitionName(JToken arg)
         {
@@ -400,7 +409,12 @@ namespace LanguageServer.Exec
             var line = position.Line;
             var character = position.Character;
             var index = LanguageServer.Module.GetIndex(line, character, document);
-            var bug = LanguageServer.Module.GetLineColumn(index, document);
+            if (trace)
+            {
+                System.Console.Error.WriteLine("position index = " + index);
+                var back = LanguageServer.Module.GetLineColumn(index, document);
+                System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
+            }
             IList<Location> found = LanguageServer.Module.FindDef(index, document);
             var locations = new List<object>();
             foreach (var f in found)
@@ -420,25 +434,79 @@ namespace LanguageServer.Exec
         }
 
         [JsonRpcMethod(Methods.TextDocumentTypeDefinitionName)]
-        public async System.Threading.Tasks.Task<JToken> TextDocumentTypeDefinitionName(JToken arg)
+        public async System.Threading.Tasks.Task<object[]> TextDocumentTypeDefinitionName(JToken arg)
         {
             if (trace)
             {
-                System.Console.Error.WriteLine("<-- TextDocumentTypeDefinition");
+                System.Console.Error.WriteLine("<-- TextDocumentTypeDefinitionName");
                 System.Console.Error.WriteLine(arg.ToString());
             }
-            return null;
+            var request = arg.ToObject<TextDocumentPositionParams>();
+            var document = CheckDoc(request.TextDocument.Uri);
+            var position = request.Position;
+            var line = position.Line;
+            var character = position.Character;
+            var index = LanguageServer.Module.GetIndex(line, character, document);
+            if (trace)
+            {
+                System.Console.Error.WriteLine("position index = " + index);
+                var back = LanguageServer.Module.GetLineColumn(index, document);
+                System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
+            }
+            IList<Location> found = LanguageServer.Module.FindDef(index, document);
+            var locations = new List<object>();
+            foreach (var f in found)
+            {
+                var location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location();
+                location.Uri = new Uri(f.Uri.FullPath);
+                var def_document = _workspace.FindDocument(f.Uri.FullPath);
+                location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
+                var lcs = LanguageServer.Module.GetLineColumn(f.Range.Start.Value, def_document);
+                var lce = LanguageServer.Module.GetLineColumn(f.Range.End.Value, def_document);
+                location.Range.Start = new Position(lcs.Item1, lcs.Item2);
+                location.Range.End = new Position(lce.Item1, lce.Item2);
+                locations.Add(location);
+            }
+            var result = locations.ToArray();
+            return result;
         }
 
         [JsonRpcMethod(Methods.TextDocumentImplementationName)]
-        public async System.Threading.Tasks.Task<JToken> TextDocumentImplementationName(JToken arg)
+        public async System.Threading.Tasks.Task<object[]> TextDocumentImplementationName(JToken arg)
         {
             if (trace)
             {
                 System.Console.Error.WriteLine("<-- TextDocumentImplementation");
                 System.Console.Error.WriteLine(arg.ToString());
             }
-            return null;
+            var request = arg.ToObject<TextDocumentPositionParams>();
+            var document = CheckDoc(request.TextDocument.Uri);
+            var position = request.Position;
+            var line = position.Line;
+            var character = position.Character;
+            var index = LanguageServer.Module.GetIndex(line, character, document);
+            if (trace)
+            {
+                System.Console.Error.WriteLine("position index = " + index);
+                var back = LanguageServer.Module.GetLineColumn(index, document);
+                System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
+            }
+            IList<Location> found = LanguageServer.Module.FindDef(index, document);
+            var locations = new List<object>();
+            foreach (var f in found)
+            {
+                var location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location();
+                location.Uri = new Uri(f.Uri.FullPath);
+                var def_document = _workspace.FindDocument(f.Uri.FullPath);
+                location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
+                var lcs = LanguageServer.Module.GetLineColumn(f.Range.Start.Value, def_document);
+                var lce = LanguageServer.Module.GetLineColumn(f.Range.End.Value, def_document);
+                location.Range.Start = new Position(lcs.Item1, lcs.Item2);
+                location.Range.End = new Position(lce.Item1, lce.Item2);
+                locations.Add(location);
+            }
+            var result = locations.ToArray();
+            return result;
         }
 
         [JsonRpcMethod(Methods.TextDocumentReferencesName)]
@@ -455,7 +523,12 @@ namespace LanguageServer.Exec
             var line = position.Line;
             var character = position.Character;
             var index = LanguageServer.Module.GetIndex(line, character, document);
-            var bug = LanguageServer.Module.GetLineColumn(index, document);
+            if (trace)
+            {
+                System.Console.Error.WriteLine("position index = " + index);
+                var back = LanguageServer.Module.GetLineColumn(index, document);
+                System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
+            }
             var found = LanguageServer.Module.FindRefsAndDefs(index, document);
             var locations = new List<object>();
             foreach (var f in found)
@@ -488,7 +561,12 @@ namespace LanguageServer.Exec
             var line = position.Line;
             var character = position.Character;
             var index = LanguageServer.Module.GetIndex(line, character, document);
-            var bug = LanguageServer.Module.GetLineColumn(index, document);
+            if (trace)
+            {
+                System.Console.Error.WriteLine("position index = " + index);
+                var back = LanguageServer.Module.GetLineColumn(index, document);
+                System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
+            }
             var found = LanguageServer.Module.FindRefsAndDefs(index, document);
             var locations = new List<object>();
             foreach (var f in found)
@@ -615,14 +693,31 @@ namespace LanguageServer.Exec
         }
 
         [JsonRpcMethod(Methods.TextDocumentFormattingName)]
-        public async System.Threading.Tasks.Task<JToken> TextDocumentFormattingName(JToken arg)
+        public async System.Threading.Tasks.Task<object[]> TextDocumentFormattingName(JToken arg)
         {
             if (trace)
             {
                 System.Console.Error.WriteLine("<-- TextDocumentFormatting");
                 System.Console.Error.WriteLine(arg.ToString());
             }
-            return null;
+            var request = arg.ToObject<DocumentFormattingParams>();
+            var document = CheckDoc(request.TextDocument.Uri);
+            var new_list = new List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit>();
+            var changes = LanguageServer.Module.Reformat(document);
+            int count = 0;
+            foreach (var delta in changes)
+            {
+                var new_edit = new Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit();
+                new_edit.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
+                var lcs = LanguageServer.Module.GetLineColumn(delta.range.Start.Value, document);
+                var lce = LanguageServer.Module.GetLineColumn(delta.range.End.Value, document);
+                new_edit.Range.Start = new Position(lcs.Item1, lcs.Item2);
+                new_edit.Range.End = new Position(lce.Item1, lce.Item2);
+                new_edit.NewText = delta.NewText;
+                new_list.Add(new_edit);
+                count++;
+            }
+            return new_list.ToArray();
         }
 
         [JsonRpcMethod(Methods.TextDocumentRangeFormattingName)]

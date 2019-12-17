@@ -13,59 +13,8 @@
         static WritableSettingsStore persistent_settings;
         static bool initialized = false;
         static bool persistent_store_initialized = false;
-
-        public static void SetBoolean(string option, bool value)
-        {
-            Initialize();
-            IEnumerable<string> collection = persistent_settings.GetSubCollectionNames("AntlrVSIX");
-            persistent_settings.SetBoolean("AntlrVSIX", option, value);
-        }
-
-        public static void SetString(string option, string value)
-        {
-            Initialize();
-            IEnumerable<string> collection = persistent_settings.GetSubCollectionNames("AntlrVSIX");
-            persistent_settings.SetString("AntlrVSIX", option, value);
-        }
-
-        public static void SetInt32(string option, int value)
-        {
-            Initialize();
-            IEnumerable<string> collection = persistent_settings.GetSubCollectionNames("AntlrVSIX");
-            persistent_settings.SetInt32("AntlrVSIX", option, value);
-        }
-
-        public static bool GetBoolean(string option)
-        {
-            Initialize();
-            bool default_value = false;
-            defaults.TryGetValue(option, out object value);
-            if (value == null)
-                default_value = false;
-            else if (value is bool)
-            {
-                default_value = (bool)value;
-            }
-            return persistent_settings.GetBoolean("AntlrVSIX", option, default_value);
-        }
-
-        public static string GetString(string option)
-        {
-            Initialize();
-            string default_value = "";
-            defaults.TryGetValue(option, out object value);
-            if (value == null)
-                default_value = "";
-            else if (value is string)
-            {
-                default_value = (string)value;
-            }
-            return persistent_settings.GetString("AntlrVSIX", option, default_value);
-        }
-
         private static string s = System.Environment.GetEnvironmentVariable("CORPUS_LOCATION");
         private static string CorpusLocation = s == null ? "" : s;
-
         private static Dictionary<string, object> defaults = new Dictionary<string, object>()
         {
             {"IncrementalReformat", true },
@@ -81,6 +30,66 @@
         };
 
 
+        public static void SetBoolean(string option, bool value)
+        {
+            Initialize();
+            defaults[option] = value;
+            if (persistent_settings == null) return;
+            IEnumerable<string> collection = persistent_settings.GetSubCollectionNames("AntlrVSIX");
+            persistent_settings.SetBoolean("AntlrVSIX", option, value);
+        }
+
+        public static void SetString(string option, string value)
+        {
+            Initialize();
+            defaults[option] = value;
+            if (persistent_settings == null) return;
+            IEnumerable<string> collection = persistent_settings.GetSubCollectionNames("AntlrVSIX");
+            persistent_settings.SetString("AntlrVSIX", option, value);
+        }
+
+        public static void SetInt32(string option, int value)
+        {
+            Initialize();
+            defaults[option] = value;
+            if (persistent_settings == null) return;
+            IEnumerable<string> collection = persistent_settings.GetSubCollectionNames("AntlrVSIX");
+            persistent_settings.SetInt32("AntlrVSIX", option, value);
+        }
+
+        public static bool GetBoolean(string option)
+        {
+            Initialize();
+            bool default_value = false;
+            defaults.TryGetValue(option, out object value);
+            if (value == null)
+                default_value = false;
+            else if (value is bool)
+            {
+                default_value = (bool)value;
+            }
+            if (persistent_settings != null)
+                return persistent_settings.GetBoolean("AntlrVSIX", option, default_value);
+            else
+                return default_value;
+        }
+
+        public static string GetString(string option)
+        {
+            Initialize();
+            string default_value = "";
+            defaults.TryGetValue(option, out object value);
+            if (value == null)
+                default_value = "";
+            else if (value is string)
+            {
+                default_value = (string)value;
+            }
+            if (persistent_settings != null)
+                return persistent_settings.GetString("AntlrVSIX", option, default_value);
+            else
+                return default_value;
+        }
 
         public static int GetInt32(string option)
         {
@@ -93,13 +102,29 @@
             {
                 default_value = (int)value;
             }
-            return persistent_settings.GetInt32("AntlrVSIX", option, default_value);
+            if (persistent_settings != null)
+                return persistent_settings.GetInt32("AntlrVSIX", option, default_value);
+            else
+                return default_value;
         }
+
 
         private static void Initialize()
         {
             if (initialized) return;
-            var dte2 = Package.GetGlobalService(typeof(SDTE));
+            object dte2 = null;
+            try
+            {
+                dte2 = Package.GetGlobalService(typeof(SDTE));
+            }
+            catch (Exception)
+            {
+            }
+            if (dte2 == null)
+            {
+                initialized = true;
+                return;
+            }
             IServiceProvider isp = (IServiceProvider)dte2;
             ServiceProvider sp = new ServiceProvider(isp);
             var settingsManager = new ShellSettingsManager(sp);

@@ -1,4 +1,5 @@
-﻿namespace LanguageServer
+﻿
+namespace LanguageServer
 {
     using Graphs;
     using System.Collections.Generic;
@@ -489,6 +490,114 @@
                 Logger.Log.Notify(e.ToString());
             }
             return new List<ParserDetails>();
+        }
+
+        public static TextEdit[] Reformat(Document doc)
+        {
+            var ref_pd = ParserDetailsFactory.Create(doc);
+            var code = doc.Code;
+            string corpus_location = global::Options.POptions.GetString("CorpusLocation");
+            if (corpus_location == null)
+            {
+                TextEdit[] result = new TextEdit[] { };
+                return result;
+            }
+
+            string ffn = doc.FullPath;
+            if (ffn == null)
+            {
+                TextEdit[] result = new TextEdit[] { };
+                return result;
+            }
+            var grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
+            if (grammar_description == null)
+            {
+                TextEdit[] result = new TextEdit[] { };
+                return result;
+            }
+            org.antlr.codebuff.Tool.unformatted_input = code;
+            try
+            {
+                var result = org.antlr.codebuff.Tool.Main(
+                    new object[]
+                    {
+                    "-g", grammar_description.Name,
+                    "-lexer", grammar_description.Lexer,
+                    "-parser", grammar_description.Parser,
+                    "-rule", grammar_description.StartRule,
+                    "-files", grammar_description.FileExtension,
+                    "-corpus", corpus_location,
+                    "-inoutstring",
+                    ""
+                    });
+                var edits = new List<TextEdit>();
+                var diff = new diff_match_patch();
+                var diffs = diff.diff_main(code, result);
+                var patch = diff.patch_make(diffs);
+                //patch.Reverse();
+
+                // Start edit session.
+                int times = 0;
+                int delta = 0;
+                foreach (var p in patch)
+                {
+                    times++;
+                    var start = p.start1 - delta;
+
+                    var offset = 0;
+                    foreach (var ed in p.diffs)
+                    {
+                        if (ed.operation == Operation.EQUAL)
+                        {
+                            //// Let's verify that.
+                            var len = ed.text.Length;
+                            //var tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
+                            //  new Span(start + offset, len));
+                            //var tt = tokenSpan.GetText();
+                            //if (ed.text != tt)
+                            //{ }
+                            offset = offset + len;
+                        }
+                        else if (ed.operation == Operation.DELETE)
+                        {
+                            var len = ed.text.Length;
+                            //var tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
+                            //  new Span(start + offset, len));
+                            //var tt = tokenSpan.GetText();
+                            //if (ed.text != tt)
+                            //{ }
+                            var edit = new TextEdit()
+                            {
+                                range = new Range(
+                                    new Index(start + offset),
+                                    new Index(start + offset + len)),
+                                NewText = ""
+                            };
+                            offset = offset + len;
+                            edits.Add(edit);
+                        }
+                        else if (ed.operation == Operation.INSERT)
+                        {
+                            var len = ed.text.Length;
+                            var edit = new TextEdit()
+                            {
+                                range = new Range(
+                                    new Index(start + offset),
+                                    new Index(start + offset)),
+                                NewText = ed.text
+                            };
+                            edits.Add(edit);
+                        }
+                    }
+                    delta = delta + (p.length2 - p.length1);
+                }
+                return edits.ToArray();
+            }
+            catch (Exception)
+            {
+                TextEdit[] result = new TextEdit[] { };
+                return result;
+            }
         }
     }
 }
