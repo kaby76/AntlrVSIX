@@ -622,7 +622,7 @@ namespace LanguageServer
                     var pre = code.Substring(previous, r.Start.Value - previous);
                     sb.Append(pre);
                     sb.Append(new_text);
-                    previous = r.End.Value;
+                    previous = r.End.Value + 1;
                 }
                 var rest = code.Substring(previous);
                 sb.Append(rest);
