@@ -142,13 +142,13 @@ myself.
 | codeLens/resolve | no |
 | textDocument/documentLink | no |
 | documentLink/resolve | no |
-| textDocument/documentColor | no |
-| textDocument/colorPresentation | no |
+| textDocument/documentColor | unavailable in API |
+| textDocument/colorPresentation | unavailable in API |
 | textDocument/formatting | yes (Dec 17, '19) |
 | textDocument/rangeFormatting | no |
 | textDocument/onTypeFormatting | no |
 | textDocument/rename | yes (Dec 18, '19) |
-| textDocument/prepareRename | no |
+| textDocument/prepareRename | unavailable in API |
 | textDocument/foldingRange | no |
 
 ## Release notes for v4.0.5:
