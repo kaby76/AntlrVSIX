@@ -229,6 +229,7 @@ namespace LanguageServer.Exec
                 System.Console.Error.WriteLine("<-- TextDocumentWillSave");
                 System.Console.Error.WriteLine(arg.ToString());
             }
+            // Nothing to do--who cares because the server does not perform a save.
         }
 
         [JsonRpcMethod(Methods.TextDocumentWillSaveWaitUntilName)]
@@ -239,6 +240,8 @@ namespace LanguageServer.Exec
                 System.Console.Error.WriteLine("<-- TextDocumentWillSaveWaitUntil");
                 System.Console.Error.WriteLine(arg.ToString());
             }
+            // Nothing to do--who cares because the server does not perform a save, and
+            // the server doesn't manufacture edit requests out of thin air.
             return null;
         }
 
@@ -250,6 +253,7 @@ namespace LanguageServer.Exec
                 System.Console.Error.WriteLine("<-- TextDocumentDidSave");
                 System.Console.Error.WriteLine(arg.ToString());
             }
+            // Nothing to do--who cares because the server does not perform a save.
         }
 
         [JsonRpcMethod(Methods.TextDocumentDidCloseName)]
@@ -260,6 +264,7 @@ namespace LanguageServer.Exec
                 System.Console.Error.WriteLine("<-- TextDocumentDidClose");
                 System.Console.Error.WriteLine(arg.ToString());
             }
+            // Nothing to do--who cares.
         }
 
         // ======= DIAGNOSTICS ========
