@@ -770,6 +770,7 @@ namespace LanguageServer.Exec
             foreach (var pair in changes)
             {
                 var doc = pair.Key;
+                var uri = new Uri(doc);
                 var val = pair.Value;
                 var new_list = new List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit>();
                 foreach (var v in val)
@@ -784,8 +785,9 @@ namespace LanguageServer.Exec
                     new_list.Add(new_edit);
                     count++;
                 }
-                edit_changes_array.Add(doc, new_list.ToArray());
+                edit_changes_array.Add(uri.ToString(), new_list.ToArray());
             }
+            edit.Changes = edit_changes_array;
             return edit;
         }
 

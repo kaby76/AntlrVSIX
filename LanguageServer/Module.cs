@@ -1,4 +1,6 @@
 ﻿
+using System.Text;
+
 namespace LanguageServer
 {
     using Graphs;
@@ -600,25 +602,90 @@ namespace LanguageServer
             }
         }
 
-        public static Dictionary<string, List<TextEdit>> Rename(int index, string new_text, Document doc)
+        public static Dictionary<string, TextEdit[]> Rename(int index, string new_text, Document doc)
         {
             var locations = LanguageServer.Module.FindRefsAndDefs(index, doc);
-            var result = new Dictionary<string, List<TextEdit>>();
-            foreach (var l in locations)
+            var result = new Dictionary<string, TextEdit[]>();
+            var documents = locations.Select(r => r.Uri).OrderBy(q => q).Distinct();
+            foreach (var f in documents)
             {
-                var d = l.Uri;
-                var fn = d.FullPath;
-                var r = l.Range;
-                if (!result.ContainsKey(fn))
+                var fn = f.FullPath;
+                var per_file_changes = locations.Where(z => z.Uri == f).OrderBy(q => q.Range.Start.Value);
+                StringBuilder sb = new StringBuilder();
+                int previous = 0;
+                var code = f.Code;
+                foreach (var l in per_file_changes)
                 {
-                    result[fn] = new List<TextEdit>();
+                    var d = l.Uri;
+                    var xx = d.FullPath;
+                    var r = l.Range;
+                    var pre = code.Substring(previous, r.Start.Value - previous);
+                    sb.Append(pre);
+                    sb.Append(new_text);
+                    previous = r.End.Value;
                 }
-                var list = result[fn];
-                list.Add(new TextEdit()
+                var rest = code.Substring(previous);
+                sb.Append(rest);
+                var new_code = sb.ToString();
+                var edits = new List<TextEdit>();
+                var diff = new diff_match_patch();
+                var diffs = diff.diff_main(code, new_code);
+                var patch = diff.patch_make(diffs);
+                int times = 0;
+                int delta = 0;
+                foreach (var p in patch)
                 {
-                    range = r,
-                    NewText = new_text
-                });
+                    times++;
+                    var start = p.start1 - delta;
+                    var offset = 0;
+                    foreach (var ed in p.diffs)
+                    {
+                        if (ed.operation == Operation.EQUAL)
+                        {
+                            //// Let's verify that.
+                            var len = ed.text.Length;
+                            //var tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
+                            //  new Span(start + offset, len));
+                            //var tt = tokenSpan.GetText();
+                            //if (ed.text != tt)
+                            //{ }
+                            offset = offset + len;
+                        }
+                        else if (ed.operation == Operation.DELETE)
+                        {
+                            var len = ed.text.Length;
+                            //var tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
+                            //  new Span(start + offset, len));
+                            //var tt = tokenSpan.GetText();
+                            //if (ed.text != tt)
+                            //{ }
+                            var edit = new TextEdit()
+                            {
+                                range = new Range(
+                                    new Index(start + offset),
+                                    new Index(start + offset + len)),
+                                NewText = ""
+                            };
+                            offset = offset + len;
+                            edits.Add(edit);
+                        }
+                        else if (ed.operation == Operation.INSERT)
+                        {
+                            var len = ed.text.Length;
+                            var edit = new TextEdit()
+                            {
+                                range = new Range(
+                                    new Index(start + offset),
+                                    new Index(start + offset)),
+                                NewText = ed.text
+                            };
+                            edits.Add(edit);
+                        }
+                    }
+                    delta = delta + (p.length2 - p.length1);
+                }
+                var e = edits.ToArray();
+                result.Add(fn, e);
             }
             return result;
         }
