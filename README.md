@@ -117,10 +117,10 @@ myself.
 | Text Synchronization | |
 | textDocument/didOpen | yes (Dec 10, '19) |
 | textDocument/didChange | yes (Dec 15, '19) |
-| textDocument/willSave | no |
-| textDocument/willSaveWaitUntil | no |
-| textDocument/didSave | no |
-| textDocument/didClose | no |
+| textDocument/willSave | yes (Dec 18, '19) |
+| textDocument/willSaveWaitUntil | yes (Dec 18, '19) |
+| textDocument/didSave | yes (Dec 18, '19) |
+| textDocument/didClose | yes (Dec 18, '19) |
 | ---- | ---- |
 | Diagnostics | |
 | textDocument/publishDiagnostics | yes (Dec 10, '19) |
