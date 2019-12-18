@@ -130,7 +130,7 @@ myself.
 | completionItem/resolve | no |
 | textDocument/hover | yes (Dec 10, '19) |
 | textDocument/signatureHelp | no |
-| textDocument/declaration | no (unavail. in API) |
+| textDocument/declaration | unavailable in API |
 | textDocument/definition | yes (Dec 11, '19) |
 | textDocument/typeDefinition | yes (same as "definition") |
 | textDocument/implementation | yes (same as "definition") |
