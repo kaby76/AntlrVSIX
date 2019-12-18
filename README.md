@@ -147,7 +147,7 @@ myself.
 | textDocument/formatting | yes (Dec 17, '19) |
 | textDocument/rangeFormatting | no |
 | textDocument/onTypeFormatting | no |
-| textDocument/rename | no |
+| textDocument/rename | yes (Dec 18, '19) |
 | textDocument/prepareRename | no |
 | textDocument/foldingRange | no |
 
