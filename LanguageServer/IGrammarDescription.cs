@@ -30,5 +30,6 @@
         string StartRule { get; }
         bool DoErrorSquiggles { get; }
         List<Func<ParserDetails, IParseTree, string>> PopUpDefinition { get; }
+
     }
 }

@@ -41,7 +41,7 @@ namespace LanguageServer.Exec
             capabilities.HoverProvider = true;
 
             capabilities.CompletionProvider = new CompletionOptions();
-            capabilities.CompletionProvider.ResolveProvider = false;
+            capabilities.CompletionProvider.ResolveProvider = true;
             capabilities.CompletionProvider.TriggerCharacters = new string[] { ",", "." };
 
             capabilities.ReferencesProvider = true;
@@ -282,14 +282,28 @@ namespace LanguageServer.Exec
         // ======= LANGUAGE FEATURES ========
 
         [JsonRpcMethod(Methods.TextDocumentCompletionName)]
-        public async System.Threading.Tasks.Task<JToken> TextDocumentCompletionName(JToken arg)
+        public async System.Threading.Tasks.Task<object[]> TextDocumentCompletionName(JToken arg)
         {
             if (trace)
             {
                 System.Console.Error.WriteLine("<-- TextDocumentCompletion");
                 System.Console.Error.WriteLine(arg.ToString());
             }
-            //List<CompletionItem> items = new List<CompletionItem>();
+            var request = arg.ToObject<CompletionParams>();
+            var document = CheckDoc(request.TextDocument.Uri);
+            var context = request.Context;
+            var position = request.Position;
+            var line = position.Line;
+            var character = position.Character;
+            var index = LanguageServer.Module.GetIndex(line, character, document);
+            if (trace)
+            {
+                System.Console.Error.WriteLine("position index = " + index);
+                var back = LanguageServer.Module.GetLineColumn(index, document);
+                System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
+            }
+            var res = LanguageServer.Module.Completion(index, document);
+            List<CompletionItem> items = new List<CompletionItem>();
             //for (int i = 0; i < 10; i++)
             //{
             //    var item = new CompletionItem();
@@ -298,8 +312,7 @@ namespace LanguageServer.Exec
             //    item.Kind = (CompletionItemKind)(i % (Enum.GetNames(typeof(CompletionItemKind)).Length) + 1);
             //    items.Add(item);
             //}
-            //return items.ToArray();
-            return null;
+            return items.ToArray();
         }
 
         [JsonRpcMethod(Methods.TextDocumentCompletionResolveName)]

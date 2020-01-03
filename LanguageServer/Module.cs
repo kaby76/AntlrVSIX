@@ -101,7 +101,7 @@ namespace LanguageServer
             Antlr4.Runtime.Tree.IParseTree p = pt;
             pd.Attributes.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
             var q = p as Antlr4.Runtime.Tree.TerminalNodeImpl;
-            var range = new Range(new Index(q.Symbol.StartIndex), new Index(q.Symbol.StopIndex + 1));
+            var range = new Workspaces.Range(new Workspaces.Index(q.Symbol.StartIndex), new Workspaces.Index(q.Symbol.StopIndex + 1));
             var found = pd.Tags.TryGetValue(q, out int tag_type);
             if (!found) return null;
             if (list_value == null || list_value.Count == 0)
@@ -193,7 +193,7 @@ namespace LanguageServer
             return new DocumentSymbol()
             {
                 name = q.Symbol.Text,
-                range = new Range(q.Symbol.StartIndex, q.Symbol.StopIndex),
+                range = new Workspaces.Range(q.Symbol.StartIndex, q.Symbol.StopIndex),
                 kind = tag_type
             };
         }
@@ -210,7 +210,7 @@ namespace LanguageServer
                     new DocumentSymbol()
                     {
                         name = p.Key.Symbol.Text,
-                        range = new Range(p.Key.Symbol.StartIndex, p.Key.Symbol.StopIndex),
+                        range = new Workspaces.Range(p.Key.Symbol.StartIndex, p.Key.Symbol.StopIndex),
                         kind = p.Value
                     });
             }
@@ -220,7 +220,7 @@ namespace LanguageServer
                     new DocumentSymbol()
                     {
                         name = p.Key.Text,
-                        range = new Range(p.Key.StartIndex, p.Key.StopIndex),
+                        range = new Workspaces.Range(p.Key.StartIndex, p.Key.StopIndex),
                         kind = p.Value
                     });
             }
@@ -230,7 +230,7 @@ namespace LanguageServer
             return sorted_combined_tokens;
         }
 
-        public static IEnumerable<DocumentSymbol> Get(Range range, Document doc)
+        public static IEnumerable<DocumentSymbol> Get(Workspaces.Range range, Document doc)
         {
             var pd = ParserDetailsFactory.Create(doc);
             if (pd.ParseTree == null) return new List<DocumentSymbol>();
@@ -246,7 +246,7 @@ namespace LanguageServer
                     new DocumentSymbol()
                     {
                         name = p.Key.Symbol.Text,
-                        range = new Range(p.Key.Symbol.StartIndex, p.Key.Symbol.StopIndex),
+                        range = new Workspaces.Range(p.Key.Symbol.StartIndex, p.Key.Symbol.StopIndex),
                         kind = p.Value
                     });
             }
@@ -260,7 +260,7 @@ namespace LanguageServer
                     new DocumentSymbol()
                     {
                         name = p.Key.Text,
-                        range = new Range(p.Key.StartIndex, p.Key.StopIndex),
+                        range = new Workspaces.Range(p.Key.StartIndex, p.Key.StopIndex),
                         kind = p.Value
                     });
             }
@@ -272,11 +272,11 @@ namespace LanguageServer
             return result;
         }
 
-        public static IEnumerable<Range> GetErrors(Range range, Document doc)
+        public static IEnumerable<Workspaces.Range> GetErrors(Workspaces.Range range, Document doc)
         {
             var pd = ParserDetailsFactory.Create(doc);
-            if (pd.ParseTree == null) return new List<Range>();
-            var result = new List<Range>();
+            if (pd.ParseTree == null) return new List<Workspaces.Range>();
+            var result = new List<Workspaces.Range>();
             foreach (var p in pd.Errors)
             {
                 var q = p as Antlr4.Runtime.Tree.ErrorNodeImpl;
@@ -294,7 +294,7 @@ namespace LanguageServer
                 int end_token_end = b;
                 if (start_token_start > range.End.Value) continue;
                 if (end_token_end < range.Start.Value) continue;
-                var r = new Range(new Index(a), new Index(b));
+                var r = new Workspaces.Range(new Workspaces.Index(a), new Workspaces.Index(b));
                 result.Add(r);
             }
             return result;
@@ -321,7 +321,7 @@ namespace LanguageServer
                 if (def_item == null) continue;
                 var new_loc = new Location()
                 {
-                    Range = new Range(def.Token.StartIndex, def.Token.StopIndex),
+                    Range = new Workspaces.Range(def.Token.StartIndex, def.Token.StopIndex),
                     Uri = def_item
                 };
                 result.Add(new_loc);
@@ -368,7 +368,7 @@ namespace LanguageServer
                         result.Add(
                            new Location()
                            {
-                               Range = new Range(def.Token.StartIndex, def.Token.StopIndex),
+                               Range = new Workspaces.Range(def.Token.StartIndex, def.Token.StopIndex),
                                Uri = Workspaces.Workspace.Instance.FindDocument(def.file)
                            });
                 }
@@ -377,7 +377,7 @@ namespace LanguageServer
                     result.Add(
                             new Location()
                             {
-                                Range = new Range(r.Symbol.StartIndex, r.Symbol.StopIndex),
+                                Range = new Workspaces.Range(r.Symbol.StartIndex, r.Symbol.StopIndex),
                                 Uri = Workspaces.Workspace.Instance.FindDocument(r.Symbol.InputStream.SourceName)
                             });
                 }
@@ -570,9 +570,9 @@ namespace LanguageServer
                             //{ }
                             var edit = new TextEdit()
                             {
-                                range = new Range(
-                                    new Index(start + offset),
-                                    new Index(start + offset + len)),
+                                range = new Workspaces.Range(
+                                    new Workspaces.Index(start + offset),
+                                    new Workspaces.Index(start + offset + len)),
                                 NewText = ""
                             };
                             offset = offset + len;
@@ -583,9 +583,9 @@ namespace LanguageServer
                             var len = ed.text.Length;
                             var edit = new TextEdit()
                             {
-                                range = new Range(
-                                    new Index(start + offset),
-                                    new Index(start + offset)),
+                                range = new Workspaces.Range(
+                                    new Workspaces.Index(start + offset),
+                                    new Workspaces.Index(start + offset)),
                                 NewText = ed.text
                             };
                             edits.Add(edit);
@@ -661,9 +661,9 @@ namespace LanguageServer
                             //{ }
                             var edit = new TextEdit()
                             {
-                                range = new Range(
-                                    new Index(start + offset),
-                                    new Index(start + offset + len)),
+                                range = new Workspaces.Range(
+                                    new Workspaces.Index(start + offset),
+                                    new Workspaces.Index(start + offset + len)),
                                 NewText = ""
                             };
                             offset = offset + len;
@@ -674,9 +674,9 @@ namespace LanguageServer
                             var len = ed.text.Length;
                             var edit = new TextEdit()
                             {
-                                range = new Range(
-                                    new Index(start + offset),
-                                    new Index(start + offset)),
+                                range = new Workspaces.Range(
+                                    new Workspaces.Index(start + offset),
+                                    new Workspaces.Index(start + offset)),
                                 NewText = ed.text
                             };
                             edits.Add(edit);
@@ -687,6 +687,14 @@ namespace LanguageServer
                 var e = edits.ToArray();
                 result.Add(fn, e);
             }
+            return result;
+        }
+
+        public static List<string> Completion(int index, Document document)
+        {
+            var result = new List<string>();
+            var ref_pd = ParserDetailsFactory.Create(document);
+            var foo = ref_pd.Candidates(index);
             return result;
         }
     }

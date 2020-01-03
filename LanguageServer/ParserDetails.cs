@@ -1,4 +1,6 @@
-﻿namespace LanguageServer
+﻿using Antlr4CodeCompletion.Core.CodeCompletion;
+
+namespace LanguageServer
 {
     using Antlr4.Runtime;
     using Antlr4.Runtime.Tree;
@@ -33,6 +35,10 @@
         public virtual IParseTree ParseTree { get; set; } = null;
 
         public virtual IEnumerable<IParseTree> AllNodes { get; set; } = null;
+        public virtual Antlr4.Runtime.Parser Parser { get; set; } = null;
+        public virtual Antlr4.Runtime.Lexer Lexer { get; set; } = null;
+        public virtual CommonTokenStream TokStream { get; set; } = null;
+        public virtual Antlr4CodeCompletion.Core.CodeCompletion.CodeCompletionCore Core { get; set; } = null;
 
         public ParserDetails(Workspaces.Document item)
         {
@@ -165,5 +171,40 @@
         {
             throw new NotImplementedException();
         }
+
+        public virtual List<string> Candidates(int index)
+        {
+            List<string> result = new List<string>();
+            if (Core == null)
+            {
+                Core = new Antlr4CodeCompletion.Core.CodeCompletion.CodeCompletionCore(
+                    Parser,
+                    new HashSet<int>(),
+                    new HashSet<int>());
+            }
+            var core = Core;
+            int loc = 0;
+            foreach (var tok in TokStream.GetTokens())
+            {
+                if (tok.StartIndex <= index && index <= tok.StopIndex)
+                {
+                    loc = tok.TokenIndex;
+                    break;
+                } else if (tok.Type != -1)
+                {
+                    loc = tok.TokenIndex;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            CandidatesCollection candidates = core.CollectCandidates(loc);
+            foreach (var candidate in candidates.Tokens)
+            {
+            }
+            return result;
+        }
+
     }
 }

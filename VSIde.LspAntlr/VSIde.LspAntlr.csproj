@@ -62,7 +62,7 @@
     <Content Include="..\LanguageServer.Exec\bin\Debug\**\*.*">
       <IncludeInVSIX>true</IncludeInVSIX>
       <Link>server/%(RecursiveDir)%(Filename)%(Extension)</Link>
-      <Visible>false</Visible>
+      <Visible>true</Visible>
     </Content>
   </ItemGroup>
   <ItemGroup>

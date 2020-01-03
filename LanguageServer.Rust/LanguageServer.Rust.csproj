@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -30,6 +30,10 @@
     <ProjectReference Include="..\LanguageServer\LanguageServer.csproj" />
     <ProjectReference Include="..\Symtab\Symtab.csproj" />
     <ProjectReference Include="..\Workspaces\Workspaces.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 
   <PropertyGroup Condition="'$(JAVA_HOME)'==''">

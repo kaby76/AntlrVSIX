@@ -1,4 +1,6 @@
-﻿namespace LanguageServer.Antlr
+﻿using Antlr4CodeCompletion.Core.CodeCompletion;
+
+namespace LanguageServer.Antlr
 {
     using Antlr4.Runtime;
     using Antlr4.Runtime.Tree;
@@ -33,9 +35,12 @@
                         new StreamReader(
                             new MemoryStream(byteArray)).ReadToEnd());
             ais.name = ffn;
-            CommonTokenStream cts = new CommonTokenStream(new ANTLRv4Lexer(ais));
+            var lexer = new ANTLRv4Lexer(ais);
+            CommonTokenStream cts = new CommonTokenStream(lexer);
+            pd.TokStream = cts;
             var parser = new ANTLRv4Parser(cts);
-
+            pd.Parser = parser;
+            pd.Lexer = lexer;
             try
             {
                 pt = parser.grammarSpec();
@@ -397,9 +402,10 @@
 
         public bool CanReformat { get { return true; } }
 
-        public List<Func<ParserDetails, IParseTree, string>> PopUpDefinition { get; } = new List<Func<ParserDetails, IParseTree, string>>()
-        {
-            (ParserDetails pd, IParseTree t) => // nonterminal
+        public List<Func<ParserDetails, IParseTree, string>> PopUpDefinition { get; } =
+            new List<Func<ParserDetails, IParseTree, string>>()
+            {
+                (ParserDetails pd, IParseTree t) => // nonterminal
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return null;
@@ -417,6 +423,7 @@
                         {
                             sym = sym.resolve();
                         }
+
                         if (sym is TerminalSymbol)
                             sb.Append("Terminal ");
                         else if (sym is NonterminalSymbol)
@@ -429,7 +436,7 @@
                         var def_pd = ParserDetailsFactory.Create(def_document);
                         if (def_pd == null) continue;
                         var fod = def_pd.Attributes.Where(
-                            kvp => kvp.Value.Contains(value))
+                                kvp => kvp.Value.Contains(value))
                             .Select(kvp => kvp.Key).FirstOrDefault();
                         if (fod == null) continue;
                         sb.Append("defined in ");
@@ -438,13 +445,15 @@
                         var node = fod;
                         for (; node != null; node = node.Parent)
                             if (node is ANTLRv4Parser.LexerRuleSpecContext ||
-                                node is ANTLRv4Parser.ParserRuleSpecContext) break;
+                                node is ANTLRv4Parser.ParserRuleSpecContext)
+                                break;
                         if (node == null) continue;
                         Reconstruct.Doit(sb, node);
                     }
+
                     return sb.ToString();
                 },
-            (ParserDetails pd, IParseTree t) => // terminal
+                (ParserDetails pd, IParseTree t) => // terminal
                 {
                     TerminalNodeImpl term = t as TerminalNodeImpl;
                     if (term == null) return null;
@@ -462,6 +471,7 @@
                         {
                             sym = sym.resolve();
                         }
+
                         if (sym is TerminalSymbol)
                             sb.Append("Terminal ");
                         else if (sym is NonterminalSymbol)
@@ -474,7 +484,7 @@
                         var def_pd = ParserDetailsFactory.Create(def_document);
                         if (def_pd == null) continue;
                         var fod = def_pd.Attributes.Where(
-                            kvp => kvp.Value.Contains(value))
+                                kvp => kvp.Value.Contains(value))
                             .Select(kvp => kvp.Key).FirstOrDefault();
                         if (fod == null) continue;
                         sb.Append("defined in ");
@@ -483,17 +493,21 @@
                         var node = fod;
                         for (; node != null; node = node.Parent)
                             if (node is ANTLRv4Parser.LexerRuleSpecContext ||
-                                node is ANTLRv4Parser.ParserRuleSpecContext) break;
+                                node is ANTLRv4Parser.ParserRuleSpecContext)
+                                break;
                         if (node == null) continue;
                         Reconstruct.Doit(sb, node);
                     }
+
                     return sb.ToString();
                 },
-            null, // comment
-            null, // keyword
-            null, // literal
-            null,
-            null,
-        };
+                null, // comment
+                null, // keyword
+                null, // literal
+                null,
+                null,
+            };
+
+
     }
 }
