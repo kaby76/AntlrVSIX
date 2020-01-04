@@ -32,15 +32,12 @@ namespace LanguageServer.Antlr
             // Set up Antlr to parse input grammar.
             byte[] byteArray = Encoding.UTF8.GetBytes(code);
             var ais = new AntlrInputStream(
-                        new StreamReader(
-                            new MemoryStream(byteArray)).ReadToEnd());
+                new StreamReader(
+                    new MemoryStream(byteArray)).ReadToEnd());
             ais.name = ffn;
             var lexer = new ANTLRv4Lexer(ais);
             CommonTokenStream cts = new CommonTokenStream(lexer);
-            pd.TokStream = cts;
             var parser = new ANTLRv4Parser(cts);
-            pd.Parser = parser;
-            pd.Lexer = lexer;
             try
             {
                 pt = parser.grammarSpec();
@@ -56,7 +53,41 @@ namespace LanguageServer.Antlr
             //fn = "c:\\temp\\" + fn;
             //System.IO.File.WriteAllText(fn, sb.ToString());
 
+            pd.TokStream = cts;
+            pd.Parser = parser;
+            pd.Lexer = lexer;
             pd.ParseTree = pt;
+        }
+
+        public void Parse(string code,
+            out CommonTokenStream TokStream,
+            out Parser Parser,
+            out Lexer Lexer,
+            out IParseTree ParseTree)
+        {
+            IParseTree pt = null;
+
+            // Set up Antlr to parse input grammar.
+            byte[] byteArray = Encoding.UTF8.GetBytes(code);
+            var ais = new AntlrInputStream(
+                new StreamReader(
+                    new MemoryStream(byteArray)).ReadToEnd());
+            var lexer = new ANTLRv4Lexer(ais);
+            CommonTokenStream cts = new CommonTokenStream(lexer);
+            var parser = new ANTLRv4Parser(cts);
+            try
+            {
+                pt = parser.grammarSpec();
+            }
+            catch (Exception)
+            {
+                // Parsing error.
+            }
+
+            TokStream = cts;
+            Parser = parser;
+            Lexer = lexer;
+            ParseTree = pt;
         }
 
         public Dictionary<IToken, int> ExtractComments(string code)

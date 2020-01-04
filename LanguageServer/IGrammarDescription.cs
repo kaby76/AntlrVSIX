@@ -12,6 +12,11 @@
         System.Type Parser { get; }
         System.Type Lexer { get; }
         void Parse(ParserDetails pd);
+        void Parse(string code,
+            out CommonTokenStream TokStream,
+            out Parser Parser,
+            out Lexer Lexer,
+            out IParseTree ParseTree);
         Dictionary<IToken, int> ExtractComments(string code);
         bool CanNextRule { get; }
         string[] Map { get; }

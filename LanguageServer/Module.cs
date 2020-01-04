@@ -1,14 +1,12 @@
-﻿
-using System.Text;
-
-namespace LanguageServer
+﻿namespace LanguageServer
 {
     using Graphs;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Workspaces;
     using Symtab;
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using Workspaces;
 
     public class Module
     {

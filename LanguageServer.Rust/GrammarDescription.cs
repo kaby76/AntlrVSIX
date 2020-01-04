@@ -93,6 +93,11 @@ namespace LanguageServer.Rust
             throw new NotImplementedException();
         }
 
+        public void Parse(string code, out CommonTokenStream TokStream, out Parser Parser, out Lexer Lexer, out IParseTree ParseTree)
+        {
+            throw new NotImplementedException();
+        }
+
 
         /* Tagging and classification types. */
         private const string ClassificationNameVariable = "Rust - variable";

@@ -1,5 +1,7 @@
 ﻿
 
+using System.Text;
+
 namespace LanguageServer
 {
     using Antlr4.Runtime;
@@ -173,24 +175,15 @@ namespace LanguageServer
 
         public virtual List<string> Candidates(int index)
         {
-            List<string> result = new List<string>();
-            int loc = 0;
-            foreach (var tok in TokStream.GetTokens())
-            {
-                if (tok.StartIndex <= index && index <= tok.StopIndex)
-                {
-                    loc = tok.TokenIndex;
-                    break;
-                } else if (tok.Type != -1)
-                {
-                    loc = tok.TokenIndex;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            return result;
+            var item = Item;
+            var ffn = item.FullPath;
+            IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);
+            if (gd == null) throw new Exception();
+            string code = this.Code.Substring(0, index);
+            gd.Parse(code, out CommonTokenStream tok_stream, out Parser parser, out Lexer lexer, out IParseTree pt);
+            LASets la_sets = new LASets();
+            var result = la_sets.Compute(parser, tok_stream);
+            return null;
         }
 
     }

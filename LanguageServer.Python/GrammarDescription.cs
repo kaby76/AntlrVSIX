@@ -90,6 +90,11 @@
             return new PythonParserDetails(item);
         }
 
+        public void Parse(string code, out CommonTokenStream TokStream, out Parser Parser, out Lexer Lexer, out IParseTree ParseTree)
+        {
+            throw new NotImplementedException();
+        }
+
         /* Tagging and classification types. */
         private const string ClassificationNameVariable = "Python - variable";
         private const string ClassificationNameMethod = "Python - method";

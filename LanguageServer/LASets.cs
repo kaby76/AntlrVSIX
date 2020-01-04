@@ -35,18 +35,8 @@ namespace LanguageServer
         {
         }
         
-        public IntervalSet Compute(Parser parser, AntlrInputStream input_stream)
+        public IntervalSet Compute(Parser parser, CommonTokenStream token_stream)
         {
-//            _parser = parser;
-//            var input = @"grammar Expr;
-
-//expression: assignment | simpleExpression;
-
-//assignment
-//    : (VAR | LET) ID EQUAL simpleExpression
-//;
-//.
-//";
 //            AntlrInputStream inputStream = new AntlrInputStream(input);
 //            var lexer = new ANTLRv4Lexer(inputStream);
 //            var tokenStream = new CommonTokenStream(lexer);
@@ -55,6 +45,7 @@ namespace LanguageServer
 
             _input = new List<IToken>();
             _parser = parser;
+            _token_stream = token_stream;
             _cursor = _token_stream.GetTokens().Select(t => t.Text == "." ? t.TokenIndex : 0).Max();
             _stop_states = parser.Atn.ruleToStopState.Select(t => parser.Atn.states[t.stateNumber]).ToHashSet();
             _start_states = parser.Atn.ruleToStartState.Select(t => parser.Atn.states[t.stateNumber]).ToHashSet();
@@ -65,7 +56,7 @@ namespace LanguageServer
             {
                 var token = _token_stream.LT(offset++);
                 _input.Add(token);
-                if (token.TokenIndex >= _cursor || token.Type == TokenConstants.EOF)
+                if (token.Type == TokenConstants.EOF)
                 {
                     break;
                 }
