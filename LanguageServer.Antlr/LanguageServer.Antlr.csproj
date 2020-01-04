@@ -27,7 +27,6 @@
       <Version>4.7.2</Version>
     </PackageReference>
     <PackageReference Include="Antlr4BuildTasks" Version="1.0.8" />
-    <PackageReference Include="Antlr4CodeCompletion.Core" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>

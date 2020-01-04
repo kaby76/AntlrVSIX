@@ -1,4 +1,4 @@
-﻿using Antlr4CodeCompletion.Core.CodeCompletion;
+﻿
 
 namespace LanguageServer
 {
@@ -38,7 +38,6 @@ namespace LanguageServer
         public virtual Antlr4.Runtime.Parser Parser { get; set; } = null;
         public virtual Antlr4.Runtime.Lexer Lexer { get; set; } = null;
         public virtual CommonTokenStream TokStream { get; set; } = null;
-        public virtual Antlr4CodeCompletion.Core.CodeCompletion.CodeCompletionCore Core { get; set; } = null;
 
         public ParserDetails(Workspaces.Document item)
         {
@@ -175,14 +174,6 @@ namespace LanguageServer
         public virtual List<string> Candidates(int index)
         {
             List<string> result = new List<string>();
-            if (Core == null)
-            {
-                Core = new Antlr4CodeCompletion.Core.CodeCompletion.CodeCompletionCore(
-                    Parser,
-                    new HashSet<int>(),
-                    new HashSet<int>());
-            }
-            var core = Core;
             int loc = 0;
             foreach (var tok in TokStream.GetTokens())
             {
@@ -198,10 +189,6 @@ namespace LanguageServer
                 {
                     break;
                 }
-            }
-            CandidatesCollection candidates = core.CollectCandidates(loc);
-            foreach (var candidate in candidates.Tokens)
-            {
             }
             return result;
         }

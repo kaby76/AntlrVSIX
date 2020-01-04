@@ -1,4 +1,4 @@
-﻿using Antlr4CodeCompletion.Core.CodeCompletion;
+﻿
 
 namespace LanguageServer.Antlr
 {

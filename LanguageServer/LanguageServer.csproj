@@ -18,7 +18,6 @@
     <PackageReference Include="Antlr4.Runtime.Standard">
       <Version>4.7.2</Version>
     </PackageReference>
-    <PackageReference Include="Antlr4CodeCompletion.Core" Version="1.0.0" />
     <PackageReference Include="cs-codebuff" Version="2.0.4" />
   </ItemGroup>
 

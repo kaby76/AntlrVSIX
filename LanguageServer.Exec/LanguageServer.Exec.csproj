@@ -2,30 +2,30 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="obj\Debug\netcoreapp3.0\LanguageServer.Exec.AssemblyInfo.cs" />
+    <Compile Include="obj\Debug\netcoreapp3.1\LanguageServer.Exec.AssemblyInfo.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="bin\Debug\netcoreapp3.0\LanguageServer.Exec.deps.json" />
-    <Content Include="obj\Debug\netcoreapp3.0\LanguageServer.Exec.csproj.FileListAbsolute.txt" />
+    <Content Include="bin\Debug\netcoreapp3.1\LanguageServer.Exec.deps.json" />
+    <Content Include="obj\Debug\netcoreapp3.1\LanguageServer.Exec.csproj.FileListAbsolute.txt" />
     <Content Include="obj\LanguageServer.Exec.csproj.nuget.dgspec.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="bin\Debug\netcoreapp3.0\LanguageServer.Antlr.dll" />
-    <None Include="bin\Debug\netcoreapp3.0\LanguageServer.Antlr.pdb" />
-    <None Include="bin\Debug\netcoreapp3.0\LanguageServer.dll" />
-    <None Include="bin\Debug\netcoreapp3.0\LanguageServer.Exec.dll" />
-    <None Include="bin\Debug\netcoreapp3.0\LanguageServer.Exec.exe" />
-    <None Include="bin\Debug\netcoreapp3.0\LanguageServer.Exec.pdb" />
-    <None Include="obj\Debug\netcoreapp3.0\LanguageServer.Exec.AssemblyInfoInputs.cache" />
-    <None Include="obj\Debug\netcoreapp3.0\LanguageServer.Exec.assets.cache" />
-    <None Include="obj\Debug\netcoreapp3.0\LanguageServer.Exec.csproj.CopyComplete" />
-    <None Include="obj\Debug\netcoreapp3.0\LanguageServer.Exec.csprojAssemblyReference.cache" />
+    <None Include="bin\Debug\netcoreapp3.1\LanguageServer.Antlr.dll" />
+    <None Include="bin\Debug\netcoreapp3.1\LanguageServer.Antlr.pdb" />
+    <None Include="bin\Debug\netcoreapp3.1\LanguageServer.dll" />
+    <None Include="bin\Debug\netcoreapp3.1\LanguageServer.Exec.dll" />
+    <None Include="bin\Debug\netcoreapp3.1\LanguageServer.Exec.exe" />
+    <None Include="bin\Debug\netcoreapp3.1\LanguageServer.Exec.pdb" />
+    <None Include="obj\Debug\netcoreapp3.1\LanguageServer.Exec.AssemblyInfoInputs.cache" />
+    <None Include="obj\Debug\netcoreapp3.1\LanguageServer.Exec.assets.cache" />
+    <None Include="obj\Debug\netcoreapp3.1\LanguageServer.Exec.csproj.CopyComplete" />
+    <None Include="obj\Debug\netcoreapp3.1\LanguageServer.Exec.csprojAssemblyReference.cache" />
     <None Include="obj\LanguageServer.Exec.csproj.nuget.cache" />
     <None Include="obj\LanguageServer.Exec.csproj.nuget.g.props" />
     <None Include="obj\LanguageServer.Exec.csproj.nuget.g.targets" />
