@@ -82,6 +82,9 @@ left recursion and common left factors, then use that to rewrite the Java gramma
 version 16.3.57 does not implement LSP version 3.14, rather something around version 3.6. What is missing is color tagging.
 I'm not sure how to deal with this other than pitch the inferior API, then use OmniSharp's API, or as usual write everything
 myself.
+* Computing the completion symbols is not easy. Antlr itself reports an incomplete set of expected input when a parse fails,
+and Mike Lischke's [Code Completion Engine](https://github.com/mike-lischke/antlr4-c3) also doesn't work. Thus, I had to develop
+the algorithm from scratch.
 
 | Message  | Support |
 | ---- | ---- |
