@@ -47,8 +47,16 @@ namespace LanguageServer
             _parser = parser;
             _token_stream = token_stream;
             _cursor = _token_stream.GetTokens().Select(t => t.Text == "." ? t.TokenIndex : 0).Max();
-            _stop_states = parser.Atn.ruleToStopState.Select(t => parser.Atn.states[t.stateNumber]).ToHashSet();
-            _start_states = parser.Atn.ruleToStartState.Select(t => parser.Atn.states[t.stateNumber]).ToHashSet();
+            _stop_states = new HashSet<ATNState>();
+            foreach (var s in parser.Atn.ruleToStopState.Select(t => parser.Atn.states[t.stateNumber]))
+            {
+                _stop_states.Add(s);
+            }
+            _start_states = new HashSet<ATNState>();
+            foreach (var s in parser.Atn.ruleToStartState.Select(t => parser.Atn.states[t.stateNumber]))
+            {
+                _start_states.Add(s);
+            }
             var currentIndex = _token_stream.Index;
             _token_stream.Seek(0);
             var offset = 1;
