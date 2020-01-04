@@ -20,12 +20,22 @@ namespace LanguageServer
         private HashSet<ATNState> _stop_states;
         private HashSet<ATNState> _start_states;
 
+        class Edge
+        {
+            public ATNState _from;
+            public ATNState _to;
+            public TransitionType _type;
+            public IntervalSet _label;
+            public int _index_at_transition;
+            public int _index; // Where we are in parse at _to state.
+        }
+
+
         public LASets()
         {
-
         }
         
-        public void Compute(Parser parser, Lexer lexer, AntlrInputStream input_stream)
+        public IntervalSet Compute(Parser parser, AntlrInputStream input_stream)
         {
 //            _parser = parser;
 //            var input = @"grammar Expr;
@@ -62,10 +72,10 @@ namespace LanguageServer
             }
             var all_parses = EnterState(null);
 
+            var result = new IntervalSet();
             foreach (var p in all_parses)
             {
-                var set = eclosure(p);
-                var q = new IntervalSet();
+                HashSet<ATNState> set = ComputeSingle(p);
                 foreach (var s in set)
                 {
                     foreach (var t in s.TransitionsArray)
@@ -83,23 +93,13 @@ namespace LanguageServer
 
                             default:
                                 if (!t.IsEpsilon)
-                                    q.AddAll(t.Label);
+                                    result.AddAll(t.Label);
                                 break;
                         }
                     }
                 }
             }
-        }
-
-
-        public class Edge
-        {
-            public ATNState _from;
-            public ATNState _to;
-            public TransitionType _type;
-            public IntervalSet _label;
-            public int _index_at_transition;
-            public int _index; // Where we are in parse at _to state.
+            return result;
         }
 
         bool CheckPredicate(PredicateTransition transition) => transition.Predicate.Eval(this._parser, ParserRuleContext.EmptyContext);
@@ -382,6 +382,37 @@ namespace LanguageServer
             return visited;
         }
 
+        HashSet<ATNState> ComputeSingle(List<Edge> parse)
+        {
+            var copy = parse.ToList();
+            HashSet<ATNState> result = new HashSet<ATNState>();
+            for (; ; )
+            {
+                if (!copy.Any()) break;
+                var last_transaction = copy.First();
+                var c = closure(last_transaction._to);
+                bool do_continue = false;
+                foreach (var s in c)
+                {
+                    result.Add(s);
+                    if (_stop_states.Contains(s))
+                        do_continue = true;
+                }
+                for (; ; )
+                {
+                    copy.RemoveAt(0);
+                    if (!copy.Any()) break;
+                    last_transaction = copy.First();
+                    if (_start_states.Contains(last_transaction._from))
+                    {
+                        copy.RemoveAt(0);
+                        if (!copy.Any()) break;
+                    }
+                }
+            }
+            return result;
+        }
+
         string PrintSingle(List<Edge> parse)
         {
             StringBuilder sb = new StringBuilder();
@@ -441,37 +472,6 @@ namespace LanguageServer
                 sb.Append("||| " + PrintSingle(p));
             }
             return sb.ToString();
-        }
-
-        HashSet<ATNState> eclosure(List<Edge> parse)
-        {
-            var copy = parse.ToList();
-            HashSet<ATNState> result = new HashSet<ATNState>();
-            for (; ; )
-            {
-                if (!copy.Any()) break;
-                var last_transaction = copy.First();
-                var c = closure(last_transaction._to);
-                bool do_continue = false;
-                foreach (var s in c)
-                {
-                    result.Add(s);
-                    if (_stop_states.Contains(s))
-                        do_continue = true;
-                }
-                for (; ; )
-                {
-                    copy.RemoveAt(0);
-                    if (!copy.Any()) break;
-                    last_transaction = copy.First();
-                    if (_start_states.Contains(last_transaction._from))
-                    {
-                        copy.RemoveAt(0);
-                        if (!copy.Any()) break;
-                    }
-                }
-            }
-            return result;
         }
     }
 }
