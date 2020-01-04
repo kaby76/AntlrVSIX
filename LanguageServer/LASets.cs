@@ -37,12 +37,6 @@ namespace LanguageServer
         
         public IntervalSet Compute(Parser parser, CommonTokenStream token_stream)
         {
-//            AntlrInputStream inputStream = new AntlrInputStream(input);
-//            var lexer = new ANTLRv4Lexer(inputStream);
-//            var tokenStream = new CommonTokenStream(lexer);
-//            var parser = new ANTLRv4Parser(tokenStream);
-//            var tree = parser.grammarSpec();
-
             _input = new List<IToken>();
             _parser = parser;
             _token_stream = token_stream;
