@@ -41,7 +41,7 @@ namespace LanguageServer.Exec
             capabilities.HoverProvider = true;
 
             capabilities.CompletionProvider = new CompletionOptions();
-            capabilities.CompletionProvider.ResolveProvider = true;
+            capabilities.CompletionProvider.ResolveProvider = false;
             capabilities.CompletionProvider.TriggerCharacters = new string[] { ",", "." };
 
             capabilities.ReferencesProvider = true;
