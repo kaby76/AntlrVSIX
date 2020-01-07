@@ -62,7 +62,7 @@
     <Content Include="..\LanguageServer.Exec\bin\Debug\**\*.*">
       <IncludeInVSIX>true</IncludeInVSIX>
       <Link>server/%(RecursiveDir)%(Filename)%(Extension)</Link>
-      <Visible>true</Visible>
+      <Visible>false</Visible>
     </Content>
   </ItemGroup>
   <ItemGroup>
@@ -78,10 +78,13 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Client">
-      <Version>16.3.57</Version>
+      <Version>16.4.30</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.SDK" Version="16.0.202" ExcludeAssets="runtime" />
-    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="16.3.2099" />
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="16.5.1027">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="SharpZipLib">
       <Version>1.2.0</Version>
     </PackageReference>

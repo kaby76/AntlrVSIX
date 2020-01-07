@@ -434,7 +434,6 @@
 
             DoAgain:
 
-                Workspaces.Loader.LoadAsync().Wait();
                 foreach (var document in Workspaces.DFSContainer.DFS(ws))
                 {
                     string file_name = document.FullPath;

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol" Version="16.3.57" />
+    <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol" Version="16.4.30" />
     <PackageReference Include="streamjsonrpc" Version="2.2.53" />
   </ItemGroup>
 

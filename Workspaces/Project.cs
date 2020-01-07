@@ -1,11 +1,9 @@
 ﻿namespace Workspaces
 {
-    using Microsoft.VisualStudio.Shell.Interop;
     using System.Collections.Generic;
 
     public class Project : Container
     {
-        public IVsHierarchy _ide_object;
         public uint _id;
         public int _hash;
         string _canonical_name;

@@ -1,13 +1,11 @@
 ﻿namespace Workspaces
 {
     using Antlr4.Runtime.Tree;
-    using Microsoft.VisualStudio.Shell.Interop;
     using System.Collections.Generic;
     using System.IO;
 
     public class Document : Container
     {
-        IVsHierarchy _ide_object;
         string _contents;
         Dictionary<string, string> _properties = new Dictionary<string, string>();
         Dictionary<string, bool> _lazy_evaluated = new Dictionary<string, bool>();
@@ -62,19 +60,6 @@
 
         public string GetProperty(string name)
         {
-            _lazy_evaluated.TryGetValue(name, out bool evaluated);
-            string result;
-            if (_ide_object != null && !evaluated)
-            {
-                object n;
-                _ide_object.GetProperty(0, (int)__VSHPROPID.VSHPROPID_Name, out n);
-                _properties[name] = null;
-            }
-            else
-            {
-                _properties.TryGetValue(name, out string r);
-                result = r;
-            }
             return null;
         }
 

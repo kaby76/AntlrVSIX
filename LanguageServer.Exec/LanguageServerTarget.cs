@@ -44,25 +44,25 @@ namespace LanguageServer.Exec
             capabilities.CompletionProvider.ResolveProvider = false;
             capabilities.CompletionProvider.TriggerCharacters = new string[] { ",", "." };
 
-            capabilities.ReferencesProvider = true;
+            capabilities.ReferencesProvider = false;
 
-            capabilities.DefinitionProvider = true;
+            capabilities.DefinitionProvider = false;
 
             capabilities.TypeDefinitionProvider = false; // Does not make sense for Antlr.
 
             capabilities.ImplementationProvider = false; // Does not make sense for Antlr.
 
-            capabilities.DocumentHighlightProvider = true;
+            capabilities.DocumentHighlightProvider = false;
 
             capabilities.DocumentSymbolProvider = false;
 
             capabilities.WorkspaceSymbolProvider = false;
 
-            capabilities.DocumentFormattingProvider = true;
+            capabilities.DocumentFormattingProvider = false;
 
             capabilities.DocumentRangeFormattingProvider = false;
 
-            capabilities.RenameProvider = true;
+            capabilities.RenameProvider = false;
 
             var result = new InitializeResult();
             result.Capabilities = capabilities;

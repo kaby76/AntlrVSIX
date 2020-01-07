@@ -1,6 +1,5 @@
 ﻿namespace Workspaces
 {
-    using Microsoft.VisualStudio.Shell.Interop;
     using System.Collections.Generic;
     using System.Linq;
 
