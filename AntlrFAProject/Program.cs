@@ -24,6 +24,8 @@ namespace $safeprojectname$
                 System.Console.WriteLine(tokens.OutputTokens());
                 System.Console.WriteLine(tree.OutputTree(tokens));
             }
+            var visitor = new CalculatorVisitor();
+            visitor.Visit(tree);
         }
     }
 }

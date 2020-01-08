@@ -27,5 +27,5 @@ namespace $safeprojectname$
             var visitor = new CalculatorVisitor();
             visitor.Visit(tree);
         }
-}
+    }
 }

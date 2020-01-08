@@ -15,10 +15,10 @@ namespace $safeprojectname$
         private static int changed = 0;
         private static bool first_time = true;
 
-        public static StringBuilder OutputTokens(this System.Collections.Generic.IList<IToken> tokens)
+        public static StringBuilder OutputTokens(this CommonTokenStream stream)
         {
             var sb = new StringBuilder();
-            foreach (var token in tokens)
+            foreach (var token in stream.GetTokens())
             {
                 sb.AppendLine("Token " + token.TokenIndex + " " + token.Type + " " + Output.PerformEscapes(token.Text));
             }
