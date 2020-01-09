@@ -1,6 +1,7 @@
 ﻿
 
 using System.Text;
+using Antlr4.Runtime.Misc;
 
 namespace LanguageServer
 {
@@ -173,17 +174,23 @@ namespace LanguageServer
             throw new NotImplementedException();
         }
 
-        public virtual List<string> Candidates(int index)
+        public virtual List<string> Candidates(int char_index)
         {
             var item = Item;
             var ffn = item.FullPath;
             IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);
             if (gd == null) throw new Exception();
-            string code = this.Code.Substring(0, index);
+            string code = this.Code.Substring(0, char_index);
             gd.Parse(code, out CommonTokenStream tok_stream, out Parser parser, out Lexer lexer, out IParseTree pt);
             LASets la_sets = new LASets();
-            var result = la_sets.Compute(parser, tok_stream);
-            return null;
+            IntervalSet int_set = la_sets.Compute(parser, tok_stream);
+            List<string> result = new List<string>();
+            foreach (int r in int_set.ToList())
+            {
+                var rule_name = Lexer.RuleNames[r];
+                result.Add(rule_name);
+            }
+            return result;
         }
 
     }

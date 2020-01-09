@@ -687,11 +687,10 @@
             return result;
         }
 
-        public static List<string> Completion(int index, Document document)
+        public static List<string> Completion(int char_index, Document document)
         {
-            var result = new List<string>();
             var ref_pd = ParserDetailsFactory.Create(document);
-            var foo = ref_pd.Candidates(index);
+            List<string> result = ref_pd.Candidates(char_index);
             return result;
         }
     }

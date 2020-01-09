@@ -40,7 +40,7 @@ namespace LanguageServer
             _input = new List<IToken>();
             _parser = parser;
             _token_stream = token_stream;
-            _cursor = _token_stream.GetTokens().Select(t => t.Text == "." ? t.TokenIndex : 0).Max();
+            //_cursor = _token_stream.GetTokens().Select(t => t.Text == "." ? t.TokenIndex : 0).Max();
             _stop_states = new HashSet<ATNState>();
             foreach (var s in parser.Atn.ruleToStopState.Select(t => parser.Atn.states[t.stateNumber]))
             {
@@ -62,6 +62,7 @@ namespace LanguageServer
                 {
                     break;
                 }
+                _cursor = token.TokenIndex;
             }
             var all_parses = EnterState(null);
 
@@ -122,21 +123,21 @@ namespace LanguageServer
             }
             var input_token = _input[token_index];
 
-            System.Console.WriteLine("Entry " + here
-                                    + " State " + state
-                                    + " tokenIndex " + token_index
-                                    + " " + input_token.Text
-                                    );
+            //System.Console.Error.WriteLine("Entry " + here
+            //                        + " State " + state
+            //                        + " tokenIndex " + token_index
+            //                        + " " + input_token.Text
+            //                        );
 
             // Upon reaching the cursor, return match.
             var at_match = input_token.TokenIndex >= _cursor;
             if (at_match)
             {
-                System.Console.Write("Entry " + here
-                                         + " return ");
+                //System.Console.Error.Write("Entry " + here
+                //                         + " return ");
                 var res = new List<List<Edge>>() { new List<Edge>() { t } };
-                var str = PrintResult(res);
-                System.Console.WriteLine(str);
+                //var str = PrintResult(res);
+                //System.Console.Error.WriteLine(str);
                 return res;
             }
 
@@ -149,11 +150,11 @@ namespace LanguageServer
 
             if (this._stop_states.Contains(state))
             {
-                System.Console.Write("Entry " + here
-                                              + " return ");
+                //System.Console.Error.Write("Entry " + here
+                //                              + " return ");
                 var res = new List<List<Edge>>() { new List<Edge>() { t } };
-                var str = PrintResult(res);
-                System.Console.WriteLine(str);
+                //var str = PrintResult(res);
+                //System.Console.Error.WriteLine(str);
                 return res;
             }
 
@@ -303,7 +304,7 @@ namespace LanguageServer
                                 if (prev != null)
                                     if (prev._from != ff)
                                     {
-                                        System.Console.WriteLine("Fail " + PrintSingle(x));
+                                        System.Console.Error.WriteLine("Fail " + PrintSingle(x));
                                         Debug.Assert(false);
                                     }
                                 prev = z;
@@ -316,12 +317,12 @@ namespace LanguageServer
             if (result.Count == 0)
                 return null;
 
-            {
-                System.Console.Write("Entry " + here
-                                              + " return ");
-                var str = PrintResult(result);
-                System.Console.WriteLine(str);
-            }
+            //{
+            //    System.Console.Error.Write("Entry " + here
+            //                                  + " return ");
+            //    var str = PrintResult(result);
+            //    System.Console.Error.WriteLine(str);
+            //}
             return result;
         }
 

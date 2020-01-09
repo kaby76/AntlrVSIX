@@ -41,28 +41,28 @@ namespace LanguageServer.Exec
             capabilities.HoverProvider = true;
 
             capabilities.CompletionProvider = new CompletionOptions();
-            capabilities.CompletionProvider.ResolveProvider = false;
+            capabilities.CompletionProvider.ResolveProvider = true;
             capabilities.CompletionProvider.TriggerCharacters = new string[] { ",", "." };
 
-            capabilities.ReferencesProvider = false;
+            capabilities.ReferencesProvider = true;
 
-            capabilities.DefinitionProvider = false;
+            capabilities.DefinitionProvider = true;
 
             capabilities.TypeDefinitionProvider = false; // Does not make sense for Antlr.
 
             capabilities.ImplementationProvider = false; // Does not make sense for Antlr.
 
-            capabilities.DocumentHighlightProvider = false;
+            capabilities.DocumentHighlightProvider = true;
 
-            capabilities.DocumentSymbolProvider = false;
+            capabilities.DocumentSymbolProvider = true;
 
             capabilities.WorkspaceSymbolProvider = false;
 
-            capabilities.DocumentFormattingProvider = false;
+            capabilities.DocumentFormattingProvider = true;
 
             capabilities.DocumentRangeFormattingProvider = false;
 
-            capabilities.RenameProvider = false;
+            capabilities.RenameProvider = true;
 
             var result = new InitializeResult();
             result.Capabilities = capabilities;
@@ -295,23 +295,23 @@ namespace LanguageServer.Exec
             var position = request.Position;
             var line = position.Line;
             var character = position.Character;
-            var index = LanguageServer.Module.GetIndex(line, character, document);
+            var char_index = LanguageServer.Module.GetIndex(line, character, document);
             if (trace)
             {
-                System.Console.Error.WriteLine("position index = " + index);
-                var back = LanguageServer.Module.GetLineColumn(index, document);
+                System.Console.Error.WriteLine("position index = " + char_index);
+                var back = LanguageServer.Module.GetLineColumn(char_index, document);
                 System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
             }
-            var res = LanguageServer.Module.Completion(index, document);
+            var res = LanguageServer.Module.Completion(char_index, document);
             List<CompletionItem> items = new List<CompletionItem>();
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    var item = new CompletionItem();
-            //    item.Label = "Item " + i;
-            //    item.InsertText = "Item" + i;
-            //    item.Kind = (CompletionItemKind)(i % (Enum.GetNames(typeof(CompletionItemKind)).Length) + 1);
-            //    items.Add(item);
-            //}
+            foreach (var r in res)
+            {
+                var item = new CompletionItem();
+                item.Label = r;
+                item.InsertText = r;
+                item.Kind = (CompletionItemKind) CompletionItemKind.Variable;
+                items.Add(item);
+            }
             return items.ToArray();
         }
 
