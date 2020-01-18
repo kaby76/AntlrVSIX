@@ -1,24 +1,24 @@
-﻿using System;
-using System.Text;
-using System.CodeDom;
-using System.CodeDom.Compiler;
-using System.IO;
-using System.Text.RegularExpressions;
-using Antlr4.Runtime;
-using Antlr4.Runtime.Misc;
-using Antlr4.Runtime.Tree;
-
+﻿// Template generated code from Antlr4BuildTasks.Template v 1.6
 namespace $safeprojectname$
 {
+    using System;
+    using System.Text;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Text.RegularExpressions;
+    using Antlr4.Runtime;
+    using Antlr4.Runtime.Misc;
+    using Antlr4.Runtime.Tree;
+
     static class Output
     {
         private static int changed = 0;
         private static bool first_time = true;
 
-        public static StringBuilder OutputTokens(this System.Collections.Generic.IList<IToken> tokens)
+        public static StringBuilder OutputTokens(this CommonTokenStream stream)
         {
             var sb = new StringBuilder();
-            foreach (var token in tokens)
+            foreach (var token in stream.GetTokens())
             {
                 sb.AppendLine("Token " + token.TokenIndex + " " + token.Type + " " + Output.PerformEscapes(token.Text));
             }
@@ -42,7 +42,9 @@ namespace $safeprojectname$
             {
                 TerminalNodeImpl tok = tree as TerminalNodeImpl;
                 Interval interval = tok.SourceInterval;
-                var inter = stream.GetHiddenTokensToLeft(tok.Symbol.TokenIndex);
+                IList<IToken> inter = null;
+                if (tok.Symbol.TokenIndex >= 0)
+                    inter = stream.GetHiddenTokensToLeft(tok.Symbol.TokenIndex);
                 if (inter != null)
                     foreach (var t in inter)
                     {
@@ -102,7 +104,7 @@ namespace $safeprojectname$
             {
                 var literal = input;
                 literal = literal.Replace("\\", "\\\\");
-                literal = input.Replace("\b", "\\b");
+                literal = literal.Replace("\b", "\\b");
                 literal = literal.Replace("\n", "\\n");
                 literal = literal.Replace("\t", "\\t");
                 literal = literal.Replace("\r", "\\r");

@@ -1,6 +1,7 @@
-﻿grammar arithmetic;
+﻿// Template generated code from Antlr4BuildTasks.Template v 1.6
+grammar arithmetic;
 
-file : expression* EOF;
+file : expression (SEMI expression)* EOF;
 
 expression
    :  left=expression op=POW right=expression
@@ -116,6 +117,9 @@ POW
    : '^'
    ;
 
+SEMI
+   : ';'
+   ;
 
 WS
    : [ \r\n\t] + -> skip
