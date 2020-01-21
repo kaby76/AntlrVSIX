@@ -57,9 +57,6 @@
         private static List<IGrammarDescription> _list_of_languages = new List<IGrammarDescription>();
 
         private static IGrammarDescription _antlr  = Register("LanguageServer.Antlr.dll");
-        private static IGrammarDescription _java   = Register("LanguageServer.Java.dll");
-        private static IGrammarDescription _python = Register("LanguageServer.Python.dll");
-        private static IGrammarDescription _rust = Register("LanguageServer.Rust.dll");
         private static ManualAssemblyResolver _resolver;
         public static List<string> AllLanguages
         {

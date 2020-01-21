@@ -41,9 +41,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LanguageServer.Antlr\LanguageServer.Antlr.csproj" />
-    <ProjectReference Include="..\LanguageServer.Java\LanguageServer.Java.csproj" />
-    <ProjectReference Include="..\LanguageServer.Python\LanguageServer.Python.csproj" />
-    <ProjectReference Include="..\LanguageServer.Rust\LanguageServer.Rust.csproj" />
     <ProjectReference Include="..\LanguageServer\LanguageServer.csproj" />
     <ProjectReference Include="..\Logger\Logger.csproj" />
     <ProjectReference Include="..\Workspaces\Workspaces.csproj" />

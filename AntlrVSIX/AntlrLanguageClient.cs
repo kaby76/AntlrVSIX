@@ -58,7 +58,7 @@ namespace LspAntlr
                 info.RedirectStandardInput = true;
                 info.RedirectStandardOutput = true;
                 info.UseShellExecute = false;
-                info.CreateNoWindow = false;
+                info.CreateNoWindow = true;
                 Process process = new Process();
                 process.StartInfo = info;
                 if (process.Start())

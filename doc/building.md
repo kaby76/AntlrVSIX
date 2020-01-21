@@ -16,7 +16,7 @@ Antlr4BuildTasks is a standard package which you can [reference using NuGet](htt
   use instead the [Java Platform Standard Edition](https://www.oracle.com/technetwork/java/javase/downloads/index.html).
 * You must [download the Java-based Antlr tool chain](https://www.antlr.org/download.html).
   You can probably use almost any version of Antlr, but this extension has only been tested with
-  version 4.7.2, released December 18, 2018.
+  version 4.8.
 * You should set the environment variable _JAVA__HOME_ to the directory of the java installation.
   AntlrVSIX uses this variable to find _java.exe_. 
 * You should set the environment variable _Antlr4ToolPath_ to the path of the downloaded Antlr jar file.
@@ -41,7 +41,7 @@ _Antlr4ToolPath_ within the .CSPROJ file.
     <JAVA_HOME>C:\Program Files\Java\jdk-11.0.1</JAVA_HOME>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Antlr4ToolPath)'==''">
-    <Antlr4ToolPath>C:\Program Files\Java\javalib\antlr-4.7.2-complete.jar</Antlr4ToolPath>
+    <Antlr4ToolPath>C:\Program Files\Java\javalib\antlr-4.8-complete.jar</Antlr4ToolPath>
   </PropertyGroup>
 ```
 

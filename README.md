@@ -16,7 +16,7 @@ The source code for the extension is open source, free of charge, and free of ad
 
 * Install Java tool chain, either [OpenJDK](https://openjdk.java.net/) or [Oracle JDK SE](https://www.oracle.com/technetwork/java/javase/downloads/index.html).
 
-* Downloaded the Java-based Antlr tool chain. [Complete ANTLR 4.7.2 Java binaries jar](https://www.antlr.org/download/antlr-4.7.2-complete.jar).
+* Downloaded the Java-based Antlr tool chain. [Complete ANTLR 4.8 Java binaries jar](https://www.antlr.org/download/antlr-4.8-complete.jar).
 
 * Set the environment variable "JAVA_HOME" to the directory of the java installation. See [this](https://confluence.atlassian.com/doc/setting-the-java_home-variable-in-windows-8895.html) for some instructions on how to do this
 on Windows.
