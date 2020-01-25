@@ -85,8 +85,7 @@
     <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Client">
       <Version>16.4.30</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="16.0.202" ExcludeAssets="runtime" />
-    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="16.5.1027">
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="16.5.2036">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -104,12 +103,25 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AntlrCppProject\AntlrCppProject.csproj">
+      <Project>{D60E6656-D74D-4D9F-8C91-42539A26E529}</Project>
+      <Name>AntlrCppProject</Name>
+      <VSIXSubPath>ProjectTemplates</VSIXSubPath>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+    </ProjectReference>
     <ProjectReference Include="..\AntlrFAProject\AntlrFAProject.csproj">
       <Project>{BC3EBEF2-6EFA-472B-9AC9-3A11DCC46E1C}</Project>
       <Name>AntlrFAProject</Name>
       <VSIXSubPath>ProjectTemplates</VSIXSubPath>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+    </ProjectReference>
+    <ProjectReference Include="..\LanguageServer.Exec\LanguageServer.Exec.csproj">
+      <Project>{E912AE6C-996B-46A9-9F55-C823EB9B4F47}</Project>
+      <Name>LanguageServer.Exec</Name>
+      <VSIXSubPath>Server</VSIXSubPath>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
     <ProjectReference Include="..\LspHelpers\LspHelpers.csproj">
       <Project>{dfff91e8-3e09-49cf-84b5-f5566826ee1a}</Project>

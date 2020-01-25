@@ -18,6 +18,7 @@
       <ProjectItem ReplaceParameters="true" TargetFileName="Properties\AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
       <ProjectItem ReplaceParameters="true" OpenInEditor="true">CalculatorVisitor.cs</ProjectItem>
       <ProjectItem ReplaceParameters="true" OpenInEditor="true">ErrorListener.cs</ProjectItem>
+      <ProjectItem ReplaceParameters="true" OpenInEditor="true">LASets.cs</ProjectItem>
       <ProjectItem ReplaceParameters="true" OpenInEditor="true">Output.cs</ProjectItem>
       <ProjectItem ReplaceParameters="true" OpenInEditor="true">Program.cs</ProjectItem>
       <ProjectItem ReplaceParameters="false" TargetFileName="arithmetic.g4" OpenInEditor="true">arithmetic.g4</ProjectItem>

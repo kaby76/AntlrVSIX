@@ -9,7 +9,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectTypeGuids>{82b43b9b-a64c-4715-b499-d71e9ca2bd60};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <ProjectGuid>{BC3EBEF2-6EFA-472B-9AC9-3A11DCC46E1C}</ProjectGuid>
+    <ProjectGuid>{D60E6656-D74D-4D9F-8C91-42539A26E529}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AntlrFAProject</RootNamespace>
@@ -54,21 +54,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ErrorListener.cs" />
-    <None Include="Output.cs" />
-    <None Include="CalculatorVisitor.cs" />
-    <None Include="LASets.cs" />
+    <None Include="arithmetic.g4" />
+    <None Include="ErrorListener.cpp" />
+    <None Include="ErrorListener.h" />
+    <None Include="Output.cpp" />
+    <None Include="Output.h" />
+    <None Include="packages.config" />
+    <None Include="Program.cpp" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="arithmetic.g4" />
-    <None Include="AssemblyInfo.cs" />
-    <None Include="Program.cs" />
-    <None Include="ProjectTemplate.csproj" />
-    <None Include="AntlrFAProject.ico" />
+    <None Include="ProjectTemplate.vcxproj" />
+    <None Include="ProjectTemplate.vcxproj.filters" />
+    <None Include="ProjectTemplate.vcxproj.user" />
   </ItemGroup>
   <ItemGroup>
-    <VSTemplate Include="AntlrFAProject.vstemplate" />
+    <VSTemplate Include="AntlrCppProject.vstemplate" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />

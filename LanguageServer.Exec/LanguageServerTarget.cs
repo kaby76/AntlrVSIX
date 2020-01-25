@@ -328,7 +328,7 @@ namespace LanguageServer.Exec
 
         Document CheckDoc(System.Uri uri)
         {
-            var decoded = HttpUtility.UrlDecode(uri.AbsoluteUri);
+            var decoded = System.Web.HttpUtility.UrlDecode(uri.AbsoluteUri);
             var file_name = new Uri(decoded).LocalPath;
             var document = _workspace.FindDocument(file_name);
             if (document == null)

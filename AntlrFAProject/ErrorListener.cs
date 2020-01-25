@@ -1,4 +1,4 @@
-﻿// Template generated code from Antlr4BuildTasks.Template v 1.6
+﻿// Template generated code from Antlr4BuildTasks.Template v 2.0
 namespace $safeprojectname$
 {
     using System;
@@ -6,6 +6,7 @@ namespace $safeprojectname$
     using System.IO;
     using Antlr4.Runtime;
     using Antlr4.Runtime.Misc;
+    using System.Linq;
 
     public class ErrorListener<S> : ConsoleErrorListener<S>
     {

@@ -40,10 +40,8 @@ namespace LspAntlr
                 var a = t.Assembly;
                 var f = System.IO.Path.GetFullPath(a.Location);
                 var p = System.IO.Path.GetDirectoryName(f);
-                //var antlr_executable = p + System.IO.Path.DirectorySeparatorChar
-                //                         + @"server\netcoreapp3.1\LanguageServer.Exec.exe";
-                var antlr_executable =
-                    @"C:\Users\kenne\Documents\AntlrVSIX\LanguageServer.Exec\bin\Debug\netcoreapp3.1\LanguageServer.Exec.exe";
+                var antlr_executable = p + System.IO.Path.DirectorySeparatorChar
+                                         + @"Server\net472\LanguageServer.Exec.exe";
                 var w2 = new SetWorkspace(cache_location, antlr_executable);
                 w2.ShowDialog();
                 w2.Close();

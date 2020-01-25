@@ -46,6 +46,7 @@
 	<ItemGroup>
     <Compile Include="CalculatorVisitor.cs" />
     <Compile Include="ErrorListener.cs" />
+    <Compile Include="LASets.cs" />
     <Compile Include="Output.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -54,7 +55,7 @@
 
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.8.0" />
-    <PackageReference Include="Antlr4BuildTasks" Version="1.0.8" />
+    <PackageReference Include="Antlr4BuildTasks" Version="2.0.1" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="3.1.0" />
 	</ItemGroup>
   <PropertyGroup Condition="'$(JAVA_HOME)'==''">
