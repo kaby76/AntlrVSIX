@@ -74,7 +74,7 @@ just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio
 
 * Restructuring the code as a Language Server Protocol implementation with extensions for VS 2019 (IDE) and VS Code.
 
-* Templates for C# and C++. Note, Antlr 4.8 currently does not have a release for Windows. You will need to build the
+* Templates for C# and C++. Note, Antlr 4.8 currently does not have a C++ pre-built binary release for Windows. You will need to build the
 runtime and update the generated .vcxproj file with path information. It is currently expecting Debug Static and x64 target.
 
 * These are the LSP features currently implemented. Note,
