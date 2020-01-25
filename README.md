@@ -3,11 +3,12 @@
 AntlrVSIX is a package of Visual Studio 2019 and Visual Studio Code extensions for Antlr v4 grammars, and implemented with a
 [Language Server Protocol (LSP)](https://langserver.org/)
 client and server architecture.
-This extension supports most of all that can be supported in Language Server Protocol API https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/ version 16.4.30 and
+This extension supports most of all that can be supported in Language Server Protocol API https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/ and
 https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Client/ version 16.4.30. Supported
 are hover, go to def, find all refs,
 replace, command completion,
-reformat.
+reformat. Color tagging is not implemented because the MS LSP API does not implement it, and I do not understand
+TextMate yet.
 
 The source code for the extension is open source, free of charge, and free of ads.
 
@@ -69,20 +70,23 @@ just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio
 
 ## Work in progress for next release:
 
+(Nothing currently.)
+
 ## Release notes for v5.0.0:
 
-* Restructuring the code as a Language Server Protocol implementation with extensions for VS 2019 (IDE) and VS Code.
+* Restructuring the code as a Language Server Protocol client/server implementation with extensions for VS 2019 (IDE) and VS Code.
 
 * Templates for C# and C++. Note, Antlr 4.8 currently does not have a C++ pre-built binary release for Windows. You will need to build the
-runtime and update the generated .vcxproj file with path information. It is currently expecting Debug Static and x64 target.
+runtime and update the generated .vcxproj file with path information. The template will generate a project that is expecting Debug Static and x64 target.
 
 * These are the LSP features currently implemented. Note,
 [Midrosoft.VisualStudio.LanguageServer.Protocol](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/)
-version 16.3.57 does not implement LSP version 3.14, rather something around version 3.6. What is missing is color tagging.
+version 16.4.30 does not implement LSP version 3.14, rather something around version 3.6. What is missing is color tagging.
 I'm not sure how to deal with this other than pitch the inferior API, then use OmniSharp's API, or as usual write everything
 myself.
 
-* Computing the completion symbols is not complete.
+* Computing the completion symbols is not complete. It only gives token types for completion, not the actual symbols that could
+be inserted.
 
 | Message  | Support |
 | ---- | ---- |
