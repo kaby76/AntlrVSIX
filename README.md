@@ -6,9 +6,8 @@ client and server architecture.
 This extension supports most of all that can be supported in Language Server Protocol API https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/ version 16.4.30 and
 https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Client/ version 16.4.30. Supported
 are hover, go to def, find all refs,
-replace, go to visitor/listener, command completion,
-reformat. Programming languages that are currently supported to one degree or another
-are: Antlr itself, Java, Python, and Rust.
+replace, command completion,
+reformat.
 
 The source code for the extension is open source, free of charge, and free of ads.
 
