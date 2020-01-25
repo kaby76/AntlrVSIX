@@ -70,7 +70,7 @@ just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio
 
 ## Work in progress for next release:
 
-## Release notes for v4.0.5:
+## Release notes for v5.0.0:
 
 * Restructuring the code as a Language Server Protocol implementation with extensions for VS 2019 (IDE) and VS Code.
 
