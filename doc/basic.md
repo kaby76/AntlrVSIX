@@ -4,32 +4,22 @@ AntlrVSIX works with Antlr version 4 grammars. The extension recognizes Antlr4 g
 with suffices .g or .g4, and will not recognize a grammar with any other suffix.
 A grammar that cannot be parsed will affect what features are available from the extension.
 Grammars can be split into multiple files, but they must be
-added to a Visual Studio C# Project in order for the tool to keep track of
+added to a Visual Studio C# or C++ Project in order for the tool to keep track of
 all grammar symbols.
+
+AntlrVSIX is implemented using a Language Server Protocol API provided by Microsoft.
 
 ## Tagging
 
-AntlrVSIX tags all tokens in the grammar file. Keywords are colored blue; terminals are colored
-orange; non-terminals are colored purple; literals are colored red; comments are colored green;
-all punctuation are black.
-
-In addition, AntlrVSIX provides error squiggles below terminals and non-terminals that do not
-have a defining rule in the project. "EOF" is a built-in terminal provided by Antlr,
-but there is no grammar rule that defines it, so an error squiggle always appears below EOF.
-
-<img src="pics/2019-08-08-19.png" width="75%" />
-
-To change the default color scheme, open "Tools -> Options" from the Visual Studio menu.
-Select "Environment -> Fonts and Colors". Look for the "Antlr" items in "Display itmes", and
-change the values to what you would like.
-
-<img src="pics/2019-08-08-18.png" width="75%" />
+AntlrVSIX tags all tokens in the grammar file, but due to restrictions in the LSP API provided
+by Microsoft, grammar symbols are not color coded. However, highlighting (by clicking on a symbol)
+is supported.
 
 ## Intellisense Tooltip
 
 AntlrVSIX provides tool tips of the type of the symbol when you move the mouse over
 it. You can, of course, gather the type of symbol by Antlr rules (all terminals begin with an uppercase
-letter, non-terminals begin with a lowercase letter) or by the tag color.
+letter, non-terminals begin with a lowercase letter).
 
 ## Intellisense Command Completion
 
