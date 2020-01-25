@@ -1,12 +1,12 @@
 # AntlrVSIX
 
-AntlrVSIX is a package of Visual Studio 2019 and Visual Studio Code extensions for programming language support
-of languages that are based in Antlr v4 grammars, and implemented with a
+AntlrVSIX is a package of Visual Studio 2019 and Visual Studio Code extensions for Antlr v4 grammars, and implemented with a
 [Language Server Protocol (LSP)](https://langserver.org/)
 client and server architecture.
-Each language is described by the grammar along with mappings of syntax
-to support tagging, go to def, find all refs,
-replace, go to visitor/listener, command completion, options,
+This extension supports most of all that can be supported in Language Server Protocol API https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/ version 16.4.30 and
+https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Client/ version 16.4.30. Supported
+are hover, go to def, find all refs,
+replace, go to visitor/listener, command completion,
 reformat. Programming languages that are currently supported to one degree or another
 are: Antlr itself, Java, Python, and Rust.
 
@@ -70,21 +70,17 @@ just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio
 
 ## Work in progress for next release:
 
-* I am restructuring the code as a Language Server Protocol implementation with extensions for VS 2019 (IDE) and VS Code. As of
-Dec 14, both extensions are now working but require some polishing.
-* After some testing, I realize I chose the wrong grammar
-for recognizing Java. The documentation in the Antlr grammars is very poor. I am now researching where to focus a
-grammar rewrite using a library of 50,000+ files to help guide me on what changes to make it more efficient.
-However, the best solution is to add to this extension code to automatic rewrite grammars to eliminate all
-left recursion and common left factors, then use that to rewrite the Java grammar directly from the language spec.
+## Release notes for v4.0.5:
+
+* Restructuring the code as a Language Server Protocol implementation with extensions for VS 2019 (IDE) and VS Code.
+
 * These are the LSP features currently implemented. Note,
 [Midrosoft.VisualStudio.LanguageServer.Protocol](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/)
 version 16.3.57 does not implement LSP version 3.14, rather something around version 3.6. What is missing is color tagging.
 I'm not sure how to deal with this other than pitch the inferior API, then use OmniSharp's API, or as usual write everything
 myself.
-* Computing the completion symbols is not easy. Antlr itself reports an incomplete set of expected input when a parse fails,
-and Mike Lischke's [Code Completion Engine](https://github.com/mike-lischke/antlr4-c3) also doesn't work. Thus, I had to develop
-the algorithm from scratch.
+
+* Computing the completion symbols is not complete.
 
 | Message  | Support |
 | ---- | ---- |
