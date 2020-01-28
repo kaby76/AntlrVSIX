@@ -44,7 +44,7 @@ aren't set.
 
 # Documentation
 
-For information on how to use AntlrVSIX, see the [User Guide](doc/readme.md), which is geared specifically for Antlr programs.
+For information on how to use AntlrVSIX, see the [User Guide](doc/readme.md), which is geared specifically for Antlr programs. _Note--all this needs updating due to the new slimmed-down UI, which is now implemented using the Visual Studio LSP Client code._
 
 # Caveats:
 
@@ -70,7 +70,8 @@ just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio
 
 ## Work in progress for next release:
 
-(Nothing currently.)
+* Add back some of the useful UI from version 4, including the About Box, goto Listener/Visitor. I may add back other UI if I can
+access the Visual Studio LSP Client code.
 
 ## Release notes for v5.0.0:
 
