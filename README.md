@@ -3,12 +3,11 @@
 AntlrVSIX is a package of Visual Studio 2019 and Visual Studio Code extensions for Antlr v4 grammars, and implemented with a
 [Language Server Protocol (LSP)](https://langserver.org/)
 client and server architecture.
-This extension supports most of all that can be supported in Language Server Protocol API https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/ and
+This extension supports much of what can be supported in Language Server Protocol API https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/ and
 https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Client/ version 16.4.30. Supported
 are hover, go to def, find all refs,
 replace, command completion,
-reformat. Color tagging is not implemented because the MS LSP API does not implement it, and I do not understand
-TextMate yet.
+reformat. Color tagging is not implemented because the MS LSP API does not implement it.
 
 The source code for the extension is open source, free of charge, and free of ads.
 
@@ -72,6 +71,10 @@ just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio
 
 * Add back some of the useful UI from version 4, including the About Box, goto Listener/Visitor. I may add back other UI if I can
 access the Visual Studio LSP Client code.
+
+* Add colorized tagging of grammar. When I switch to the LSP implementation, this functionality was lost because it's not
+directly supported by the LSP Client/Server API that Microsoft provides. Microsoft says to implement this functionality using
+TextMate files, but it's not at all clear how to do this.
 
 ## Release notes for v5.0.0:
 
