@@ -27,6 +27,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "corpus-for-codebuff", "corp
 		corpus-for-codebuff\YangJavaParser.g = corpus-for-codebuff\YangJavaParser.g
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntlrVSIX", "AntlrVSIX\AntlrVSIX.csproj", "{99377F57-EC77-4949-A670-F97989990A3C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E912AE6C-996B-46A9-9F55-C823EB9B4F47} = {E912AE6C-996B-46A9-9F55-C823EB9B4F47}
+	EndProjectSection
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntlrFAProject", "AntlrFAProject\AntlrFAProject.csproj", "{BC3EBEF2-6EFA-472B-9AC9-3A11DCC46E1C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LanguageServer", "LanguageServer\LanguageServer.csproj", "{9600BAEC-E51A-4F80-9251-2306A7A84D44}"
@@ -53,11 +58,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Options", "Options\Options.csproj", "{B11CB730-FE6F-44E8-953C-5B9E92E7A026}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LanguageServer.Exec", "LanguageServer.Exec\LanguageServer.Exec.csproj", "{E912AE6C-996B-46A9-9F55-C823EB9B4F47}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntlrVSIX", "AntlrVSIX\AntlrVSIX.csproj", "{99377F57-EC77-4949-A670-F97989990A3C}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E912AE6C-996B-46A9-9F55-C823EB9B4F47} = {E912AE6C-996B-46A9-9F55-C823EB9B4F47}
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LspHelpers", "LspHelpers\LspHelpers.csproj", "{DFFF91E8-3E09-49CF-84B5-F5566826EE1A}"
 EndProject
