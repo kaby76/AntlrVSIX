@@ -2,32 +2,40 @@
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>fileTypes</key>
+
+  <key>fileTypes</key>
 	<array>
 		<string>g4</string>
 	</array>
+
 	<key>name</key>
 	<string>Antlr</string>
+
 	<key>patterns</key>
 	<array>
 		<dict>
-			<key>captures</key>
+
+      <key>captures</key>
 			<dict>
-				<key>1</key>
+        <key>1</key>
 				<dict>
 					<key>name</key>
 					<string>keyword.operator.antlr</string>
 				</dict>
+
 				<key>2</key>
 				<dict>
 					<key>name</key>
 					<string>keyword.operator.antlr</string>
 				</dict>
 			</dict>
+
 			<key>match</key>
 			<string>(lexer|parser)?\s*(grammar)\s*(\w+);</string>
+
 			<key>name</key>
 			<string>meta.header.antlr</string>
+
 		</dict>
 		<dict>
 			<key>begin</key>
