@@ -54,6 +54,10 @@
     <Compile Include="ViewCreationListener.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Grammars\Antlr.tmLanguage">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="Grammars\Antlr4.tmLanguage" />
     <None Include="README.md" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
@@ -64,6 +68,9 @@
       <IncludeInVSIX>true</IncludeInVSIX>
       <Link>server/%(RecursiveDir)%(Filename)%(Extension)</Link>
       <Visible>false</Visible>
+    </Content>
+    <Content Include="AntlrVSIX.pkgdef">
+      <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="AntlrVSIX_large.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

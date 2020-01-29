@@ -13,7 +13,7 @@ namespace LspAntlr
 
 
     [Export(typeof(IVsTextViewCreationListener))]
-    [ContentType("any")]
+    [ContentType("Antlr")]
     [TextViewRole(PredefinedTextViewRoles.Editable)]
     public class ViewCreationListener : IVsTextViewCreationListener
     {
