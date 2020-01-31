@@ -20,7 +20,7 @@ namespace $safeprojectname$
             var sb = new StringBuilder();
             foreach (var token in stream.GetTokens())
             {
-                sb.AppendLine("Token " + token.TokenIndex + " " + token.Type + " " + Output.PerformEscapes(token.Text));
+                sb.AppendLine("Token " + token.TokenIndex + " " + token.Type + " " + "channel " + ((Lexer)stream.TokenSource).ChannelNames[token.Channel] + " " + Output.PerformEscapes(token.Text));
             }
             return sb;
         }
@@ -49,10 +49,10 @@ namespace $safeprojectname$
                     foreach (var t in inter)
                     {
                         StartLine(sb, tree, stream, level);
-                        sb.AppendLine("( HIDDEN text=" + t.Text.PerformEscapes());
+                        sb.AppendLine("( " + ((Lexer)stream.TokenSource).ChannelNames[t.Channel] + " text=" + t.Text.PerformEscapes());
                     }
                 StartLine(sb, tree, stream, level);
-                sb.AppendLine("( TOKEN i=" + tree.SourceInterval.a
+                sb.AppendLine("( " + ((Lexer)stream.TokenSource).ChannelNames[tok.Symbol.Channel] + " i=" + tree.SourceInterval.a
                     + " txt=" + tree.GetText().PerformEscapes()
                     + " tt=" + tok.Symbol.Type);
             }

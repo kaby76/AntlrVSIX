@@ -1,10 +1,10 @@
 ﻿// Template generated code from Antlr4BuildTasks.Template v 2.0
 namespace $safeprojectname$
 {
-    using System;
     using Antlr4.Runtime;
     using Antlr4.Runtime.Atn;
     using Antlr4.Runtime.Misc;
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
@@ -13,7 +13,6 @@ namespace $safeprojectname$
     class LASets
     {
         private Parser _parser;
-        private AntlrInputStream _input_stream;
         private CommonTokenStream _token_stream;
         private List<IToken> _input;
         private int _cursor;
@@ -22,7 +21,6 @@ namespace $safeprojectname$
         private HashSet<ATNState> _start_states;
         private bool _log_parse = false;
         private bool _log_closure = false;
-        private bool _log_first = false;
 
         class Edge
         {
