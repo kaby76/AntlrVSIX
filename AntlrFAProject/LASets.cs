@@ -72,7 +72,13 @@ namespace $safeprojectname$
             }
             _token_stream.Seek(currentIndex);
 
-            List<List<Edge>> all_parses = EnterState(null);
+            List<List<Edge>> all_parses = EnterState(new Edge()
+            {
+                _index = 0,
+                _index_at_transition = 0,
+                _to = _parser.Atn.states[0],
+                _type = TransitionType.EPSILON
+            });
             // Remove last token on input.
             _input.RemoveAt(_input.Count - 1);
             // Eliminate all paths that don't consume all input.
@@ -137,22 +143,9 @@ namespace $safeprojectname$
         List<List<Edge>> EnterState(Edge t)
         {
             int here = ++entry_value;
-
-            int index_on_transition;
-            int token_index;
-            ATNState state;
-            if (t == null)
-            {
-                token_index = 0;
-                index_on_transition = 0;
-                state = _parser.Atn.states[0];
-            }
-            else
-            {
-                token_index = t._index;
-                index_on_transition = t._index_at_transition;
-                state = t._to;
-            }
+            int index_on_transition = t._index_at_transition;
+            int token_index = t._index;
+            ATNState state = t._to;
             var input_token = _input[token_index];
 
             if (_log_parse)
@@ -170,8 +163,6 @@ namespace $safeprojectname$
                     System.Console.Error.Write("Entry " + here
                                          + " return ");
                 var res = new List<List<Edge>>() { new List<Edge>() { t } };
-                if (t._type == TransitionType.EPSILON)
-                    throw new Exception();
                 if (_log_parse)
                 {
                     var str = PrintResult(res);
@@ -384,7 +375,6 @@ namespace $safeprojectname$
                 visited.Add(state);
                 foreach (var transition in state.TransitionsArray)
                 {
-                    List<List<Edge>> matches = null;
                     switch (transition.TransitionType)
                     {
                         case TransitionType.RULE:
