@@ -1,36 +1,47 @@
 ﻿using Microsoft.VisualStudio.LanguageServer.Client;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Threading;
 using Microsoft.VisualStudio.Utilities;
+using StreamJsonRpc;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell.Interop;
+using Newtonsoft.Json.Linq;
+using ServiceProvider = Microsoft.VisualStudio.Shell.ServiceProvider;
 
 
 namespace LspAntlr
 {
     [ContentType("Antlr")]
     [Export(typeof(ILanguageClient))]
-    public class AntlrLanguageClient : ILanguageClient
+    public class AntlrLanguageClient : ILanguageClient, ILanguageClientCustomMessage2
     {
         public static MemoryStream _log_to_server = new MemoryStream();
         public static MemoryStream _log_from_server = new MemoryStream();
 
-        string ILanguageClient.Name => "Antlr language extension";
+        public string Name => "Antlr language extension";
 
-        IEnumerable<string> ILanguageClient.ConfigurationSections => null;
+        public IEnumerable<string> ConfigurationSections => null;
 
-        object ILanguageClient.InitializationOptions => null;
+        public object InitializationOptions => null;
 
-        IEnumerable<string> ILanguageClient.FilesToWatch => null;
+        public IEnumerable<string> FilesToWatch => null;
 
         public event AsyncEventHandler<EventArgs> StartAsync;
         public event AsyncEventHandler<EventArgs> StopAsync;
 
-        async Task<Connection> ILanguageClient.ActivateAsync(CancellationToken token)
+        public AntlrLanguageClient()
+        {
+        }
+
+        public async Task<Connection> ActivateAsync(CancellationToken token)
         {
             await Task.Yield();
             try
@@ -49,18 +60,18 @@ namespace LspAntlr
                 var workspace_path = cache_location;
 
                 if (workspace_path == null || workspace_path == "")
-			        workspace_path = cache_location;
-                
+                    workspace_path = cache_location;
+
                 //antlr_executable = w2.lspserver.Text;
 
-		        ProcessStartInfo info = new ProcessStartInfo();
+                ProcessStartInfo info = new ProcessStartInfo();
                 info.FileName = antlr_executable;
                 info.WorkingDirectory = workspace_path;
-		        info.Arguments = workspace_path;
+                info.Arguments = workspace_path;
                 info.RedirectStandardInput = true;
                 info.RedirectStandardOutput = true;
                 info.UseShellExecute = false;
-                info.CreateNoWindow = true;
+                info.CreateNoWindow = false;
                 Process process = new Process();
                 process.StartInfo = info;
                 if (process.Start())
@@ -83,22 +94,87 @@ namespace LspAntlr
             catch (Exception e)
             {
             }
+
             return null;
         }
 
-        async Task ILanguageClient.OnLoadedAsync()
+        public async Task OnLoadedAsync()
         {
             await StartAsync.InvokeAsync(this, EventArgs.Empty);
         }
 
-        Task ILanguageClient.OnServerInitializedAsync()
+        public Task OnServerInitializedAsync()
         {
             return Task.CompletedTask;
         }
 
-        Task ILanguageClient.OnServerInitializeFailedAsync(Exception e)
+        public Task OnServerInitializeFailedAsync(Exception e)
         {
             return Task.CompletedTask;
+        }
+
+        public Task AttachForCustomMessageAsync(JsonRpc rpc)
+        {
+            return Task.CompletedTask;
+        }
+
+        public object MiddleLayer => new MiddleLayerProvider();
+        public object CustomMessageTarget => null;
+
+        public class MiddleLayerProvider : ILanguageClientMiddleLayer, ILanguageClientWorkspaceSymbolProvider
+        {
+            public bool CanHandle(string methodName)
+            {
+                if (methodName.ToLower().Contains("symbol"))
+                {
+                }
+                return false;
+                switch (methodName)
+                {
+                    case "textDocument/completion":
+                        return false; // true;
+                }
+
+                return false;
+            }
+
+            public Task HandleNotificationAsync(string methodName, JToken methodParam, Func<JToken, Task> sendNotification)
+            {
+                return Task.CompletedTask;
+            }
+
+            public async Task<JToken> HandleRequestAsync(string methodName, JToken methodParam, Func<JToken, Task<JToken>> sendRequest)
+            {
+                var result = await sendRequest(methodParam);
+
+                //switch (methodName)
+                //{
+                //    case "textDocument/completion":
+                //        await HandleCompletionAsync(result);
+                //        break;
+                //    default:
+                //        break;
+                //}
+
+                return result;
+            }
+            private async Task HandleCompletionAsync(JToken serverCompletions)
+            {
+                // since we're implementing the REPL completion ourselves, we add the completions directly
+                // rather than go through the middle layer (which would require extra serialization / deserialization)
+                //await AddSnippetCompletionsAsync(serverCompletions);
+
+                //if (_replWindow != null) {
+                //    await AddReplCompletionsAsync(serverCompletions);
+                //}
+            }
+
+            public async Task<SymbolInformation[]> RequestWorkspaceSymbols(WorkspaceSymbolParams param, Func<WorkspaceSymbolParams, Task<SymbolInformation[]>> sendRequest)
+            {
+                SymbolInformation[] symbols = await sendRequest(param);
+                return symbols;
+            }
+
         }
     }
 }
