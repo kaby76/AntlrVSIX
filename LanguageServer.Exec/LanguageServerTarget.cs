@@ -5,6 +5,7 @@ using StreamJsonRpc;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Web;
 using Workspaces;
 
@@ -641,7 +642,6 @@ namespace LanguageServer.Exec
                     // si.Kind = 0; // Default.
                     continue;
                 si.Name = s.name;
-                si.Kind = (SymbolKind) si.Kind;
                 si.Location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location();
                 si.Location.Uri = request.TextDocument.Uri;
                 var lcs = LanguageServer.Module.GetLineColumn(s.range.Start.Value, document);
@@ -650,6 +650,15 @@ namespace LanguageServer.Exec
                 si.Location.Range.Start = new Position(lcs.Item1, lcs.Item2);
                 si.Location.Range.End = new Position(lce.Item1, lce.Item2);
                 symbols.Add(si);
+            }
+            if (trace)
+            {
+                System.Console.Error.Write("returning ");
+                System.Console.Error.WriteLine(String.Join(" ", symbols.Select(s =>
+                {
+                    var v = (SymbolInformation)s;
+                    return "<" + v.Name + "," + v.Kind + ">";
+                })));
             }
             var result = symbols.ToArray();
             return result;

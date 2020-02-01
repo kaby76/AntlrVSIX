@@ -54,10 +54,6 @@
     <Compile Include="ViewCreationListener.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Grammars\Antlr.tmLanguage">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Grammars\Antlr4.tmLanguage" />
     <None Include="README.md" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
