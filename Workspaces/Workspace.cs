@@ -1,4 +1,7 @@
-﻿namespace Workspaces
+﻿using System;
+using System.IO;
+
+namespace Workspaces
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -60,6 +63,26 @@
             {
                 var found = doc.FindDocument(ffn);
                 if (found != null) return found;
+            }
+            // If no document found, try to create it.
+            if (File.Exists(ffn))
+            {
+                var document = new Workspaces.Document(ffn, ffn);
+                try
+                {   // Open the text file using a stream reader.
+                    using (StreamReader sr = new StreamReader(ffn))
+                    {
+                        // Read the stream to a string, and write the string to the console.
+                        String str = sr.ReadToEnd();
+                        document.Code = str;
+                    }
+                }
+                catch (IOException e)
+                {
+                    return null;
+                }
+                this.AddChild(document);
+                return document;
             }
             return null;
         }

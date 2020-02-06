@@ -1,4 +1,13 @@
-﻿using Microsoft.VisualStudio.LanguageServer.Client;
+﻿using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using StreamJsonRpc;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Web;
+using Microsoft.VisualStudio.LanguageServer.Client;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Microsoft.VisualStudio.Threading;
 using Microsoft.VisualStudio.Utilities;
@@ -11,6 +20,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using LanguageServer;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 using Newtonsoft.Json.Linq;
@@ -25,7 +35,8 @@ namespace LspAntlr
     {
         public static MemoryStream _log_to_server = new MemoryStream();
         public static MemoryStream _log_from_server = new MemoryStream();
-
+        private JsonRpc _rpc;
+        public static AntlrLanguageClient Instance { get; set; }
         public string Name => "Antlr language extension";
 
         public IEnumerable<string> ConfigurationSections => null;
@@ -39,6 +50,8 @@ namespace LspAntlr
 
         public AntlrLanguageClient()
         {
+            CustomMessageTarget = new CustomTarget();
+            Instance = this;
         }
 
         public async Task<Connection> ActivateAsync(CancellationToken token)
@@ -113,68 +126,41 @@ namespace LspAntlr
             return Task.CompletedTask;
         }
 
-        public Task AttachForCustomMessageAsync(JsonRpc rpc)
+        public async Task AttachForCustomMessageAsync(JsonRpc rpc)
         {
-            return Task.CompletedTask;
+            await Task.Yield();
+            this._rpc = rpc;
         }
 
-        public object MiddleLayer => new MiddleLayerProvider();
-        public object CustomMessageTarget => null;
-
-        public class MiddleLayerProvider : ILanguageClientMiddleLayer, ILanguageClientWorkspaceSymbolProvider
+        public object[] SendServerCustomMessage(int start, int end, string ffn)
         {
-            public bool CanHandle(string methodName)
-            {
-                if (methodName.ToLower().Contains("symbol"))
-                {
-                }
-                return false;
-                switch (methodName)
-                {
-                    case "textDocument/completion":
-                        return false; // true;
-                }
+            if (this._rpc == null) return null;
+            DocumentSymbolSpansParams p = new DocumentSymbolSpansParams();
+            var uri = new Uri(ffn);
+            p.TextDocument = uri;
+            p.Start = start;
+            p.End = end;
+            var result = this._rpc.InvokeAsync<object[]>("KenCustomMessage", p).Result;
+            return result;
+        }
 
-                return false;
+        public object MiddleLayer => null;
+
+        public object CustomMessageTarget { get; set; }
+
+
+        public class CustomTarget
+        {
+            public void OnCustomNotification(JToken arg)
+            {
+                // Provide logic on what happens OnCustomNotification is called from the language server
             }
 
-            public Task HandleNotificationAsync(string methodName, JToken methodParam, Func<JToken, Task> sendNotification)
+            public string OnCustomRequest(string test)
             {
-                return Task.CompletedTask;
+                // Provide logic on what happens OnCustomRequest is called from the language server
+                return "";
             }
-
-            public async Task<JToken> HandleRequestAsync(string methodName, JToken methodParam, Func<JToken, Task<JToken>> sendRequest)
-            {
-                var result = await sendRequest(methodParam);
-
-                //switch (methodName)
-                //{
-                //    case "textDocument/completion":
-                //        await HandleCompletionAsync(result);
-                //        break;
-                //    default:
-                //        break;
-                //}
-
-                return result;
-            }
-            private async Task HandleCompletionAsync(JToken serverCompletions)
-            {
-                // since we're implementing the REPL completion ourselves, we add the completions directly
-                // rather than go through the middle layer (which would require extra serialization / deserialization)
-                //await AddSnippetCompletionsAsync(serverCompletions);
-
-                //if (_replWindow != null) {
-                //    await AddReplCompletionsAsync(serverCompletions);
-                //}
-            }
-
-            public async Task<SymbolInformation[]> RequestWorkspaceSymbols(WorkspaceSymbolParams param, Func<WorkspaceSymbolParams, Task<SymbolInformation[]>> sendRequest)
-            {
-                SymbolInformation[] symbols = await sendRequest(param);
-                return symbols;
-            }
-
         }
     }
 }

@@ -44,9 +44,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AntlrClassifier.cs" />
+    <Compile Include="AntlrClassifierProvider.cs" />
     <Compile Include="AntlrLanguageClient.cs" />
     <Compile Include="AntlrContentDefinition.cs" />
+    <Compile Include="GetVSVersion.cs" />
     <Compile Include="Helpers.cs" />
+    <Compile Include="IVsTextViewExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SetWorkspace.xaml.cs">
       <DependentUpon>SetWorkspace.xaml</DependentUpon>
@@ -81,6 +85,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -124,15 +129,43 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <IncludeOutputGroupsInVSIX>TemplateProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
+    <ProjectReference Include="..\Graphs\Graphs.csproj">
+      <Project>{227bb0f6-9df1-4782-b8c2-77c76e6824ae}</Project>
+      <Name>Graphs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LanguageServer.Antlr\LanguageServer.Antlr.csproj">
+      <Project>{1b4ad20d-e4fa-40ba-bc63-8eec48d0ced5}</Project>
+      <Name>LanguageServer.Antlr</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LanguageServer.Exec\LanguageServer.Exec.csproj">
       <Project>{E912AE6C-996B-46A9-9F55-C823EB9B4F47}</Project>
       <Name>LanguageServer.Exec</Name>
       <VSIXSubPath>Server</VSIXSubPath>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>
+    <ProjectReference Include="..\LanguageServer\LanguageServer.csproj">
+      <Project>{9600baec-e51a-4f80-9251-2306a7a84d44}</Project>
+      <Name>LanguageServer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Logger\Logger.csproj">
+      <Project>{a097e2d9-542e-44b7-9fc4-344e10b4e363}</Project>
+      <Name>Logger</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LspHelpers\LspHelpers.csproj">
       <Project>{dfff91e8-3e09-49cf-84b5-f5566826ee1a}</Project>
       <Name>LspHelpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Options\Options.csproj">
+      <Project>{b11cb730-fe6f-44e8-953c-5b9e92e7a026}</Project>
+      <Name>Options</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Symtab\Symtab.csproj">
+      <Project>{95fab63b-1fe9-41f9-a875-49556e5e6b8a}</Project>
+      <Name>Symtab</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Workspaces\Workspaces.csproj">
+      <Project>{e138159b-e61c-4cb7-abbc-7c57dc9bdd79}</Project>
+      <Name>Workspaces</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

@@ -14,7 +14,6 @@
         public static int GetIndex(int line, int column, Document doc)
         {
             var pd = ParserDetailsFactory.Create(doc);
-            if (pd.ParseTree == null) return 0;
             int index = 0;
             var buffer = pd.Code;
             if (buffer == null) return 0;
@@ -53,7 +52,6 @@
         public static (int, int) GetLineColumn(int index, Document doc)
         {
             var pd = ParserDetailsFactory.Create(doc);
-            if (pd.ParseTree == null) return (0, 0);
             int cur_index = 0;
             var buffer = pd.Code;
             if (buffer == null) return (0, 0);
@@ -92,7 +90,7 @@
         public static QuickInfo GetQuickInfo(int index, Document doc)
         {
             var pd = ParserDetailsFactory.Create(doc);
-            if (pd.ParseTree == null) return null;
+            if (pd.ParseTree == null) LanguageServer.Module.Compile();
             Antlr4.Runtime.Tree.IParseTree pt = LanguageServer.Util.Find(index, doc);
             var gd = GrammarDescriptionFactory.Create(doc.FullPath);
             if (pt == null) return null;
@@ -162,7 +160,7 @@
         public static int GetTag(int index, Document doc)
         {
             var pd = ParserDetailsFactory.Create(doc);
-            if (pd.ParseTree == null) return -1;
+            if (pd.ParseTree == null) LanguageServer.Module.Compile();
             Antlr4.Runtime.Tree.IParseTree pt = LanguageServer.Util.Find(index, doc);
             var gd = GrammarDescriptionFactory.Create(doc.FullPath);
             if (pt == null) return -1;
@@ -179,7 +177,7 @@
         public static DocumentSymbol GetDocumentSymbol(int index, Document doc)
         {
             var pd = ParserDetailsFactory.Create(doc);
-            if (pd.ParseTree == null) return null;
+            if (pd.ParseTree == null) LanguageServer.Module.Compile();
             Antlr4.Runtime.Tree.IParseTree pt = LanguageServer.Util.Find(index, doc);
             var gd = GrammarDescriptionFactory.Create(doc.FullPath);
             if (pt == null) return default(DocumentSymbol);
@@ -199,7 +197,7 @@
         public static IEnumerable<DocumentSymbol> Get(Document doc)
         {
             var pd = ParserDetailsFactory.Create(doc);
-            if (pd.ParseTree == null) return new List<DocumentSymbol>();
+            if (pd.ParseTree == null) LanguageServer.Module.Compile();
             var combined = new List<DocumentSymbol>();
             foreach (var p in pd.Tags)
             {
@@ -231,7 +229,7 @@
         public static IEnumerable<DocumentSymbol> Get(Workspaces.Range range, Document doc)
         {
             var pd = ParserDetailsFactory.Create(doc);
-            if (pd.ParseTree == null) return new List<DocumentSymbol>();
+            if (pd.ParseTree == null) LanguageServer.Module.Compile();
             var combined = new System.Collections.Generic.List<DocumentSymbol>();
             foreach (var p in pd.Tags)
             {
@@ -273,7 +271,7 @@
         public static IEnumerable<Workspaces.Range> GetErrors(Workspaces.Range range, Document doc)
         {
             var pd = ParserDetailsFactory.Create(doc);
-            if (pd.ParseTree == null) return new List<Workspaces.Range>();
+            if (pd.ParseTree == null) LanguageServer.Module.Compile();
             var result = new List<Workspaces.Range>();
             foreach (var p in pd.Errors)
             {
@@ -305,6 +303,7 @@
             var ref_pt = Util.Find(index, doc);
             if (ref_pt == null) return result;
             var ref_pd = ParserDetailsFactory.Create(doc);
+            if (ref_pd.ParseTree == null) LanguageServer.Module.Compile();
             ref_pd.Attributes.TryGetValue(ref_pt, out IList<Symtab.CombinedScopeSymbol> list_values);
             foreach (var value in list_values)
             {
@@ -333,6 +332,7 @@
             var ref_pt = Util.Find(index, doc);
             if (ref_pt == null) return result;
             var ref_pd = ParserDetailsFactory.Create(doc);
+            if (ref_pd.ParseTree == null) LanguageServer.Module.Compile();
             ref_pd.Attributes.TryGetValue(ref_pt, out IList<Symtab.CombinedScopeSymbol> list_value);
             foreach (var value in list_value)
             {
@@ -690,6 +690,7 @@
         public static List<string> Completion(int char_index, Document document)
         {
             var ref_pd = ParserDetailsFactory.Create(document);
+            if (ref_pd.ParseTree == null) LanguageServer.Module.Compile();
             List<string> result = ref_pd.Candidates(char_index);
             return result;
         }

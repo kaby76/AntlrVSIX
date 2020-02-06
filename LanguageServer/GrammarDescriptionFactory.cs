@@ -79,8 +79,9 @@
         }
         
 
-        public static IGrammarDescription Register(string assembly_ffn)
+        public static IGrammarDescription Register(string ffn)
         {
+            var assembly_ffn = ffn;
             if (_resolver == null)
             {
                  _resolver = new ManualAssemblyResolver();

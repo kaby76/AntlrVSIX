@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web;
+using Antlr4.Runtime.Tree.Pattern;
 using Workspaces;
 
 namespace LanguageServer.Exec
@@ -827,6 +828,73 @@ namespace LanguageServer.Exec
                 System.Console.Error.WriteLine(arg.ToString());
             }
             return null;
+        }
+
+
+        [JsonRpcMethod("KenCustomMessage")]
+        public async System.Threading.Tasks.Task<object[]> KenCustomMessageName(JToken arg)
+        {
+            var request = arg.ToObject<DocumentSymbolSpansParams>();
+            var document = CheckDoc(request.TextDocument);
+            var start = request.Start;
+            var end = request.End;
+            if (trace)
+            {
+                System.Console.Error.WriteLine("<-- KenCustomMessage");
+                System.Console.Error.WriteLine(arg.ToString());
+                var bs = LanguageServer.Module.GetLineColumn(start, document);
+                System.Console.Error.WriteLine("");
+            }
+            IEnumerable<DocumentSymbol> r = LanguageServer.Module.Get(document);
+            var symbols = new List<object>();
+            foreach (var s in r)
+            {
+                if (!(start <= s.range.Start.Value && s.range.Start.Value <= end))
+                    continue;
+                var si = new SymbolInformation();
+                if (s.kind == 0)
+                    si.Kind = SymbolKind.Variable; // Nonterminal
+                else if (s.kind == 1)
+                    si.Kind = SymbolKind.Enum; // Terminal
+                else if (s.kind == 2)
+                    //si.Kind = 0; // Comment
+                    continue;
+                else if (s.kind == 3)
+                    // si.Kind = 0; // Keyword
+                    continue;
+                else if (s.kind == 4)
+                    // si.Kind = SymbolKind.Number; // Literal
+                    continue;
+                else if (s.kind == 5)
+                    // si.Kind = 0; // Mode
+                    continue;
+                else if (s.kind == 6)
+                    // si.Kind = SymbolKind.Enum; // Channel
+                    continue;
+                else
+                    // si.Kind = 0; // Default.
+                    continue;
+                si.Name = s.name;
+                si.Location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location();
+                si.Location.Uri = request.TextDocument;
+                var lcs = LanguageServer.Module.GetLineColumn(s.range.Start.Value, document);
+                var lce = LanguageServer.Module.GetLineColumn(s.range.End.Value, document);
+                si.Location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
+                si.Location.Range.Start = new Position(lcs.Item1, lcs.Item2);
+                si.Location.Range.End = new Position(lce.Item1, lce.Item2);
+                symbols.Add(si);
+            }
+            if (trace)
+            {
+                System.Console.Error.Write("returning ");
+                System.Console.Error.WriteLine(String.Join(" ", symbols.Select(s =>
+                {
+                    var v = (SymbolInformation)s;
+                    return "<" + v.Name + "," + v.Kind + ">";
+                })));
+            }
+            var result = symbols.ToArray();
+            return result;
         }
 
 
