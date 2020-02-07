@@ -1,34 +1,20 @@
-﻿using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using StreamJsonRpc;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Web;
-using Microsoft.VisualStudio.LanguageServer.Client;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Microsoft.VisualStudio.Threading;
-using Microsoft.VisualStudio.Utilities;
-using StreamJsonRpc;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using LanguageServer;
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell.Interop;
-using Newtonsoft.Json.Linq;
-using ServiceProvider = Microsoft.VisualStudio.Shell.ServiceProvider;
-
-
+﻿
 namespace LspAntlr
 {
+    using LanguageServer;
+    using Microsoft.VisualStudio.LanguageServer.Client;
+    using Microsoft.VisualStudio.Threading;
+    using Microsoft.VisualStudio.Utilities;
+    using Newtonsoft.Json.Linq;
+    using StreamJsonRpc;
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.Composition;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Threading;
+    using System.Threading.Tasks;
+
     [ContentType("Antlr")]
     [Export(typeof(ILanguageClient))]
     public class AntlrLanguageClient : ILanguageClient, ILanguageClientCustomMessage2
@@ -50,7 +36,6 @@ namespace LspAntlr
 
         public AntlrLanguageClient()
         {
-            CustomMessageTarget = new CustomTarget();
             Instance = this;
         }
 
@@ -84,7 +69,7 @@ namespace LspAntlr
                 info.RedirectStandardInput = true;
                 info.RedirectStandardOutput = true;
                 info.UseShellExecute = false;
-                info.CreateNoWindow = false;
+                info.CreateNoWindow = true;
                 Process process = new Process();
                 process.StartInfo = info;
                 if (process.Start())
@@ -146,21 +131,6 @@ namespace LspAntlr
 
         public object MiddleLayer => null;
 
-        public object CustomMessageTarget { get; set; }
-
-
-        public class CustomTarget
-        {
-            public void OnCustomNotification(JToken arg)
-            {
-                // Provide logic on what happens OnCustomNotification is called from the language server
-            }
-
-            public string OnCustomRequest(string test)
-            {
-                // Provide logic on what happens OnCustomRequest is called from the language server
-                return "";
-            }
-        }
+        public object CustomMessageTarget => null;
     }
 }

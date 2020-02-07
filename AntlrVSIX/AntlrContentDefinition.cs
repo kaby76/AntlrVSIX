@@ -1,9 +1,9 @@
-﻿using Microsoft.VisualStudio.LanguageServer.Client;
-using Microsoft.VisualStudio.Utilities;
-using System.ComponentModel.Composition;
-
-namespace LspAntlr
+﻿namespace LspAntlr
 {
+    using Microsoft.VisualStudio.LanguageServer.Client;
+    using Microsoft.VisualStudio.Utilities;
+    using System.ComponentModel.Composition;
+
     public class AntlrContentDefinition
     {
         [Export]

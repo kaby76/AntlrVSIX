@@ -54,7 +54,7 @@ For information on how to use AntlrVSIX, see the [User Guide](doc/readme.md), wh
 Antlrvsix uses the slower [Java9 grammar](https://github.com/antlr/grammars-v4/blob/master/java9/Java9.g4).
 The faster, "official" Java grammar is [here](https://github.com/antlr/grammars-v4/tree/master/java).
 
-* Support for VS2015 and older editions has been removed.
+* Support for VS2017 and older editions has been removed.
 If you are interested in those, you can try using an older version of the extension.
 
 * The grammar used is the standard Antlr4 grammar in the examples: 
@@ -74,11 +74,14 @@ just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio
 * Add back some of the useful UI from version 4, including the About Box, goto Listener/Visitor. I may add back other UI if I can
 access the Visual Studio LSP Client code.
 
-* Add colorized tagging of grammar. When I switch to the LSP implementation, this functionality was lost because it's not
-directly supported by the LSP Client/Server API that Microsoft provides. Microsoft says to implement this functionality using
-TextMate files, but it's not at all clear how to do this.
+## Release notes for v5.1:
 
-## Release notes for v5.0.0:
+* Re-added colorized tagging of grammar. When I switch to the LSP implementation, this functionality was lost because it's not
+directly supported by the LSP Client/Server API that Microsoft provides. Microsoft says to implement this functionality using
+TextMate files, but that is not how it should be done--it duplicates the purpose of the LSP server, and it's hard to
+get right. Instead, it's implemented with a Visual Studio ITagger<> and a custom message to the LSP server.
+
+## Release notes for v5.0:
 
 * Restructuring the code as a Language Server Protocol client/server implementation with extensions for VS 2019 (IDE) and VS Code.
 

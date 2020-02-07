@@ -1,21 +1,16 @@
 ﻿namespace LspAntlr
 {
-    using System.Runtime.CompilerServices;
-    using LspAntlr;
-    using Microsoft.Build.Utilities;
     using Microsoft.VisualStudio.LanguageServer.Protocol;
-    using Microsoft.VisualStudio.TextManager.Interop;
-    using Newtonsoft.Json.Linq;
-    using LanguageServer;
     using Microsoft.VisualStudio.PlatformUI;
     using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Classification;
     using Microsoft.VisualStudio.Text.Tagging;
+    using Microsoft.VisualStudio.TextManager.Interop;
+    using Newtonsoft.Json.Linq;
     using System;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Linq;
 
     class Themes
     {
