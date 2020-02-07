@@ -1,4 +1,4 @@
-﻿// Template generated code from Antlr4BuildTasks.Template v 2.0
+﻿// Template generated code from Antlr4BuildTasks.Template v 2.1
 namespace $safeprojectname$
 {
     using Antlr4.Runtime;

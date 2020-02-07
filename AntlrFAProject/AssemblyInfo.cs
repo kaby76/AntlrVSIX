@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿// Template generated code from Antlr4BuildTasks.Template v 2.1
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 

@@ -178,13 +178,13 @@
     <ClInclude Include="ErrorListener.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <Import Project="..\packages\Antlr4BuildTasks.2.0.1\build\Antlr4BuildTasks.props" />
-  <Import Project="..\packages\Antlr4BuildTasks.2.0.1\build\Antlr4BuildTasks.targets" />
+  <Import Project="..\packages\Antlr4BuildTasks.2.1\build\Antlr4BuildTasks.props" />
+  <Import Project="..\packages\Antlr4BuildTasks.2.1\build\Antlr4BuildTasks.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Antlr4BuildTasks.2.0.1\build\Antlr4BuildTasks.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Antlr4BuildTasks.2.0.1\build\Antlr4BuildTasks.props'))" />
-    <Error Condition="!Exists('..\packages\Antlr4BuildTasks.2.0.1\build\Antlr4BuildTasks.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Antlr4BuildTasks.2.0.1\build\Antlr4BuildTasks.targets'))" />
+    <Error Condition="!Exists('..\packages\Antlr4BuildTasks.2.1\build\Antlr4BuildTasks.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Antlr4BuildTasks.2.1\build\Antlr4BuildTasks.props'))" />
+    <Error Condition="!Exists('..\packages\Antlr4BuildTasks.2.1\build\Antlr4BuildTasks.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Antlr4BuildTasks.2.1\build\Antlr4BuildTasks.targets'))" />
   </Target>
 </Project>

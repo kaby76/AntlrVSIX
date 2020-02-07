@@ -1,6 +1,6 @@
-#pragma once
+// Template generated code from Antlr4BuildTasks.Template v 2.1
 
-// Template generated code from Antlr4BuildTasks.Template v 2.0
+#pragma once
 
 #include <string>
 #include <iostream>

@@ -1,4 +1,4 @@
-// Template generated code from Antlr4BuildTasks.Template v 2.0
+// Template generated code from Antlr4BuildTasks.Template v 2.1
 #include <iostream>
 #include "ANTLRInputStream.h"
 #include "arithmeticLexer.h"

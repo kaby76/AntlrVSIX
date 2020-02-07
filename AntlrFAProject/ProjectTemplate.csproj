@@ -55,7 +55,7 @@
 
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.8.0" />
-    <PackageReference Include="Antlr4BuildTasks" Version="2.0.1" />
+    <PackageReference Include="Antlr4BuildTasks" Version="2.1" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="3.1.0" />
   </ItemGroup>
 
@@ -64,12 +64,5 @@
   </PropertyGroup>
 
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 
  </Project>
