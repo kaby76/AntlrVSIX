@@ -137,20 +137,20 @@ namespace LspAntlr
                     int type = (int)r.Kind;
                     int length = end_token_end - start_token_start + 1;
 
-                    // Make sure the length doesn't go past the end of the current span.
-                    if (start_token_start + length > curLocEnd)
-                        length = curLocEnd - start_token_start;
-
-                    var a = curSpan.Snapshot.TextBuffer.CurrentSnapshot;
-                    var b = curSpan.Snapshot;
-
-                    var tokenSpan = new SnapshotSpan(
-                        curSpan.Snapshot.TextBuffer.CurrentSnapshot,
-                        //curSpan.Snapshot,
-                        new Span(start_token_start, length));
-
                     if (type >= 0)
                     {
+                        // Make sure the length doesn't go past the end of the current span.
+                        if (start_token_start + length > curLocEnd)
+                            length = curLocEnd - start_token_start;
+
+                        var a = curSpan.Snapshot.TextBuffer.CurrentSnapshot;
+                        var b = curSpan.Snapshot;
+
+                        var tokenSpan = new SnapshotSpan(
+                            curSpan.Snapshot.TextBuffer.CurrentSnapshot,
+                            //curSpan.Snapshot,
+                            new Span(start_token_start, length));
+
                         TagSpan<ClassificationTag> result = null;
                         try
                         {

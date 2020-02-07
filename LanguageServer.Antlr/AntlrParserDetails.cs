@@ -18,15 +18,37 @@
             {
                 // Gather Imports from grammars.
                 // Gather _dependent_grammars map.
+                int before_count = 0;
+                foreach (var x in AntlrParserDetails._dependent_grammars)
+                {
+                    before_count++;
+                    before_count = before_count + x.Value.Count;
+                }
                 ParseTreeWalker.Default.Walk(new Pass3Listener(this), ParseTree);
-                return false;
+                int after_count = 0;
+                foreach (var dep in AntlrParserDetails._dependent_grammars)
+                {
+                    var name = dep.Key;
+                    var x = Workspaces.Workspace.Instance.FindDocument(name);
+                    if (x == null)
+                    {
+                        // Add document.
+                        var proj = this.Item.Parent;
+                        var new_doc = new Workspaces.Document(name, name);
+                        proj.AddChild(new_doc);
+                        after_count++;
+                    }
+                    after_count++;
+                    after_count = after_count + dep.Value.Count;
+                }
+                return before_count != after_count;
             });
             Passes.Add(() =>
             {
                 // For all imported grammars across the entire universe,
                 // make sure all are loaded in the workspace,
                 // then restart.
-                foreach (KeyValuePair<string, List<string>> dep in _dependent_grammars)
+                foreach (var dep in AntlrParserDetails._dependent_grammars)
                 {
                     var name = dep.Key;
                     var x = Workspaces.Workspace.Instance.FindDocument(name);
