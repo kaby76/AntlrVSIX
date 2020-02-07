@@ -1,12 +1,11 @@
-﻿using System.Runtime.CompilerServices;
-using LspAntlr;
-using Microsoft.Build.Utilities;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Microsoft.VisualStudio.TextManager.Interop;
-using Newtonsoft.Json.Linq;
-
-namespace LspAntlr
+﻿namespace LspAntlr
 {
+    using System.Runtime.CompilerServices;
+    using LspAntlr;
+    using Microsoft.Build.Utilities;
+    using Microsoft.VisualStudio.LanguageServer.Protocol;
+    using Microsoft.VisualStudio.TextManager.Interop;
+    using Newtonsoft.Json.Linq;
     using LanguageServer;
     using Microsoft.VisualStudio.PlatformUI;
     using Microsoft.VisualStudio.Text;
@@ -39,23 +38,11 @@ namespace LspAntlr
             {
                 _buffer = buffer;
                 _buffer.Changed += new EventHandler<TextContentChangedEventArgs>(OnTextChanged);
-
                 var ffn = _buffer.GetFFN().Result;
                 if (ffn == null) return;
-                //_grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
-                //if (_grammar_description == null) return;
-                //var document = Workspaces.Workspace.Instance.FindDocument(ffn);
-                //if (document == null)
-                //{
-                //    Workspaces.Loader.LoadAsync().Wait();
-                //    var to_do = LanguageServer.Module.Compile();
-                //    document = Workspaces.Workspace.Instance.FindDocument(ffn);
-                //}
-                //AntlrLanguagePackage package = AntlrLanguagePackage.Instance;
             }
             catch (Exception exception)
             {
-                // Logger.Log.Notify(exception.ToString());
             }
         }
 
@@ -177,39 +164,13 @@ namespace LspAntlr
 
         async void OnTextChanged(object sender, TextContentChangedEventArgs args)
         {
-            try
-            {
-                var s = source;
-                var t = task;
-                if (s != null)
-                {
-                    s.Cancel();
-                }
-                {
-                    s = source = new CancellationTokenSource();
-                    t = task = Task.Run(async delegate
-                    {
-                        await Task.Delay(TimeSpan.FromSeconds(3), s.Token);
-                        return 42;
-                    });
-                    try
-                    {
-                        await t;
-                    }
-                    catch (Exception)
-                    {
-                    }
-                    if (t.Status == TaskStatus.RanToCompletion)
-                    {
-                        //ReparseFile(sender, args);
-                    }
-                    source = null;
-                    task = null;
-                }
-            } catch (Exception exception)
-            {
-                //Logger.Log.Notify(exception.StackTrace);
-            }
+            var alc = AntlrLanguageClient.Instance;
+            if (alc == null) return;
+            var ffn = _buffer.GetFFN().Result;
+            var document = Workspaces.Workspace.Instance.FindDocument(ffn);
+            if (document == null) return;
+            if (_buffer.CurrentSnapshot == null) return;
+            document.Code = _buffer.CurrentSnapshot.GetText();
         }
 
         object updateLock = new object();
