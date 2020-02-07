@@ -477,7 +477,6 @@ namespace $safeprojectname$
 
         bool Validate(List<Edge> parse, List<IToken> i)
         {
-            bool result = false;
             var q = parse.ToList();
             q.Reverse();
             var ei = _input.GetEnumerator();
