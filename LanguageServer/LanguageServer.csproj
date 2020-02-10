@@ -2,29 +2,41 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageProjectUrl>https://github.com/kaby76/AntlrVSIX</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/kaby76/AntlrVSIX</RepositoryUrl>
-    <RepositoryType>Git</RepositoryType>
-    <PackageTags>Antlr VS Extension</PackageTags>
-    <Description>Contains interface used to describe a language for support in AntlrVSIX and Visual Studio IDE, and a tree serializer for Antlr's IParseTree as a parenthesized expression.</Description>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Authors>Ken Domino</Authors>
-    <Company>Domem Technologies, Inc.</Company>
-    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
+    <Antlr4 Remove="LexBasic.g4" />
+    <Antlr4 Remove="LexUnicode.g4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Antlr4 Include="ANTLRv4Lexer.g4">
+      <CustomToolNamespace>LanguageServer</CustomToolNamespace>
+    </Antlr4>
+    <Antlr4 Include="ANTLRv4Parser.g4">
+      <CustomToolNamespace>LanguageServer</CustomToolNamespace>
+    </Antlr4>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.8.0" />
+    <PackageReference Include="Antlr4BuildTasks" Version="2.1" />
     <PackageReference Include="cs-codebuff" Version="2.0.4" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Graphs\Graphs.csproj" />
     <ProjectReference Include="..\Logger\Logger.csproj" />
-    <ProjectReference Include="..\Options\Options.csproj" />
     <ProjectReference Include="..\Symtab\Symtab.csproj" />
     <ProjectReference Include="..\Workspaces\Workspaces.csproj" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;3021</NoWarn>
+  </PropertyGroup>
 
 </Project>

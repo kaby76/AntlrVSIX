@@ -1,6 +1,25 @@
 ﻿
+using System.Runtime.InteropServices;
+using AntlrVSIX;
+using AntlrVSIX.About;
+using AntlrVSIX.Options;
+using AntlrVSIX.Package;
+using Microsoft.VisualStudio.Shell;
+
 namespace LspAntlr
 {
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.VisualStudio;
+    using Microsoft.VisualStudio.OLE.Interop;
+    using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Shell.Interop;
+    using Microsoft.Win32;
+    using Task = System.Threading.Tasks.Task;
+    using Microsoft.VisualStudio.LanguageServer.Client;
+    using Microsoft.VisualStudio.Shell.Interop;
+    using Microsoft.VisualStudio.Threading;
+    using Microsoft.VisualStudio.Utilities;
     using LanguageServer;
     using Microsoft.VisualStudio.LanguageServer.Client;
     using Microsoft.VisualStudio.Threading;
@@ -17,8 +36,24 @@ namespace LspAntlr
 
     [ContentType("Antlr")]
     [Export(typeof(ILanguageClient))]
-    public class AntlrLanguageClient : ILanguageClient, ILanguageClientCustomMessage2
+    [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
+    [ProvideMenuResource("Menus.ctmenu", 1)]
+    [Guid(AntlrLanguageClient.PackageGuidString)]
+    public class AntlrLanguageClient : AsyncPackage, ILanguageClient, ILanguageClientCustomMessage2
     {
+
+
+
+
+
+        internal const string UiContextGuidString = "DE885E15-D44E-40B1-A370-45372EFC23AA";
+
+        private Guid uiContextGuid = new Guid(UiContextGuidString);
+
+        
+        
+        
+        
         public static MemoryStream _log_to_server = new MemoryStream();
         public static MemoryStream _log_from_server = new MemoryStream();
         private JsonRpc _rpc;
@@ -132,5 +167,38 @@ namespace LspAntlr
         public object MiddleLayer => null;
 
         public object CustomMessageTarget => null;
+
+
+
+
+
+
+        /// <summary>
+        /// Command1Package GUID string.
+        /// </summary>
+        public const string PackageGuidString = "49bf9144-398a-467c-9b87-ac26d1e62737";
+
+        #region Package Members
+
+        /// <summary>
+        /// Initialization of the package; this method is called right after the package is sited, so this is the place
+        /// where you can put all the initialization code that rely on services provided by VisualStudio.
+        /// </summary>
+        /// <param name="cancellationToken">A cancellation token to monitor for initialization cancellation, which can occur when VS is shutting down.</param>
+        /// <param name="progress">A provider for progress updates.</param>
+        /// <returns>A task representing the async work of package initialization, or an already completed task if there is none. Do not return null from this method.</returns>
+        protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
+        {
+            // When initialized asynchronously, the current thread may be a background thread at this point.
+            // Do any initialization that requires the UI thread after switching to the UI thread.
+            await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+            await Command1.InitializeAsync(this);
+        }
+
+        #endregion
+
+
+
+
     }
 }

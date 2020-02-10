@@ -1,4 +1,4 @@
-﻿namespace LanguageServer.Antlr
+﻿namespace LanguageServer
 {
     using Antlr4.Runtime.Tree;
     using System.Text;

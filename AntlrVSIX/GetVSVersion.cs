@@ -9,7 +9,7 @@
     {
         /// Setup to get the VS version number including the correct minor version, 
         /// since the DTE.Version does not seem to accurately reflect that. 
-        private static string GetVisualStudioVersion()
+        public static string GetVisualStudioVersion()
         {
             FileVersionInfo versionInfo;
             try
