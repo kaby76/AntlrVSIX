@@ -46,7 +46,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Command1.cs" />
-    <Compile Include="Command1Package.cs" />
     <Compile Include="Menus\AboutBox.xaml.cs">
       <DependentUpon>AboutBox.xaml</DependentUpon>
     </Compile>
@@ -57,8 +56,8 @@
     <Compile Include="Menus\Menus.cs" />
     <Compile Include="Menus\OptionsCommand.cs" />
     <Compile Include="Constants.cs" />
-    <VSCTCompile Include="Command1Package.vsct">
-      <ResourceName>Menus.ctmenu</ResourceName>
+    <VSCTCompile Include="Package\VSPackageCommandCodeWindowContextMenu.vsct" >
+       <ResourceName>Menus.ctmenu</ResourceName>
     </VSCTCompile>
     <Content Include="Resources\Command1.png" />
     <Content Include="Resources\Command1Package.ico" />
@@ -98,7 +97,7 @@
   <ItemGroup>
     <Content Include="..\LanguageServer.Exec\bin\Debug\**\*.*">
       <IncludeInVSIX>true</IncludeInVSIX>
-      <Link>server/%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <Link>Server\%(RecursiveDir)%(Filename)%(Extension)</Link>
       <Visible>false</Visible>
     </Content>
     <Content Include="AntlrVSIX_large.png">
@@ -194,9 +193,7 @@
       <Name>Workspaces</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Package\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

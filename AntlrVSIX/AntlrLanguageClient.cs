@@ -72,6 +72,8 @@ namespace LspAntlr
         public AntlrLanguageClient()
         {
             Instance = this;
+            OptionsCommand.Initialize(this);
+            AboutCommand.Initialize(this);
         }
 
         public async Task<Connection> ActivateAsync(CancellationToken token)
