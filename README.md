@@ -11,7 +11,8 @@ Supported are hover, go to def, find all refs,
 replace, command completion,
 reformat. Color tagging is not implemented because the MS LSP API does not implement it.
 
-The source code for the extension is open source, free of charge, and free of ads.
+The source code for the extension is open source, free of charge, and free of ads. For the latest developments on the extension,
+check out my [blog](http://codinggorilla.com).
 
 # Installation of Prerequisites
 
@@ -69,10 +70,9 @@ just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio
 
 * Use Visual Studio 2019 to build the extension.
 
-## Work in progress for next release:
+## Work in progress for the next release (v5.2):
 
-* Add back some of the useful UI from version 4, including the About Box, goto Listener/Visitor. I may add back other UI if I can
-access the Visual Studio LSP Client code.
+* Add back some of the useful UI from version 4, including the About Box, goto Listener/Visitor, and the Options Box.
 
 ## Release notes for v5.1:
 
