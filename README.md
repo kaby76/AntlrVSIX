@@ -7,9 +7,8 @@ client and server architecture, using Microsoft's Language Server Protocol
 [server](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/) API
 version 16.4.30 for Visual Studio 2019. The server is implemented in C#; the client for VS 2019
 is in C#; the client for VS Code is in Typescript. 
-Supported are hover, go to def, find all refs,
-replace, command completion,
-reformat. Color tagging is not implemented because the MS LSP API does not implement it.
+Supported are colorized tagging, hover, go to def, find all refs,
+replace, command completion, reformat.
 
 The source code for the extension is open source, free of charge, and free of ads. For the latest developments on the extension,
 check out my [blog](http://codinggorilla.com).
