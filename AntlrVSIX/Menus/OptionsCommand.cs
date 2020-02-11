@@ -8,6 +8,8 @@ namespace AntlrVSIX.Options
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.Design;
+    using Options;
+
 
     public class OptionsCommand
     {

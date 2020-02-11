@@ -1,6 +1,4 @@
-﻿using LspAntlr;
-
-namespace AntlrVSIX.Package
+﻿namespace AntlrVSIX.Package
 {
     using LanguageServer;
     using Microsoft.VisualStudio.Text;
@@ -8,6 +6,7 @@ namespace AntlrVSIX.Package
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.Text.Operations;
     using System.Linq;
+    using LspAntlr;
 
     public class Menus
     {
