@@ -1,4 +1,4 @@
-﻿namespace AntlrVSIX
+﻿namespace LspAntlr
 {
     using System;
     using System.Diagnostics;

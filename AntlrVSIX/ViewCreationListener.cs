@@ -1,7 +1,6 @@
-﻿using System.IO;
-
-namespace LspAntlr
+﻿namespace LspAntlr
 {
+    using System.IO;
     using Microsoft.VisualStudio.Editor;
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.TextManager.Interop;

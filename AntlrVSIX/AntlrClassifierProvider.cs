@@ -15,11 +15,10 @@
     internal sealed class AntlrClassifierProvider : ITaggerProvider
     {
         [Import]
-        internal IClassificationTypeRegistryService ClassificationTypeRegistry = null;
-
-        [Import]
         internal IClassificationFormatMapService ClassificationFormatMapService = null;
 
+        [Import]
+        internal IClassificationTypeRegistryService ClassificationTypeRegistry = null;
         public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
         {
             ITagger<T> result = null;

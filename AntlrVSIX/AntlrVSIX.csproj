@@ -45,7 +45,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Command1.cs" />
     <Compile Include="Menus\AboutBox.xaml.cs">
       <DependentUpon>AboutBox.xaml</DependentUpon>
     </Compile>
@@ -56,8 +55,8 @@
     <Compile Include="Menus\Menus.cs" />
     <Compile Include="Menus\OptionsCommand.cs" />
     <Compile Include="Constants.cs" />
-    <VSCTCompile Include="Package\VSPackageCommandCodeWindowContextMenu.vsct" >
-       <ResourceName>Menus.ctmenu</ResourceName>
+    <VSCTCompile Include="Package\VSPackageCommandCodeWindowContextMenu.vsct">
+      <ResourceName>Menus.ctmenu</ResourceName>
     </VSCTCompile>
     <Content Include="Resources\Command1.png" />
     <Content Include="Resources\Command1Package.ico" />
@@ -183,6 +182,10 @@
     <ProjectReference Include="..\LspHelpers\LspHelpers.csproj">
       <Project>{dfff91e8-3e09-49cf-84b5-f5566826ee1a}</Project>
       <Name>LspHelpers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Options\Options.csproj">
+      <Project>{e4c5ed5b-21ae-492f-8cf8-c3eadf4059e2}</Project>
+      <Name>Options</Name>
     </ProjectReference>
     <ProjectReference Include="..\Symtab\Symtab.csproj">
       <Project>{95fab63b-1fe9-41f9-a875-49556e5e6b8a}</Project>

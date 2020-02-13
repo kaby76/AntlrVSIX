@@ -1,14 +1,8 @@
-﻿using Options;
-
-namespace AntlrVSIX.Options
+﻿namespace LspAntlr
 {
-    using Microsoft.VisualStudio.Settings;
     using Microsoft.VisualStudio.Shell;
-    using Microsoft.VisualStudio.Shell.Settings;
     using System;
-    using System.Collections.Generic;
     using System.ComponentModel.Design;
-    using Options;
 
 
     public class OptionsCommand
@@ -33,7 +27,7 @@ namespace AntlrVSIX.Options
 
             {
                 // Set up hook for context menu.
-                var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidMenuAndCommandsCmdSet), 0x7007);
+                var menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidMenuAndCommandsCmdSet), 0x7007);
                 _menu_item1 = new MenuCommand(this.MenuItemCallback, menuCommandID);
                 _menu_item1.Enabled = true;
                 _menu_item1.Visible = true;

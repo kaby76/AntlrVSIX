@@ -1,8 +1,7 @@
 <Window 
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    x:Class="AntlrVSIX.About.AboutBox"
-    xmlns:local="clr-namespace:AntlrVSIX.About"
+    x:Class="LspAntlr.AboutBox"
     Title="About"
     Height="307.334"
     Width="650"

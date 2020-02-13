@@ -1,4 +1,4 @@
-﻿namespace AntlrVSIX.About
+﻿namespace LspAntlr
 {
     using Microsoft.VisualStudio.Shell;
     using System;
@@ -28,7 +28,7 @@
 
             {
                 // Set up hook for context menu.
-                var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidVSPackageCommandCodeWindowContextMenuCmdSet), 0x7010);
+                var menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidVSPackageCommandCodeWindowContextMenuCmdSet), 0x7010);
                 _menu_item1 = new MenuCommand(this.MenuItemCallback, menuCommandID);
                 _menu_item1.Enabled = true;
                 _menu_item1.Visible = true;
@@ -36,7 +36,7 @@
             }
             {
                 // Set up hook for context menu.
-                var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidMenuAndCommandsCmdSet), 0x7010);
+                var menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidMenuAndCommandsCmdSet), 0x7010);
                 _menu_item2 = new MenuCommand(this.MenuItemCallback, menuCommandID);
                 _menu_item2.Enabled = true;
                 _menu_item2.Visible = true;

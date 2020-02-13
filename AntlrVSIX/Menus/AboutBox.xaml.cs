@@ -1,10 +1,6 @@
-﻿using LspAntlr;
-
-namespace AntlrVSIX.About
+﻿namespace LspAntlr
 {
-    using AntlrVSIX.Package;
     using System;
-    using System.Diagnostics;
     using Window = System.Windows.Window;
 
     public partial class AboutBox : Window
@@ -14,11 +10,11 @@ namespace AntlrVSIX.About
             InitializeComponent();
             _info.Text = "Author: Ken Domino";
             _info.AppendText(Environment.NewLine);
-            _info.AppendText("AntlrVSIX version: " + AntlrVSIX.Constants.Version);
+            _info.AppendText("AntlrVSIX version: " + LspAntlr.Constants.Version);
             _info.AppendText(Environment.NewLine);
-            _info.AppendText("NET Runtime: " + typeof(string).Assembly.ImageRuntimeVersion);
+            _info.AppendText("NET Runtime version: " + typeof(string).Assembly.ImageRuntimeVersion);
             _info.AppendText(Environment.NewLine);
-            _info.AppendText("Running " + GetVSVersion.GetVisualStudioVersion());
+            _info.AppendText("Visual Studio version: " + GetVSVersion.GetVisualStudioVersion());
             _info.AppendText(Environment.NewLine);
         }
     }

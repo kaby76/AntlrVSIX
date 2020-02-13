@@ -12,20 +12,14 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    class Themes
-    {
-        public static bool IsInvertedTheme()
-        {
-            return VSColorTheme.GetThemedColor(EnvironmentColors.ToolWindowBackgroundColorKey).GetBrightness() < 0.5;
-        }
-    }
-
     internal sealed class AntlrClassifier : ITagger<ClassificationTag>
     {
-        private bool initialized = false;
+        static CancellationTokenSource source;
+        static Task<int> task;
         private ITextBuffer _buffer;
         private IDictionary<int, IClassificationType> _lsptype_to_classifiertype;
-
+        private bool initialized = false;
+        object updateLock = new object();
 
         internal AntlrClassifier(ITextBuffer buffer)
         {
@@ -41,52 +35,7 @@
             }
         }
 
-        internal void Initialize(
-            IClassificationTypeRegistryService service,
-            IClassificationFormatMapService ClassificationFormatMapService)
-        {
-            try
-            {
-                if (initialized) return;
-                var ffn = _buffer.GetFFN().Result;
-                if (ffn == null) return;
-                var _grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
-                if (_grammar_description == null) return;
-                var document = Workspaces.Workspace.Instance.FindDocument(ffn);
-                _lsptype_to_classifiertype = new Dictionary<int, IClassificationType>();
-                for (int i = 0; i < _grammar_description.Map.Length; ++i)
-                {
-                    var key = i;
-                    var val = _grammar_description.Map[i];
-                    var identiferClassificationType = service.GetClassificationType(val);
-                    var classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
-                            : identiferClassificationType;
-                    var classificationFormatMap = ClassificationFormatMapService.GetClassificationFormatMap(category: "text");
-                    var identifierProperties = classificationFormatMap
-                        .GetExplicitTextProperties(classificationType);
-                    var color = !Themes.IsInvertedTheme() ? _grammar_description.MapColor[key]
-                        : _grammar_description.MapInvertedColor[key];
-                    System.Windows.Media.Color newColor = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
-                    var newProperties = identifierProperties.SetForeground(newColor);
-                    classificationFormatMap.AddExplicitTextProperties(classificationType, newProperties);
-                }
-                {
-                    var key = (int)SymbolKind.Variable;
-                    var val = _grammar_description.Map[0];
-                    _lsptype_to_classifiertype[key] = service.GetClassificationType(val);
-                }
-                {
-                    var key = (int)SymbolKind.Enum;
-                    var val = _grammar_description.Map[1];
-                    _lsptype_to_classifiertype[key] = service.GetClassificationType(val);
-                }
-                initialized = true;
-            }
-            catch (Exception exception)
-            {
-                //Logger.Log.Notify(exception.StackTrace);
-            }
-        }
+        public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 
         public IEnumerable<ITagSpan<ClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
@@ -150,26 +99,6 @@
             }
         }
 
-#pragma warning disable CS0067
-        public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
-#pragma warning restore CS0067
-
-        static CancellationTokenSource source;
-        static Task<int> task;
-
-        async void OnTextChanged(object sender, TextContentChangedEventArgs args)
-        {
-            var alc = AntlrLanguageClient.Instance;
-            if (alc == null) return;
-            var ffn = _buffer.GetFFN().Result;
-            var document = Workspaces.Workspace.Instance.FindDocument(ffn);
-            if (document == null) return;
-            if (_buffer.CurrentSnapshot == null) return;
-            document.Code = _buffer.CurrentSnapshot.GetText();
-        }
-
-        object updateLock = new object();
-
         public void Raise()
         {
             lock (updateLock)
@@ -182,6 +111,70 @@
             }
         }
 
+        internal void Initialize(
+                                    IClassificationTypeRegistryService service,
+            IClassificationFormatMapService ClassificationFormatMapService)
+        {
+            try
+            {
+                if (initialized) return;
+                var ffn = _buffer.GetFFN().Result;
+                if (ffn == null) return;
+                var _grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
+                if (_grammar_description == null) return;
+                var document = Workspaces.Workspace.Instance.FindDocument(ffn);
+                _lsptype_to_classifiertype = new Dictionary<int, IClassificationType>();
+                for (int i = 0; i < _grammar_description.Map.Length; ++i)
+                {
+                    var key = i;
+                    var val = _grammar_description.Map[i];
+                    var identiferClassificationType = service.GetClassificationType(val);
+                    var classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
+                            : identiferClassificationType;
+                    var classificationFormatMap = ClassificationFormatMapService.GetClassificationFormatMap(category: "text");
+                    var identifierProperties = classificationFormatMap
+                        .GetExplicitTextProperties(classificationType);
+                    var color = !Themes.IsInvertedTheme() ? _grammar_description.MapColor[key]
+                        : _grammar_description.MapInvertedColor[key];
+                    System.Windows.Media.Color newColor = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+                    var newProperties = identifierProperties.SetForeground(newColor);
+                    classificationFormatMap.AddExplicitTextProperties(classificationType, newProperties);
+                }
+                {
+                    var key = (int)SymbolKind.Variable;
+                    var val = _grammar_description.Map[0];
+                    _lsptype_to_classifiertype[key] = service.GetClassificationType(val);
+                }
+                {
+                    var key = (int)SymbolKind.Enum;
+                    var val = _grammar_description.Map[1];
+                    _lsptype_to_classifiertype[key] = service.GetClassificationType(val);
+                }
+                initialized = true;
+            }
+            catch (Exception exception)
+            {
+                //Logger.Log.Notify(exception.StackTrace);
+            }
+        }
 
+        async void OnTextChanged(object sender, TextContentChangedEventArgs args)
+        {
+            var alc = AntlrLanguageClient.Instance;
+            if (alc == null) return;
+            var ffn = _buffer.GetFFN().Result;
+            var document = Workspaces.Workspace.Instance.FindDocument(ffn);
+            if (document == null) return;
+            if (_buffer.CurrentSnapshot == null) return;
+            document.Code = _buffer.CurrentSnapshot.GetText();
+        }
+    }
+
+    class Themes
+    {
+        public static bool IsInvertedTheme()
+        {
+            return VSColorTheme.GetThemedColor(EnvironmentColors.ToolWindowBackgroundColorKey).GetBrightness() < 0.5;
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace AntlrVSIX.Package
+﻿namespace LspAntlr
 {
     using LanguageServer;
     using Microsoft.VisualStudio.Text;

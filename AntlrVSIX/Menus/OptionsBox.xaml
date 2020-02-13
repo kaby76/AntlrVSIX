@@ -1,8 +1,7 @@
 ﻿<Window 
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    x:Class="Options.OptionsBox"
-    xmlns:local="clr-namespace:AntlrVSIX.Options"
+    x:Class="LspAntlr.OptionsBox"
     Title="AntlrVSIX Options"
     Height="600"
     Width="800"
@@ -30,12 +29,9 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        
-        <TextBox Grid.Column="0" Grid.Row="0" TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0">
-            Select this box if you want the parser to not run with each character changed
-            in the buffer for the grammar.
-        </TextBox>
-        <CheckBox Name="noninteractive" Grid.Row="0" Grid.Column="1" Margin="10,0,10,10">Non-Interactive Parse</CheckBox>
+
+        <TextBox Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Select this box if you want a visible server window. This might be useful if you want to confirm communication between client and server."/>
+        <CheckBox Name="visible_server_window" Grid.Row="0" Grid.Column="1" Margin="10,0,10,10">Visible LSP server.</CheckBox>
 
         <TextBox Grid.Row="1" Grid.Column="0" TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0">
             Select this box if you want only search for visitors and listeners in the directory
@@ -65,10 +61,7 @@
         <TextBox Name="grammar_description_locations" Grid.Row="5" Grid.Column="1" Margin="10,0,10,10">Not set</TextBox>
 
         <CheckBox Name="override_antlr" Grid.Row="6" Grid.Column="1" Margin="10,0,10,10">Override any other ANTLR plugins.</CheckBox>
-        <CheckBox Name="override_java" Grid.Row="7" Grid.Column="1" Margin="10,0,10,10">Override any other Java plugins.</CheckBox>
-        <CheckBox Name="override_python" Grid.Row="6" Grid.Column="0" Margin="10,0,10,10">Override any other Python plugins.</CheckBox>
-        <CheckBox Name="override_rust" Grid.Row="7" Grid.Column="0" Margin="10,0,10,10">Override any other Rust plugins.</CheckBox>
-        <CheckBox Name="opt_in_reporting" Grid.Row="8" Grid.Column="0" Margin="10,0,10,10" IsThreeState="True" >Opt-in to help development with logging of crashes.</CheckBox>
+        <CheckBox Name="opt_in_reporting" Grid.Row="7" Grid.Column="0" Margin="10,0,10,10" IsThreeState="True" >Opt-in to help development with logging of crashes.</CheckBox>
 
         <!-- Accept or Cancel -->
         <WrapPanel Grid.Row="14" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="10,0,0,0" >

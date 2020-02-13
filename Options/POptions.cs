@@ -8,7 +8,7 @@ namespace Options
     public class POptions
     {
         static bool initialized = false;
-        static string home = System.Environment.GetEnvironmentVariable("HOME");
+        static string home = System.Environment.GetEnvironmentVariable("HOMEPATH");
         static string antlr_options_file_name = "";
         private static string s = System.Environment.GetEnvironmentVariable("CORPUS_LOCATION");
         private static string CorpusLocation = s == null ? "" : s;

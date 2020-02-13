@@ -16,6 +16,25 @@
 
     public static class IVsTextViewExtensions
     {
+        // Many of these methods are from https://github.com/madskristensen/WebPackTaskRunner/blob/master/src/TaskRunner/VsTextViewUtil.cs
+        // and are here because VsShellUtilities.IsDocumentOpen() opens a new view even if there is an existing
+        // view. Worse, it creates a whole new buffer from disk, shadowing a view/buffer that may have been modified.
+        // Therefore, call ShowFrame() only if there really is no view for the file.
+        public static IVsTextView FindTextViewFor(string filePath)
+        {
+            IVsWindowFrame frame = FindWindowFrame(filePath);
+            if (frame != null)
+            {
+                IVsTextView textView;
+
+                if (GetTextViewFromFrame(frame, out textView))
+                {
+                    return textView;
+                }
+            }
+            return null;
+        }
+
         public static IVsCodeWindow GetCodeWindow(this IVsTextView text_view)
         {
             Contract.Requires<ArgumentNullException>(text_view != null, "textView");
@@ -77,32 +96,6 @@
 
 
 
-        internal static IVsTextView GetIVsTextView(string full_file_name)
-        {
-            throw new Exception();
-        }
-
-
-
-        // Many of these methods are from https://github.com/madskristensen/WebPackTaskRunner/blob/master/src/TaskRunner/VsTextViewUtil.cs
-        // and are here because VsShellUtilities.IsDocumentOpen() opens a new view even if there is an existing
-        // view. Worse, it creates a whole new buffer from disk, shadowing a view/buffer that may have been modified.
-        // Therefore, call ShowFrame() only if there really is no view for the file.
-        public static IVsTextView FindTextViewFor(string filePath)
-        {
-            IVsWindowFrame frame = FindWindowFrame(filePath);
-            if (frame != null)
-            {
-                IVsTextView textView;
-
-                if (GetTextViewFromFrame(frame, out textView))
-                {
-                    return textView;
-                }
-            }
-            return null;
-        }
-
         internal static IEnumerable<IVsWindowFrame> EnumerateDocumentWindowFrames()
         {
             IVsUIShell shell = Package.GetGlobalService(typeof(SVsUIShell)) as IVsUIShell;
@@ -126,6 +119,23 @@
             }
         }
 
+        internal static IVsWindowFrame FindWindowFrame(string filePath)
+        {
+            foreach (IVsWindowFrame currentFrame in EnumerateDocumentWindowFrames())
+            {
+                if (IsFrameForFilePath(currentFrame, filePath))
+                {
+                    return currentFrame;
+                }
+            }
+
+            return null;
+        }
+
+        internal static IVsTextView GetIVsTextView(string full_file_name)
+        {
+            throw new Exception();
+        }
         private static bool GetPhysicalPathFromFrame(IVsWindowFrame frame, out string frameFilePath)
         {
             object propertyValue;
@@ -141,6 +151,13 @@
             return false;
         }
 
+        private static bool GetTextViewFromFrame(IVsWindowFrame frame, out IVsTextView textView)
+        {
+            textView = VsShellUtilities.GetTextView(frame);
+
+            return textView != null;
+        }
+
         private static bool IsFrameForFilePath(IVsWindowFrame frame, string filePath)
         {
             string frameFilePath;
@@ -151,26 +168,6 @@
             }
 
             return false;
-        }
-
-        private static bool GetTextViewFromFrame(IVsWindowFrame frame, out IVsTextView textView)
-        {
-            textView = VsShellUtilities.GetTextView(frame);
-
-            return textView != null;
-        }
-
-        internal static IVsWindowFrame FindWindowFrame(string filePath)
-        {
-            foreach (IVsWindowFrame currentFrame in EnumerateDocumentWindowFrames())
-            {
-                if (IsFrameForFilePath(currentFrame, filePath))
-                {
-                    return currentFrame;
-                }
-            }
-
-            return null;
         }
     }
 }
