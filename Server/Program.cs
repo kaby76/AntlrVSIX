@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace LanguageServer.Exec
+namespace Server
 {
     class Program
     {

@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.ComponentModel;
 
-namespace LanguageServer.Exec
+namespace Server
 {
     public class LSPServer : INotifyPropertyChanged
     {

@@ -8,9 +8,10 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using Antlr4.Runtime.Tree.Pattern;
+using LanguageServer;
 using Workspaces;
 
-namespace LanguageServer.Exec
+namespace Server
 {
     public class LanguageServerTarget
     {
@@ -435,7 +436,7 @@ namespace LanguageServer.Exec
                 var back = LanguageServer.Module.GetLineColumn(index, document);
                 System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
             }
-            IList<Location> found = LanguageServer.Module.FindDef(index, document);
+            var found = LanguageServer.Module.FindDef(index, document);
             var locations = new List<object>();
             foreach (var f in found)
             {
@@ -473,7 +474,7 @@ namespace LanguageServer.Exec
                 var back = LanguageServer.Module.GetLineColumn(index, document);
                 System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
             }
-            IList<Location> found = LanguageServer.Module.FindDef(index, document);
+            var found = LanguageServer.Module.FindDef(index, document);
             var locations = new List<object>();
             foreach (var f in found)
             {
@@ -511,7 +512,7 @@ namespace LanguageServer.Exec
                 var back = LanguageServer.Module.GetLineColumn(index, document);
                 System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
             }
-            IList<Location> found = LanguageServer.Module.FindDef(index, document);
+            var found = LanguageServer.Module.FindDef(index, document);
             var locations = new List<object>();
             foreach (var f in found)
             {
@@ -615,7 +616,7 @@ namespace LanguageServer.Exec
             }
             var request = arg.ToObject<DocumentSymbolParams>();
             var document = CheckDoc(request.TextDocument.Uri);
-            IEnumerable<DocumentSymbol> r = LanguageServer.Module.Get(document);
+            var r = LanguageServer.Module.Get(document);
             var symbols = new List<object>();
             foreach (var s in r)
             {
@@ -845,7 +846,7 @@ namespace LanguageServer.Exec
                 var bs = LanguageServer.Module.GetLineColumn(start, document);
                 System.Console.Error.WriteLine("");
             }
-            IEnumerable<DocumentSymbol> r = LanguageServer.Module.Get(document);
+            var r = LanguageServer.Module.Get(document);
             var symbols = new List<object>();
             foreach (var s in r)
             {

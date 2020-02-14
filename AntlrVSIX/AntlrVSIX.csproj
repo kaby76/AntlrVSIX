@@ -96,7 +96,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\LanguageServer.Exec\bin\Debug\**\*.*">
+    <Content Include="..\Server\bin\Debug\**\*.*">
       <IncludeInVSIX>true</IncludeInVSIX>
       <Link>Server\%(RecursiveDir)%(Filename)%(Extension)</Link>
       <Visible>false</Visible>
@@ -170,9 +170,9 @@
       <Project>{227bb0f6-9df1-4782-b8c2-77c76e6824ae}</Project>
       <Name>Graphs</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LanguageServer.Exec\LanguageServer.Exec.csproj">
+    <ProjectReference Include="..\Server\Server.csproj">
       <Project>{E912AE6C-996B-46A9-9F55-C823EB9B4F47}</Project>
-      <Name>LanguageServer.Exec</Name>
+      <Name>Server</Name>
       <VSIXSubPath>Server</VSIXSubPath>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
     </ProjectReference>

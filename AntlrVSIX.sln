@@ -48,7 +48,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logger", "Logger\Logger.csproj", "{A097E2D9-542E-44B7-9FC4-344E10B4E363}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LanguageServer.Exec", "LanguageServer.Exec\LanguageServer.Exec.csproj", "{E912AE6C-996B-46A9-9F55-C823EB9B4F47}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "Server\Server.csproj", "{E912AE6C-996B-46A9-9F55-C823EB9B4F47}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LspHelpers", "LspHelpers\LspHelpers.csproj", "{DFFF91E8-3E09-49CF-84B5-F5566826EE1A}"
 EndProject
