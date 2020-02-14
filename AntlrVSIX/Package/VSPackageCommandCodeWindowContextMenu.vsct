@@ -18,19 +18,9 @@
          <Group guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="NavigateMenuGroup" priority="0x0600">
            <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="NavigateMenu"/>
          </Group>
-         <Group guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="FindMenuGroup" priority="0x0600">
-           <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="FindMenu"/>
-         </Group>
       </Groups>
 
       <Buttons>
-        <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="GoToDefinitionCmd" priority="0x100" type="Button">
-          <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="NavigateMenuGroup"/>
-          <CommandFlag>DefaultDisabled</CommandFlag>
-          <Strings>
-            <ButtonText>Go to definition</ButtonText>
-          </Strings>
-        </Button>
         <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="NextRuleCmd" priority="0x100" type="Button">
           <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="NavigateMenuGroup"/>
           <CommandFlag>DefaultDisabled</CommandFlag>
@@ -57,27 +47,6 @@
           <CommandFlag>DefaultDisabled</CommandFlag>
           <Strings>
             <ButtonText>Go to Visitor</ButtonText>
-          </Strings>
-        </Button>
-        <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="FindAllOccurencesCmd" priority="0x100" type="Button">
-          <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="FindMenuGroup"/>
-          <CommandFlag>DefaultDisabled</CommandFlag>
-          <Strings>
-            <ButtonText>Find all references</ButtonText>
-          </Strings>
-        </Button>
-        <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="ReformatCmd" priority="0x700" type="Button">
-          <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="TopLevelMenuGroup"/>
-          <CommandFlag>DefaultDisabled</CommandFlag>
-          <Strings>
-            <ButtonText>Reformat</ButtonText>
-          </Strings>
-        </Button>
-        <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="RenameCmd" priority="0x700" type="Button">
-          <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="TopLevelMenuGroup"/>
-          <CommandFlag>DefaultDisabled</CommandFlag>
-          <Strings>
-            <ButtonText>Rename</ButtonText>
           </Strings>
         </Button>
         <Button guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="AboutCmd" priority="0x700" type="Button">
@@ -111,13 +80,6 @@
            <CommandName>Navigate</CommandName>
          </Strings>
        </Menu>
-       <Menu guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="FindMenu" priority="0x700" type="Menu">
-         <Parent guid="guidVSPackageCommandCodeWindowContextMenuCmdSet" id="TopLevelMenuGroup" />
-         <Strings>
-           <ButtonText>Find</ButtonText>
-           <CommandName>Find</CommandName>
-         </Strings>
-       </Menu>
      </Menus>
 
       <Bitmaps>
@@ -136,19 +98,9 @@
        <Group guid="guidMenuAndCommandsCmdSet" id="NavigateMenuGroup" priority="0x0600">
          <Parent guid="guidMenuAndCommandsCmdSet" id="NavigateMenu"/>
        </Group>
-       <Group guid="guidMenuAndCommandsCmdSet" id="FindMenuGroup" priority="0x0600">
-         <Parent guid="guidMenuAndCommandsCmdSet" id="FindMenu"/>
-       </Group>
      </Groups>
 
      <Buttons>
-       <Button guid="guidMenuAndCommandsCmdSet" id="GoToDefinitionCmd" priority="0x100" type="Button">
-         <Parent guid="guidMenuAndCommandsCmdSet" id="NavigateMenuGroup"/>
-         <CommandFlag>DefaultDisabled</CommandFlag>
-         <Strings>
-           <ButtonText>Go to definition</ButtonText>
-         </Strings>
-       </Button>
        <Button guid="guidMenuAndCommandsCmdSet" id="NextRuleCmd" priority="0x100" type="Button">
          <Parent guid="guidMenuAndCommandsCmdSet" id="NavigateMenuGroup"/>
          <CommandFlag>DefaultDisabled</CommandFlag>
@@ -177,31 +129,10 @@
            <ButtonText>Go to Visitor</ButtonText>
          </Strings>
        </Button>
-       <Button guid="guidMenuAndCommandsCmdSet" id="FindAllOccurencesCmd" priority="0x100" type="Button">
-         <Parent guid="guidMenuAndCommandsCmdSet" id="FindMenuGroup"/>
-         <CommandFlag>DefaultDisabled</CommandFlag>
-         <Strings>
-           <ButtonText>Find all references</ButtonText>
-         </Strings>
-       </Button>
        <Button guid="guidMenuAndCommandsCmdSet" id="OptionsCmd" priority="0x700" type="Button">
          <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup"/>
          <Strings>
            <ButtonText>Options</ButtonText>
-         </Strings>
-       </Button>
-       <Button guid="guidMenuAndCommandsCmdSet" id="ReformatCmd" priority="0x700" type="Button">
-         <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup"/>
-         <CommandFlag>DefaultDisabled</CommandFlag>
-         <Strings>
-           <ButtonText>Reformat</ButtonText>
-         </Strings>
-       </Button>
-       <Button guid="guidMenuAndCommandsCmdSet" id="RenameCmd" priority="0x700" type="Button">
-         <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup"/>
-         <CommandFlag>DefaultDisabled</CommandFlag>
-         <Strings>
-           <ButtonText>Rename</ButtonText>
          </Strings>
        </Button>
        
@@ -228,13 +159,6 @@
            <CommandName>Navigate</CommandName>
          </Strings>
        </Menu>
-       <Menu guid="guidMenuAndCommandsCmdSet" id="FindMenu" priority="0x700" type="Menu">
-         <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup" />
-         <Strings>
-           <ButtonText>Find</ButtonText>
-           <CommandName>Find</CommandName>
-         </Strings>
-       </Menu>
      </Menus>
 
    </Commands>
@@ -256,17 +180,11 @@
       <IDSymbol name="TopLevelMenuGroup" value="0x6012" />
       <IDSymbol name="NavigateMenu" value="0x6013" />
       <IDSymbol name="NavigateMenuGroup" value="0x6014" />
-      <IDSymbol name="FindMenu" value="0x6015" />
-      <IDSymbol name="FindMenuGroup" value="0x6016" />
-      <IDSymbol name="GoToDefinitionCmd" value="0x0100" />
       <IDSymbol name="NextRuleCmd" value="0x7002" />
       <IDSymbol name="PrevRuleCmd" value="0x7003" />
-      <IDSymbol name="FindAllOccurencesCmd" value="0x7004" />
       <IDSymbol name="GoToListenerCmd" value="0x7005" />
       <IDSymbol name="GoToVisitorCmd" value="0x7006" />
       <IDSymbol name="OptionsCmd" value="0x7007" />
-      <IDSymbol name="ReformatCmd" value="0x7008" />
-      <IDSymbol name="RenameCmd" value="0x7009" />
       <IDSymbol name="AboutCmd" value="0x7010" />
     </GuidSymbol>
 
@@ -295,17 +213,11 @@
       <IDSymbol name="TopLevelMenuGroup" value="0x6012" />
       <IDSymbol name="NavigateMenu" value="0x6013" />
       <IDSymbol name="NavigateMenuGroup" value="0x6014" />
-      <IDSymbol name="FindMenu" value="0x6015" />
-      <IDSymbol name="FindMenuGroup" value="0x6016" />
-      <IDSymbol name="GoToDefinitionCmd" value="0x0100" />
       <IDSymbol name="NextRuleCmd" value="0x7002" />
       <IDSymbol name="PrevRuleCmd" value="0x7003" />
-      <IDSymbol name="FindAllOccurencesCmd" value="0x7004" />
       <IDSymbol name="GoToListenerCmd" value="0x7005" />
       <IDSymbol name="GoToVisitorCmd" value="0x7006" />
       <IDSymbol name="OptionsCmd" value="0x7007" />
-      <IDSymbol name="ReformatCmd" value="0x7008" />
-      <IDSymbol name="RenameCmd" value="0x7009" />
       <IDSymbol name="AboutCmd" value="0x7010" />
     </GuidSymbol>
   </Symbols>

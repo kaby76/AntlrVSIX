@@ -49,6 +49,8 @@
       <DependentUpon>AboutBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Menus\AboutCommand.cs" />
+    <Compile Include="Menus\GoToVisitorCommand.cs" />
+    <Compile Include="Menus\NextSymCommand.cs" />
     <Compile Include="Menus\OptionsBox.xaml.cs">
       <DependentUpon>OptionsBox.xaml</DependentUpon>
     </Compile>

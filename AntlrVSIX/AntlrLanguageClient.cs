@@ -131,7 +131,7 @@ namespace LspAntlr
             try
             {
                 if (this._rpc == null) return null;
-                DocumentSymbolSpansParams p = new DocumentSymbolSpansParams();
+                CustomMessageParams p = new CustomMessageParams();
                 var uri = new Uri(ffn);
                 p.TextDocument = uri;
                 p.Start = start;
@@ -143,6 +143,24 @@ namespace LspAntlr
             {
             }
             return null;
+        }
+
+        public int SendServerCustomMessage2(int pos, string ffn)
+        {
+            try
+            {
+                if (this._rpc == null) return -1;
+                var p = new CustomMessage2Params();
+                var uri = new Uri(ffn);
+                p.TextDocument = uri;
+                p.Pos = pos;
+                var result = this._rpc.InvokeAsync<int>("CustomMessage2", p).Result;
+                return result;
+            }
+            catch (Exception)
+            {
+            }
+            return -1;
         }
 
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)

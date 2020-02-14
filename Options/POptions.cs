@@ -51,9 +51,12 @@ namespace Options
             defaults.TryGetValue(option, out object value);
             if (value == null)
                 default_value = false;
-            else if (value is bool)
+            else
             {
-                default_value = (bool)value;
+                var options = new JsonSerializerOptions();
+                options.Converters.Add(new ObjectToBoolConverter());
+                object obj = JsonSerializer.Deserialize<object>(value.ToString().ToLower(), options);
+                default_value = (bool)obj;
             }
             return default_value;
         }
@@ -65,9 +68,9 @@ namespace Options
             defaults.TryGetValue(option, out object value);
             if (value == null)
                 default_value = "";
-            else if (value is string)
+            else
             {
-                default_value = (string)value;
+                default_value = value.ToString();
             }
             return default_value;
         }

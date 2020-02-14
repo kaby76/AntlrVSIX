@@ -5,11 +5,18 @@ using Microsoft.CodeAnalysis;
 
 namespace LanguageServer
 {
-    public class DocumentSymbolSpansParams
+    public class CustomMessageParams
     {
-        public DocumentSymbolSpansParams() { }
+        public CustomMessageParams() { }
         public System.Uri TextDocument;
         public int Start;
         public int End;
+    }
+
+    public class CustomMessage2Params
+    {
+        public CustomMessage2Params() { }
+        public System.Uri TextDocument;
+        public int Pos;
     }
 }

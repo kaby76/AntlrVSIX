@@ -1,4 +1,6 @@
-﻿namespace LanguageServer
+﻿using Antlr4.Runtime.Tree;
+
+namespace LanguageServer
 {
     using Graphs;
     using Symtab;
@@ -379,6 +381,25 @@
                                 Uri = Workspaces.Workspace.Instance.FindDocument(r.Symbol.InputStream.SourceName)
                             });
                 }
+            }
+            return result;
+        }
+
+        public static IEnumerable<Location> GetDefs(Document doc)
+        {
+            var result = new List<Location>();
+            var ref_pd = ParserDetailsFactory.Create(doc);
+            if (ref_pd.ParseTree == null) LanguageServer.Module.Compile();
+            foreach (KeyValuePair<TerminalNodeImpl, int> value in ref_pd.Defs)
+            {
+                var key = value.Key;
+                var sym = key.Payload;
+                result.Add(
+                    new Location()
+                    {
+                        Range = new Workspaces.Range(sym.StartIndex, sym.StopIndex),
+                        Uri = Workspaces.Workspace.Instance.FindDocument(sym.InputStream.SourceName)
+                    });
             }
             return result;
         }

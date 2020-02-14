@@ -834,7 +834,7 @@ namespace LanguageServer.Exec
         [JsonRpcMethod("KenCustomMessage")]
         public async System.Threading.Tasks.Task<object[]> KenCustomMessageName(JToken arg)
         {
-            var request = arg.ToObject<DocumentSymbolSpansParams>();
+            var request = arg.ToObject<CustomMessageParams>();
             var document = CheckDoc(request.TextDocument);
             var start = request.Start;
             var end = request.End;
@@ -895,6 +895,36 @@ namespace LanguageServer.Exec
             }
             var result = symbols.ToArray();
             return result;
+        }
+
+        [JsonRpcMethod("CustomMessage2")]
+        public async System.Threading.Tasks.Task<int> KenCustomMessageName2(JToken arg)
+        {
+            var request = arg.ToObject<CustomMessage2Params>();
+            var document = CheckDoc(request.TextDocument);
+            var pos = request.Pos;
+            if (trace)
+            {
+                System.Console.Error.WriteLine("<-- CustomMessage2");
+                System.Console.Error.WriteLine(arg.ToString());
+                var bs = LanguageServer.Module.GetLineColumn(pos, document);
+                System.Console.Error.WriteLine("");
+            }
+            var r = LanguageServer.Module.GetDefs(document);
+            var symbols = new List<object>();
+            int next_sym = Int32.MaxValue;
+
+            foreach (var s in r)
+            {
+                if (s.Range.Start.Value > pos && s.Range.Start.Value < next_sym)
+                    next_sym = s.Range.Start.Value;
+            }
+            if (trace)
+            {
+                System.Console.Error.Write("returning ");
+                System.Console.Error.WriteLine(next_sym);
+            }
+            return next_sym;
         }
 
 

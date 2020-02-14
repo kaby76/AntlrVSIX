@@ -1,8 +1,9 @@
-﻿namespace AntlrVSIX.NextSym
+﻿using System.ComponentModel.Composition;
+using Microsoft.VisualStudio.Editor;
+
+namespace LspAntlr
 {
     using Antlr4.Runtime;
-    using AntlrVSIX.Extensions;
-    using AntlrVSIX.Package;
     using LanguageServer;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text;
@@ -14,6 +15,9 @@
 
     internal sealed class NextSymCommand
     {
+        [Import]
+        public IVsEditorAdaptersFactoryService AdaptersFactory = null;
+
         private readonly Microsoft.VisualStudio.Shell.Package _package;
         private MenuCommand _menu_item1;
         private MenuCommand _menu_item2;
@@ -33,7 +37,7 @@
 
             {
                 // Set up hook for context menu.
-                var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidVSPackageCommandCodeWindowContextMenuCmdSet), 0x7002);
+                var menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidVSPackageCommandCodeWindowContextMenuCmdSet), 0x7002);
                 _menu_item1 = new MenuCommand(this.MenuItemCallbackFor, menuCommandID);
                 _menu_item1.Enabled = true;
                 _menu_item1.Visible = true;
@@ -41,7 +45,7 @@
             }
             {
                 // Set up hook for context menu.
-                var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidVSPackageCommandCodeWindowContextMenuCmdSet), 0x7003);
+                var menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidVSPackageCommandCodeWindowContextMenuCmdSet), 0x7003);
                 _menu_item2 = new MenuCommand(this.MenuItemCallbackRev, menuCommandID);
                 _menu_item2.Enabled = true;
                 _menu_item2.Visible = true;
@@ -49,7 +53,7 @@
             }
             {
                 // Set up hook for context menu.
-                var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidMenuAndCommandsCmdSet), 0x7002);
+                var menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidMenuAndCommandsCmdSet), 0x7002);
                 _menu_item3 = new MenuCommand(this.MenuItemCallbackFor, menuCommandID);
                 _menu_item3.Enabled = true;
                 _menu_item3.Visible = true;
@@ -57,7 +61,7 @@
             }
             {
                 // Set up hook for context menu.
-                var menuCommandID = new CommandID(new Guid(AntlrVSIX.Constants.guidMenuAndCommandsCmdSet), 0x7003);
+                var menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidMenuAndCommandsCmdSet), 0x7003);
                 _menu_item4 = new MenuCommand(this.MenuItemCallbackRev, menuCommandID);
                 _menu_item4.Enabled = true;
                 _menu_item4.Visible = true;
@@ -113,96 +117,44 @@
                 /// Next rule.
                 ////////////////////////
 
-                string classification = AntlrLanguagePackage.Instance.Classification;
-                SnapshotSpan span = AntlrLanguagePackage.Instance.Span;
-                ITextView view = AntlrLanguagePackage.Instance.View;
-
-                view = AntlrLanguagePackage.Instance.GetActiveView();
+                var manager = this.ServiceProvider.GetService(typeof(VsTextManagerClass)) as IVsTextManager;
+                if (manager == null) return;
+                manager.GetActiveView(1, null, out IVsTextView view);
                 if (view == null) return;
-
-                ITextCaret car = view.Caret;
-                CaretPosition cp = car.Position;
-                SnapshotPoint bp = cp.BufferPosition;
-                int pos = bp.Position;
-
-                // First, find out what this view is, and what the file is.
-                ITextBuffer buffer = view.TextBuffer;
-                string path = buffer.GetFFN().Result;
-                if (path == null) return;
+                view.GetCaretPos(out int l, out int c);
+                view.GetBuffer(out IVsTextLines buf);
+                if (buf == null) return;
+                IWpfTextView xxx = AdaptersFactory.GetWpfTextView(view);
+                var buffer = xxx.TextBuffer;
+                string ffn = buffer.GetFFN().Result;
+                if (ffn == null) return;
+                var document = Workspaces.Workspace.Instance.FindDocument(ffn);
+                if (document == null) return;
+                var pos = LanguageServer.Module.GetIndex(l, c, document);
+                var alc = AntlrLanguageClient.Instance;
+                if (alc == null) return;
+                var new_pos = alc.SendServerCustomMessage2(pos, ffn);
+                if (new_pos < 0) return;
 
                 List<IToken> where = new List<IToken>();
                 List<ParserDetails> where_details = new List<ParserDetails>();
-                int next_sym = forward ? Int32.MaxValue : -1;
-                foreach (var kvp in ParserDetailsFactory.AllParserDetails)
-                {
-                    string file_name = kvp.Key;
-                    if (file_name != path)
-                        continue;
-                    ParserDetails details = kvp.Value;
-                    foreach (var p in details.Defs)
-                    {
-                        if (p.Value != 0) continue;
-                        var t = p.Key;
-                        if (forward)
-                        {
-                            if (t.Symbol.StartIndex > pos && t.Symbol.StartIndex < next_sym)
-                                next_sym = t.Symbol.StartIndex;
-                        }
-                        else
-                        {
-                            if (t.Symbol.StartIndex < pos && t.Symbol.StartIndex > next_sym)
-                                next_sym = t.Symbol.StartIndex;
-                        }
-                    }
 
-                    foreach (var p in details.Defs)
-                    {
-                        if (p.Value != 1) continue;
-                        var t = p.Key;
-                        if (forward)
-                        {
-                            if (t.Symbol.StartIndex > pos && t.Symbol.StartIndex < next_sym)
-                                next_sym = t.Symbol.StartIndex;
-                        }
-                        else
-                        {
-                            if (t.Symbol.StartIndex < pos && t.Symbol.StartIndex > next_sym)
-                                next_sym = t.Symbol.StartIndex;
-                        }
-                    }
-
-                    break;
-                }
-
-                if (next_sym == Int32.MaxValue || next_sym < 0) return;
-
-                string full_file_name = path;
-                IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(full_file_name);
-                if (vstv == null)
-                {
-                    IVsTextViewExtensions.ShowFrame(full_file_name);
-                    vstv = IVsTextViewExtensions.FindTextViewFor(full_file_name);
-                }
-
-                IWpfTextView wpftv = vstv.GetIWpfTextView();
+                IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(ffn);
+                if (vstv == null) return;
+                IWpfTextView wpftv = this.AdaptersFactory.GetWpfTextView(vstv);
                 if (wpftv == null) return;
-
                 int line_number;
                 int colum_number;
-                vstv.GetLineAndColumn(next_sym, out line_number, out colum_number);
-
-                // Create new span in the appropriate view.
+                vstv.GetLineAndColumn(new_pos, out line_number, out colum_number);
                 ITextSnapshot cc = wpftv.TextBuffer.CurrentSnapshot;
-                SnapshotSpan ss = new SnapshotSpan(cc, next_sym, 1);
+                SnapshotSpan ss = new SnapshotSpan(cc, new_pos, 1);
                 SnapshotPoint sp = ss.Start;
                 // Put cursor on symbol.
-                wpftv.Caret.MoveTo(sp); // This sets cursor, bot does not center.
-                                        // Center on cursor.
+                wpftv.Caret.MoveTo(sp);
                 if (line_number > 0)
                     vstv.CenterLines(line_number - 1, 2);
                 else
                     vstv.CenterLines(line_number, 1);
-                AntlrVSIX.Package.Menus.ResetMenus();
             }
             catch (Exception exception)
             {

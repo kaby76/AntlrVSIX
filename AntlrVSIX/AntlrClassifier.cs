@@ -111,8 +111,7 @@
             }
         }
 
-        internal void Initialize(
-                                    IClassificationTypeRegistryService service,
+        internal void Initialize(IClassificationTypeRegistryService service,
             IClassificationFormatMapService ClassificationFormatMapService)
         {
             try
