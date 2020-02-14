@@ -57,7 +57,7 @@
     <Compile Include="Menus\Menus.cs" />
     <Compile Include="Menus\OptionsCommand.cs" />
     <Compile Include="Constants.cs" />
-    <VSCTCompile Include="Package\VSPackageCommandCodeWindowContextMenu.vsct">
+    <VSCTCompile Include="Menus\VSPackageCommandCodeWindowContextMenu.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
     </VSCTCompile>
     <Content Include="Resources\Command1.png" />
@@ -125,6 +125,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.ComponentModelHost">
+      <Version>16.4.280</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Editor">
       <Version>16.4.280</Version>
     </PackageReference>

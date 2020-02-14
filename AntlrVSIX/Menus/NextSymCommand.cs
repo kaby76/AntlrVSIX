@@ -15,19 +15,16 @@ namespace LspAntlr
 
     internal sealed class NextSymCommand
     {
-        [Import]
-        public IVsEditorAdaptersFactoryService AdaptersFactory = null;
-
-        private readonly Microsoft.VisualStudio.Shell.Package _package;
+        private readonly AntlrLanguageClient _package;
         private MenuCommand _menu_item1;
         private MenuCommand _menu_item2;
         private MenuCommand _menu_item3;
         private MenuCommand _menu_item4;
 
-        private NextSymCommand(Microsoft.VisualStudio.Shell.Package package)
+        private NextSymCommand(AntlrLanguageClient package)
         {
             _package = package ?? throw new ArgumentNullException("package");
-            OleMenuCommandService commandService = this.ServiceProvider.GetService(
+            OleMenuCommandService commandService = ((IServiceProvider)this.ServiceProvider).GetService(
                 typeof(IMenuCommandService)) as OleMenuCommandService;
 
             if (commandService == null)
@@ -89,12 +86,12 @@ namespace LspAntlr
 
         public static NextSymCommand Instance { get; private set; }
 
-        private IServiceProvider ServiceProvider
+        private AntlrLanguageClient ServiceProvider
         {
             get { return this._package; }
         }
 
-        public static void Initialize(Microsoft.VisualStudio.Shell.Package package)
+        public static void Initialize(AntlrLanguageClient package)
         {
             Instance = new NextSymCommand(package);
         }
@@ -117,14 +114,14 @@ namespace LspAntlr
                 /// Next rule.
                 ////////////////////////
 
-                var manager = this.ServiceProvider.GetService(typeof(VsTextManagerClass)) as IVsTextManager;
+                var manager = ((IServiceProvider)this.ServiceProvider).GetService(typeof(VsTextManagerClass)) as IVsTextManager;
                 if (manager == null) return;
                 manager.GetActiveView(1, null, out IVsTextView view);
                 if (view == null) return;
                 view.GetCaretPos(out int l, out int c);
                 view.GetBuffer(out IVsTextLines buf);
                 if (buf == null) return;
-                IWpfTextView xxx = AdaptersFactory.GetWpfTextView(view);
+                IWpfTextView xxx = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view);
                 var buffer = xxx.TextBuffer;
                 string ffn = buffer.GetFFN().Result;
                 if (ffn == null) return;
@@ -133,15 +130,13 @@ namespace LspAntlr
                 var pos = LanguageServer.Module.GetIndex(l, c, document);
                 var alc = AntlrLanguageClient.Instance;
                 if (alc == null) return;
-                var new_pos = alc.SendServerCustomMessage2(pos, ffn);
+                var new_pos = alc.SendServerCustomMessage2(ffn, pos, forward);
                 if (new_pos < 0) return;
-
                 List<IToken> where = new List<IToken>();
                 List<ParserDetails> where_details = new List<ParserDetails>();
-
                 IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(ffn);
                 if (vstv == null) return;
-                IWpfTextView wpftv = this.AdaptersFactory.GetWpfTextView(vstv);
+                IWpfTextView wpftv = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(vstv);
                 if (wpftv == null) return;
                 int line_number;
                 int colum_number;

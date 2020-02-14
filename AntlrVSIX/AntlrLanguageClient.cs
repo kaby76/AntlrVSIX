@@ -1,4 +1,6 @@
-﻿using Options;
+﻿using Microsoft.VisualStudio.ComponentModelHost;
+using Microsoft.VisualStudio.Editor;
+using Options;
 
 namespace LspAntlr
 {
@@ -25,16 +27,22 @@ namespace LspAntlr
     [Guid(AntlrLanguageClient.PackageGuidString)]
     public class AntlrLanguageClient : AsyncPackage, ILanguageClient, ILanguageClientCustomMessage2
     {
+        public static IVsEditorAdaptersFactoryService AdaptersFactory = null;
         public const string PackageGuidString = "49bf9144-398a-467c-9b87-ac26d1e62737";
         public static MemoryStream _log_from_server = new MemoryStream();
         public static MemoryStream _log_to_server = new MemoryStream();
-        private JsonRpc _rpc;
+        private static JsonRpc _rpc;
 
         public AntlrLanguageClient()
         {
             Instance = this;
+            var componentModel = Package.GetGlobalService(typeof(SComponentModel)) as IComponentModel;
+            AdaptersFactory = componentModel.GetService<IVsEditorAdaptersFactoryService>();
+            //AdaptersFactory = this.GetService(typeof(IVsEditorAdaptersFactoryService)) as IVsEditorAdaptersFactoryService;
             OptionsCommand.Initialize(this);
             AboutCommand.Initialize(this);
+            NextSymCommand.Initialize(this);
+            GoToVisitorCommand.Initialize(this);
         }
 
         public event AsyncEventHandler<EventArgs> StartAsync;
@@ -108,7 +116,7 @@ namespace LspAntlr
         public async Task AttachForCustomMessageAsync(JsonRpc rpc)
         {
             await Task.Yield();
-            this._rpc = rpc;
+            _rpc = rpc;
         }
 
         public async Task OnLoadedAsync()
@@ -130,13 +138,13 @@ namespace LspAntlr
         {
             try
             {
-                if (this._rpc == null) return null;
+                if (_rpc == null) return null;
                 CustomMessageParams p = new CustomMessageParams();
                 var uri = new Uri(ffn);
                 p.TextDocument = uri;
                 p.Start = start;
                 p.End = end;
-                var result = this._rpc.InvokeAsync<object[]>("KenCustomMessage", p).Result;
+                var result = _rpc.InvokeAsync<object[]>("CustomMessage", p).Result;
                 return result;
             }
             catch (Exception)
@@ -145,16 +153,17 @@ namespace LspAntlr
             return null;
         }
 
-        public int SendServerCustomMessage2(int pos, string ffn)
+        public int SendServerCustomMessage2(string ffn, int pos, bool forward)
         {
             try
             {
-                if (this._rpc == null) return -1;
+                if (_rpc == null) return -1;
                 var p = new CustomMessage2Params();
                 var uri = new Uri(ffn);
                 p.TextDocument = uri;
                 p.Pos = pos;
-                var result = this._rpc.InvokeAsync<int>("CustomMessage2", p).Result;
+                p.Forward = forward;
+                var result = _rpc.InvokeAsync<int>("CustomMessage2", p).Result;
                 return result;
             }
             catch (Exception)

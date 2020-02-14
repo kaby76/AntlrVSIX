@@ -831,8 +831,8 @@ namespace LanguageServer.Exec
         }
 
 
-        [JsonRpcMethod("KenCustomMessage")]
-        public async System.Threading.Tasks.Task<object[]> KenCustomMessageName(JToken arg)
+        [JsonRpcMethod("CustomMessage")]
+        public async System.Threading.Tasks.Task<object[]> CustomMessageName(JToken arg)
         {
             var request = arg.ToObject<CustomMessageParams>();
             var document = CheckDoc(request.TextDocument);
@@ -840,7 +840,7 @@ namespace LanguageServer.Exec
             var end = request.End;
             if (trace)
             {
-                System.Console.Error.WriteLine("<-- KenCustomMessage");
+                System.Console.Error.WriteLine("<-- CustomMessage");
                 System.Console.Error.WriteLine(arg.ToString());
                 var bs = LanguageServer.Module.GetLineColumn(start, document);
                 System.Console.Error.WriteLine("");
@@ -903,6 +903,7 @@ namespace LanguageServer.Exec
             var request = arg.ToObject<CustomMessage2Params>();
             var document = CheckDoc(request.TextDocument);
             var pos = request.Pos;
+            var forward = request.Forward;
             if (trace)
             {
                 System.Console.Error.WriteLine("<-- CustomMessage2");
@@ -912,13 +913,22 @@ namespace LanguageServer.Exec
             }
             var r = LanguageServer.Module.GetDefs(document);
             var symbols = new List<object>();
-            int next_sym = Int32.MaxValue;
-
+            int next_sym = forward ? Int32.MaxValue : -1;
             foreach (var s in r)
             {
-                if (s.Range.Start.Value > pos && s.Range.Start.Value < next_sym)
-                    next_sym = s.Range.Start.Value;
+                if (forward)
+                {
+                    if (s.Range.Start.Value > pos && s.Range.Start.Value < next_sym)
+                        next_sym = s.Range.Start.Value;
+                }
+                else
+                {
+                    if (s.Range.Start.Value < pos && s.Range.Start.Value > next_sym)
+                        next_sym = s.Range.Start.Value;
+                }
             }
+            if (next_sym == Int32.MaxValue)
+                next_sym = -1;
             if (trace)
             {
                 System.Console.Error.Write("returning ");
