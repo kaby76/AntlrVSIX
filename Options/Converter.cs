@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-
-namespace Options
+﻿namespace Options
 {
+    using System;
+    using System.Text.Json;
+    using System.Text.Json.Serialization;
+
     class ObjectToBoolConverter : JsonConverter<object>
     {
         public override object Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -37,25 +35,29 @@ namespace Options
         }
     }
 
-    class ObjectToStringConverter : JsonConverter<object>
+    class ObjectToIntConverter : JsonConverter<object>
     {
         public override object Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            if (reader.TokenType == JsonTokenType.String)
+            if (reader.TokenType == JsonTokenType.Number)
             {
-                return reader.GetString();
+                return reader.GetInt32();
             }
 
             // Use JsonElement as fallback.
-            using (JsonDocument document = JsonDocument.ParseValue(ref reader))
+            var converter = options.GetConverter(typeof(JsonElement)) as JsonConverter<JsonElement>;
+            if (converter != null)
             {
-                return document.RootElement.Clone();
+                return converter.Read(ref reader, typeToConvert, options);
             }
+
+            // Shouldn't get here.
+            throw new JsonException();
         }
 
         public override void Write(Utf8JsonWriter writer, object value, JsonSerializerOptions options)
         {
-            throw new InvalidOperationException("Should not get here.");
+            throw new InvalidOperationException("Directly writing object not supported");
         }
     }
 
@@ -94,6 +96,28 @@ namespace Options
                     return datetime;
                 }
 
+                return reader.GetString();
+            }
+
+            // Use JsonElement as fallback.
+            using (JsonDocument document = JsonDocument.ParseValue(ref reader))
+            {
+                return document.RootElement.Clone();
+            }
+        }
+
+        public override void Write(Utf8JsonWriter writer, object value, JsonSerializerOptions options)
+        {
+            throw new InvalidOperationException("Should not get here.");
+        }
+    }
+
+    class ObjectToStringConverter : JsonConverter<object>
+    {
+        public override object Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            if (reader.TokenType == JsonTokenType.String)
+            {
                 return reader.GetString();
             }
 

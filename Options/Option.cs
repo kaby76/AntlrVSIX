@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text.Json;
-
-namespace Options
+﻿namespace Options
 {
-    public class POptions
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Text.Json;
+
+    public class Option
     {
-        static bool initialized = false;
-        static string home = System.Environment.GetEnvironmentVariable("HOMEPATH");
         static string antlr_options_file_name = "";
-        private static string s = System.Environment.GetEnvironmentVariable("CORPUS_LOCATION");
         private static string CorpusLocation = s == null ? "" : s;
         private static Dictionary<string, object> defaults = new Dictionary<string, object>()
         {
@@ -22,28 +18,9 @@ namespace Options
             {"CorpusLocation", CorpusLocation },
         };
 
-
-        public static void SetBoolean(string option, bool value)
-        {
-            Initialize();
-            defaults[option] = value;
-            Write();
-        }
-
-        public static void SetString(string option, string value)
-        {
-            Initialize();
-            defaults[option] = value;
-            Write();
-        }
-
-        public static void SetInt32(string option, int value)
-        {
-            Initialize();
-            defaults[option] = value;
-            Write();
-        }
-
+        static string home = System.Environment.GetEnvironmentVariable("HOMEPATH");
+        static bool initialized = false;
+        private static string s = System.Environment.GetEnvironmentVariable("CORPUS_LOCATION");
         public static bool GetBoolean(string option)
         {
             Initialize();
@@ -57,6 +34,23 @@ namespace Options
                 options.Converters.Add(new ObjectToBoolConverter());
                 object obj = JsonSerializer.Deserialize<object>(value.ToString().ToLower(), options);
                 default_value = (bool)obj;
+            }
+            return default_value;
+        }
+
+        public static int GetInt32(string option)
+        {
+            Initialize();
+            int default_value = 0;
+            defaults.TryGetValue(option, out object value);
+            if (value == null)
+                default_value = 0;
+            else
+            {
+                var options = new JsonSerializerOptions();
+                options.Converters.Add(new ObjectToIntConverter());
+                object obj = JsonSerializer.Deserialize<object>(value.ToString().ToLower(), options);
+                default_value = (int)obj;
             }
             return default_value;
         }
@@ -75,21 +69,26 @@ namespace Options
             return default_value;
         }
 
-        public static int GetInt32(string option)
+        public static void SetBoolean(string option, bool value)
         {
             Initialize();
-            int default_value = 0;
-            defaults.TryGetValue(option, out object value);
-            if (value == null)
-                default_value = 0;
-            else if (value is Int32)
-            {
-                default_value = (int)value;
-            }
-            return default_value;
+            defaults[option] = value;
+            Write();
         }
 
+        public static void SetInt32(string option, int value)
+        {
+            Initialize();
+            defaults[option] = value;
+            Write();
+        }
 
+        public static void SetString(string option, string value)
+        {
+            Initialize();
+            defaults[option] = value;
+            Write();
+        }
         private static void Initialize()
         {
             if (initialized) return;

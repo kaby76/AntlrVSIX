@@ -68,17 +68,9 @@ namespace LspAntlr
                 var p = System.IO.Path.GetDirectoryName(f);
                 var antlr_executable = p + System.IO.Path.DirectorySeparatorChar
                                          + @"Server\net472\Server.exe";
-                //var w2 = new SetWorkspace(cache_location, antlr_executable);
-                //w2.ShowDialog();
-                //w2.Close();
-                //var workspace_path = w2.workspace_path.Text;
                 var workspace_path = cache_location;
-
                 if (workspace_path == null || workspace_path == "")
                     workspace_path = cache_location;
-
-                //antlr_executable = w2.lspserver.Text;
-
                 ProcessStartInfo info = new ProcessStartInfo();
                 info.FileName = antlr_executable;
                 info.WorkingDirectory = workspace_path;
@@ -86,7 +78,7 @@ namespace LspAntlr
                 info.RedirectStandardInput = true;
                 info.RedirectStandardOutput = true;
                 info.UseShellExecute = false;
-                info.CreateNoWindow = ! POptions.GetBoolean("VisibleServerWindow");
+                info.CreateNoWindow = ! Option.GetBoolean("VisibleServerWindow");
                 Process process = new Process();
                 process.StartInfo = info;
                 if (process.Start())
