@@ -71,7 +71,9 @@ just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio
 
 ## Work in progress for v5.3:
 
-* Add in PIggy for grammar rewriting and checking.
+* Add in PIggy for grammar rewriting and checking. The addition of Piggy will allow for  for rules to transform the
+grammar e.g., warning/removal of LHS predicates in lexer, replacing factored grammar rules with Kleene star rules (which
+result in faster parsers).
 
 ## Work in progress for v5.2:
 
