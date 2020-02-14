@@ -69,9 +69,15 @@ just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio
 
 * Use Visual Studio 2019 to build the extension.
 
-## Work in progress for the next release (v5.2):
+## Work in progress for v5.3:
 
-* Add back some of the useful UI from version 4, including the About Box, goto Listener/Visitor, and the Options Box.
+* Add in PIggy for grammar rewriting and checking.
+
+## Work in progress for v5.2:
+
+* Add About Box, Options Box, Go To Listener/Visitor from version 4 of the extension.
+* Options is now contained in ~/.antlrvsixrc, and it is a JSON file.
+* Extending Go To Listener/Visitor with swap between the grammar symbol and C# visitor.
 
 ## Release notes for v5.1:
 
