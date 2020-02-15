@@ -14,10 +14,9 @@
             {"RestrictedDirectory", true },
             {"GenerateVisitorListener", false },
             {"OverrideAntlrPluggins", true },
-            {"OptInLogging", 0 },
+            {"OptInLogging", false },
             {"CorpusLocation", CorpusLocation },
         };
-
         static string home = System.Environment.GetEnvironmentVariable("HOMEPATH");
         static bool initialized = false;
         private static string s = System.Environment.GetEnvironmentVariable("CORPUS_LOCATION");

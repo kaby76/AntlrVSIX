@@ -7,8 +7,8 @@
     {
         public static void Notify(string message)
         {
-            var options = Options.Option.GetInt32("OptInLogging");
-            if (options == 1)
+            var options = Options.Option.GetBoolean("OptInLogging");
+            if (options)
             {
                 try
                 {

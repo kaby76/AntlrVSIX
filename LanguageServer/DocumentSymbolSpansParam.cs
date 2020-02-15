@@ -20,4 +20,11 @@ namespace LanguageServer
         public int Pos;
         public bool Forward;
     }
+
+    public class CustomMessage3Params
+    {
+        public CustomMessage3Params() { }
+        public System.Uri TextDocument;
+        public int Pos;
+    }
 }

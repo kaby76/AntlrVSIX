@@ -1,14 +1,10 @@
-﻿using Nerdbank.Streams;
-
-namespace LspAntlr
+﻿namespace LspAntlr
 {
     using System.Windows;
     using Options;
 
     public partial class OptionsBox : Window
     {
-        OptionsCommand _o;
-
         public OptionsBox()
         {
             InitializeComponent();
@@ -18,9 +14,7 @@ namespace LspAntlr
             this.corpus_location.Text = Option.GetString("CorpusLocation");
             this.incremental_reformat.IsChecked = Option.GetBoolean("IncrementalReformat");
             this.override_antlr.IsChecked = Option.GetBoolean("OverrideAntlrPluggins");
-            if (Option.GetInt32("OptInLogging") == 1) this.opt_in_reporting.IsChecked = true;
-            else if (Option.GetInt32("OptInLogging") == 2) this.opt_in_reporting.IsChecked = false;
-            else this.opt_in_reporting.IsChecked = null;
+            this.opt_in_reporting.IsChecked = Option.GetBoolean("OptInLogging");
         }
 
         private void btnDialogOk_Click(object sender, RoutedEventArgs e)
@@ -32,6 +26,7 @@ namespace LspAntlr
             Option.SetString("CorpusLocation", inputDialog.corpus_location.Text);
             Option.SetBoolean("IncrementalReformat", inputDialog.incremental_reformat.IsChecked ?? false);
             Option.SetBoolean("OverrideAntlrPluggins", inputDialog.override_antlr.IsChecked ?? false);
+            Option.SetBoolean("OptInLogging", inputDialog.opt_in_reporting.IsChecked ?? false);
             this.Close();
         }
 

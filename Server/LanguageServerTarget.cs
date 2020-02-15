@@ -10,6 +10,7 @@ using System.Web;
 using Antlr4.Runtime.Tree.Pattern;
 using LanguageServer;
 using Workspaces;
+using DocumentSymbol = LanguageServer.DocumentSymbol;
 
 namespace Server
 {
@@ -833,7 +834,7 @@ namespace Server
 
 
         [JsonRpcMethod("CustomMessage")]
-        public async System.Threading.Tasks.Task<object[]> CustomMessageName(JToken arg)
+        public async System.Threading.Tasks.Task<SymbolInformation[]> CustomMessageName(JToken arg)
         {
             var request = arg.ToObject<CustomMessageParams>();
             var document = CheckDoc(request.TextDocument);
@@ -847,7 +848,7 @@ namespace Server
                 System.Console.Error.WriteLine("");
             }
             var r = LanguageServer.Module.Get(document);
-            var symbols = new List<object>();
+            var symbols = new List<SymbolInformation>();
             foreach (var s in r)
             {
                 if (!(start <= s.range.Start.Value && s.range.Start.Value <= end))
@@ -938,10 +939,57 @@ namespace Server
             return next_sym;
         }
 
-
-        public string GetText()
+        [JsonRpcMethod("CustomMessage3")]
+        public async System.Threading.Tasks.Task<SymbolInformation> KenCustomMessageName3(JToken arg)
         {
-            return string.IsNullOrWhiteSpace(this.server.CustomText) ? "custom text from language server target" : this.server.CustomText;
+            var request = arg.ToObject<CustomMessage3Params>();
+            var document = CheckDoc(request.TextDocument);
+            var pos = request.Pos;
+            if (trace)
+            {
+                System.Console.Error.WriteLine("<-- CustomMessage3");
+                System.Console.Error.WriteLine(arg.ToString());
+                var bs = LanguageServer.Module.GetLineColumn(pos, document);
+                System.Console.Error.WriteLine("");
+            }
+            var s = LanguageServer.Module.GetDocumentSymbol(pos, document);
+            var si = new SymbolInformation();
+            if (s.kind == 0)
+                si.Kind = SymbolKind.Variable; // Nonterminal
+            else if (s.kind == 1)
+                si.Kind = SymbolKind.Enum; // Terminal
+            else if (s.kind == 2)
+                //si.Kind = 0; // Comment
+                return null;
+            else if (s.kind == 3)
+                // si.Kind = 0; // Keyword
+                return null;
+            else if (s.kind == 4)
+                // si.Kind = SymbolKind.Number; // Literal
+                return null;
+            else if (s.kind == 5)
+                // si.Kind = 0; // Mode
+                return null;
+            else if (s.kind == 6)
+                // si.Kind = SymbolKind.Enum; // Channel
+                return null;
+            else
+                // si.Kind = 0; // Default.
+                return null;
+            si.Name = s.name;
+            si.Location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location();
+            si.Location.Uri = request.TextDocument;
+            var lcs = LanguageServer.Module.GetLineColumn(s.range.Start.Value, document);
+            var lce = LanguageServer.Module.GetLineColumn(s.range.End.Value, document);
+            si.Location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
+            si.Location.Range.Start = new Position(lcs.Item1, lcs.Item2);
+            si.Location.Range.End = new Position(lce.Item1, lce.Item2);
+            if (trace)
+            {
+                System.Console.Error.Write("returning ");
+                System.Console.Error.WriteLine("<" + si.Name + "," + si.Kind + ">");
+            }
+            return si;
         }
     }
 }

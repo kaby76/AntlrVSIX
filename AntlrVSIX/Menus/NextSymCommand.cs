@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.Composition;
-using Microsoft.VisualStudio.Editor;
-
-namespace LspAntlr
+﻿namespace LspAntlr
 {
     using Antlr4.Runtime;
     using LanguageServer;

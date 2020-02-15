@@ -60,8 +60,15 @@
         </TextBox>
         <TextBox Name="grammar_description_locations" Grid.Row="5" Grid.Column="1" Margin="10,0,10,10">Not set</TextBox>
 
+        <TextBox Grid.Row="6" Grid.Column="0" TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0">
+            Override any other Antlr extensions.
+        </TextBox>
         <CheckBox Name="override_antlr" Grid.Row="6" Grid.Column="1" Margin="10,0,10,10">Override any other ANTLR plugins.</CheckBox>
-        <CheckBox Name="opt_in_reporting" Grid.Row="7" Grid.Column="0" Margin="10,0,10,10" IsThreeState="True" >Opt-in to help development with logging of crashes.</CheckBox>
+
+        <TextBox Grid.Row="7" Grid.Column="0" TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0">
+            Report any errors in extension automatically to online server.
+        </TextBox>
+        <CheckBox Name="opt_in_reporting" Grid.Row="7" Grid.Column="1" Margin="10,0,10,10" >Opt-in to help development with logging of crashes.</CheckBox>
 
         <!-- Accept or Cancel -->
         <WrapPanel Grid.Row="14" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="10,0,0,0" >

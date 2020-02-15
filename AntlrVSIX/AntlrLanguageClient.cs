@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Editor;
+using Microsoft.VisualStudio.LanguageServer.Protocol;
 using Options;
 
 namespace LspAntlr
@@ -126,7 +127,7 @@ namespace LspAntlr
             return Task.CompletedTask;
         }
 
-        public object[] SendServerCustomMessage(int start, int end, string ffn)
+        public SymbolInformation[] SendServerCustomMessage(int start, int end, string ffn)
         {
             try
             {
@@ -136,7 +137,7 @@ namespace LspAntlr
                 p.TextDocument = uri;
                 p.Start = start;
                 p.End = end;
-                var result = _rpc.InvokeAsync<object[]>("CustomMessage", p).Result;
+                var result = _rpc.InvokeAsync<SymbolInformation[]>("CustomMessage", p).Result;
                 return result;
             }
             catch (Exception)
@@ -156,6 +157,24 @@ namespace LspAntlr
                 p.Pos = pos;
                 p.Forward = forward;
                 var result = _rpc.InvokeAsync<int>("CustomMessage2", p).Result;
+                return result;
+            }
+            catch (Exception)
+            {
+            }
+            return -1;
+        }
+
+        public SymbolInformation SendServerCustomMessage3(string ffn, int pos)
+        {
+            try
+            {
+                if (_rpc == null) return null;
+                var p = new CustomMessage3Params();
+                var uri = new Uri(ffn);
+                p.TextDocument = uri;
+                p.Pos = pos;
+                var result = _rpc.InvokeAsync<SymbolInformation>("CustomMessage3", p).Result;
                 return result;
             }
             catch (Exception)
