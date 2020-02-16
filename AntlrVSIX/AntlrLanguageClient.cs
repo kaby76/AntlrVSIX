@@ -180,7 +180,7 @@ namespace LspAntlr
             catch (Exception)
             {
             }
-            return -1;
+            return null;
         }
 
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)

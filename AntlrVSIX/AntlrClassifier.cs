@@ -53,10 +53,8 @@
                 int curLocEnd = end.Position;
                 var sorted_combined_tokens = alc.SendServerCustomMessage(curLocStart, curLocEnd - 1, ffn);
                 if (sorted_combined_tokens == null) continue;
-                foreach (var p in sorted_combined_tokens)
+                foreach (var r in sorted_combined_tokens)
                 {
-                    JToken q = p as JToken;
-                    var r = q.ToObject<SymbolInformation>();
                     var l = r.Location.Range.Start.Line;
                     var c = r.Location.Range.Start.Character;
                     var i = LanguageServer.Module.GetIndex(l, c, document);

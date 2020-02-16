@@ -337,7 +337,7 @@ namespace Server
             var document = _workspace.FindDocument(file_name);
             if (document == null)
             {
-                document = new Workspaces.Document(file_name, file_name);
+                document = new Workspaces.Document(file_name);
                 try
                 {   // Open the text file using a stream reader.
                     using (StreamReader sr = new StreamReader(file_name))
@@ -953,6 +953,8 @@ namespace Server
                 System.Console.Error.WriteLine("");
             }
             var s = LanguageServer.Module.GetDocumentSymbol(pos, document);
+            var d = LanguageServer.Module.FindDef(pos, document);
+            if (d == null) return null;
             var si = new SymbolInformation();
             if (s.kind == 0)
                 si.Kind = SymbolKind.Variable; // Nonterminal
@@ -978,9 +980,9 @@ namespace Server
                 return null;
             si.Name = s.name;
             si.Location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location();
-            si.Location.Uri = request.TextDocument;
-            var lcs = LanguageServer.Module.GetLineColumn(s.range.Start.Value, document);
-            var lce = LanguageServer.Module.GetLineColumn(s.range.End.Value, document);
+            si.Location.Uri = new Uri(d.First().Uri.FullPath);
+            var lcs = LanguageServer.Module.GetLineColumn(d.First().Range.Start.Value, d.First().Uri);
+            var lce = LanguageServer.Module.GetLineColumn(d.First().Range.End.Value, d.First().Uri);
             si.Location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
             si.Location.Range.Start = new Position(lcs.Item1, lcs.Item2);
             si.Location.Range.End = new Position(lce.Item1, lce.Item2);

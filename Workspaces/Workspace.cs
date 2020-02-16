@@ -67,7 +67,7 @@ namespace Workspaces
             // If no document found, try to create it.
             if (File.Exists(ffn))
             {
-                var document = new Workspaces.Document(ffn, ffn);
+                var document = new Workspaces.Document(ffn);
                 try
                 {   // Open the text file using a stream reader.
                     using (StreamReader sr = new StreamReader(ffn))

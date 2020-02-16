@@ -10,14 +10,11 @@
         Dictionary<string, string> _properties = new Dictionary<string, string>();
         Dictionary<string, bool> _lazy_evaluated = new Dictionary<string, bool>();
 
-        public Document(string ffn, string name)
+        public Document(string ffn)
         {
             FullPath = ffn;
-            Name = name;
             Changed = false;
         }
-
-        public string Name { get; set; }
 
         public string FullPath { get; set; }
 
