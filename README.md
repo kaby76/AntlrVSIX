@@ -78,9 +78,8 @@ result in faster parsers).
 
 ## Release notes for v5.2:
 
-* Add About Box, Options Box, Go To Listener/Visitor from version 4 of the extension.
-* Options is now contained in ~/.antlrvsixrc, and it is a JSON file.
-* Adding in next/previous grammar symbol.
+* Re-add About Box, Options Box, and next/previous grammar symbol.
+* Options are now contained in ~/.antlrvsixrc, a JSON file.
 
 ## Release notes for v5.1:
 
