@@ -71,15 +71,16 @@ just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio
 
 ## Work in progress for v5.3:
 
-* Add in PIggy for grammar rewriting and checking. The addition of Piggy will allow for  for rules to transform the
+* Add in Piggy for grammar rewriting and checking. The addition of Piggy will allow for  for rules to transform the
 grammar e.g., warning/removal of LHS predicates in lexer, replacing factored grammar rules with Kleene star rules (which
 result in faster parsers).
+* Extending Go To Listener/Visitor with swap between the grammar symbol and C# visitor.
 
-## Work in progress for v5.2:
+## Release notes for v5.2:
 
 * Add About Box, Options Box, Go To Listener/Visitor from version 4 of the extension.
 * Options is now contained in ~/.antlrvsixrc, and it is a JSON file.
-* Extending Go To Listener/Visitor with swap between the grammar symbol and C# visitor.
+* Adding in next/previous grammar symbol.
 
 ## Release notes for v5.1:
 
