@@ -78,7 +78,7 @@ result in faster parsers).
 
 ## Release notes for v5.2:
 
-* Re-add About Box, Options Box, and next/previous grammar symbol.
+* Re-added About Box, Options Box, and next/previous grammar symbol.
 * Options are now contained in ~/.antlrvsixrc, a JSON file.
 
 ## Release notes for v5.1:
