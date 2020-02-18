@@ -23,5 +23,7 @@
 	     * inside the symbol to reveal in the symbol in the UI.
 	     */
         public Workspaces.Range range;
+
+        public Uri Document;
     }
 }

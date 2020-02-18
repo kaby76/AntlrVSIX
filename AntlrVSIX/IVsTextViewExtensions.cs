@@ -119,6 +119,31 @@
             }
         }
 
+        internal static IVsTextView OpenStupidFile(IServiceProvider isp, string full_file_name)
+        {
+            ServiceProvider sp = new ServiceProvider(isp);
+            IVsUIHierarchy ivsuih;
+            uint item_id;
+            IVsWindowFrame ivswf;
+            if (!VsShellUtilities.IsDocumentOpen(sp, full_file_name, Guid.Empty,
+                out ivsuih, out item_id, out ivswf))
+            {
+                VsShellUtilities.OpenDocument(sp, full_file_name);
+            }
+            return FindTextViewFor(full_file_name);
+        }
+
+        internal static void ShowFrame(IServiceProvider isp, string full_file_name)
+        {
+            IVsTextView xx = OpenStupidFile(isp, full_file_name);
+            ServiceProvider sp = new ServiceProvider(isp);
+            IVsUIHierarchy ivsuih;
+            uint item_id;
+            IVsWindowFrame ivswf;
+            VsShellUtilities.IsDocumentOpen(sp, full_file_name, Guid.Empty, out ivsuih, out item_id, out ivswf);
+            ivswf?.Show();
+        }
+
         internal static IVsWindowFrame FindWindowFrame(string filePath)
         {
             foreach (IVsWindowFrame currentFrame in EnumerateDocumentWindowFrames())

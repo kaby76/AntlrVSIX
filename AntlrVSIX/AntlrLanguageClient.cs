@@ -165,7 +165,7 @@ namespace LspAntlr
             return -1;
         }
 
-        public SymbolInformation SendServerCustomMessage3(string ffn, int pos)
+        public DocumentSymbol SendServerCustomMessage3(string ffn, int pos)
         {
             try
             {
@@ -174,7 +174,7 @@ namespace LspAntlr
                 var uri = new Uri(ffn);
                 p.TextDocument = uri;
                 p.Pos = pos;
-                var result = _rpc.InvokeAsync<SymbolInformation>("CustomMessage3", p).Result;
+                var result = _rpc.InvokeAsync<DocumentSymbol>("CustomMessage3", p).Result;
                 return result;
             }
             catch (Exception)
