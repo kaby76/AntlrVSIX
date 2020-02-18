@@ -27,4 +27,11 @@ namespace LanguageServer
         public System.Uri TextDocument;
         public int Pos;
     }
+
+    public class CustomMessage3Result
+    {
+        public CustomMessage3Result() { }
+        public System.Uri TextDocument;
+        public int Start;
+    }
 }

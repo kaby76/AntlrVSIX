@@ -135,8 +135,8 @@
 
         internal static void ShowFrame(IServiceProvider isp, string full_file_name)
         {
-            IVsTextView xx = OpenStupidFile(isp, full_file_name);
-            ServiceProvider sp = new ServiceProvider(isp);
+            IVsTextView xx = OpenStupidFile(AntlrLanguageClient.XXX, full_file_name);
+            ServiceProvider sp = new ServiceProvider(AntlrLanguageClient.XXX);
             IVsUIHierarchy ivsuih;
             uint item_id;
             IVsWindowFrame ivswf;

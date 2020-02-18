@@ -941,7 +941,7 @@ namespace Server
         }
 
         [JsonRpcMethod("CustomMessage3")]
-        public async System.Threading.Tasks.Task<DocumentSymbol> KenCustomMessageName3(JToken arg)
+        public async System.Threading.Tasks.Task<CustomMessage3Result> KenCustomMessageName3(JToken arg)
         {
             var request = arg.ToObject<CustomMessage3Params>();
             var document = CheckDoc(request.TextDocument);
@@ -954,7 +954,7 @@ namespace Server
                 System.Console.Error.WriteLine("");
             }
 
-            DocumentSymbol s = Goto.main(true, document, pos);
+            CustomMessage3Result s = Goto.main(true, document, pos);
 
             return s;
         }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.ComponentModelHost;
 using Microsoft.VisualStudio.Editor;
 using Microsoft.VisualStudio.LanguageServer.Protocol;
+using Microsoft.VisualStudio.Shell.Interop;
 using Options;
 
 namespace LspAntlr
@@ -33,12 +34,16 @@ namespace LspAntlr
         public static MemoryStream _log_from_server = new MemoryStream();
         public static MemoryStream _log_to_server = new MemoryStream();
         private static JsonRpc _rpc;
+        public static Microsoft.VisualStudio.OLE.Interop.IServiceProvider XXX;
 
         public AntlrLanguageClient()
         {
             Instance = this;
             var componentModel = Package.GetGlobalService(typeof(SComponentModel)) as IComponentModel;
             AdaptersFactory = componentModel.GetService<IVsEditorAdaptersFactoryService>();
+            var dte2 = Package.GetGlobalService(typeof(SDTE));
+            XXX = (Microsoft.VisualStudio.OLE.Interop.IServiceProvider)dte2;
+            ServiceProvider sp = new ServiceProvider(XXX);
             //AdaptersFactory = this.GetService(typeof(IVsEditorAdaptersFactoryService)) as IVsEditorAdaptersFactoryService;
             OptionsCommand.Initialize(this);
             AboutCommand.Initialize(this);
@@ -165,7 +170,7 @@ namespace LspAntlr
             return -1;
         }
 
-        public DocumentSymbol SendServerCustomMessage3(string ffn, int pos)
+        public CustomMessage3Result SendServerCustomMessage3(string ffn, int pos)
         {
             try
             {
@@ -174,7 +179,7 @@ namespace LspAntlr
                 var uri = new Uri(ffn);
                 p.TextDocument = uri;
                 p.Pos = pos;
-                var result = _rpc.InvokeAsync<DocumentSymbol>("CustomMessage3", p).Result;
+                var result = _rpc.InvokeAsync<CustomMessage3Result>("CustomMessage3", p).Result;
                 return result;
             }
             catch (Exception)

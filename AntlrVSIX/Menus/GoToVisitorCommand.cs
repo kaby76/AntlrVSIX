@@ -144,12 +144,12 @@ namespace LspAntlr
                 var listener_class_name = visitor ? ("My" + grammar_name + "Visitor") : ("My" + grammar_name + "Listener");
                 var alc = AntlrLanguageClient.Instance;
                 if (alc == null) return;
-                DocumentSymbol symbol = alc.SendServerCustomMessage3(g4_file_path, pos);
+                CustomMessage3Result symbol = alc.SendServerCustomMessage3(g4_file_path, pos);
                 if (symbol == null) return;
 
                 {
-                    var class_file_path = symbol.Document.LocalPath;
-                    var index = symbol.range.Start.Value;
+                    var class_file_path = symbol.TextDocument.LocalPath;
+                    var index = symbol.Start;
                     // Open to this line in editor.
                     IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(class_file_path);
                     {

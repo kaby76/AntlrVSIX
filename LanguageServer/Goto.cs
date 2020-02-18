@@ -22,7 +22,7 @@ namespace LanguageServer
 {
     public class Goto
     {
-        public static DocumentSymbol main(bool visitor, Workspaces.Document document, int pos)
+        public static CustomMessage3Result main(bool visitor, Workspaces.Document document, int pos)
         {
             string g4_file_path = document.FullPath;
             string current_dir = Path.GetDirectoryName(g4_file_path);
@@ -363,9 +363,9 @@ public override void {capitalized_member_name}({capitalized_grammar_name}Parser.
                 }
             }
 
-            var result = new DocumentSymbol();
-            result.Document = new Uri(class_file_path);
-            result.range = new Range(new Index(found_member.Identifier.SpanStart), new Index(found_member.Identifier.SpanStart));
+            var result = new CustomMessage3Result();
+            result.TextDocument = new Uri(class_file_path);
+            result.Start = found_member.Identifier.SpanStart;
             return result;
         }
 
