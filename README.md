@@ -1,8 +1,8 @@
 # AntlrVSIX
 
 AntlrVSIX is an extension for Visual Studio 2019 and Visual Studio Code to support editing of Antlr v4 grammars.
-It is implemented as a client/server using the [Language Server Protocol (LSP)](https://langserver.org/) protocol.
-It uses Microsoft's Language Server Protocol
+It is implemented as a client/server using the [Language Server Protocol (LSP)](https://langserver.org/) protocol,
+using Microsoft's Language Server Protocol
 [client](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Client/) and
 [server](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/) APIs.
 The server is implemented in C#; the client for VS 2019
