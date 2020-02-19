@@ -95,7 +95,6 @@
         }
 
 
-
         internal static IEnumerable<IVsWindowFrame> EnumerateDocumentWindowFrames()
         {
             IVsUIShell shell = Package.GetGlobalService(typeof(SVsUIShell)) as IVsUIShell;
@@ -157,10 +156,6 @@
             return null;
         }
 
-        internal static IVsTextView GetIVsTextView(string full_file_name)
-        {
-            throw new Exception();
-        }
         private static bool GetPhysicalPathFromFrame(IVsWindowFrame frame, out string frameFilePath)
         {
             object propertyValue;
@@ -193,6 +188,23 @@
             }
 
             return false;
+        }
+
+        public static SnapshotPoint GetPointInLine(this ITextBuffer textBuffer, int line, int column)
+        {
+            return textBuffer.CurrentSnapshot.GetPointInLine(line, column);
+        }
+        public static SnapshotPoint GetPointInLine(this ITextSnapshot snapshot, int line, int column)
+        {
+            var snapshotLine = snapshot.GetLineFromLineNumber(line);
+            return snapshotLine.Start.Add(column);
+        }
+
+        public static int GetIndex(this ITextBuffer textBuffer, int line, int column)
+        {
+            var point = GetPointInLine(textBuffer, line, column);
+            var index = point.Position;
+            return index;
         }
     }
 }

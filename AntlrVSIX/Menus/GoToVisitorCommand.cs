@@ -124,27 +124,21 @@ namespace LspAntlr
 
                 var manager = ((IServiceProvider)this.ServiceProvider).GetService(typeof(VsTextManagerClass)) as IVsTextManager;
                 if (manager == null) return;
-                manager.GetActiveView(1, null, out IVsTextView grammar_view);
-                if (grammar_view == null) return;
-                grammar_view.GetCaretPos(out int l, out int c);
-                grammar_view.GetBuffer(out IVsTextLines buf);
+                manager.GetActiveView(1, null, out IVsTextView view);
+                if (view == null) return;
+                view.GetCaretPos(out int l, out int c);
+                view.GetBuffer(out IVsTextLines buf);
                 if (buf == null) return;
-                IWpfTextView xxx = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(grammar_view);
+                IWpfTextView xxx = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view);
                 var buffer = xxx.TextBuffer;
-                string g4_file_path = buffer.GetFFN().Result;
-                if (g4_file_path == null) return;
-                var document = Workspaces.Workspace.Instance.FindDocument(g4_file_path);
+                string orig_ffn = buffer.GetFFN().Result;
+                if (orig_ffn == null) return;
+                var document = Workspaces.Workspace.Instance.FindDocument(orig_ffn);
                 if (document == null) return;
                 var pos = LanguageServer.Module.GetIndex(l, c, document);
-                IGrammarDescription grammar_description = LanguageServer.GrammarDescriptionFactory.Create(g4_file_path);
-                if (!grammar_description.IsFileType(g4_file_path)) return;
-                var grammar_name = Path.GetFileName(g4_file_path);
-                grammar_name = Path.GetFileNameWithoutExtension(grammar_name);
-                var listener_baseclass_name = visitor ? (grammar_name + "BaseVisitor") : (grammar_name + "BaseListener");
-                var listener_class_name = visitor ? ("My" + grammar_name + "Visitor") : ("My" + grammar_name + "Listener");
                 var alc = AntlrLanguageClient.Instance;
                 if (alc == null) return;
-                CustomMessage3Result symbol = alc.SendServerCustomMessage3(g4_file_path, pos);
+                CustomMessage3Result symbol = alc.SendServerCustomMessage3(orig_ffn, pos);
                 if (symbol == null) return;
 
                 {

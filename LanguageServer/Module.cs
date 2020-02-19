@@ -15,9 +15,8 @@ namespace LanguageServer
 
         public static int GetIndex(int line, int column, Document doc)
         {
-            var pd = ParserDetailsFactory.Create(doc);
             int index = 0;
-            var buffer = pd.Code;
+            var buffer = doc.Code;
             if (buffer == null) return 0;
             int cur_line = 0;
             int cur_col = 0;
@@ -53,9 +52,8 @@ namespace LanguageServer
 
         public static (int, int) GetLineColumn(int index, Document doc)
         {
-            var pd = ParserDetailsFactory.Create(doc);
             int cur_index = 0;
-            var buffer = pd.Code;
+            var buffer = doc.Code;
             if (buffer == null) return (0, 0);
             int cur_line = 0; // zero based LSP.
             int cur_col = 0; // zero based LSP.
