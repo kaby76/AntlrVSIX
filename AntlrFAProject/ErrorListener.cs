@@ -30,26 +30,29 @@ namespace $safeprojectname$
             had_error = true;
             if (_first_time)
             {
-                _first_time = false;
-                var la_sets = new LASets();
-                IntervalSet set = la_sets.Compute(_parser, _token_stream, line, col);
-                List<string> result = new List<string>();
-                foreach (int r in set.ToList())
+                try
                 {
-                    string rule_name = _parser.Vocabulary.GetSymbolicName(r);
-                    result.Add(rule_name);
-                }
-                if (result.Any())
-                    System.Console.Error.WriteLine("Parse error line/col " + line + "/" + col
+                    _first_time = false;
+                    var la_sets = new LASets();
+                    IntervalSet set = la_sets.Compute(_parser, _token_stream, line, col);
+                    List<string> result = new List<string>();
+                    foreach (int r in set.ToList())
+                    {
+                        string rule_name = _parser.Vocabulary.GetSymbolicName(r);
+                        result.Add(rule_name);
+                    }
+                    if (result.Any())
+                        System.Console.Error.WriteLine("Parse error line/col " + line + "/" + col
                                                        + ", expecting "
-                        + String.Join(", ", result));
-                else
-                    base.SyntaxError(output, recognizer, offendingSymbol, line, col, msg, e);
+                                                       + String.Join(", ", result));
+                    else
+                        base.SyntaxError(output, recognizer, offendingSymbol, line, col, msg, e);
+                    return;
+                }
+                catch(Exception)
+                { }
             }
-            else
-            {
-                base.SyntaxError(output, recognizer, offendingSymbol, line, col, msg, e);
-            }
+            base.SyntaxError(output, recognizer, offendingSymbol, line, col, msg, e);
         }
     }
 }

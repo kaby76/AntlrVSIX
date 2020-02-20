@@ -364,6 +364,7 @@ namespace $safeprojectname$
 
         HashSet<ATNState> closure(ATNState start)
         {
+            if (start == null) throw new Exception();
             var visited = new HashSet<ATNState>();
             var stack = new Stack<ATNState>();
             stack.Push(start);
@@ -394,6 +395,7 @@ namespace $safeprojectname$
                         case TransitionType.PREDICATE:
                             if (this.CheckPredicate((PredicateTransition)transition))
                             {
+                                if (transition.target == null) throw new Exception();
                                 stack.Push(transition.target);
                             }
                             break;
@@ -403,7 +405,10 @@ namespace $safeprojectname$
 
                         default:
                             if (transition.IsEpsilon)
+                            {
+                                if (transition.target == null) throw new Exception();
                                 stack.Push(transition.target);
+                            }
                             break;
                     }
                 }
@@ -427,6 +432,7 @@ namespace $safeprojectname$
             var last_transaction = copy.First();
             if (last_transaction == null) return result;
             var current_state = last_transaction._to;
+            if (current_state == null) throw new Exception();
             for (; ; )
             {
                 if (_log_closure)
@@ -443,12 +449,16 @@ namespace $safeprojectname$
                 var rule = current_state.ruleIndex;
                 var start_state = atn.ruleToStartState[rule];
                 var stop_state = atn.ruleToStopState[rule];
+                bool changed = false;
                 foreach (var s in c)
                 {
+                    if (result.Contains(s)) continue;
+                    changed = true;
                     result.Add(s);
                     if (s == stop_state)
                         do_continue = true;
                 }
+                if (!changed) break;
 
                 if (!do_continue)
                     break;
@@ -466,8 +476,10 @@ namespace $safeprojectname$
                         last_transaction = copy.First();
                         // Get follow state of rule-type transition.
                         var from_state = last_transaction._from;
+                        if (from_state == null) break;
                         var follow_state = last_transaction._follow;
                         current_state = follow_state;
+                        if (current_state == null) throw new Exception();
                         break;
                     }
                 }
