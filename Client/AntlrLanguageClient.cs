@@ -35,6 +35,7 @@ namespace LspAntlr
         public static MemoryStream _log_to_server = new MemoryStream();
         private static JsonRpc _rpc;
         public static Microsoft.VisualStudio.OLE.Interop.IServiceProvider XXX;
+        private JsonRpcMethodAttribute junk;
 
         public AntlrLanguageClient()
         {

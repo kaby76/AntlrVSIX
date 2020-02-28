@@ -59,7 +59,7 @@ export function activate(context: vscode.ExtensionContext) {
     const syncFileEvents = getConfig<boolean>('syncFileEvents', true);
     const extPath = vscode.extensions.getExtension("KenDomino.LspAntlr").extensionPath;
     const antlr: vscodelc.Executable = {
-        command: `${extPath}/server/netcoreapp3.0/LanguageServer.Exec.exe`,
+        command: `${extPath}/server/net472/Server.exe`,
         args: []
     };
     const traceFile = getConfig<string>('trace');

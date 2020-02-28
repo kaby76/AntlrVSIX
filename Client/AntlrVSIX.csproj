@@ -176,12 +176,12 @@
     <ProjectReference Include="..\Server\Server.csproj">
       <Project>{E912AE6C-996B-46A9-9F55-C823EB9B4F47}</Project>
       <Name>Server</Name>
-      <VSIXSubPath>Server</VSIXSubPath>
-      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup</IncludeOutputGroupsInVSIX>
     </ProjectReference>
     <ProjectReference Include="..\LanguageServer\LanguageServer.csproj">
       <Project>{dac36616-e61d-4512-ae4e-c3706544dab1}</Project>
       <Name>LanguageServer</Name>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup</IncludeOutputGroupsInVSIX>
     </ProjectReference>
     <ProjectReference Include="..\Logger\Logger.csproj">
       <Project>{a097e2d9-542e-44b7-9fc4-344e10b4e363}</Project>

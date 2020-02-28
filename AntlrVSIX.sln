@@ -27,7 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "corpus-for-codebuff", "corp
 		corpus-for-codebuff\YangJavaParser.g = corpus-for-codebuff\YangJavaParser.g
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntlrVSIX", "AntlrVSIX\AntlrVSIX.csproj", "{99377F57-EC77-4949-A670-F97989990A3C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\AntlrVSIX.csproj", "{99377F57-EC77-4949-A670-F97989990A3C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{E912AE6C-996B-46A9-9F55-C823EB9B4F47} = {E912AE6C-996B-46A9-9F55-C823EB9B4F47}
 	EndProjectSection

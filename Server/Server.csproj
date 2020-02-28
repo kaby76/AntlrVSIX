@@ -23,4 +23,8 @@
     <Reference Include="System.Web" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+  </PropertyGroup>
+
 </Project>
