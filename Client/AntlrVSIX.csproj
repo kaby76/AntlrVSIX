@@ -97,9 +97,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\Server\bin\Debug\**\*.*">
-      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>Server\%(RecursiveDir)%(Filename)%(Extension)</Link>
-      <Visible>false</Visible>
+      <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="AntlrVSIX_large.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
