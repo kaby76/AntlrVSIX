@@ -96,11 +96,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\Server\bin\Debug\**\*.*">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Link>Server\%(RecursiveDir)%(Filename)%(Extension)</Link>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="AntlrVSIX_large.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -155,6 +150,13 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="$(ProjectDir)\bin\Debug\Server\**\*.*">
+      <Link>Server\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\AntlrCppProject\AntlrCppProject.csproj">
       <Project>{D60E6656-D74D-4D9F-8C91-42539A26E529}</Project>
       <Name>AntlrCppProject</Name>
@@ -176,7 +178,6 @@
     <ProjectReference Include="..\Server\Server.csproj">
       <Project>{E912AE6C-996B-46A9-9F55-C823EB9B4F47}</Project>
       <Name>Server</Name>
-      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup</IncludeOutputGroupsInVSIX>
     </ProjectReference>
     <ProjectReference Include="..\LanguageServer\LanguageServer.csproj">
       <Project>{dac36616-e61d-4512-ae4e-c3706544dab1}</Project>
@@ -204,9 +205,11 @@
       <Name>Workspaces</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
+  <PropertyGroup>
+    <PreBuildEvent>if not exist "$(SolutionDir)Client\bin\Debug\Server" (mkdir "$(SolutionDir)Client\bin\Debug\Server" &amp;&amp; xcopy "$(SolutionDir)Server\bin\Debug\." "$(SolutionDir)Client\bin\Debug\Server" /s /e /y) ELSE (xcopy "$(SolutionDir)Server\bin\Debug\." "$(SolutionDir)Client\bin\Debug\Server")</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
