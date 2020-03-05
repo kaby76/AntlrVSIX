@@ -26,7 +26,7 @@ namespace Graphs
 
     public class DirectedEdge<NODE> : IEdge<NODE>
     {
-        private double weight;
+        private readonly double weight;
         private NODE _from;
         private NODE _to;
 
@@ -39,9 +39,13 @@ namespace Graphs
          */
         public DirectedEdge(NODE v, NODE w, double weight = 0)
         {
-            if (Double.IsNaN(weight)) throw new Exception("Weight is NaN");
-            this._from = v;
-            this._to = w;
+            if (double.IsNaN(weight))
+            {
+                throw new Exception("Weight is NaN");
+            }
+
+            _from = v;
+            _to = w;
             this.weight = weight;
         }
 
@@ -51,8 +55,8 @@ namespace Graphs
          */
         public NODE From
         {
-            get { return _from; }
-            set {_from = value; }
+            get => _from;
+            set => _from = value;
         }
 
 
@@ -62,8 +66,8 @@ namespace Graphs
          */
         public NODE To
         {
-            get { return _to; }
-            set { _to = value; }
+            get => _to;
+            set => _to = value;
         }
 
         /**
@@ -86,7 +90,7 @@ namespace Graphs
 
         public override string ToString()
         {
-            return _from + "->" + _to + " " + String.Format("%5.2f", weight);
+            return _from + "->" + _to + " " + string.Format("%5.2f", weight);
         }
 
         /**

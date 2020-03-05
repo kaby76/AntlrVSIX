@@ -4,7 +4,7 @@
     using System.Text.Json;
     using System.Text.Json.Serialization;
 
-    class ObjectToBoolConverter : JsonConverter<object>
+    internal class ObjectToBoolConverter : JsonConverter<object>
     {
         public override object Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -19,7 +19,7 @@
             }
 
             // Use JsonElement as fallback.
-            var converter = options.GetConverter(typeof(JsonElement)) as JsonConverter<JsonElement>;
+            JsonConverter<JsonElement> converter = options.GetConverter(typeof(JsonElement)) as JsonConverter<JsonElement>;
             if (converter != null)
             {
                 return converter.Read(ref reader, typeToConvert, options);
@@ -35,7 +35,7 @@
         }
     }
 
-    class ObjectToIntConverter : JsonConverter<object>
+    internal class ObjectToIntConverter : JsonConverter<object>
     {
         public override object Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -45,7 +45,7 @@
             }
 
             // Use JsonElement as fallback.
-            var converter = options.GetConverter(typeof(JsonElement)) as JsonConverter<JsonElement>;
+            JsonConverter<JsonElement> converter = options.GetConverter(typeof(JsonElement)) as JsonConverter<JsonElement>;
             if (converter != null)
             {
                 return converter.Read(ref reader, typeToConvert, options);
@@ -61,7 +61,7 @@
         }
     }
 
-    class ObjectToPrimitiveConverter : JsonConverter<object>
+    internal class ObjectToPrimitiveConverter : JsonConverter<object>
     {
         public override object Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
@@ -112,7 +112,7 @@
         }
     }
 
-    class ObjectToStringConverter : JsonConverter<object>
+    internal class ObjectToStringConverter : JsonConverter<object>
     {
         public override object Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {

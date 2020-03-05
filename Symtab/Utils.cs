@@ -142,10 +142,10 @@
             {
                 foreach (T x in data)
                 {
-                if (pred(x))
-                {
-                    return x;
-                }
+                    if (pred(x))
+                    {
+                        return x;
+                    }
                 }
             }
             return default(T);
@@ -158,10 +158,10 @@
             {
                 foreach (T x in data)
                 {
-                if (pred(x))
-                {
-                    output.Add(x);
-                }
+                    if (pred(x))
+                    {
+                        output.Add(x);
+                    }
                 }
             }
             return output;
@@ -187,7 +187,7 @@
             {
                 foreach (T x in data)
                 {
-                output.Add(getter(x));
+                    output.Add(getter(x));
                 }
             }
             return output;
@@ -200,7 +200,7 @@
             {
                 foreach (T x in data)
                 {
-                output.Add(getter(x));
+                    output.Add(getter(x));
                 }
             }
             return output;
@@ -223,7 +223,7 @@
             while (iter.MoveNext())
             {
                 buf.Append(iter.Current);
-//JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
+                //JAVA TO C# CONVERTER TODO TASK: Java iterators are only converted within the context of 'while' and 'for' loops:
                 if (iter.MoveNext())
                 {
                     buf.Append(separator);

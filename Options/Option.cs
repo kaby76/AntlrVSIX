@@ -6,8 +6,8 @@
 
     public class Option
     {
-        static string antlr_options_file_name = "";
-        private static string CorpusLocation = s == null ? "" : s;
+        private static string antlr_options_file_name = "";
+        private static readonly string CorpusLocation = s == null ? "" : s;
         private static Dictionary<string, object> defaults = new Dictionary<string, object>()
         {
             {"IncrementalReformat", true },
@@ -17,19 +17,21 @@
             {"OptInLogging", false },
             {"CorpusLocation", CorpusLocation },
         };
-        static string home = System.Environment.GetEnvironmentVariable("HOMEPATH");
-        static bool initialized = false;
-        private static string s = System.Environment.GetEnvironmentVariable("CORPUS_LOCATION");
+        private static readonly string home = System.Environment.GetEnvironmentVariable("HOMEPATH");
+        private static bool initialized = false;
+        private static readonly string s = System.Environment.GetEnvironmentVariable("CORPUS_LOCATION");
         public static bool GetBoolean(string option)
         {
             Initialize();
             bool default_value = false;
             defaults.TryGetValue(option, out object value);
             if (value == null)
+            {
                 default_value = false;
+            }
             else
             {
-                var options = new JsonSerializerOptions();
+                JsonSerializerOptions options = new JsonSerializerOptions();
                 options.Converters.Add(new ObjectToBoolConverter());
                 object obj = JsonSerializer.Deserialize<object>(value.ToString().ToLower(), options);
                 default_value = (bool)obj;
@@ -43,10 +45,12 @@
             int default_value = 0;
             defaults.TryGetValue(option, out object value);
             if (value == null)
+            {
                 default_value = 0;
+            }
             else
             {
-                var options = new JsonSerializerOptions();
+                JsonSerializerOptions options = new JsonSerializerOptions();
                 options.Converters.Add(new ObjectToIntConverter());
                 object obj = JsonSerializer.Deserialize<object>(value.ToString().ToLower(), options);
                 default_value = (int)obj;
@@ -60,7 +64,9 @@
             string default_value = "";
             defaults.TryGetValue(option, out object value);
             if (value == null)
+            {
                 default_value = "";
+            }
             else
             {
                 default_value = value.ToString();
@@ -90,7 +96,11 @@
         }
         private static void Initialize()
         {
-            if (initialized) return;
+            if (initialized)
+            {
+                return;
+            }
+
             Read();
         }
 
@@ -103,7 +113,7 @@
             {
                 if (File.Exists(antlr_options_file_name))
                 {
-                    var jsonString = File.ReadAllText(antlr_options_file_name);
+                    string jsonString = File.ReadAllText(antlr_options_file_name);
                     defaults = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonString);
                 }
                 else
@@ -118,7 +128,7 @@
         {
             if (Path.IsPathRooted(antlr_options_file_name))
             {
-                var jsonString = JsonSerializer.Serialize(defaults);
+                string jsonString = JsonSerializer.Serialize(defaults);
                 File.WriteAllText(antlr_options_file_name, jsonString);
             }
             initialized = true;

@@ -12,21 +12,9 @@
             this.targetType = targetType;
         }
 
-        public virtual int TypeIndex
-        {
-            get
-            {
-                return -1;
-            }
-        }
+        public virtual int TypeIndex => -1;
 
-        public virtual IType TargetType
-        {
-            get
-            {
-                return targetType;
-            }
-        }
+        public virtual IType TargetType => targetType;
     }
 
 }

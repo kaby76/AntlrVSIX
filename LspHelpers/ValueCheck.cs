@@ -32,8 +32,10 @@ namespace LspTools.LspHelpers
         /// <param name="val">The value to check for null</param>
         public static void AssertNotNullArg(string argName, object val)
         {
-            if(val == null)
+            if (val == null)
+            {
                 throw new ArgumentNullException(argName);
+            }
         }
 
         /// <summary>
@@ -51,8 +53,10 @@ namespace LspTools.LspHelpers
         public static void AssertNotNullArg(
             string argName, object val, string message)
         {
-            if(val == null)
+            if (val == null)
+            {
                 throw new ArgumentNullException(argName, message);
+            }
         }
 
         /// <summary>
@@ -65,8 +69,10 @@ namespace LspTools.LspHelpers
         /// </param>
         public static void AssertNotNull(object val, string message)
         {
-            if(val == null)
+            if (val == null)
+            {
                 throw new AssertFailedException(message);
+            }
         }
 
         /// <summary>
@@ -79,8 +85,10 @@ namespace LspTools.LspHelpers
         /// </param>
         public static void AssertTrue(bool cond, string message)
         {
-            if(!cond)
+            if (!cond)
+            {
                 throw new AssertFailedException(message);
+            }
         }
 
         /// <summary>
@@ -98,8 +106,10 @@ namespace LspTools.LspHelpers
         public static void AssertTrueArg(
             string argName, bool cond, string message)
         {
-            if(!cond)
+            if (!cond)
+            {
                 throw new ArgumentException(message, argName);
+            }
         }
 
         /// <summary>
@@ -114,7 +124,7 @@ namespace LspTools.LspHelpers
         public static void AssertNonEmptyStringArg(
             string argName, string strValue)
         {
-            if(strValue == null || strValue == "")
+            if (strValue == null || strValue == "")
             {
                 throw new ArgumentNullException(
                     argName, NullOrZeroLengthMessage
@@ -133,7 +143,7 @@ namespace LspTools.LspHelpers
         /// <param name="arr">The array to check.</param>
         public static void AssertNonEmptyArrayArg(string argName, object[] arr)
         {
-            if(arr == null || arr.Length == 0)
+            if (arr == null || arr.Length == 0)
             {
                 throw new ArgumentNullException(
                     argName, NullOrZeroLengthMessage
@@ -155,16 +165,15 @@ namespace LspTools.LspHelpers
         public static void AssertInRangeArg(
             string argName, double val, double min, double max)
         {
-            if(val < min || val > max)
+            if (val < min || val > max)
+            {
                 throw new ArgumentOutOfRangeException(argName);
+            }
         }
 
         /// <summary>
         /// Retrieves a string containing "Cannot be null or zero-length.".
         /// </summary>
-        public static string NullOrZeroLengthMessage
-        {
-            get { return "Cannot be null or zero-length."; }
-        }
+        public static string NullOrZeroLengthMessage => "Cannot be null or zero-length.";
     }
 }

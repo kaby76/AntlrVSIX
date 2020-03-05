@@ -3,9 +3,7 @@
     //using Options;
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Reflection;
-    using System.Text;
 
     public class ManualAssemblyResolver : IDisposable
     {
@@ -27,9 +25,14 @@
         {
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(OnAssemblyResolve);
             if (assembly == null)
+            {
                 throw new ArgumentNullException("assembly");
-            _assemblies = new List<Assembly>();
-            _assemblies.Add(assembly);
+            }
+
+            _assemblies = new List<Assembly>
+            {
+                assembly
+            };
         }
 
         public void Dispose()
@@ -53,17 +56,19 @@
 
     public class GrammarDescriptionFactory
     {
-        private static IGrammarDescription _antlr = new AntlrGrammarDescription();
+        private static readonly IGrammarDescription _antlr = new AntlrGrammarDescription();
         public static List<string> AllLanguages
         {
             get
             {
-                List<string> result = new List<string>();
-                result.Add(_antlr.Name);
+                List<string> result = new List<string>
+                {
+                    _antlr.Name
+                };
                 return result;
             }
         }
-        
+
         public static IGrammarDescription Create(string ffn)
         {
             if (_antlr.IsFileType(ffn))

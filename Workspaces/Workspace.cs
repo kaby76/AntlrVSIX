@@ -1,22 +1,24 @@
-﻿using System;
-using System.IO;
-
-namespace Workspaces
+﻿namespace Workspaces
 {
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
 
     public class Workspace : Container
     {
-        static Workspace _instance;
-        string _name;
-        string _ffn;
-        List<Container> _contents = new List<Container>();
+        private static Workspace _instance;
+        private string _name;
+        private string _ffn;
+        private readonly List<Container> _contents = new List<Container>();
 
         public static Workspace Initialize(string name, string ffn)
         {
-            if (_instance != null) return _instance;
-            var i = Instance;
+            if (_instance != null)
+            {
+                return _instance;
+            }
+
+            Workspace i = Instance;
             i._name = name;
             i._ffn = ffn;
             return i;
@@ -27,27 +29,27 @@ namespace Workspaces
             get
             {
                 if (_instance == null)
+                {
                     _instance = new Workspace();
+                }
+
                 return _instance;
             }
         }
 
         public string Name
         {
-            get { return _name; }
-            set { _name = value; }
+            get => _name;
+            set => _name = value;
         }
 
         public string FFN
         {
-            get { return _ffn; }
-            set { _ffn = value; }
+            get => _ffn;
+            set => _ffn = value;
         }
 
-        public IEnumerable<Container> Children
-        {
-            get { return _contents; }
-        }
+        public IEnumerable<Container> Children => _contents;
 
         public override Container AddChild(Container doc)
         {
@@ -58,30 +60,37 @@ namespace Workspaces
 
         public override Document FindDocument(string ffn)
         {
-            if (ffn == null) return null;
-            foreach (var doc in _contents)
+            if (ffn == null)
             {
-                var found = doc.FindDocument(ffn);
-                if (found != null) return found;
+                return null;
+            }
+
+            foreach (Container doc in _contents)
+            {
+                Document found = doc.FindDocument(ffn);
+                if (found != null)
+                {
+                    return found;
+                }
             }
             // If no document found, try to create it.
             if (File.Exists(ffn))
             {
-                var document = new Workspaces.Document(ffn);
+                Document document = new Workspaces.Document(ffn);
                 try
                 {   // Open the text file using a stream reader.
                     using (StreamReader sr = new StreamReader(ffn))
                     {
                         // Read the stream to a string, and write the string to the console.
-                        String str = sr.ReadToEnd();
+                        string str = sr.ReadToEnd();
                         document.Code = str;
                     }
                 }
-                catch (IOException e)
+                catch (IOException)
                 {
                     return null;
                 }
-                this.AddChild(document);
+                AddChild(document);
                 return document;
             }
             return null;
@@ -94,8 +103,12 @@ namespace Workspaces
             stack.Push(this);
             while (stack.Any())
             {
-                var current = stack.Pop();
-                if (visited.Contains(current)) continue;
+                Container current = stack.Pop();
+                if (visited.Contains(current))
+                {
+                    continue;
+                }
+
                 visited.Add(current);
                 if (current is Document)
                 {
@@ -103,7 +116,7 @@ namespace Workspaces
                 }
                 else
                 {
-                    foreach (var c in this._contents)
+                    foreach (Container c in _contents)
                     {
                         stack.Push(c);
                     }
@@ -113,20 +126,26 @@ namespace Workspaces
 
         public override Project FindProject(string ffn)
         {
-            foreach (var doc in _contents)
+            foreach (Container doc in _contents)
             {
-                var found = doc.FindProject(ffn);
-                if (found != null) return found;
+                Project found = doc.FindProject(ffn);
+                if (found != null)
+                {
+                    return found;
+                }
             }
             return null;
         }
 
         public override Project FindProject(string canonical_name, string name, string ffn)
         {
-            foreach (var doc in _contents)
+            foreach (Container doc in _contents)
             {
-                var found = doc.FindProject(canonical_name, name, ffn);
-                if (found != null) return found;
+                Project found = doc.FindProject(canonical_name, name, ffn);
+                if (found != null)
+                {
+                    return found;
+                }
             }
             return null;
         }

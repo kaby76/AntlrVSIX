@@ -18,27 +18,15 @@
 
         public virtual ParserRuleContext DefNode
         {
-            set
-            {
-                this.defNode = value;
-            }
-            get
-            {
-                return defNode;
-            }
+            set => defNode = value;
+            get => defNode;
         }
 
 
         public virtual IType Type
         {
-            get
-            {
-                return retType;
-            }
-            set
-            {
-                retType = value;
-            }
+            get => retType;
+            set => retType = value;
         }
 
 
@@ -47,21 +35,9 @@
         ///  This is useful as either the number of parameters or the number of
         ///  parameters and locals depending on how you build the scope tree.
         /// </summary>
-        public virtual int NumberOfVariables
-        {
-            get
-            {
-                return Utils.filter(symbols.Values, s => s is VariableSymbol).Count;
-            }
-        }
+        public virtual int NumberOfVariables => Utils.filter(symbols.Values, s => s is VariableSymbol).Count;
 
-        public virtual int NumberOfParameters
-        {
-            get
-            {
-                return Utils.filter(symbols.Values, s => s is ParameterSymbol).Count;
-            }
-        }
+        public virtual int NumberOfParameters => Utils.filter(symbols.Values, s => s is ParameterSymbol).Count;
 
         public override string ToString()
         {

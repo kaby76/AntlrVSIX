@@ -1,7 +1,7 @@
 ﻿namespace Symtab
 {
-    using System.Collections.Generic;
     using Antlr4.Runtime;
+    using System.Collections.Generic;
 
     /// <summary>
     /// A symbol representing the class. It is a kind of data aggregate
@@ -29,12 +29,14 @@
                 {
                     if (EnclosingScope != null)
                     {
-                        var list = EnclosingScope.LookupType(superClassName);
+                        IList<ISymbol> list = EnclosingScope.LookupType(superClassName);
                         foreach (ISymbol superClass in list)
+                        {
                             if (superClass is InterfaceSymbol)
                             {
-                                result.Add( (InterfaceSymbol)superClass);
+                                result.Add((InterfaceSymbol)superClass);
                             }
+                        }
                     }
                 }
                 return result;
@@ -43,24 +45,18 @@
 
         /// <summary>
         /// Multiple superclass or interface implementations and the like... </summary>
-        public virtual IList<InterfaceSymbol> SuperClassScopes
-        {
-            get
-            {
-                return SuperClassScope;
-            }
-        }
+        public virtual IList<InterfaceSymbol> SuperClassScopes => SuperClassScope;
 
         public override IList<ISymbol> LookupType(string name, bool alias = false)
         {
-            var result = new List<ISymbol>();
-            var list = resolveMember(name);
+            List<ISymbol> result = new List<ISymbol>();
+            IList<ISymbol> list = resolveMember(name);
             result.AddRange(list);
             // if not a member, check any enclosing scope. it might be a global variable for example
             IScope parent = EnclosingScope;
             if (parent != null)
             {
-                var another_list = parent.LookupType(name, alias);
+                IList<ISymbol> another_list = parent.LookupType(name, alias);
                 result.AddRange(another_list);
             }
             return result;
@@ -72,7 +68,7 @@
         /// </summary>
         public override IList<ISymbol> resolveMember(string name)
         {
-            var result = new List<ISymbol>();
+            List<ISymbol> result = new List<ISymbol>();
             symbols.TryGetValue(name, out ISymbol s);
             if (s is IMemberSymbol)
             {
@@ -84,12 +80,14 @@
             {
                 foreach (InterfaceSymbol sup in superClassScopes)
                 {
-                    var list = sup.resolveMember(name);
-                    foreach (var ss in list)
+                    IList<ISymbol> list = sup.resolveMember(name);
+                    foreach (ISymbol ss in list)
+                    {
                         if (ss is IMemberSymbol)
                         {
                             result.Add(ss);
                         }
+                    }
                 }
             }
             return result;
@@ -101,13 +99,16 @@
         /// </summary>
         public override IList<FieldSymbol> resolveField(string name)
         {
-            var result = new List<FieldSymbol>();
+            List<FieldSymbol> result = new List<FieldSymbol>();
             IList<ISymbol> list = resolveMember(name);
-            foreach (var s in list)
+            foreach (ISymbol s in list)
+            {
                 if (s is FieldSymbol)
                 {
                     result.Add(s as FieldSymbol);
                 }
+            }
+
             return result;
         }
 
@@ -117,13 +118,16 @@
         /// </summary>
         public virtual IList<MethodSymbol> resolveMethod(string name)
         {
-            var result = new List<MethodSymbol>();
+            List<MethodSymbol> result = new List<MethodSymbol>();
             IList<ISymbol> list = resolveMember(name);
-            foreach (var s in list)
+            foreach (ISymbol s in list)
+            {
                 if (s is MethodSymbol)
                 {
                     result.Add(s as MethodSymbol);
                 }
+            }
+
             return result;
         }
 
@@ -131,18 +135,12 @@
         {
             set
             {
-                this.superClassName = value;
+                superClassName = value;
                 nextFreeMethodSlot = NumberOfMethods;
             }
         }
 
-        public virtual string SuperClassName
-        {
-            get
-            {
-                return superClassName;
-            }
-        }
+        public virtual string SuperClassName => superClassName;
 
         public override void setSlotNumber(ISymbol sym)
         {
@@ -152,13 +150,13 @@
                     MethodSymbol msym = (MethodSymbol)sym;
                     // handle inheritance. If not found in this scope, check superclass
                     // if any.
-                    var list = SuperClassScope;
+                    IList<InterfaceSymbol> list = SuperClassScope;
                     if (list.Count == 1)
                     {
                         InterfaceSymbol superClass = list[0];
                         if (superClass != null)
                         {
-                            var list_methods = superClass.resolveMethod(sym.Name);
+                            IList<MethodSymbol> list_methods = superClass.resolveMethod(sym.Name);
                             if (list_methods.Count > 0)
                             {
                                 MethodSymbol superMethodSym = list_methods[0];
@@ -206,7 +204,7 @@
             get
             {
                 ISet<MethodSymbol> methods = new LinkedHashSet<MethodSymbol>();
-                var list_supers = SuperClassScope;
+                IList<InterfaceSymbol> list_supers = SuperClassScope;
                 foreach (InterfaceSymbol superClassScope in list_supers)
                 {
                     if (superClassScope != null)
@@ -226,7 +224,7 @@
             get
             {
                 List<FieldSymbol> fields = new List<FieldSymbol>();
-                var list_supers = SuperClassScope;
+                IList<InterfaceSymbol> list_supers = SuperClassScope;
                 foreach (InterfaceSymbol superClassScope in list_supers)
                 {
                     if (superClassScope != null)
@@ -235,7 +233,7 @@
                     }
                 }
                 throw new System.Exception("Not implemented.");
-                ((List<FieldSymbol>)fields).AddRange(DefinedFields);
+                fields.AddRange(DefinedFields);
                 return fields;
             }
         }
@@ -260,37 +258,9 @@
 
         /// <summary>
         /// get the total number of methods visible to this class </summary>
-        public virtual int NumberOfMethods
-        {
-            get
-            {
-                throw new System.Exception("Not implemented.");
-                //int n = 0;
-                //InterfaceSymbol superClassScope = SuperClassScope;
-                //if (superClassScope != null)
-                //{
-                //    n += superClassScope.NumberOfMethods;
-                //}
-                //n += NumberOfDefinedMethods;
-                //return n;
-            }
-        }
+        public virtual int NumberOfMethods => throw new System.Exception("Not implemented.");//int n = 0;//InterfaceSymbol superClassScope = SuperClassScope;//if (superClassScope != null)//{//    n += superClassScope.NumberOfMethods;//}//n += NumberOfDefinedMethods;//return n;
 
-        public override int NumberOfFields
-        {
-            get
-            {
-                throw new System.Exception("Not implemented.");
-                //int n = 0;
-                //InterfaceSymbol superClassScope = SuperClassScope;
-                //if (superClassScope != null)
-                //{
-                //    n += superClassScope.NumberOfFields;
-                //}
-                //n += NumberOfDefinedFields;
-                //return n;
-            }
-        }
+        public override int NumberOfFields => throw new System.Exception("Not implemented.");//int n = 0;//InterfaceSymbol superClassScope = SuperClassScope;//if (superClassScope != null)//{//    n += superClassScope.NumberOfFields;//}//n += NumberOfDefinedFields;//return n;
 
         public override string ToString()
         {

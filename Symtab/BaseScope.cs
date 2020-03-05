@@ -32,13 +32,7 @@
             EnclosingScope = enclosingScope;
         }
 
-        public virtual IDictionary<string, ISymbol> Members
-        {
-            get
-            {
-                return symbols;
-            }
-        }
+        public virtual IDictionary<string, ISymbol> Members => symbols;
 
         public virtual ISymbol getSymbol(string name)
         {
@@ -48,14 +42,8 @@
 
         public virtual IScope EnclosingScope
         {
-            set
-            {
-                this.enclosingScope = value;
-            }
-            get
-            {
-                return enclosingScope;
-            }
+            set => enclosingScope = value;
+            get => enclosingScope;
         }
 
         public virtual IList<IScope> AllNestedScopedSymbols
@@ -72,14 +60,18 @@
         {
             get
             {
-                var result = new List<IScope>();
-                foreach (var sym in Symbols)
+                List<IScope> result = new List<IScope>();
+                foreach (ISymbol sym in Symbols)
                 {
-                    var s = sym as IScope;
-                    if (s == null) continue;
+                    IScope s = sym as IScope;
+                    if (s == null)
+                    {
+                        continue;
+                    }
+
                     result.Add(s);
                 }
-                return (IList<IScope>)result;
+                return result;
             }
         }
 
@@ -121,21 +113,27 @@
                 IScope parent = EnclosingScope;
                 if (parent != null)
                 {
-                    var possibles = parent.LookupType(name, alias);
-                    if (possibles.Any()) result.AddRange(possibles);
+                    IList<ISymbol> possibles = parent.LookupType(name, alias);
+                    if (possibles.Any())
+                    {
+                        result.AddRange(possibles);
+                    }
                 }
                 // If not here, check enclosing "import" scopes.
-                foreach (var sc in this.nestedScopesNotSymbols)
+                foreach (IScope sc in nestedScopesNotSymbols)
                 {
                     if (sc is SearchPathScope)
                     {
-                        var spsc = sc as SearchPathScope;
-                        foreach (var sub_scope in spsc.nestedScopesNotSymbols)
+                        SearchPathScope spsc = sc as SearchPathScope;
+                        foreach (IScope sub_scope in spsc.nestedScopesNotSymbols)
                         {
-                            var res = sub_scope.LookupType(name);
+                            IList<ISymbol> res = sub_scope.LookupType(name);
                             if (res != null)
                             {
-                                if (res.Any()) result.AddRange(res);
+                                if (res.Any())
+                                {
+                                    result.AddRange(res);
+                                }
                             }
                         }
                     }
@@ -143,35 +141,47 @@
             }
             else
             {
-                var list = symbols.Where(kvp =>
+                IEnumerable<KeyValuePair<string, ISymbol>> list = symbols.Where(kvp =>
                 {
-                    var a = kvp.Value as TypeAlias;
+                    TypeAlias a = kvp.Value as TypeAlias;
                     if (a != null)
                     {
-                        if (a.targetType.Name == name) return true;
+                        if (a.targetType.Name == name)
+                        {
+                            return true;
+                        }
                     }
                     return false;
                 });
-                if (list.Any()) result.AddRange(list.Select(l => l.Value));
+                if (list.Any())
+                {
+                    result.AddRange(list.Select(l => l.Value));
+                }
                 // if not here, check any enclosing scope
                 IScope parent = EnclosingScope;
                 if (parent != null)
                 {
-                    var possibles = parent.LookupType(name, alias);
-                    if (possibles.Any()) result.AddRange(possibles);
+                    IList<ISymbol> possibles = parent.LookupType(name, alias);
+                    if (possibles.Any())
+                    {
+                        result.AddRange(possibles);
+                    }
                 }
                 // If not here, check enclosing "import" scopes.
-                foreach (var sc in this.nestedScopesNotSymbols)
+                foreach (IScope sc in nestedScopesNotSymbols)
                 {
                     if (sc is SearchPathScope)
                     {
-                        var spsc = sc as SearchPathScope;
-                        foreach (var sub_scope in spsc.nestedScopesNotSymbols)
+                        SearchPathScope spsc = sc as SearchPathScope;
+                        foreach (IScope sub_scope in spsc.nestedScopesNotSymbols)
                         {
-                            var res = sub_scope.LookupType(name);
+                            IList<ISymbol> res = sub_scope.LookupType(name);
                             if (res != null)
                             {
-                                if (res.Any()) result.AddRange(res);
+                                if (res.Any())
+                                {
+                                    result.AddRange(res);
+                                }
                             }
                         }
                     }
@@ -185,7 +195,7 @@
             if (symbols.ContainsKey(sym.Name))
             {
                 System.Type t = sym.GetType();
-                var s = System.Activator.CreateInstance(t, new object[] { "_generated_" + new System.Random().Next(), null } );
+                object s = System.Activator.CreateInstance(t, new object[] { "_generated_" + new System.Random().Next(), null });
                 sym = s as ISymbol;
                 // throw new System.ArgumentException("duplicate symbol " + sym.Name);
             }
@@ -268,7 +278,7 @@
             {
                 Dictionary<string, ISymbol>.ValueCollection list = symbols.Values;
                 IList<ISymbol> result = new List<ISymbol>();
-                foreach (var l in list)
+                foreach (ISymbol l in list)
                 {
                     result.Add(l);
                 }
@@ -294,20 +304,14 @@
             }
         }
 
-        public virtual int NumberOfSymbols
-        {
-            get
-            {
-                return symbols.Count;
-            }
-        }
+        public virtual int NumberOfSymbols => symbols.Count;
 
         public virtual ISet<string> SymbolNames
         {
             get
             {
                 ISet<string> set = new HashSet<string>();
-                foreach (var t in symbols)
+                foreach (KeyValuePair<string, ISymbol> t in symbols)
                 {
                     set.Add(t.Key);
                 }
@@ -337,7 +341,7 @@
 
         public virtual string toTestString(string separator, string scopePathSeparator)
         {
-            IList<ISymbol> allSymbols = this.AllSymbols;
+            IList<ISymbol> allSymbols = AllSymbols;
             IList<string> syms = Utils.map(allSymbols, s => s.Scope.Name + scopePathSeparator + s.Name);
             return Utils.join(syms, separator);
         }

@@ -86,8 +86,8 @@ namespace LanguageServer
          */
         public override string ToString()
         {
-            string prettyText = this.text.Replace('\n', '\u00b6');
-            return "Diff(" + this.operation + ",\"" + prettyText + "\")";
+            string prettyText = text.Replace('\n', '\u00b6');
+            return "Diff(" + operation + ",\"" + prettyText + "\")";
         }
 
         /**
@@ -95,7 +95,7 @@ namespace LanguageServer
          * @param d Another Diff to compare against.
          * @return true or false.
          */
-        public override bool Equals(Object obj)
+        public override bool Equals(object obj)
         {
             // If parameter is null return false.
             if (obj == null)
@@ -105,13 +105,13 @@ namespace LanguageServer
 
             // If parameter cannot be cast to Diff return false.
             Diff p = obj as Diff;
-            if ((System.Object)p == null)
+            if (p == null)
             {
                 return false;
             }
 
             // Return true if the fields match.
-            return p.operation == this.operation && p.text == this.text;
+            return p.operation == operation && p.text == text;
         }
 
         public bool Equals(Diff obj)
@@ -123,7 +123,7 @@ namespace LanguageServer
             }
 
             // Return true if the fields match.
-            return obj.operation == this.operation && obj.text == this.text;
+            return obj.operation == operation && obj.text == text;
         }
 
         public override int GetHashCode()
@@ -153,35 +153,35 @@ namespace LanguageServer
         public override string ToString()
         {
             string coords1, coords2;
-            if (this.length1 == 0)
+            if (length1 == 0)
             {
-                coords1 = this.start1 + ",0";
+                coords1 = start1 + ",0";
             }
-            else if (this.length1 == 1)
+            else if (length1 == 1)
             {
-                coords1 = Convert.ToString(this.start1 + 1);
-            }
-            else
-            {
-                coords1 = (this.start1 + 1) + "," + this.length1;
-            }
-            if (this.length2 == 0)
-            {
-                coords2 = this.start2 + ",0";
-            }
-            else if (this.length2 == 1)
-            {
-                coords2 = Convert.ToString(this.start2 + 1);
+                coords1 = Convert.ToString(start1 + 1);
             }
             else
             {
-                coords2 = (this.start2 + 1) + "," + this.length2;
+                coords1 = (start1 + 1) + "," + length1;
+            }
+            if (length2 == 0)
+            {
+                coords2 = start2 + ",0";
+            }
+            else if (length2 == 1)
+            {
+                coords2 = Convert.ToString(start2 + 1);
+            }
+            else
+            {
+                coords2 = (start2 + 1) + "," + length2;
             }
             StringBuilder text = new StringBuilder();
             text.Append("@@ -").Append(coords1).Append(" +").Append(coords2)
                 .Append(" @@\n");
             // Escape the body of the patch with %xx notation.
-            foreach (Diff aDiff in this.diffs)
+            foreach (Diff aDiff in diffs)
             {
                 switch (aDiff.operation)
                 {
@@ -231,7 +231,7 @@ namespace LanguageServer
         public short Patch_Margin = 4;
 
         // The number of bits in an int.
-        private short Match_MaxBits = 32;
+        private readonly short Match_MaxBits = 32;
 
 
         //  DIFF FUNCTIONS
@@ -264,7 +264,7 @@ namespace LanguageServer
         {
             // Set a deadline by which time the diff must be complete.
             DateTime deadline;
-            if (this.Diff_Timeout <= 0)
+            if (Diff_Timeout <= 0)
             {
                 deadline = DateTime.MaxValue;
             }
@@ -429,7 +429,7 @@ namespace LanguageServer
                                          DateTime deadline)
         {
             // Scan the text on a line-by-line basis first.
-            Object[] a = diff_linesToChars(text1, text2);
+            object[] a = diff_linesToChars(text1, text2);
             text1 = (string)a[0];
             text2 = (string)a[1];
             List<string> linearray = (List<string>)a[2];
@@ -470,7 +470,7 @@ namespace LanguageServer
                                 count_delete + count_insert);
                             pointer = pointer - count_delete - count_insert;
                             List<Diff> subDiff =
-                                this.diff_main(text_delete, text_insert, false, deadline);
+                                diff_main(text_delete, text_insert, false, deadline);
                             diffs.InsertRange(pointer, subDiff);
                             pointer = pointer + subDiff.Count;
                         }
@@ -631,9 +631,11 @@ namespace LanguageServer
             }
             // Diff took too long and hit the deadline or
             // number of diffs equals number of characters, no commonality at all.
-            List<Diff> diffs = new List<Diff>();
-            diffs.Add(new Diff(Operation.DELETE, text1));
-            diffs.Add(new Diff(Operation.INSERT, text2));
+            List<Diff> diffs = new List<Diff>
+            {
+                new Diff(Operation.DELETE, text1),
+                new Diff(Operation.INSERT, text2)
+            };
             return diffs;
         }
 
@@ -672,7 +674,7 @@ namespace LanguageServer
          *     encoded text2 and the List of unique strings.  The zeroth element
          *     of the List of unique strings is intentionally blank.
          */
-        protected Object[] diff_linesToChars(string text1, string text2)
+        protected object[] diff_linesToChars(string text1, string text2)
         {
             List<string> lineArray = new List<string>();
             Dictionary<string, int> lineHash = new Dictionary<string, int>();
@@ -686,7 +688,7 @@ namespace LanguageServer
             // Allocate 2/3rds of the space for text1, the rest for text2.
             string chars1 = diff_linesToCharsMunge(text1, lineArray, lineHash, 40000);
             string chars2 = diff_linesToCharsMunge(text2, lineArray, lineHash, 65535);
-            return new Object[] { chars1, chars2, lineArray };
+            return new object[] { chars1, chars2, lineArray };
         }
 
         /**
@@ -719,7 +721,7 @@ namespace LanguageServer
 
                 if (lineHash.ContainsKey(line))
                 {
-                    chars.Append(((char)(int)lineHash[line]));
+                    chars.Append(((char)lineHash[line]));
                 }
                 else
                 {
@@ -870,7 +872,7 @@ namespace LanguageServer
 
         protected string[] diff_halfMatch(string text1, string text2)
         {
-            if (this.Diff_Timeout <= 0)
+            if (Diff_Timeout <= 0)
             {
                 // Don't risk returning a non-optimal diff if we have unlimited time.
                 return null;
@@ -1117,7 +1119,7 @@ namespace LanguageServer
                     string equality2 = diffs[pointer + 1].text;
 
                     // First, shift the edit as far left as possible.
-                    int commonOffset = this.diff_commonSuffix(equality1, edit);
+                    int commonOffset = diff_commonSuffix(equality1, edit);
                     if (commonOffset > 0)
                     {
                         string commonString = edit.Substring(edit.Length - commonOffset);
@@ -1203,12 +1205,12 @@ namespace LanguageServer
             // rather than force total conformity.
             char char1 = one[one.Length - 1];
             char char2 = two[0];
-            bool nonAlphaNumeric1 = !Char.IsLetterOrDigit(char1);
-            bool nonAlphaNumeric2 = !Char.IsLetterOrDigit(char2);
-            bool whitespace1 = nonAlphaNumeric1 && Char.IsWhiteSpace(char1);
-            bool whitespace2 = nonAlphaNumeric2 && Char.IsWhiteSpace(char2);
-            bool lineBreak1 = whitespace1 && Char.IsControl(char1);
-            bool lineBreak2 = whitespace2 && Char.IsControl(char2);
+            bool nonAlphaNumeric1 = !char.IsLetterOrDigit(char1);
+            bool nonAlphaNumeric2 = !char.IsLetterOrDigit(char2);
+            bool whitespace1 = nonAlphaNumeric1 && char.IsWhiteSpace(char1);
+            bool whitespace2 = nonAlphaNumeric2 && char.IsWhiteSpace(char2);
+            bool lineBreak1 = whitespace1 && char.IsControl(char1);
+            bool lineBreak2 = whitespace2 && char.IsControl(char2);
             bool blankLine1 = lineBreak1 && BLANKLINEEND.IsMatch(one);
             bool blankLine2 = lineBreak2 && BLANKLINESTART.IsMatch(two);
 
@@ -1241,8 +1243,8 @@ namespace LanguageServer
         }
 
         // Define some regex patterns for matching boundaries.
-        private Regex BLANKLINEEND = new Regex("\\n\\r?\\n\\Z");
-        private Regex BLANKLINESTART = new Regex("\\A\\r?\\n\\r?\\n");
+        private readonly Regex BLANKLINEEND = new Regex("\\n\\r?\\n\\Z");
+        private readonly Regex BLANKLINESTART = new Regex("\\A\\r?\\n\\r?\\n");
 
         /**
          * Reduce the number of edits by eliminating operationally trivial
@@ -1269,7 +1271,7 @@ namespace LanguageServer
             {
                 if (diffs[pointer].operation == Operation.EQUAL)
                 {  // Equality found.
-                    if (diffs[pointer].text.Length < this.Diff_EditCost
+                    if (diffs[pointer].text.Length < Diff_EditCost
                         && (post_ins || post_del))
                     {
                         // Candidate found.
@@ -1306,7 +1308,7 @@ namespace LanguageServer
                      */
                     if ((lastEquality.Length != 0)
                         && ((pre_ins && pre_del && post_ins && post_del)
-                        || ((lastEquality.Length < this.Diff_EditCost / 2)
+                        || ((lastEquality.Length < Diff_EditCost / 2)
                         && ((pre_ins ? 1 : 0) + (pre_del ? 1 : 0) + (post_ins ? 1 : 0)
                         + (post_del ? 1 : 0)) == 3)))
                     {
@@ -1381,7 +1383,7 @@ namespace LanguageServer
                             if (count_delete != 0 && count_insert != 0)
                             {
                                 // Factor out any common prefixies.
-                                commonlength = this.diff_commonPrefix(text_insert, text_delete);
+                                commonlength = diff_commonPrefix(text_insert, text_delete);
                                 if (commonlength != 0)
                                 {
                                     if ((pointer - count_delete - count_insert) > 0 &&
@@ -1401,7 +1403,7 @@ namespace LanguageServer
                                     text_delete = text_delete.Substring(commonlength);
                                 }
                                 // Factor out any common suffixies.
-                                commonlength = this.diff_commonSuffix(text_insert, text_delete);
+                                commonlength = diff_commonSuffix(text_insert, text_delete);
                                 if (commonlength != 0)
                                 {
                                     diffs[pointer].text = text_insert.Substring(text_insert.Length
@@ -1493,7 +1495,7 @@ namespace LanguageServer
             // If shifts were made, the diff needs reordering and another shift sweep.
             if (changes)
             {
-                this.diff_cleanupMerge(diffs);
+                diff_cleanupMerge(diffs);
             }
         }
 
@@ -2214,17 +2216,17 @@ namespace LanguageServer
          * @return Two element Object array, containing the new text and an array of
          *      bool values.
          */
-        public Object[] patch_apply(List<Patch> patches, string text)
+        public object[] patch_apply(List<Patch> patches, string text)
         {
             if (patches.Count == 0)
             {
-                return new Object[] { text, new bool[0] };
+                return new object[] { text, new bool[0] };
             }
 
             // Deep copy the patches so that no changes are made to originals.
             patches = patch_deepCopy(patches);
 
-            string nullPadding = this.patch_addPadding(patches);
+            string nullPadding = patch_addPadding(patches);
             text = nullPadding + text + nullPadding;
             patch_splitMax(patches);
 
@@ -2241,17 +2243,17 @@ namespace LanguageServer
                 string text1 = diff_text1(aPatch.diffs);
                 int start_loc;
                 int end_loc = -1;
-                if (text1.Length > this.Match_MaxBits)
+                if (text1.Length > Match_MaxBits)
                 {
                     // patch_splitMax will only provide an oversized pattern
                     // in the case of a monster delete.
                     start_loc = match_main(text,
-                        text1.Substring(0, this.Match_MaxBits), expected_loc);
+                        text1.Substring(0, Match_MaxBits), expected_loc);
                     if (start_loc != -1)
                     {
                         end_loc = match_main(text,
-                            text1.Substring(text1.Length - this.Match_MaxBits),
-                            expected_loc + text1.Length - this.Match_MaxBits);
+                            text1.Substring(text1.Length - Match_MaxBits),
+                            expected_loc + text1.Length - Match_MaxBits);
                         if (end_loc == -1 || start_loc >= end_loc)
                         {
                             // Can't find valid trailing context.  Drop this patch.
@@ -2261,7 +2263,7 @@ namespace LanguageServer
                 }
                 else
                 {
-                    start_loc = this.match_main(text, text1, expected_loc);
+                    start_loc = match_main(text, text1, expected_loc);
                 }
                 if (start_loc == -1)
                 {
@@ -2284,7 +2286,7 @@ namespace LanguageServer
                     else
                     {
                         text2 = text.JavaSubstring(start_loc,
-                            Math.Min(end_loc + this.Match_MaxBits, text.Length));
+                            Math.Min(end_loc + Match_MaxBits, text.Length));
                     }
                     if (text1 == text2)
                     {
@@ -2297,9 +2299,9 @@ namespace LanguageServer
                         // Imperfect match.  Run a diff to get a framework of equivalent
                         // indices.
                         List<Diff> diffs = diff_main(text1, text2, false);
-                        if (text1.Length > this.Match_MaxBits
-                            && this.diff_levenshtein(diffs) / (float)text1.Length
-                            > this.Patch_DeleteThreshold)
+                        if (text1.Length > Match_MaxBits
+                            && diff_levenshtein(diffs) / (float)text1.Length
+                            > Patch_DeleteThreshold)
                         {
                             // The end points match, but the content is unacceptably bad.
                             results[x] = false;
@@ -2338,7 +2340,7 @@ namespace LanguageServer
             // Strip the padding off.
             text = text.Substring(nullPadding.Length, text.Length
                 - 2 * nullPadding.Length);
-            return new Object[] { text, results };
+            return new object[] { text, results };
         }
 
         /**
@@ -2349,7 +2351,7 @@ namespace LanguageServer
          */
         public string patch_addPadding(List<Patch> patches)
         {
-            short paddingLength = this.Patch_Margin;
+            short paddingLength = Patch_Margin;
             string nullPadding = string.Empty;
             for (short x = 1; x <= paddingLength; x++)
             {
@@ -2419,7 +2421,7 @@ namespace LanguageServer
          */
         public void patch_splitMax(List<Patch> patches)
         {
-            short patch_size = this.Match_MaxBits;
+            short patch_size = Match_MaxBits;
             for (int x = 0; x < patches.Count; x++)
             {
                 if (patches[x].length1 <= patch_size)
@@ -2445,7 +2447,7 @@ namespace LanguageServer
                         patch.diffs.Add(new Diff(Operation.EQUAL, precontext));
                     }
                     while (bigpatch.diffs.Count != 0
-                        && patch.length1 < patch_size - this.Patch_Margin)
+                        && patch.length1 < patch_size - Patch_Margin)
                     {
                         Operation diff_type = bigpatch.diffs[0].operation;
                         string diff_text = bigpatch.diffs[0].text;
@@ -2498,9 +2500,9 @@ namespace LanguageServer
                         }
                     }
                     // Compute the head context for the next patch.
-                    precontext = this.diff_text2(patch.diffs);
+                    precontext = diff_text2(patch.diffs);
                     precontext = precontext.Substring(Math.Max(0,
-                        precontext.Length - this.Patch_Margin));
+                        precontext.Length - Patch_Margin));
 
                     string postcontext = null;
                     // Append the end context for this patch.

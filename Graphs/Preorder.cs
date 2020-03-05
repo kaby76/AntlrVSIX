@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Utils;
 
 namespace Graphs
@@ -18,10 +17,14 @@ namespace Graphs
             StackQueue<T> Stack = new StackQueue<T>();
 
             foreach (T v in graph.Vertices)
+            {
                 Visited[v] = false;
+            }
 
             foreach (T v in source)
+            {
                 Stack.Push(v);
+            }
 
             while (Stack.Count != 0)
             {
@@ -31,7 +34,9 @@ namespace Graphs
                 foreach (T v in graph.ReverseSuccessors(u))
                 {
                     if (!Visited[v] && !Stack.Contains(v))
+                    {
                         Stack.Push(v);
+                    }
                 }
             }
         }
@@ -47,10 +52,14 @@ namespace Graphs
             StackQueue<T> Stack = new StackQueue<T>();
 
             foreach (T v in graph.Vertices)
+            {
                 Visited[v] = false;
+            }
 
             foreach (T v in source)
+            {
                 Stack.Push(v);
+            }
 
             while (Stack.Count != 0)
             {
@@ -60,7 +69,9 @@ namespace Graphs
                 foreach (T v in graph.ReversePredecessors(u))
                 {
                     if (!Visited[v] && !Stack.Contains(v))
+                    {
                         Stack.Push(v);
+                    }
                 }
             }
         }

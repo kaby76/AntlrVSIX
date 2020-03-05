@@ -2,12 +2,11 @@
 {
     using Antlr4.Runtime;
     using Antlr4.Runtime.Misc;
-    using System;
     using System.Linq;
 
     public abstract class LexerAdaptor : Lexer
     {
-        private ICharStream _input;
+        private readonly ICharStream _input;
 
         public LexerAdaptor(
             Antlr4.Runtime.ICharStream input,
@@ -39,62 +38,62 @@
 
         public void setCurrentRuleType(int ruleType)
         {
-            this._currentRuleType = ruleType;
+            _currentRuleType = ruleType;
         }
 
         protected void handleBeginArgument()
         {
             if (inLexerRule())
             {
-                this.PushMode(ANTLRv4Lexer.MLexerCharSet);
-                this.More();
+                PushMode(ANTLRv4Lexer.MLexerCharSet);
+                More();
             }
             else
             {
-                this.PushMode(ANTLRv4Lexer.MArgument);
+                PushMode(ANTLRv4Lexer.MArgument);
             }
         }
 
         protected void handleEndArgument()
         {
-            this.PopMode();
+            PopMode();
             if (ModeStack.Any())
             {
-                this.Type = ANTLRv4Lexer.ARGUMENT_CONTENT;
+                Type = ANTLRv4Lexer.ARGUMENT_CONTENT;
             }
         }
 
         protected void handleEndAction()
         {
-            this.PopMode();
+            PopMode();
             if (ModeStack.Any())
             {
-                this.Type = ANTLRv4Lexer.ACTION_CONTENT;
+                Type = ANTLRv4Lexer.ACTION_CONTENT;
             }
         }
 
         public override IToken Emit()
         {
-            if (this.Type == ANTLRv4Lexer.ID)
+            if (Type == ANTLRv4Lexer.ID)
             {
-                String firstChar = this._input.GetText(
-                    Interval.Of(this.TokenStartCharIndex, this.TokenStartCharIndex));
+                string firstChar = _input.GetText(
+                    Interval.Of(TokenStartCharIndex, TokenStartCharIndex));
 
-                if (Char.IsUpper(firstChar.ElementAt(0)))
+                if (char.IsUpper(firstChar.ElementAt(0)))
                 {
-                    this.Type = ANTLRv4Lexer.TOKEN_REF;
+                    Type = ANTLRv4Lexer.TOKEN_REF;
                 }
                 else
                 {
-                    this.Type = ANTLRv4Lexer.RULE_REF;
+                    Type = ANTLRv4Lexer.RULE_REF;
                 }
 
                 if (_currentRuleType == TokenConstants.InvalidType)
                 { // if outside of rule def
-                    _currentRuleType = this.Type; // set to inside lexer or parser rule
+                    _currentRuleType = Type; // set to inside lexer or parser rule
                 }
             }
-            else if (this.Type == ANTLRv4Lexer.SEMI)
+            else if (Type == ANTLRv4Lexer.SEMI)
             { // exit rule def
                 _currentRuleType = TokenConstants.InvalidType;
             }

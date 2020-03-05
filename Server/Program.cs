@@ -1,17 +1,16 @@
-﻿using Microsoft.VisualStudio.LanguageServer.Protocol;
-using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace Server
+﻿namespace Server
 {
-    class Program
+    using Microsoft.VisualStudio.LanguageServer.Protocol;
+    using System;
+    using System.Collections.ObjectModel;
+    using System.ComponentModel;
+    using System.Linq;
+    using System.Threading.Tasks;
+
+    internal class Program
     {
         private string logMessage;
-        private ObservableCollection<DiagnosticTag> tags = new ObservableCollection<DiagnosticTag>();
+        private readonly ObservableCollection<DiagnosticTag> tags = new ObservableCollection<DiagnosticTag>();
         private LSPServer languageServer;
         private string responseText;
         private string currentSettings;
@@ -23,20 +22,20 @@ namespace Server
             //Console.Error.WriteLine("Waiting " + delay + " seconds...");
             //Thread.Sleep((int)delay.TotalMilliseconds);
             Console.Error.WriteLine("Starting");
-            var program = new Program();
+            Program program = new Program();
             program.MainAsync(args).GetAwaiter().GetResult();
         }
 
-        async Task MainAsync(string[] args)
+        private async Task MainAsync(string[] args)
         {
-            var stdin = Console.OpenStandardInput();
-            var stdout = Console.OpenStandardOutput();
-            this.languageServer = new LSPServer(stdout, stdin);
-            this.languageServer.Disconnected += OnDisconnected;
-            this.languageServer.PropertyChanged += OnLanguageServerPropertyChanged;
+            System.IO.Stream stdin = Console.OpenStandardInput();
+            System.IO.Stream stdout = Console.OpenStandardOutput();
+            languageServer = new LSPServer(stdout, stdin);
+            languageServer.Disconnected += OnDisconnected;
+            languageServer.PropertyChanged += OnLanguageServerPropertyChanged;
             Tags.Add(new DiagnosticTag());
-            this.LogMessage = string.Empty;
-            this.ResponseText = string.Empty;
+            LogMessage = string.Empty;
+            ResponseText = string.Empty;
             await Task.Delay(-1);
         }
 
@@ -44,26 +43,26 @@ namespace Server
         {
             if (e.PropertyName.Equals("CurrentSettings"))
             {
-                this.CurrentSettings = this.languageServer.CurrentSettings;
+                CurrentSettings = languageServer.CurrentSettings;
             }
         }
 
         internal void SendLogMessage()
         {
-            this.languageServer.LogMessage(arg: null, message: this.LogMessage, messageType: this.MessageType);
+            languageServer.LogMessage(arg: null, message: LogMessage, messageType: MessageType);
         }
 
         internal void SendMessage()
         {
-            this.languageServer.ShowMessage(message: this.LogMessage, messageType: this.MessageType);
+            languageServer.ShowMessage(message: LogMessage, messageType: MessageType);
         }
 
         internal void SendMessageRequest()
         {
             Task.Run(async () =>
             {
-                MessageActionItem selectedAction = await this.languageServer.ShowMessageRequestAsync(message: this.LogMessage, messageType: this.MessageType, actionItems: new string[] { "option 1", "option 2", "option 3" });
-                this.ResponseText = $"The user selected: {selectedAction?.Title ?? "cancelled"}";
+                MessageActionItem selectedAction = await languageServer.ShowMessageRequestAsync(message: LogMessage, messageType: MessageType, actionItems: new string[] { "option 1", "option 2", "option 3" });
+                ResponseText = $"The user selected: {selectedAction?.Title ?? "cancelled"}";
             });
         }
 
@@ -74,86 +73,68 @@ namespace Server
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ObservableCollection<DiagnosticTag> Tags
-        {
-            get { return this.tags; }
-        }
+        public ObservableCollection<DiagnosticTag> Tags => tags;
 
         public string LogMessage
         {
-            get
-            {
-                return this.logMessage;
-            }
+            get => logMessage;
             set
             {
-                this.logMessage = value;
-                this.NotifyPropertyChanged(nameof(LogMessage));
+                logMessage = value;
+                NotifyPropertyChanged(nameof(LogMessage));
             }
         }
 
         public string ResponseText
         {
-            get
-            {
-                return this.responseText;
-            }
+            get => responseText;
             set
             {
-                this.responseText = value;
-                this.NotifyPropertyChanged(nameof(ResponseText));
+                responseText = value;
+                NotifyPropertyChanged(nameof(ResponseText));
             }
         }
 
         public string CustomText
         {
-            get
-            {
-                return this.languageServer.CustomText;
-            }
+            get => languageServer.CustomText;
             set
             {
-                this.languageServer.CustomText = value;
-                this.NotifyPropertyChanged(nameof(CustomText));
+                languageServer.CustomText = value;
+                NotifyPropertyChanged(nameof(CustomText));
             }
         }
 
         public MessageType MessageType
         {
-            get
-            {
-                return this.messageType;
-            }
+            get => messageType;
             set
             {
-                this.messageType = value;
-                this.NotifyPropertyChanged(nameof(MessageType));
+                messageType = value;
+                NotifyPropertyChanged(nameof(MessageType));
             }
         }
 
         public string CurrentSettings
         {
-            get
-            {
-                return this.currentSettings;
-            }
+            get => currentSettings;
             set
             {
-                this.currentSettings = value;
-                this.NotifyPropertyChanged(nameof(CurrentSettings));
+                currentSettings = value;
+                NotifyPropertyChanged(nameof(CurrentSettings));
             }
         }
 
         public void SendDiagnostics()
         {
-            var diagnosticTags = Tags.ToDictionary((d) => d.Text, (d) => d.Severity);
-            this.languageServer.SetDiagnostics(diagnosticTags);
-            this.languageServer.SendDiagnostics();
+            System.Collections.Generic.Dictionary<string, DiagnosticSeverity> diagnosticTags = Tags.ToDictionary((d) => d.Text, (d) => d.Severity);
+            languageServer.SetDiagnostics(diagnosticTags);
+            languageServer.SendDiagnostics();
         }
 
         private void NotifyPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 
@@ -166,20 +147,20 @@ namespace Server
 
         public string Text
         {
-            get { return this.text; }
+            get => text;
             set
             {
-                this.text = value;
+                text = value;
                 OnPropertyChanged(nameof(Text));
             }
         }
 
         public DiagnosticSeverity Severity
         {
-            get { return this.severity; }
+            get => severity;
             set
             {
-                this.severity = value;
+                severity = value;
                 OnPropertyChanged(nameof(Severity));
             }
         }

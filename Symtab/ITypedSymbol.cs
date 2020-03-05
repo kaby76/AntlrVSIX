@@ -7,7 +7,7 @@
     /// </summary>
     public interface ITypedSymbol
     {
-        IType Type {get;set;}
+        IType Type { get; set; }
     }
 
 }

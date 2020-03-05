@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Utils;
+﻿using System.Collections.Generic;
 
 namespace Graphs
 {
     public class EdgeClassifier
     {
-        enum Color
+        private enum Color
         {
             Black,
             Gray,
@@ -36,7 +32,7 @@ namespace Graphs
             color[u] = Color.Gray;
             time = time + 1;
             d[u] = time;
-            foreach (var e in graph.SuccessorEdges(u))
+            foreach (E e in graph.SuccessorEdges(u))
             {
                 if (color[e.To] == Color.White)
                 {
@@ -44,12 +40,19 @@ namespace Graphs
                     Visit(e.To, graph, color, d, f, classify, ref time);
                 }
                 else if (color[e.To] == Color.Gray)
+                {
                     classify[e] = Classification.Back;
+                }
                 else if (color[e.To] == Color.Black)
                 {
                     if (d[u] < d[e.To])
+                    {
                         classify[e] = Classification.Forward;
-                    else classify[e] = Classification.Cross;
+                    }
+                    else
+                    {
+                        classify[e] = Classification.Cross;
+                    }
                 }
             }
 
@@ -66,14 +69,20 @@ namespace Graphs
             Dictionary<T, int> d = new Dictionary<T, int>();
             Dictionary<T, int> f = new Dictionary<T, int>();
 
-            foreach (var v in graph.Vertices)
+            foreach (T v in graph.Vertices)
+            {
                 color[v] = Color.White;
+            }
 
             int time = 0;
             Visit(u, graph, color, d, f, classify, ref time);
-            foreach (var v in graph.Vertices)
+            foreach (T v in graph.Vertices)
+            {
                 if (color[v] == Color.White)
+                {
                     Visit(v, graph, color, d, f, classify, ref time);
+                }
+            }
         }
     }
 }

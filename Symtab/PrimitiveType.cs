@@ -12,14 +12,8 @@
 
         public virtual int TypeIndex
         {
-            get
-            {
-                return typeIndex;
-            }
-            set
-            {
-                this.typeIndex = value;
-            }
+            get => typeIndex;
+            set => typeIndex = value;
         }
     }
 }

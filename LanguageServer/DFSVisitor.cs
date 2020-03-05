@@ -5,12 +5,12 @@
     using System;
     using System.Collections.Generic;
 
-    class DFSVisitor
+    internal class DFSVisitor
     {
         public static IEnumerable<IParseTree> DFS(IParseTree root)
         {
-            var toVisit = new Stack<IParseTree>();
-            var visitedAncestors = new Stack<IParseTree>();
+            Stack<IParseTree> toVisit = new Stack<IParseTree>();
+            Stack<IParseTree> visitedAncestors = new Stack<IParseTree>();
             toVisit.Push(root);
             while (toVisit.Count > 0)
             {
@@ -23,11 +23,11 @@
 
                         if (node as TerminalNodeImpl != null)
                         {
-                            var leaf = node as TerminalNodeImpl;
+                            TerminalNodeImpl leaf = node as TerminalNodeImpl;
                         }
                         else
                         {
-                            var internal_node = node as ParserRuleContext;
+                            ParserRuleContext internal_node = node as ParserRuleContext;
                             int child_count = internal_node.children.Count;
                             for (int i = node.ChildCount - 1; i >= 0; --i)
                             {
@@ -46,7 +46,7 @@
         }
     }
 
-    static class StackHelper
+    internal static class StackHelper
     {
         public static IParseTree PeekOrDefault(this Stack<IParseTree> s)
         {

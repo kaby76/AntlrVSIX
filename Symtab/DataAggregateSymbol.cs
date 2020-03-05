@@ -21,14 +21,8 @@
 
         public virtual ParserRuleContext DefNode
         {
-            set
-            {
-                this.defNode = value;
-            }
-            get
-            {
-                return defNode;
-            }
+            set => defNode = value;
+            get => defNode;
         }
 
 
@@ -42,21 +36,9 @@
             setSlotNumber(sym);
         }
 
-        public override IList<ISymbol> Symbols
-        {
-            get
-            {
-                return base.Symbols;
-            }
-        }
+        public override IList<ISymbol> Symbols => base.Symbols;
 
-        public override IDictionary<string, ISymbol> Members
-        {
-            get
-            {
-                return base.Members;
-            }
-        }
+        public override IDictionary<string, ISymbol> Members => base.Members;
 
         /// <summary>
         /// Look up name within this scope only. Return any kind of MemberSymbol found
@@ -64,7 +46,7 @@
         /// </summary>
         public virtual IList<ISymbol> resolveMember(string name)
         {
-            var result = new List<ISymbol>();
+            List<ISymbol> result = new List<ISymbol>();
             ISymbol s = symbols[name];
             if (s is IMemberSymbol)
             {
@@ -79,13 +61,16 @@
         /// </summary>
         public virtual IList<FieldSymbol> resolveField(string name)
         {
-            var result = new List<FieldSymbol>();
-            var list = resolveMember(name);
-            foreach (var s in list)
+            List<FieldSymbol> result = new List<FieldSymbol>();
+            IList<ISymbol> list = resolveMember(name);
+            foreach (ISymbol s in list)
+            {
                 if (s is FieldSymbol)
                 {
                     result.Add(s as FieldSymbol);
                 }
+            }
+
             return result;
         }
 
@@ -109,18 +94,12 @@
 
         /// <summary>
         /// Get the total number of fields visible to this class </summary>
-        public virtual int NumberOfFields
-        {
-            get
-            {
-                return NumberOfDefinedFields;
-            }
-        }
+        public virtual int NumberOfFields => NumberOfDefinedFields;
 
         /// <summary>
         /// Return the list of fields in this specific aggregate </summary>
-//JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in .NET:
-//ORIGINAL LINE: public java.util.List<? extends FieldSymbol> getDefinedFields()
+        //JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in .NET:
+        //ORIGINAL LINE: public java.util.List<? extends FieldSymbol> getDefinedFields()
         public virtual IList<FieldSymbol> DefinedFields
         {
             get
@@ -137,15 +116,9 @@
             }
         }
 
-//JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in .NET:
-//ORIGINAL LINE: public java.util.List<? extends FieldSymbol> getFields()
-        public virtual IList<FieldSymbol> Fields
-        {
-            get
-            {
-                return DefinedFields;
-            }
-        }
+        //JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in .NET:
+        //ORIGINAL LINE: public java.util.List<? extends FieldSymbol> getFields()
+        public virtual IList<FieldSymbol> Fields => DefinedFields;
 
         public virtual void setSlotNumber(ISymbol sym)
         {
@@ -163,14 +136,8 @@
 
         public virtual int TypeIndex
         {
-            get
-            {
-                return typeIndex;
-            }
-            set
-            {
-                this.typeIndex = value;
-            }
+            get => typeIndex;
+            set => typeIndex = value;
         }
 
     }

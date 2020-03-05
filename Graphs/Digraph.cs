@@ -78,19 +78,25 @@ namespace Graphs
             try
             {
                 string[] strings = content.Split(new char[] { ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-                var vertex_count = Int32.Parse(strings[0]);
-                var edge_count = Int32.Parse(strings[1]);
+                int vertex_count = int.Parse(strings[0]);
+                int edge_count = int.Parse(strings[1]);
 
                 if (vertex_count < 0)
+                {
                     throw new Exception("number of vertices in a Digraph must be nonnegative");
+                }
+
                 if (edge_count < 0)
+                {
                     throw new Exception("number of edges in a Digraph must be nonnegative");
+                }
+
                 for (int v = 0; v < edge_count; v++)
                 {
-                    var f = parser(strings[2 + 2 * v]);
-                    var t = parser(strings[2 + 2 * v + 1]);
-                    this.AddVertex(f);
-                    this.AddVertex(t);
+                    T f = parser(strings[2 + 2 * v]);
+                    T t = parser(strings[2 + 2 * v + 1]);
+                    AddVertex(f);
+                    AddVertex(t);
                     addEdge(new DirectedEdge<T>(f, t));
                 }
             }
@@ -110,13 +116,13 @@ namespace Graphs
          */
         public Digraph(Digraph<T> G)
         {
-            foreach (var n in G.Vertices)
+            foreach (T n in G.Vertices)
             {
-                this.AddVertex(n);
+                AddVertex(n);
             }
-            foreach (var e in G.Edges)
+            foreach (DirectedEdge<T> e in G.Edges)
             {
-                this.AddEdge(e);
+                AddEdge(e);
             }
         }
 
@@ -125,20 +131,14 @@ namespace Graphs
          *
          * @return the number of vertices in this digraph
          */
-        public int V
-        {
-            get { return this.Vertices.Count(); }
-        }
+        public int V => Vertices.Count();
 
         /**
          * Returns the number of edges in this digraph.
          *
          * @return the number of edges in this digraph
          */
-        public int E
-        {
-            get { return this.Edges.Count(); }
-        }
+        public int E => Edges.Count();
 
 
         // throw an IllegalArgumentException unless {@code 0 <= v < V}
@@ -200,7 +200,7 @@ namespace Graphs
         public int indegree(T v)
         {
             validateVertex(v);
-            return this.Predecessors(v).Count();
+            return Predecessors(v).Count();
         }
 
         /**
@@ -211,13 +211,13 @@ namespace Graphs
         public Digraph<T> reverse()
         {
             Digraph<T> reverse = new Digraph<T>();
-            foreach (var v in this.Vertices)
+            foreach (T v in Vertices)
             {
-                var nv = v.Clone();
+                object nv = v.Clone();
             }
-            foreach (var v in this.Vertices)
+            foreach (T v in Vertices)
             {
-                foreach (var s in this.Successors(v))
+                foreach (T s in Successors(v))
                 {
                     reverse.AddEdge(new DirectedEdge<T>(s, v));
                 }
@@ -235,12 +235,12 @@ namespace Graphs
         {
             StringBuilder s = new StringBuilder();
             s.Append(V.ToString() + " vertices, " + E + " edges " + System.Environment.NewLine);
-            foreach (var v in this.Vertices)
+            foreach (T v in Vertices)
             {
-                s.Append(String.Format("{0}: ", v));
+                s.Append(string.Format("{0}: ", v));
                 foreach (T w in adj(v))
                 {
-                    s.Append(String.Format("{0} ", w));
+                    s.Append(string.Format("{0} ", w));
                 }
                 s.Append(System.Environment.NewLine);
             }
@@ -281,7 +281,7 @@ namespace Graphs
  7  6
 ";
 
-            var graph = new Digraph<IntWrapper>(input, (string s) => new IntWrapper(System.Int32.Parse(s)));
+            Digraph<IntWrapper> graph = new Digraph<IntWrapper>(input, (string s) => new IntWrapper(int.Parse(s)));
             System.Console.Error.WriteLine(graph);
         }
     }

@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Utils;
 
 namespace Graphs
@@ -18,10 +17,14 @@ namespace Graphs
             StackQueue<T> Stack = new StackQueue<T>();
 
             foreach (T v in graph.Vertices)
+            {
                 Visited.Add(v, false);
+            }
 
             foreach (T v in source)
+            {
                 Stack.Push(v);
+            }
 
             while (Stack.Count != 0)
             {
@@ -37,7 +40,9 @@ namespace Graphs
                     foreach (T v in graph.ReverseSuccessors(u))
                     {
                         if (!Visited[v] && !Stack.Contains(v))
+                        {
                             Stack.Push(v);
+                        }
                     }
                 }
             }
@@ -66,9 +71,9 @@ namespace Graphs
 12 13
 ";
 
-                var graph = new Digraph<IntWrapper>(input, (string s) => new IntWrapper(System.Int32.Parse(s)));
-                var sort = Postorder.Sort(graph, new List<IntWrapper>() { new IntWrapper(1) });
-                foreach (var n in sort)
+                Digraph<IntWrapper> graph = new Digraph<IntWrapper>(input, (string s) => new IntWrapper(int.Parse(s)));
+                IEnumerable<IntWrapper> sort = Postorder.Sort(graph, new List<IntWrapper>() { new IntWrapper(1) });
+                foreach (IntWrapper n in sort)
                 {
                     System.Console.Error.WriteLine(n);
                 }
@@ -84,9 +89,9 @@ namespace Graphs
 3  6
 ";
 
-                var graph = new Digraph<IntWrapper>(input, (string s) => new IntWrapper(System.Int32.Parse(s)));
-                var sort = Postorder.Sort(graph, new List<IntWrapper>() { new IntWrapper(1) });
-                foreach (var n in sort)
+                Digraph<IntWrapper> graph = new Digraph<IntWrapper>(input, (string s) => new IntWrapper(int.Parse(s)));
+                IEnumerable<IntWrapper> sort = Postorder.Sort(graph, new List<IntWrapper>() { new IntWrapper(1) });
+                foreach (IntWrapper n in sort)
                 {
                     System.Console.Error.WriteLine(n);
                 }

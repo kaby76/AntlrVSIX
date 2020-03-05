@@ -24,20 +24,23 @@
                 TerminalNodeImpl tok = tree as TerminalNodeImpl;
                 Interval interval = tok.SourceInterval;
 
-                var inter = tok.Symbol.TokenIndex >= 0 ? stream.GetHiddenTokensToLeft(tok.Symbol.TokenIndex) : null;
+                System.Collections.Generic.IList<IToken> inter = tok.Symbol.TokenIndex >= 0 ? stream.GetHiddenTokensToLeft(tok.Symbol.TokenIndex) : null;
                 if (inter != null)
-                    foreach (var t in inter)
+                {
+                    foreach (IToken t in inter)
                     {
                         StartLine(sb, file_name, tree, stream, level);
                         sb.AppendLine("( HIDDEN text=" + t.Text.PerformEscapes());
                     }
+                }
+
                 StartLine(sb, file_name, tree, stream, level);
                 sb.AppendLine("( TOKEN i=" + tree.SourceInterval.a
                     + " t=" + tree.GetText().PerformEscapes());
             }
             else
             {
-                var fixed_name = tree.GetType().ToString()
+                string fixed_name = tree.GetType().ToString()
                     .Replace("Antlr4.Runtime.Tree.", "");
                 fixed_name = Regex.Replace(fixed_name, "^.*[+]", "");
                 fixed_name = fixed_name.Substring(0, fixed_name.Length - "Context".Length);
@@ -45,19 +48,27 @@
                              + fixed_name.Substring(1);
                 StartLine(sb, file_name, tree, stream, level);
                 sb.Append("( " + fixed_name);
-                if (level == 0) sb.Append(" File=\""
+                if (level == 0)
+                {
+                    sb.Append(" File=\""
                     + file_name
                     + "\"");
+                }
+
                 sb.AppendLine();
             }
             for (int i = 0; i < tree.ChildCount; ++i)
             {
-                var c = tree.GetChild(i);
+                IParseTree c = tree.GetChild(i);
                 c.ParenthesizedAST(sb, file_name, stream, level + 1);
             }
             if (level == 0)
             {
-                for (int k = 0; k < 1 + changed - level; ++k) sb.Append(") ");
+                for (int k = 0; k < 1 + changed - level; ++k)
+                {
+                    sb.Append(") ");
+                }
+
                 sb.AppendLine();
                 changed = 0;
             }
@@ -69,22 +80,33 @@
             {
                 if (!first_time)
                 {
-                    for (int j = 0; j < level; ++j) sb.Append("  ");
-                    for (int k = 0; k < 1 + changed - level; ++k) sb.Append(") ");
+                    for (int j = 0; j < level; ++j)
+                    {
+                        sb.Append("  ");
+                    }
+
+                    for (int k = 0; k < 1 + changed - level; ++k)
+                    {
+                        sb.Append(") ");
+                    }
+
                     sb.AppendLine();
                 }
                 changed = 0;
                 first_time = false;
             }
             changed = level;
-            for (int j = 0; j < level; ++j) sb.Append("  ");
+            for (int j = 0; j < level; ++j)
+            {
+                sb.Append("  ");
+            }
         }
 
         private static string ToLiteral(this string input)
         {
-            using (var writer = new StringWriter())
+            using (StringWriter writer = new StringWriter())
             {
-                var literal = Regex.Escape(input);
+                string literal = Regex.Escape(input);
                 literal = literal.Replace(string.Format("\" +{0}\t\"", Environment.NewLine), "");
                 return literal;
             }

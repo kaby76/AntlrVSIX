@@ -13,21 +13,9 @@
             this.targetType = targetType;
         }
 
-        public virtual string Name
-        {
-            get
-            {
-                return ToString();
-            }
-        }
+        public virtual string Name => ToString();
 
-        public virtual int TypeIndex
-        {
-            get
-            {
-                return -1;
-            }
-        }
+        public virtual int TypeIndex => -1;
         public override string ToString()
         {
             return "*" + targetType;

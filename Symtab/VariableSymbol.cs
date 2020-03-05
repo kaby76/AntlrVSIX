@@ -10,10 +10,7 @@
 
         public override IType Type
         {
-            set
-            {
-                base.Type = value;
-            }
+            set => base.Type = value;
         }
     }
 

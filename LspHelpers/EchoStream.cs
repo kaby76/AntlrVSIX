@@ -9,8 +9,8 @@
 //
 
 using System;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
 
 namespace LspTools.LspHelpers
 {
@@ -30,7 +30,7 @@ namespace LspTools.LspHelpers
         /// whether the echo stream closes its consituent streams whenever
         /// it itself is closed.
         /// </summary>
-        [ Flags ]
+        [Flags]
         public enum StreamOwnership
         {
             /// <summary>
@@ -38,19 +38,19 @@ namespace LspTools.LspHelpers
             /// constituent streams, and will close neither of them whenever
             /// the <see cref="EchoStream"/> is closed.
             /// </summary>
-            OwnNone             = 0x0,
+            OwnNone = 0x0,
 
             /// <summary>
             /// The <see cref="EchoStream"/> owns its primary stream, and will
             /// close it whenever the <see cref="EchoStream"/> is closed.
             /// </summary>
-            OwnPrimaryStream    = 0x1,
+            OwnPrimaryStream = 0x1,
 
             /// <summary>
             /// The <see cref="EchoStream"/> owns its slave stream, and will
             /// close it whenever the <see cref="EchoStream"/> is closed.
             /// </summary>
-            OwnSlaveStream      = 0x2,
+            OwnSlaveStream = 0x2,
 
             /// <summary>
             /// The <see cref="EchoStream"/> owns both of its constituent
@@ -59,7 +59,7 @@ namespace LspTools.LspHelpers
             /// <c><see cref="OwnPrimaryStream"/> | <see cref="OwnSlaveStream"/>
             /// </c>.
             /// </summary>
-            OwnBoth             = OwnPrimaryStream | OwnSlaveStream
+            OwnBoth = OwnPrimaryStream | OwnSlaveStream
         }
 
         #endregion // StreamOwnership Enumeration
@@ -91,7 +91,7 @@ namespace LspTools.LspHelpers
             /// for primary stream failures.
             /// </summary>
             Ignore,
-    
+
             /// <summary>
             /// The failure will be passed on to an error handler delegate that
             /// determines how to handle it.  The performance hit for this option
@@ -150,8 +150,8 @@ namespace LspTools.LspHelpers
 
         #region Private Implementation Variables
 
-        private Stream  m_primaryStream;
-        private Stream  m_slaveStream;
+        private readonly Stream m_primaryStream;
+        private readonly Stream m_slaveStream;
         private StreamOwnership m_streamsOwned;
 
         private SlaveFailAction m_readFailAction = SlaveFailAction.Propogate;
@@ -204,10 +204,15 @@ namespace LspTools.LspHelpers
             Flush();
 
             // Close the streams that we own.
-            if((m_streamsOwned & StreamOwnership.OwnPrimaryStream) > 0)
+            if ((m_streamsOwned & StreamOwnership.OwnPrimaryStream) > 0)
+            {
                 m_primaryStream.Close();
-            if((m_streamsOwned & StreamOwnership.OwnSlaveStream) > 0)
+            }
+
+            if ((m_streamsOwned & StreamOwnership.OwnSlaveStream) > 0)
+            {
                 m_slaveStream.Close();
+            }
 
             base.Close();
         }
@@ -223,8 +228,8 @@ namespace LspTools.LspHelpers
         /// </summary>
         public StreamOwnership StreamsOwned
         {
-            get { return m_streamsOwned; }
-            set { m_streamsOwned = value; }
+            get => m_streamsOwned;
+            set => m_streamsOwned = value;
         }
 
         /// <summary>
@@ -233,10 +238,7 @@ namespace LspTools.LspHelpers
         /// to the primary stream.  When data is read from the
         /// <see cref="EchoStream"/>, it is read from the primary stream.
         /// </summary>
-        public Stream PrimaryStream
-        {
-            get { return m_primaryStream; }
-        }
+        public Stream PrimaryStream => m_primaryStream;
 
         /// <summary>
         /// Gets the slave stream for the <see cref="EchoStream"/>.  When
@@ -247,10 +249,7 @@ namespace LspTools.LspHelpers
         /// data is read from the primary stream is then written (echoed) into
         /// the slave stream.
         /// </summary>
-        public Stream SlaveStream
-        {
-            get { return m_slaveStream; }
-        }
+        public Stream SlaveStream => m_slaveStream;
 
         #endregion // Non-Error Properties
 
@@ -275,10 +274,7 @@ namespace LspTools.LspHelpers
         /// use of this property to recover from reads that failed because of
         /// a downed slave stream.
         /// </remarks>
-        public int LastReadResult
-        {
-            get { return m_lastReadResult; }
-        }
+        public int LastReadResult => m_lastReadResult;
 
         /// <summary>
         /// Sets the action to use for all possible failures.  It is more
@@ -326,11 +322,11 @@ namespace LspTools.LspHelpers
         /// </summary>
         public SlaveFailAction SlaveReadFailAction
         {
-            get { return m_readFailAction; }
+            get => m_readFailAction;
 
             set
             {
-                if(value == SlaveFailAction.Filter)
+                if (value == SlaveFailAction.Filter)
                 {
                     throw new InvalidOperationException(
                         "You cannot set this property to "
@@ -355,11 +351,11 @@ namespace LspTools.LspHelpers
         /// </summary>
         public SlaveFailAction SlaveWriteFailAction
         {
-            get { return m_writeFailAction; }
+            get => m_writeFailAction;
 
             set
             {
-                if(value == SlaveFailAction.Filter)
+                if (value == SlaveFailAction.Filter)
                 {
                     throw new InvalidOperationException(
                         "You cannot set this property to "
@@ -384,11 +380,11 @@ namespace LspTools.LspHelpers
         /// </summary>
         public SlaveFailAction SlaveSeekFailAction
         {
-            get { return m_seekFailAction; }
+            get => m_seekFailAction;
 
             set
             {
-                if(value == SlaveFailAction.Filter)
+                if (value == SlaveFailAction.Filter)
                 {
                     throw new InvalidOperationException(
                         "You cannot set this property to "
@@ -414,7 +410,7 @@ namespace LspTools.LspHelpers
         /// </summary>
         public SlaveFailHandler SlaveWriteFailFilter
         {
-            get { return m_slaveWriteFailFilter; }
+            get => m_slaveWriteFailFilter;
 
             set
             {
@@ -427,15 +423,19 @@ namespace LspTools.LspHelpers
                 // Reset the fail action to a potentially-temporary default
                 // if there was a previous slave (so that the fail action
                 // was Filter).
-                if(m_slaveWriteFailFilter != null)
+                if (m_slaveWriteFailFilter != null)
+                {
                     m_writeFailAction = SlaveFailAction.Propogate;
+                }
 
                 m_slaveWriteFailFilter = value;
 
                 // Automatically set the fail action to Filter if we now have
                 // a slave filter.
-                if(value != null)
+                if (value != null)
+                {
                     m_writeFailAction = SlaveFailAction.Filter;
+                }
             }
         }
 
@@ -447,7 +447,7 @@ namespace LspTools.LspHelpers
         /// </summary>
         public SlaveFailHandler SlaveReadFailFilter
         {
-            get { return m_slaveReadFailFilter; }
+            get => m_slaveReadFailFilter;
 
             set
             {
@@ -460,15 +460,19 @@ namespace LspTools.LspHelpers
                 // Reset the fail action to a potentially-temporary default
                 // if there was a previous slave (so that the fail action
                 // was Filter).
-                if(m_slaveReadFailFilter != null)
+                if (m_slaveReadFailFilter != null)
+                {
                     m_readFailAction = SlaveFailAction.Propogate;
+                }
 
                 m_slaveReadFailFilter = value;
 
                 // Automatically set the fail action to Filter if we now have
                 // a slave filter.
-                if(value != null)
+                if (value != null)
+                {
                     m_readFailAction = SlaveFailAction.Filter;
+                }
             }
         }
 
@@ -479,7 +483,7 @@ namespace LspTools.LspHelpers
         /// </summary>
         public SlaveFailHandler SlaveSeekFailFilter
         {
-            get { return m_slaveSeekFailFilter; }
+            get => m_slaveSeekFailFilter;
 
             set
             {
@@ -492,15 +496,19 @@ namespace LspTools.LspHelpers
                 // Reset the fail action to a potentially-temporary default
                 // if there was a previous slave (so that the fail action
                 // was Filter).
-                if(m_slaveSeekFailFilter != null)
+                if (m_slaveSeekFailFilter != null)
+                {
                     m_seekFailAction = SlaveFailAction.Propogate;
+                }
 
                 m_slaveSeekFailFilter = value;
 
                 // Automatically set the fail action to Filter if we now have
                 // a slave filter.
-                if(value != null)
+                if (value != null)
+                {
                     m_seekFailAction = SlaveFailAction.Filter;
+                }
             }
         }
 
@@ -512,19 +520,13 @@ namespace LspTools.LspHelpers
         /// Returns the value of CanRead provided by the primary stream.
         /// See <see cref="Stream.CanRead"/>.
         /// </summary>
-        public override bool CanRead
-        {
-            get { return m_primaryStream.CanRead; }
-        }
+        public override bool CanRead => m_primaryStream.CanRead;
 
         /// <summary>
         /// Returns true if CanSeek on both the primary stream and the slave
         /// stream returns true.
         /// </summary>
-        public override bool CanSeek
-        {
-            get { return m_primaryStream.CanSeek && m_slaveStream.CanSeek; }
-        }
+        public override bool CanSeek => m_primaryStream.CanSeek && m_slaveStream.CanSeek;
 
         /// <summary>
         /// Returns true if CanWrite on both the primary stream and the slave
@@ -532,10 +534,7 @@ namespace LspTools.LspHelpers
         /// <see cref="SlaveStream"/>'s CanWrite returns false is not
         /// very useful.
         /// </summary>
-        public override bool CanWrite
-        {
-            get { return m_primaryStream.CanWrite && m_slaveStream.CanWrite; }
-        }
+        public override bool CanWrite => m_primaryStream.CanWrite && m_slaveStream.CanWrite;
 
         /// <summary>
         /// Flushes both constituent streams.  See <see cref="Stream.Flush"/>.
@@ -547,7 +546,7 @@ namespace LspTools.LspHelpers
         {
             m_primaryStream.Flush();
 
-            if(m_writeFailAction == SlaveFailAction.Propogate)
+            if (m_writeFailAction == SlaveFailAction.Propogate)
             {
                 // This is the simple and most efficient case.
                 m_slaveStream.Flush();
@@ -561,7 +560,7 @@ namespace LspTools.LspHelpers
                 {
                     m_slaveStream.Flush();
                 }
-                catch(Exception exc)
+                catch (Exception exc)
                 {
                     HandleSlaveException(
                         exc, SlaveFailMethod.Write,
@@ -576,10 +575,7 @@ namespace LspTools.LspHelpers
         /// is the length of the primary stream, since the slave stream is never
         /// read by the <see cref="EchoStream"/>.
         /// </summary>
-        public override long Length
-        {
-            get { return m_primaryStream.Length; }
-        }
+        public override long Length => m_primaryStream.Length;
 
         /// <summary>
         /// Sets the length of the stream.  See <see cref="Stream.SetLength"/>.
@@ -595,7 +591,7 @@ namespace LspTools.LspHelpers
 
             m_primaryStream.SetLength(len);
 
-            if(m_seekFailAction == SlaveFailAction.Propogate)
+            if (m_seekFailAction == SlaveFailAction.Propogate)
             {
                 m_slaveStream.SetLength(m_slaveStream.Length + diff);
             }
@@ -605,7 +601,7 @@ namespace LspTools.LspHelpers
                 {
                     m_slaveStream.SetLength(m_slaveStream.Length + diff);
                 }
-                catch(Exception exc)
+                catch (Exception exc)
                 {
                     HandleSlaveException(
                         exc, SlaveFailMethod.Seek, m_seekFailAction
@@ -639,10 +635,10 @@ namespace LspTools.LspHelpers
         {
             // Read from the primary stream.
             m_lastReadResult = m_primaryStream.Read(buffer, offset, count);
-            if(m_lastReadResult != 0)
+            if (m_lastReadResult != 0)
             {
                 // Echo to the slave stream.
-                if(m_readFailAction == SlaveFailAction.Propogate)
+                if (m_readFailAction == SlaveFailAction.Propogate)
                 {
                     // This is the simple and most efficent case.
                     m_slaveStream.Write(buffer, offset, m_lastReadResult);
@@ -656,7 +652,7 @@ namespace LspTools.LspHelpers
                     {
                         m_slaveStream.Write(buffer, offset, m_lastReadResult);
                     }
-                    catch(Exception exc)
+                    catch (Exception exc)
                     {
                         HandleSlaveException(
                             exc, SlaveFailMethod.Read, m_readFailAction
@@ -691,7 +687,7 @@ namespace LspTools.LspHelpers
         {
             m_primaryStream.Write(buffer, offset, count);
 
-            if(m_writeFailAction == SlaveFailAction.Propogate)
+            if (m_writeFailAction == SlaveFailAction.Propogate)
             {
                 // This is the simple and most efficient case.
                 m_slaveStream.Write(buffer, offset, count);
@@ -705,7 +701,7 @@ namespace LspTools.LspHelpers
                 {
                     m_slaveStream.Write(buffer, offset, count);
                 }
-                catch(Exception exc)
+                catch (Exception exc)
                 {
                     HandleSlaveException(
                         exc, SlaveFailMethod.Write,
@@ -739,7 +735,7 @@ namespace LspTools.LspHelpers
         /// </remarks>
         public override long Position
         {
-            get { return m_primaryStream.Position; }
+            get => m_primaryStream.Position;
 
             set
             {
@@ -755,7 +751,7 @@ namespace LspTools.LspHelpers
 
                 m_primaryStream.Position = value;
 
-                if(m_seekFailAction == SlaveFailAction.Propogate)
+                if (m_seekFailAction == SlaveFailAction.Propogate)
                 {
                     m_slaveStream.Position += diff;
                 }
@@ -765,7 +761,7 @@ namespace LspTools.LspHelpers
                     {
                         m_slaveStream.Position += diff;
                     }
-                    catch(Exception exc)
+                    catch (Exception exc)
                     {
                         HandleSlaveException(
                             exc, SlaveFailMethod.Seek, m_seekFailAction
@@ -795,12 +791,18 @@ namespace LspTools.LspHelpers
             // this in terms of our Position property, rather than the other
             // way around, because Position properly calculates changes in
             // both streams for us.
-            if(origin == SeekOrigin.Begin)
+            if (origin == SeekOrigin.Begin)
+            {
                 Position = offset;
-            else if(origin == SeekOrigin.Current)
+            }
+            else if (origin == SeekOrigin.Current)
+            {
                 Position += offset;
-            else if(origin == SeekOrigin.End)
+            }
+            else if (origin == SeekOrigin.End)
+            {
                 Position = Length + offset;
+            }
 
             return Position;
         }
@@ -815,16 +817,24 @@ namespace LspTools.LspHelpers
             // handle the errors.
             SlaveFailAction action = SlaveFailAction.Filter;
 
-            if(method == SlaveFailMethod.Read)
+            if (method == SlaveFailMethod.Read)
+            {
                 action = m_slaveReadFailFilter(this, method, exc);
-            else if(method == SlaveFailMethod.Write)
+            }
+            else if (method == SlaveFailMethod.Write)
+            {
                 action = m_slaveWriteFailFilter(this, method, exc);
-            else if(method == SlaveFailMethod.Seek)
+            }
+            else if (method == SlaveFailMethod.Seek)
+            {
                 action = m_slaveSeekFailFilter(this, method, exc);
+            }
             else
+            {
                 Debug.Assert(false, "Unhandled SlaveFailMethod.");
+            }
 
-            if(action == SlaveFailAction.Filter)
+            if (action == SlaveFailAction.Filter)
             {
                 throw new InvalidOperationException(
                     "SlaveFailAction.Filter is not a valid return "
@@ -845,15 +855,15 @@ namespace LspTools.LspHelpers
         private void HandleSlaveException(
             Exception exc, SlaveFailMethod method, SlaveFailAction action)
         {
-            if(action == SlaveFailAction.Propogate)
+            if (action == SlaveFailAction.Propogate)
             {
                 throw exc;
             }
-            else if(action == SlaveFailAction.Ignore)
+            else if (action == SlaveFailAction.Ignore)
             {
                 // Intentionally Empty
             }
-            else if(action == SlaveFailAction.Filter)
+            else if (action == SlaveFailAction.Filter)
             {
                 FilterException(exc, method);
             }

@@ -6,9 +6,9 @@
 
     public class Document : Container
     {
-        string _contents;
-        Dictionary<string, string> _properties = new Dictionary<string, string>();
-        Dictionary<string, bool> _lazy_evaluated = new Dictionary<string, bool>();
+        private string _contents;
+        private readonly Dictionary<string, string> _properties = new Dictionary<string, string>();
+        private readonly Dictionary<string, bool> _lazy_evaluated = new Dictionary<string, bool>();
 
         public Document(string ffn)
         {
@@ -79,8 +79,11 @@
 
         public override Document FindDocument(string ffn)
         {
-            if (this.FullPath.ToLower() == ffn.ToLower())
+            if (FullPath.ToLower() == ffn.ToLower())
+            {
                 return this;
+            }
+
             return null;
         }
     }

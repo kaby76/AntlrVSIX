@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Utils
 {
@@ -14,33 +10,15 @@ namespace Utils
     /// <typeparam name="T"></typeparam>
     public class ListSection<T>
     {
-        List<T> _list;
-        int _base;
-        int _len;
+        private readonly List<T> _list;
+        private readonly int _base;
+        private readonly int _len;
 
-        public List<T> List
-        {
-            get
-            {
-                return _list;
-            }
-        }
+        public List<T> List => _list;
 
-        public int Base
-        {
-            get
-            {
-                return _base;
-            }
-        }
+        public int Base => _base;
 
-        public int Len
-        {
-            get
-            {
-                return _len;
-            }
-        }
+        public int Len => _len;
 
         public ListSection(List<T> list, int b, int l)
         {
@@ -51,17 +29,11 @@ namespace Utils
 
         public T this[int i]
         {
-            get
-            {
-                return _list[_base + i];
-            }
-            set
-            {
-                _list[_base + i] = value;
-            }
+            get => _list[_base + i];
+            set => _list[_base + i] = value;
         }
 
-        static void Resize(ref ListSection<T> arr, int new_length)
+        private static void Resize(ref ListSection<T> arr, int new_length)
         {
         }
     }

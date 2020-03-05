@@ -12,14 +12,14 @@
 
         public LinkedHashSet(int initialCapacity)
         {
-            this.dict = new Dictionary<T, LinkedListNode<T>>(initialCapacity);
-            this.list = new LinkedList<T>();
+            dict = new Dictionary<T, LinkedListNode<T>>(initialCapacity);
+            list = new LinkedList<T>();
         }
 
         public LinkedHashSet()
         {
-            this.dict = new Dictionary<T, LinkedListNode<T>>();
-            this.list = new LinkedList<T>();
+            dict = new Dictionary<T, LinkedListNode<T>>();
+            list = new LinkedList<T>();
         }
 
         public LinkedHashSet(IEnumerable<T> e) : this()
@@ -46,12 +46,12 @@
 
         public bool Add(T item)
         {
-            if (this.dict.ContainsKey(item))
+            if (dict.ContainsKey(item))
             {
                 return false;
             }
-            LinkedListNode<T> node = this.list.AddLast(item);
-            this.dict[item] = node;
+            LinkedListNode<T> node = list.AddLast(item);
+            dict[item] = node;
             return true;
         }
 
@@ -234,21 +234,9 @@
         // ICollection<T> implementation
         //
 
-        public int Count
-        {
-            get
-            {
-                return this.dict.Count;
-            }
-        }
+        public int Count => dict.Count;
 
-        public bool IsReadOnly
-        {
-            get
-            {
-                return this.dict.IsReadOnly;
-            }
-        }
+        public bool IsReadOnly => dict.IsReadOnly;
 
         void ICollection<T>.Add(T item)
         {
@@ -257,29 +245,28 @@
 
         public void Clear()
         {
-            this.dict.Clear();
-            this.list.Clear();
+            dict.Clear();
+            list.Clear();
         }
 
         public bool Contains(T item)
         {
-            return this.dict.ContainsKey(item);
+            return dict.ContainsKey(item);
         }
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            this.list.CopyTo(array, arrayIndex);
+            list.CopyTo(array, arrayIndex);
         }
 
         public bool Remove(T item)
         {
-            LinkedListNode<T> node;
-            if (!this.dict.TryGetValue(item, out node))
+            if (!dict.TryGetValue(item, out LinkedListNode<T> node))
             {
                 return false;
             }
-            this.dict.Remove(item);
-            this.list.Remove(node);
+            dict.Remove(item);
+            list.Remove(node);
             return true;
         }
 
@@ -289,7 +276,7 @@
 
         public IEnumerator<T> GetEnumerator()
         {
-            return this.list.GetEnumerator();
+            return list.GetEnumerator();
         }
 
         //
@@ -298,7 +285,7 @@
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return this.list.GetEnumerator();
+            return list.GetEnumerator();
         }
 
     }

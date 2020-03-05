@@ -5,7 +5,7 @@
     /// A marginally useful object to track predefined and global scopes. </summary>
     public class SymbolTable
     {
-        private bool InstanceFieldsInitialized = false;
+        private readonly bool InstanceFieldsInitialized = false;
 
         private void InitializeInstanceFields()
         {

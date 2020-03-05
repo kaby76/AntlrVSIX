@@ -4,7 +4,6 @@
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Shell.Interop;
     using Microsoft.VisualStudio.Text;
-    using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.TextManager.Interop;
     using System;
     using System.Collections.Generic;
@@ -25,9 +24,8 @@
             IVsWindowFrame frame = FindWindowFrame(filePath);
             if (frame != null)
             {
-                IVsTextView textView;
 
-                if (GetTextViewFromFrame(frame, out textView))
+                if (GetTextViewFromFrame(frame, out IVsTextView textView))
                 {
                     return textView;
                 }
@@ -41,13 +39,16 @@
 
             IObjectWithSite object_with_site = text_view as IObjectWithSite;
             if (object_with_site == null)
+            {
                 return null;
+            }
 
             Guid riid = typeof(IOleServiceProvider).GUID;
-            IntPtr ppvSite;
-            object_with_site.GetSite(ref riid, out ppvSite);
+            object_with_site.GetSite(ref riid, out IntPtr ppvSite);
             if (ppvSite == IntPtr.Zero)
+            {
                 return null;
+            }
 
             IOleServiceProvider ole_service_provider = null;
             try
@@ -60,13 +61,16 @@
             }
 
             if (ole_service_provider == null)
+            {
                 return null;
+            }
 
             Guid guid_service = typeof(SVsWindowFrame).GUID;
             riid = typeof(IVsWindowFrame).GUID;
-            IntPtr ppvObject;
-            if (ErrorHandler.Failed(ole_service_provider.QueryService(ref guid_service, ref riid, out ppvObject)) || ppvObject == IntPtr.Zero)
+            if (ErrorHandler.Failed(ole_service_provider.QueryService(ref guid_service, ref riid, out IntPtr ppvObject)) || ppvObject == IntPtr.Zero)
+            {
                 return null;
+            }
 
             IVsWindowFrame frame = null;
             try
@@ -80,7 +84,9 @@
 
             riid = typeof(IVsCodeWindow).GUID;
             if (ErrorHandler.Failed(frame.QueryViewInterface(ref riid, out ppvObject)) || ppvObject == IntPtr.Zero)
+            {
                 return null;
+            }
 
             IVsCodeWindow code_window = null;
             try
@@ -101,16 +107,14 @@
 
             if (shell != null)
             {
-                IEnumWindowFrames framesEnum;
 
-                int hr = shell.GetDocumentWindowEnum(out framesEnum);
+                int hr = shell.GetDocumentWindowEnum(out IEnumWindowFrames framesEnum);
 
                 if (hr == VSConstants.S_OK && framesEnum != null)
                 {
                     IVsWindowFrame[] frames = new IVsWindowFrame[1];
-                    uint fetched;
 
-                    while (framesEnum.Next(1, frames, out fetched) == VSConstants.S_OK && fetched == 1)
+                    while (framesEnum.Next(1, frames, out uint fetched) == VSConstants.S_OK && fetched == 1)
                     {
                         yield return frames[0];
                     }
@@ -121,11 +125,8 @@
         internal static IVsTextView OpenStupidFile(IServiceProvider isp, string full_file_name)
         {
             ServiceProvider sp = new ServiceProvider(isp);
-            IVsUIHierarchy ivsuih;
-            uint item_id;
-            IVsWindowFrame ivswf;
             if (!VsShellUtilities.IsDocumentOpen(sp, full_file_name, Guid.Empty,
-                out ivsuih, out item_id, out ivswf))
+                out IVsUIHierarchy ivsuih, out uint item_id, out IVsWindowFrame ivswf))
             {
                 VsShellUtilities.OpenDocument(sp, full_file_name);
             }
@@ -136,10 +137,7 @@
         {
             IVsTextView xx = OpenStupidFile(AntlrLanguageClient.XXX, full_file_name);
             ServiceProvider sp = new ServiceProvider(AntlrLanguageClient.XXX);
-            IVsUIHierarchy ivsuih;
-            uint item_id;
-            IVsWindowFrame ivswf;
-            VsShellUtilities.IsDocumentOpen(sp, full_file_name, Guid.Empty, out ivsuih, out item_id, out ivswf);
+            VsShellUtilities.IsDocumentOpen(sp, full_file_name, Guid.Empty, out IVsUIHierarchy ivsuih, out uint item_id, out IVsWindowFrame ivswf);
             ivswf?.Show();
         }
 
@@ -158,9 +156,8 @@
 
         private static bool GetPhysicalPathFromFrame(IVsWindowFrame frame, out string frameFilePath)
         {
-            object propertyValue;
 
-            int hr = frame.GetProperty((int)__VSFPROPID.VSFPROPID_pszMkDocument, out propertyValue);
+            int hr = frame.GetProperty((int)__VSFPROPID.VSFPROPID_pszMkDocument, out object propertyValue);
             if (hr == VSConstants.S_OK && propertyValue != null)
             {
                 frameFilePath = propertyValue.ToString();
@@ -180,11 +177,10 @@
 
         private static bool IsFrameForFilePath(IVsWindowFrame frame, string filePath)
         {
-            string frameFilePath;
 
-            if (GetPhysicalPathFromFrame(frame, out frameFilePath))
+            if (GetPhysicalPathFromFrame(frame, out string frameFilePath))
             {
-                return String.Equals(filePath, frameFilePath, StringComparison.OrdinalIgnoreCase);
+                return string.Equals(filePath, frameFilePath, StringComparison.OrdinalIgnoreCase);
             }
 
             return false;
@@ -196,14 +192,14 @@
         }
         public static SnapshotPoint GetPointInLine(this ITextSnapshot snapshot, int line, int column)
         {
-            var snapshotLine = snapshot.GetLineFromLineNumber(line);
+            ITextSnapshotLine snapshotLine = snapshot.GetLineFromLineNumber(line);
             return snapshotLine.Start.Add(column);
         }
 
         public static int GetIndex(this ITextBuffer textBuffer, int line, int column)
         {
-            var point = GetPointInLine(textBuffer, line, column);
-            var index = point.Position;
+            SnapshotPoint point = GetPointInLine(textBuffer, line, column);
+            int index = point.Position;
             return index;
         }
     }

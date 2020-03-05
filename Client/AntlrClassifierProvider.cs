@@ -27,10 +27,10 @@
                 //AntlrLanguagePackage package = AntlrLanguagePackage.Instance;
                 VSColorTheme.ThemeChanged += UpdateTheme;
                 result = buffer.Properties.GetOrCreateSingletonProperty(() => new AntlrClassifier(buffer)) as ITagger<T>;
-                var classifier = result as AntlrClassifier;
+                AntlrClassifier classifier = result as AntlrClassifier;
                 classifier.Initialize(ClassificationTypeRegistry, ClassificationFormatMapService);
             }
-            catch (Exception exception)
+            catch (Exception)
             {
             }
             return result;
@@ -40,7 +40,7 @@
         {
             Color defaultBackground = VSColorTheme.GetThemedColor(EnvironmentColors.ToolWindowBackgroundColorKey);
             Color defaultForeground = VSColorTheme.GetThemedColor(EnvironmentColors.ToolWindowTextColorKey);
-            var formatMap = ClassificationFormatMapService.GetClassificationFormatMap(category: "code");
+            IClassificationFormatMap formatMap = ClassificationFormatMapService.GetClassificationFormatMap(category: "code");
             try
             {
                 formatMap.BeginBatchUpdate();

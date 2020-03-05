@@ -10,9 +10,9 @@
     /// </summary>
     public interface ISymbol
     {
-        string Name {get;}
-        IScope Scope {get;set;}
-        int InsertionOrderNumber {get;set;}
+        string Name { get; }
+        IScope Scope { get; set; }
+        int InsertionOrderNumber { get; set; }
         int line { get; }
         int col { get; }
         string file { get; }

@@ -1,31 +1,29 @@
-﻿using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using StreamJsonRpc;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Web;
-using Antlr4.Runtime.Tree.Pattern;
-using LanguageServer;
-using Workspaces;
-using DocumentSymbol = LanguageServer.DocumentSymbol;
-using Location = LanguageServer.Location;
-
-namespace Server
+﻿namespace Server
 {
+    using LanguageServer;
+    using Microsoft.VisualStudio.LanguageServer.Protocol;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
+    using StreamJsonRpc;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using Workspaces;
+    using DocumentSymbol = LanguageServer.DocumentSymbol;
+    using Location = LanguageServer.Location;
+
     public class LanguageServerTarget
     {
         private readonly LSPServer server;
-        private bool trace = true;
+        private readonly bool trace = true;
         private readonly Workspaces.Workspace _workspace;
-        static readonly object _object = new object();
+        private static readonly object _object = new object();
 
         public LanguageServerTarget(LSPServer server)
         {
             this.server = server;
-            this._workspace = Workspaces.Workspace.Instance;
+            _workspace = Workspaces.Workspace.Instance;
         }
 
         [JsonRpcMethod(Methods.InitializeName)]
@@ -36,41 +34,51 @@ namespace Server
                 System.Console.Error.WriteLine("<-- Initialize");
                 System.Console.Error.WriteLine(arg.ToString());
             }
-            var capabilities = new ServerCapabilities();
-            capabilities.TextDocumentSync = new TextDocumentSyncOptions();
-            capabilities.TextDocumentSync.OpenClose = true;
-            capabilities.TextDocumentSync.Change = TextDocumentSyncKind.Incremental;
-            capabilities.TextDocumentSync.Save = new SaveOptions();
-            capabilities.TextDocumentSync.Save.IncludeText = true;
+            ServerCapabilities capabilities = new ServerCapabilities
+            {
+                TextDocumentSync = new TextDocumentSyncOptions
+                {
+                    OpenClose = true,
+                    Change = TextDocumentSyncKind.Incremental,
+                    Save = new SaveOptions
+                    {
+                        IncludeText = true
+                    }
+                },
 
-            capabilities.HoverProvider = true;
+                HoverProvider = true,
 
-            capabilities.CompletionProvider = new CompletionOptions();
-            capabilities.CompletionProvider.ResolveProvider = true;
-            capabilities.CompletionProvider.TriggerCharacters = new string[] { ",", "." };
+                CompletionProvider = new CompletionOptions
+                {
+                    ResolveProvider = true,
+                    TriggerCharacters = new string[] { ",", "." }
+                },
 
-            capabilities.ReferencesProvider = true;
+                ReferencesProvider = true,
 
-            capabilities.DefinitionProvider = true;
+                DefinitionProvider = true,
 
-            capabilities.TypeDefinitionProvider = false; // Does not make sense for Antlr.
+                TypeDefinitionProvider = false, // Does not make sense for Antlr.
 
-            capabilities.ImplementationProvider = false; // Does not make sense for Antlr.
+                ImplementationProvider = false, // Does not make sense for Antlr.
 
-            capabilities.DocumentHighlightProvider = true;
+                DocumentHighlightProvider = true,
 
-            capabilities.DocumentSymbolProvider = true;
+                DocumentSymbolProvider = true,
 
-            capabilities.WorkspaceSymbolProvider = false;
+                WorkspaceSymbolProvider = false,
 
-            capabilities.DocumentFormattingProvider = true;
+                DocumentFormattingProvider = true,
 
-            capabilities.DocumentRangeFormattingProvider = false;
+                DocumentRangeFormattingProvider = false,
 
-            capabilities.RenameProvider = true;
+                RenameProvider = true
+            };
 
-            var result = new InitializeResult();
-            result.Capabilities = capabilities;
+            InitializeResult result = new InitializeResult
+            {
+                Capabilities = capabilities
+            };
             string json = JsonConvert.SerializeObject(result);
             if (trace)
             {
@@ -176,8 +184,8 @@ namespace Server
                 System.Console.Error.WriteLine("<-- TextDocumentDidOpen");
                 System.Console.Error.WriteLine(arg.ToString());
             }
-            var request = arg.ToObject<DidOpenTextDocumentParams>();
-            var document = CheckDoc(request.TextDocument.Uri);
+            DidOpenTextDocumentParams request = arg.ToObject<DidOpenTextDocumentParams>();
+            Document document = CheckDoc(request.TextDocument.Uri);
             server.SendDiagnostics(request.TextDocument.Uri.AbsoluteUri, "");
         }
 
@@ -189,40 +197,40 @@ namespace Server
                 System.Console.Error.WriteLine("<-- TextDocumentDidChange");
                 System.Console.Error.WriteLine(arg.ToString());
             }
-            var request = arg.ToObject<DidChangeTextDocumentParams>();
-            var version = request.TextDocument.Version;
-            var document = CheckDoc(request.TextDocument.Uri);
+            DidChangeTextDocumentParams request = arg.ToObject<DidChangeTextDocumentParams>();
+            int? version = request.TextDocument.Version;
+            Document document = CheckDoc(request.TextDocument.Uri);
             lock (_object)
             {
-                var pd = ParserDetailsFactory.Create(document);
-                var code = pd.Code;
-                var start_index = 0;
-                var end_index = 0;
-                foreach (var change in request.ContentChanges)
+                ParserDetails pd = ParserDetailsFactory.Create(document);
+                string code = pd.Code;
+                int start_index = 0;
+                int end_index = 0;
+                foreach (TextDocumentContentChangeEvent change in request.ContentChanges)
                 {
-                    var range = change.Range;
-                    var length = change.RangeLength; // Why? range encodes start and end => length!
-                    var text = change.Text;
+                    Microsoft.VisualStudio.LanguageServer.Protocol.Range range = change.Range;
+                    int length = change.RangeLength; // Why? range encodes start and end => length!
+                    string text = change.Text;
                     {
-                        var line = range.Start.Line;
-                        var character = range.Start.Character;
+                        int line = range.Start.Line;
+                        int character = range.Start.Character;
                         start_index = LanguageServer.Module.GetIndex(line, character, document);
                     }
                     {
-                        var line = range.End.Line;
-                        var character = range.End.Character;
+                        int line = range.End.Line;
+                        int character = range.End.Character;
                         end_index = LanguageServer.Module.GetIndex(line, character, document);
                     }
-                    var bs = LanguageServer.Module.GetLineColumn(start_index, document);
-                    var be = LanguageServer.Module.GetLineColumn(end_index, document);
-                    var original = code.Substring(start_index, end_index - start_index);
-                    var n = code.Substring(0, start_index)
+                    (int, int) bs = LanguageServer.Module.GetLineColumn(start_index, document);
+                    (int, int) be = LanguageServer.Module.GetLineColumn(end_index, document);
+                    string original = code.Substring(start_index, end_index - start_index);
+                    string n = code.Substring(0, start_index)
                             + text
                             + code.Substring(0 + start_index + end_index - start_index);
                     code = n;
                 }
                 document.Code = code;
-                var to_do = LanguageServer.Module.Compile();
+                List<ParserDetails> to_do = LanguageServer.Module.Compile();
             }
         }
 
@@ -294,27 +302,29 @@ namespace Server
                 System.Console.Error.WriteLine("<-- TextDocumentCompletion");
                 System.Console.Error.WriteLine(arg.ToString());
             }
-            var request = arg.ToObject<CompletionParams>();
-            var document = CheckDoc(request.TextDocument.Uri);
-            var context = request.Context;
-            var position = request.Position;
-            var line = position.Line;
-            var character = position.Character;
-            var char_index = LanguageServer.Module.GetIndex(line, character, document);
+            CompletionParams request = arg.ToObject<CompletionParams>();
+            Document document = CheckDoc(request.TextDocument.Uri);
+            CompletionContext context = request.Context;
+            Position position = request.Position;
+            int line = position.Line;
+            int character = position.Character;
+            int char_index = LanguageServer.Module.GetIndex(line, character, document);
             if (trace)
             {
                 System.Console.Error.WriteLine("position index = " + char_index);
-                var back = LanguageServer.Module.GetLineColumn(char_index, document);
+                (int, int) back = LanguageServer.Module.GetLineColumn(char_index, document);
                 System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
             }
-            var res = LanguageServer.Module.Completion(char_index, document);
+            List<string> res = LanguageServer.Module.Completion(char_index, document);
             List<CompletionItem> items = new List<CompletionItem>();
-            foreach (var r in res)
+            foreach (string r in res)
             {
-                var item = new CompletionItem();
-                item.Label = r;
-                item.InsertText = r;
-                item.Kind = (CompletionItemKind) CompletionItemKind.Variable;
+                CompletionItem item = new CompletionItem
+                {
+                    Label = r,
+                    InsertText = r,
+                    Kind = CompletionItemKind.Variable
+                };
                 items.Add(item);
             }
             return items.ToArray();
@@ -331,11 +341,11 @@ namespace Server
             return null;
         }
 
-        Document CheckDoc(System.Uri uri)
+        private Document CheckDoc(System.Uri uri)
         {
-            var decoded = System.Web.HttpUtility.UrlDecode(uri.AbsoluteUri);
-            var file_name = new Uri(decoded).LocalPath;
-            var document = _workspace.FindDocument(file_name);
+            string decoded = System.Web.HttpUtility.UrlDecode(uri.AbsoluteUri);
+            string file_name = new Uri(decoded).LocalPath;
+            Document document = _workspace.FindDocument(file_name);
             if (document == null)
             {
                 document = new Workspaces.Document(file_name);
@@ -344,14 +354,14 @@ namespace Server
                     using (StreamReader sr = new StreamReader(file_name))
                     {
                         // Read the stream to a string, and write the string to the console.
-                        String str = sr.ReadToEnd();
+                        string str = sr.ReadToEnd();
                         document.Code = str;
                     }
                 }
-                catch (IOException e)
+                catch (IOException)
                 {
                 }
-                var project = _workspace.FindProject("Misc");
+                Project project = _workspace.FindProject("Misc");
                 if (project == null)
                 {
                     project = new Project("Misc", "Misc", "Misc");
@@ -359,8 +369,8 @@ namespace Server
                 }
                 project.AddDocument(document);
                 document.Changed = true;
-                var pd = ParserDetailsFactory.Create(document);
-                var to_do = LanguageServer.Module.Compile();
+                ParserDetails pd = ParserDetailsFactory.Create(document);
+                List<ParserDetails> to_do = LanguageServer.Module.Compile();
             }
             return document;
         }
@@ -373,33 +383,41 @@ namespace Server
                 System.Console.Error.WriteLine("<-- TextDocumentHover");
                 System.Console.Error.WriteLine(arg.ToString());
             }
-            var request = arg.ToObject<TextDocumentPositionParams>();
-            var document = CheckDoc(request.TextDocument.Uri);
-            var position = request.Position;
-            var line = position.Line;
-            var character = position.Character;
-            var index = LanguageServer.Module.GetIndex(line, character, document);
+            TextDocumentPositionParams request = arg.ToObject<TextDocumentPositionParams>();
+            Document document = CheckDoc(request.TextDocument.Uri);
+            Position position = request.Position;
+            int line = position.Line;
+            int character = position.Character;
+            int index = LanguageServer.Module.GetIndex(line, character, document);
             if (trace)
             {
                 System.Console.Error.WriteLine("position index = " + index);
-                var back = LanguageServer.Module.GetLineColumn(index, document);
+                (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
                 System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
             }
             QuickInfo quick_info = LanguageServer.Module.GetQuickInfo(index, document);
-            if (quick_info == null) return null;
-            var hover = new Hover();
-            hover.Contents = new MarkupContent
+            if (quick_info == null)
             {
-                Kind = MarkupKind.PlainText,
-                Value = quick_info.Display
+                return null;
+            }
+
+            Hover hover = new Hover
+            {
+                Contents = new MarkupContent
+                {
+                    Kind = MarkupKind.PlainText,
+                    Value = quick_info.Display
+                }
             };
-            var index_start = quick_info.Range.Start.Value;
-            var index_end = quick_info.Range.End.Value;
-            var lcs = LanguageServer.Module.GetLineColumn(index_start, document);
-            var lce = LanguageServer.Module.GetLineColumn(index_end, document);
-            hover.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
-            hover.Range.Start = new Position(lcs.Item1, lcs.Item2);
-            hover.Range.End = new Position(lce.Item1, lce.Item2);
+            int index_start = quick_info.Range.Start.Value;
+            int index_end = quick_info.Range.End.Value;
+            (int, int) lcs = LanguageServer.Module.GetLineColumn(index_start, document);
+            (int, int) lce = LanguageServer.Module.GetLineColumn(index_end, document);
+            hover.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range
+            {
+                Start = new Position(lcs.Item1, lcs.Item2),
+                End = new Position(lce.Item1, lce.Item2)
+            };
             System.Console.Error.WriteLine("returning " + quick_info.Display.ToString());
             return hover;
         }
@@ -426,33 +444,35 @@ namespace Server
                 System.Console.Error.WriteLine("<-- TextDocumentDefinition");
                 System.Console.Error.WriteLine(arg.ToString());
             }
-            var request = arg.ToObject<TextDocumentPositionParams>();
-            var document = CheckDoc(request.TextDocument.Uri);
-            var position = request.Position;
-            var line = position.Line;
-            var character = position.Character;
-            var index = LanguageServer.Module.GetIndex(line, character, document);
+            TextDocumentPositionParams request = arg.ToObject<TextDocumentPositionParams>();
+            Document document = CheckDoc(request.TextDocument.Uri);
+            Position position = request.Position;
+            int line = position.Line;
+            int character = position.Character;
+            int index = LanguageServer.Module.GetIndex(line, character, document);
             if (trace)
             {
                 System.Console.Error.WriteLine("position index = " + index);
-                var back = LanguageServer.Module.GetLineColumn(index, document);
+                (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
                 System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
             }
-            var found = LanguageServer.Module.FindDef(index, document);
-            var locations = new List<object>();
-            foreach (var f in found)
+            IList<Location> found = LanguageServer.Module.FindDef(index, document);
+            List<object> locations = new List<object>();
+            foreach (Location f in found)
             {
-                var location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location();
-                location.Uri = new Uri(f.Uri.FullPath);
-                var def_document = _workspace.FindDocument(f.Uri.FullPath);
+                Microsoft.VisualStudio.LanguageServer.Protocol.Location location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location
+                {
+                    Uri = new Uri(f.Uri.FullPath)
+                };
+                Document def_document = _workspace.FindDocument(f.Uri.FullPath);
                 location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
-                var lcs = LanguageServer.Module.GetLineColumn(f.Range.Start.Value, def_document);
-                var lce = LanguageServer.Module.GetLineColumn(f.Range.End.Value, def_document);
+                (int, int) lcs = LanguageServer.Module.GetLineColumn(f.Range.Start.Value, def_document);
+                (int, int) lce = LanguageServer.Module.GetLineColumn(f.Range.End.Value, def_document);
                 location.Range.Start = new Position(lcs.Item1, lcs.Item2);
                 location.Range.End = new Position(lce.Item1, lce.Item2);
                 locations.Add(location);
             }
-            var result = locations.ToArray();
+            object[] result = locations.ToArray();
             return result;
         }
 
@@ -464,33 +484,35 @@ namespace Server
                 System.Console.Error.WriteLine("<-- TextDocumentTypeDefinitionName");
                 System.Console.Error.WriteLine(arg.ToString());
             }
-            var request = arg.ToObject<TextDocumentPositionParams>();
-            var document = CheckDoc(request.TextDocument.Uri);
-            var position = request.Position;
-            var line = position.Line;
-            var character = position.Character;
-            var index = LanguageServer.Module.GetIndex(line, character, document);
+            TextDocumentPositionParams request = arg.ToObject<TextDocumentPositionParams>();
+            Document document = CheckDoc(request.TextDocument.Uri);
+            Position position = request.Position;
+            int line = position.Line;
+            int character = position.Character;
+            int index = LanguageServer.Module.GetIndex(line, character, document);
             if (trace)
             {
                 System.Console.Error.WriteLine("position index = " + index);
-                var back = LanguageServer.Module.GetLineColumn(index, document);
+                (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
                 System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
             }
-            var found = LanguageServer.Module.FindDef(index, document);
-            var locations = new List<object>();
-            foreach (var f in found)
+            IList<Location> found = LanguageServer.Module.FindDef(index, document);
+            List<object> locations = new List<object>();
+            foreach (Location f in found)
             {
-                var location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location();
-                location.Uri = new Uri(f.Uri.FullPath);
-                var def_document = _workspace.FindDocument(f.Uri.FullPath);
+                Microsoft.VisualStudio.LanguageServer.Protocol.Location location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location
+                {
+                    Uri = new Uri(f.Uri.FullPath)
+                };
+                Document def_document = _workspace.FindDocument(f.Uri.FullPath);
                 location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
-                var lcs = LanguageServer.Module.GetLineColumn(f.Range.Start.Value, def_document);
-                var lce = LanguageServer.Module.GetLineColumn(f.Range.End.Value, def_document);
+                (int, int) lcs = LanguageServer.Module.GetLineColumn(f.Range.Start.Value, def_document);
+                (int, int) lce = LanguageServer.Module.GetLineColumn(f.Range.End.Value, def_document);
                 location.Range.Start = new Position(lcs.Item1, lcs.Item2);
                 location.Range.End = new Position(lce.Item1, lce.Item2);
                 locations.Add(location);
             }
-            var result = locations.ToArray();
+            object[] result = locations.ToArray();
             return result;
         }
 
@@ -502,33 +524,35 @@ namespace Server
                 System.Console.Error.WriteLine("<-- TextDocumentImplementation");
                 System.Console.Error.WriteLine(arg.ToString());
             }
-            var request = arg.ToObject<TextDocumentPositionParams>();
-            var document = CheckDoc(request.TextDocument.Uri);
-            var position = request.Position;
-            var line = position.Line;
-            var character = position.Character;
-            var index = LanguageServer.Module.GetIndex(line, character, document);
+            TextDocumentPositionParams request = arg.ToObject<TextDocumentPositionParams>();
+            Document document = CheckDoc(request.TextDocument.Uri);
+            Position position = request.Position;
+            int line = position.Line;
+            int character = position.Character;
+            int index = LanguageServer.Module.GetIndex(line, character, document);
             if (trace)
             {
                 System.Console.Error.WriteLine("position index = " + index);
-                var back = LanguageServer.Module.GetLineColumn(index, document);
+                (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
                 System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
             }
-            var found = LanguageServer.Module.FindDef(index, document);
-            var locations = new List<object>();
-            foreach (var f in found)
+            IList<Location> found = LanguageServer.Module.FindDef(index, document);
+            List<object> locations = new List<object>();
+            foreach (Location f in found)
             {
-                var location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location();
-                location.Uri = new Uri(f.Uri.FullPath);
-                var def_document = _workspace.FindDocument(f.Uri.FullPath);
+                Microsoft.VisualStudio.LanguageServer.Protocol.Location location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location
+                {
+                    Uri = new Uri(f.Uri.FullPath)
+                };
+                Document def_document = _workspace.FindDocument(f.Uri.FullPath);
                 location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
-                var lcs = LanguageServer.Module.GetLineColumn(f.Range.Start.Value, def_document);
-                var lce = LanguageServer.Module.GetLineColumn(f.Range.End.Value, def_document);
+                (int, int) lcs = LanguageServer.Module.GetLineColumn(f.Range.Start.Value, def_document);
+                (int, int) lce = LanguageServer.Module.GetLineColumn(f.Range.End.Value, def_document);
                 location.Range.Start = new Position(lcs.Item1, lcs.Item2);
                 location.Range.End = new Position(lce.Item1, lce.Item2);
                 locations.Add(location);
             }
-            var result = locations.ToArray();
+            object[] result = locations.ToArray();
             return result;
         }
 
@@ -540,33 +564,35 @@ namespace Server
                 System.Console.Error.WriteLine("<-- TextDocumentReferences");
                 System.Console.Error.WriteLine(arg.ToString());
             }
-            var request = arg.ToObject<TextDocumentPositionParams>();
-            var document = CheckDoc(request.TextDocument.Uri);
-            var position = request.Position;
-            var line = position.Line;
-            var character = position.Character;
-            var index = LanguageServer.Module.GetIndex(line, character, document);
+            TextDocumentPositionParams request = arg.ToObject<TextDocumentPositionParams>();
+            Document document = CheckDoc(request.TextDocument.Uri);
+            Position position = request.Position;
+            int line = position.Line;
+            int character = position.Character;
+            int index = LanguageServer.Module.GetIndex(line, character, document);
             if (trace)
             {
                 System.Console.Error.WriteLine("position index = " + index);
-                var back = LanguageServer.Module.GetLineColumn(index, document);
+                (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
                 System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
             }
-            var found = LanguageServer.Module.FindRefsAndDefs(index, document);
-            var locations = new List<object>();
-            foreach (var f in found)
+            IEnumerable<Location> found = LanguageServer.Module.FindRefsAndDefs(index, document);
+            List<object> locations = new List<object>();
+            foreach (Location f in found)
             {
-                var location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location();
-                location.Uri = new Uri(f.Uri.FullPath);
-                var def_document = _workspace.FindDocument(f.Uri.FullPath);
+                Microsoft.VisualStudio.LanguageServer.Protocol.Location location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location
+                {
+                    Uri = new Uri(f.Uri.FullPath)
+                };
+                Document def_document = _workspace.FindDocument(f.Uri.FullPath);
                 location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
-                var lcs = LanguageServer.Module.GetLineColumn(f.Range.Start.Value, def_document);
-                var lce = LanguageServer.Module.GetLineColumn(f.Range.End.Value + 1, def_document);
+                (int, int) lcs = LanguageServer.Module.GetLineColumn(f.Range.Start.Value, def_document);
+                (int, int) lce = LanguageServer.Module.GetLineColumn(f.Range.End.Value + 1, def_document);
                 location.Range.Start = new Position(lcs.Item1, lcs.Item2);
                 location.Range.End = new Position(lce.Item1, lce.Item2);
                 locations.Add(location);
             }
-            var result = locations.ToArray();
+            object[] result = locations.ToArray();
             return result;
         }
 
@@ -578,33 +604,35 @@ namespace Server
                 System.Console.Error.WriteLine("<-- TextDocumentDocumentHighlight");
                 System.Console.Error.WriteLine(arg.ToString());
             }
-            var request = arg.ToObject<TextDocumentPositionParams>();
-            var document = CheckDoc(request.TextDocument.Uri);
-            var position = request.Position;
-            var line = position.Line;
-            var character = position.Character;
-            var index = LanguageServer.Module.GetIndex(line, character, document);
+            TextDocumentPositionParams request = arg.ToObject<TextDocumentPositionParams>();
+            Document document = CheckDoc(request.TextDocument.Uri);
+            Position position = request.Position;
+            int line = position.Line;
+            int character = position.Character;
+            int index = LanguageServer.Module.GetIndex(line, character, document);
             if (trace)
             {
                 System.Console.Error.WriteLine("position index = " + index);
-                var back = LanguageServer.Module.GetLineColumn(index, document);
+                (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
                 System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
             }
-            var found = LanguageServer.Module.FindRefsAndDefs(index, document);
-            var locations = new List<object>();
-            foreach (var f in found)
+            IEnumerable<Location> found = LanguageServer.Module.FindRefsAndDefs(index, document);
+            List<object> locations = new List<object>();
+            foreach (Location f in found)
             {
-                var location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location();
-                location.Uri = new Uri(f.Uri.FullPath);
-                var def_document = _workspace.FindDocument(f.Uri.FullPath);
+                Microsoft.VisualStudio.LanguageServer.Protocol.Location location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location
+                {
+                    Uri = new Uri(f.Uri.FullPath)
+                };
+                Document def_document = _workspace.FindDocument(f.Uri.FullPath);
                 location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
-                var lcs = LanguageServer.Module.GetLineColumn(f.Range.Start.Value, def_document);
-                var lce = LanguageServer.Module.GetLineColumn(f.Range.End.Value + 1, def_document);
+                (int, int) lcs = LanguageServer.Module.GetLineColumn(f.Range.Start.Value, def_document);
+                (int, int) lce = LanguageServer.Module.GetLineColumn(f.Range.End.Value + 1, def_document);
                 location.Range.Start = new Position(lcs.Item1, lcs.Item2);
                 location.Range.End = new Position(lce.Item1, lce.Item2);
                 locations.Add(location);
             }
-            var result = locations.ToArray();
+            object[] result = locations.ToArray();
             return result;
         }
 
@@ -616,55 +644,76 @@ namespace Server
                 System.Console.Error.WriteLine("<-- TextDocumentDocumentSymbol");
                 System.Console.Error.WriteLine(arg.ToString());
             }
-            var request = arg.ToObject<DocumentSymbolParams>();
-            var document = CheckDoc(request.TextDocument.Uri);
-            var r = LanguageServer.Module.Get(document);
-            var symbols = new List<object>();
-            foreach (var s in r)
+            DocumentSymbolParams request = arg.ToObject<DocumentSymbolParams>();
+            Document document = CheckDoc(request.TextDocument.Uri);
+            IEnumerable<DocumentSymbol> r = LanguageServer.Module.Get(document);
+            List<object> symbols = new List<object>();
+            foreach (DocumentSymbol s in r)
             {
-                var si = new SymbolInformation();
+                SymbolInformation si = new SymbolInformation();
                 if (s.kind == 0)
+                {
                     si.Kind = SymbolKind.Variable; // Nonterminal
+                }
                 else if (s.kind == 1)
+                {
                     si.Kind = SymbolKind.Enum; // Terminal
+                }
                 else if (s.kind == 2)
+                {
                     //si.Kind = 0; // Comment
                     continue;
+                }
                 else if (s.kind == 3)
+                {
                     // si.Kind = 0; // Keyword
                     continue;
+                }
                 else if (s.kind == 4)
+                {
                     // si.Kind = SymbolKind.Number; // Literal
                     continue;
+                }
                 else if (s.kind == 5)
+                {
                     // si.Kind = 0; // Mode
                     continue;
+                }
                 else if (s.kind == 6)
+                {
                     // si.Kind = SymbolKind.Enum; // Channel
                     continue;
+                }
                 else
+                {
                     // si.Kind = 0; // Default.
                     continue;
+                }
+
                 si.Name = s.name;
-                si.Location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location();
-                si.Location.Uri = request.TextDocument.Uri;
-                var lcs = LanguageServer.Module.GetLineColumn(s.range.Start.Value, document);
-                var lce = LanguageServer.Module.GetLineColumn(s.range.End.Value, document);
-                si.Location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
-                si.Location.Range.Start = new Position(lcs.Item1, lcs.Item2);
-                si.Location.Range.End = new Position(lce.Item1, lce.Item2);
+                si.Location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location
+                {
+                    Uri = request.TextDocument.Uri
+                };
+                (int, int) lcs = LanguageServer.Module.GetLineColumn(s.range.Start.Value, document);
+                (int, int) lce = LanguageServer.Module.GetLineColumn(s.range.End.Value, document);
+                si.Location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range
+                {
+                    Start = new Position(lcs.Item1, lcs.Item2),
+                    End = new Position(lce.Item1, lce.Item2)
+                };
                 symbols.Add(si);
             }
             if (trace)
             {
                 System.Console.Error.Write("returning ");
-                System.Console.Error.WriteLine(String.Join(" ", symbols.Select(s =>
+                System.Console.Error.WriteLine(string.Join(" ", symbols.Select(s =>
                 {
-                    var v = (SymbolInformation)s;
+                    SymbolInformation v = (SymbolInformation)s;
                     return "<" + v.Name + "," + v.Kind + ">";
                 })));
             }
-            var result = symbols.ToArray();
+            object[] result = symbols.ToArray();
             return result;
         }
 
@@ -731,17 +780,19 @@ namespace Server
                 System.Console.Error.WriteLine("<-- TextDocumentFormatting");
                 System.Console.Error.WriteLine(arg.ToString());
             }
-            var request = arg.ToObject<DocumentFormattingParams>();
-            var document = CheckDoc(request.TextDocument.Uri);
-            var new_list = new List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit>();
-            var changes = LanguageServer.Module.Reformat(document);
+            DocumentFormattingParams request = arg.ToObject<DocumentFormattingParams>();
+            Document document = CheckDoc(request.TextDocument.Uri);
+            List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit> new_list = new List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit>();
+            LanguageServer.TextEdit[] changes = LanguageServer.Module.Reformat(document);
             int count = 0;
-            foreach (var delta in changes)
+            foreach (LanguageServer.TextEdit delta in changes)
             {
-                var new_edit = new Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit();
-                new_edit.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
-                var lcs = LanguageServer.Module.GetLineColumn(delta.range.Start.Value, document);
-                var lce = LanguageServer.Module.GetLineColumn(delta.range.End.Value, document);
+                Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit new_edit = new Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit
+                {
+                    Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range()
+                };
+                (int, int) lcs = LanguageServer.Module.GetLineColumn(delta.range.Start.Value, document);
+                (int, int) lce = LanguageServer.Module.GetLineColumn(delta.range.End.Value, document);
                 new_edit.Range.Start = new Position(lcs.Item1, lcs.Item2);
                 new_edit.Range.End = new Position(lce.Item1, lce.Item2);
                 new_edit.NewText = delta.NewText;
@@ -781,35 +832,37 @@ namespace Server
                 System.Console.Error.WriteLine("<-- TextDocumentRename");
                 System.Console.Error.WriteLine(arg.ToString());
             }
-            var request = arg.ToObject<RenameParams>();
-            var document = CheckDoc(request.TextDocument.Uri);
-            var position = request.Position;
-            var line = position.Line;
-            var character = position.Character;
-            var index = LanguageServer.Module.GetIndex(line, character, document);
+            RenameParams request = arg.ToObject<RenameParams>();
+            Document document = CheckDoc(request.TextDocument.Uri);
+            Position position = request.Position;
+            int line = position.Line;
+            int character = position.Character;
+            int index = LanguageServer.Module.GetIndex(line, character, document);
             if (trace)
             {
                 System.Console.Error.WriteLine("position index = " + index);
-                var back = LanguageServer.Module.GetLineColumn(index, document);
+                (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
                 System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
             }
-            var new_name = request.NewName;
-            var changes = LanguageServer.Module.Rename(index, new_name, document);
-            var edit = new WorkspaceEdit();
+            string new_name = request.NewName;
+            Dictionary<string, LanguageServer.TextEdit[]> changes = LanguageServer.Module.Rename(index, new_name, document);
+            WorkspaceEdit edit = new WorkspaceEdit();
             int count = 0;
-            var edit_changes_array = new Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]>();
-            foreach (var pair in changes)
+            Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]> edit_changes_array = new Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]>();
+            foreach (KeyValuePair<string, LanguageServer.TextEdit[]> pair in changes)
             {
-                var doc = pair.Key;
-                var uri = new Uri(doc);
-                var val = pair.Value;
-                var new_list = new List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit>();
-                foreach (var v in val)
+                string doc = pair.Key;
+                Uri uri = new Uri(doc);
+                LanguageServer.TextEdit[] val = pair.Value;
+                List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit> new_list = new List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit>();
+                foreach (LanguageServer.TextEdit v in val)
                 {
-                    var new_edit = new Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit();
-                    new_edit.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
-                    var lcs = LanguageServer.Module.GetLineColumn(v.range.Start.Value, document);
-                    var lce = LanguageServer.Module.GetLineColumn(v.range.End.Value, document);
+                    Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit new_edit = new Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit
+                    {
+                        Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range()
+                    };
+                    (int, int) lcs = LanguageServer.Module.GetLineColumn(v.range.Start.Value, document);
+                    (int, int) lce = LanguageServer.Module.GetLineColumn(v.range.End.Value, document);
                     new_edit.Range.Start = new Position(lcs.Item1, lcs.Item2);
                     new_edit.Range.End = new Position(lce.Item1, lce.Item2);
                     new_edit.NewText = v.NewText;
@@ -837,101 +890,132 @@ namespace Server
         [JsonRpcMethod("CustomMessage")]
         public async System.Threading.Tasks.Task<SymbolInformation[]> CustomMessageName(JToken arg)
         {
-            var request = arg.ToObject<CustomMessageParams>();
-            var document = CheckDoc(request.TextDocument);
-            var start = request.Start;
-            var end = request.End;
+            CustomMessageParams request = arg.ToObject<CustomMessageParams>();
+            Document document = CheckDoc(request.TextDocument);
+            int start = request.Start;
+            int end = request.End;
             if (trace)
             {
                 System.Console.Error.WriteLine("<-- CustomMessage");
                 System.Console.Error.WriteLine(arg.ToString());
-                var bs = LanguageServer.Module.GetLineColumn(start, document);
+                (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
                 System.Console.Error.WriteLine("");
             }
             IEnumerable<DocumentSymbol> r = LanguageServer.Module.Get(document);
-            var symbols = new List<SymbolInformation>();
-            foreach (var s in r)
+            List<SymbolInformation> symbols = new List<SymbolInformation>();
+            foreach (DocumentSymbol s in r)
             {
                 if (!(start <= s.range.Start.Value && s.range.Start.Value <= end))
+                {
                     continue;
-                var si = new SymbolInformation();
+                }
+
+                SymbolInformation si = new SymbolInformation();
                 if (s.kind == 0)
+                {
                     si.Kind = SymbolKind.Variable; // Nonterminal
+                }
                 else if (s.kind == 1)
+                {
                     si.Kind = SymbolKind.Enum; // Terminal
+                }
                 else if (s.kind == 2)
+                {
                     //si.Kind = 0; // Comment
                     continue;
+                }
                 else if (s.kind == 3)
+                {
                     // si.Kind = 0; // Keyword
                     continue;
+                }
                 else if (s.kind == 4)
+                {
                     // si.Kind = SymbolKind.Number; // Literal
                     continue;
+                }
                 else if (s.kind == 5)
+                {
                     // si.Kind = 0; // Mode
                     continue;
+                }
                 else if (s.kind == 6)
+                {
                     // si.Kind = SymbolKind.Enum; // Channel
                     continue;
+                }
                 else
+                {
                     // si.Kind = 0; // Default.
                     continue;
+                }
+
                 si.Name = s.name;
-                si.Location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location();
-                si.Location.Uri = request.TextDocument;
-                var lcs = LanguageServer.Module.GetLineColumn(s.range.Start.Value, document);
-                var lce = LanguageServer.Module.GetLineColumn(s.range.End.Value, document);
-                si.Location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
-                si.Location.Range.Start = new Position(lcs.Item1, lcs.Item2);
-                si.Location.Range.End = new Position(lce.Item1, lce.Item2);
+                si.Location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location
+                {
+                    Uri = request.TextDocument
+                };
+                (int, int) lcs = LanguageServer.Module.GetLineColumn(s.range.Start.Value, document);
+                (int, int) lce = LanguageServer.Module.GetLineColumn(s.range.End.Value, document);
+                si.Location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range
+                {
+                    Start = new Position(lcs.Item1, lcs.Item2),
+                    End = new Position(lce.Item1, lce.Item2)
+                };
                 symbols.Add(si);
             }
             if (trace)
             {
                 System.Console.Error.Write("returning ");
-                System.Console.Error.WriteLine(String.Join(" ", symbols.Select(s =>
+                System.Console.Error.WriteLine(string.Join(" ", symbols.Select(s =>
                 {
-                    var v = (SymbolInformation)s;
+                    SymbolInformation v = s;
                     return "<" + v.Name + "," + v.Kind + ">";
                 })));
             }
-            var result = symbols.ToArray();
+            SymbolInformation[] result = symbols.ToArray();
             return result;
         }
 
         [JsonRpcMethod("CustomMessage2")]
         public async System.Threading.Tasks.Task<int> KenCustomMessageName2(JToken arg)
         {
-            var request = arg.ToObject<CustomMessage2Params>();
-            var document = CheckDoc(request.TextDocument);
-            var pos = request.Pos;
-            var forward = request.Forward;
+            CustomMessage2Params request = arg.ToObject<CustomMessage2Params>();
+            Document document = CheckDoc(request.TextDocument);
+            int pos = request.Pos;
+            bool forward = request.Forward;
             if (trace)
             {
                 System.Console.Error.WriteLine("<-- CustomMessage2");
                 System.Console.Error.WriteLine(arg.ToString());
-                var bs = LanguageServer.Module.GetLineColumn(pos, document);
+                (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
                 System.Console.Error.WriteLine("");
             }
-            var r = LanguageServer.Module.GetDefs(document);
-            var symbols = new List<object>();
-            int next_sym = forward ? Int32.MaxValue : -1;
-            foreach (var s in r)
+            IEnumerable<Location> r = LanguageServer.Module.GetDefs(document);
+            List<object> symbols = new List<object>();
+            int next_sym = forward ? int.MaxValue : -1;
+            foreach (Location s in r)
             {
                 if (forward)
                 {
                     if (s.Range.Start.Value > pos && s.Range.Start.Value < next_sym)
+                    {
                         next_sym = s.Range.Start.Value;
+                    }
                 }
                 else
                 {
                     if (s.Range.Start.Value < pos && s.Range.Start.Value > next_sym)
+                    {
                         next_sym = s.Range.Start.Value;
+                    }
                 }
             }
-            if (next_sym == Int32.MaxValue)
+            if (next_sym == int.MaxValue)
+            {
                 next_sym = -1;
+            }
+
             if (trace)
             {
                 System.Console.Error.Write("returning ");
@@ -943,14 +1027,14 @@ namespace Server
         [JsonRpcMethod("CustomMessage3")]
         public async System.Threading.Tasks.Task<CustomMessage3Result> KenCustomMessageName3(JToken arg)
         {
-            var request = arg.ToObject<CustomMessage3Params>();
-            var document = CheckDoc(request.TextDocument);
-            var pos = request.Pos;
+            CustomMessage3Params request = arg.ToObject<CustomMessage3Params>();
+            Document document = CheckDoc(request.TextDocument);
+            int pos = request.Pos;
             if (trace)
             {
                 System.Console.Error.WriteLine("<-- CustomMessage3");
                 System.Console.Error.WriteLine(arg.ToString());
-                var bs = LanguageServer.Module.GetLineColumn(pos, document);
+                (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
                 System.Console.Error.WriteLine("");
             }
 

@@ -49,25 +49,25 @@ namespace Graphs.Utils
         /// <param name="value">The value of the element to add.</param>
         public void Add(TKey key, TValue value)
         {
-            List<TValue> valueList;
             //System.Console.WriteLine("In Add of MultiMap " + key + " " + value);
-            if (TryGetValue(key, out valueList))
+            if (TryGetValue(key, out List<TValue> valueList))
             {
                 valueList.Add(value);
             }
             else
             {
-                valueList = new List<TValue>();
-                valueList.Add(value);
+                valueList = new List<TValue>
+                {
+                    value
+                };
                 Add(key, valueList);
             }
         }
 
         public void Add(TKey key)
         {
-            List<TValue> valueList;
             //System.Console.WriteLine("In Add of MultiMap " + key);
-            if (TryGetValue(key, out valueList))
+            if (TryGetValue(key, out List<TValue> valueList))
             {
             }
             else
@@ -86,9 +86,8 @@ namespace Graphs.Utils
         /// false if the key or the value were not found.</returns>
         public bool Remove(TKey key, TValue value)
         {
-            List<TValue> valueList;
 
-            if (TryGetValue(key, out valueList))
+            if (TryGetValue(key, out List<TValue> valueList))
             {
                 if (valueList.Remove(value))
                 {
@@ -110,10 +109,9 @@ namespace Graphs.Utils
         /// <returns>Number of elements removed.</returns>
         public int RemoveAll(TKey key, TValue value)
         {
-            List<TValue> valueList;
             int n = 0;
 
-            if (TryGetValue(key, out valueList))
+            if (TryGetValue(key, out List<TValue> valueList))
             {
                 while (valueList.Remove(value))
                 {
@@ -153,9 +151,8 @@ namespace Graphs.Utils
         /// <returns>true if the element was found; otherwise false.</returns>
         public bool Contains(TKey key, TValue value)
         {
-            List<TValue> valueList;
 
-            if (TryGetValue(key, out valueList))
+            if (TryGetValue(key, out List<TValue> valueList))
             {
                 return valueList.Contains(value);
             }

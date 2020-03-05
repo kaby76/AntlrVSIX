@@ -7,13 +7,13 @@
     {
         public static void Notify(string message)
         {
-            var options = Options.Option.GetBoolean("OptInLogging");
+            bool options = Options.Option.GetBoolean("OptInLogging");
             if (options)
             {
                 try
                 {
                     HttpClient httpClient = new HttpClient();
-                    var result = httpClient.GetAsync("http://domemtech.com/home/db?" + message).Result;
+                    HttpResponseMessage result = httpClient.GetAsync("http://domemtech.com/home/db?" + message).Result;
                 }
                 catch (Exception)
                 {

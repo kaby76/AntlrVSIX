@@ -30,14 +30,19 @@
 
         /// <summary>Indicates whether the current Range object is equal to another object of the same type.</summary>
         /// <param name="value">An object to compare with this object</param>
-        public override bool Equals(object value) =>
-            value is Range r &&
-            r.Start.Equals(Start) &&
-            r.End.Equals(End);
+        public override bool Equals(object value)
+        {
+            return value is Range r &&
+r.Start.Equals(Start) &&
+r.End.Equals(End);
+        }
 
         /// <summary>Indicates whether the current Range object is equal to another Range object.</summary>
         /// <param name="other">An object to compare with this object</param>
-        public bool Equals(Range other) => other.Start.Equals(Start) && other.End.Equals(End);
+        public bool Equals(Range other)
+        {
+            return other.Start.Equals(Start) && other.End.Equals(End);
+        }
 
         /// <summary>Returns the hash code for this instance.</summary>
         public override int GetHashCode()
@@ -52,10 +57,16 @@
         }
 
         /// <summary>Create a Range object starting from start index to the end of the collection.</summary>
-        public static Range StartAt(Index start) => new Range(start, Index.End);
+        public static Range StartAt(Index start)
+        {
+            return new Range(start, Index.End);
+        }
 
         /// <summary>Create a Range object starting from first element in the collection to the end Index.</summary>
-        public static Range EndAt(Index end) => new Range(Index.Start, end);
+        public static Range EndAt(Index end)
+        {
+            return new Range(Index.Start, end);
+        }
 
         /// <summary>Create a Range object starting from first element to the end.</summary>
         public static Range All => new Range(Index.Start, Index.End);
@@ -72,16 +83,24 @@
             int start;
             Index startIndex = Start;
             if (startIndex.IsFromEnd)
+            {
                 start = length - startIndex.Value;
+            }
             else
+            {
                 start = startIndex.Value;
+            }
 
             int end;
             Index endIndex = End;
             if (endIndex.IsFromEnd)
+            {
                 end = length - endIndex.Value;
+            }
             else
+            {
                 end = endIndex.Value;
+            }
 
             if ((uint)end > (uint)length || (uint)start > (uint)end)
             {

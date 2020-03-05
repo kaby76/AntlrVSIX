@@ -1,23 +1,19 @@
-﻿
-
-using System.Text;
-using Antlr4.Runtime.Misc;
-
-namespace LanguageServer
+﻿namespace LanguageServer
 {
     using Antlr4.Runtime;
+    using Antlr4.Runtime.Misc;
     using Antlr4.Runtime.Tree;
+    using Symtab;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Symtab;
 
     public class ParserDetails : ICloneable
     {
         public virtual Workspaces.Document Item { get; set; }
-        public virtual string FullFileName { get { return this.Item?.FullPath; } }
-        public virtual string Code { get { return this.Item?.Code; } }
-        public virtual bool Changed { get { return Item == null ? true : Item.Changed; } }
+        public virtual string FullFileName => Item?.FullPath;
+        public virtual string Code => Item?.Code;
+        public virtual bool Changed => Item == null ? true : Item.Changed;
         public virtual void Cleanup() { }
         public virtual IGrammarDescription Gd { get; set; }
 
@@ -51,26 +47,33 @@ namespace LanguageServer
 
         public virtual void Parse()
         {
-            var item = Item;
-            var code = item.Code;
-            var ffn = item.FullPath;
+            Workspaces.Document item = Item;
+            string code = item.Code;
+            string ffn = item.FullPath;
             bool has_changed = item.Changed;
             item.Changed = false;
-            if (!has_changed) return;
+            if (!has_changed)
+            {
+                return;
+            }
 
             IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);
-            if (gd == null) throw new Exception();
+            if (gd == null)
+            {
+                throw new Exception();
+            }
+
             gd.Parse(this);
 
-            this.AllNodes = DFSVisitor.DFS(this.ParseTree as ParserRuleContext);
-            this.Comments = gd.ExtractComments(code);
-            this.Defs = new Dictionary<TerminalNodeImpl, int>();
-            this.Refs = new Dictionary<TerminalNodeImpl, int>();
-            this.Tags = new Dictionary<TerminalNodeImpl, int>();
-            this.Errors = new HashSet<IParseTree>();
-            this.Imports = new HashSet<string>();
-            this.Attributes = new Dictionary<IParseTree, IList<CombinedScopeSymbol>>();
-            this.Cleanup();
+            AllNodes = DFSVisitor.DFS(ParseTree as ParserRuleContext);
+            Comments = gd.ExtractComments(code);
+            Defs = new Dictionary<TerminalNodeImpl, int>();
+            Refs = new Dictionary<TerminalNodeImpl, int>();
+            Tags = new Dictionary<TerminalNodeImpl, int>();
+            Errors = new HashSet<IParseTree>();
+            Imports = new HashSet<string>();
+            Attributes = new Dictionary<IParseTree, IList<CombinedScopeSymbol>>();
+            Cleanup();
         }
 
         public virtual List<Func<bool>> Passes { get; } = new List<Func<bool>>();
@@ -82,24 +85,40 @@ namespace LanguageServer
 
         public virtual void GatherDefs()
         {
-            var item = Item;
-            var ffn = item.FullPath;
+            Workspaces.Document item = Item;
+            string ffn = item.FullPath;
             IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);
-            if (gd == null) throw new Exception();
+            if (gd == null)
+            {
+                throw new Exception();
+            }
+
             for (int classification = 0; classification < gd.IdentifyDefinition.Count; ++classification)
             {
-                var fun = gd.IdentifyDefinition[classification];
-                if (fun == null) continue;
-                var it = this.AllNodes.Where(t => fun(gd, this.Attributes, t));
-                foreach (var t in it)
+                Func<IGrammarDescription, Dictionary<IParseTree, IList<CombinedScopeSymbol>>, IParseTree, bool> fun = gd.IdentifyDefinition[classification];
+                if (fun == null)
                 {
-                    var x = (t as TerminalNodeImpl);
-                    if (x == null) continue;
-                    if (x.Symbol == null) continue;
+                    continue;
+                }
+
+                IEnumerable<IParseTree> it = AllNodes.Where(t => fun(gd, Attributes, t));
+                foreach (IParseTree t in it)
+                {
+                    TerminalNodeImpl x = (t as TerminalNodeImpl);
+                    if (x == null)
+                    {
+                        continue;
+                    }
+
+                    if (x.Symbol == null)
+                    {
+                        continue;
+                    }
+
                     try
                     {
-                        this.Defs.Add(x, classification);
-                        this.Tags.Add(x, classification);
+                        Defs.Add(x, classification);
+                        Tags.Add(x, classification);
                     }
                     catch (ArgumentException)
                     {
@@ -111,39 +130,67 @@ namespace LanguageServer
 
         public virtual void GatherRefs()
         {
-            var item = Item;
-            var ffn = item.FullPath;
+            Workspaces.Document item = Item;
+            string ffn = item.FullPath;
             IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);
-            if (gd == null) throw new Exception();
+            if (gd == null)
+            {
+                throw new Exception();
+            }
+
             for (int classification = 0; classification < gd.Identify.Count; ++classification)
             {
-                var fun = gd.Identify[classification];
-                if (fun == null) continue;
-                var it = this.AllNodes.Where(t => fun(gd, this.Attributes, t));
-                foreach (var t in it)
+                Func<IGrammarDescription, Dictionary<IParseTree, IList<CombinedScopeSymbol>>, IParseTree, bool> fun = gd.Identify[classification];
+                if (fun == null)
                 {
-                    var x = (t as TerminalNodeImpl);
-                    if (x == null) continue;
-                    if (x.Symbol == null) continue;
+                    continue;
+                }
+
+                IEnumerable<IParseTree> it = AllNodes.Where(t => fun(gd, Attributes, t));
+                foreach (IParseTree t in it)
+                {
+                    TerminalNodeImpl x = (t as TerminalNodeImpl);
+                    if (x == null)
+                    {
+                        continue;
+                    }
+
+                    if (x.Symbol == null)
+                    {
+                        continue;
+                    }
+
                     try
                     {
-                        this.Attributes.TryGetValue(x, out IList<CombinedScopeSymbol> attr_list);
-                        if (attr_list == null) continue;
-                        foreach (var attr in attr_list)
+                        Attributes.TryGetValue(x, out IList<CombinedScopeSymbol> attr_list);
+                        if (attr_list == null)
                         {
-                            this.Tags.Add(x, classification);
-                            if (attr == null) continue;
-                            var sym = attr as Symtab.ISymbol;
-                            if (sym == null) continue;
-                            var def = sym.resolve();
+                            continue;
+                        }
+
+                        foreach (CombinedScopeSymbol attr in attr_list)
+                        {
+                            Tags.Add(x, classification);
+                            if (attr == null)
+                            {
+                                continue;
+                            }
+
+                            ISymbol sym = attr as Symtab.ISymbol;
+                            if (sym == null)
+                            {
+                                continue;
+                            }
+
+                            ISymbol def = sym.resolve();
                             if (def != null && def.file != null && def.file != ""
                                 && def.file != ffn)
                             {
-                                var def_item = Workspaces.Workspace.Instance.FindDocument(def.file);
-                                var def_pd = ParserDetailsFactory.Create(def_item);
+                                Workspaces.Document def_item = Workspaces.Workspace.Instance.FindDocument(def.file);
+                                ParserDetails def_pd = ParserDetailsFactory.Create(def_item);
                                 def_pd.PropagateChangesTo.Add(ffn);
                             }
-                            this.Refs.Add(x, classification);
+                            Refs.Add(x, classification);
                         }
                     }
                     catch (ArgumentException)
@@ -156,15 +203,19 @@ namespace LanguageServer
 
         public virtual void GatherErrors()
         {
-            var item = Item;
-            var ffn = item.FullPath;
+            Workspaces.Document item = Item;
+            string ffn = item.FullPath;
             IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);
-            if (gd == null) throw new Exception();
+            if (gd == null)
             {
-                var it = this.AllNodes.Where(t => t as Antlr4.Runtime.Tree.ErrorNodeImpl != null);
-                foreach (var t in it)
+                throw new Exception();
+            }
+
+            {
+                IEnumerable<IParseTree> it = AllNodes.Where(t => t as Antlr4.Runtime.Tree.ErrorNodeImpl != null);
+                foreach (IParseTree t in it)
                 {
-                    this.Errors.Add(t);
+                    Errors.Add(t);
                 }
             }
         }
@@ -176,18 +227,22 @@ namespace LanguageServer
 
         public virtual List<string> Candidates(int char_index)
         {
-            var item = Item;
-            var ffn = item.FullPath;
+            Workspaces.Document item = Item;
+            string ffn = item.FullPath;
             IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);
-            if (gd == null) throw new Exception();
-            string code = this.Code.Substring(0, char_index);
+            if (gd == null)
+            {
+                throw new Exception();
+            }
+
+            string code = Code.Substring(0, char_index);
             gd.Parse(code, out CommonTokenStream tok_stream, out Parser parser, out Lexer lexer, out IParseTree pt);
             LASets la_sets = new LASets();
             IntervalSet int_set = la_sets.Compute(parser, tok_stream);
             List<string> result = new List<string>();
             foreach (int r in int_set.ToList())
             {
-                var rule_name = Lexer.RuleNames[r];
+                string rule_name = Lexer.RuleNames[r];
                 result.Add(rule_name);
             }
             return result;

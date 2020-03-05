@@ -1,7 +1,7 @@
 ﻿namespace Symtab
 {
-    using System.Collections.Generic;
     using Antlr4.Runtime;
+    using System.Collections.Generic;
 
     /// <summary>
     /// A symbol representing the class. It is a kind of data aggregate
@@ -29,7 +29,7 @@
                     if (EnclosingScope != null)
                     {
                         IList<ISymbol> superClasslist = EnclosingScope.LookupType(superClassName);
-                        foreach (var superClass in superClasslist)
+                        foreach (ISymbol superClass in superClasslist)
                         {
                             if (superClass is ClassSymbol)
                             {
@@ -51,8 +51,10 @@
                 ClassSymbol superClassScope = SuperClassScope;
                 if (superClassScope != null)
                 {
-                    IList<ClassSymbol> result = new List<ClassSymbol>();
-                    result.Add(superClassScope);
+                    IList<ClassSymbol> result = new List<ClassSymbol>
+                    {
+                        superClassScope
+                    };
                     return result;
                 }
                 return null;
@@ -93,8 +95,8 @@
             {
                 foreach (ClassSymbol sup in superClassScopes)
                 {
-                    var list = sup.resolveMember(name);
-                    foreach (var ss in list)
+                    IList<ISymbol> list = sup.resolveMember(name);
+                    foreach (ISymbol ss in list)
                     {
                         if (ss is IMemberSymbol)
                         {
@@ -112,9 +114,9 @@
         /// </summary>
         public override IList<FieldSymbol> resolveField(string name)
         {
-            var result = new List<FieldSymbol>(); 
-            var list = resolveMember(name);
-            foreach (var s in list)
+            List<FieldSymbol> result = new List<FieldSymbol>();
+            IList<ISymbol> list = resolveMember(name);
+            foreach (ISymbol s in list)
             {
                 if (s is FieldSymbol)
                 {
@@ -130,9 +132,9 @@
         /// </summary>
         public virtual IList<MethodSymbol> resolveMethod(string name)
         {
-            var result = new List<MethodSymbol>();
-            var list = resolveMember(name);
-            foreach (var s in list)
+            List<MethodSymbol> result = new List<MethodSymbol>();
+            IList<ISymbol> list = resolveMember(name);
+            foreach (ISymbol s in list)
             {
                 if (s is MethodSymbol)
                 {
@@ -146,18 +148,12 @@
         {
             set
             {
-                this.superClassName = value;
+                superClassName = value;
                 nextFreeMethodSlot = NumberOfMethods;
             }
         }
 
-        public virtual string SuperClassName
-        {
-            get
-            {
-                return superClassName;
-            }
-        }
+        public virtual string SuperClassName => superClassName;
 
         public override void setSlotNumber(ISymbol sym)
         {
@@ -170,7 +166,7 @@
                     ClassSymbol superClass = SuperClassScope;
                     if (superClass != null)
                     {
-                        var list = superClass.resolveMethod(sym.Name);
+                        IList<MethodSymbol> list = superClass.resolveMethod(sym.Name);
                         if (list.Count == 1)
                         {
                             MethodSymbol superMethodSym = list[0];

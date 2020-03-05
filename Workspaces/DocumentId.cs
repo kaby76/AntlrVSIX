@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-
-namespace Workspaces
+﻿namespace Workspaces
 {
+    using System;
+    using System.Collections.Generic;
+
     public sealed class DocumentId
     {
         public Guid Id { get; }

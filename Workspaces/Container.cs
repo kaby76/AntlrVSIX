@@ -1,8 +1,7 @@
 ﻿namespace Workspaces
 {
-    using System.Linq;
-    using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class Container
     {
@@ -21,8 +20,8 @@
     {
         public static IEnumerable<Document> DFS(Container root)
         {
-            var toVisit = new Stack<Container>();
-            var visitedAncestors = new Stack<Container>();
+            Stack<Container> toVisit = new Stack<Container>();
+            Stack<Container> visitedAncestors = new Stack<Container>();
             toVisit.Push(root);
             while (toVisit.Count > 0)
             {
@@ -37,9 +36,9 @@
                         }
                         else if (node is Project)
                         {
-                            var internal_node = node as Project;
-                            var children = internal_node.Children;
-                            foreach (var o in children.Reverse())
+                            Project internal_node = node as Project;
+                            IEnumerable<Container> children = internal_node.Children;
+                            foreach (Container o in children.Reverse())
                             {
                                 toVisit.Push(o);
                             }
@@ -47,9 +46,9 @@
                         }
                         else if (node is Workspace)
                         {
-                            var internal_node = node as Workspace;
-                            var children = internal_node.Children;
-                            foreach (var o in children.Reverse())
+                            Workspace internal_node = node as Workspace;
+                            IEnumerable<Container> children = internal_node.Children;
+                            foreach (Container o in children.Reverse())
                             {
                                 toVisit.Push(o);
                             }
@@ -67,7 +66,7 @@
         }
     }
 
-    static class StackHelper
+    internal static class StackHelper
     {
         public static Container PeekOrDefault(this Stack<Container> s)
         {

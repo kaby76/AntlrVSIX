@@ -14,14 +14,14 @@
             FileVersionInfo versionInfo;
             try
             {
-                var msenvPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "msenv.dll");
+                string msenvPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "msenv.dll");
                 versionInfo = FileVersionInfo.GetVersionInfo(msenvPath);
             }
             catch (FileNotFoundException)
             { return null; }
 
             // Extract the version number from the string in the format "D16.2", "D16.3", etc.
-            var version = Regex.Match(versionInfo.FileVersion, @"D([\d\.]+)");
+            Match version = Regex.Match(versionInfo.FileVersion, @"D([\d\.]+)");
             return version.Success ? version.Groups[1].Value : null;
         }
     }

@@ -14,7 +14,7 @@
 
         public int getSlotNumber()
         {
-                return slot;
+            return slot;
         }
     }
 

@@ -5,8 +5,8 @@
 
     internal class LinkedHashMap<T, U>
     {
-        Dictionary<T, LinkedListNode<Tuple<U, T>>> D = new Dictionary<T, LinkedListNode<Tuple<U, T>>>();
-        LinkedList<Tuple<U, T>> LL = new LinkedList<Tuple<U, T>>();
+        private readonly Dictionary<T, LinkedListNode<Tuple<U, T>>> D = new Dictionary<T, LinkedListNode<Tuple<U, T>>>();
+        private readonly LinkedList<Tuple<U, T>> LL = new LinkedList<Tuple<U, T>>();
 
         public U this[T c]
         {
@@ -14,9 +14,13 @@
             {
                 D.TryGetValue(c, out LinkedListNode<Tuple<U, T>> v);
                 if (v != null)
+                {
                     return D[c].Value.Item1;
+                }
                 else
+                {
                     return default(U);
+                }
             }
 
             set
@@ -38,15 +42,12 @@
 
         public U PopFirst()
         {
-            var node = LL.First;
+            LinkedListNode<Tuple<U, T>> node = LL.First;
             LL.Remove(node);
             D.Remove(node.Value.Item2);
             return node.Value.Item1;
         }
 
-        public int Count
-        {
-            get { return D.Count; }
-        }
+        public int Count => D.Count;
     }
 }

@@ -16,43 +16,25 @@
 
         public SymbolWithScope(string name, IToken token)
         {
-            this.Name = name;
-            this.Token = token;
+            Name = name;
+            Token = token;
         }
 
         public override string Name { get; set; }
 
         public virtual IScope Scope
         {
-            get
-            {
-                return enclosingScope;
-            }
-            set
-            {
-                EnclosingScope = value;
-            }
+            get => enclosingScope;
+            set => EnclosingScope = value;
         }
 
-        public override IScope EnclosingScope
-        {
-            get
-            {
-                return enclosingScope;
-            }
-        }
+        public override IScope EnclosingScope => enclosingScope;
 
         /// <summary>
         /// Return the name prefixed with the name of its enclosing scope
         ///  using '.' (dot) as the scope separator.
         /// </summary>
-        public virtual string QualifiedName
-        {
-            get
-            {
-                return enclosingScope.Name + "." + Name;
-            }
-        }
+        public virtual string QualifiedName => enclosingScope.Name + "." + Name;
 
         /// <summary>
         /// Return the name prefixed with the name of its enclosing scope. </summary>
@@ -74,27 +56,15 @@
 
         public virtual int InsertionOrderNumber
         {
-            get
-            {
-                return index;
-            }
-            set
-            {
-                this.index = value;
-            }
+            get => index;
+            set => index = value;
         }
 
-        public override int NumberOfSymbols
-        {
-            get
-            {
-                return symbols.Count;
-            }
-        }
+        public override int NumberOfSymbols => symbols.Count;
 
-        public virtual int line { get { return Token != null ? Token.Line : 0; } }
-        public virtual int col { get { return Token != null ? Token.Column : 0; } }
-        public virtual string file { get { return Token != null ? Token.InputStream.SourceName : ""; } }
+        public virtual int line => Token != null ? Token.Line : 0;
+        public virtual int col => Token != null ? Token.Column : 0;
+        public virtual string file => Token != null ? Token.InputStream.SourceName : "";
         public virtual IToken Token { get; protected set; }
 
         public override bool Equals(object obj)

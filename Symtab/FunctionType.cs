@@ -17,29 +17,11 @@
             this.argumentTypes = argumentTypes;
         }
 
-        public virtual string Name
-        {
-            get
-            {
-                return ToString();
-            }
-        }
+        public virtual string Name => ToString();
 
-        public virtual int TypeIndex
-        {
-            get
-            {
-                return -1;
-            }
-        }
+        public virtual int TypeIndex => -1;
 
-        public virtual IList<IType> ArgumentTypes
-        {
-            get
-            {
-                return argumentTypes;
-            }
-        }
+        public virtual IList<IType> ArgumentTypes => argumentTypes;
 
         public override string ToString()
         {

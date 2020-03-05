@@ -6,29 +6,29 @@
     {
         public uint _id;
         public int _hash;
-        string _canonical_name;
-        string _name;
-        string _ffn;
-        List<Container> _contents = new List<Container>();
-        Dictionary<string, string> _properties = new Dictionary<string, string>();
-        Dictionary<string, bool> _lazy_evaluated = new Dictionary<string, bool>();
+        private string _canonical_name;
+        private string _name;
+        private string _ffn;
+        private readonly List<Container> _contents = new List<Container>();
+        private readonly Dictionary<string, string> _properties = new Dictionary<string, string>();
+        private readonly Dictionary<string, bool> _lazy_evaluated = new Dictionary<string, bool>();
 
         public string Name
         {
-            get { return _name; }
-            set { _name = value; }
+            get => _name;
+            set => _name = value;
         }
 
         public string CanonicalName
         {
-            get { return _canonical_name; }
-            set { _canonical_name = value; }
+            get => _canonical_name;
+            set => _canonical_name = value;
         }
 
         public string FullPath
         {
-            get { return _ffn; }
-            set { _ffn = value; }
+            get => _ffn;
+            set => _ffn = value;
         }
 
         public Project(string canonical_name, string name, string ffn)
@@ -40,7 +40,11 @@
 
         public Document AddDocument(Document doc)
         {
-            if (doc == null) throw new System.Exception("Trying to add null document.");
+            if (doc == null)
+            {
+                throw new System.Exception("Trying to add null document.");
+            }
+
             _contents.Add(doc);
             doc.Parent = this;
             return doc;
@@ -77,48 +81,68 @@
 
         public override Project FindProject(string ffn)
         {
-            if (ffn == null && this.FullPath == null) return null;
-            if (this.FullPath.ToLower() == ffn.ToLower())
-                return this;
-            foreach (var proj in _contents)
+            if (ffn == null && FullPath == null)
             {
-                var found = proj.FindProject(ffn);
-                if (found != null) return found;
+                return null;
+            }
+
+            if (FullPath.ToLower() == ffn.ToLower())
+            {
+                return this;
+            }
+
+            foreach (Container proj in _contents)
+            {
+                Project found = proj.FindProject(ffn);
+                if (found != null)
+                {
+                    return found;
+                }
             }
             return null;
         }
 
         public override Project FindProject(string canonical_name, string name, string ffn)
         {
-            if (this.CanonicalName == canonical_name &&
-                this.Name == name &&
-                this.FullPath.ToLower() == ffn.ToLower())
-                return this;
-            foreach (var proj in _contents)
+            if (CanonicalName == canonical_name &&
+                Name == name &&
+                FullPath.ToLower() == ffn.ToLower())
             {
-                var found = proj.FindProject(canonical_name, name, ffn);
-                if (found != null) return found;
+                return this;
+            }
+
+            foreach (Container proj in _contents)
+            {
+                Project found = proj.FindProject(canonical_name, name, ffn);
+                if (found != null)
+                {
+                    return found;
+                }
             }
             return null;
         }
 
         public override Document FindDocument(string ffn)
         {
-            foreach (var doc in _contents)
+            foreach (Container doc in _contents)
             {
-                var found = doc.FindDocument(ffn);
-                if (found != null) return found;
+                Document found = doc.FindDocument(ffn);
+                if (found != null)
+                {
+                    return found;
+                }
             }
             return null;
         }
 
-        public IEnumerable<Container> Children
-        {
-            get { return _contents; }
-        }
+        public IEnumerable<Container> Children => _contents;
         public override Container AddChild(Container doc)
         {
-            if (doc == null) throw new System.Exception("Trying to add null document.");
+            if (doc == null)
+            {
+                throw new System.Exception("Trying to add null document.");
+            }
+
             _contents.Add(doc);
             doc.Parent = this;
             return doc;

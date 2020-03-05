@@ -1,7 +1,5 @@
-﻿using System;
+﻿using Graphs.Utils;
 using System.Collections.Generic;
-using System.Linq;
-using Graphs.Utils;
 
 namespace Graphs
 {
@@ -12,9 +10,9 @@ namespace Graphs
         public MultiMap<NODE, EDGE> ForwardEdgeSpace = new MultiMap<NODE, EDGE>();
         public MultiMap<NODE, EDGE> ReverseEdgeSpace = new MultiMap<NODE, EDGE>();
 
-        class VertexEnumerator : IEnumerable<NODE>
+        private class VertexEnumerator : IEnumerable<NODE>
         {
-            Dictionary<NODE, NODE> VertexSpace;
+            private readonly Dictionary<NODE, NODE> VertexSpace;
 
             public VertexEnumerator(Dictionary<NODE, NODE> vs)
             {
@@ -23,7 +21,7 @@ namespace Graphs
 
             public IEnumerator<NODE> GetEnumerator()
             {
-                foreach (var key in VertexSpace.Keys)
+                foreach (NODE key in VertexSpace.Keys)
                 {
                     yield return key;
                 }
@@ -35,17 +33,11 @@ namespace Graphs
             }
         }
 
-        public IEnumerable<NODE> Vertices
-        {
-            get
-            {
-                return new VertexEnumerator(VertexSpace);
-            }
-        }
+        public IEnumerable<NODE> Vertices => new VertexEnumerator(VertexSpace);
 
         public class EdgeEnumerator : IEnumerable<EDGE>
         {
-            MultiMap<NODE, EDGE> EdgeSpace;
+            private readonly MultiMap<NODE, EDGE> EdgeSpace;
 
             public EdgeEnumerator(MultiMap<NODE, EDGE> es)
             {
@@ -54,10 +46,10 @@ namespace Graphs
 
             public IEnumerator<EDGE> GetEnumerator()
             {
-                foreach (var t in EdgeSpace)
+                foreach (KeyValuePair<NODE, List<EDGE>> t in EdgeSpace)
                 {
-                    var l = t.Value;
-                    foreach (var e in l)
+                    List<EDGE> l = t.Value;
+                    foreach (EDGE e in l)
                     {
                         yield return e;
                     }
@@ -70,23 +62,20 @@ namespace Graphs
             }
         }
 
-        public IEnumerable<EDGE> Edges
-        {
-            get
-            {
-                return new EdgeEnumerator(ForwardEdgeSpace);
-            }
-        }
+        public IEnumerable<EDGE> Edges => new EdgeEnumerator(ForwardEdgeSpace);
 
-        virtual public NODE AddVertex(NODE v)
+        public virtual NODE AddVertex(NODE v)
         {
             //System.Console.Error.WriteLine("List "
             //    + String.Join(" ", VertexSpace.Select(x => x.ToString())));
             //System.Console.Error.WriteLine("V " + v.ToString()
             //                              + " Contains " 
             //                              + (VertexSpace.ContainsKey(v)?"true":"false"));
-            if(VertexSpace.ContainsKey(v))
+            if (VertexSpace.ContainsKey(v))
+            {
                 return VertexSpace[v];
+            }
+
             VertexSpace[v] = v;
             //System.Console.Error.WriteLine("aV " + v.ToString()
             //                                    + " Contains "
@@ -94,24 +83,24 @@ namespace Graphs
             return v;
         }
 
-        virtual public void DeleteVertex(NODE v)
+        public virtual void DeleteVertex(NODE v)
         {
         }
 
-        virtual public EDGE AddEdge(EDGE e)
+        public virtual EDGE AddEdge(EDGE e)
         {
-            var vf = AddVertex(e.From);
-            var vt = AddVertex(e.To);
+            NODE vf = AddVertex(e.From);
+            NODE vt = AddVertex(e.To);
             ForwardEdgeSpace.Add(e.From, e);
             ReverseEdgeSpace.Add(e.To, e);
             return e;
         }
 
-        virtual public void DeleteEdge(EDGE e)
+        public virtual void DeleteEdge(EDGE e)
         {
-            var vf = e.From;
-            var vt = e.To;
-            var done = ForwardEdgeSpace.TryGetValue(vf, out List<EDGE> list);
+            NODE vf = e.From;
+            NODE vt = e.To;
+            bool done = ForwardEdgeSpace.TryGetValue(vf, out List<EDGE> list);
             if (done)
             {
                 for (int i = 0; i < list.Count; ++i)
@@ -141,10 +130,10 @@ namespace Graphs
         {
         }
 
-        class PredecessorEnumerator : IEnumerable<NODE>
+        private class PredecessorEnumerator : IEnumerable<NODE>
         {
-            private GraphAdjList<NODE, EDGE> graph;
-            private NODE node;
+            private readonly GraphAdjList<NODE, EDGE> graph;
+            private readonly NODE node;
 
             public PredecessorEnumerator(GraphAdjList<NODE, EDGE> g, NODE n)
             {
@@ -174,10 +163,10 @@ namespace Graphs
             return new PredecessorEnumerator(this, n);
         }
 
-        class PredecessorEdgeEnumerator : IEnumerable<EDGE>
+        private class PredecessorEdgeEnumerator : IEnumerable<EDGE>
         {
-            private GraphAdjList<NODE, EDGE> graph;
-            private NODE node;
+            private readonly GraphAdjList<NODE, EDGE> graph;
+            private readonly NODE node;
 
             public PredecessorEdgeEnumerator(GraphAdjList<NODE, EDGE> g, NODE n)
             {
@@ -207,10 +196,10 @@ namespace Graphs
             return new PredecessorEdgeEnumerator(this, n);
         }
 
-        class ReversePredecessorEnumerator : IEnumerable<NODE>
+        private class ReversePredecessorEnumerator : IEnumerable<NODE>
         {
-            GraphAdjList<NODE, EDGE> graph;
-            NODE node;
+            private readonly GraphAdjList<NODE, EDGE> graph;
+            private readonly NODE node;
 
             public ReversePredecessorEnumerator(GraphAdjList<NODE, EDGE> g, NODE n)
             {
@@ -223,7 +212,7 @@ namespace Graphs
                 if (graph.ReverseEdgeSpace.TryGetValue(node, out List<EDGE> list))
                 {
                     list.Reverse();
-                    foreach (var e in list)
+                    foreach (EDGE e in list)
                     {
                         yield return e.From;
                     }
@@ -246,10 +235,10 @@ namespace Graphs
             return new PredecessorEnumerator(this, n);
         }
 
-        class SuccessorEnumerator : IEnumerable<NODE>
+        private class SuccessorEnumerator : IEnumerable<NODE>
         {
-            private GraphAdjList<NODE, EDGE> graph;
-            private NODE node;
+            private readonly GraphAdjList<NODE, EDGE> graph;
+            private readonly NODE node;
 
             public SuccessorEnumerator(GraphAdjList<NODE, EDGE> g, NODE n)
             {
@@ -284,10 +273,10 @@ namespace Graphs
             return new SuccessorEnumerator(this, n);
         }
 
-        class SuccessorEdgeEnumerator : IEnumerable<EDGE>
+        private class SuccessorEdgeEnumerator : IEnumerable<EDGE>
         {
-            private GraphAdjList<NODE, EDGE> graph;
-            private NODE node;
+            private readonly GraphAdjList<NODE, EDGE> graph;
+            private readonly NODE node;
 
             public SuccessorEdgeEnumerator(GraphAdjList<NODE, EDGE> g, NODE n)
             {
@@ -319,8 +308,8 @@ namespace Graphs
 
         public class ReverseSuccessorEnumerator : IEnumerable<NODE>
         {
-            GraphAdjList<NODE, EDGE> graph;
-            NODE node;
+            private readonly GraphAdjList<NODE, EDGE> graph;
+            private readonly NODE node;
 
             public ReverseSuccessorEnumerator(GraphAdjList<NODE, EDGE> g, NODE n)
             {
@@ -353,10 +342,14 @@ namespace Graphs
 
         public bool IsLeaf(NODE name)
         {
-            if (this.ForwardEdgeSpace.TryGetValue(name, out List<EDGE> list))
+            if (ForwardEdgeSpace.TryGetValue(name, out List<EDGE> list))
+            {
                 return false;
+            }
             else
+            {
                 return true;
+            }
         }
     }
 }

@@ -66,13 +66,7 @@
             return strings;
         }
 
-        public virtual int NumberOfStrings
-        {
-            get
-            {
-                return index + 1;
-            }
-        }
+        public virtual int NumberOfStrings => index + 1;
 
         public override string ToString()
         {

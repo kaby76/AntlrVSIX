@@ -70,7 +70,7 @@
         ///  ScopedSymbols come first then all non-ScopedSymbols Scope objects.
         ///  Insertion order is used within each sublist.
         /// </summary>
-        IList<IScope> NestedScopes {get;}
+        IList<IScope> NestedScopes { get; }
 
         // ------------ Convenience methods --------------------------------
 
@@ -78,7 +78,7 @@
         /// Return (inclusive) list of all scopes on path to root scope.
         ///  The first element is the current scope and the last is the root scope.
         /// </summary>
-        IList<IScope> EnclosingPathToRoot {get;}
+        IList<IScope> EnclosingPathToRoot { get; }
 
         /// <summary>
         /// Return all immediately enclosed scoped symbols in insertion order.
@@ -90,13 +90,13 @@
         ///  scope. E.g., does not get local scopes within a function.
         ///  This returns a subset or same set as <seealso cref="#getNestedScopes"/>.
         /// </summary>
-        IList<IScope> NestedScopedSymbols {get;}
+        IList<IScope> NestedScopedSymbols { get; }
 
         /// <summary>
         /// Return the symbols defined within this scope. The order of insertion
         ///  into the scope is the order returned in this list.
         /// </summary>
-        IList<ISymbol> Symbols {get;}
+        IList<ISymbol> Symbols { get; }
 
         /// <summary>
         /// Return all symbols found in all nested scopes. The order
@@ -104,15 +104,15 @@
         ///  list for each scope.  The scopes are traversed in the
         ///  order in which they are encountered in the input.
         /// </summary>
-        IList<ISymbol> AllSymbols {get;}
+        IList<ISymbol> AllSymbols { get; }
 
         /// <summary>
         /// Return the set of names associated with all symbols in the scope. </summary>
-        ISet<string> SymbolNames {get;}
+        ISet<string> SymbolNames { get; }
 
         /// <summary>
         /// Number of symbols in this specific scope </summary>
-        int NumberOfSymbols {get;}
+        int NumberOfSymbols { get; }
 
         /// <summary>
         /// Return scopes from to current with separator in between </summary>

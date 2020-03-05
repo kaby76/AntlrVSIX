@@ -23,46 +23,28 @@
 
         public BaseSymbol(string name, IToken token)
         {
-            this.Name = name;
-            this.Token = token;
+            Name = name;
+            Token = token;
         }
 
         public virtual string Name { get; set; }
 
         public virtual IScope Scope
         {
-            get
-            {
-                return scope;
-            }
-            set
-            {
-                this.scope = value;
-            }
+            get => scope;
+            set => scope = value;
         }
 
         public virtual IType Type
         {
-            get
-            {
-                return type;
-            }
-            set
-            {
-                this.type = value;
-            }
+            get => type;
+            set => type = value;
         }
 
         public virtual ParserRuleContext DefNode
         {
-            set
-            {
-                this.defNode = value;
-            }
-            get
-            {
-                return defNode;
-            }
+            set => defNode = value;
+            get => defNode;
         }
 
 
@@ -86,14 +68,8 @@
 
         public virtual int InsertionOrderNumber
         {
-            get
-            {
-                return lexicalOrder;
-            }
-            set
-            {
-                this.lexicalOrder = value;
-            }
+            get => lexicalOrder;
+            set => lexicalOrder = value;
         }
 
 
@@ -117,7 +93,7 @@
                 string ts = type.ToString();
                 if (type is SymbolWithScope)
                 {
-                    ts = ((SymbolWithScope) type).getFullyQualifiedName(".");
+                    ts = ((SymbolWithScope)type).getFullyQualifiedName(".");
                 }
                 return '<' + s + Name + ":" + ts + '>';
             }
@@ -125,9 +101,9 @@
         }
 
         public ISymbol definition { get; set; }
-        public virtual int line { get { return Token != null ? Token.Line : 0; } }
-        public virtual int col { get { return Token != null ? Token.Column : 0; } }
-        public virtual string file { get { return Token != null ? Token.InputStream.SourceName : ""; } }
+        public virtual int line => Token != null ? Token.Line : 0;
+        public virtual int col => Token != null ? Token.Column : 0;
+        public virtual string file => Token != null ? Token.InputStream.SourceName : "";
         public virtual IToken Token { get; protected set; }
     }
 

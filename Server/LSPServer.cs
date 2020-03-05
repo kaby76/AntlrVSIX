@@ -1,16 +1,16 @@
-﻿using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Newtonsoft.Json.Linq;
-using StreamJsonRpc;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.ComponentModel;
-
-namespace Server
+﻿namespace Server
 {
+    using Microsoft.VisualStudio.LanguageServer.Protocol;
+    using Newtonsoft.Json.Linq;
+    using StreamJsonRpc;
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.IO;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+
     public class LSPServer : INotifyPropertyChanged
     {
         private int maxProblems = -1;
@@ -24,10 +24,10 @@ namespace Server
 
         public LSPServer(Stream sender, Stream reader, Dictionary<string, DiagnosticSeverity> initialDiagnostics = null)
         {
-            this.target = new LanguageServerTarget(this);
-            this.rpc = JsonRpc.Attach(sender, reader, this.target);
-            this.rpc.Disconnected += OnRpcDisconnected;
-            this.diagnostics = initialDiagnostics;
+            target = new LanguageServerTarget(this);
+            rpc = JsonRpc.Attach(sender, reader, target);
+            rpc.Disconnected += OnRpcDisconnected;
+            diagnostics = initialDiagnostics;
         }
 
         public string CustomText
@@ -46,12 +46,12 @@ namespace Server
 
         private void OnInitialized(object sender, EventArgs e)
         {
-            var timer = new Timer(LogMessage, null, 0, 5 * 1000);
+            Timer timer = new Timer(LogMessage, null, 0, 5 * 1000);
         }
 
         public void OnTextDocumentOpened(DidOpenTextDocumentParams messageParams)
         {
-            this.textDocument = messageParams.TextDocument;
+            textDocument = messageParams.TextDocument;
 
             SendDiagnostics();
         }
@@ -63,23 +63,23 @@ namespace Server
 
         public void SendDiagnostics()
         {
-            if (this.textDocument == null || this.diagnostics == null)
+            if (textDocument == null || this.diagnostics == null)
             {
                 return;
             }
 
-            string[] lines = this.textDocument.Text.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+            string[] lines = textDocument.Text.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
 
             List<Diagnostic> diagnostics = new List<Diagnostic>();
             for (int i = 0; i < lines.Length; i++)
             {
-                var line = lines[i];
+                string line = lines[i];
 
                 int j = 0;
                 while (j < line.Length)
                 {
                     Diagnostic diagnostic = null;
-                    foreach (var tag in this.diagnostics)
+                    foreach (KeyValuePair<string, DiagnosticSeverity> tag in this.diagnostics)
                     {
                         diagnostic = GetDiagnostic(line, i, ref j, tag.Key, tag.Value);
 
@@ -100,16 +100,18 @@ namespace Server
                 }
             }
 
-            PublishDiagnosticParams parameter = new PublishDiagnosticParams();
-            parameter.Uri = textDocument.Uri;
-            parameter.Diagnostics = diagnostics.ToArray();
-
-            if (this.maxProblems > -1)
+            PublishDiagnosticParams parameter = new PublishDiagnosticParams
             {
-                parameter.Diagnostics = parameter.Diagnostics.Take(this.maxProblems).ToArray();
+                Uri = textDocument.Uri,
+                Diagnostics = diagnostics.ToArray()
+            };
+
+            if (maxProblems > -1)
+            {
+                parameter.Diagnostics = parameter.Diagnostics.Take(maxProblems).ToArray();
             }
 
-            this.rpc.NotifyWithParameterObjectAsync(Methods.TextDocumentPublishDiagnosticsName, parameter);
+            rpc.NotifyWithParameterObjectAsync(Methods.TextDocumentPublishDiagnosticsName, parameter);
         }
 
         public void SendDiagnostics(string uri, string text)
@@ -119,13 +121,13 @@ namespace Server
             List<Diagnostic> diagnostics = new List<Diagnostic>();
             for (int i = 0; i < lines.Length; i++)
             {
-                var line = lines[i];
+                string line = lines[i];
 
                 int j = 0;
                 while (j < line.Length)
                 {
                     Diagnostic diagnostic = null;
-                    foreach (var tag in this.diagnostics)
+                    foreach (KeyValuePair<string, DiagnosticSeverity> tag in this.diagnostics)
                     {
                         diagnostic = GetDiagnostic(line, i, ref j, tag.Key, tag.Value);
 
@@ -146,26 +148,28 @@ namespace Server
                 }
             }
 
-            PublishDiagnosticParams parameter = new PublishDiagnosticParams();
-            parameter.Uri = new Uri(uri);
-            parameter.Diagnostics = diagnostics.ToArray();
-
-            if (this.maxProblems > -1)
+            PublishDiagnosticParams parameter = new PublishDiagnosticParams
             {
-                parameter.Diagnostics = parameter.Diagnostics.Take(this.maxProblems).ToArray();
+                Uri = new Uri(uri),
+                Diagnostics = diagnostics.ToArray()
+            };
+
+            if (maxProblems > -1)
+            {
+                parameter.Diagnostics = parameter.Diagnostics.Take(maxProblems).ToArray();
             }
 
-            this.rpc.NotifyWithParameterObjectAsync(Methods.TextDocumentPublishDiagnosticsName, parameter);
+            rpc.NotifyWithParameterObjectAsync(Methods.TextDocumentPublishDiagnosticsName, parameter);
         }
 
         public void LogMessage(object arg)
         {
-            this.LogMessage(arg, MessageType.Info);
+            LogMessage(arg, MessageType.Info);
         }
 
         public void LogMessage(object arg, MessageType messageType)
         {
-            this.LogMessage(arg, "testing " + counter++, messageType);
+            LogMessage(arg, "testing " + counter++, messageType);
         }
 
         public void LogMessage(object arg, string message, MessageType messageType)
@@ -175,7 +179,7 @@ namespace Server
                 Message = message,
                 MessageType = messageType
             };
-            this.rpc.NotifyWithParameterObjectAsync(Methods.WindowLogMessageName, parameter);
+            rpc.NotifyWithParameterObjectAsync(Methods.WindowLogMessageName, parameter);
         }
 
         public void ShowMessage(string message, MessageType messageType)
@@ -185,7 +189,7 @@ namespace Server
                 Message = message,
                 MessageType = messageType
             };
-            this.rpc.NotifyWithParameterObjectAsync(Methods.WindowShowMessageName, parameter);
+            rpc.NotifyWithParameterObjectAsync(Methods.WindowShowMessageName, parameter);
         }
 
         public async Task<MessageActionItem> ShowMessageRequestAsync(string message, MessageType messageType, string[] actionItems)
@@ -197,32 +201,32 @@ namespace Server
                 Actions = actionItems.Select(a => new MessageActionItem { Title = a }).ToArray()
             };
 
-            var response = await this.rpc.InvokeWithParameterObjectAsync<JToken>(Methods.WindowShowMessageRequestName, parameter);
+            JToken response = await rpc.InvokeWithParameterObjectAsync<JToken>(Methods.WindowShowMessageRequestName, parameter);
             return response.ToObject<MessageActionItem>();
         }
 
         public void SendSettings(DidChangeConfigurationParams parameter)
         {
-            this.CurrentSettings = parameter.Settings.ToString();
-            this.NotifyPropertyChanged(nameof(CurrentSettings));
+            CurrentSettings = parameter.Settings.ToString();
+            NotifyPropertyChanged(nameof(CurrentSettings));
 
-            JToken parsedSettings = JToken.Parse(this.CurrentSettings);
+            JToken parsedSettings = JToken.Parse(CurrentSettings);
             int newMaxProblems = parsedSettings.Children().First().Values<int>("maxNumberOfProblems").First();
-            if (this.maxProblems != newMaxProblems)
+            if (maxProblems != newMaxProblems)
             {
-                this.maxProblems = newMaxProblems;
-                this.SendDiagnostics();
+                maxProblems = newMaxProblems;
+                SendDiagnostics();
             }
         }
 
         public void WaitForExit()
         {
-            this.disconnectEvent.WaitOne();
+            disconnectEvent.WaitOne();
         }
 
         public void Exit()
         {
-            this.disconnectEvent.Set();
+            disconnectEvent.Set();
             Disconnected?.Invoke(this, new EventArgs());
             System.Environment.Exit(0);
         }
@@ -231,16 +235,20 @@ namespace Server
         {
             if ((characterOffset + wordToMatch.Length) <= line.Length)
             {
-                var subString = line.Substring(characterOffset, wordToMatch.Length);
+                string subString = line.Substring(characterOffset, wordToMatch.Length);
                 if (subString.Equals(wordToMatch, StringComparison.OrdinalIgnoreCase))
                 {
-                    var diagnostic = new Diagnostic();
-                    diagnostic.Message = "This is an " + Enum.GetName(typeof(DiagnosticSeverity), severity);
-                    diagnostic.Severity = severity;
-                    diagnostic.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
-                    diagnostic.Range.Start = new Position(lineOffset, characterOffset);
-                    diagnostic.Range.End = new Position(lineOffset, characterOffset + wordToMatch.Length);
-                    diagnostic.Code = "Test" + Enum.GetName(typeof(DiagnosticSeverity), severity);
+                    Diagnostic diagnostic = new Diagnostic
+                    {
+                        Message = "This is an " + Enum.GetName(typeof(DiagnosticSeverity), severity),
+                        Severity = severity,
+                        Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range
+                        {
+                            Start = new Position(lineOffset, characterOffset),
+                            End = new Position(lineOffset, characterOffset + wordToMatch.Length)
+                        },
+                        Code = "Test" + Enum.GetName(typeof(DiagnosticSeverity), severity)
+                    };
                     characterOffset = characterOffset + wordToMatch.Length;
 
                     return diagnostic;
@@ -257,7 +265,7 @@ namespace Server
 
         private void NotifyPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

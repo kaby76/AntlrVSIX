@@ -16,15 +16,27 @@
         public static int GetIndex(int line, int column, Document doc)
         {
             int index = 0;
-            var buffer = doc.Code;
-            if (buffer == null) return 0;
+            string buffer = doc.Code;
+            if (buffer == null)
+            {
+                return 0;
+            }
+
             int cur_line = 0;
             int cur_col = 0;
-            for (; ;)
+            for (; ; )
             {
-                if (cur_line > line) break;
-                if (cur_line >= line && cur_col >= column) break;
-                var ch = buffer[index];
+                if (cur_line > line)
+                {
+                    break;
+                }
+
+                if (cur_line >= line && cur_col >= column)
+                {
+                    break;
+                }
+
+                char ch = buffer[index];
                 if (ch == '\r')
                 {
                     if (buffer[index + 1] == '\n')
@@ -45,7 +57,10 @@
                     cur_col += 1;
                     index += 1;
                 }
-                if (index >= buffer.Length) break;
+                if (index >= buffer.Length)
+                {
+                    break;
+                }
             }
             return index;
         }
@@ -53,15 +68,27 @@
         public static (int, int) GetLineColumn(int index, Document doc)
         {
             int cur_index = 0;
-            var buffer = doc.Code;
-            if (buffer == null) return (0, 0);
+            string buffer = doc.Code;
+            if (buffer == null)
+            {
+                return (0, 0);
+            }
+
             int cur_line = 0; // zero based LSP.
             int cur_col = 0; // zero based LSP.
             for (; ; )
             {
-                if (cur_index >= buffer.Length) break;
-                if (cur_index >= index) break;
-                var ch = buffer[cur_index];
+                if (cur_index >= buffer.Length)
+                {
+                    break;
+                }
+
+                if (cur_index >= index)
+                {
+                    break;
+                }
+
+                char ch = buffer[cur_index];
                 if (ch == '\r')
                 {
                     if (buffer[cur_index + 1] == '\n')
@@ -82,32 +109,47 @@
                     cur_col += 1;
                     cur_index += 1;
                 }
-                if (cur_index >= buffer.Length) break;
+                if (cur_index >= buffer.Length)
+                {
+                    break;
+                }
             }
             return (cur_line, cur_col);
         }
 
         public static QuickInfo GetQuickInfo(int index, Document doc)
         {
-            var pd = ParserDetailsFactory.Create(doc);
-            if (pd.ParseTree == null) LanguageServer.Module.Compile();
+            ParserDetails pd = ParserDetailsFactory.Create(doc);
+            if (pd.ParseTree == null)
+            {
+                LanguageServer.Module.Compile();
+            }
+
             Antlr4.Runtime.Tree.IParseTree pt = LanguageServer.Util.Find(index, doc);
-            var gd = GrammarDescriptionFactory.Create(doc.FullPath);
-            if (pt == null) return null;
+            IGrammarDescription gd = GrammarDescriptionFactory.Create(doc.FullPath);
+            if (pt == null)
+            {
+                return null;
+            }
+
             Antlr4.Runtime.Tree.IParseTree p = pt;
             pd.Attributes.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
-            var q = p as Antlr4.Runtime.Tree.TerminalNodeImpl;
-            var range = new Workspaces.Range(new Workspaces.Index(q.Symbol.StartIndex), new Workspaces.Index(q.Symbol.StopIndex + 1));
-            var found = pd.Tags.TryGetValue(q, out int tag_type);
-            if (!found) return null;
+            TerminalNodeImpl q = p as Antlr4.Runtime.Tree.TerminalNodeImpl;
+            Range range = new Workspaces.Range(new Workspaces.Index(q.Symbol.StartIndex), new Workspaces.Index(q.Symbol.StopIndex + 1));
+            bool found = pd.Tags.TryGetValue(q, out int tag_type);
+            if (!found)
+            {
+                return null;
+            }
+
             if (list_value == null || list_value.Count == 0)
             {
                 return new QuickInfo() { Display = gd.Map[tag_type], Range = range };
             }
             if (list_value.Count == 1)
             {
-                var value = list_value.First();
-                var name = value as Symtab.ISymbol;
+                CombinedScopeSymbol value = list_value.First();
+                ISymbol name = value as Symtab.ISymbol;
                 string show = name?.Name;
                 if (value is Symtab.Literal)
                 {
@@ -115,23 +157,23 @@
                 }
                 if (gd.PopUpDefinition[tag_type] != null)
                 {
-                    var fun = gd.PopUpDefinition[tag_type];
-                    var mess = fun(pd, p);
+                    Func<ParserDetails, IParseTree, string> fun = gd.PopUpDefinition[tag_type];
+                    string mess = fun(pd, p);
                     if (mess != null)
                     {
                         return new QuickInfo() { Display = mess, Range = range };
                     }
                 }
-                var display = gd.Map[tag_type]
+                string display = gd.Map[tag_type]
                     + "\n"
                     + show;
                 return new QuickInfo() { Display = display, Range = range };
             }
             {
-                var display = "Ambiguous -- ";
-                foreach (var value in list_value)
+                string display = "Ambiguous -- ";
+                foreach (CombinedScopeSymbol value in list_value)
                 {
-                    var name = value as Symtab.ISymbol;
+                    ISymbol name = value as Symtab.ISymbol;
                     string show = name?.Name;
                     if (value is Symtab.Literal)
                     {
@@ -139,8 +181,8 @@
                     }
                     if (gd.PopUpDefinition[tag_type] != null)
                     {
-                        var fun = gd.PopUpDefinition[tag_type];
-                        var mess = fun(pd, p);
+                        Func<ParserDetails, IParseTree, string> fun = gd.PopUpDefinition[tag_type];
+                        string mess = fun(pd, p);
                         if (mess != null)
                         {
                             display = display + mess;
@@ -159,33 +201,69 @@
 
         public static int GetTag(int index, Document doc)
         {
-            var pd = ParserDetailsFactory.Create(doc);
-            if (pd.ParseTree == null) LanguageServer.Module.Compile();
+            ParserDetails pd = ParserDetailsFactory.Create(doc);
+            if (pd.ParseTree == null)
+            {
+                LanguageServer.Module.Compile();
+            }
+
             Antlr4.Runtime.Tree.IParseTree pt = LanguageServer.Util.Find(index, doc);
-            var gd = GrammarDescriptionFactory.Create(doc.FullPath);
-            if (pt == null) return -1;
+            IGrammarDescription gd = GrammarDescriptionFactory.Create(doc.FullPath);
+            if (pt == null)
+            {
+                return -1;
+            }
+
             Antlr4.Runtime.Tree.IParseTree p = pt;
-            var q = p as Antlr4.Runtime.Tree.TerminalNodeImpl;
-            var found = pd.Tags.TryGetValue(q, out int tag_type);
-            if (found) return tag_type;
-            if (q.Symbol == null) return -1;
-            var found2 = pd.Comments.TryGetValue(q.Symbol, out int tag2);
-            if (found2) return tag2;
+            TerminalNodeImpl q = p as Antlr4.Runtime.Tree.TerminalNodeImpl;
+            bool found = pd.Tags.TryGetValue(q, out int tag_type);
+            if (found)
+            {
+                return tag_type;
+            }
+
+            if (q.Symbol == null)
+            {
+                return -1;
+            }
+
+            bool found2 = pd.Comments.TryGetValue(q.Symbol, out int tag2);
+            if (found2)
+            {
+                return tag2;
+            }
+
             return -1;
         }
 
         public static DocumentSymbol GetDocumentSymbol(int index, Document doc)
         {
-            var pd = ParserDetailsFactory.Create(doc);
-            if (pd.ParseTree == null) LanguageServer.Module.Compile();
+            ParserDetails pd = ParserDetailsFactory.Create(doc);
+            if (pd.ParseTree == null)
+            {
+                LanguageServer.Module.Compile();
+            }
+
             Antlr4.Runtime.Tree.IParseTree pt = LanguageServer.Util.Find(index, doc);
-            var gd = GrammarDescriptionFactory.Create(doc.FullPath);
-            if (pt == null) return default(DocumentSymbol);
+            IGrammarDescription gd = GrammarDescriptionFactory.Create(doc.FullPath);
+            if (pt == null)
+            {
+                return default(DocumentSymbol);
+            }
+
             Antlr4.Runtime.Tree.IParseTree p = pt;
-            var q = p as Antlr4.Runtime.Tree.TerminalNodeImpl;
-            var found = pd.Tags.TryGetValue(q, out int tag_type);
-            if (!found) return null;
-            if (q.Symbol == null) return null;
+            TerminalNodeImpl q = p as Antlr4.Runtime.Tree.TerminalNodeImpl;
+            bool found = pd.Tags.TryGetValue(q, out int tag_type);
+            if (!found)
+            {
+                return null;
+            }
+
+            if (q.Symbol == null)
+            {
+                return null;
+            }
+
             return new DocumentSymbol()
             {
                 name = q.Symbol.Text,
@@ -196,12 +274,20 @@
 
         public static IEnumerable<DocumentSymbol> Get(Document doc)
         {
-            var pd = ParserDetailsFactory.Create(doc);
-            if (pd.ParseTree == null) LanguageServer.Module.Compile();
-            var combined = new List<DocumentSymbol>();
-            foreach (var p in pd.Tags)
+            ParserDetails pd = ParserDetailsFactory.Create(doc);
+            if (pd.ParseTree == null)
             {
-                if (p.Key.Symbol == null) continue;
+                LanguageServer.Module.Compile();
+            }
+
+            List<DocumentSymbol> combined = new List<DocumentSymbol>();
+            foreach (KeyValuePair<TerminalNodeImpl, int> p in pd.Tags)
+            {
+                if (p.Key.Symbol == null)
+                {
+                    continue;
+                }
+
                 combined.Add(
                     new DocumentSymbol()
                     {
@@ -210,7 +296,7 @@
                         kind = p.Value
                     });
             }
-            foreach (var p in pd.Comments)
+            foreach (KeyValuePair<Antlr4.Runtime.IToken, int> p in pd.Comments)
             {
                 combined.Add(
                     new DocumentSymbol()
@@ -222,22 +308,38 @@
             }
 
             // Sort the list.
-            var sorted_combined_tokens = combined.OrderBy(t => t.range.Start.Value).ThenBy(t => t.range.End.Value);
+            IOrderedEnumerable<DocumentSymbol> sorted_combined_tokens = combined.OrderBy(t => t.range.Start.Value).ThenBy(t => t.range.End.Value);
             return sorted_combined_tokens;
         }
 
         public static IEnumerable<DocumentSymbol> Get(Workspaces.Range range, Document doc)
         {
-            var pd = ParserDetailsFactory.Create(doc);
-            if (pd.ParseTree == null) LanguageServer.Module.Compile();
-            var combined = new System.Collections.Generic.List<DocumentSymbol>();
-            foreach (var p in pd.Tags)
+            ParserDetails pd = ParserDetailsFactory.Create(doc);
+            if (pd.ParseTree == null)
             {
-                if (p.Key.Symbol == null) continue;
+                LanguageServer.Module.Compile();
+            }
+
+            List<DocumentSymbol> combined = new System.Collections.Generic.List<DocumentSymbol>();
+            foreach (KeyValuePair<TerminalNodeImpl, int> p in pd.Tags)
+            {
+                if (p.Key.Symbol == null)
+                {
+                    continue;
+                }
+
                 int start_token_start = p.Key.Symbol.StartIndex;
                 int end_token_end = p.Key.Symbol.StopIndex + 1;
-                if (start_token_start > range.End.Value) continue;
-                if (end_token_end < range.Start.Value) continue;
+                if (start_token_start > range.End.Value)
+                {
+                    continue;
+                }
+
+                if (end_token_end < range.Start.Value)
+                {
+                    continue;
+                }
+
                 combined.Add(
                     new DocumentSymbol()
                     {
@@ -246,12 +348,20 @@
                         kind = p.Value
                     });
             }
-            foreach (var p in pd.Comments)
+            foreach (KeyValuePair<Antlr4.Runtime.IToken, int> p in pd.Comments)
             {
                 int start_token_start = p.Key.StartIndex;
                 int end_token_end = p.Key.StopIndex + 1;
-                if (start_token_start > range.End.Value) continue;
-                if (end_token_end < range.Start.Value) continue;
+                if (start_token_start > range.End.Value)
+                {
+                    continue;
+                }
+
+                if (end_token_end < range.Start.Value)
+                {
+                    continue;
+                }
+
                 combined.Add(
                     new DocumentSymbol()
                     {
@@ -263,34 +373,60 @@
 
             // Sort the list.
             IEnumerable<DocumentSymbol> result;
-            var sorted_combined_tokens = combined.OrderBy(t => t.range.Start.Value).ThenBy(t => t.range.End.Value);
+            IOrderedEnumerable<DocumentSymbol> sorted_combined_tokens = combined.OrderBy(t => t.range.Start.Value).ThenBy(t => t.range.End.Value);
             result = sorted_combined_tokens;
             return result;
         }
 
         public static IEnumerable<Workspaces.Range> GetErrors(Workspaces.Range range, Document doc)
         {
-            var pd = ParserDetailsFactory.Create(doc);
-            if (pd.ParseTree == null) LanguageServer.Module.Compile();
-            var result = new List<Workspaces.Range>();
-            foreach (var p in pd.Errors)
+            ParserDetails pd = ParserDetailsFactory.Create(doc);
+            if (pd.ParseTree == null)
             {
-                var q = p as Antlr4.Runtime.Tree.ErrorNodeImpl;
-                if (q == null) continue;
-                if (q.Payload == null) continue;
-                var y = q.Payload.StartIndex;
-                var z = q.Payload.StopIndex;
+                LanguageServer.Module.Compile();
+            }
+
+            List<Range> result = new List<Workspaces.Range>();
+            foreach (IParseTree p in pd.Errors)
+            {
+                ErrorNodeImpl q = p as Antlr4.Runtime.Tree.ErrorNodeImpl;
+                if (q == null)
+                {
+                    continue;
+                }
+
+                if (q.Payload == null)
+                {
+                    continue;
+                }
+
+                int y = q.Payload.StartIndex;
+                int z = q.Payload.StopIndex;
                 if (y < 0)
+                {
                     y = 0;
+                }
+
                 if (z < 0)
+                {
                     z = 0;
-                var a = y;
-                var b = z + 1;
+                }
+
+                int a = y;
+                int b = z + 1;
                 int start_token_start = a;
                 int end_token_end = b;
-                if (start_token_start > range.End.Value) continue;
-                if (end_token_end < range.Start.Value) continue;
-                var r = new Workspaces.Range(new Workspaces.Index(a), new Workspaces.Index(b));
+                if (start_token_start > range.End.Value)
+                {
+                    continue;
+                }
+
+                if (end_token_end < range.Start.Value)
+                {
+                    continue;
+                }
+
+                Range r = new Workspaces.Range(new Workspaces.Index(a), new Workspaces.Index(b));
                 result.Add(r);
             }
             return result;
@@ -298,25 +434,57 @@
 
         public static IList<Location> FindDef(int index, Document doc)
         {
-            var result = new List<Location>();
-            if (doc == null) return result;
-            var ref_pt = Util.Find(index, doc);
-            if (ref_pt == null) return result;
-            var ref_pd = ParserDetailsFactory.Create(doc);
-            if (ref_pd.ParseTree == null) LanguageServer.Module.Compile();
-            ref_pd.Attributes.TryGetValue(ref_pt, out IList<Symtab.CombinedScopeSymbol> list_values);
-            foreach (var value in list_values)
+            List<Location> result = new List<Location>();
+            if (doc == null)
             {
-                if (value == null) continue;
-                var @ref = value as Symtab.ISymbol;
-                if (@ref == null) continue;
-                var def = @ref.resolve();
-                if (def == null) continue;
-                var def_file = def.file;
-                if (def_file == null) continue;
-                var def_item = Workspaces.Workspace.Instance.FindDocument(def_file);
-                if (def_item == null) continue;
-                var new_loc = new Location()
+                return result;
+            }
+
+            IParseTree ref_pt = Util.Find(index, doc);
+            if (ref_pt == null)
+            {
+                return result;
+            }
+
+            ParserDetails ref_pd = ParserDetailsFactory.Create(doc);
+            if (ref_pd.ParseTree == null)
+            {
+                LanguageServer.Module.Compile();
+            }
+
+            ref_pd.Attributes.TryGetValue(ref_pt, out IList<Symtab.CombinedScopeSymbol> list_values);
+            foreach (CombinedScopeSymbol value in list_values)
+            {
+                if (value == null)
+                {
+                    continue;
+                }
+
+                ISymbol @ref = value as Symtab.ISymbol;
+                if (@ref == null)
+                {
+                    continue;
+                }
+
+                ISymbol def = @ref.resolve();
+                if (def == null)
+                {
+                    continue;
+                }
+
+                string def_file = def.file;
+                if (def_file == null)
+                {
+                    continue;
+                }
+
+                Document def_item = Workspaces.Workspace.Instance.FindDocument(def_file);
+                if (def_item == null)
+                {
+                    continue;
+                }
+
+                Location new_loc = new Location()
                 {
                     Range = new Workspaces.Range(def.Token.StartIndex, def.Token.StopIndex),
                     Uri = def_item
@@ -328,24 +496,52 @@
 
         public static IEnumerable<Location> FindRefsAndDefs(int index, Document doc)
         {
-            var result = new List<Location>();
-            var ref_pt = Util.Find(index, doc);
-            if (ref_pt == null) return result;
-            var ref_pd = ParserDetailsFactory.Create(doc);
-            if (ref_pd.ParseTree == null) LanguageServer.Module.Compile();
+            List<Location> result = new List<Location>();
+            IParseTree ref_pt = Util.Find(index, doc);
+            if (ref_pt == null)
+            {
+                return result;
+            }
+
+            ParserDetails ref_pd = ParserDetailsFactory.Create(doc);
+            if (ref_pd.ParseTree == null)
+            {
+                LanguageServer.Module.Compile();
+            }
+
             ref_pd.Attributes.TryGetValue(ref_pt, out IList<Symtab.CombinedScopeSymbol> list_value);
             ISymbol found_def = null;
             ISymbol found_ref = null;
-            foreach (var value in list_value)
+            foreach (CombinedScopeSymbol value in list_value)
             {
-                if (value == null) continue;
-                var @ref = value as Symtab.ISymbol;
-                if (@ref == null) continue;
-                if (@ref.Token == null) continue;
+                if (value == null)
+                {
+                    continue;
+                }
+
+                ISymbol @ref = value as Symtab.ISymbol;
+                if (@ref == null)
+                {
+                    continue;
+                }
+
+                if (@ref.Token == null)
+                {
+                    continue;
+                }
+
                 found_ref = @ref;
-                var def = @ref.resolve();
-                if (def == null) continue;
-                if (def.Token == null) continue;
+                ISymbol def = @ref.resolve();
+                if (def == null)
+                {
+                    continue;
+                }
+
+                if (def.Token == null)
+                {
+                    continue;
+                }
+
                 found_def = def;
                 break;
             }
@@ -353,26 +549,46 @@
             // Go through all files and look for refs.
             foreach (KeyValuePair<string, List<string>> d in AntlrParserDetails._dependent_grammars)
             {
-                var d_doc = Workspaces.Workspace.Instance.FindDocument(d.Key);
-                var d_pd = ParserDetailsFactory.Create(d_doc);
-                if (d_pd.ParseTree == null) continue;
-                var refs = d_pd.Refs.Where(
+                Document d_doc = Workspaces.Workspace.Instance.FindDocument(d.Key);
+                ParserDetails d_pd = ParserDetailsFactory.Create(d_doc);
+                if (d_pd.ParseTree == null)
+                {
+                    continue;
+                }
+
+                IEnumerable<TerminalNodeImpl> refs = d_pd.Refs.Where(
                     (t) =>
                     {
                         Antlr4.Runtime.Tree.TerminalNodeImpl x = t.Key;
-                        if (x.Symbol == found_ref.Token) return true;
-                        d_pd.Attributes.TryGetValue(x, out IList<Symtab.CombinedScopeSymbol> list_v);
-                        if (list_v == null) return false;
-                        foreach (var v in list_v)
+                        if (x.Symbol == found_ref.Token)
                         {
-                            var vv = v as Symtab.ISymbol;
-                            if (vv == null) return false;
-                            if (vv.resolve() == found_def) return true;
+                            return true;
+                        }
+
+                        d_pd.Attributes.TryGetValue(x, out IList<Symtab.CombinedScopeSymbol> list_v);
+                        if (list_v == null)
+                        {
+                            return false;
+                        }
+
+                        foreach (CombinedScopeSymbol v in list_v)
+                        {
+                            ISymbol vv = v as Symtab.ISymbol;
+                            if (vv == null)
+                            {
+                                return false;
+                            }
+
+                            if (vv.resolve() == found_def)
+                            {
+                                return true;
+                            }
+
                             return false;
                         }
                         return false;
                     }).Select(t => t.Key);
-                foreach (var r in refs)
+                foreach (TerminalNodeImpl r in refs)
                 {
                     result.Add(
                             new Location()
@@ -396,13 +612,17 @@
 
         public static IEnumerable<Location> GetDefs(Document doc)
         {
-            var result = new List<Location>();
-            var ref_pd = ParserDetailsFactory.Create(doc);
-            if (ref_pd.ParseTree == null) LanguageServer.Module.Compile();
+            List<Location> result = new List<Location>();
+            ParserDetails ref_pd = ParserDetailsFactory.Create(doc);
+            if (ref_pd.ParseTree == null)
+            {
+                LanguageServer.Module.Compile();
+            }
+
             foreach (KeyValuePair<TerminalNodeImpl, int> value in ref_pd.Defs)
             {
-                var key = value.Key;
-                var sym = key.Payload;
+                TerminalNodeImpl key = value.Key;
+                Antlr4.Runtime.IToken sym = key.Payload;
                 result.Add(
                     new Location()
                     {
@@ -418,34 +638,38 @@
             Digraph<ParserDetails> g = new Digraph<ParserDetails>();
             HashSet<ParserDetails> done = new HashSet<ParserDetails>();
             Stack<ParserDetails> stack = new Stack<ParserDetails>();
-            foreach (var f in to_do)
+            foreach (ParserDetails f in to_do)
             {
                 stack.Push(f);
             }
 
             while (stack.Count > 0)
             {
-                var f = stack.Pop();
+                ParserDetails f = stack.Pop();
                 g.AddVertex(f);
                 done.Add(f);
-                foreach (var d in f.PropagateChangesTo)
+                foreach (string d in f.PropagateChangesTo)
                 {
-                    var d_doc = Workspace.Instance.FindDocument(d);
-                    var d_pd = ParserDetailsFactory.Create(d_doc);
-                    if (done.Contains(d_pd)) continue;
+                    Document d_doc = Workspace.Instance.FindDocument(d);
+                    ParserDetails d_pd = ParserDetailsFactory.Create(d_doc);
+                    if (done.Contains(d_pd))
+                    {
+                        continue;
+                    }
+
                     stack.Push(d_pd);
                 }
             }
 
-            foreach (var v in g.Vertices)
+            foreach (ParserDetails v in g.Vertices)
             {
-                var deps = v.PropagateChangesTo;
-                var doc = Workspace.Instance.FindDocument(v.FullFileName);
-                var pd = ParserDetailsFactory.Create(doc);
-                foreach (var d in deps)
+                HashSet<string> deps = v.PropagateChangesTo;
+                Document doc = Workspace.Instance.FindDocument(v.FullFileName);
+                ParserDetails pd = ParserDetailsFactory.Create(doc);
+                foreach (string d in deps)
                 {
-                    var d_doc = Workspace.Instance.FindDocument(d);
-                    var d_pd = ParserDetailsFactory.Create(d_doc);
+                    Document d_doc = Workspace.Instance.FindDocument(d);
+                    ParserDetails d_pd = ParserDetailsFactory.Create(d_doc);
                     g.AddEdge(new DirectedEdge<ParserDetails>(pd, d_pd));
                 }
             }
@@ -457,7 +681,7 @@
         {
             try
             {
-                var ws = Workspaces.Workspace.Instance;
+                Workspace ws = Workspaces.Workspace.Instance;
 
                 // Get all changed files.
                 HashSet<ParserDetails> to_do = new HashSet<ParserDetails>();
@@ -468,63 +692,92 @@
                 foreach (Document document in Workspaces.DFSContainer.DFS(ws))
                 {
                     string file_name = document.FullPath;
-                    if (file_name == null) continue;
-                    var parent = document.Parent;
-                    var gd = LanguageServer.GrammarDescriptionFactory.Create(file_name);
-                    if (gd == null) continue;
+                    if (file_name == null)
+                    {
+                        continue;
+                    }
+
+                    Container parent = document.Parent;
+                    IGrammarDescription gd = LanguageServer.GrammarDescriptionFactory.Create(file_name);
+                    if (gd == null)
+                    {
+                        continue;
+                    }
 
                     // Get suffix of file_name.
                     string extension = System.IO.Path.GetExtension(file_name);
                     string directory = System.IO.Path.GetDirectoryName(file_name);
 
-                    foreach (var file in System.IO.Directory.GetFiles(directory))
+                    foreach (string file in System.IO.Directory.GetFiles(directory))
                     {
                         if (System.IO.Path.GetExtension(file) != extension)
+                        {
                             continue;
-                        var g2 = LanguageServer.GrammarDescriptionFactory.Create(file);
-                        if (g2 == null) continue;
-                        var x = Workspaces.Workspace.Instance.FindDocument(file);
+                        }
+
+                        IGrammarDescription g2 = LanguageServer.GrammarDescriptionFactory.Create(file);
+                        if (g2 == null)
+                        {
+                            continue;
+                        }
+
+                        Document x = Workspaces.Workspace.Instance.FindDocument(file);
                         if (x == null)
                         {
                             // Add document.
-                            var proj = parent;
-                            var new_doc = new Workspaces.Document(file);
+                            Container proj = parent;
+                            Document new_doc = new Workspaces.Document(file);
                             proj.AddChild(new_doc);
                         }
-                        var p2 = ParserDetailsFactory.Create(document);
-                        if (!p2.Changed) continue;
+                        ParserDetails p2 = ParserDetailsFactory.Create(document);
+                        if (!p2.Changed)
+                        {
+                            continue;
+                        }
+
                         to_do.Add(p2);
                     }
                 }
 
-                foreach (var document in Workspaces.DFSContainer.DFS(ws))
+                foreach (Document document in Workspaces.DFSContainer.DFS(ws))
                 {
                     string file_name = document.FullPath;
-                    if (file_name == null) continue;
-                    var gd = LanguageServer.GrammarDescriptionFactory.Create(file_name);
-                    if (gd == null) continue;
+                    if (file_name == null)
+                    {
+                        continue;
+                    }
+
+                    IGrammarDescription gd = LanguageServer.GrammarDescriptionFactory.Create(file_name);
+                    if (gd == null)
+                    {
+                        continue;
+                    }
                     // file_name can be a URI, so this doesn't make sense.
                     //if (!System.IO.File.Exists(file_name)) continue;
-                    var pd = ParserDetailsFactory.Create(document);
-                    if (!pd.Changed) continue;
+                    ParserDetails pd = ParserDetailsFactory.Create(document);
+                    if (!pd.Changed)
+                    {
+                        continue;
+                    }
+
                     to_do.Add(pd);
                 }
                 Digraph<ParserDetails> g = ConstructGraph(to_do);
-                foreach (var v in g.Vertices)
+                foreach (ParserDetails v in g.Vertices)
                 {
                     v.Item.Changed = true; // Force.
                     v.Parse();
                 }
-                var changed = true;
+                bool changed = true;
                 for (int pass = 0; changed; pass++)
                 {
                     changed = false;
-                    foreach (var v in g.Vertices)
+                    foreach (ParserDetails v in g.Vertices)
                     {
                         int number_of_passes = v.Passes.Count;
                         if (pass < number_of_passes)
                         {
-                            var reset = v.Pass(pass);
+                            bool reset = v.Pass(pass);
                             if (reset)
                             {
                                 goto DoAgain;
@@ -533,15 +786,15 @@
                         }
                     }
                 }
-                foreach (var v in g.Vertices)
+                foreach (ParserDetails v in g.Vertices)
                 {
                     v.GatherDefs();
                 }
-                foreach (var v in g.Vertices)
+                foreach (ParserDetails v in g.Vertices)
                 {
                     v.GatherRefs();
                 }
-                foreach (var v in g.Vertices)
+                foreach (ParserDetails v in g.Vertices)
                 {
                     v.GatherErrors();
                 }
@@ -556,8 +809,8 @@
 
         public static TextEdit[] Reformat(Document doc)
         {
-            var ref_pd = ParserDetailsFactory.Create(doc);
-            var code = doc.Code;
+            ParserDetails ref_pd = ParserDetailsFactory.Create(doc);
+            string code = doc.Code;
             string corpus_location = null;//global::Options.POptions.GetString("CorpusLocation");
             if (corpus_location == null)
             {
@@ -571,7 +824,7 @@
                 TextEdit[] result = new TextEdit[] { };
                 return result;
             }
-            var grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
+            IGrammarDescription grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
             if (grammar_description == null)
             {
                 TextEdit[] result = new TextEdit[] { };
@@ -580,7 +833,7 @@
             org.antlr.codebuff.Tool.unformatted_input = code;
             try
             {
-                var result = org.antlr.codebuff.Tool.Main(
+                string result = org.antlr.codebuff.Tool.Main(
                     new object[]
                     {
                     "-g", grammar_description.Name,
@@ -592,27 +845,27 @@
                     "-inoutstring",
                     ""
                     });
-                var edits = new List<TextEdit>();
-                var diff = new diff_match_patch();
-                var diffs = diff.diff_main(code, result);
-                var patch = diff.patch_make(diffs);
+                List<TextEdit> edits = new List<TextEdit>();
+                diff_match_patch diff = new diff_match_patch();
+                List<Diff> diffs = diff.diff_main(code, result);
+                List<Patch> patch = diff.patch_make(diffs);
                 //patch.Reverse();
 
                 // Start edit session.
                 int times = 0;
                 int delta = 0;
-                foreach (var p in patch)
+                foreach (Patch p in patch)
                 {
                     times++;
-                    var start = p.start1 - delta;
+                    int start = p.start1 - delta;
 
-                    var offset = 0;
-                    foreach (var ed in p.diffs)
+                    int offset = 0;
+                    foreach (Diff ed in p.diffs)
                     {
                         if (ed.operation == Operation.EQUAL)
                         {
                             //// Let's verify that.
-                            var len = ed.text.Length;
+                            int len = ed.text.Length;
                             //var tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
                             //  new Span(start + offset, len));
                             //var tt = tokenSpan.GetText();
@@ -622,13 +875,13 @@
                         }
                         else if (ed.operation == Operation.DELETE)
                         {
-                            var len = ed.text.Length;
+                            int len = ed.text.Length;
                             //var tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
                             //  new Span(start + offset, len));
                             //var tt = tokenSpan.GetText();
                             //if (ed.text != tt)
                             //{ }
-                            var edit = new TextEdit()
+                            TextEdit edit = new TextEdit()
                             {
                                 range = new Workspaces.Range(
                                     new Workspaces.Index(start + offset),
@@ -640,8 +893,8 @@
                         }
                         else if (ed.operation == Operation.INSERT)
                         {
-                            var len = ed.text.Length;
-                            var edit = new TextEdit()
+                            int len = ed.text.Length;
+                            TextEdit edit = new TextEdit()
                             {
                                 range = new Workspaces.Range(
                                     new Workspaces.Index(start + offset),
@@ -664,46 +917,46 @@
 
         public static Dictionary<string, TextEdit[]> Rename(int index, string new_text, Document doc)
         {
-            var locations = LanguageServer.Module.FindRefsAndDefs(index, doc);
-            var result = new Dictionary<string, TextEdit[]>();
-            var documents = locations.Select(r => r.Uri).OrderBy(q => q).Distinct();
-            foreach (var f in documents)
+            IEnumerable<Location> locations = LanguageServer.Module.FindRefsAndDefs(index, doc);
+            Dictionary<string, TextEdit[]> result = new Dictionary<string, TextEdit[]>();
+            IEnumerable<Document> documents = locations.Select(r => r.Uri).OrderBy(q => q).Distinct();
+            foreach (Document f in documents)
             {
-                var fn = f.FullPath;
-                var per_file_changes = locations.Where(z => z.Uri == f).OrderBy(q => q.Range.Start.Value);
+                string fn = f.FullPath;
+                IOrderedEnumerable<Location> per_file_changes = locations.Where(z => z.Uri == f).OrderBy(q => q.Range.Start.Value);
                 StringBuilder sb = new StringBuilder();
                 int previous = 0;
-                var code = f.Code;
-                foreach (var l in per_file_changes)
+                string code = f.Code;
+                foreach (Location l in per_file_changes)
                 {
-                    var d = l.Uri;
-                    var xx = d.FullPath;
-                    var r = l.Range;
-                    var pre = code.Substring(previous, r.Start.Value - previous);
+                    Document d = l.Uri;
+                    string xx = d.FullPath;
+                    Range r = l.Range;
+                    string pre = code.Substring(previous, r.Start.Value - previous);
                     sb.Append(pre);
                     sb.Append(new_text);
                     previous = r.End.Value + 1;
                 }
-                var rest = code.Substring(previous);
+                string rest = code.Substring(previous);
                 sb.Append(rest);
-                var new_code = sb.ToString();
-                var edits = new List<TextEdit>();
-                var diff = new diff_match_patch();
-                var diffs = diff.diff_main(code, new_code);
-                var patch = diff.patch_make(diffs);
+                string new_code = sb.ToString();
+                List<TextEdit> edits = new List<TextEdit>();
+                diff_match_patch diff = new diff_match_patch();
+                List<Diff> diffs = diff.diff_main(code, new_code);
+                List<Patch> patch = diff.patch_make(diffs);
                 int times = 0;
                 int delta = 0;
-                foreach (var p in patch)
+                foreach (Patch p in patch)
                 {
                     times++;
-                    var start = p.start1 - delta;
-                    var offset = 0;
-                    foreach (var ed in p.diffs)
+                    int start = p.start1 - delta;
+                    int offset = 0;
+                    foreach (Diff ed in p.diffs)
                     {
                         if (ed.operation == Operation.EQUAL)
                         {
                             //// Let's verify that.
-                            var len = ed.text.Length;
+                            int len = ed.text.Length;
                             //var tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
                             //  new Span(start + offset, len));
                             //var tt = tokenSpan.GetText();
@@ -713,13 +966,13 @@
                         }
                         else if (ed.operation == Operation.DELETE)
                         {
-                            var len = ed.text.Length;
+                            int len = ed.text.Length;
                             //var tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
                             //  new Span(start + offset, len));
                             //var tt = tokenSpan.GetText();
                             //if (ed.text != tt)
                             //{ }
-                            var edit = new TextEdit()
+                            TextEdit edit = new TextEdit()
                             {
                                 range = new Workspaces.Range(
                                     new Workspaces.Index(start + offset),
@@ -731,8 +984,8 @@
                         }
                         else if (ed.operation == Operation.INSERT)
                         {
-                            var len = ed.text.Length;
-                            var edit = new TextEdit()
+                            int len = ed.text.Length;
+                            TextEdit edit = new TextEdit()
                             {
                                 range = new Workspaces.Range(
                                     new Workspaces.Index(start + offset),
@@ -744,7 +997,7 @@
                     }
                     delta = delta + (p.length2 - p.length1);
                 }
-                var e = edits.ToArray();
+                TextEdit[] e = edits.ToArray();
                 result.Add(fn, e);
             }
             return result;
@@ -752,8 +1005,12 @@
 
         public static List<string> Completion(int char_index, Document document)
         {
-            var ref_pd = ParserDetailsFactory.Create(document);
-            if (ref_pd.ParseTree == null) LanguageServer.Module.Compile();
+            ParserDetails ref_pd = ParserDetailsFactory.Create(document);
+            if (ref_pd.ParseTree == null)
+            {
+                LanguageServer.Module.Compile();
+            }
+
             List<string> result = ref_pd.Candidates(char_index);
             return result;
         }

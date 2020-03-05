@@ -1,16 +1,15 @@
-﻿using Microsoft.VisualStudio.ComponentModelHost;
-using Microsoft.VisualStudio.Editor;
-using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Microsoft.VisualStudio.Shell.Interop;
-using Options;
-
-namespace LspAntlr
+﻿namespace LspAntlr
 {
     using LanguageServer;
+    using Microsoft.VisualStudio.ComponentModelHost;
+    using Microsoft.VisualStudio.Editor;
     using Microsoft.VisualStudio.LanguageServer.Client;
+    using Microsoft.VisualStudio.LanguageServer.Protocol;
     using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Shell.Interop;
     using Microsoft.VisualStudio.Threading;
     using Microsoft.VisualStudio.Utilities;
+    using Options;
     using StreamJsonRpc;
     using System;
     using System.Collections.Generic;
@@ -35,14 +34,14 @@ namespace LspAntlr
         public static MemoryStream _log_to_server = new MemoryStream();
         private static JsonRpc _rpc;
         public static Microsoft.VisualStudio.OLE.Interop.IServiceProvider XXX;
-        private JsonRpcMethodAttribute junk;
+        private readonly JsonRpcMethodAttribute junk;
 
         public AntlrLanguageClient()
         {
             Instance = this;
-            var componentModel = Package.GetGlobalService(typeof(SComponentModel)) as IComponentModel;
+            IComponentModel componentModel = Package.GetGlobalService(typeof(SComponentModel)) as IComponentModel;
             AdaptersFactory = componentModel.GetService<IVsEditorAdaptersFactoryService>();
-            var dte2 = Package.GetGlobalService(typeof(SDTE));
+            object dte2 = Package.GetGlobalService(typeof(SDTE));
             XXX = (Microsoft.VisualStudio.OLE.Interop.IServiceProvider)dte2;
             ServiceProvider sp = new ServiceProvider(XXX);
             //AdaptersFactory = this.GetService(typeof(IVsEditorAdaptersFactoryService)) as IVsEditorAdaptersFactoryService;
@@ -69,35 +68,42 @@ namespace LspAntlr
             try
             {
                 string cache_location = System.IO.Path.GetTempPath();
-                var t = typeof(AntlrLanguageClient);
-                var a = t.Assembly;
-                var f = System.IO.Path.GetFullPath(a.Location);
-                var p = System.IO.Path.GetDirectoryName(f);
-                var antlr_executable = p + System.IO.Path.DirectorySeparatorChar
+                Type t = typeof(AntlrLanguageClient);
+                System.Reflection.Assembly a = t.Assembly;
+                string f = System.IO.Path.GetFullPath(a.Location);
+                string p = System.IO.Path.GetDirectoryName(f);
+                string antlr_executable = p + System.IO.Path.DirectorySeparatorChar
                                          + @"Server\net472\Server.exe";
-                var workspace_path = cache_location;
+                string workspace_path = cache_location;
                 if (workspace_path == null || workspace_path == "")
+                {
                     workspace_path = cache_location;
-                ProcessStartInfo info = new ProcessStartInfo();
-                info.FileName = antlr_executable;
-                info.WorkingDirectory = workspace_path;
-                info.Arguments = workspace_path;
-                info.RedirectStandardInput = true;
-                info.RedirectStandardOutput = true;
-                info.UseShellExecute = false;
-                info.CreateNoWindow = ! Option.GetBoolean("VisibleServerWindow");
-                Process process = new Process();
-                process.StartInfo = info;
+                }
+
+                ProcessStartInfo info = new ProcessStartInfo
+                {
+                    FileName = antlr_executable,
+                    WorkingDirectory = workspace_path,
+                    Arguments = workspace_path,
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = !Option.GetBoolean("VisibleServerWindow")
+                };
+                Process process = new Process
+                {
+                    StartInfo = info
+                };
                 if (process.Start())
                 {
                     bool debug = false;
-                    var @out = process.StandardOutput.BaseStream;
-                    var eout = debug
+                    Stream @out = process.StandardOutput.BaseStream;
+                    Stream eout = debug
                         ? new LspTools.LspHelpers.EchoStream(@out, _log_from_server,
                             LspTools.LspHelpers.EchoStream.StreamOwnership.OwnNone)
                         : @out;
-                    var @in = process.StandardInput.BaseStream;
-                    var ein = debug
+                    Stream @in = process.StandardInput.BaseStream;
+                    Stream ein = debug
                         ? new LspTools.LspHelpers.EchoStream(@in, _log_to_server,
                             LspTools.LspHelpers.EchoStream.StreamOwnership.OwnNone)
                         : @in;
@@ -105,7 +111,7 @@ namespace LspAntlr
                     return new Connection(eout, ein);
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
             }
 
@@ -137,13 +143,17 @@ namespace LspAntlr
         {
             try
             {
-                if (_rpc == null) return null;
+                if (_rpc == null)
+                {
+                    return null;
+                }
+
                 CustomMessageParams p = new CustomMessageParams();
-                var uri = new Uri(ffn);
+                Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
                 p.Start = start;
                 p.End = end;
-                var result = _rpc.InvokeAsync<SymbolInformation[]>("CustomMessage", p).Result;
+                SymbolInformation[] result = _rpc.InvokeAsync<SymbolInformation[]>("CustomMessage", p).Result;
                 return result;
             }
             catch (Exception)
@@ -156,13 +166,17 @@ namespace LspAntlr
         {
             try
             {
-                if (_rpc == null) return -1;
-                var p = new CustomMessage2Params();
-                var uri = new Uri(ffn);
+                if (_rpc == null)
+                {
+                    return -1;
+                }
+
+                CustomMessage2Params p = new CustomMessage2Params();
+                Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
                 p.Pos = pos;
                 p.Forward = forward;
-                var result = _rpc.InvokeAsync<int>("CustomMessage2", p).Result;
+                int result = _rpc.InvokeAsync<int>("CustomMessage2", p).Result;
                 return result;
             }
             catch (Exception)
@@ -175,12 +189,16 @@ namespace LspAntlr
         {
             try
             {
-                if (_rpc == null) return null;
-                var p = new CustomMessage3Params();
-                var uri = new Uri(ffn);
+                if (_rpc == null)
+                {
+                    return null;
+                }
+
+                CustomMessage3Params p = new CustomMessage3Params();
+                Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
                 p.Pos = pos;
-                var result = _rpc.InvokeAsync<CustomMessage3Result>("CustomMessage3", p).Result;
+                CustomMessage3Result result = _rpc.InvokeAsync<CustomMessage3Result>("CustomMessage3", p).Result;
                 return result;
             }
             catch (Exception)
@@ -193,7 +211,7 @@ namespace LspAntlr
         {
             // When initialized asynchronously, the current thread may be a background thread at this point.
             // Do any initialization that requires the UI thread after switching to the UI thread.
-            await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+            await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
             //await Command1.InitializeAsync(this);
         }
     }

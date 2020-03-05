@@ -12,7 +12,7 @@
     /// </summary>
     public interface IType
     {
-        string Name {get;}
+        string Name { get; }
 
         /// <summary>
         /// It is useful during type computation and code gen to assign an int
@@ -20,7 +20,7 @@
         ///  structs and classes.
         /// </summary>
         ///  <returns> Return 0-indexed type index else -1 if no index. </returns>
-        int TypeIndex {get;}
+        int TypeIndex { get; }
     }
 
 }

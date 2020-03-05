@@ -13,14 +13,17 @@ namespace Utils
 
         // Underlying the datatype, we need an array that resizes without changing it's
         // reference. A straight array cannot work.
-        private List<T> _items;
+        private readonly List<T> _items;
 
         public StackQueue()
         {
             _size = 10;
             _top = 0;
             _items = new List<T>(_size);
-            for (int i = 0; i < _size; ++i) _items.Add(default(T));
+            for (int i = 0; i < _size; ++i)
+            {
+                _items.Add(default(T));
+            }
         }
 
         public StackQueue(T value)
@@ -28,7 +31,11 @@ namespace Utils
             _size = 10;
             _top = 0;
             _items = new List<T>(_size);
-            for (int i = 0; i < _size; ++i) _items.Add(default(T));
+            for (int i = 0; i < _size; ++i)
+            {
+                _items.Add(default(T));
+            }
+
             _items[_top++] = value;
         }
 
@@ -37,7 +44,11 @@ namespace Utils
             _size = other._size;
             _top = other._top;
             _items = new List<T>(_size);
-            for (int i = 0; i < _size; ++i) _items.Add(default(T));
+            for (int i = 0; i < _size; ++i)
+            {
+                _items.Add(default(T));
+            }
+
             _items.AddRange(other._items);
         }
 
@@ -46,10 +57,7 @@ namespace Utils
             return _top;
         }
 
-        public virtual int Count
-        {
-            get { return _top; }
-        }
+        public virtual int Count => _top;
 
         public virtual T Pop()
         {
@@ -58,7 +66,10 @@ namespace Utils
                 int old = _size;
                 _size *= 2;
                 _items.Capacity = _size;
-                for (int i = old; i < _size; ++i) _items.Add(default(T));
+                for (int i = old; i < _size; ++i)
+                {
+                    _items.Add(default(T));
+                }
             }
             if (_top > 0)
             {
@@ -76,14 +87,8 @@ namespace Utils
 
         public virtual T this[int n]
         {
-            get
-            {
-                return PeekBottom(n);
-            }
-            set
-            {
-                _items[n] = value;
-            }
+            get => PeekBottom(n);
+            set => _items[n] = value;
         }
 
         public virtual T PeekTop(int n = 0)
@@ -93,7 +98,10 @@ namespace Utils
                 int old = _size;
                 _size *= 2;
                 _items.Capacity = _size;
-                for (int i = old; i < _size; ++i) _items.Add(default(T));
+                for (int i = old; i < _size; ++i)
+                {
+                    _items.Add(default(T));
+                }
             }
             if (_top > 0)
             {
@@ -114,10 +122,16 @@ namespace Utils
                 int old = _size;
                 _size *= 2;
                 _items.Capacity = _size;
-                for (int i = old; i < _size; ++i) _items.Add(default(T));
+                for (int i = old; i < _size; ++i)
+                {
+                    _items.Add(default(T));
+                }
             }
             if (n >= _top)
+            {
                 return default(T);
+            }
+
             T cur = _items[n];
             return cur;
         }
@@ -129,7 +143,10 @@ namespace Utils
                 int old = _size;
                 _size *= 2;
                 _items.Capacity = _size;
-                for (int i = old; i < _size; ++i) _items.Add(default(T));
+                for (int i = old; i < _size; ++i)
+                {
+                    _items.Add(default(T));
+                }
             }
             _items[_top++] = value;
         }
@@ -143,7 +160,10 @@ namespace Utils
                     int old = _size;
                     _size *= 2;
                     _items.Capacity = _size;
-                    for (int i = old; i < _size; ++i) _items.Add(default(T));
+                    for (int i = old; i < _size; ++i)
+                    {
+                        _items.Add(default(T));
+                    }
                 }
                 _items[_top++] = t;
             }
@@ -173,7 +193,10 @@ namespace Utils
             }
             // "Push" a value on the bottom of the stack.
             for (int i = _top - 1; i >= 0; --i)
+            {
                 _items[i + 1] = _items[i];
+            }
+
             _items[0] = value;
             ++_top;
         }
@@ -196,7 +219,10 @@ namespace Utils
             {
                 T cur = _items[0];
                 for (int i = 1; i <= _top; ++i)
+                {
                     _items[i - 1] = _items[i];
+                }
+
                 _top--;
                 return cur;
             }
@@ -227,7 +253,7 @@ namespace Utils
 
         public virtual ListSection<T> Section(int length)
         {
-            ListSection<T> result = new ListSection<T>(_items, this._top, length);
+            ListSection<T> result = new ListSection<T>(_items, _top, length);
             return result;
         }
     }

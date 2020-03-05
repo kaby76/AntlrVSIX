@@ -1,7 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Graphs
 {
@@ -25,10 +23,10 @@ namespace Graphs
         where E : IEdge<T>
     {
         public Dictionary<T, HashSet<T>> _doms;
-        private bool DEBUG = false;
-        private IGraph<T, E> _graph;
-        private IEnumerable<T> _work;
-        private T _exit;
+        private readonly bool DEBUG = false;
+        private readonly IGraph<T, E> _graph;
+        private readonly IEnumerable<T> _work;
+        private readonly T _exit;
 
         public PostDominators(IGraph<T, E> graph, IEnumerable<T> subset_vertices, T exit)
         {
@@ -40,8 +38,8 @@ namespace Graphs
 
         private HashSet<T> All()
         {
-            var d = new HashSet<T>();
-            foreach (var u in _work)
+            HashSet<T> d = new HashSet<T>();
+            foreach (T u in _work)
             {
                 d.Add(u);
             }
@@ -50,26 +48,37 @@ namespace Graphs
 
         private HashSet<T> One(T v)
         {
-            var d = new HashSet<T>();
-            d.Add(v);
+            HashSet<T> d = new HashSet<T>
+            {
+                v
+            };
             return d;
         }
 
         public void run()
         {
             foreach (T t in _work)
+            {
                 _doms[t] = t.Equals(_exit) ? One(_exit) : All();
+            }
+
             bool changed = true;
             while (changed)
             {
                 changed = false;
-                foreach (var v in _work)
+                foreach (T v in _work)
                 {
-                    if (v.Equals(_exit)) continue;
+                    if (v.Equals(_exit))
+                    {
+                        continue;
+                    }
 
                     HashSet<T> new_idom = All();
-                    foreach (var q in _graph.Successors(v))
+                    foreach (T q in _graph.Successors(v))
+                    {
                         new_idom.IntersectWith(_doms[q]);
+                    }
+
                     new_idom.Add(v);
                     if (!_doms[v].SetEquals(new_idom))
                     {

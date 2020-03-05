@@ -5,20 +5,20 @@ namespace Graphs
 {
     public class FiniteTotalOrderSet<SetElementType> : IEnumerable<SetElementType>
     {
-        List<SetElementType> elements = new List<SetElementType>();
-        List<Tuple<SetElementType, SetElementType>> relation = new List<Tuple<SetElementType, SetElementType>>();
+        private readonly List<SetElementType> elements = new List<SetElementType>();
+        private readonly List<Tuple<SetElementType, SetElementType>> relation = new List<Tuple<SetElementType, SetElementType>>();
 
         // Notes whether to convert relationships, etc. into final
         // representation, and to perform optimizations.
-        bool finalized = false;
+        private bool finalized = false;
 
         // Bijective functions for conversion from basetype to int and vice versa.
-        List<SetElementType> int_to_basetype = new List<SetElementType>();
-        Dictionary<SetElementType, int> basetype_to_int = new Dictionary<SetElementType, int>();
+        private readonly List<SetElementType> int_to_basetype = new List<SetElementType>();
+        private readonly Dictionary<SetElementType, int> basetype_to_int = new Dictionary<SetElementType, int>();
 
         // Optimizations in the case where element type is int.
-        bool optimized = false;
-        int start_index = 0;
+        private bool optimized = false;
+        private int start_index = 0;
 
         public FiniteTotalOrderSet()
         {
@@ -109,10 +109,14 @@ namespace Graphs
         {
             // If optimized, then return since there's nothing to enter.
             if (optimized)
+            {
                 return;
+            }
 
             if (int_to_basetype.Contains(v))
+            {
                 return;
+            }
 
             int_to_basetype.Add(v);
             basetype_to_int.Add(v, basetype_to_int.Count);
@@ -181,9 +185,14 @@ namespace Graphs
                         min = t.Item1;
                     }
                     if (!basetype_to_int.ContainsKey(t.Item1))
+                    {
                         basetype_to_int.Add(t.Item1, 0);
+                    }
+
                     if (!basetype_to_int.ContainsKey(t.Item2))
+                    {
                         basetype_to_int.Add(t.Item2, 0);
+                    }
                 }
                 // Min found.
                 // Intialize basetype_to_int to an initial guess.
@@ -226,22 +235,32 @@ namespace Graphs
                         start_index = Convert.ToInt32(str);
                     }
                     else
+                    {
                         optimized = false;
+                    }
                 }
             }
 
             if (!optimized)
+            {
                 return int_to_basetype[k];
+            }
             else
+            {
                 return (SetElementType)Convert.ChangeType((k - start_index), typeof(SetElementType));
+            }
         }
 
         public int BijectFromBasetype(SetElementType v)
         {
             if (!optimized)
+            {
                 return basetype_to_int[v];
+            }
             else
+            {
                 return (int)Convert.ChangeType(v, typeof(int)) + start_index;
+            }
         }
 
         public System.Collections.Generic.IEnumerator<SetElementType> GetEnumerator()

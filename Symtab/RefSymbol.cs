@@ -10,7 +10,7 @@
 
         public override ISymbol resolve()
         {
-            return this.Def;
+            return Def;
         }
 
         public RefSymbol(IToken t, ISymbol def)
