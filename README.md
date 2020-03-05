@@ -69,12 +69,16 @@ just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio
 
 * Use Visual Studio 2019 to build the extension.
 
-## Work in progress for v5.3:
+## Work in progress for v5.4:
 
 * Add in Piggy for grammar rewriting and checking. The addition of Piggy will allow for  for rules to transform the
 grammar e.g., warning/removal of LHS predicates in lexer, replacing factored grammar rules with Kleene star rules (which
 result in faster parsers).
-* Extending Go To Listener/Visitor with swap between the grammar symbol and C# visitor.
+
+## Release notes for v5.3:
+
+* Fix "Find references" of grammar symbols when opening only lexer grammar file.
+* Add Go To Listener/Visitor. _Caveat: only works for C# and you must save solution before using._
 
 ## Release notes for v5.2:
 
