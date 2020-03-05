@@ -1,24 +1,24 @@
 ﻿// Template generated code from Antlr4BuildTasks.Template v 2.1
 namespace $safeprojectname$
 {
-    using System;
-    using System.Text;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Text.RegularExpressions;
     using Antlr4.Runtime;
     using Antlr4.Runtime.Misc;
     using Antlr4.Runtime.Tree;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Text;
+    using System.Text.RegularExpressions;
 
-    static class Output
+    internal static class Output
     {
         private static int changed = 0;
         private static bool first_time = true;
 
         public static StringBuilder OutputTokens(this CommonTokenStream stream)
         {
-            var sb = new StringBuilder();
-            foreach (var token in stream.GetTokens())
+            StringBuilder sb = new StringBuilder();
+            foreach (IToken token in stream.GetTokens())
             {
                 sb.AppendLine("Token " + token.TokenIndex + " " + token.Type + " " + "channel " + ((Lexer)stream.TokenSource).ChannelNames[token.Channel] + " " + Output.PerformEscapes(token.Text));
             }
@@ -27,7 +27,7 @@ namespace $safeprojectname$
 
         public static StringBuilder OutputTree(this IParseTree tree, CommonTokenStream stream)
         {
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             tree.ParenthesizedAST(sb, stream);
             return sb;
         }
@@ -44,13 +44,19 @@ namespace $safeprojectname$
                 Interval interval = tok.SourceInterval;
                 IList<IToken> inter = null;
                 if (tok.Symbol.TokenIndex >= 0)
+                {
                     inter = stream.GetHiddenTokensToLeft(tok.Symbol.TokenIndex);
+                }
+
                 if (inter != null)
-                    foreach (var t in inter)
+                {
+                    foreach (IToken t in inter)
                     {
                         StartLine(sb, tree, stream, level);
                         sb.AppendLine("( " + ((Lexer)stream.TokenSource).ChannelNames[t.Channel] + " text=" + t.Text.PerformEscapes());
                     }
+                }
+
                 StartLine(sb, tree, stream, level);
                 sb.AppendLine("( " + ((Lexer)stream.TokenSource).ChannelNames[tok.Symbol.Channel] + " i=" + tree.SourceInterval.a
                     + " txt=" + tree.GetText().PerformEscapes()
@@ -58,7 +64,7 @@ namespace $safeprojectname$
             }
             else
             {
-                var fixed_name = tree.GetType().ToString()
+                string fixed_name = tree.GetType().ToString()
                     .Replace("Antlr4.Runtime.Tree.", "");
                 fixed_name = Regex.Replace(fixed_name, "^.*[+]", "");
                 fixed_name = fixed_name.Substring(0, fixed_name.Length - "Context".Length);
@@ -70,12 +76,16 @@ namespace $safeprojectname$
             }
             for (int i = 0; i < tree.ChildCount; ++i)
             {
-                var c = tree.GetChild(i);
+                IParseTree c = tree.GetChild(i);
                 c.ParenthesizedAST(sb, stream, level + 1);
             }
             if (level == 0)
             {
-                for (int k = 0; k < 1 + changed - level; ++k) sb.Append(") ");
+                for (int k = 0; k < 1 + changed - level; ++k)
+                {
+                    sb.Append(") ");
+                }
+
                 sb.AppendLine();
                 changed = 0;
             }
@@ -87,22 +97,33 @@ namespace $safeprojectname$
             {
                 if (!first_time)
                 {
-                    for (int j = 0; j < level; ++j) sb.Append("  ");
-                    for (int k = 0; k < 1 + changed - level; ++k) sb.Append(") ");
+                    for (int j = 0; j < level; ++j)
+                    {
+                        sb.Append("  ");
+                    }
+
+                    for (int k = 0; k < 1 + changed - level; ++k)
+                    {
+                        sb.Append(") ");
+                    }
+
                     sb.AppendLine();
                 }
                 changed = 0;
                 first_time = false;
             }
             changed = level;
-            for (int j = 0; j < level; ++j) sb.Append("  ");
+            for (int j = 0; j < level; ++j)
+            {
+                sb.Append("  ");
+            }
         }
 
         private static string ToLiteral(this string input)
         {
-            using (var writer = new StringWriter())
+            using (StringWriter writer = new StringWriter())
             {
-                var literal = input;
+                string literal = input;
                 literal = literal.Replace("\\", "\\\\");
                 literal = literal.Replace("\b", "\\b");
                 literal = literal.Replace("\n", "\\n");
