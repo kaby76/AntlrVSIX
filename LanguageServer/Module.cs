@@ -1,7 +1,6 @@
-﻿using Antlr4.Runtime.Tree;
-
-namespace LanguageServer
+﻿namespace LanguageServer
 {
+    using Antlr4.Runtime.Tree;
     using Graphs;
     using Symtab;
     using System;
@@ -9,6 +8,7 @@ namespace LanguageServer
     using System.Linq;
     using System.Text;
     using Workspaces;
+
 
     public class Module
     {
@@ -334,42 +334,44 @@ namespace LanguageServer
             var ref_pd = ParserDetailsFactory.Create(doc);
             if (ref_pd.ParseTree == null) LanguageServer.Module.Compile();
             ref_pd.Attributes.TryGetValue(ref_pt, out IList<Symtab.CombinedScopeSymbol> list_value);
+            ISymbol found_def = null;
+            ISymbol found_ref = null;
             foreach (var value in list_value)
             {
                 if (value == null) continue;
                 var @ref = value as Symtab.ISymbol;
                 if (@ref == null) continue;
                 if (@ref.Token == null) continue;
+                found_ref = @ref;
                 var def = @ref.resolve();
                 if (def == null) continue;
                 if (def.Token == null) continue;
-                List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
-                var refs = ref_pd.Refs.Where(
+                found_def = def;
+                break;
+            }
+            List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
+            // Go through all files and look for refs.
+            foreach (KeyValuePair<string, List<string>> d in AntlrParserDetails._dependent_grammars)
+            {
+                var d_doc = Workspaces.Workspace.Instance.FindDocument(d.Key);
+                var d_pd = ParserDetailsFactory.Create(d_doc);
+                if (d_pd.ParseTree == null) continue;
+                var refs = d_pd.Refs.Where(
                     (t) =>
                     {
                         Antlr4.Runtime.Tree.TerminalNodeImpl x = t.Key;
-                        if (x == @ref.Token) return true;
-
-                        ref_pd.Attributes.TryGetValue(x, out IList<Symtab.CombinedScopeSymbol> list_v);
+                        if (x.Symbol == found_ref.Token) return true;
+                        d_pd.Attributes.TryGetValue(x, out IList<Symtab.CombinedScopeSymbol> list_v);
+                        if (list_v == null) return false;
                         foreach (var v in list_v)
                         {
                             var vv = v as Symtab.ISymbol;
                             if (vv == null) return false;
-                            if (vv.resolve() == def) return true;
+                            if (vv.resolve() == found_def) return true;
                             return false;
                         }
                         return false;
                     }).Select(t => t.Key);
-                if (def != null)
-                {
-                    if (def.file == @ref.file)
-                        result.Add(
-                           new Location()
-                           {
-                               Range = new Workspaces.Range(def.Token.StartIndex, def.Token.StopIndex),
-                               Uri = Workspaces.Workspace.Instance.FindDocument(def.file)
-                           });
-                }
                 foreach (var r in refs)
                 {
                     result.Add(
@@ -379,6 +381,15 @@ namespace LanguageServer
                                 Uri = Workspaces.Workspace.Instance.FindDocument(r.Symbol.InputStream.SourceName)
                             });
                 }
+            }
+            if (found_def != null)
+            {
+                result.Add(
+                    new Location()
+                    {
+                        Range = new Workspaces.Range(found_def.Token.StartIndex, found_def.Token.StopIndex),
+                        Uri = Workspaces.Workspace.Instance.FindDocument(found_def.file)
+                    });
             }
             return result;
         }
@@ -452,6 +463,39 @@ namespace LanguageServer
                 HashSet<ParserDetails> to_do = new HashSet<ParserDetails>();
 
             DoAgain:
+
+                // Get current directory, and add all grammar files.
+                foreach (Document document in Workspaces.DFSContainer.DFS(ws))
+                {
+                    string file_name = document.FullPath;
+                    if (file_name == null) continue;
+                    var parent = document.Parent;
+                    var gd = LanguageServer.GrammarDescriptionFactory.Create(file_name);
+                    if (gd == null) continue;
+
+                    // Get suffix of file_name.
+                    string extension = System.IO.Path.GetExtension(file_name);
+                    string directory = System.IO.Path.GetDirectoryName(file_name);
+
+                    foreach (var file in System.IO.Directory.GetFiles(directory))
+                    {
+                        if (System.IO.Path.GetExtension(file) != extension)
+                            continue;
+                        var g2 = LanguageServer.GrammarDescriptionFactory.Create(file);
+                        if (g2 == null) continue;
+                        var x = Workspaces.Workspace.Instance.FindDocument(file);
+                        if (x == null)
+                        {
+                            // Add document.
+                            var proj = parent;
+                            var new_doc = new Workspaces.Document(file);
+                            proj.AddChild(new_doc);
+                        }
+                        var p2 = ParserDetailsFactory.Create(document);
+                        if (!p2.Changed) continue;
+                        to_do.Add(p2);
+                    }
+                }
 
                 foreach (var document in Workspaces.DFSContainer.DFS(ws))
                 {

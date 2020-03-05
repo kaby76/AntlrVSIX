@@ -35,6 +35,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DeployExtension>True</DeployExtension>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -104,6 +105,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="$(ProjectDir)\bin\Debug\Server\**\*.*">
+      <Link>Server\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
@@ -138,23 +144,16 @@
     <PackageReference Include="Microsoft.VisualStudio.Shell.Framework">
       <Version>16.4.29519.181</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="16.5.2044">
+ <!--   <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="16.6.3">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+    </PackageReference> -->
     <PackageReference Include="SharpZipLib">
       <Version>1.2.0</Version>
     </PackageReference>
     <PackageReference Include="System.Threading">
       <Version>4.3.0</Version>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="$(ProjectDir)\bin\Debug\Server\**\*.*">
-      <Link>Server\%(RecursiveDir)%(Filename)%(Extension)</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AntlrCppProject\AntlrCppProject.csproj">
@@ -208,7 +207,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
   <PropertyGroup>
-    <PreBuildEvent>if not exist "$(SolutionDir)Client\bin\Debug\Server" (mkdir "$(SolutionDir)Client\bin\Debug\Server" &amp;&amp; xcopy "$(SolutionDir)Server\bin\Debug\." "$(SolutionDir)Client\bin\Debug\Server" /s /e /y) ELSE (xcopy "$(SolutionDir)Server\bin\Debug\." "$(SolutionDir)Client\bin\Debug\Server")</PreBuildEvent>
+    <PreBuildEvent>if not exist "$(SolutionDir)Client\bin\Debug\Server" (mkdir "$(SolutionDir)Client\bin\Debug\Server" &amp;&amp; xcopy "$(SolutionDir)Server\bin\Debug\." "$(SolutionDir)Client\bin\Debug\Server" /s /e /y /u) ELSE (xcopy "$(SolutionDir)Server\bin\Debug\." "$(SolutionDir)Client\bin\Debug\Server" /s /e /y /u)</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
