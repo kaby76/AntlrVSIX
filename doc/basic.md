@@ -1,15 +1,15 @@
 # Basic Editing of a Grammar
 
-Prior to using the AntlrVSIX extension, you should install the Java runtime, the "complete" Antlr tool
+__Prior to using the AntlrVSIX extension, you should install the Java runtime, the "complete" Antlr tool
 jar, and update your environment with JAVA_HOME, Antlr4ToolPath. You should have this so you can perform
-builds. You can use the extension without these, but you won't be able to build and debug your Antlr program.
+builds. You can use the extension without these, but you won't be able to build and debug your Antlr program.__
 
 AntlrVSIX supports editing of Antlr version 4 grammars. Grammar files
-must end with a .g4 suffix.
-A grammar that cannot be parsed will affect what features are available from the extension.
-Grammars can be split into multiple files, but they must be
-added to a Visual Studio C# or C++ Project in order for the tool to keep track of
-all grammar symbols.
+must end with a .g or .g4 suffix (the "standard" is to use .g4).
+A grammar that only partially parses will show tagging up to the error.
+Grammars can be split into multiple files, but they should be in the same directory.
+The tool will try to only perform cross symbol matching between lexer and parser grammars
+by the tokenVocab option, or the import statement.
 
 AntlrVSIX is implemented using a Language Server Protocol API provided by Microsoft.
 

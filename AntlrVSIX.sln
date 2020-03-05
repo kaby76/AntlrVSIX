@@ -27,7 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "corpus-for-codebuff", "corp
 		corpus-for-codebuff\YangJavaParser.g = corpus-for-codebuff\YangJavaParser.g
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\AntlrVSIX.csproj", "{99377F57-EC77-4949-A670-F97989990A3C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntlrVSIX", "Client\AntlrVSIX.csproj", "{99377F57-EC77-4949-A670-F97989990A3C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{E912AE6C-996B-46A9-9F55-C823EB9B4F47} = {E912AE6C-996B-46A9-9F55-C823EB9B4F47}
 	EndProjectSection
@@ -57,6 +57,41 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LanguageServer", "LanguageServer\LanguageServer.csproj", "{DAC36616-E61D-4512-AE4E-C3706544DAB1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Options", "Options\Options.csproj", "{E4C5ED5B-21AE-492F-8CF8-C3EADF4059E2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{65955E78-3712-4604-B151-4A2F7474BA58}"
+	ProjectSection(SolutionItems) = preProject
+		doc\basic.md = doc\basic.md
+		doc\building.md = doc\building.md
+		doc\customizing.md = doc\customizing.md
+		doc\readme.md = doc\readme.md
+		doc\setup.md = doc\setup.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pics", "pics", "{AB776C0F-4B61-4EDF-A654-40A9259855CD}"
+	ProjectSection(SolutionItems) = preProject
+		doc\pics\2019-08-08-10.png = doc\pics\2019-08-08-10.png
+		doc\pics\2019-08-08-17.png = doc\pics\2019-08-08-17.png
+		doc\pics\2019-08-08-18.png = doc\pics\2019-08-08-18.png
+		doc\pics\2019-08-08-19.png = doc\pics\2019-08-08-19.png
+		doc\pics\2019-08-08-20.png = doc\pics\2019-08-08-20.png
+		doc\pics\2019-08-08-21.png = doc\pics\2019-08-08-21.png
+		doc\pics\2019-08-08-22.png = doc\pics\2019-08-08-22.png
+		doc\pics\2019-08-08-23.png = doc\pics\2019-08-08-23.png
+		doc\pics\2019-08-08-24.png = doc\pics\2019-08-08-24.png
+		doc\pics\2019-08-08-25.png = doc\pics\2019-08-08-25.png
+		doc\pics\2019-08-08-26.png = doc\pics\2019-08-08-26.png
+		doc\pics\2019-08-08-3.png = doc\pics\2019-08-08-3.png
+		doc\pics\2019-08-08-30.png = doc\pics\2019-08-08-30.png
+		doc\pics\2019-08-08-31.png = doc\pics\2019-08-08-31.png
+		doc\pics\2019-08-08-32.png = doc\pics\2019-08-08-32.png
+		doc\pics\2019-08-08-33.png = doc\pics\2019-08-08-33.png
+		doc\pics\2019-08-08-34.png = doc\pics\2019-08-08-34.png
+		doc\pics\2019-08-08-4.png = doc\pics\2019-08-08-4.png
+		doc\pics\2019-08-08-7.png = doc\pics\2019-08-08-7.png
+		doc\pics\2019-08-08-8.png = doc\pics\2019-08-08-8.png
+		doc\pics\2019-08-08-9.png = doc\pics\2019-08-08-9.png
+		doc\pics\2019-08-09-1.png = doc\pics\2019-08-09-1.png
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -111,6 +146,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{AB776C0F-4B61-4EDF-A654-40A9259855CD} = {65955E78-3712-4604-B151-4A2F7474BA58}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {84E7A3AD-E215-47C2-9812-AD75B8DC62E4}
