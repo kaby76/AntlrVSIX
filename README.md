@@ -79,6 +79,7 @@ result in faster parsers).
 
 * Fix "Find references" of grammar symbols when opening only lexer grammar file.
 * Add Go To Listener/Visitor. _Caveat: only works for C# and you must save solution before using._
+* Templates updated, Antlr4BuildTasks 2.2.
 
 ## Release notes for v5.2:
 
