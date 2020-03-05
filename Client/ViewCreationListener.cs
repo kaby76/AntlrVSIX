@@ -12,7 +12,7 @@
 
 
     [Export(typeof(IVsTextViewCreationListener))]
-    [ContentType("Antlr")]
+    [ContentType("any")]
     [TextViewRole(PredefinedTextViewRoles.Editable)]
     public class ViewCreationListener : IVsTextViewCreationListener
     {
@@ -36,7 +36,9 @@
                 if (buffer == null) return;
                 string ffn = await buffer.GetFFN();
                 if (ffn == null) return;
-                if (!(Path.GetExtension(ffn) == ".g4"))
+                if (!(Path.GetExtension(ffn) == ".g4" || Path.GetExtension(ffn) == ".g"))
+                    return;
+                if (!Options.Option.GetBoolean("OverrideAntlrPluggins"))
                     return;
                 var content_type = buffer.ContentType;
                 System.Collections.Generic.List<IContentType> content_types = ContentTypeRegistryService.ContentTypes.ToList();

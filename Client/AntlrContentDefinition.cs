@@ -11,9 +11,9 @@
         [BaseDefinition(CodeRemoteContentDefinition.CodeRemoteContentTypeName)]
         internal static ContentTypeDefinition JavaContentTypeDefinition;
 
-        [Export]
-        [FileExtension("g4;g")]
-        [ContentType("Antlr")]
-        internal static FileExtensionToContentTypeDefinition JavaFileExtensionDefinition;
+        //[Export]
+        //[FileExtension("g4;g")]
+        //[ContentType("Antlr")]
+        //internal static FileExtensionToContentTypeDefinition JavaFileExtensionDefinition;
     }
 }

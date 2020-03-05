@@ -4,7 +4,6 @@
     using System;
     using System.ComponentModel.Design;
 
-
     public class OptionsCommand
     {
         private readonly Microsoft.VisualStudio.Shell.Package _package;
