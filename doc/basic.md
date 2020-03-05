@@ -1,7 +1,11 @@
 # Basic Editing of a Grammar
 
-AntlrVSIX works with Antlr version 4 grammars. The extension recognizes Antlr4 grammars
-with suffices .g or .g4, and will not recognize a grammar with any other suffix.
+Prior to using the AntlrVSIX extension, you should install the Java runtime, the "complete" Antlr tool
+jar, and update your environment with JAVA_HOME, Antlr4ToolPath. You should have this so you can perform
+builds. You can use the extension without these, but you won't be able to build and debug your Antlr program.
+
+AntlrVSIX supports editing of Antlr version 4 grammars. Grammar files
+must end with a .g4 suffix.
 A grammar that cannot be parsed will affect what features are available from the extension.
 Grammars can be split into multiple files, but they must be
 added to a Visual Studio C# or C++ Project in order for the tool to keep track of
@@ -11,9 +15,8 @@ AntlrVSIX is implemented using a Language Server Protocol API provided by Micros
 
 ## Tagging
 
-AntlrVSIX tags all tokens in the grammar file, but due to restrictions in the LSP API provided
-by Microsoft, grammar symbols are not color coded. However, highlighting (by clicking on a symbol)
-is supported.
+AntlrVSIX support tagging of terminal and non-terminal grammar symbols. Literals are not currently tagged.
+Tagging only works from the beginning of the file to a point of syntax error.
 
 ## Intellisense Tooltip
 

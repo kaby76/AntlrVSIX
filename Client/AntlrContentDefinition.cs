@@ -12,7 +12,7 @@
         internal static ContentTypeDefinition JavaContentTypeDefinition;
 
         [Export]
-        [FileExtension(".g4")]
+        [FileExtension("g4;g")]
         [ContentType("Antlr")]
         internal static FileExtensionToContentTypeDefinition JavaFileExtensionDefinition;
     }

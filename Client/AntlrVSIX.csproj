@@ -207,7 +207,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
   <PropertyGroup>
-    <PreBuildEvent>if not exist "$(SolutionDir)Client\bin\Debug\Server" (mkdir "$(SolutionDir)Client\bin\Debug\Server" &amp;&amp; xcopy "$(SolutionDir)Server\bin\Debug\." "$(SolutionDir)Client\bin\Debug\Server" /s /e /y /u) ELSE (xcopy "$(SolutionDir)Server\bin\Debug\." "$(SolutionDir)Client\bin\Debug\Server" /s /e /y /u)</PreBuildEvent>
+    <PreBuildEvent>if not exist "$(SolutionDir)Client\bin\Debug\Server" (mkdir "$(SolutionDir)Client\bin\Debug\Server" &amp;&amp; xcopy "$(SolutionDir)Server\bin\Debug\." "$(SolutionDir)Client\bin\Debug\Server" /e /y /h /r) ELSE (xcopy "$(SolutionDir)Server\bin\Debug\." "$(SolutionDir)Client\bin\Debug\Server" /e /y /h /r)</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
