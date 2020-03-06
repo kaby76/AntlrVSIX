@@ -170,7 +170,7 @@
                     return;
                 }
 
-                int new_pos = alc.SendServerCustomMessage2(ffn, pos, forward);
+                int new_pos = alc.CMNextSymbolSendServer(ffn, pos, forward);
                 if (new_pos < 0)
                 {
                     return;

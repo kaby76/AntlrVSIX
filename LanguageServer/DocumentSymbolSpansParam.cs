@@ -1,16 +1,16 @@
 ﻿namespace LanguageServer
 {
-    public class CustomMessageParams
+    public class CMGetClassifiersParams
     {
-        public CustomMessageParams() { }
+        public CMGetClassifiersParams() { }
         public System.Uri TextDocument;
         public int Start;
         public int End;
     }
 
-    public class CustomMessage2Params
+    public class CMNextSymbolParams
     {
-        public CustomMessage2Params() { }
+        public CMNextSymbolParams() { }
         public System.Uri TextDocument;
         public int Pos;
         public bool Forward;

@@ -887,16 +887,16 @@
         }
 
 
-        [JsonRpcMethod("CustomMessage")]
-        public async System.Threading.Tasks.Task<SymbolInformation[]> CustomMessageName(JToken arg)
+        [JsonRpcMethod("CMGetClassifiers")]
+        public async System.Threading.Tasks.Task<SymbolInformation[]> CMGetClassifiers(JToken arg)
         {
-            CustomMessageParams request = arg.ToObject<CustomMessageParams>();
+            CMGetClassifiersParams request = arg.ToObject<CMGetClassifiersParams>();
             Document document = CheckDoc(request.TextDocument);
             int start = request.Start;
             int end = request.End;
             if (trace)
             {
-                System.Console.Error.WriteLine("<-- CustomMessage");
+                System.Console.Error.WriteLine("<-- CMGetClassifiers");
                 System.Console.Error.WriteLine(arg.ToString());
                 (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
                 System.Console.Error.WriteLine("");
@@ -977,16 +977,16 @@
             return result;
         }
 
-        [JsonRpcMethod("CustomMessage2")]
-        public async System.Threading.Tasks.Task<int> KenCustomMessageName2(JToken arg)
+        [JsonRpcMethod("CMNextSymbol")]
+        public async System.Threading.Tasks.Task<int> CMNextSymbol(JToken arg)
         {
-            CustomMessage2Params request = arg.ToObject<CustomMessage2Params>();
+            CMNextSymbolParams request = arg.ToObject<CMNextSymbolParams>();
             Document document = CheckDoc(request.TextDocument);
             int pos = request.Pos;
             bool forward = request.Forward;
             if (trace)
             {
-                System.Console.Error.WriteLine("<-- CustomMessage2");
+                System.Console.Error.WriteLine("<-- CMNextSymbol");
                 System.Console.Error.WriteLine(arg.ToString());
                 (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
                 System.Console.Error.WriteLine("");

@@ -139,7 +139,7 @@
             return Task.CompletedTask;
         }
 
-        public SymbolInformation[] SendServerCustomMessage(int start, int end, string ffn)
+        public SymbolInformation[] CMGetClassifiersSendServer(int start, int end, string ffn)
         {
             try
             {
@@ -148,12 +148,12 @@
                     return null;
                 }
 
-                CustomMessageParams p = new CustomMessageParams();
+                CMGetClassifiersParams p = new CMGetClassifiersParams();
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
                 p.Start = start;
                 p.End = end;
-                SymbolInformation[] result = _rpc.InvokeAsync<SymbolInformation[]>("CustomMessage", p).Result;
+                SymbolInformation[] result = _rpc.InvokeAsync<SymbolInformation[]>("CMGetClassifiers", p).Result;
                 return result;
             }
             catch (Exception)
@@ -162,7 +162,7 @@
             return null;
         }
 
-        public int SendServerCustomMessage2(string ffn, int pos, bool forward)
+        public int CMNextSymbolSendServer(string ffn, int pos, bool forward)
         {
             try
             {
@@ -171,12 +171,12 @@
                     return -1;
                 }
 
-                CustomMessage2Params p = new CustomMessage2Params();
+                CMNextSymbolParams p = new CMNextSymbolParams();
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
                 p.Pos = pos;
                 p.Forward = forward;
-                int result = _rpc.InvokeAsync<int>("CustomMessage2", p).Result;
+                int result = _rpc.InvokeAsync<int>("CMNextSymbol", p).Result;
                 return result;
             }
             catch (Exception)

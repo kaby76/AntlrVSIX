@@ -57,7 +57,7 @@
                 string text = curSpan.GetText();
                 int curLocStart = start.Position;
                 int curLocEnd = end.Position;
-                SymbolInformation[] sorted_combined_tokens = alc.SendServerCustomMessage(curLocStart, curLocEnd - 1, ffn);
+                SymbolInformation[] sorted_combined_tokens = alc.CMGetClassifiersSendServer(curLocStart, curLocEnd - 1, ffn);
                 if (sorted_combined_tokens == null)
                 {
                     continue;
