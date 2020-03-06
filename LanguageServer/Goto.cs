@@ -11,7 +11,7 @@
 
     public class Goto
     {
-        public static CustomMessage3Result main(bool visitor, Workspaces.Document document, int pos)
+        public static CMGotoResult main(bool visitor, Workspaces.Document document, int pos)
         {
             string main_suffix = Path.GetExtension(document.FullPath);
             bool in_grammar = main_suffix == ".g4" || main_suffix == ".g";
@@ -446,7 +446,7 @@ public override void {capitalized_member_name}({capitalized_grammar_name}Parser.
                     }
                 }
 
-                CustomMessage3Result result = new CustomMessage3Result
+                CMGotoResult result = new CMGotoResult
                 {
                     TextDocument = new Uri(class_file_path),
                     Start = found_member.Identifier.SpanStart

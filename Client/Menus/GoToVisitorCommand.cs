@@ -171,7 +171,15 @@
                     return;
                 }
 
-                CustomMessage3Result symbol = alc.SendServerCustomMessage3(orig_ffn, pos);
+                CMGotoResult symbol = null;
+                if (visitor)
+                {
+                    symbol = alc.CMGotoVisitorSendServer(orig_ffn, pos);
+                }
+                else
+                {
+                    symbol = alc.CMGotoListenerSendServer(orig_ffn, pos);
+                }
                 if (symbol == null)
                 {
                     return;

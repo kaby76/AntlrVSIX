@@ -1024,21 +1024,40 @@
             return next_sym;
         }
 
-        [JsonRpcMethod("CustomMessage3")]
-        public async System.Threading.Tasks.Task<CustomMessage3Result> KenCustomMessageName3(JToken arg)
+        [JsonRpcMethod("CMGotoVisitor")]
+        public async System.Threading.Tasks.Task<CMGotoResult> CMGotoVisitor(JToken arg)
         {
-            CustomMessage3Params request = arg.ToObject<CustomMessage3Params>();
+            CMGotoParams request = arg.ToObject<CMGotoParams>();
             Document document = CheckDoc(request.TextDocument);
             int pos = request.Pos;
             if (trace)
             {
-                System.Console.Error.WriteLine("<-- CustomMessage3");
+                System.Console.Error.WriteLine("<-- CMGotoVisitor");
                 System.Console.Error.WriteLine(arg.ToString());
                 (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
                 System.Console.Error.WriteLine("");
             }
 
-            CustomMessage3Result s = Goto.main(true, document, pos);
+            CMGotoResult s = Goto.main(true, document, pos);
+
+            return s;
+        }
+
+        [JsonRpcMethod("CMGotoListener")]
+        public async System.Threading.Tasks.Task<CMGotoResult> CMGotoListener(JToken arg)
+        {
+            CMGotoParams request = arg.ToObject<CMGotoParams>();
+            Document document = CheckDoc(request.TextDocument);
+            int pos = request.Pos;
+            if (trace)
+            {
+                System.Console.Error.WriteLine("<-- CMGotoListener");
+                System.Console.Error.WriteLine(arg.ToString());
+                (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
+                System.Console.Error.WriteLine("");
+            }
+
+            CMGotoResult s = Goto.main(false, document, pos);
 
             return s;
         }

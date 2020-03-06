@@ -30,7 +30,7 @@ Step4: <img src="pics/2019-08-08-10.png" width="75%" />
 
 ## Notes on Install
 
-AntlrVSIX only targets VS2019 or VS2017. Older versions are no longer supported, albeit you could
+AntlrVSIX only targets VS2019. Older versions are no longer supported, albeit you could
 build a version from sources targeting older versions of Visual Studio. An older version of AntlrVSIX
 can be downloaded in lieu of building from sources.
 

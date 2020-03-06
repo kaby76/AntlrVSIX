@@ -185,7 +185,7 @@
             return -1;
         }
 
-        public CustomMessage3Result SendServerCustomMessage3(string ffn, int pos)
+        public CMGotoResult CMGotoVisitorSendServer(string ffn, int pos)
         {
             try
             {
@@ -194,11 +194,33 @@
                     return null;
                 }
 
-                CustomMessage3Params p = new CustomMessage3Params();
+                CMGotoParams p = new CMGotoParams();
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
                 p.Pos = pos;
-                CustomMessage3Result result = _rpc.InvokeAsync<CustomMessage3Result>("CustomMessage3", p).Result;
+                CMGotoResult result = _rpc.InvokeAsync<CMGotoResult>("CMGotoVisitor", p).Result;
+                return result;
+            }
+            catch (Exception)
+            {
+            }
+            return null;
+        }
+
+        public CMGotoResult CMGotoListenerSendServer(string ffn, int pos)
+        {
+            try
+            {
+                if (_rpc == null)
+                {
+                    return null;
+                }
+
+                CMGotoParams p = new CMGotoParams();
+                Uri uri = new Uri(ffn);
+                p.TextDocument = uri;
+                p.Pos = pos;
+                CMGotoResult result = _rpc.InvokeAsync<CMGotoResult>("CMGotoListener", p).Result;
                 return result;
             }
             catch (Exception)

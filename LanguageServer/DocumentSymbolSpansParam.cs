@@ -16,16 +16,16 @@
         public bool Forward;
     }
 
-    public class CustomMessage3Params
+    public class CMGotoParams
     {
-        public CustomMessage3Params() { }
+        public CMGotoParams() { }
         public System.Uri TextDocument;
         public int Pos;
     }
 
-    public class CustomMessage3Result
+    public class CMGotoResult
     {
-        public CustomMessage3Result() { }
+        public CMGotoResult() { }
         public System.Uri TextDocument;
         public int Start;
     }
