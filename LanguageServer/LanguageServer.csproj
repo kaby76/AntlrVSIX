@@ -21,7 +21,7 @@
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.8.0" />
     <PackageReference Include="Antlr4BuildTasks" Version="2.2" />
-    <PackageReference Include="cs-codebuff" Version="2.0.4" />
+    <PackageReference Include="cs-codebuff" Version="2.0.5" />
     <PackageReference Include="Microsoft.Build" Version="16.4.0" />
     <PackageReference Include="Microsoft.Build.Framework" Version="16.4.0" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="16.4.0" />

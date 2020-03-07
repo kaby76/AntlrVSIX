@@ -811,7 +811,7 @@
         {
             ParserDetails ref_pd = ParserDetailsFactory.Create(doc);
             string code = doc.Code;
-            string corpus_location = null;//global::Options.POptions.GetString("CorpusLocation");
+            string corpus_location = Options.Option.GetString("CorpusLocation");
             if (corpus_location == null)
             {
                 TextEdit[] result = new TextEdit[] { };

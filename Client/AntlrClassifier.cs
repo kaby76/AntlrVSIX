@@ -75,37 +75,37 @@
                     int end_token_end = i2;
                     int type = (int)r.Kind;
                     int length = end_token_end - start_token_start + 1;
-
-                    if (type >= 0)
+                    TagSpan<ClassificationTag> result = null;
+                    try
                     {
-                        // Make sure the length doesn't go past the end of the current span.
-                        if (start_token_start + length > curLocEnd)
+                        if (type >= 0)
                         {
-                            length = curLocEnd - start_token_start;
-                        }
+                            // Make sure the length doesn't go past the end of the current span.
+                            if (start_token_start + length > curLocEnd)
+                            {
+                                var new_length = curLocEnd - start_token_start;
+                                if (new_length >= 0) length = new_length;
+                            }
 
-                        ITextSnapshot a = curSpan.Snapshot.TextBuffer.CurrentSnapshot;
-                        ITextSnapshot b = curSpan.Snapshot;
+                            ITextSnapshot a = curSpan.Snapshot.TextBuffer.CurrentSnapshot;
+                            ITextSnapshot b = curSpan.Snapshot;
 
-                        SnapshotSpan tokenSpan = new SnapshotSpan(
-                            curSpan.Snapshot.TextBuffer.CurrentSnapshot,
-                            //curSpan.Snapshot,
-                            new Span(start_token_start, length));
+                            SnapshotSpan tokenSpan = new SnapshotSpan(
+                                curSpan.Snapshot.TextBuffer.CurrentSnapshot,
+                                //curSpan.Snapshot,
+                                new Span(start_token_start, length));
 
-                        TagSpan<ClassificationTag> result = null;
-                        try
-                        {
                             result = new TagSpan<ClassificationTag>(tokenSpan,
                                 new ClassificationTag(_lsptype_to_classifiertype[type]));
                         }
-                        catch (Exception)
-                        {
-                            //Logger.Log.Notify(exception.StackTrace);
-                        }
-                        if (result != null)
-                        {
-                            yield return result;
-                        }
+                    }
+                    catch (Exception)
+                    {
+                        //Logger.Log.Notify(exception.StackTrace);
+                    }
+                    if (result != null)
+                    {
+                        yield return result;
                     }
                 }
             }
