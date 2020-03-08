@@ -178,7 +178,8 @@
                 }
                 else
                 {
-                    symbol = alc.CMGotoListenerSendServer(orig_ffn, pos);
+                    var is_enter = CtrlKeyState.GetStateForView(xxx).Enabled;
+                    symbol = alc.CMGotoListenerSendServer(orig_ffn, is_enter, pos);
                 }
                 if (symbol == null)
                 {

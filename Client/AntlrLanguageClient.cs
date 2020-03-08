@@ -207,7 +207,7 @@
             return null;
         }
 
-        public CMGotoResult CMGotoListenerSendServer(string ffn, int pos)
+        public CMGotoResult CMGotoListenerSendServer(string ffn, bool is_enter, int pos)
         {
             try
             {
@@ -220,6 +220,7 @@
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
                 p.Pos = pos;
+                p.IsEnter = is_enter;
                 CMGotoResult result = _rpc.InvokeAsync<CMGotoResult>("CMGotoListener", p).Result;
                 return result;
             }

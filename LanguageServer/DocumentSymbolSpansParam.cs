@@ -21,6 +21,7 @@
         public CMGotoParams() { }
         public System.Uri TextDocument;
         public int Pos;
+        public bool IsEnter;
     }
 
     public class CMGotoResult

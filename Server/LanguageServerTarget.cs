@@ -1037,8 +1037,8 @@
                 (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
                 System.Console.Error.WriteLine("");
             }
-
-            CMGotoResult s = Goto.main(true, document, pos);
+            var key_state = request.IsEnter;
+            CMGotoResult s = Goto.main(true, key_state, document, pos);
 
             return s;
         }
@@ -1056,8 +1056,8 @@
                 (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
                 System.Console.Error.WriteLine("");
             }
-
-            CMGotoResult s = Goto.main(false, document, pos);
+            var is_enter = request.IsEnter;
+            CMGotoResult s = Goto.main(false, is_enter, document, pos);
 
             return s;
         }

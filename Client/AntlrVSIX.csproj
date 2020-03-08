@@ -57,6 +57,9 @@
     </Compile>
     <Compile Include="Menus\Menus.cs" />
     <Compile Include="Menus\OptionsCommand.cs" />
+
+    <Compile Include="Keyboard\CtrlKeyState.cs" />
+
     <Compile Include="Constants.cs" />
     <VSCTCompile Include="Menus\VSPackageCommandCodeWindowContextMenu.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>

@@ -11,7 +11,7 @@
 
     public class Goto
     {
-        public static CMGotoResult main(bool visitor, Workspaces.Document document, int pos)
+        public static CMGotoResult main(bool is_visitor, bool is_enter, Workspaces.Document document, int pos)
         {
             string main_suffix = Path.GetExtension(document.FullPath);
             bool in_grammar = main_suffix == ".g4" || main_suffix == ".g";
@@ -70,9 +70,9 @@
                 string grammar_name = Path.GetFileName(g4_file_path);
                 grammar_name = Path.GetFileNameWithoutExtension(grammar_name);
                 string listener_baseclass_name =
-                    visitor ? (grammar_name + "BaseVisitor") : (grammar_name + "BaseListener");
+                    is_visitor ? (grammar_name + "BaseVisitor") : (grammar_name + "BaseListener");
                 string listener_class_name =
-                    visitor ? ("My" + grammar_name + "Visitor") : ("My" + grammar_name + "Listener");
+                    is_visitor ? ("My" + grammar_name + "Visitor") : ("My" + grammar_name + "Listener");
 
                 // Find all occurrences of visitor class.
                 List<ClassDeclarationSyntax> found_class = new List<ClassDeclarationSyntax>();
@@ -187,7 +187,7 @@
                     }
 
                     // Create class.
-                    string clazz = visitor
+                    string clazz = is_visitor
                         ? $@"
 using System;
 using System.Collections.Generic;
@@ -291,19 +291,18 @@ namespace {name_space}
 
                 // Look for enter or exit method for symbol.
                 MethodDeclarationSyntax found_member = null;
-                bool ctl = true; //CtrlKeyState.GetStateForView(grammar_view).Enabled;
                 string capitalized_member_name = "";
-                if (visitor)
+                if (is_visitor)
                 {
                     capitalized_member_name = "Visit" + capitalized_symbol_name;
                 }
-                else if (ctl)
+                else if (is_enter)
                 {
-                    capitalized_member_name = "Exit" + capitalized_symbol_name;
+                    capitalized_member_name = "Enter" + capitalized_symbol_name;
                 }
                 else
                 {
-                    capitalized_member_name = "Enter" + capitalized_symbol_name;
+                    capitalized_member_name = "Exit" + capitalized_symbol_name;
                 }
 
                 string capitalized_grammar_name = Capitalized(grammar_name);
@@ -348,7 +347,7 @@ namespace {name_space}
                     string code = sr.ReadToEnd();
 
                     // Create class.
-                    string member = visitor
+                    string member = is_visitor
                         ? $@"
 public override Result {capitalized_member_name}([NotNull] {capitalized_grammar_name}Parser.{capitalized_symbol_name}Context context)
 {{
