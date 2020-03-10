@@ -10,9 +10,10 @@ is in C#; the client for VS Code is in Typescript.
 Supported are colorized tagging, hover, go to def, find all refs,
 replace, command completion, reformat, and go to visitor/listener.
 
-My goal for this extension is
-to provide support for transforming grammars in order to make significant changes in your grammar
-via refactoring.
+My goal for this extension is to support
+
+* conversion of non-Antlr grammars to/from Antlr;
+* refactoring grammars in order to make them cleaner, more readable, and more efficient.
 
 The source code for the extension is open source, free of charge, and free of ads. For the latest developments on the extension,
 check out my [blog](http://codinggorilla.com).
