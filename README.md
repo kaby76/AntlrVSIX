@@ -10,7 +10,8 @@ is in C#; the client for VS Code is in Typescript.
 Supported are colorized tagging, hover, go to def, find all refs,
 replace, command completion, reformat, and go to visitor/listener.
 
-My goal for this extension is to support
+Instead of providing mostly useless railroad diagrams and ATN graphs,
+my goal for this extension is to provide useful features for writing and maintaining grammars:
 
 * conversion of non-Antlr grammars to/from Antlr;
 * refactoring grammars in order to make them cleaner, more readable, and more efficient.
@@ -74,11 +75,18 @@ just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio
 
 * Use Visual Studio 2019 to build the extension.
 
-## Work in progress for v5.4:
+## Work in progress for v6.x:
 
-* Add in Piggy for grammar rewriting and checking. The addition of Piggy will allow for  for rules to transform the
+* Add in Piggy for grammar rewriting and checking. The addition of Piggy will allow for rules to transform the
 grammar e.g., warning/removal of LHS predicates in lexer, replacing factored grammar rules with Kleene star rules (which
 result in faster parsers).
+
+## Work in progress for v5.4:
+
+* Add in a few refactoring transformations (remove useless parser productions, convert parser string literals to
+lexer token symbols).
+* Fix goto visitor/listener.
+* Add in stability fixes.
 
 ## Release notes for v5.3:
 
