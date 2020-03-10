@@ -49,6 +49,7 @@
             AboutCommand.Initialize(this);
             NextSymCommand.Initialize(this);
             GoToVisitorCommand.Initialize(this);
+            ReplaceLiteral.Initialize(this);
         }
 
         public event AsyncEventHandler<EventArgs> StartAsync;
@@ -229,6 +230,29 @@
             }
             return null;
         }
+
+        public Dictionary<string, string> CMReplaceLiteralsServer(string ffn, int pos)
+        {
+            try
+            {
+                if (_rpc == null)
+                {
+                    return null;
+                }
+
+                CMReplaceLiteralsParams p = new CMReplaceLiteralsParams();
+                Uri uri = new Uri(ffn);
+                p.TextDocument = uri;
+                p.Pos = pos;
+                Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMReplaceLiterals", p).Result;
+                return result;
+            }
+            catch (Exception)
+            {
+            }
+            return null;
+        }
+
 
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {

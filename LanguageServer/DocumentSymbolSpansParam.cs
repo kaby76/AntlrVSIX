@@ -30,4 +30,12 @@
         public System.Uri TextDocument;
         public int Start;
     }
+
+    public class CMReplaceLiteralsParams
+    {
+        public CMReplaceLiteralsParams() { }
+        public System.Uri TextDocument;
+        public int Pos;
+    }
+
 }
