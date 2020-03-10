@@ -134,6 +134,11 @@
 
             Antlr4.Runtime.Tree.IParseTree p = pt;
             pd.Attributes.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
+            if (list_value == null)
+            {
+                return null;
+            }
+
             TerminalNodeImpl q = p as Antlr4.Runtime.Tree.TerminalNodeImpl;
             Range range = new Workspaces.Range(new Workspaces.Index(q.Symbol.StartIndex), new Workspaces.Index(q.Symbol.StopIndex + 1));
             bool found = pd.Tags.TryGetValue(q, out int tag_type);
@@ -453,6 +458,11 @@
             }
 
             ref_pd.Attributes.TryGetValue(ref_pt, out IList<Symtab.CombinedScopeSymbol> list_values);
+            if (list_values == null)
+            {
+                return result;
+            }
+
             foreach (CombinedScopeSymbol value in list_values)
             {
                 if (value == null)
@@ -510,6 +520,11 @@
             }
 
             ref_pd.Attributes.TryGetValue(ref_pt, out IList<Symtab.CombinedScopeSymbol> list_value);
+            if (list_value == null)
+            {
+                return result;
+            }
+
             ISymbol found_def = null;
             ISymbol found_ref = null;
             foreach (CombinedScopeSymbol value in list_value)
