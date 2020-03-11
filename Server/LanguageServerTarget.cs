@@ -1096,6 +1096,22 @@
             return changes;
         }
 
-        
+        [JsonRpcMethod("CMMoveStartRuleToTop")]
+        public async System.Threading.Tasks.Task<Dictionary<string, string>> CMMoveStartRuleToTop(JToken arg)
+        {
+            CMReplaceLiteralsParams request = arg.ToObject<CMReplaceLiteralsParams>();
+            Document document = CheckDoc(request.TextDocument);
+            int pos = request.Pos;
+            if (trace)
+            {
+                System.Console.Error.WriteLine("<-- CMMoveStartRuleToTop");
+                System.Console.Error.WriteLine(arg.ToString());
+                (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
+                System.Console.Error.WriteLine("");
+            }
+            Dictionary<string, string> changes = LanguageServer.Transform.MoveStartRuleToTop(pos, document);
+            return changes;
+        }
+
     }
 }

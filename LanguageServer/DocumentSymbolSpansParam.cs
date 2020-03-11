@@ -45,4 +45,11 @@
         public int Pos;
     }
 
+    public class CMMoveStartRuleToTopParams
+    {
+        public CMMoveStartRuleToTopParams() { }
+        public System.Uri TextDocument;
+        public int Pos;
+    }
+
 }

@@ -68,6 +68,13 @@
           </Strings>
         </Button>
 
+        <Button guid="guidMenuAndCommandsCmdSet" id="MoveStartRuleToTopCmd" priority="0x100" type="Button">
+          <Parent guid="guidMenuAndCommandsCmdSet" id="TransformMenuGroup"/>
+          <Strings>
+            <ButtonText>Move start rule to top</ButtonText>
+          </Strings>
+        </Button>
+
         <Button guid="guidMenuAndCommandsCmdSet" id="OptionsCmd" priority="0x700" type="Button">
           <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup"/>
           <Strings>
@@ -147,6 +154,7 @@
       <IDSymbol name="AboutCmd" value="0x7010" />
       <IDSymbol name="ReplaceParserLiteralCmd" value="0x7011" />
       <IDSymbol name="RemoveUselessParserProductionsCmd" value="0x7012" />
+      <IDSymbol name="MoveStartRuleToTopCmd" value="0x7013" />
     </GuidSymbol>
   </Symbols>
 </CommandTable>

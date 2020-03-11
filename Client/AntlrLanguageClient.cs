@@ -51,6 +51,7 @@
             GoToVisitorCommand.Initialize(this);
             ReplaceLiteral.Initialize(this);
             RemoveUselessParserProductions.Initialize(this);
+            MoveStartRuleToTop.Initialize(this);
         }
 
         public event AsyncEventHandler<EventArgs> StartAsync;
@@ -268,6 +269,29 @@
                 p.TextDocument = uri;
                 p.Pos = pos;
                 Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMRemoveUselessParserProductions", p).Result;
+                return result;
+            }
+            catch (Exception)
+            {
+            }
+            return null;
+        }
+
+
+        public Dictionary<string, string> CMMoveStartRuleToTopServer(string ffn, int pos)
+        {
+            try
+            {
+                if (_rpc == null)
+                {
+                    return null;
+                }
+
+                CMMoveStartRuleToTopParams p = new CMMoveStartRuleToTopParams();
+                Uri uri = new Uri(ffn);
+                p.TextDocument = uri;
+                p.Pos = pos;
+                Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMMoveStartRuleToTop", p).Result;
                 return result;
             }
             catch (Exception)

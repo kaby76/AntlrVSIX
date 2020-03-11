@@ -46,8 +46,11 @@
             {
                 yield break;
             }
-
             string ffn = _buffer.GetFFN().Result;
+            if (ffn == null)
+            {
+                yield break;
+            }
             Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(ffn);
             IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(ffn);
             foreach (SnapshotSpan curSpan in spans)
