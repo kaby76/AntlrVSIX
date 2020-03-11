@@ -38,4 +38,11 @@
         public int Pos;
     }
 
+    public class CMRemoveUselessParserProductionsParams
+    {
+        public CMRemoveUselessParserProductionsParams() { }
+        public System.Uri TextDocument;
+        public int Pos;
+    }
+
 }

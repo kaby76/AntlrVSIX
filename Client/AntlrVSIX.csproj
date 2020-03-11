@@ -81,6 +81,7 @@
     <Compile Include="GetVSVersion.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="IVsTextViewExtensions.cs" />
+    <Compile Include="Menus\RemoveUselessParserProductions.cs" />
     <Compile Include="Menus\ReplaceLiteral.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewCreationListener.cs" />
