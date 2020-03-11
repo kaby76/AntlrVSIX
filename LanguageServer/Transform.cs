@@ -582,6 +582,7 @@
             }
 
             // 6
+            string old_code = document.Code;
             List<Pair<int, int>> deletions = new List<Pair<int, int>>();
             foreach (var s in is_start_rule)
             {
@@ -602,8 +603,28 @@
                     var end = p.SourceInterval.b;
                     var start_tok = pd_parser.TokStream.Get(start);
                     var end_tok = pd_parser.TokStream.Get(end);
+                    // Move forward to include white space.
+                    var inter = pd_parser.TokStream.GetHiddenTokensToRight(end_tok.TokenIndex);
+                    Antlr4.Runtime.IToken last = end_tok;
+                    foreach (Antlr4.Runtime.IToken i in inter)
+                    {
+                        if (i.Channel == ANTLRv4Lexer.OFF_CHANNEL)
+                        {
+                            last = i;
+                            break;
+                        }
+                    }
+                    var end_ind = last.StopIndex + 1;
+                    // Back up to beginning of line. We don't want partial lines.
+                    for (int j = end_ind; ; j--)
+                    {
+                        if (old_code[j] == '\n' || old_code[j] == '\r')
+                        {
+                            end_ind = j + 1;
+                            break;
+                        }
+                    }
                     var start_ind = start_tok.StartIndex;
-                    var end_ind = end_tok.StopIndex + 1;
                     deletions.Add(new Pair<int, int>(start_ind, end_ind));
                 }
             }
@@ -624,7 +645,6 @@
 
             StringBuilder sb = new StringBuilder();
             int previous = 0;
-            string old_code = document.Code;
             {
                 int index_start = insertion_ind;
                 int len = 0;
