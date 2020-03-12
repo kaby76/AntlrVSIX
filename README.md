@@ -5,8 +5,7 @@ It is implemented as a client/server using the [Language Server Protocol (LSP)](
 using Microsoft's Language Server Protocol
 [client](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Client/) and
 [server](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/) APIs.
-The server is implemented in C#; the client for VS 2019
-is in C#; the client for VS Code is in Typescript. 
+Most of the extension is implemented in C#, while the client for VS Code is in Typescript. 
 Supported are colorized tagging, hover, go to def, find all refs,
 replace, command completion, reformat, and go to visitor/listener.
 
