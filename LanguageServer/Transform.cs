@@ -606,12 +606,15 @@
                     // Move forward to include white space.
                     var inter = pd_parser.TokStream.GetHiddenTokensToRight(end_tok.TokenIndex);
                     Antlr4.Runtime.IToken last = end_tok;
-                    foreach (Antlr4.Runtime.IToken i in inter)
+                    if (inter != null)
                     {
-                        if (i.Channel == ANTLRv4Lexer.OFF_CHANNEL)
+                        foreach (Antlr4.Runtime.IToken i in inter)
                         {
-                            last = i;
-                            break;
+                            if (i.Channel == ANTLRv4Lexer.OFF_CHANNEL)
+                            {
+                                last = i;
+                                break;
+                            }
                         }
                     }
                     var end_ind = last.StopIndex + 1;
@@ -669,6 +672,241 @@
             }
             string rest = old_code.Substring(previous);
             sb.Append(rest);
+            string new_code = sb.ToString();
+            result.Add(document.FullPath, new_code);
+
+            return result;
+        }
+
+        public static Dictionary<string, string> ReorderParserRules(int pos, Document document, LspAntlr.ReorderType type)
+        {
+            var result = new Dictionary<string, string>();
+            AntlrParserDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrParserDetails;
+            IsParser lp = new IsParser();
+            var is_parser = lp.Visit(pd_parser.ParseTree);
+            if (!is_parser)
+            {
+                return result;
+            }
+
+            // 1) Get non-terminals.
+            // 2) Get all rules.
+            // 3) Parse all .cs files in directory.
+            // 4) Find all method calls to parser.
+            // 5) Get start symbols.
+            // 6) Perform topological sort of uses.
+            // 7) Move rules.
+            // 8) Return new code.
+
+            // 1
+            ExtractProductions listener = new ExtractProductions();
+            ParseTreeWalker.Default.Walk(listener, pd_parser.ParseTree);
+            List<ITerminalNode> nonterminals = listener.Nonterminals;
+
+            // 2
+            var nonterminal_symbols = new Dictionary<ITerminalNode, ISymbol>();
+            var rules = new Dictionary<ISymbol, List<ISymbol>>();
+            nonterminals.ForEach(t =>
+            {
+                var nt = pd_parser.RootScope.LookupType(t.GetText()).First() as ISymbol;
+                nonterminal_symbols.Add(t, nt);
+                rules[nt] = new List<ISymbol>();
+                listener.RhsReferences[t].ForEach(q =>
+                {
+                    var rhs = pd_parser.RootScope.LookupType(q.GetText()).First();
+                    rules[nt].Add(rhs);
+                });
+            });
+            var is_start_rule = new Dictionary<ISymbol, bool>();
+            foreach (var r in rules)
+            {
+                is_start_rule[r.Key] = false;
+            }
+
+            // 3
+            string g4_file_path = document.FullPath;
+            string current_dir = Path.GetDirectoryName(g4_file_path);
+            if (current_dir == null)
+            {
+                return null;
+            }
+            Dictionary<string, SyntaxTree> trees = new Dictionary<string, SyntaxTree>();
+            foreach (string f in Directory.EnumerateFiles(current_dir))
+            {
+                if (Path.GetExtension(f).ToLower() != ".cs")
+                {
+                    continue;
+                }
+
+                string file_name = f;
+                string suffix = Path.GetExtension(file_name);
+                if (suffix != ".cs")
+                {
+                    continue;
+                }
+
+                try
+                {
+                    string ffn = file_name;
+                    StreamReader sr = new StreamReader(ffn);
+                    string code = sr.ReadToEnd();
+                    SyntaxTree tree = CSharpSyntaxTree.ParseText(code);
+                    trees[ffn] = tree;
+                }
+                catch (Exception)
+                {
+                }
+            }
+
+            // 4
+            try
+            {
+                foreach (KeyValuePair<string, SyntaxTree> kvp in trees)
+                {
+                    string file_name = kvp.Key;
+                    SyntaxTree tree = kvp.Value;
+                    CompilationUnitSyntax root = (CompilationUnitSyntax)tree.GetRoot();
+                    if (root == null)
+                    {
+                        continue;
+                    }
+                    var syntax_walker = new FindCalls();
+                    syntax_walker.Visit(root);
+                    foreach (var nt in nonterminals)
+                    {
+                        var nt_name = nt.GetText();
+                        var call = "." + nt_name + "()";
+                        foreach (var i in syntax_walker.Invocations)
+                        {
+                            if (i.Contains(call))
+                            {
+                                is_start_rule[nonterminal_symbols[nt]] = true;
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+            }
+
+            // 5
+            string old_code = document.Code;
+            List<Pair<int, int>> additions = new List<Pair<int, int>>();
+            if (type == LspAntlr.ReorderType.DFS)
+            {
+                Digraph<string> graph = new Digraph<string>();
+                foreach (var r in rules)
+                {
+                    graph.AddVertex(r.Key.Name);
+                }
+                foreach (var r in rules)
+                {
+                    var j = r.Value.ToList();
+                    j.Reverse();
+                    foreach (var rhs in j)
+                    {
+                        var e = new DirectedEdge<string>(r.Key.Name, rhs.Name);
+                        graph.AddEdge(e);
+                    }
+                }
+                List<string> starts = new List<string>();
+                foreach (var p in is_start_rule)
+                {
+                    starts.Add(p.Key.Name);
+                }
+                TarjanNoBackEdges<string, DirectedEdge<string>> sort = new TarjanNoBackEdges<string, DirectedEdge<string>>(graph, starts);
+                var ordered = sort.Reverse().ToList();
+
+                // 6
+                List<Pair<int, int>> new_order = new List<Pair<int, int>>();
+                foreach (var s in ordered)
+                {
+                    // Find range of code to copy, and where to insert.
+                    var token = nonterminal_symbols.Where(t => t.Value.Name == s).First();
+                    IParseTree p = token.Key;
+                    for (; p != null; p = p.Parent)
+                    {
+                        if (p is ANTLRv4Parser.RuleSpecContext)
+                            break;
+                    }
+                    if (p == null) continue;
+                    var token_interval = p.SourceInterval;
+                    var start = p.SourceInterval.a;
+                    var end = p.SourceInterval.b;
+                    var start_tok = pd_parser.TokStream.Get(start);
+                    var end_tok = pd_parser.TokStream.Get(end);
+                    // Move forward to include white space.
+                    var inter = pd_parser.TokStream.GetHiddenTokensToRight(end_tok.TokenIndex);
+                    Antlr4.Runtime.IToken last = end_tok;
+                    if (inter != null)
+                    {
+                        foreach (Antlr4.Runtime.IToken i in inter)
+                        {
+                            if (i.Channel == ANTLRv4Lexer.OFF_CHANNEL)
+                            {
+                                last = i;
+                                break;
+                            }
+                        }
+                    }
+                    var end_ind = last.StopIndex + 1;
+                    // Back up to beginning of line. We don't want partial lines.
+                    for (int j = end_ind; ; j--)
+                    {
+                        if (old_code.Length <= j)
+                        {
+                            end_ind = j - 1;
+                            break;
+                        }
+                        if (old_code[j] == '\n' || old_code[j] == '\r')
+                        {
+                            end_ind = j + 1;
+                            break;
+                        }
+                    }
+                    var start_ind = start_tok.StartIndex;
+                    additions.Add(new Pair<int, int>(start_ind, end_ind));
+                }
+
+            }
+            else if (type == LspAntlr.ReorderType.BFS)
+            {
+            }
+            else if (type == LspAntlr.ReorderType.Alphabetically)
+            {
+            }
+            else
+            {
+                return result;
+            }
+
+            var find_first_rule = new FindFirstRule();
+            var first_rule = find_first_rule.Visit(pd_parser.ParseTree);
+            if (first_rule == null) return result;
+
+            var insertion = first_rule.SourceInterval.a;
+            var insertion_tok = pd_parser.TokStream.Get(insertion);
+            var insertion_ind = insertion_tok.StartIndex;
+
+            StringBuilder sb = new StringBuilder();
+            int previous = 0;
+            {
+                int index_start = insertion_ind;
+                int len = 0;
+                string pre = old_code.Substring(previous, index_start - previous);
+                sb.Append(pre);
+                previous = index_start + len;
+            }
+            foreach (var l in additions)
+            {
+                int index_start = l.a;
+                int len = l.b - l.a;
+                string add = old_code.Substring(index_start, len);
+                sb.Append(add);
+            }
+            //string rest = old_code.Substring(previous);
+            //sb.Append(rest);
             string new_code = sb.ToString();
             result.Add(document.FullPath, new_code);
 

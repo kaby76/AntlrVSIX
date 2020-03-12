@@ -52,6 +52,7 @@
             ReplaceLiteral.Initialize(this);
             RemoveUselessParserProductions.Initialize(this);
             MoveStartRuleToTop.Initialize(this);
+            Reorder.Initialize(this);
         }
 
         public event AsyncEventHandler<EventArgs> StartAsync;
@@ -277,7 +278,6 @@
             return null;
         }
 
-
         public Dictionary<string, string> CMMoveStartRuleToTopServer(string ffn, int pos)
         {
             try
@@ -292,6 +292,30 @@
                 p.TextDocument = uri;
                 p.Pos = pos;
                 Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMMoveStartRuleToTop", p).Result;
+                return result;
+            }
+            catch (Exception)
+            {
+            }
+            return null;
+        }
+
+        public Dictionary<string, string> CMReorderParserRulesServer(string ffn, int pos, ReorderType reorder_type)
+        {
+            try
+            {
+                if (_rpc == null)
+                {
+                    return null;
+                }
+
+                CMReorderParserRulesParams p = new CMReorderParserRulesParams();
+                Uri uri = new Uri(ffn);
+                p.TextDocument = uri;
+                p.Pos = pos;
+                p.Type = reorder_type;
+
+                Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMReorderParserRules", p).Result;
                 return result;
             }
             catch (Exception)

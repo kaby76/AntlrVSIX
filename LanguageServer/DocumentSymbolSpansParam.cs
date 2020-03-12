@@ -1,5 +1,7 @@
 ﻿namespace LanguageServer
 {
+    using LspAntlr;
+
     public class CMGetClassifiersParams
     {
         public CMGetClassifiersParams() { }
@@ -52,4 +54,11 @@
         public int Pos;
     }
 
+    public class CMReorderParserRulesParams
+    {
+        public CMReorderParserRulesParams() { }
+        public System.Uri TextDocument;
+        public int Pos;
+        public ReorderType Type;
+    }
 }

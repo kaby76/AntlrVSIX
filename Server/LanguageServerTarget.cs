@@ -1113,5 +1113,23 @@
             return changes;
         }
 
+        [JsonRpcMethod("CMReorderParserRules")]
+        public async System.Threading.Tasks.Task<Dictionary<string, string>> CMReorderParserRules(JToken arg)
+        {
+            CMReorderParserRulesParams request = arg.ToObject<CMReorderParserRulesParams>();
+            Document document = CheckDoc(request.TextDocument);
+            int pos = request.Pos;
+            LspAntlr.ReorderType type = request.Type;
+            if (trace)
+            {
+                System.Console.Error.WriteLine("<-- CMReorderParserRules");
+                System.Console.Error.WriteLine(arg.ToString());
+                (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
+                System.Console.Error.WriteLine("");
+            }
+            Dictionary<string, string> changes = LanguageServer.Transform.ReorderParserRules(pos, document, type);
+            return changes;
+        }
+
     }
 }

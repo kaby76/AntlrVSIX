@@ -75,6 +75,27 @@
           </Strings>
         </Button>
 
+        <Button guid="guidMenuAndCommandsCmdSet" id="ReorderAlphabeticallyCmd" priority="0x100" type="Button">
+          <Parent guid="guidMenuAndCommandsCmdSet" id="TransformMenuGroup"/>
+          <Strings>
+            <ButtonText>Reorder parser rules alphabetically</ButtonText>
+          </Strings>
+        </Button>
+
+        <Button guid="guidMenuAndCommandsCmdSet" id="ReorderBFSCmd" priority="0x100" type="Button">
+          <Parent guid="guidMenuAndCommandsCmdSet" id="TransformMenuGroup"/>
+          <Strings>
+            <ButtonText>Reorder parser rules vis BFS</ButtonText>
+          </Strings>
+        </Button>
+
+        <Button guid="guidMenuAndCommandsCmdSet" id="ReorderDFSCmd" priority="0x100" type="Button">
+          <Parent guid="guidMenuAndCommandsCmdSet" id="TransformMenuGroup"/>
+          <Strings>
+            <ButtonText>Reorder parser rules via DFS</ButtonText>
+          </Strings>
+        </Button>
+
         <Button guid="guidMenuAndCommandsCmdSet" id="OptionsCmd" priority="0x700" type="Button">
           <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup"/>
           <Strings>
@@ -155,6 +176,9 @@
       <IDSymbol name="ReplaceParserLiteralCmd" value="0x7011" />
       <IDSymbol name="RemoveUselessParserProductionsCmd" value="0x7012" />
       <IDSymbol name="MoveStartRuleToTopCmd" value="0x7013" />
+      <IDSymbol name="ReorderAlphabeticallyCmd" value="0x7014" />
+      <IDSymbol name="ReorderBFSCmd" value="0x7015" />
+      <IDSymbol name="ReorderDFSCmd" value="0x7016" />
     </GuidSymbol>
   </Symbols>
 </CommandTable>
