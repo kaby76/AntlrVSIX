@@ -81,7 +81,8 @@ result in faster parsers).
 ## Release notes for v5.4:
 
 * Add in a few refactoring transformations (remove useless parser productions, convert parser string literals to
-lexer token symbols, move start rule to top of grammar).
+lexer token symbols, move start rule to top of grammar). _Note: Lexer rules are prioritized, so transformations on these
+types may not be totally correct at the moment._
 * Fix goto visitor/listener.
 * Add stability fixes.
 
