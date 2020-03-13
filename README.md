@@ -78,6 +78,12 @@ just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio
 grammar e.g., warning/removal of LHS predicates in lexer, replacing factored grammar rules with Kleene star rules (which
 result in faster parsers).
 
+## Work in progress for v5.5:
+
+* Add in more refactorings:
+a) Sort rules alphabetically, DFS or BFS traversals.
+b) Separate/combine grammars.
+
 ## Release notes for v5.4:
 
 * Add in a few refactoring transformations (remove useless parser productions, convert parser string literals to
