@@ -31,7 +31,7 @@ namespace Graphs
 
                 EdgeClassifier.Classify(graph, v, ref classify);
             }
-            foreach (T v in _work)
+            foreach (T v in _graph.Vertices)
             {
                 Index[v] = -1;
                 LowLink[v] = -1;
