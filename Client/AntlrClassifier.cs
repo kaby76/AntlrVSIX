@@ -78,6 +78,10 @@
                     int end_token_end = i2;
                     int type = (int)r.Kind;
                     int length = end_token_end - start_token_start + 1;
+                    if (length < 0)
+                    {
+                        continue;
+                    }
                     TagSpan<ClassificationTag> result = null;
                     try
                     {
