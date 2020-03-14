@@ -634,7 +634,6 @@
                 }
                 Graphs.DepthFirstOrder<string, DirectedEdge<string>> sort = new DepthFirstOrder<string, DirectedEdge<string>>(graph, starts);
                 var ordered = sort.ToList();
-                List<Pair<int, int>> new_order = new List<Pair<int, int>>();
                 foreach (var s in ordered)
                 {
                     var row = table.rules[table.nt_to_index[s]];
@@ -643,9 +642,44 @@
             }
             else if (type == LspAntlr.ReorderType.BFS)
             {
+                Digraph<string> graph = new Digraph<string>();
+                foreach (var r in table.rules)
+                {
+                    graph.AddVertex(r.LHS);
+                }
+                foreach (var r in table.rules)
+                {
+                    var j = r.RHS;
+                    //j.Reverse();
+                    foreach (var rhs in j)
+                    {
+                        var e = new DirectedEdge<string>(r.LHS, rhs);
+                        graph.AddEdge(e);
+                    }
+                }
+                List<string> starts = new List<string>();
+                foreach (var r in table.rules)
+                {
+                    if (r.is_start) starts.Add(r.LHS);
+                }
+                Graphs.BreadthFirstOrder<string, DirectedEdge<string>> sort = new BreadthFirstOrder<string, DirectedEdge<string>>(graph, starts);
+                var ordered = sort.ToList();
+                foreach (var s in ordered)
+                {
+                    var row = table.rules[table.nt_to_index[s]];
+                    reorder.Add(new Pair<int, int>(row.start_index, row.end_index));
+                }
             }
             else if (type == LspAntlr.ReorderType.Alphabetically)
             {
+                var ordered = table.rules
+                    .Select(r => r.LHS)
+                    .OrderBy(r => r).ToList();
+                foreach (var s in ordered)
+                {
+                    var row = table.rules[table.nt_to_index[s]];
+                    reorder.Add(new Pair<int, int>(row.start_index, row.end_index));
+                }
             }
             else
             {

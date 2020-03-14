@@ -45,6 +45,13 @@
                         cur_col = 0;
                         index += 2;
                     }
+                    else
+                    {
+                        // Error in code.
+                        cur_line++;
+                        cur_col = 0;
+                        index += 1;
+                    }
                 }
                 else if (ch == '\n')
                 {
