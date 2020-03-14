@@ -82,6 +82,7 @@ result in faster parsers).
 * Add in more refactorings:
 a) Sort rules alphabetically, DFS or BFS traversals.
 b) Separate/combine grammars.
+* Bug fixes.
 
 ## Release notes for v5.4:
 
