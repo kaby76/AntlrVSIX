@@ -39,7 +39,11 @@
                 char ch = buffer[index];
                 if (ch == '\r')
                 {
-                    if (buffer[index + 1] == '\n')
+                    if (index + 1 >= buffer.Length)
+                    {
+                        break;
+                    }
+                    else if (buffer[index + 1] == '\n')
                     {
                         cur_line++;
                         cur_col = 0;
@@ -98,11 +102,22 @@
                 char ch = buffer[cur_index];
                 if (ch == '\r')
                 {
-                    if (buffer[cur_index + 1] == '\n')
+                    if (index + 1 >= buffer.Length)
+                    {
+                        break;
+                    }
+                    else if (buffer[index + 1] == '\n')
                     {
                         cur_line++;
                         cur_col = 0;
-                        cur_index += 2;
+                        index += 2;
+                    }
+                    else
+                    {
+                        // Error in code.
+                        cur_line++;
+                        cur_col = 0;
+                        index += 1;
                     }
                 }
                 else if (ch == '\n')
