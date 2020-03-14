@@ -248,12 +248,12 @@
                     bool on_end = false;
                     for (int j = end_ind; j < old_code.Length; j++)
                     {
-                        if (old_code[j] == '\n' || old_code[j] == '\r')
+                        if (old_code[j] == '\r')
                         {
-                            on_end = true;
-                        }
-                        else if (on_end)
-                        {
+                            if (j + 1 < old_code.Length && old_code[j + 1] == '\n')
+                                end_ind = j + 2;
+                            else
+                                end_ind = j + 1;
                             break;
                         }
                         end_ind = j;
@@ -270,6 +270,20 @@
                     if (i > 0)
                     {
                         rules[i].start_index = rules[i - 1].end_index;
+                    }
+                }
+                bool bad = false;
+                for (int i = 0; i < rules.Count; ++i)
+                {
+                    for (int j = rules[i].start_index; j < rules[i].end_index; ++j)
+                    {
+                        if (old_code[j] == '\r')
+                        {
+                            if (j + 1 < rules[i].end_index && old_code[j + 1] == '\n')
+                                ;
+                            else
+                                bad = true;
+                        }
                     }
                 }
             }
