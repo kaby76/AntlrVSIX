@@ -92,7 +92,7 @@
         <Button guid="guidMenuAndCommandsCmdSet" id="ReorderDFSCmd" priority="0x100" type="Button">
           <Parent guid="guidMenuAndCommandsCmdSet" id="TransformMenuGroup"/>
           <Strings>
-            <ButtonText>Reorder parser rules via DFS</ButtonText>
+            <ButtonText>Reorder parser rules via DFS pre-order</ButtonText>
           </Strings>
         </Button>
 

@@ -620,7 +620,7 @@
                 foreach (var r in table.rules)
                 {
                     var j = r.RHS;
-                    j.Reverse();
+                    //j.Reverse();
                     foreach (var rhs in j)
                     {
                         var e = new DirectedEdge<string>(r.LHS, rhs);
@@ -632,8 +632,8 @@
                 {
                     if (r.is_start) starts.Add(r.LHS);
                 }
-                TarjanNoBackEdges<string, DirectedEdge<string>> sort = new TarjanNoBackEdges<string, DirectedEdge<string>>(graph, starts);
-                var ordered = sort.Reverse().ToList();
+                Graphs.DepthFirstOrder<string, DirectedEdge<string>> sort = new DepthFirstOrder<string, DirectedEdge<string>>(graph, starts);
+                var ordered = sort.ToList();
                 List<Pair<int, int>> new_order = new List<Pair<int, int>>();
                 foreach (var s in ordered)
                 {
