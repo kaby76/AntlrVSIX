@@ -64,6 +64,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{65955E78-371
 		doc\building.md = doc\building.md
 		doc\customizing.md = doc\customizing.md
 		doc\readme.md = doc\readme.md
+		refactoring.md = doc\refactoring.md
 		doc\setup.md = doc\setup.md
 	EndProjectSection
 EndProject
