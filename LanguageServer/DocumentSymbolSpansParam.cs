@@ -61,4 +61,12 @@
         public int Pos;
         public ReorderType Type;
     }
+
+    public class CMSplitCombineGrammarsParams
+    {
+        public CMSplitCombineGrammarsParams() { }
+        public System.Uri TextDocument;
+        public int Pos;
+        public bool Split;
+    }
 }

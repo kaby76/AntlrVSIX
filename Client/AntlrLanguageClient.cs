@@ -53,6 +53,7 @@
             RemoveUselessParserProductions.Initialize(this);
             MoveStartRuleToTop.Initialize(this);
             Reorder.Initialize(this);
+            SplitCombineGrammars.Initialize(this);
         }
 
         public event AsyncEventHandler<EventArgs> StartAsync;
@@ -316,6 +317,31 @@
                 p.Type = reorder_type;
 
                 Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMReorderParserRules", p).Result;
+                return result;
+            }
+            catch (Exception)
+            {
+            }
+            return null;
+        }
+
+
+        public Dictionary<string, string> CMSplitCombineGrammarsServer(string ffn, int pos, bool split)
+        {
+            try
+            {
+                if (_rpc == null)
+                {
+                    return null;
+                }
+
+                CMSplitCombineGrammarsParams p = new CMSplitCombineGrammarsParams();
+                Uri uri = new Uri(ffn);
+                p.TextDocument = uri;
+                p.Pos = pos;
+                p.Split = split;
+
+                Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMSplitCombineGrammars", p).Result;
                 return result;
             }
             catch (Exception)

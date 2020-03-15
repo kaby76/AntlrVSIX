@@ -1131,5 +1131,22 @@
             return changes;
         }
 
+        [JsonRpcMethod("CMSplitCombineGrammars")]
+        public async System.Threading.Tasks.Task<Dictionary<string, string>> CMSplitCombineGrammars(JToken arg)
+        {
+            CMSplitCombineGrammarsParams request = arg.ToObject<CMSplitCombineGrammarsParams>();
+            Document document = CheckDoc(request.TextDocument);
+            int pos = request.Pos;
+            bool split = request.Split;
+            if (trace)
+            {
+                System.Console.Error.WriteLine("<-- CMSplitCombineGrammars");
+                System.Console.Error.WriteLine(arg.ToString());
+                (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
+                System.Console.Error.WriteLine("");
+            }
+            Dictionary<string, string> changes = LanguageServer.Transform.SplitCombineGrammars(pos, document, split);
+            return changes;
+        }
     }
 }

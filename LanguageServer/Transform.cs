@@ -16,36 +16,36 @@
 
     public class Transform
     {
-        private class IsParser : ANTLRv4ParserBaseVisitor<bool>
+
+        private class ExtractGrammarType : ANTLRv4ParserBaseListener
         {
-            bool found = false;
+            public enum GrammarType
+            {
+                Combined,
+                Parser,
+                Lexer
+            }
 
-            public IsParser()
+            public GrammarType Type;
+
+            public ExtractGrammarType()
             {
             }
 
-            protected override bool ShouldVisitNextChild(IRuleNode node, bool currentResult)
+            public override void EnterGrammarType([NotNull] ANTLRv4Parser.GrammarTypeContext context)
             {
-                return ! found;
-            }
-
-            public override bool VisitGrammarType([NotNull] ANTLRv4Parser.GrammarTypeContext context)
-            {
-                bool IsLexer;
                 if (context.GetChild(0).GetText() == "parser")
                 {
-                    IsLexer = false;
+                    Type = GrammarType.Parser;
                 }
                 else if (context.GetChild(0).GetText() == "lexer")
                 {
-                    IsLexer = true;
+                    Type = GrammarType.Lexer;
                 }
                 else
                 {
-                    IsLexer = false;
+                    Type = GrammarType.Combined;
                 }
-                found = true;
-                return !IsLexer;
             }
         }
 
@@ -491,9 +491,10 @@
 
             // Check if lexer grammar.
             AntlrParserDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrParserDetails;
-            IsParser lp = new IsParser();
-            var is_parser = lp.Visit(pd_parser.ParseTree);
-            if (!is_parser)
+            ExtractGrammarType lp = new ExtractGrammarType();
+            ParseTreeWalker.Default.Walk(lp, pd_parser.ParseTree);
+            var is_lexer = lp.Type == ExtractGrammarType.GrammarType.Lexer;
+            if (is_lexer)
             {
                 return result;
             }
@@ -537,9 +538,10 @@
 
             // Check if lexer grammar.
             AntlrParserDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrParserDetails;
-            IsParser lp = new IsParser();
-            var is_parser = lp.Visit(pd_parser.ParseTree);
-            if (!is_parser)
+            ExtractGrammarType lp = new ExtractGrammarType();
+            ParseTreeWalker.Default.Walk(lp, pd_parser.ParseTree);
+            var is_lexer = lp.Type == ExtractGrammarType.GrammarType.Lexer;
+            if (is_lexer)
             {
                 return result;
             }
@@ -609,9 +611,10 @@
 
             // Check if lexer grammar.
             AntlrParserDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrParserDetails;
-            IsParser lp = new IsParser();
-            var is_parser = lp.Visit(pd_parser.ParseTree);
-            if (!is_parser)
+            ExtractGrammarType lp = new ExtractGrammarType();
+            ParseTreeWalker.Default.Walk(lp, pd_parser.ParseTree);
+            var is_lexer = lp.Type == ExtractGrammarType.GrammarType.Lexer;
+            if (is_lexer)
             {
                 return result;
             }
@@ -698,6 +701,113 @@
             else
             {
                 return result;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            int previous = 0;
+            {
+                int index_start = table.rules[0].start_index;
+                int len = 0;
+                string pre = old_code.Substring(previous, index_start - previous);
+                sb.Append(pre);
+                previous = index_start + len;
+            }
+            foreach (var l in reorder)
+            {
+                int index_start = l.a;
+                int len = l.b - l.a;
+                string add = old_code.Substring(index_start, len);
+                sb.Append(add);
+            }
+            //string rest = old_code.Substring(previous);
+            //sb.Append(rest);
+            string new_code = sb.ToString();
+            result.Add(document.FullPath, new_code);
+
+            return result;
+        }
+
+        public static Dictionary<string, string> SplitCombineGrammars(int pos, Document document, bool split)
+        {
+            var result = new Dictionary<string, string>();
+
+            // Check if lexer grammar.
+            AntlrParserDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrParserDetails;
+            ExtractGrammarType lp = new ExtractGrammarType();
+            ParseTreeWalker.Default.Walk(lp, pd_parser.ParseTree);
+            var is_lexer = lp.Type == ExtractGrammarType.GrammarType.Lexer;
+            if (is_lexer)
+            {
+                return result;
+            }
+
+            Table table = new Table(pd_parser, document);
+            table.ReadRules();
+            table.FindPartitions();
+            table.FindStartRules();
+
+            // Find new order or rules.
+            string old_code = document.Code;
+            List<Pair<int, int>> reorder = new List<Pair<int, int>>();
+            if (split)
+            {
+                Digraph<string> graph = new Digraph<string>();
+                foreach (var r in table.rules)
+                {
+                    graph.AddVertex(r.LHS);
+                }
+                foreach (var r in table.rules)
+                {
+                    var j = r.RHS;
+                    //j.Reverse();
+                    foreach (var rhs in j)
+                    {
+                        var e = new DirectedEdge<string>(r.LHS, rhs);
+                        graph.AddEdge(e);
+                    }
+                }
+                List<string> starts = new List<string>();
+                foreach (var r in table.rules)
+                {
+                    if (r.is_start) starts.Add(r.LHS);
+                }
+                Graphs.DepthFirstOrder<string, DirectedEdge<string>> sort = new DepthFirstOrder<string, DirectedEdge<string>>(graph, starts);
+                var ordered = sort.ToList();
+                foreach (var s in ordered)
+                {
+                    var row = table.rules[table.nt_to_index[s]];
+                    reorder.Add(new Pair<int, int>(row.start_index, row.end_index));
+                }
+            }
+            else
+            {
+                Digraph<string> graph = new Digraph<string>();
+                foreach (var r in table.rules)
+                {
+                    graph.AddVertex(r.LHS);
+                }
+                foreach (var r in table.rules)
+                {
+                    var j = r.RHS;
+                    //j.Reverse();
+                    foreach (var rhs in j)
+                    {
+                        var e = new DirectedEdge<string>(r.LHS, rhs);
+                        graph.AddEdge(e);
+                    }
+                }
+                List<string> starts = new List<string>();
+                foreach (var r in table.rules)
+                {
+                    if (r.is_start) starts.Add(r.LHS);
+                }
+                Graphs.BreadthFirstOrder<string, DirectedEdge<string>> sort = new BreadthFirstOrder<string, DirectedEdge<string>>(graph, starts);
+                var ordered = sort.ToList();
+                foreach (var s in ordered)
+                {
+                    var row = table.rules[table.nt_to_index[s]];
+                    reorder.Add(new Pair<int, int>(row.start_index, row.end_index));
+                }
             }
 
             StringBuilder sb = new StringBuilder();
