@@ -8,14 +8,15 @@ refine your grammar to make it more readable and more efficient.
 
 This transformation takes a parser or combined grammar
 and converts the string literals in the parser rules to
-lexer token symbols. In fact, the Antlr runtime performs
+lexer token symbols. In fact, the Antlr tool performs
 this mapping. However, some people may feel using the string
 literal instead of the lexer token symbol clouds the readability
 of the grammar since you don't know exactly which token the
 literal corresponds to in the lexer/parser. While the
 [documentation](https://github.com/antlr/antlr4/blob/master/doc/lexer-rules.md)
 for Antlr says the tool does not allow string literals in a
-parser grammar, it appears it does at least with Antlr 4.8,
+parser grammar, it appears it does allow string literals in
+parser grammars at least with Antlr 4.8,
 so Antlrvsix does not enforce this when splitting a combined
 grammar.
 
