@@ -3,7 +3,9 @@
 AntlrVSIX is an extension for Visual Studio 2019 and Visual Studio Code to support editing and refactoring of Antlr v4 grammars.
 It is implemented using Microsoft's [Language Server Protocol (LSP)](https://langserver.org/) 
 [client](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Client/) and
-[server](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/) APIs.
+[server](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/) APIs,
+[Antlr](https://www.antlr.org/), [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks),
+and a number of other tools.
 Most of the extension is implemented in C#, while the client for VS Code is in Typescript. 
 Supported are colorized tagging, hover, go to def, find all refs,
 replace, command completion, reformat, and go to visitor/listener.
