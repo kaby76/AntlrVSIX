@@ -71,7 +71,12 @@ Unfortunately, I've found CreateExpInstance doesn't always work because it copie
 previous hives stored under the AppData directory. It is often easier to
 just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio\16.0_*.
 
-* Use Visual Studio 2019 to build the extension.
+* Use Visual Studio 2019 to build the extension. Note, the extension builds in two steps: (1) open VS on
+the solution and perform a build, then quit. (2) reopen the solution in VS and perform a build. VS computes
+the objects to pack into the .vsix file *at the time it opens the project*, not at build time (a really
+bad thing MS). If your debug version of the
+.vssix is 5M in size, it did not compute that the server executable needs to be added into the .vsix. Quit
+VS, then reopen. Do not do "rebuild", only "build".
 
 ## Work in progress for v6.x:
 
