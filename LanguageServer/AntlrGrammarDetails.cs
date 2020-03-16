@@ -5,12 +5,12 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class AntlrParserDetails : ParserDetails
+    public class AntlrGrammarDetails : ParserDetails
     {
         private static readonly Dictionary<string, IScope> _scopes = new Dictionary<string, IScope>();
         public static Graphs.Utils.MultiMap<string, string> _dependent_grammars = new Graphs.Utils.MultiMap<string, string>();
 
-        public AntlrParserDetails(Workspaces.Document item)
+        public AntlrGrammarDetails(Workspaces.Document item)
             : base(item)
         {
             // Passes executed in order for all files.
@@ -19,14 +19,14 @@
                 // Gather Imports from grammars.
                 // Gather _dependent_grammars map.
                 int before_count = 0;
-                foreach (KeyValuePair<string, List<string>> x in AntlrParserDetails._dependent_grammars)
+                foreach (KeyValuePair<string, List<string>> x in AntlrGrammarDetails._dependent_grammars)
                 {
                     before_count++;
                     before_count = before_count + x.Value.Count;
                 }
                 ParseTreeWalker.Default.Walk(new Pass3Listener(this), ParseTree);
                 int after_count = 0;
-                foreach (KeyValuePair<string, List<string>> dep in AntlrParserDetails._dependent_grammars)
+                foreach (KeyValuePair<string, List<string>> dep in AntlrGrammarDetails._dependent_grammars)
                 {
                     string name = dep.Key;
                     Workspaces.Document x = Workspaces.Workspace.Instance.FindDocument(name);
@@ -48,7 +48,7 @@
                 // For all imported grammars across the entire universe,
                 // make sure all are loaded in the workspace,
                 // then restart.
-                foreach (KeyValuePair<string, List<string>> dep in AntlrParserDetails._dependent_grammars)
+                foreach (KeyValuePair<string, List<string>> dep in AntlrGrammarDetails._dependent_grammars)
                 {
                     string name = dep.Key;
                     Workspaces.Document x = Workspaces.Workspace.Instance.FindDocument(name);

@@ -7,9 +7,9 @@ namespace LanguageServer
 
     public class Pass1Listener : ANTLRv4ParserBaseListener
     {
-        private readonly AntlrParserDetails _pd;
+        private readonly AntlrGrammarDetails _pd;
 
-        public Pass1Listener(AntlrParserDetails pd)
+        public Pass1Listener(AntlrGrammarDetails pd)
         {
             _pd = pd;
         }

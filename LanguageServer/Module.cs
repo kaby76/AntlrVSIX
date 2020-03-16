@@ -584,7 +584,7 @@
             }
             List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
             // Go through all files and look for refs.
-            foreach (KeyValuePair<string, List<string>> d in AntlrParserDetails._dependent_grammars)
+            foreach (KeyValuePair<string, List<string>> d in AntlrGrammarDetails._dependent_grammars)
             {
                 Document d_doc = Workspaces.Workspace.Instance.FindDocument(d.Key);
                 ParserDetails d_pd = ParserDetailsFactory.Create(d_doc);

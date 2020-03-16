@@ -8,9 +8,9 @@
 
     public class Pass2Listener : ANTLRv4ParserBaseListener
     {
-        private readonly AntlrParserDetails _pd;
+        private readonly AntlrGrammarDetails _pd;
 
-        public Pass2Listener(AntlrParserDetails pd)
+        public Pass2Listener(AntlrGrammarDetails pd)
         {
             _pd = pd;
         }

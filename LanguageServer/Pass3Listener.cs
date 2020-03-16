@@ -4,14 +4,14 @@
 
     public class Pass3Listener : ANTLRv4ParserBaseListener
     {
-        private readonly AntlrParserDetails _pd;
+        private readonly AntlrGrammarDetails _pd;
 
-        public Pass3Listener(AntlrParserDetails pd)
+        public Pass3Listener(AntlrGrammarDetails pd)
         {
             _pd = pd;
-            if (!AntlrParserDetails._dependent_grammars.ContainsKey(_pd.FullFileName))
+            if (!AntlrGrammarDetails._dependent_grammars.ContainsKey(_pd.FullFileName))
             {
-                AntlrParserDetails._dependent_grammars.Add(_pd.FullFileName);
+                AntlrGrammarDetails._dependent_grammars.Add(_pd.FullFileName);
             }
         }
 
@@ -43,13 +43,13 @@
             }
 
             _pd.Imports.Add(dep);
-            if (!AntlrParserDetails._dependent_grammars.ContainsKey(dep))
+            if (!AntlrGrammarDetails._dependent_grammars.ContainsKey(dep))
             {
-                AntlrParserDetails._dependent_grammars.Add(dep);
+                AntlrGrammarDetails._dependent_grammars.Add(dep);
             }
 
             bool found = false;
-            foreach (string f in AntlrParserDetails._dependent_grammars[dep])
+            foreach (string f in AntlrGrammarDetails._dependent_grammars[dep])
             {
                 if (f == file)
                 {
@@ -59,7 +59,7 @@
             }
             if (!found)
             {
-                AntlrParserDetails._dependent_grammars.Add(dep, file);
+                AntlrGrammarDetails._dependent_grammars.Add(dep, file);
             }
         }
 
@@ -86,13 +86,13 @@
             }
 
             _pd.Imports.Add(dep);
-            if (!AntlrParserDetails._dependent_grammars.ContainsKey(dep))
+            if (!AntlrGrammarDetails._dependent_grammars.ContainsKey(dep))
             {
-                AntlrParserDetails._dependent_grammars.Add(dep);
+                AntlrGrammarDetails._dependent_grammars.Add(dep);
             }
 
             bool found = false;
-            foreach (string f in AntlrParserDetails._dependent_grammars[dep])
+            foreach (string f in AntlrGrammarDetails._dependent_grammars[dep])
             {
                 if (f == file)
                 {
@@ -102,7 +102,7 @@
             }
             if (!found)
             {
-                AntlrParserDetails._dependent_grammars.Add(dep, file);
+                AntlrGrammarDetails._dependent_grammars.Add(dep, file);
             }
         }
     }

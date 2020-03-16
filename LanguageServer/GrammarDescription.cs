@@ -17,7 +17,7 @@
 
         public ParserDetails CreateParserDetails(Workspaces.Document item)
         {
-            return new AntlrParserDetails(item);
+            return new AntlrGrammarDetails(item);
         }
 
         public void Parse(ParserDetails pd)
