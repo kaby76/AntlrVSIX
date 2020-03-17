@@ -25,40 +25,56 @@
         private readonly AntlrLanguageClient _package;
         private readonly MenuCommand _menu_item1;
         private readonly MenuCommand _menu_item2;
+        private string current_grammar_ffn;
 
-        private List<EnvDTE.ProjectItem> MakeList(EnvDTE.ProjectItems items)
+        private (EnvDTE.Project, EnvDTE.ProjectItem) FindProjectAndItem(string fn)
         {
-            List<EnvDTE.ProjectItem> result = new List<EnvDTE.ProjectItem>();
-            for (int i = 1; i < items.Count; ++i)
+            var f = System.IO.Path.GetFileName(fn);
+            EnvDTE.DTE dte = (EnvDTE.DTE)Package.GetGlobalService(typeof(EnvDTE.DTE));
+            for (int i = 1; i <= dte.Solution.Projects.Count; ++i)
             {
-                var item = items.Item(i);
-                result.Add(item);
+                EnvDTE.Project project = dte.Solution.Projects.Item(i);
+                for (int j = 1; j <= project.ProjectItems.Count; ++j)
+                {
+                    var item = project.ProjectItems.Item(j);
+                    if (item.Name == f)
+                    {
+                        return (project, item);
+                    }
+                }
             }
-            return result;
+            return (null, null);
         }
 
         private void EnterChanges(Dictionary<string, string> changes)
         {
-            EnvDTE.DTE dte = (EnvDTE.DTE)Package.GetGlobalService(typeof(EnvDTE.DTE));
-            EnvDTE.Project project = dte.Solution.Projects.Item(1);
+            var p_f_original_grammar = FindProjectAndItem(current_grammar_ffn);
             foreach (var pair in changes)
             {
                 string fn = pair.Key;
                 string new_code = pair.Value;
                 if (new_code == null)
                 {
-                    var f = System.IO.Path.GetFileName(fn);
-                    EnvDTE.ProjectItems items = project.ProjectItems;
-                    foreach (var item in MakeList(items))
+                    var p_f = FindProjectAndItem(fn);
+                    if (p_f.Item1 != null && p_f.Item2 != null)
                     {
-                        if (item.Name == f)
+                        // Get attributes.
+                        for (int k = 1; k <= p_f.Item2.Properties.Count; ++k)
                         {
-                            // Delete from project.
-                            item.Delete();
-                            // Delete the file.
-                            System.IO.File.Delete(fn);
-                            break;
+                            try
+                            {
+                                var prop = p_f.Item2.Properties.Item(k);
+                                var prop_name = prop.Name;
+                                object prop_value = prop.Value;
+                            }
+                            catch (Exception)
+                            { }
                         }
+                        // Delete from project.
+                        p_f.Item2.Delete();
+                        // Delete the file.
+                        System.IO.File.Delete(fn);
+                        break;
                     }
                     continue;
                 }
@@ -68,7 +84,22 @@
                     // Create the file.
                     System.IO.File.WriteAllText(fn, new_code);
                     // Add to project.
-                    project.ProjectItems.AddFromFile(fn);
+                    p_f_original_grammar.Item1.ProjectItems.AddFromFile(fn);
+                    // Find new item.
+                    var new_item = FindProjectAndItem(fn);
+                    // Set attributes.
+                    new_item.Item2.Properties.Item("ItemType").Value = "Antlr4";
+                    //for (int k = 1; k <= p_f_original_grammar.Item2.Properties.Count; ++k)
+                    //{
+                    //    try
+                    //    {
+                    //        var prop = p_f.Item2.Properties.Item(k);
+                    //        var prop_name = prop.Name;
+                    //        object prop_value = prop.Value;
+                    //    }
+                    //    catch (Exception)
+                    //    { }
+                    //}
                     continue;
                 }
 
@@ -240,6 +271,7 @@
                 {
                     return;
                 }
+                current_grammar_ffn = ffn;
 
                 Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(ffn);
                 if (document == null)
