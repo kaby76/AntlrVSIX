@@ -55,27 +55,6 @@
                 string new_code = pair.Value;
                 if (new_code == null)
                 {
-                    var p_f = FindProjectAndItem(fn);
-                    if (p_f.Item1 != null && p_f.Item2 != null)
-                    {
-                        // Get attributes.
-                        for (int k = 1; k <= p_f.Item2.Properties.Count; ++k)
-                        {
-                            try
-                            {
-                                var prop = p_f.Item2.Properties.Item(k);
-                                var prop_name = prop.Name;
-                                object prop_value = prop.Value;
-                            }
-                            catch (Exception)
-                            { }
-                        }
-                        // Delete from project.
-                        p_f.Item2.Delete();
-                        // Delete the file.
-                        System.IO.File.Delete(fn);
-                        break;
-                    }
                     continue;
                 }
                 Workspaces.Document dd = Workspaces.Workspace.Instance.FindDocument(fn);
@@ -88,21 +67,46 @@
                     // Find new item.
                     var new_item = FindProjectAndItem(fn);
                     // Set attributes.
-                    new_item.Item2.Properties.Item("ItemType").Value = "Antlr4";
-                    //for (int k = 1; k <= p_f_original_grammar.Item2.Properties.Count; ++k)
-                    //{
-                    //    try
-                    //    {
-                    //        var prop = p_f.Item2.Properties.Item(k);
-                    //        var prop_name = prop.Name;
-                    //        object prop_value = prop.Value;
-                    //    }
-                    //    catch (Exception)
-                    //    { }
-                    //}
+                    // Believe or not, something is wrong with VS in that
+                    // properties when set get an exception thrown. The "cure"
+                    // from my anecdotal evidence is to just keep repeating until
+                    // it "sticks"! Really really bad, but it works.
+                    bool again = true;
+                    for (int times = 0; times < 10 && again; ++times)
+                    {
+                        again = false;
+                        new_item.Item2.Properties.Item("ItemType").Value = "Antlr4";
+                        try
+                        {
+                            var prop = p_f_original_grammar.Item2.Properties.Item("CustomToolNamespace").Value;
+                            if (prop.ToString() != "")
+                                new_item.Item2.Properties.Item("CustomToolNamespace").Value = prop.ToString();
+                        }
+                        catch (Exception e)
+                        {
+                            again = true;
+                        }
+                    }
                     continue;
                 }
-
+            }
+            foreach (var pair in changes)
+            {
+                string fn = pair.Key;
+                string new_code = pair.Value;
+                if (new_code == null)
+                {
+                    var p_f = FindProjectAndItem(fn);
+                    if (p_f.Item1 != null && p_f.Item2 != null)
+                    {
+                        // Delete from project.
+                        p_f.Item2.Delete();
+                        // Delete the file.
+                        System.IO.File.Delete(fn);
+                        break;
+                    }
+                    continue;
+                }
                 //var edit = buffer.CreateEdit();
                 //var diff = new LanguageServer.diff_match_patch();
                 //var diffs = diff.diff_main(document.Code, new_code);
