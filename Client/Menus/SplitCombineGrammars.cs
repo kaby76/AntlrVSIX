@@ -18,6 +18,7 @@
     using Microsoft.VisualStudio.Shell.Interop;
     using Microsoft.VisualStudio.Threading;
     using Microsoft.VisualStudio.Utilities;
+    using System.Linq;
 
     class SplitCombineGrammars
     {
@@ -25,16 +26,40 @@
         private readonly MenuCommand _menu_item1;
         private readonly MenuCommand _menu_item2;
 
+        private List<EnvDTE.ProjectItem> MakeList(EnvDTE.ProjectItems items)
+        {
+            List<EnvDTE.ProjectItem> result = new List<EnvDTE.ProjectItem>();
+            for (int i = 1; i < items.Count; ++i)
+            {
+                var item = items.Item(i);
+                result.Add(item);
+            }
+            return result;
+        }
+
         private void EnterChanges(Dictionary<string, string> changes)
         {
+            EnvDTE.DTE dte = (EnvDTE.DTE)Package.GetGlobalService(typeof(EnvDTE.DTE));
+            EnvDTE.Project project = dte.Solution.Projects.Item(1);
             foreach (var pair in changes)
             {
                 string fn = pair.Key;
                 string new_code = pair.Value;
                 if (new_code == null)
                 {
-                    // Delete the file.
-                    System.IO.File.Delete(fn);
+                    var f = System.IO.Path.GetFileName(fn);
+                    EnvDTE.ProjectItems items = project.ProjectItems;
+                    foreach (var item in MakeList(items))
+                    {
+                        if (item.Name == f)
+                        {
+                            // Delete from project.
+                            item.Delete();
+                            // Delete the file.
+                            System.IO.File.Delete(fn);
+                            break;
+                        }
+                    }
                     continue;
                 }
                 Workspaces.Document dd = Workspaces.Workspace.Instance.FindDocument(fn);
@@ -42,10 +67,10 @@
                 {
                     // Create the file.
                     System.IO.File.WriteAllText(fn, new_code);
+                    // Add to project.
+                    project.ProjectItems.AddFromFile(fn);
                     continue;
                 }
-                EnvDTE.DTE dte = (EnvDTE.DTE)Package.GetGlobalService(typeof(EnvDTE.DTE));
-                EnvDTE.Project project = dte.Solution.Projects.Item(1);
 
                 //var edit = buffer.CreateEdit();
                 //var diff = new LanguageServer.diff_match_patch();
