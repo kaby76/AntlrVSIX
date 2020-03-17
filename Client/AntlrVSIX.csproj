@@ -150,10 +150,9 @@
     <PackageReference Include="Microsoft.VisualStudio.Shell.Framework">
       <Version>16.4.29519.181</Version>
     </PackageReference>
-    <!--   <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="16.6.3">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference> -->
+    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="16.0.202" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="16.4.1059">
+    </PackageReference>
     <PackageReference Include="SharpZipLib">
       <Version>1.2.0</Version>
     </PackageReference>
