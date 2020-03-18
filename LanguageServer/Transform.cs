@@ -530,9 +530,11 @@
             var is_lexer = lp.Type == ExtractGrammarType.GrammarType.Lexer;
             if (is_lexer)
             {
+                // We don't consider lexer grammars.
                 return result;
             }
 
+            // Consider only the target grammar.
             Table table = new Table(pd_parser, document);
             table.ReadRules();
             table.FindPartitions();
@@ -541,7 +543,7 @@
             List<Pair<int, int>> deletions = new List<Pair<int, int>>();
             foreach (var r in table.rules)
             {
-                if (r.is_used == false)
+                if (r.is_parser_rule && r.is_used == false)
                 {
                     deletions.Add(new Pair<int, int>(r.start_index, r.end_index));
                 }
@@ -577,9 +579,11 @@
             var is_lexer = lp.Type == ExtractGrammarType.GrammarType.Lexer;
             if (is_lexer)
             {
+                // We don't consider lexer grammars.
                 return result;
             }
 
+            // Consider only the target grammar.
             Table table = new Table(pd_parser, document);
             table.ReadRules();
             table.FindPartitions();
@@ -589,7 +593,7 @@
             List<Pair<int, int>> move = new List<Pair<int, int>>();
             foreach (var r in table.rules)
             {
-                if (r.is_start == true)
+                if (r.is_parser_rule && r.is_start == true)
                 {
                     move.Add(new Pair<int, int>(r.start_index, r.end_index));
                 }
@@ -666,14 +670,21 @@
                 Digraph<string> graph = new Digraph<string>();
                 foreach (var r in table.rules)
                 {
+                    if (!r.is_parser_rule)
+                        continue;
                     graph.AddVertex(r.LHS);
                 }
                 foreach (var r in table.rules)
                 {
+                    if (!r.is_parser_rule)
+                        continue;
                     var j = r.RHS;
                     //j.Reverse();
                     foreach (var rhs in j)
                     {
+                        var sym = table.rules.Where(t => t.LHS == rhs).FirstOrDefault();
+                        if (!sym.is_parser_rule)
+                            continue;
                         var e = new DirectedEdge<string>(r.LHS, rhs);
                         graph.AddEdge(e);
                     }
@@ -681,7 +692,7 @@
                 List<string> starts = new List<string>();
                 foreach (var r in table.rules)
                 {
-                    if (r.is_start) starts.Add(r.LHS);
+                    if (r.is_parser_rule && r.is_start) starts.Add(r.LHS);
                 }
                 Graphs.DepthFirstOrder<string, DirectedEdge<string>> sort = new DepthFirstOrder<string, DirectedEdge<string>>(graph, starts);
                 var ordered = sort.ToList();
@@ -724,6 +735,7 @@
             else if (type == LspAntlr.ReorderType.Alphabetically)
             {
                 var ordered = table.rules
+                    .Where(r => r.is_parser_rule)
                     .Select(r => r.LHS)
                     .OrderBy(r => r).ToList();
                 foreach (var s in ordered)
@@ -750,6 +762,15 @@
             {
                 int index_start = l.a;
                 int len = l.b - l.a;
+                string add = old_code.Substring(index_start, len);
+                sb.Append(add);
+            }
+            // Now add all non-parser rules.
+            foreach (var r in table.rules)
+            {
+                if (r.is_parser_rule) continue;
+                int index_start = r.start_index;
+                int len = r.end_index - r.start_index;
                 string add = old_code.Substring(index_start, len);
                 sb.Append(add);
             }
