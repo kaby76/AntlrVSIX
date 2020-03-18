@@ -97,7 +97,7 @@
             {
                 ANTLRv4Parser.RuleSpecContext[] rule_spec = context.ruleSpec();
                 if (rule_spec == null) return;
-                First = rule_spec[0].parserRuleSpec();
+                First = rule_spec[0];
             }
         }
 
@@ -373,7 +373,7 @@
             foreach (string f in read_files)
             {
                 Workspaces.Document lexer_document = Workspaces.Workspace.Instance.FindDocument(f);
-                if (document == null)
+                if (lexer_document == null)
                 {
                     continue;
                 }
@@ -830,6 +830,112 @@
             }
             else
             {
+                // Parse lexer grammar.
+                HashSet<string> read_files = new HashSet<string>();
+                read_files.Add(document.FullPath);
+                for (; ; )
+                {
+                    int before_count = read_files.Count;
+                    foreach (var f in read_files)
+                    {
+                        var additional = AntlrGrammarDetails._dependent_grammars.Where(
+                            t => t.Value.Contains(f)).Select(
+                            t => t.Key).ToList();
+                        read_files = read_files.Union(additional).ToHashSet();
+                    }
+                    int after_count = read_files.Count;
+                    if (after_count == before_count)
+                    {
+                        break;
+                    }
+                }
+                List<AntlrGrammarDetails> lexers = new List<AntlrGrammarDetails>();
+                foreach (string f in read_files)
+                {
+                    Workspaces.Document lexer_document = Workspaces.Workspace.Instance.FindDocument(f);
+                    if (lexer_document == null)
+                    {
+                        continue;
+                    }
+                    AntlrGrammarDetails x = ParserDetailsFactory.Create(lexer_document) as AntlrGrammarDetails;
+                    lexers.Add(x);
+                }
+
+                if (lexers.Count != 2) return null;
+                var pd_lexer = lexers[1];
+                Workspaces.Document ldocument = Workspaces.Workspace.Instance.FindDocument(pd_lexer.FullFileName);
+                Table lexer_table = new Table(pd_lexer, ldocument);
+                lexer_table.ReadRules();
+                lexer_table.FindPartitions();
+                lexer_table.FindStartRules();
+
+                // Create a combined parser grammar.
+                StringBuilder sb_parser = new StringBuilder();
+                var root = pd_parser.ParseTree as ANTLRv4Parser.GrammarSpecContext;
+                if (root == null)
+                    return null;
+                int grammar_type_index = 0;
+                if (root.DOC_COMMENT() != null)
+                    grammar_type_index++;
+                var grammar_type_tree = root.grammarType();
+                var id = root.id();
+                var semi_tree = root.SEMI();
+                var rules_tree = root.rules();
+                string pre = old_code.Substring(0, pd_parser.TokStream.Get(grammar_type_tree.SourceInterval.a).StartIndex - 0);
+                sb_parser.Append(pre);
+                sb_parser.Append("grammar " + id.GetText().Replace("Parser","") + ";" + Environment.NewLine);
+                int x1 = pd_parser.TokStream.Get(semi_tree.SourceInterval.b).StopIndex + 1;
+                int x2 = pd_parser.TokStream.Get(rules_tree.SourceInterval.a).StartIndex;
+                string n1 = old_code.Substring(x1, x2 - x1);
+                sb_parser.Append(n1);
+                int end = 0;
+                for (int i = 0; i < table.rules.Count; ++i)
+                {
+                    var r = table.rules[i];
+                    if (r.is_parser_rule)
+                    {
+                        string n2 = old_code.Substring(r.start_index, r.end_index - r.start_index);
+                        sb_parser.Append(n2);
+                    }
+                    end = r.end_index + 1;
+                }
+                if (end < old_code.Length)
+                {
+                    string rest = old_code.Substring(end);
+                    sb_parser.Append(rest);
+                }
+                end = 0;
+                var lexer_old_code = ldocument.Code;
+                for (int i = 0; i < lexer_table.rules.Count; ++i)
+                {
+                    var r = lexer_table.rules[i];
+                    if (!r.is_parser_rule)
+                    {
+                        string n2 = lexer_old_code.Substring(r.start_index, r.end_index - r.start_index);
+                        sb_parser.Append(n2);
+                    }
+                    end = r.end_index + 1;
+                }
+                if (end < lexer_old_code.Length)
+                {
+                    string rest = lexer_old_code.Substring(end);
+                    sb_parser.Append(rest);
+                }
+                string g4_file_path = document.FullPath;
+                string current_dir = Path.GetDirectoryName(g4_file_path);
+                if (current_dir == null)
+                {
+                    return null;
+                }
+
+                string orig_name = Path.GetFileName(g4_file_path);
+                var new_name = orig_name.Replace("Parser.g4", "");
+                string new_code_parser = sb_parser.ToString();
+                string new_parser_ffn = current_dir + Path.DirectorySeparatorChar
+                    + new_name + ".g4";
+                result.Add(new_parser_ffn, new_code_parser);
+                result.Add(pd_parser.FullFileName, null);
+                result.Add(pd_lexer.FullFileName, null);
             }
 
             return result;

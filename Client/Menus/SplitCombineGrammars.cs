@@ -87,7 +87,6 @@
                             again = true;
                         }
                     }
-                    continue;
                 }
             }
             foreach (var pair in changes)
@@ -103,60 +102,58 @@
                         p_f.Item2.Delete();
                         // Delete the file.
                         System.IO.File.Delete(fn);
-                        break;
                     }
-                    continue;
                 }
-                //var edit = buffer.CreateEdit();
-                //var diff = new LanguageServer.diff_match_patch();
-                //var diffs = diff.diff_main(document.Code, new_code);
-                //var patch = diff.patch_make(diffs);
-                ////patch.Reverse();
-
-                //// Start edit session.
-                //int times = 0;
-                //int delta = 0;
-                //foreach (var p in patch)
-                //{
-                //    times++;
-                //    var start = p.start1 - delta;
-
-                //    var offset = 0;
-                //    foreach (var ed in p.diffs)
-                //    {
-                //        if (ed.operation == LanguageServer.Operation.EQUAL)
-                //        {
-                //            // Let's verify that.
-                //            var len = ed.text.Length;
-                //            var tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
-                //              new Span(start + offset, len));
-                //            var tt = tokenSpan.GetText();
-                //            if (ed.text != tt)
-                //            { }
-                //            offset = offset + len;
-                //        }
-                //        else if (ed.operation == LanguageServer.Operation.DELETE)
-                //        {
-                //            var len = ed.text.Length;
-                //            var tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
-                //              new Span(start + offset, len));
-                //            var tt = tokenSpan.GetText();
-                //            if (ed.text != tt)
-                //            { }
-                //            var sp = new Span(start + offset, len);
-                //            offset = offset + len;
-                //            edit.Delete(sp);
-                //        }
-                //        else if (ed.operation == LanguageServer.Operation.INSERT)
-                //        {
-                //            var len = ed.text.Length;
-                //            edit.Insert(start + offset, ed.text);
-                //        }
-                //    }
-                //    delta = delta + (p.length2 - p.length1);
-                //}
-                //edit.Apply();
             }
+            //var edit = buffer.CreateEdit();
+            //var diff = new LanguageServer.diff_match_patch();
+            //var diffs = diff.diff_main(document.Code, new_code);
+            //var patch = diff.patch_make(diffs);
+            ////patch.Reverse();
+
+            //// Start edit session.
+            //int times = 0;
+            //int delta = 0;
+            //foreach (var p in patch)
+            //{
+            //    times++;
+            //    var start = p.start1 - delta;
+
+            //    var offset = 0;
+            //    foreach (var ed in p.diffs)
+            //    {
+            //        if (ed.operation == LanguageServer.Operation.EQUAL)
+            //        {
+            //            // Let's verify that.
+            //            var len = ed.text.Length;
+            //            var tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
+            //              new Span(start + offset, len));
+            //            var tt = tokenSpan.GetText();
+            //            if (ed.text != tt)
+            //            { }
+            //            offset = offset + len;
+            //        }
+            //        else if (ed.operation == LanguageServer.Operation.DELETE)
+            //        {
+            //            var len = ed.text.Length;
+            //            var tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
+            //              new Span(start + offset, len));
+            //            var tt = tokenSpan.GetText();
+            //            if (ed.text != tt)
+            //            { }
+            //            var sp = new Span(start + offset, len);
+            //            offset = offset + len;
+            //            edit.Delete(sp);
+            //        }
+            //        else if (ed.operation == LanguageServer.Operation.INSERT)
+            //        {
+            //            var len = ed.text.Length;
+            //            edit.Insert(start + offset, ed.text);
+            //        }
+            //    }
+            //    delta = delta + (p.length2 - p.length1);
+            //}
+            //edit.Apply();
         }
 
         private SplitCombineGrammars(AntlrLanguageClient package)
