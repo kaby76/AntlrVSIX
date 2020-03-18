@@ -23,7 +23,8 @@
             {
                 Combined,
                 Parser,
-                Lexer
+                Lexer,
+                NotAGrammar
             }
 
             public GrammarType Type;
@@ -49,31 +50,14 @@
             }
         }
 
-        private class LiteralsParser : ANTLRv4ParserBaseListener
+        private class LiteralsGrammar : ANTLRv4ParserBaseListener
         {
             public List<TerminalNodeImpl> Literals = new List<TerminalNodeImpl>();
             private readonly AntlrGrammarDetails _pd;
-            public bool IsLexer = false;
 
-            public LiteralsParser(AntlrGrammarDetails pd)
+            public LiteralsGrammar(AntlrGrammarDetails pd)
             {
                 _pd = pd;
-            }
-
-            public override void EnterGrammarType([NotNull] ANTLRv4Parser.GrammarTypeContext context)
-            {
-                if (context.GetChild(0).GetText() == "parser")
-                {
-                    IsLexer = false;
-                }
-                else if (context.GetChild(0).GetText() == "lexer")
-                {
-                    IsLexer = true;
-                }
-                else
-                {
-                    IsLexer = false;
-                }
             }
 
             public override void EnterTerminal([NotNull] ANTLRv4Parser.TerminalContext context)
@@ -346,13 +330,25 @@
 
         public static Dictionary<string, string> ReplaceLiterals(int index, Document document)
         {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+
+            // Check if initial file is a grammar.
             AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
-            // Find all literals in parser grammar.
-            LiteralsParser lp = new LiteralsParser(pd_parser);
-            ParseTreeWalker.Default.Walk(lp, pd_parser.ParseTree);
-            List<TerminalNodeImpl> list = lp.Literals;
+            ExtractGrammarType egt = new ExtractGrammarType();
+            ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
+            var is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
+                || egt.Type == ExtractGrammarType.GrammarType.Combined
+                || egt.Type == ExtractGrammarType.GrammarType.Lexer;
+            if (! is_grammar)
+            {
+                return result;
+            }
+
+            // Find all other grammars by walking dependencies (import, vocab, file names).
             HashSet<string> read_files = new HashSet<string>();
             read_files.Add(document.FullPath);
+            Dictionary<Workspaces.Document, List<TerminalNodeImpl>> every_damn_literal =
+                new Dictionary<Workspaces.Document, List<TerminalNodeImpl>>();
             for (; ;)
             {
                 int before_count = read_files.Count;
@@ -363,110 +359,137 @@
                         t => t.Key).ToList();
                     read_files = read_files.Union(additional).ToHashSet();
                 }
+                foreach (var f in read_files)
+                {
+                    var additional = AntlrGrammarDetails._dependent_grammars.Where(
+                        t => t.Key == f).Select(
+                        t => t.Value);
+                    foreach (var t in additional)
+                        read_files = read_files.Union(t).ToHashSet();
+                }
                 int after_count = read_files.Count;
                 if (after_count == before_count)
                 {
                     break;
                 }
             }
-            Dictionary<TerminalNodeImpl, string> rewrites = new Dictionary<TerminalNodeImpl, string>();
+
+            // Find rewrite rules, i.e., string literal to symbol name.
+            Dictionary<string, string> subs = new Dictionary<string, string>();
             foreach (string f in read_files)
             {
-                Workspaces.Document lexer_document = Workspaces.Workspace.Instance.FindDocument(f);
-                if (lexer_document == null)
+                Workspaces.Document whatever_document = Workspaces.Workspace.Instance.FindDocument(f);
+                if (whatever_document == null)
                 {
                     continue;
                 }
-                AntlrGrammarDetails pd_lexer = ParserDetailsFactory.Create(lexer_document) as AntlrGrammarDetails;
-                // Find all literals in lexer grammar.
-                LiteralsParser lp_lexer = new LiteralsParser(pd_lexer);
-                ParseTreeWalker.Default.Walk(lp_lexer, pd_lexer.ParseTree);
-                if (! lp_lexer.IsLexer)
+                AntlrGrammarDetails pd_whatever = ParserDetailsFactory.Create(whatever_document) as AntlrGrammarDetails;
+                
+                // Find literals in grammars.
+                LiteralsGrammar lp_whatever = new LiteralsGrammar(pd_whatever);
+                ParseTreeWalker.Default.Walk(lp_whatever, pd_whatever.ParseTree);
+                List<TerminalNodeImpl> list_literals = lp_whatever.Literals;
+                every_damn_literal[whatever_document] = list_literals;
+
+                foreach (var lexer_literal in list_literals)
                 {
-                    continue;
+                    var old_name = lexer_literal.GetText();
+                    // Given candidate, walk up tree to find lexer_rule.
+                    /*
+                        ( ruleSpec
+                          ( lexerRuleSpec
+                            ( OFF_CHANNEL text=\r\n\r\n
+                            )
+                            ( OFF_CHANNEL text=...
+                            )
+                            (OFF_CHANNEL text =\r\n\r\n
+                            )
+                            (OFF_CHANNEL text =...
+                            )
+                            (OFF_CHANNEL text =\r\n\r\n
+                            )
+                            (DEFAULT_TOKEN_CHANNEL i = 995 txt = NONASSOC tt = 1
+                            )
+                            (OFF_CHANNEL text =\r\n\t
+                            )
+                            (DEFAULT_TOKEN_CHANNEL i = 997 txt =: tt = 29
+                            )
+                            (lexerRuleBlock
+                              (lexerAltList
+                                (lexerAlt
+                                  (lexerElements
+                                    (lexerElement
+                                      (lexerAtom
+                                        (terminal
+                                          (OFF_CHANNEL text =
+                                          )
+                                          (DEFAULT_TOKEN_CHANNEL i = 999 txt = '%binary' tt = 8
+                            ))))))))
+                            (OFF_CHANNEL text =\r\n\t
+                            )
+                            (DEFAULT_TOKEN_CHANNEL i = 1001 txt =; tt = 32
+                        ) ) )
+
+                     * Make sure it fits the structure of the tree shown above.
+                     * 
+                     */
+                    var p1 = lexer_literal.Parent;
+                    if (p1.ChildCount != 1) continue;
+                    if (!(p1 is ANTLRv4Parser.TerminalContext)) continue;
+                    var p2 = p1.Parent;
+                    if (p2.ChildCount != 1) continue;
+                    if (!(p2 is ANTLRv4Parser.LexerAtomContext)) continue;
+                    var p3 = p2.Parent;
+                    if (p3.ChildCount != 1) continue;
+                    if (!(p3 is ANTLRv4Parser.LexerElementContext)) continue;
+                    var p4 = p3.Parent;
+                    if (p4.ChildCount != 1) continue;
+                    if (!(p4 is ANTLRv4Parser.LexerElementsContext)) continue;
+                    var p5 = p4.Parent;
+                    if (p5.ChildCount != 1) continue;
+                    if (!(p5 is ANTLRv4Parser.LexerAltContext)) continue;
+                    var p6 = p5.Parent;
+                    if (p6.ChildCount != 1) continue;
+                    if (!(p6 is ANTLRv4Parser.LexerAltListContext)) continue;
+                    var p7 = p6.Parent;
+                    if (p7.ChildCount != 1) continue;
+                    if (!(p7 is ANTLRv4Parser.LexerRuleBlockContext)) continue;
+                    var p8 = p7.Parent;
+                    if (p8.ChildCount != 4) continue;
+                    if (!(p8 is ANTLRv4Parser.LexerRuleSpecContext)) continue;
+                    var alt = p8.GetChild(0);
+                    var new_name = alt.GetText();
+                    subs.Add(old_name, new_name);
                 }
-                List<TerminalNodeImpl> list_lexer = lp_lexer.Literals;
-                // Find equivalent lexer rules.
-                foreach (var literal in list)
+            }
+
+            // Find string literals in parser and combined grammars and substitute.
+            Dictionary<TerminalNodeImpl, string> rewrites = new Dictionary<TerminalNodeImpl, string>();
+            foreach (var pair in every_damn_literal)
+            {
+                var doc = pair.Key;
+                var list_literals = pair.Value;
+                foreach (var l in list_literals)
                 {
-                    foreach (var lexer_literal in list_lexer)
+                    bool no = false;
+                    // Make sure this literal does not appear in lexer rule.
+                    for (IRuleNode p = l.Parent; p != null; p = p.Parent)
                     {
-                        if (literal.GetText() == lexer_literal.GetText())
+                        if (p is ANTLRv4Parser.LexerRuleSpecContext)
                         {
-                            var rewritten_literal = lexer_literal;
-                            // Given candidate, walk up tree to find lexer_rule.
-                            /*
-                                ( ruleSpec
-                                  ( lexerRuleSpec
-                                    ( OFF_CHANNEL text=\r\n\r\n
-                                    )
-                                    ( OFF_CHANNEL text=...
-                                    )
-                                    (OFF_CHANNEL text =\r\n\r\n
-                                    )
-                                    (OFF_CHANNEL text =...
-                                    )
-                                    (OFF_CHANNEL text =\r\n\r\n
-                                    )
-                                    (DEFAULT_TOKEN_CHANNEL i = 995 txt = NONASSOC tt = 1
-                                    )
-                                    (OFF_CHANNEL text =\r\n\t
-                                    )
-                                    (DEFAULT_TOKEN_CHANNEL i = 997 txt =: tt = 29
-                                    )
-                                    (lexerRuleBlock
-                                      (lexerAltList
-                                        (lexerAlt
-                                          (lexerElements
-                                            (lexerElement
-                                              (lexerAtom
-                                                (terminal
-                                                  (OFF_CHANNEL text =
-                                                  )
-                                                  (DEFAULT_TOKEN_CHANNEL i = 999 txt = '%binary' tt = 8
-                                    ))))))))
-                                    (OFF_CHANNEL text =\r\n\t
-                                    )
-                                    (DEFAULT_TOKEN_CHANNEL i = 1001 txt =; tt = 32
-                                ) ) )
-
-                             * Make sure it fits the structure of the tree shown above.
-                             * 
-                             */
-                            var p1 = rewritten_literal.Parent;
-                            if (p1.ChildCount != 1) continue;
-                            if (!(p1 is ANTLRv4Parser.TerminalContext)) continue;
-                            var p2 = p1.Parent;
-                            if (p2.ChildCount != 1) continue;
-                            if (!(p2 is ANTLRv4Parser.LexerAtomContext)) continue;
-                            var p3 = p2.Parent;
-                            if (p3.ChildCount != 1) continue;
-                            if (!(p3 is ANTLRv4Parser.LexerElementContext)) continue;
-                            var p4 = p3.Parent;
-                            if (p4.ChildCount != 1) continue;
-                            if (!(p4 is ANTLRv4Parser.LexerElementsContext)) continue;
-                            var p5 = p4.Parent;
-                            if (p5.ChildCount != 1) continue;
-                            if (!(p5 is ANTLRv4Parser.LexerAltContext)) continue;
-                            var p6 = p5.Parent;
-                            if (p6.ChildCount != 1) continue;
-                            if (!(p6 is ANTLRv4Parser.LexerAltListContext)) continue;
-                            var p7 = p6.Parent;
-                            if (p7.ChildCount != 1) continue;
-                            if (!(p7 is ANTLRv4Parser.LexerRuleBlockContext)) continue;
-                            var p8 = p7.Parent;
-                            if (p8.ChildCount != 4) continue;
-                            if (!(p8 is ANTLRv4Parser.LexerRuleSpecContext)) continue;
-
-                            var alt = p8.GetChild(0);
-                            var new_name = alt.GetText();
-                            rewrites.Add(literal, new_name);
+                            no = true;
+                            break;
                         }
+                    }
+                    if (no) continue;
+                    subs.TryGetValue(l.GetText(), out string re);
+                    if (re != null)
+                    {
+                        rewrites.Add(l, re);
                     }
                 }
             }
 
-            Dictionary<string, string> result = new Dictionary<string, string>();
             var files = rewrites.Select(r => r.Key.Payload.TokenSource.SourceName).OrderBy(q => q).Distinct();
             var documents = files.Select(f => { return Workspaces.Workspace.Instance.FindDocument(f); }).ToList();
             foreach (Document f in documents)
