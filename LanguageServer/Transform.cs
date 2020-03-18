@@ -707,14 +707,21 @@
                 Digraph<string> graph = new Digraph<string>();
                 foreach (var r in table.rules)
                 {
+                    if (!r.is_parser_rule)
+                        continue;
                     graph.AddVertex(r.LHS);
                 }
                 foreach (var r in table.rules)
                 {
+                    if (!r.is_parser_rule)
+                        continue;
                     var j = r.RHS;
                     //j.Reverse();
                     foreach (var rhs in j)
                     {
+                        var sym = table.rules.Where(t => t.LHS == rhs).FirstOrDefault();
+                        if (!sym.is_parser_rule)
+                            continue;
                         var e = new DirectedEdge<string>(r.LHS, rhs);
                         graph.AddEdge(e);
                     }
@@ -722,7 +729,7 @@
                 List<string> starts = new List<string>();
                 foreach (var r in table.rules)
                 {
-                    if (r.is_start) starts.Add(r.LHS);
+                    if (r.is_parser_rule && r.is_start) starts.Add(r.LHS);
                 }
                 Graphs.BreadthFirstOrder<string, DirectedEdge<string>> sort = new BreadthFirstOrder<string, DirectedEdge<string>>(graph, starts);
                 var ordered = sort.ToList();
