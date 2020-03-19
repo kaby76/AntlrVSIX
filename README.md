@@ -84,20 +84,20 @@ VS, then reopen. Do not do "rebuild", only "build".
 grammar e.g., warning/removal of LHS predicates in lexer, replacing factored grammar rules with Kleene star rules (which
 result in faster parsers).
 
-## Work in progress for v5.5:
+## Release notes for v5.5:
 
-* Add in more refactorings:
+* Added in more refactorings:
 a) Sort rules alphabetically, DFS or BFS traversals.
 b) Separate/combine grammars.
 * Bug fixes.
 
 ## Release notes for v5.4:
 
-* Add in a few refactoring transformations (remove useless parser productions, convert parser string literals to
+* Added in a few refactoring transformations (remove useless parser productions, convert parser string literals to
 lexer token symbols, move start rule to top of grammar). _Note: Lexer rules are prioritized, so transformations on these
 types may not be totally correct at the moment._
-* Fix goto visitor/listener.
-* Add stability fixes.
+* Fixed goto visitor/listener.
+* Added stability fixes.
 
 ## Release notes for v5.3:
 
