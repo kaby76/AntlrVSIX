@@ -1,7 +1,5 @@
 ﻿namespace LspAntlr
 {
-    using Antlr4.Runtime;
-    using LanguageServer;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Editor;
@@ -9,16 +7,6 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.Design;
-    using Microsoft.VisualStudio.Shell;
-    using Microsoft.VisualStudio.ComponentModelHost;
-    using Microsoft.VisualStudio.Editor;
-    using Microsoft.VisualStudio.LanguageServer.Client;
-    using Microsoft.VisualStudio.LanguageServer.Protocol;
-    using Microsoft.VisualStudio.Shell;
-    using Microsoft.VisualStudio.Shell.Interop;
-    using Microsoft.VisualStudio.Threading;
-    using Microsoft.VisualStudio.Utilities;
-    using System.Linq;
 
     class SplitCombineGrammars
     {

@@ -1,7 +1,5 @@
 ﻿namespace LspAntlr
 {
-    using Antlr4.Runtime;
-    using LanguageServer;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Editor;
