@@ -1,12 +1,9 @@
 # Building and Running Antlr Applications
 
-By default, there is no build support for Antlr grammars using AntlrVSIX. This was by design
-because there were other Antlr extensions for Visual Studio which only performed basic tagging
-and editor navigation. In order to eliminate conflicting Antlr extensions for tagging, the
-build process was placed in a separate NuGet library.
+Support for Antlr grammars in C# projects is provided
+by [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks).
+Antlrvsix focuses on the editing of Antlr grammars.
 
-This build tool, called [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks), is written in C#, and encapsulates
-the Antlr command-line tool.
 Antlr4BuildTasks is a standard package which you can [reference using NuGet](https://www.nuget.org/packages/Antlr4BuildTasks/).
 Also including in the Antlr4BuildTasks git tree is Antlr4BuildTasks.Templates. This Nuget
 package includes Net Core templates for generating a C# and C++ Antlr program.

@@ -8,7 +8,6 @@ namespace Graphs
     public class BreadthFirstOrder<T, E> : IEnumerable<T>
         where E : IEdge<T>
     {
-        private Dictionary<T, bool> marked; // marked[v] = has v been marked in dfs?
         private Dictionary<T, int> bfs;
         private Queue<T> bfsorder;
         private int bfsCounter;
@@ -18,10 +17,8 @@ namespace Graphs
             bfs = new Dictionary<T, int>();
             foreach (var v in graph.Vertices) bfs[v] = 0;
             bfsorder = new Queue<T>();
-            marked = new Dictionary<T, bool>();
-            foreach (var v in graph.Vertices) marked[v] = false;
             foreach (T v in subset_vertices)
-                if (!marked[v]) order(graph, v);
+                order(graph, v);
         }
 
         private void order(IGraph<T, E> G, T s)
@@ -35,7 +32,6 @@ namespace Graphs
             foreach (var v in G.Vertices) pi[v] = default(T);
 
             bfsorder.Enqueue(s);
-            marked[s] = true;
             foreach (T u in G.Vertices)
             {
                 if (! u.Equals(s))
@@ -52,15 +48,16 @@ namespace Graphs
             while (Q.Count > 0)
             {
                 var u = Q.Dequeue();
-                if (marked[u]) continue;
                 foreach (var v in G.Successors(u))
                 {
-                    if (color[v] == 0 && !marked[v])
+                    if (color[v] == 0)
                     {
                         color[v] = 1;
-                        marked[v] = true;
-                        bfs[v] = ++bfsCounter;
-                        bfsorder.Enqueue(v);
+                        if (!bfsorder.Contains(v))
+                        {
+                            bfs[v] = ++bfsCounter;
+                            bfsorder.Enqueue(v);
+                        }
                         d[v] = d[u] + 1;
                         pi[v] = u;
                         Q.Enqueue(v);

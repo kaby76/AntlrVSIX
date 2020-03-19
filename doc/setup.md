@@ -45,4 +45,13 @@ etc).
 
 <img src="pics/2019-08-08-17.png" width="75%" />
 
+## Building Antlrvsix
+
+To build Antlrvsix, you will need to have the prerequisites
+for building Antlr programs. See [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks).
+Building the extension is, unfortunately, a two step process. To build,
+open Antlrvsix.sln and perform a build on a clean git fetch.
+Then, close VS2019, and reopen it on Antlrvsix.sln again. You can now
+"Build" to get the LSP server in the Antlrvsix.vsix file (it should be 31MB after building).
+
 [Next: Basic editing of a grammar file](basic.md)<br/>

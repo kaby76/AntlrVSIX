@@ -25,10 +25,10 @@ grammar.
 _Before_
 
     grammar Expression;
-    e : e ('** | '/') e
+    e : e ('*' | '/') e
       | e ('+' | '-') e
       | '(' e ')'
-      | ('-' | '+') a
+      | ('-' | '+')* a
       ;
     a : INT ;
     INT : ('0' .. '9')+ ;
@@ -46,7 +46,7 @@ _After_
     e : e (MUL | DIV) e
       | e (ADD | SUB) e
       | LP e RP
-      | (SUB | ADD) a
+      | (SUB | ADD)* a
       ;
     a : INT ;
     INT : ('0' .. '9')+ ;
@@ -71,10 +71,10 @@ grammar. Lexer rules are currently not removed.
 _Before_
 
     grammar Expression;
-    e : e ('** | '/') e
+    e : e ('*' | '/') e
       | e ('+' | '-') e
       | '(' e ')'
-      | ('-' | '+') a
+      | ('-' | '+')* a
       ;
     a : INT ;
     id : ID ;
@@ -91,10 +91,10 @@ _Before_
 _After_
 
     grammar Expression;
-    e : e ('** | '/') e
+    e : e ('*' | '/') e
       | e ('+' | '-') e
       | '(' e ')'
-      | ('-' | '+') a
+      | ('-' | '+')* a
       ;
     a : INT ;
     INT : ('0' .. '9')+ ;
@@ -106,3 +106,173 @@ _After_
     RP : ')' ;
     ID : ( ('a' .. 'z') | ('A' .. 'Z') | '_' )+ ;
     WS : [ \r\n\t] + -> skip ;
+
+## Reorder parser rules
+
+There are three different refactorings to reorder parser
+rules in a parser or combined grammar: alphabetic, dfs, bfs.
+For BFS or DFS orderings, Antlrvsix will examine the C#
+source code to determine the start symbols for the grammar.
+Reordering never applies to lexer rules, as recognition by these
+rules is ordered. For combined grammars, the lexer rules are placed
+at the end of the grammar file. Formatting of the rules is
+perserved but formatting between rules may not. Use "reformat"
+to reformat the grammars to your style.
+
+_Before_
+
+    grammar Expression;
+    e : e ('*' | '/') e
+     | e ('+' | '-') e
+     | '(' e ')'
+     | ('-' | '+')* a
+     ;
+    a : number | variable ;
+    number : INT ;
+    variable : VARIABLE ;
+    VARIABLE : VALID_ID_START VALID_ID_CHAR* ;
+    fragment VALID_ID_START : ('a' .. 'z') | ('A' .. 'Z') | '_' ;
+    fragment VALID_ID_CHAR : VALID_ID_START | ('0' .. '9') ;
+    INT : ('0' .. '9')+ ;
+    MUL : '*' ;
+    DIV : '/' ;
+    ADD : '+' ;
+    SUB : '-' ;
+    LP : '(' ;
+    RP : ')' ;
+    WS : [ \r\n\t] + -> skip ;
+
+_Alphabetic After_
+
+    grammar Expression;
+    a : number | variable ;
+    e : e ('*' | '/') e
+     | e ('+' | '-') e
+     | '(' e ')'
+     | ('-' | '+')* a
+     ;
+    number : INT ;
+    variable : VARIABLE ;
+    VARIABLE : VALID_ID_START VALID_ID_CHAR* ;
+    fragment VALID_ID_START : ('a' .. 'z') | ('A' .. 'Z') | '_' ;
+    fragment VALID_ID_CHAR : VALID_ID_START | ('0' .. '9') ;
+    INT : ('0' .. '9')+ ;
+    MUL : '*' ;
+    DIV : '/' ;
+    ADD : '+' ;
+    SUB : '-' ;
+    LP : '(' ;
+    RP : ')' ;
+    WS : [ \r\n\t] + -> skip ;
+
+_DFS After_
+
+    grammar Expression;
+    e : e ('*' | '/') e
+     | e ('+' | '-') e
+     | '(' e ')'
+     | ('-' | '+')* a
+     ;
+    a : number | variable ;
+    number : INT ;
+    variable : VARIABLE ;
+    VARIABLE : VALID_ID_START VALID_ID_CHAR* ;
+    fragment VALID_ID_START : ('a' .. 'z') | ('A' .. 'Z') | '_' ;
+    fragment VALID_ID_CHAR : VALID_ID_START | ('0' .. '9') ;
+    INT : ('0' .. '9')+ ;
+    MUL : '*' ;
+    DIV : '/' ;
+    ADD : '+' ;
+    SUB : '-' ;
+    LP : '(' ;
+    RP : ')' ;
+    WS : [ \r\n\t] + -> skip ;
+
+_BFS After_
+
+    grammar Expression;
+    e : e ('*' | '/') e
+     | e ('+' | '-') e
+     | '(' e ')'
+     | ('-' | '+')* a
+     ;
+    a : number | variable ;
+    number : INT ;
+    variable : VARIABLE ;
+    VARIABLE : VALID_ID_START VALID_ID_CHAR* ;
+    fragment VALID_ID_START : ('a' .. 'z') | ('A' .. 'Z') | '_' ;
+    fragment VALID_ID_CHAR : VALID_ID_START | ('0' .. '9') ;
+    INT : ('0' .. '9')+ ;
+    MUL : '*' ;
+    DIV : '/' ;
+    ADD : '+' ;
+    SUB : '-' ;
+    LP : '(' ;
+    RP : ')' ;
+    WS : [ \r\n\t] + -> skip ;
+
+## Splitting and combining grammars
+
+Antlrvsix provides two refactorings for splitting or combining
+grammars. These refactorings are useful when
+you need to introduce modes in lexers, or when you want to
+have one grammar for a language.
+
+Splitting a grammar converts a combined grammar into
+split parser and lexer grammars. Arguments to the Antlr
+tool are applied to the resulting grammars.
+
+_Before_
+
+Combined grammar:
+
+    grammar Expression;
+    e : e ('*' | '/') e
+     | e ('+' | '-') e
+     | '(' e ')'
+     | ('-' | '+')* a
+     ;
+    a : number | variable ;
+    number : INT ;
+    variable : VARIABLE ;
+    VARIABLE : VALID_ID_START VALID_ID_CHAR* ;
+    fragment VALID_ID_START : ('a' .. 'z') | ('A' .. 'Z') | '_' ;
+    fragment VALID_ID_CHAR : VALID_ID_START | ('0' .. '9') ;
+    INT : ('0' .. '9')+ ;
+    MUL : '*' ;
+    DIV : '/' ;
+    ADD : '+' ;
+    SUB : '-' ;
+    LP : '(' ;
+    RP : ')' ;
+    WS : [ \r\n\t] + -> skip ;
+
+_After_
+
+Lexer grammar:
+
+    lexer grammar ExpressionLexer;
+    VARIABLE : VALID_ID_START VALID_ID_CHAR* ;
+    fragment VALID_ID_START : ('a' .. 'z') | ('A' .. 'Z') | '_' ;
+    fragment VALID_ID_CHAR : VALID_ID_START | ('0' .. '9') ;
+    INT : ('0' .. '9')+ ;
+    MUL : '*' ;
+    DIV : '/' ;
+    ADD : '+' ;
+    SUB : '-' ;
+    LP : '(' ;
+    RP : ')' ;
+    WS : [ \r\n\t] + -> skip ;
+
+Parser grammar:
+
+    parser grammar ExpressionParser;
+    e : e ('*' | '/') e
+     | e ('+' | '-') e
+     | '(' e ')'
+     | ('-' | '+')* a
+     ;
+    a : number | variable ;
+    number : INT ;
+    variable : VARIABLE ;
+
