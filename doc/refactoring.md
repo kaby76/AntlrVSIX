@@ -20,6 +20,10 @@ parser grammars at least with Antlr 4.8,
 so Antlrvsix does not enforce this when splitting a combined
 grammar.
 
+Note: This refactoring is a "fold" transformation
+as described in Halupka, Ivan, and Ján Kollár. "Catalog of grammar refactoring patterns." Open Computer Science 4.4 (2014): 231-241.
+However, this refactoring only applies to lexer symbols.
+
 ### Example
 
 _Before_
