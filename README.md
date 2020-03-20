@@ -84,6 +84,12 @@ VS, then reopen. Do not do "rebuild", only "build".
 grammar e.g., warning/removal of LHS predicates in lexer, replacing factored grammar rules with Kleene star rules (which
 result in faster parsers).
 
+## Work in progress for v5.6:
+
+* Import of Bison/Yacc grammars.
+* Generalized fold/unfold/pack grammar rule refactorings.
+* Bug fixes.
+
 ## Release notes for v5.5:
 
 * Added in more refactorings:
