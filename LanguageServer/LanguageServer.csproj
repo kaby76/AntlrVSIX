@@ -22,10 +22,10 @@
       <CustomToolNamespace>LanguageServer</CustomToolNamespace>
     </Antlr4>
     <Antlr4 Include="BisonLexer.g4">
-      <CustomToolNamespace>Bison</CustomToolNamespace>
+      <CustomToolNamespace>LanguageServer</CustomToolNamespace>
     </Antlr4>
     <Antlr4 Include="BisonParser.g4">
-      <CustomToolNamespace>Bison</CustomToolNamespace>
+      <CustomToolNamespace>LanguageServer</CustomToolNamespace>
     </Antlr4>
   </ItemGroup>
 

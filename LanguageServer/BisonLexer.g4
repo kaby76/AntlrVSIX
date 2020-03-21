@@ -5,7 +5,7 @@
 lexer grammar BisonLexer;
 
 options {
-	superClass = LexerAdaptor ;
+	superClass = BisonLexerAdaptor ;
 }
 
 channels {

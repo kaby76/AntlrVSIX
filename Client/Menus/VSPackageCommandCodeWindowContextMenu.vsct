@@ -109,6 +109,13 @@
             <ButtonText>Combine split grammars</ButtonText>
           </Strings>
         </Button>
+        
+        <Button guid="guidMenuAndCommandsCmdSet" id="ImportCmd" priority="0x700" type="Button">
+          <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup"/>
+          <Strings>
+            <ButtonText>Import</ButtonText>
+          </Strings>
+        </Button>
 
         <Button guid="guidMenuAndCommandsCmdSet" id="OptionsCmd" priority="0x700" type="Button">
           <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup"/>
@@ -185,6 +192,7 @@
       <IDSymbol name="PrevRuleCmd" value="0x7003" />
       <IDSymbol name="GoToListenerCmd" value="0x7005" />
       <IDSymbol name="GoToVisitorCmd" value="0x7006" />
+      <IDSymbol name="ImportCmd" value="0x7019" />
       <IDSymbol name="OptionsCmd" value="0x7007" />
       <IDSymbol name="AboutCmd" value="0x7010" />
       <IDSymbol name="ReplaceParserLiteralCmd" value="0x7011" />

@@ -1,5 +1,5 @@
 ﻿// Template generated code from Antlr4BuildTasks.Template v 2.1
-namespace Bison
+namespace LanguageServer
 {
     using Antlr4.Runtime;
     using Antlr4.Runtime.Misc;

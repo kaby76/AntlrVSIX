@@ -3,15 +3,17 @@
 using Antlr4.Runtime.Tree;
 using System;
 using System.Collections.Generic;
+using System.Text;
 
-namespace Bison
+namespace LanguageServer
 {
     using Antlr4.Runtime;
 
     public class BisonImport
     {
-        private static void Try(string input)
+        private static string Try(string input)
         {
+            StringBuilder sb = new StringBuilder();
             AntlrFileStream str = new AntlrFileStream(input);
             BisonLexer lexer = new BisonLexer(str);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -21,11 +23,10 @@ namespace Bison
             BisonParser.InputContext tree = parser.input();
             if (listener.had_error)
             {
-                System.Console.WriteLine("error in parse.");
+                return null;
             }
             else
             {
-                System.Console.WriteLine("parse completed.");
                 BisonGrammarListener visitor = new BisonGrammarListener();
                 ParseTreeWalker.Default.Walk(visitor, tree);
                 foreach (Tuple<string, List<List<string>>> r in visitor.rules)
@@ -36,23 +37,29 @@ namespace Bison
                     bool first = true;
                     foreach (List<string> s in rhs)
                     {
-                        System.Console.Write(first ? "  :" : "  |");
+                        sb.Append(first ? "  :" : "  |");
                         first = false;
                         foreach (string c in s)
                         {
-                            System.Console.Write(" " + c);
+                            sb.Append(" " + c);
                         }
 
-                        System.Console.WriteLine();
+                        sb.AppendLine();
                     }
-                    System.Console.WriteLine("  ;");
+                    sb.AppendLine("  ;");
                 }
             }
+            return sb.ToString();
         }
 
-        private static void Main(string[] args)
+        public static Dictionary<string, string> ImportGrammars(string[] args)
         {
-            Try(args[0]);
+            Dictionary<string, string> result = new Dictionary<string, string>();
+            foreach (var f in args)
+            {
+                Try(f);
+            }
+            return result;
         }
     }
 }

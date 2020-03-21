@@ -1148,5 +1148,18 @@
             Dictionary<string, string> changes = LanguageServer.Transform.SplitCombineGrammars(pos, document, split);
             return changes;
         }
+
+        [JsonRpcMethod("CMImportGrammars")]
+        public async System.Threading.Tasks.Task<Dictionary<string, string>> CMImportGrammars(JToken arg)
+        {
+            string[] request = arg.ToObject<string[]>();
+            if (trace)
+            {
+                System.Console.Error.WriteLine("<-- CMImportGrammars");
+                System.Console.Error.WriteLine(arg.ToString());
+            }
+            Dictionary<string, string> changes = LanguageServer.BisonImport.ImportGrammars(request);
+            return changes;
+        }
     }
 }

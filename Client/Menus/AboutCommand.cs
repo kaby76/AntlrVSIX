@@ -9,7 +9,6 @@
     {
         private readonly Microsoft.VisualStudio.Shell.Package _package;
         private readonly MenuCommand _menu_item1;
-        private readonly MenuCommand _menu_item2;
 
         private AboutCommand(Microsoft.VisualStudio.Shell.Package package)
         {
@@ -28,23 +27,13 @@
 
             {
                 // Set up hook for context menu.
-                CommandID menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidVSPackageCommandCodeWindowContextMenuCmdSet), 0x7010);
+                CommandID menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidMenuAndCommandsCmdSet), 0x7010);
                 _menu_item1 = new MenuCommand(MenuItemCallback, menuCommandID)
                 {
                     Enabled = true,
                     Visible = true
                 };
                 commandService.AddCommand(_menu_item1);
-            }
-            {
-                // Set up hook for context menu.
-                CommandID menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidMenuAndCommandsCmdSet), 0x7010);
-                _menu_item2 = new MenuCommand(MenuItemCallback, menuCommandID)
-                {
-                    Enabled = true,
-                    Visible = true
-                };
-                commandService.AddCommand(_menu_item2);
             }
         }
         public static AboutCommand Instance { get; private set; }

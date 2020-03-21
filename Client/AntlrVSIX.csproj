@@ -49,9 +49,13 @@
     <Compile Include="Menus\AboutBox.xaml.cs">
       <DependentUpon>AboutBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Menus\ImportBox.xaml.cs">
+      <DependentUpon>ImportBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Menus\AboutCommand.cs" />
     <Compile Include="Menus\GoToVisitorCommand.cs" />
     <Compile Include="Menus\Import.cs" />
+    <Compile Include="Menus\MakeChanges.cs" />
     <Compile Include="Menus\MoveStartRuleToTop.cs" />
     <Compile Include="Menus\NextSymCommand.cs" />
     <Compile Include="Menus\OptionsBox.xaml.cs">
@@ -69,6 +73,10 @@
     <Content Include="Resources\FindRefsWindowCommand.png" />
     <Content Include="Resources\VSPackageCommandCodeWindowContextMenu.ico" />
     <Page Include="Menus\AboutBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Menus\ImportBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -91,7 +99,6 @@
     <Compile Include="ViewCreationListener.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="README.md" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>

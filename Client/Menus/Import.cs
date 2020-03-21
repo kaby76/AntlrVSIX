@@ -4,12 +4,22 @@
     using System;
     using System.ComponentModel.Design;
     using System.Windows;
+    using System.Linq;
+    using Antlr4.Runtime;
+    using LanguageServer;
+    using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.Text.Editor;
+    using Microsoft.VisualStudio.TextManager.Interop;
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.Design;
 
     public class Import
     {
         private readonly Microsoft.VisualStudio.Shell.Package _package;
         private readonly MenuCommand _menu_item1;
-        private readonly MenuCommand _menu_item2;
+        //private readonly MenuCommand _menu_item2;
 
         private Import(Microsoft.VisualStudio.Shell.Package package)
         {
@@ -28,23 +38,13 @@
 
             {
                 // Set up hook for context menu.
-                CommandID menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidVSPackageCommandCodeWindowContextMenuCmdSet), 0x7010);
+                CommandID menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidMenuAndCommandsCmdSet), 0x7019);
                 _menu_item1 = new MenuCommand(MenuItemCallback, menuCommandID)
                 {
                     Enabled = true,
                     Visible = true
                 };
                 commandService.AddCommand(_menu_item1);
-            }
-            {
-                // Set up hook for context menu.
-                CommandID menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidMenuAndCommandsCmdSet), 0x7010);
-                _menu_item2 = new MenuCommand(MenuItemCallback, menuCommandID)
-                {
-                    Enabled = true,
-                    Visible = true
-                };
-                commandService.AddCommand(_menu_item2);
             }
         }
         public static Import Instance { get; private set; }
@@ -58,10 +58,44 @@
 
         private void MenuItemCallback(object sender, EventArgs e)
         {
+            IVsTextManager manager = ((IServiceProvider)ServiceProvider).GetService(typeof(VsTextManagerClass)) as IVsTextManager;
+            if (manager == null)
+            {
+                return;
+            }
+
+            manager.GetActiveView(1, null, out IVsTextView view);
+            if (view == null)
+            {
+                return;
+            }
+
+            view.GetCaretPos(out int l, out int c);
+            view.GetBuffer(out IVsTextLines buf);
+            if (buf == null)
+            {
+                return;
+            }
+
+            IWpfTextView xxx = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view);
+            ITextBuffer buffer = xxx.TextBuffer;
+            string ffn = buffer.GetFFN().Result;
+            if (ffn == null)
+            {
+                return;
+            }
+            var current_grammar_ffn = ffn;
+
             Application.Current.Dispatcher.Invoke(delegate
             {
-                AboutBox inputDialog = new AboutBox();
-                inputDialog.Show();
+                ImportBox dialog_box = new ImportBox();
+                dialog_box.Show();
+                var xx = dialog_box.list;
+                if (xx == null) return;
+                AntlrLanguageClient alc = AntlrLanguageClient.Instance;
+                if (alc == null) return;
+                System.Collections.Generic.Dictionary<string, string> changes = alc.CMImportGrammarsServer(xx.Select(t => t._ffn).ToArray());
+                new LspAntlr.MakeChanges().EnterChanges(current_grammar_ffn, changes);
             });
         }
     }

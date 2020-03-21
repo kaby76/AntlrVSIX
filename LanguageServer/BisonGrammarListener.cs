@@ -1,4 +1,4 @@
-﻿namespace Bison
+﻿namespace LanguageServer
 {
     using System;
     using System.Collections.Generic;

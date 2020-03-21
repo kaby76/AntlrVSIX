@@ -1,0 +1,41 @@
+<Window 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Class="LspAntlr.ImportBox"
+    Title="Import"
+    Height="307.334"
+    Width="650"
+    MinHeight="10"
+    MinWidth="300"
+    ResizeMode="CanResizeWithGrip"
+    ShowInTaskbar="False"
+    WindowStartupLocation="CenterOwner" 
+    FocusManager.FocusedElement="{Binding ElementName=leftMarginTextBox}">
+
+    <Grid Margin="15">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBox Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0">
+            Please select grammar files to convert to Antlr syntax.
+        </TextBox>
+        <DataGrid Name="Files" Grid.Row="1" Height="100"
+                  CanUserResizeColumns="True" >
+        </DataGrid>
+
+        <!-- Accept or Cancel -->
+        <WrapPanel Grid.Row="14" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="10,0,0,0" >
+            <Button IsDefault="True" Name="btnDialogFind" Click="btnDialogFind_Click" MinWidth="60" Margin="0,0,10,0">Select</Button>
+            <Button IsDefault="True" Name="btnDialogOk" Click="btnDialogOk_Click" MinWidth="60" Margin="0,0,10,0">Ok</Button>
+            <Button IsCancel="True" MinWidth="60" Click="btnDialogCancel_Click" >Cancel</Button>
+        </WrapPanel>
+
+    </Grid >
+</Window>

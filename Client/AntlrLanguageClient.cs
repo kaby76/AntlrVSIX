@@ -45,6 +45,7 @@
             XXX = (Microsoft.VisualStudio.OLE.Interop.IServiceProvider)dte2;
             ServiceProvider sp = new ServiceProvider(XXX);
             //AdaptersFactory = this.GetService(typeof(IVsEditorAdaptersFactoryService)) as IVsEditorAdaptersFactoryService;
+            Import.Initialize(this);
             OptionsCommand.Initialize(this);
             AboutCommand.Initialize(this);
             NextSymCommand.Initialize(this);
@@ -350,6 +351,24 @@
             return null;
         }
 
+        public Dictionary<string, string> CMImportGrammarsServer(string[] ffn)
+        {
+            try
+            {
+                if (_rpc == null)
+                {
+                    return null;
+                }
+
+                var p = ffn;
+                Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMImportGrammars", p).Result;
+                return result;
+            }
+            catch (Exception)
+            {
+            }
+            return null;
+        }
 
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {

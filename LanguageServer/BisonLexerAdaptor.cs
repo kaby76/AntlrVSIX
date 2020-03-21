@@ -1,14 +1,14 @@
-namespace Bison
+namespace LanguageServer
 {
     using Antlr4.Runtime;
     using Antlr4.Runtime.Misc;
 
-    public abstract class LexerAdaptor : Lexer
+    public abstract class BisonLexerAdaptor : Lexer
     {
         private readonly ICharStream _input;
         protected int percent_percent_count;
 
-        public LexerAdaptor(
+        public BisonLexerAdaptor(
                     Antlr4.Runtime.ICharStream input,
                     System.IO.TextWriter output,
                     System.IO.TextWriter errorOutput)
