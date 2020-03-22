@@ -29,10 +29,12 @@ namespace LanguageServer
             {
                 BisonGrammarListener visitor = new BisonGrammarListener();
                 ParseTreeWalker.Default.Walk(visitor, tree);
+                var name = System.IO.Path.GetFileNameWithoutExtension(input);
+                sb.AppendLine("grammar " + name + ";");
                 foreach (Tuple<string, List<List<string>>> r in visitor.rules)
                 {
                     string lhs = r.Item1;
-                    System.Console.WriteLine(lhs);
+                    sb.Append(lhs);
                     List<List<string>> rhs = r.Item2;
                     bool first = true;
                     foreach (List<string> s in rhs)
