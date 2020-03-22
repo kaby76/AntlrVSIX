@@ -52,12 +52,15 @@ namespace LanguageServer
             return sb.ToString();
         }
 
-        public static Dictionary<string, string> ImportGrammars(string[] args)
+        public static Dictionary<string, string> ImportGrammars(List<string> args)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
             foreach (var f in args)
             {
-                Try(f);
+                var new_code = Try(f);
+                var antlr = f.Replace(".y", ".g4");
+                if (new_code != null)
+                    result.Add(antlr, new_code);
             }
             return result;
         }

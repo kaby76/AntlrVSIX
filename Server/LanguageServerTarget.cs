@@ -1152,7 +1152,7 @@
         [JsonRpcMethod("CMImportGrammars")]
         public async System.Threading.Tasks.Task<Dictionary<string, string>> CMImportGrammars(JToken arg)
         {
-            string[] request = arg.ToObject<string[]>();
+            List<string> request = arg.ToObject<List<string>>();
             if (trace)
             {
                 System.Console.Error.WriteLine("<-- CMImportGrammars");

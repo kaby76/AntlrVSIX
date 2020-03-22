@@ -351,7 +351,7 @@
             return null;
         }
 
-        public Dictionary<string, string> CMImportGrammarsServer(string[] ffn)
+        public Dictionary<string, string> CMImportGrammarsServer(List<string> ffn)
         {
             try
             {
@@ -364,7 +364,7 @@
                 Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMImportGrammars", p).Result;
                 return result;
             }
-            catch (Exception)
+            catch (Exception e)
             {
             }
             return null;

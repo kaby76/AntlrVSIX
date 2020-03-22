@@ -1,19 +1,13 @@
 ﻿namespace LspAntlr
 {
     using Microsoft.VisualStudio.Shell;
-    using System;
-    using System.ComponentModel.Design;
-    using System.Windows;
-    using System.Linq;
-    using Antlr4.Runtime;
-    using LanguageServer;
-    using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.TextManager.Interop;
     using System;
-    using System.Collections.Generic;
     using System.ComponentModel.Design;
+    using System.Linq;
+    using System.Windows;
 
     public class Import
     {
@@ -86,15 +80,15 @@
             }
             var current_grammar_ffn = ffn;
 
+            ImportBox dialog_box = new ImportBox();
             Application.Current.Dispatcher.Invoke(delegate
             {
-                ImportBox dialog_box = new ImportBox();
-                dialog_box.Show();
+                dialog_box.ShowDialog();
                 var xx = dialog_box.list;
                 if (xx == null) return;
                 AntlrLanguageClient alc = AntlrLanguageClient.Instance;
                 if (alc == null) return;
-                System.Collections.Generic.Dictionary<string, string> changes = alc.CMImportGrammarsServer(xx.Select(t => t._ffn).ToArray());
+                System.Collections.Generic.Dictionary<string, string> changes = alc.CMImportGrammarsServer(xx.Select(t => t._ffn).ToList());
                 new LspAntlr.MakeChanges().EnterChanges(current_grammar_ffn, changes);
             });
         }
