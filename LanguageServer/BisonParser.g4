@@ -29,7 +29,6 @@ options {
     tokenVocab=BisonLexer;
 }
 
-
 input
     : prologue_declarations '%%' bison_grammar epilogue_opt
     ;
@@ -73,6 +72,11 @@ prologue_declaration
     | SEMICOLON
     ;
 
+params
+    : params actionBlock
+    | actionBlock
+    ;
+
 
 /*----------------------.
 | grammar_declaration.  |
@@ -89,11 +93,51 @@ grammar_declaration
     | PERCENT_UNION union_name actionBlock
     ;
 
+code_props_type
+    : DESTRUCTOR
+    | PRINTER
+    ;
+
+/*---------.
+| %union.  |
+`---------*/
+
+union_name
+    : | ID
+    ;
+
 symbol_declaration
     : NTERM nterm_decls
     | PERCENT_TOKEN token_decls
     | PERCENT_TYPE symbol_decls
     | precedence_declarator token_decls_for_prec
+    ;
+
+precedence_declarator
+    : PERCENT_LEFT
+    | PERCENT_RIGHT
+    | PERCENT_NONASSOC
+    | PRECEDENCE
+    ;
+
+tag_opt
+    : | TAG
+    ;
+
+generic_symlist
+    : generic_symlist_item
+    | generic_symlist generic_symlist_item
+    ;
+
+generic_symlist_item
+    : symbol
+    | tag
+    ;
+
+tag
+    : TAG
+    | TAG_ANY
+    | TAG_NONE
     ;
 
 /*-----------------------.
@@ -136,63 +180,13 @@ token_decl
     | id id LPAREN id RPAREN alias    // Not in Bison, but used in https://github.com/ruby/ruby/parse.y
     ;
 
-
-/*--------------.
-| Identifiers.  |
-`--------------*/
-
-/* Identifiers are returned as uniqstr values by the scanner.
-   Depending on their use, we may need to make them genuine symbols.  */
-
-id
-    : ID
-    | CHAR
-    ;
-
 int_opt
     : | INT
     ;
+
 alias
     : | string_as_id
 //| TSTRING
-    ;
-
-/* A string used as an ID: quote it.  */
-
-string_as_id
-    : STRING
-    ;
-
-
-/*-----------------------------------.
-| symbol_decls (argument of %type).  |
-`-----------------------------------*/
-
-// A non empty list of typed symbols (for %type).
-
-symbol_decls
-    : symbol_decl_1
-    | TAG symbol_decl_1
-    | symbol_decls TAG symbol_decl_1
-    ;
-
-// One or more token declarations (for %type).
-
-symbol_decl_1
-    : symbol
-    | symbol_decl_1 symbol
-    ;
-
-symbol
-    : id
-    | string_as_id
-    ;
-
-precedence_declarator
-    : PERCENT_LEFT
-    | PERCENT_RIGHT
-    | PERCENT_NONASSOC
-    | PRECEDENCE
     ;
 
 
@@ -225,56 +219,24 @@ token_decl_for_prec
     | string_as_id
     ;
 
-code_props_type
-    : DESTRUCTOR
-    | PRINTER
-    ;
-actionBlock
-    : BRACED_CODE
+
+/*-----------------------------------.
+| symbol_decls (argument of %type).  |
+`-----------------------------------*/
+
+// A non empty list of typed symbols (for %type).
+
+symbol_decls
+    : symbol_decl_1
+    | TAG symbol_decl_1
+    | symbol_decls TAG symbol_decl_1
     ;
 
-generic_symlist
-    : generic_symlist_item
-    | generic_symlist generic_symlist_item
-    ;
+// One or more token declarations (for %type).
 
-generic_symlist_item
+symbol_decl_1
     : symbol
-    | tag
-    ;
-
-tag
-    : TAG
-    | TAG_ANY
-    | TAG_NONE
-    ;
-
-/*---------.
-| %union.  |
-`---------*/
-
-union_name
-    : | ID
-    ;
-
-
-/*---------------------.
-| variable and value.  |
-`---------------------*/
-
-variable
-    : ID
-    ;
-
-value
-    : | ID
-      | STRING
-      | actionBlock
-    ;
-
-params
-    : params actionBlock
-    | actionBlock
+    | symbol_decl_1 symbol
     ;
 
         /*------------------------------------------.
@@ -298,10 +260,6 @@ rules
     : id named_ref_opt COLON rhses_1
     ;
 
-named_ref_opt
-    : | BRACKETED_ID
-    ;
-
 rhses_1
     : rhs       # rhs1
     | rhses_1 PIPE rhs       # rhs2
@@ -320,10 +278,53 @@ rhs
       | rhs EXPECT_RR INT
     ;
 
-tag_opt
-    : | TAG
+named_ref_opt
+    : | BRACKETED_ID
+    ;
+
+
+/*---------------------.
+| variable and value.  |
+`---------------------*/
+
+variable
+    : ID
+    ;
+
+value
+    : | ID
+      | STRING
+      | actionBlock
+    ;
+
+
+/*--------------.
+| Identifiers.  |
+`--------------*/
+
+/* Identifiers are returned as uniqstr values by the scanner.
+   Depending on their use, we may need to make them genuine symbols.  */
+
+id
+    : ID
+    | CHAR
+    ;
+
+symbol
+    : id
+    | string_as_id
+    ;
+
+/* A string used as an ID: quote it.  */
+
+string_as_id
+    : STRING
     ;
 
 epilogue_opt
     : | '%%' EPILOGUE?
+    ;
+
+actionBlock
+    : BRACED_CODE
     ;

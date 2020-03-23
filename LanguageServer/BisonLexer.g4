@@ -66,7 +66,7 @@ fragment Esc
 
 fragment EscSeq
 	:	Esc
-		([abenrtv?"'\\]	// The standard escaped character set such as tab, newline, etc.
+		([abefnrtv?"'\\]	// The standard escaped character set such as tab, newline, etc.
 		| [xuU]?[0-9]+) // C-style 
 	;
 

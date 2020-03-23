@@ -18,39 +18,114 @@ namespace LanguageServer
             BisonLexer lexer = new BisonLexer(str);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             BisonParser parser = new BisonParser(tokens);
-            BisonErrorListener<IToken> listener = new BisonErrorListener<IToken>(parser, lexer, tokens);
-            parser.AddErrorListener(listener);
+            BisonErrorListener<IToken> elistener = new BisonErrorListener<IToken>(parser, lexer, tokens);
+            parser.AddErrorListener(elistener);
             BisonParser.InputContext tree = parser.input();
-            if (listener.had_error)
+            if (elistener.had_error)
             {
                 return null;
             }
-            else
-            {
-                BisonGrammarListener visitor = new BisonGrammarListener();
-                ParseTreeWalker.Default.Walk(visitor, tree);
-                var name = System.IO.Path.GetFileNameWithoutExtension(input);
-                sb.AppendLine("grammar " + name + ";");
-                foreach (Tuple<string, List<List<string>>> r in visitor.rules)
-                {
-                    string lhs = r.Item1;
-                    sb.Append(lhs);
-                    List<List<string>> rhs = r.Item2;
-                    bool first = true;
-                    foreach (List<string> s in rhs)
-                    {
-                        sb.Append(first ? "  :" : "  |");
-                        first = false;
-                        foreach (string c in s)
-                        {
-                            sb.Append(" " + c);
-                        }
 
-                        sb.AppendLine();
+            // First, collect information about the grammar.
+            BisonGrammarListener listener = new BisonGrammarListener();
+            ParseTreeWalker.Default.Walk(listener, tree);
+
+            // Get list of tokens. Convert this to a list of capitalized names.
+            Dictionary<string, Tuple<string, string>> terminals = new Dictionary<string, Tuple<string, string>>();
+            foreach (var token in listener.terminals)
+            {
+                Antlr4.Runtime.Tree.IParseTree parent;
+                for (parent = token; parent != null; parent = parent.Parent)
+                {
+                    if (parent is BisonParser.Token_declsContext)
+                    {
+                        var token_decls = parent as BisonParser.Token_declsContext;
+                        var count = token_decls.ChildCount;
+                        if (count == 1)
+                        {
+                            var tag = "";
+                            var tok = token.GetText();
+                            var cap_tok = tok.Length == 1 ? Char.ToUpper(tok[0]).ToString() :
+                                (Char.ToUpper(tok[0]) + tok.Substring(1));
+                            terminals.Add(tok, new Tuple<string, string>(tag, cap_tok));
+                        }
+                        else if (count == 2)
+                        {
+                            var tag = parent.GetChild(0).GetText();
+                            tag = tag.Replace("<", "").Replace(">", "");
+                            var tok = token.GetText();
+                            var cap_tok = tok.Length == 1 ? Char.ToUpper(tok[0]).ToString() :
+                                (Char.ToUpper(tok[0]) + tok.Substring(1));
+                            terminals.Add(tok, new Tuple<string, string>(tag, cap_tok));
+                        }
+                        else if (count == 3)
+                        {
+                            var tag = parent.GetChild(1).GetText();
+                            tag = tag.Replace("<", "").Replace(">", "");
+                            var tok = token.GetText();
+                            var cap_tok = tok.Length == 1 ? Char.ToUpper(tok[0]).ToString() :
+                                (Char.ToUpper(tok[0]) + tok.Substring(1));
+                            terminals.Add(tok, new Tuple<string, string>(tag, cap_tok));
+                        }
                     }
-                    sb.AppendLine("  ;");
                 }
             }
+
+            // Get the name of the grammar.
+            var name = System.IO.Path.GetFileNameWithoutExtension(input);
+            sb.AppendLine("grammar " + name + ";");
+
+            // Output the rules.
+            foreach (Tuple<string, List<List<string>>> r in listener.rules)
+            {
+                string lhs = r.Item1;
+                sb.Append(lhs);
+                List<List<string>> rhs = r.Item2;
+                bool first = true;
+                foreach (List<string> s in rhs)
+                {
+                    sb.Append(first ? "  :" : "  |");
+                    first = false;
+                    foreach (string c in s)
+                    {
+                        sb.Append(" "
+                            + (terminals.ContainsKey(c) ? terminals[c].Item2
+                            : c));
+                    }
+
+                    sb.AppendLine();
+                }
+                sb.AppendLine("  ;");
+            }
+
+            // Check for use of error symbol. The semantics is for the parser to look for
+            // the ERROR token.
+            bool found = false;
+            foreach (Tuple<string, List<List<string>>> r in listener.rules)
+            {
+                List<List<string>> rhs = r.Item2;
+                bool first = true;
+                foreach (List<string> s in rhs)
+                {
+                    foreach (string c in s)
+                    {
+                        if (c == "error")
+                        {
+                            found = true;
+                            goto bigexit;
+                        }
+                    }
+                }
+            }
+            bigexit:
+            if (found)
+            {
+                sb.AppendLine("error : ERROR ;");
+            }
+
+
+
+
             return sb.ToString();
         }
 

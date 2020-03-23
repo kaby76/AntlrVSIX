@@ -147,7 +147,30 @@
                     return;
                 }
                 Dictionary<string, string> changes = alc.CMSplitCombineGrammarsServer(ffn, pos, split);
-                new MakeChanges().EnterChanges(ffn, changes);
+                EnvDTE.Project project = null;
+                string the_namespace = "";
+                for (; ; )
+                {
+                    string current_grammar_ffn = ffn;
+                    (EnvDTE.Project, EnvDTE.ProjectItem) p_f_original_grammar = LspAntlr.MakeChanges.FindProjectAndItem(current_grammar_ffn);
+                    project = p_f_original_grammar.Item1;
+                    try
+                    {
+                        var prop = p_f_original_grammar.Item2.Properties.Item("CustomToolNamespace").Value;
+                        the_namespace = prop.ToString();
+                    }
+                    catch (Exception eeks)
+                    {
+                    }
+                    break;
+                }
+                if (project == null)
+                {
+                    EnvDTE.DTE dte = (EnvDTE.DTE)Package.GetGlobalService(typeof(EnvDTE.DTE));
+                    EnvDTE.Projects projects = dte.Solution.Projects;
+                    project = projects.Item(EnvDTE.Constants.vsMiscFilesProjectUniqueName);
+                }
+                MakeChanges.EnterChanges(changes, project, the_namespace);
             }
             catch (Exception exception)
             {

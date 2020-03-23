@@ -57,28 +57,39 @@
             {
                 return;
             }
-
-            manager.GetActiveView(1, null, out IVsTextView view);
-            if (view == null)
+            // If we have a view, we'll place the imported file in the parent project.
+            // Otherwise the "misc project".
+            EnvDTE.Project project = null;
+            string the_namespace = "";
+            for (; ; )
             {
-                return;
+                manager.GetActiveView(1, null, out IVsTextView view);
+                if (view == null) break;
+                view.GetBuffer(out IVsTextLines buf);
+                if (buf == null) break;
+                IWpfTextView xxx = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view);
+                ITextBuffer buffer = xxx.TextBuffer;
+                string ffn = buffer.GetFFN().Result;
+                if (ffn == null) break;
+                string current_grammar_ffn = ffn;
+                (EnvDTE.Project, EnvDTE.ProjectItem) p_f_original_grammar = LspAntlr.MakeChanges.FindProjectAndItem(current_grammar_ffn);
+                project = p_f_original_grammar.Item1;
+                try
+                {
+                    var prop = p_f_original_grammar.Item2.Properties.Item("CustomToolNamespace").Value;
+                    the_namespace = prop.ToString();
+                }
+                catch (Exception eeks)
+                {
+                }
+                break;
             }
-
-            view.GetCaretPos(out int l, out int c);
-            view.GetBuffer(out IVsTextLines buf);
-            if (buf == null)
+            if (project == null)
             {
-                return;
+                EnvDTE.DTE dte = (EnvDTE.DTE)Package.GetGlobalService(typeof(EnvDTE.DTE));
+                EnvDTE.Projects projects = dte.Solution.Projects;
+                project = projects.Item(EnvDTE.Constants.vsMiscFilesProjectUniqueName);
             }
-
-            IWpfTextView xxx = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view);
-            ITextBuffer buffer = xxx.TextBuffer;
-            string ffn = buffer.GetFFN().Result;
-            if (ffn == null)
-            {
-                return;
-            }
-            var current_grammar_ffn = ffn;
 
             ImportBox dialog_box = new ImportBox();
             Application.Current.Dispatcher.Invoke(delegate
@@ -86,10 +97,11 @@
                 dialog_box.ShowDialog();
                 var xx = dialog_box.list;
                 if (xx == null) return;
-                AntlrLanguageClient alc = AntlrLanguageClient.Instance;
-                if (alc == null) return;
-                System.Collections.Generic.Dictionary<string, string> changes = alc.CMImportGrammarsServer(xx.Select(t => t._ffn).ToList());
-                new LspAntlr.MakeChanges().EnterChanges(current_grammar_ffn, changes);
+                // Note, the language client cannot be applied here because we
+                // aren't focused on a grammar file, and may not even have a window
+                // open!
+                System.Collections.Generic.Dictionary<string, string> changes = LanguageServer.BisonImport.ImportGrammars(xx.Select(t => t._ffn).ToList());
+                LspAntlr.MakeChanges.EnterChanges(changes, project, the_namespace);
             });
         }
     }

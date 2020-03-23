@@ -15,7 +15,7 @@ namespace LspAntlr
 {
     class MakeChanges
     {
-        public (EnvDTE.Project, EnvDTE.ProjectItem) FindProjectAndItem(string fn)
+        public static (EnvDTE.Project, EnvDTE.ProjectItem) FindProjectAndItem(string fn)
         {
             var f = System.IO.Path.GetFileName(fn);
             EnvDTE.DTE dte = (EnvDTE.DTE)Package.GetGlobalService(typeof(EnvDTE.DTE));
@@ -34,9 +34,8 @@ namespace LspAntlr
             return (null, null);
         }
 
-        public void EnterChanges(string current_grammar_ffn, Dictionary<string, string> changes)
+        public static void EnterChanges(Dictionary<string, string> changes, EnvDTE.Project project, string custom_namespace)
         {
-            var p_f_original_grammar = FindProjectAndItem(current_grammar_ffn);
             foreach (var pair in changes)
             {
                 string fn = pair.Key;
@@ -45,13 +44,11 @@ namespace LspAntlr
                 {
                     continue;
                 }
-                Workspaces.Document dd = Workspaces.Workspace.Instance.FindDocument(fn);
-                if (dd == null)
                 {
                     // Create the file.
                     System.IO.File.WriteAllText(fn, new_code);
                     // Add to project.
-                    p_f_original_grammar.Item1.ProjectItems.AddFromFile(fn);
+                    project.ProjectItems.AddFromFile(fn);
                     // Find new item.
                     var new_item = FindProjectAndItem(fn);
                     // Set attributes.
@@ -66,9 +63,8 @@ namespace LspAntlr
                         new_item.Item2.Properties.Item("ItemType").Value = "Antlr4";
                         try
                         {
-                            var prop = p_f_original_grammar.Item2.Properties.Item("CustomToolNamespace").Value;
-                            if (prop.ToString() != "")
-                                new_item.Item2.Properties.Item("CustomToolNamespace").Value = prop.ToString();
+                            if (custom_namespace != "")
+                                new_item.Item2.Properties.Item("CustomToolNamespace").Value = custom_namespace;
                         }
                         catch (Exception e)
                         {

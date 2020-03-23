@@ -3,12 +3,17 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Antlr4.Runtime.Misc;
+    using Antlr4.Runtime.Tree;
+    using Symtab;
+    using System.Collections.Generic;
 
     public class BisonGrammarListener : BisonParserBaseListener
     {
         public List<Tuple<string, List<List<string>>>> rules = new List<Tuple<string, List<List<string>>>>();
         private string lhs;
         private List<List<string>> rhs;
+        public List<IParseTree> terminals = new List<IParseTree>();
 
         public override void EnterRules(BisonParser.RulesContext context)
         {
@@ -50,6 +55,12 @@
         {
             rhs.RemoveAt(rhs.Count - 1);
             rules.Add(new Tuple<string, List<List<string>>>(lhs, rhs));
+        }
+
+        public override void EnterToken_decl([NotNull] BisonParser.Token_declContext context)
+        {
+            var id = context.GetChild(0) as BisonParser.IdContext;
+            terminals.Add(id);
         }
     }
 }
