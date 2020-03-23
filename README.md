@@ -86,7 +86,7 @@ result in faster parsers).
 
 ## Work in progress for v5.6:
 
-* Import of Bison/Yacc grammars.
+* Import of Flex/Bison/Yacc grammars.
 * Generalized fold/unfold/pack grammar rule refactorings.
 * Bug fixes.
 
