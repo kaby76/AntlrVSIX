@@ -51,24 +51,27 @@ namespace LspAntlr
                     project.ProjectItems.AddFromFile(fn);
                     // Find new item.
                     var new_item = FindProjectAndItem(fn);
-                    // Set attributes.
-                    // Believe or not, something is wrong with VS in that
-                    // properties when set get an exception thrown. The "cure"
-                    // from my anecdotal evidence is to just keep repeating until
-                    // it "sticks"! Really really bad, but it works.
-                    bool again = true;
-                    for (int times = 0; times < 10 && again; ++times)
+                    if (fn.EndsWith(".g4"))
                     {
-                        again = false;
-                        new_item.Item2.Properties.Item("ItemType").Value = "Antlr4";
-                        try
+                        // Set attributes, but only for grammar file.
+                        // Believe or not, something is wrong with VS in that
+                        // properties when set get an exception thrown. The "cure"
+                        // from my anecdotal evidence is to just keep repeating until
+                        // it "sticks"! Really really bad, but it works.
+                        bool again = true;
+                        for (int times = 0; times < 10 && again; ++times)
                         {
-                            if (custom_namespace != "")
-                                new_item.Item2.Properties.Item("CustomToolNamespace").Value = custom_namespace;
-                        }
-                        catch (Exception e)
-                        {
-                            again = true;
+                            again = false;
+                            new_item.Item2.Properties.Item("ItemType").Value = "Antlr4";
+                            try
+                            {
+                                if (custom_namespace != "")
+                                    new_item.Item2.Properties.Item("CustomToolNamespace").Value = custom_namespace;
+                            }
+                            catch (Exception e)
+                            {
+                                again = true;
+                            }
                         }
                     }
                 }
@@ -89,56 +92,6 @@ namespace LspAntlr
                     }
                 }
             }
-            //var edit = buffer.CreateEdit();
-            //var diff = new LanguageServer.diff_match_patch();
-            //var diffs = diff.diff_main(document.Code, new_code);
-            //var patch = diff.patch_make(diffs);
-            ////patch.Reverse();
-
-            //// Start edit session.
-            //int times = 0;
-            //int delta = 0;
-            //foreach (var p in patch)
-            //{
-            //    times++;
-            //    var start = p.start1 - delta;
-
-            //    var offset = 0;
-            //    foreach (var ed in p.diffs)
-            //    {
-            //        if (ed.operation == LanguageServer.Operation.EQUAL)
-            //        {
-            //            // Let's verify that.
-            //            var len = ed.text.Length;
-            //            var tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
-            //              new Span(start + offset, len));
-            //            var tt = tokenSpan.GetText();
-            //            if (ed.text != tt)
-            //            { }
-            //            offset = offset + len;
-            //        }
-            //        else if (ed.operation == LanguageServer.Operation.DELETE)
-            //        {
-            //            var len = ed.text.Length;
-            //            var tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
-            //              new Span(start + offset, len));
-            //            var tt = tokenSpan.GetText();
-            //            if (ed.text != tt)
-            //            { }
-            //            var sp = new Span(start + offset, len);
-            //            offset = offset + len;
-            //            edit.Delete(sp);
-            //        }
-            //        else if (ed.operation == LanguageServer.Operation.INSERT)
-            //        {
-            //            var len = ed.text.Length;
-            //            edit.Insert(start + offset, ed.text);
-            //        }
-            //    }
-            //    delta = delta + (p.length2 - p.length1);
-            //}
-            //edit.Apply();
         }
-
     }
 }
