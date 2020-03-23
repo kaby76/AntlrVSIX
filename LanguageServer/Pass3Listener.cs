@@ -1,171 +1,106 @@
 ﻿namespace LanguageServer
 {
     using Antlr4.Runtime.Misc;
+    using Antlr4.Runtime.Tree;
+    using Symtab;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class Pass3Listener : ANTLRv4ParserBaseListener
     {
         private readonly AntlrGrammarDetails _pd;
-        private bool saw_tokenVocab_option = false;
-        private enum GrammarType
-        {
-            Combined,
-            Parser,
-            Lexer
-        }
-
-        private GrammarType Type;
 
         public Pass3Listener(AntlrGrammarDetails pd)
         {
             _pd = pd;
-            if (!AntlrGrammarDetails._dependent_grammars.ContainsKey(_pd.FullFileName))
-            {
-                AntlrGrammarDetails._dependent_grammars.Add(_pd.FullFileName);
-            }
         }
 
-        public override void EnterGrammarType([NotNull] ANTLRv4Parser.GrammarTypeContext context)
+        public override void EnterTerminal([NotNull] ANTLRv4Parser.TerminalContext context)
         {
-            if (context.GetChild(0).GetText() == "parser")
+            TerminalNodeImpl first = context.GetChild(0) as TerminalNodeImpl;
+            if (first.Symbol.Type == ANTLRv4Parser.TOKEN_REF)
             {
-                Type = GrammarType.Parser;
-            }
-            else if (context.GetChild(0).GetText() == "lexer")
-            {
-                Type = GrammarType.Lexer;
-            }
-            else
-            {
-                Type = GrammarType.Combined;
-            }
-        }
-
-        public override void EnterOption([NotNull] ANTLRv4Parser.OptionContext context)
-        {
-            if (context.ChildCount < 3)
-            {
-                return;
-            }
-
-            if (context.GetChild(0) == null)
-            {
-                return;
-            }
-
-            if (context.GetChild(0).GetText() != "tokenVocab")
-            {
-                return;
-            }
-
-            string dep_grammar = context.GetChild(2).GetText();
-            string file = _pd.Item.FullPath;
-            string dir = System.IO.Path.GetDirectoryName(file);
-            string dep = dir + System.IO.Path.DirectorySeparatorChar + dep_grammar + ".g4";
-            dep = Workspaces.Util.GetProperFilePathCapitalization(dep);
-            if (dep == null)
-            {
-                return;
-            }
-
-            _pd.Imports.Add(dep);
-            if (!AntlrGrammarDetails._dependent_grammars.ContainsKey(dep))
-            {
-                AntlrGrammarDetails._dependent_grammars.Add(dep);
-            }
-
-            bool found = false;
-            foreach (string f in AntlrGrammarDetails._dependent_grammars[dep])
-            {
-                if (f == file)
+                string id = first.GetText();
+                IList<ISymbol> list = _pd.RootScope.LookupType(id);
+                if (!list.Any())
                 {
-                    found = true;
-                    break;
+                    ISymbol sym = new TerminalSymbol(id, first.Symbol);
+                    _pd.RootScope.define(ref sym);
                 }
-            }
-            if (!found)
-            {
-                AntlrGrammarDetails._dependent_grammars.Add(dep, file);
-            }
-            saw_tokenVocab_option = true;
-        }
-
-        public override void EnterDelegateGrammar([NotNull] ANTLRv4Parser.DelegateGrammarContext context)
-        {
-            if (context.ChildCount < 1)
-            {
-                return;
-            }
-
-            if (context.GetChild(0) == null)
-            {
-                return;
-            }
-
-            string dep_grammar = context.GetChild(0).GetText();
-            string file = _pd.Item.FullPath;
-            string dir = System.IO.Path.GetDirectoryName(file);
-            string dep = dir + System.IO.Path.DirectorySeparatorChar + dep_grammar + ".g4";
-            dep = Workspaces.Util.GetProperFilePathCapitalization(dep);
-            if (dep == null)
-            {
-                return;
-            }
-
-            _pd.Imports.Add(dep);
-            if (!AntlrGrammarDetails._dependent_grammars.ContainsKey(dep))
-            {
-                AntlrGrammarDetails._dependent_grammars.Add(dep);
-            }
-
-            bool found = false;
-            foreach (string f in AntlrGrammarDetails._dependent_grammars[dep])
-            {
-                if (f == file)
+                List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
+                foreach (ISymbol sym in list)
                 {
-                    found = true;
-                    break;
+                    CombinedScopeSymbol s = new RefSymbol(first.Symbol, sym);
+                    new_attrs.Add(s);
                 }
-            }
-            if (!found)
-            {
-                AntlrGrammarDetails._dependent_grammars.Add(dep, file);
+                _pd.Attributes[context] = new_attrs;
+                _pd.Attributes[context.GetChild(0)] = new_attrs;
             }
         }
 
-        public override void EnterRules([NotNull] ANTLRv4Parser.RulesContext context)
+        public override void EnterRuleref([NotNull] ANTLRv4Parser.RulerefContext context)
         {
-            if (saw_tokenVocab_option)
-                return;
-
-            // We didn't see an option to include lexer grammar.
-
-            if (Type != GrammarType.Parser)
-                return;
-
-            // It's a parser grammar, but we didn't see the tokenVocab option for the lexer.
-            // We must assume a lexer grammar in this directory.
-
-            string file = _pd.Item.FullPath;
-            string dir = System.IO.Path.GetDirectoryName(file);
-            string dep = file.Replace("Parser.g4","Lexer.g4");
-            _pd.Imports.Add(dep);
-            if (!AntlrGrammarDetails._dependent_grammars.ContainsKey(dep))
+            TerminalNodeImpl first = context.GetChild(0) as TerminalNodeImpl;
+            string id = context.GetChild(0).GetText();
+            IList<ISymbol> list = _pd.RootScope.LookupType(id);
+            if (!list.Any())
             {
-                AntlrGrammarDetails._dependent_grammars.Add(dep);
+                ISymbol sym = new NonterminalSymbol(id, first.Symbol);
+                _pd.RootScope.define(ref sym);
             }
-
-            bool found = false;
-            foreach (string f in AntlrGrammarDetails._dependent_grammars[dep])
+            List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
+            foreach (ISymbol sym in list)
             {
-                if (f == file)
+                CombinedScopeSymbol s = new RefSymbol(first.Symbol, sym);
+                new_attrs.Add(s);
+            }
+            _pd.Attributes[context] = new_attrs;
+            _pd.Attributes[context.GetChild(0)] = new_attrs;
+        }
+
+        public override void EnterId([NotNull] ANTLRv4Parser.IdContext context)
+        {
+            if (context.Parent is ANTLRv4Parser.LexerCommandExprContext && context.Parent.Parent is ANTLRv4Parser.LexerCommandContext)
+            {
+                ANTLRv4Parser.LexerCommandContext lc = context.Parent.Parent as ANTLRv4Parser.LexerCommandContext;
+                if (lc.GetChild(0)?.GetChild(0)?.GetText() == "pushMode")
                 {
-                    found = true;
-                    break;
+                    TerminalNodeImpl term = context.GetChild(0) as TerminalNodeImpl;
+                    string id = term.GetText();
+                    IList<ISymbol> sym_list = _pd.RootScope.LookupType(id);
+                    if (!sym_list.Any())
+                    {
+                        ISymbol sym = new ModeSymbol(id, null);
+                        _pd.RootScope.define(ref sym);
+                    }
+                    List<CombinedScopeSymbol> ref_list = new List<CombinedScopeSymbol>();
+                    foreach (ISymbol sym in sym_list)
+                    {
+                        CombinedScopeSymbol s = new RefSymbol(term.Symbol, sym);
+                        ref_list.Add(s);
+                    }
+                    _pd.Attributes[context] = ref_list;
+                    _pd.Attributes[context.GetChild(0)] = ref_list;
                 }
-            }
-            if (!found)
-            {
-                AntlrGrammarDetails._dependent_grammars.Add(dep, file);
+                else if (lc.GetChild(0)?.GetChild(0)?.GetText() == "channel")
+                {
+                    TerminalNodeImpl term = context.GetChild(0) as TerminalNodeImpl;
+                    string id = term.GetText();
+                    IList<ISymbol> sym_list = _pd.RootScope.LookupType(id);
+                    if (!sym_list.Any())
+                    {
+                        ISymbol sym = new ChannelSymbol(id, null);
+                        _pd.RootScope.define(ref sym);
+                    }
+                    List<CombinedScopeSymbol> ref_list = new List<CombinedScopeSymbol>();
+                    foreach (ISymbol sym in sym_list)
+                    {
+                        CombinedScopeSymbol s = new RefSymbol(term.Symbol, sym);
+                        ref_list.Add(s);
+                    }
+                    _pd.Attributes[context] = ref_list;
+                    _pd.Attributes[context.GetChild(0)] = ref_list;
+                }
             }
         }
     }

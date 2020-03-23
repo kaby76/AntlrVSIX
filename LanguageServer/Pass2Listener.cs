@@ -1,10 +1,9 @@
-﻿namespace LanguageServer
+namespace LanguageServer
 {
     using Antlr4.Runtime.Misc;
     using Antlr4.Runtime.Tree;
     using Symtab;
     using System.Collections.Generic;
-    using System.Linq;
 
     public class Pass2Listener : ANTLRv4ParserBaseListener
     {
@@ -15,92 +14,126 @@
             _pd = pd;
         }
 
-        public override void EnterTerminal([NotNull] ANTLRv4Parser.TerminalContext context)
+        public IParseTree NearestScope(IParseTree node)
         {
-            TerminalNodeImpl first = context.GetChild(0) as TerminalNodeImpl;
-            if (first.Symbol.Type == ANTLRv4Parser.TOKEN_REF)
+            for (; node != null; node = node.Parent)
             {
-                string id = first.GetText();
-                IList<ISymbol> list = _pd.RootScope.LookupType(id);
-                if (!list.Any())
+                _pd.Attributes.TryGetValue(node, out IList<CombinedScopeSymbol> list);
+                if (list != null)
                 {
-                    ISymbol sym = new TerminalSymbol(id, first.Symbol);
-                    _pd.RootScope.define(ref sym);
+                    if (list.Count == 1 && list[0] is IScope)
+                    {
+                        return node;
+                    }
                 }
-                List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
-                foreach (ISymbol sym in list)
-                {
-                    CombinedScopeSymbol s = new RefSymbol(first.Symbol, sym);
-                    new_attrs.Add(s);
-                }
-                _pd.Attributes[context] = new_attrs;
-                _pd.Attributes[context.GetChild(0)] = new_attrs;
             }
+            return null;
         }
 
-        public override void EnterRuleref([NotNull] ANTLRv4Parser.RulerefContext context)
+        public IScope GetScope(IParseTree node)
         {
-            TerminalNodeImpl first = context.GetChild(0) as TerminalNodeImpl;
-            string id = context.GetChild(0).GetText();
-            IList<ISymbol> list = _pd.RootScope.LookupType(id);
-            if (!list.Any())
+            if (node == null)
             {
-                ISymbol sym = new NonterminalSymbol(id, first.Symbol);
-                _pd.RootScope.define(ref sym);
+                return null;
             }
-            List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
-            foreach (ISymbol sym in list)
+
+            _pd.Attributes.TryGetValue(node, out IList<CombinedScopeSymbol> list);
+            if (list != null)
             {
-                CombinedScopeSymbol s = new RefSymbol(first.Symbol, sym);
-                new_attrs.Add(s);
+                if (list.Count == 1 && list[0] is IScope)
+                {
+                    return list[0] as IScope;
+                }
             }
-            _pd.Attributes[context] = new_attrs;
-            _pd.Attributes[context.GetChild(0)] = new_attrs;
+            return null;
+        }
+
+        public override void EnterGrammarSpec([NotNull] ANTLRv4Parser.GrammarSpecContext context)
+        {
+            _pd.Attributes[context] = new List<CombinedScopeSymbol>() { (CombinedScopeSymbol)_pd.RootScope };
+        }
+
+        public override void EnterParserRuleSpec([NotNull] ANTLRv4Parser.ParserRuleSpecContext context)
+        {
+            int i;
+            for (i = 0; i < context.ChildCount; ++i)
+            {
+                if (!(context.GetChild(i) is TerminalNodeImpl))
+                {
+                    continue;
+                }
+
+                TerminalNodeImpl c = context.GetChild(i) as TerminalNodeImpl;
+                if (c.Symbol.Type == ANTLRv4Lexer.RULE_REF)
+                {
+                    break;
+                }
+            }
+            if (i == context.ChildCount)
+            {
+                return;
+            }
+
+            TerminalNodeImpl rule_ref = context.GetChild(i) as TerminalNodeImpl;
+            string id = rule_ref.GetText();
+            ISymbol sym = new NonterminalSymbol(id, rule_ref.Symbol);
+            _pd.RootScope.define(ref sym);
+            CombinedScopeSymbol s = (CombinedScopeSymbol)sym;
+            _pd.Attributes[context] = new List<CombinedScopeSymbol>() { s };
+            _pd.Attributes[context.GetChild(i)] = new List<CombinedScopeSymbol>() { s };
+        }
+
+        public override void EnterLexerRuleSpec([NotNull] ANTLRv4Parser.LexerRuleSpecContext context)
+        {
+            int i;
+            for (i = 0; i < context.ChildCount; ++i)
+            {
+                if (!(context.GetChild(i) is TerminalNodeImpl))
+                {
+                    continue;
+                }
+
+                TerminalNodeImpl c = context.GetChild(i) as TerminalNodeImpl;
+                if (c.Symbol.Type == ANTLRv4Lexer.TOKEN_REF)
+                {
+                    break;
+                }
+            }
+            if (i == context.ChildCount)
+            {
+                return;
+            }
+
+            TerminalNodeImpl token_ref = context.GetChild(i) as TerminalNodeImpl;
+            string id = token_ref.GetText();
+            ISymbol sym = new TerminalSymbol(id, token_ref.Symbol);
+            _pd.RootScope.define(ref sym);
+            CombinedScopeSymbol s = (CombinedScopeSymbol)sym;
+            _pd.Attributes[context] = new List<CombinedScopeSymbol>() { s };
+            _pd.Attributes[context.GetChild(i)] = new List<CombinedScopeSymbol>() { s };
         }
 
         public override void EnterId([NotNull] ANTLRv4Parser.IdContext context)
         {
-            if (context.Parent is ANTLRv4Parser.LexerCommandExprContext && context.Parent.Parent is ANTLRv4Parser.LexerCommandContext)
+            if (context.Parent is ANTLRv4Parser.ModeSpecContext)
             {
-                ANTLRv4Parser.LexerCommandContext lc = context.Parent.Parent as ANTLRv4Parser.LexerCommandContext;
-                if (lc.GetChild(0)?.GetChild(0)?.GetText() == "pushMode")
-                {
-                    TerminalNodeImpl term = context.GetChild(0) as TerminalNodeImpl;
-                    string id = term.GetText();
-                    IList<ISymbol> sym_list = _pd.RootScope.LookupType(id);
-                    if (!sym_list.Any())
-                    {
-                        ISymbol sym = new ModeSymbol(id, null);
-                        _pd.RootScope.define(ref sym);
-                    }
-                    List<CombinedScopeSymbol> ref_list = new List<CombinedScopeSymbol>();
-                    foreach (ISymbol sym in sym_list)
-                    {
-                        CombinedScopeSymbol s = new RefSymbol(term.Symbol, sym);
-                        ref_list.Add(s);
-                    }
-                    _pd.Attributes[context] = ref_list;
-                    _pd.Attributes[context.GetChild(0)] = ref_list;
-                }
-                else if (lc.GetChild(0)?.GetChild(0)?.GetText() == "channel")
-                {
-                    TerminalNodeImpl term = context.GetChild(0) as TerminalNodeImpl;
-                    string id = term.GetText();
-                    IList<ISymbol> sym_list = _pd.RootScope.LookupType(id);
-                    if (!sym_list.Any())
-                    {
-                        ISymbol sym = new ChannelSymbol(id, null);
-                        _pd.RootScope.define(ref sym);
-                    }
-                    List<CombinedScopeSymbol> ref_list = new List<CombinedScopeSymbol>();
-                    foreach (ISymbol sym in sym_list)
-                    {
-                        CombinedScopeSymbol s = new RefSymbol(term.Symbol, sym);
-                        ref_list.Add(s);
-                    }
-                    _pd.Attributes[context] = ref_list;
-                    _pd.Attributes[context.GetChild(0)] = ref_list;
-                }
+                TerminalNodeImpl term = context.GetChild(0) as TerminalNodeImpl;
+                string id = term.GetText();
+                ISymbol sym = new ModeSymbol(id, term.Symbol);
+                _pd.RootScope.define(ref sym);
+                CombinedScopeSymbol s = (CombinedScopeSymbol)sym;
+                _pd.Attributes[context] = new List<CombinedScopeSymbol>() { s };
+                _pd.Attributes[context.GetChild(0)] = new List<CombinedScopeSymbol>() { s };
+            }
+            else if (context.Parent is ANTLRv4Parser.IdListContext && context.Parent?.Parent is ANTLRv4Parser.ChannelsSpecContext)
+            {
+                TerminalNodeImpl term = context.GetChild(0) as TerminalNodeImpl;
+                string id = term.GetText();
+                ISymbol sym = new ChannelSymbol(id, term.Symbol);
+                _pd.RootScope.define(ref sym);
+                CombinedScopeSymbol s = (CombinedScopeSymbol)sym;
+                _pd.Attributes[context] = new List<CombinedScopeSymbol>() { s };
+                _pd.Attributes[term] = new List<CombinedScopeSymbol>() { s };
             }
         }
     }
