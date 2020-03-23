@@ -13,6 +13,10 @@ replace, command completion, reformat, and go to visitor/listener.
 Instead of providing railroad diagrams and ATN graphs,
 this extension focuses on features useful for maintaining grammars,
 i.e., refactoring grammars in order to make them cleaner, more readable, and more efficient.
+For example, implemented to one degree or another are string literal folding, parser rule orderings,
+useless rule elimination, split combined grammars, combine split grammars,
+Flex/Bison import, removal of indirect left recursion,
+rule folding, rule unfolding, rule packing, and a "linter for Antlr grammars".
 
 The source code for the extension is open source, free of charge, and free of ads. For the latest developments on the extension,
 check out my [blog](http://codinggorilla.com).
