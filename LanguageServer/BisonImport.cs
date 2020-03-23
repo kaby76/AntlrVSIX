@@ -4,6 +4,8 @@ using Antlr4.Runtime.Tree;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
+
 
 namespace LanguageServer
 {
@@ -13,6 +15,7 @@ namespace LanguageServer
     {
         private static void Try(string input, ref Dictionary<string,string> results)
         {
+            bool convert_undefined_to_terminals = true;
             var now = DateTime.Now.ToString();
             StringBuilder errors = new StringBuilder();
             StringBuilder sb = new StringBuilder();
@@ -75,6 +78,37 @@ namespace LanguageServer
                             var cap_tok = tok.Length == 1 ? Char.ToUpper(tok[0]).ToString() :
                                 (Char.ToUpper(tok[0]) + tok.Substring(1));
                             terminals.Add(tok, new Tuple<string, string>(tag, cap_tok));
+                        }
+                    }
+                }
+            }
+
+            if (convert_undefined_to_terminals)
+            {
+                foreach (Tuple<string, List<List<string>>> r in listener.rules)
+                {
+                    List<List<string>> rhs = r.Item2;
+                    foreach (List<string> s in rhs)
+                    {
+                        foreach (string c in s)
+                        {
+                            if (listener.rules.Where(rr => rr.Item1 == c).Any())
+                                continue;
+                            if (terminals.ContainsKey(c))
+                                continue;
+                            if (c[0] == '\'')
+                                continue;
+                            if (c == "error")
+                                continue;
+                            // RHS symbol is not a non-terminal and not a %token terminal.
+                            // Enter it as a terminal.
+                            var tag = "";
+                            var tok = c;
+                            var cap_tok = tok.Length == 1 ? Char.ToUpper(tok[0]).ToString() :
+                                (Char.ToUpper(tok[0]) + tok.Substring(1));
+                            terminals.Add(tok, new Tuple<string, string>(tag, cap_tok));
+                            // Note that in the error list.
+                            errors.AppendLine("Symbol " + c + " not declared, assuming it is a terminal.");
                         }
                     }
                 }
