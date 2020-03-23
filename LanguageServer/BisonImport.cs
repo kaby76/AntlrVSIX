@@ -11,19 +11,22 @@ namespace LanguageServer
 
     public class BisonImport
     {
-        private static string Try(string input)
+        private static void Try(string input, ref Dictionary<string,string> results)
         {
+            StringBuilder errors = new StringBuilder();
             StringBuilder sb = new StringBuilder();
             AntlrFileStream str = new AntlrFileStream(input);
             BisonLexer lexer = new BisonLexer(str);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             BisonParser parser = new BisonParser(tokens);
-            BisonErrorListener<IToken> elistener = new BisonErrorListener<IToken>(parser, lexer, tokens);
+            BisonErrorListener<IToken> elistener = new BisonErrorListener<IToken>(parser, lexer, tokens, errors);
             parser.AddErrorListener(elistener);
             BisonParser.InputContext tree = parser.input();
+            var error_file_name = input.Replace(".g4", ".txt");
             if (elistener.had_error)
             {
-                return null;
+                results.Add(input.Replace(".y", ".txt"), errors.ToString());
+                return;
             }
 
             // First, collect information about the grammar.
@@ -122,11 +125,8 @@ namespace LanguageServer
             {
                 sb.AppendLine("error : ERROR ;");
             }
-
-
-
-
-            return sb.ToString();
+            results.Add(input.Replace(".y", ".txt"), errors.ToString());
+            results.Add(input.Replace(".y", ".g4"), sb.ToString());
         }
 
         public static Dictionary<string, string> ImportGrammars(List<string> args)
@@ -134,10 +134,7 @@ namespace LanguageServer
             Dictionary<string, string> result = new Dictionary<string, string>();
             foreach (var f in args)
             {
-                var new_code = Try(f);
-                var antlr = f.Replace(".y", ".g4");
-                if (new_code != null)
-                    result.Add(antlr, new_code);
+                Try(f, ref result);
             }
             return result;
         }
