@@ -37,6 +37,7 @@
 
         public IEnumerable<ITagSpan<ClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
+            // Checks to partially fix https://github.com/kaby76/AntlrVSIX/issues/31#.
             AntlrLanguageClient alc = AntlrLanguageClient.Instance;
             if (alc == null)
             {
