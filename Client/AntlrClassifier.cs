@@ -27,10 +27,6 @@
                 _buffer = buffer;
                 _buffer.Changed += new EventHandler<TextContentChangedEventArgs>(OnTextChanged);
                 string ffn = _buffer.GetFFN().Result;
-                if (ffn == null)
-                {
-                    return;
-                }
             }
             catch (Exception)
             {
@@ -48,6 +44,11 @@
             }
             string ffn = _buffer.GetFFN().Result;
             if (ffn == null)
+            {
+                yield break;
+            }
+            LanguageServer.IGrammarDescription _grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
+            if (_grammar_description == null)
             {
                 yield break;
             }
@@ -200,6 +201,17 @@
             }
 
             string ffn = _buffer.GetFFN().Result;
+            if (ffn == null)
+            {
+                return;
+            }
+
+            LanguageServer.IGrammarDescription _grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
+            if (_grammar_description == null)
+            {
+                return;
+            }
+
             Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(ffn);
             if (document == null)
             {
