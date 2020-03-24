@@ -93,6 +93,7 @@ result in faster parsers).
 
 * Import of Flex/Bison/Yacc grammars.
 * Generalized fold/unfold/pack grammar rule refactorings.
+* Adjust Antlr4BuildTasks options to directly reflect options for the Java Antlr Tool, using the descriptions in the Antlr documentation.
 * Bug fixes.
 
 ## Release notes for v5.5:
