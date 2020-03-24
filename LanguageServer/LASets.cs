@@ -12,18 +12,20 @@
     internal class LASets
     {
         private Parser _parser;
-        private readonly AntlrInputStream _input_stream;
         private CommonTokenStream _token_stream;
         private List<IToken> _input;
         private int _cursor;
         private readonly Dictionary<Pair<ATNState, int>, bool> _visited = new Dictionary<Pair<ATNState, int>, bool>();
         private HashSet<ATNState> _stop_states;
         private HashSet<ATNState> _start_states;
+        private readonly bool _log_parse = false;
+        private readonly bool _log_closure = false;
 
         private class Edge
         {
             public ATNState _from;
             public ATNState _to;
+            public ATNState _follow;
             public TransitionType _type;
             public IntervalSet _label;
             public int _index_at_transition;
@@ -40,7 +42,6 @@
             _input = new List<IToken>();
             _parser = parser;
             _token_stream = token_stream;
-            //_cursor = _token_stream.GetTokens().Select(t => t.Text == "." ? t.TokenIndex : 0).Max();
             _stop_states = new HashSet<ATNState>();
             foreach (ATNState s in parser.Atn.ruleToStopState.Select(t => parser.Atn.states[t.stateNumber]))
             {
@@ -58,40 +59,83 @@
             {
                 IToken token = _token_stream.LT(offset++);
                 _input.Add(token);
+                _cursor = token.TokenIndex;
                 if (token.Type == TokenConstants.EOF)
                 {
                     break;
                 }
-                _cursor = token.TokenIndex;
+                //if (token.Line >= line && token.Column >= col)
+                //{
+                //    break;
+                //}
             }
-            List<List<Edge>> all_parses = EnterState(null);
+            _token_stream.Seek(currentIndex);
 
-            IntervalSet result = new IntervalSet();
-            foreach (List<Edge> p in all_parses)
+            List<List<Edge>> all_parses = EnterState(new Edge()
             {
-                HashSet<ATNState> set = ComputeSingle(p);
-                foreach (ATNState s in set)
+                _index = 0,
+                _index_at_transition = 0,
+                _to = _parser.Atn.states[0],
+                _type = TransitionType.EPSILON
+            });
+            // Remove last token on input.
+            _input.RemoveAt(_input.Count - 1);
+            // Eliminate all paths that don't consume all input.
+            List<List<Edge>> temp = new List<List<Edge>>();
+            if (all_parses != null)
+            {
+                foreach (List<Edge> p in all_parses)
                 {
-                    foreach (Transition t in s.TransitionsArray)
+                    //System.Console.Error.WriteLine(PrintSingle(p));
+                    if (Validate(p, _input))
                     {
-                        switch (t.TransitionType)
+                        temp.Add(p);
+                    }
+                }
+            }
+            all_parses = temp;
+            if (all_parses != null && _log_closure)
+            {
+                foreach (List<Edge> p in all_parses)
+                {
+                    System.Console.Error.WriteLine("Path " + PrintSingle(p));
+                }
+            }
+            IntervalSet result = new IntervalSet();
+            if (all_parses != null)
+            {
+                foreach (List<Edge> p in all_parses)
+                {
+                    HashSet<ATNState> set = ComputeSingle(p);
+                    if (_log_closure)
+                    {
+                        System.Console.Error.WriteLine("All states for path "
+                                                       + string.Join(" ", set.ToList()));
+                    }
+
+                    foreach (ATNState s in set)
+                    {
+                        foreach (Transition t in s.TransitionsArray)
                         {
-                            case TransitionType.RULE:
-                                break;
+                            switch (t.TransitionType)
+                            {
+                                case TransitionType.RULE:
+                                    break;
 
-                            case TransitionType.PREDICATE:
-                                break;
+                                case TransitionType.PREDICATE:
+                                    break;
 
-                            case TransitionType.WILDCARD:
-                                break;
+                                case TransitionType.WILDCARD:
+                                    break;
 
-                            default:
-                                if (!t.IsEpsilon)
-                                {
-                                    result.AddAll(t.Label);
-                                }
+                                default:
+                                    if (!t.IsEpsilon)
+                                    {
+                                        result.AddAll(t.Label);
+                                    }
 
-                                break;
+                                    break;
+                            }
                         }
                     }
                 }
@@ -111,39 +155,36 @@
         private List<List<Edge>> EnterState(Edge t)
         {
             int here = ++entry_value;
-
-            int index_on_transition;
-            int token_index;
-            ATNState state;
-            if (t == null)
-            {
-                token_index = 0;
-                index_on_transition = 0;
-                state = _parser.Atn.states[0];
-            }
-            else
-            {
-                token_index = t._index;
-                index_on_transition = t._index_at_transition;
-                state = t._to;
-            }
+            int index_on_transition = t._index_at_transition;
+            int token_index = t._index;
+            ATNState state = t._to;
             IToken input_token = _input[token_index];
 
-            //System.Console.Error.WriteLine("Entry " + here
-            //                        + " State " + state
-            //                        + " tokenIndex " + token_index
-            //                        + " " + input_token.Text
-            //                        );
+            if (_log_parse)
+            {
+                System.Console.Error.WriteLine("Entry " + here
+                                    + " State " + state
+                                    + " tokenIndex " + token_index
+                                    + " " + input_token.Text
+                                    );
+            }
 
             // Upon reaching the cursor, return match.
             bool at_match = input_token.TokenIndex >= _cursor;
             if (at_match)
             {
-                //System.Console.Error.Write("Entry " + here
-                //                         + " return ");
+                if (_log_parse)
+                {
+                    System.Console.Error.Write("Entry " + here
+                                         + " return ");
+                }
+
                 List<List<Edge>> res = new List<List<Edge>>() { new List<Edge>() { t } };
-                //var str = PrintResult(res);
-                //System.Console.Error.WriteLine(str);
+                if (_log_parse)
+                {
+                    string str = PrintResult(res);
+                    System.Console.Error.WriteLine(str);
+                }
                 return res;
             }
 
@@ -158,11 +199,18 @@
 
             if (_stop_states.Contains(state))
             {
-                //System.Console.Error.Write("Entry " + here
-                //                              + " return ");
+                if (_log_parse)
+                {
+                    System.Console.Error.Write("Entry " + here
+                                              + " return ");
+                }
+
                 List<List<Edge>> res = new List<List<Edge>>() { new List<Edge>() { t } };
-                //var str = PrintResult(res);
-                //System.Console.Error.WriteLine(str);
+                if (_log_parse)
+                {
+                    string str = PrintResult(res);
+                    System.Console.Error.WriteLine(str);
+                }
                 return res;
             }
 
@@ -179,9 +227,10 @@
                             matches = EnterState(new Edge()
                             {
                                 _from = state,
-                                _to = transition.target,
-                                _label = transition.Label,
-                                _type = transition.TransitionType,
+                                _to = rule.target,
+                                _follow = rule.followState,
+                                _label = rule.Label,
+                                _type = rule.TransitionType,
                                 _index = token_index,
                                 _index_at_transition = token_index
                             });
@@ -356,17 +405,23 @@
                 return null;
             }
 
-            //{
-            //    System.Console.Error.Write("Entry " + here
-            //                                  + " return ");
-            //    var str = PrintResult(result);
-            //    System.Console.Error.WriteLine(str);
-            //}
+            if (_log_parse)
+            {
+                System.Console.Error.Write("Entry " + here
+                                              + " return ");
+                string str = PrintResult(result);
+                System.Console.Error.WriteLine(str);
+            }
             return result;
         }
 
         private HashSet<ATNState> closure(ATNState start)
         {
+            if (start == null)
+            {
+                throw new Exception();
+            }
+
             HashSet<ATNState> visited = new HashSet<ATNState>();
             Stack<ATNState> stack = new Stack<ATNState>();
             stack.Push(start);
@@ -403,6 +458,11 @@
                         case TransitionType.PREDICATE:
                             if (CheckPredicate((PredicateTransition)transition))
                             {
+                                if (transition.target == null)
+                                {
+                                    throw new Exception();
+                                }
+
                                 stack.Push(transition.target);
                             }
                             break;
@@ -413,9 +473,13 @@
                         default:
                             if (transition.IsEpsilon)
                             {
+                                if (transition.target == null)
+                                {
+                                    throw new Exception();
+                                }
+
                                 stack.Push(transition.target);
                             }
-
                             break;
                     }
                 }
@@ -427,24 +491,78 @@
         {
             List<Edge> copy = parse.ToList();
             HashSet<ATNState> result = new HashSet<ATNState>();
+            if (_log_closure)
+            {
+                System.Console.Error.WriteLine("Computing closure for the following parse:");
+                System.Console.Error.Write(PrintSingle(parse));
+                System.Console.Error.WriteLine();
+            }
+
+            if (!copy.Any())
+            {
+                return result;
+            }
+
+            Edge last_transaction = copy.First();
+            if (last_transaction == null)
+            {
+                return result;
+            }
+
+            ATNState current_state = last_transaction._to;
+            if (current_state == null)
+            {
+                throw new Exception();
+            }
+
             for (; ; )
             {
-                if (!copy.Any())
+                if (_log_closure)
+                {
+                    System.Console.Error.WriteLine("Getting closure of " + current_state.stateNumber);
+                }
+                HashSet<ATNState> c = closure(current_state);
+                if (_log_closure)
+                {
+                    System.Console.Error.WriteLine("closure " + string.Join(" ", c.Select(s => s.stateNumber)));
+                }
+                bool do_continue = false;
+                ATN atn = current_state.atn;
+                int rule = current_state.ruleIndex;
+                RuleStartState start_state = atn.ruleToStartState[rule];
+                RuleStopState stop_state = atn.ruleToStopState[rule];
+                bool changed = false;
+                foreach (ATNState s in c)
+                {
+                    if (result.Contains(s))
+                    {
+                        continue;
+                    }
+
+                    changed = true;
+                    result.Add(s);
+                    if (s == stop_state)
+                    {
+                        do_continue = true;
+                    }
+                }
+                if (!changed)
                 {
                     break;
                 }
 
-                Edge last_transaction = copy.First();
-                HashSet<ATNState> c = closure(last_transaction._to);
-                foreach (ATNState s in c)
+                if (!do_continue)
                 {
-                    result.Add(s);
-                    if (_stop_states.Contains(s))
-                    {
-                    }
+                    break;
                 }
+
                 for (; ; )
                 {
+                    if (!copy.Any())
+                    {
+                        break;
+                    }
+
                     copy.RemoveAt(0);
                     if (!copy.Any())
                     {
@@ -452,17 +570,163 @@
                     }
 
                     last_transaction = copy.First();
-                    if (_start_states.Contains(last_transaction._from))
+                    if (start_state == last_transaction._from)
                     {
                         copy.RemoveAt(0);
                         if (!copy.Any())
                         {
                             break;
                         }
+
+                        last_transaction = copy.First();
+                        // Get follow state of rule-type transition.
+                        ATNState from_state = last_transaction._from;
+                        if (from_state == null)
+                        {
+                            break;
+                        }
+
+                        ATNState follow_state = last_transaction._follow;
+                        current_state = follow_state;
+                        if (current_state == null)
+                        {
+                            throw new Exception();
+                        }
+
+                        break;
                     }
                 }
             }
             return result;
+        }
+
+        private bool Validate(List<Edge> parse, List<IToken> i)
+        {
+            List<Edge> q = parse.ToList();
+            q.Reverse();
+            List<IToken>.Enumerator ei = _input.GetEnumerator();
+            List<Edge>.Enumerator eq = q.GetEnumerator();
+            bool fei = false;
+            bool feq = false;
+            for (; ; )
+            {
+                fei = ei.MoveNext();
+                IToken v = ei.Current;
+                if (!fei)
+                {
+                    break;
+                }
+
+                bool empty = true;
+                for (; empty;)
+                {
+                    feq = eq.MoveNext();
+                    if (!feq)
+                    {
+                        break;
+                    }
+
+                    Edge x = eq.Current;
+                    switch (x._type)
+                    {
+                        case TransitionType.RULE:
+                            empty = true;
+                            break;
+                        case TransitionType.PREDICATE:
+                            empty = true;
+                            break;
+                        case TransitionType.ACTION:
+                            empty = true;
+                            break;
+                        case TransitionType.ATOM:
+                            empty = false;
+                            break;
+                        case TransitionType.EPSILON:
+                            empty = true;
+                            break;
+                        case TransitionType.INVALID:
+                            empty = true;
+                            break;
+                        case TransitionType.NOT_SET:
+                            empty = false;
+                            break;
+                        case TransitionType.PRECEDENCE:
+                            empty = true;
+                            break;
+                        case TransitionType.SET:
+                            empty = false;
+                            break;
+                        case TransitionType.WILDCARD:
+                            empty = false;
+                            break;
+                        default:
+                            throw new Exception();
+                    }
+                }
+                Edge w = eq.Current;
+                if (w == null && v == null)
+                {
+                    return true;
+                }
+                else if (w == null)
+                {
+                    return false;
+                }
+                else if (v == null)
+                {
+                    return false;
+                }
+
+                switch (w._type)
+                {
+                    case TransitionType.ATOM:
+                        {
+                            IntervalSet set = w._label;
+                            if (set != null && set.Count > 0)
+                            {
+                                if (!set.Contains(v.Type))
+                                {
+                                    return false;
+                                }
+                            }
+                            break;
+                        }
+
+                    case TransitionType.NOT_SET:
+                        {
+                            IntervalSet set = w._label;
+                            set = set.Complement(IntervalSet.Of(TokenConstants.MinUserTokenType, _parser.Atn.maxTokenType));
+                            if (set != null && set.Count > 0)
+                            {
+                                if (!set.Contains(v.Type))
+                                {
+                                    return false;
+                                }
+                            }
+                            break;
+                        }
+
+                    case TransitionType.SET:
+                        {
+                            IntervalSet set = w._label;
+                            if (set != null && set.Count > 0)
+                            {
+                                if (!set.Contains(v.Type))
+                                {
+                                    return false;
+                                }
+                            }
+                            break;
+                        }
+
+                    case TransitionType.WILDCARD:
+                        break;
+
+                    default:
+                        throw new Exception();
+                }
+            }
+            return true;
         }
 
         private string PrintSingle(List<Edge> parse)

@@ -90,31 +90,46 @@
         [JsonRpcMethod(Methods.InitializedName)]
         public async void InitializedName(JToken arg)
         {
-            if (trace)
+            try
             {
-                System.Console.Error.WriteLine("<-- Initialized");
-                System.Console.Error.WriteLine(arg.ToString());
+                if (trace)
+                {
+                    System.Console.Error.WriteLine("<-- Initialized");
+                    System.Console.Error.WriteLine(arg.ToString());
+                }
             }
+            catch (Exception eeks)
+            { }
         }
 
         [JsonRpcMethod(Methods.ShutdownName)]
         public async System.Threading.Tasks.Task<JToken> ShutdownName()
         {
-            if (trace)
+            try
             {
-                System.Console.Error.WriteLine("<-- Shutdown");
+                if (trace)
+                {
+                    System.Console.Error.WriteLine("<-- Shutdown");
+                }
             }
+            catch (Exception eeks)
+            { }
             return null;
         }
 
         [JsonRpcMethod(Methods.ExitName)]
         public async void ExitName()
         {
-            if (trace)
+            try
             {
-                System.Console.Error.WriteLine("<-- Exit");
+                if (trace)
+                {
+                    System.Console.Error.WriteLine("<-- Exit");
+                }
+                server.Exit();
             }
-            server.Exit();
+            catch (Exception eeks)
+            { }
         }
 
         // ======= WINDOW ========
@@ -122,44 +137,64 @@
         [JsonRpcMethod(Methods.WorkspaceDidChangeConfigurationName)]
         public async void WorkspaceDidChangeConfigurationName(JToken arg)
         {
-            if (trace)
+            try
             {
-                System.Console.Error.WriteLine("<-- WorkspaceDidChangeConfiguration");
-                System.Console.Error.WriteLine(arg.ToString());
+                if (trace)
+                {
+                    System.Console.Error.WriteLine("<-- WorkspaceDidChangeConfiguration");
+                    System.Console.Error.WriteLine(arg.ToString());
+                }
+                //var parameter = arg.ToObject<DidChangeConfigurationParams>();
+                //this.server.SendSettings(parameter);
             }
-            //var parameter = arg.ToObject<DidChangeConfigurationParams>();
-            //this.server.SendSettings(parameter);
+            catch (Exception eeks)
+            { }
         }
 
         [JsonRpcMethod(Methods.WorkspaceDidChangeWatchedFilesName)]
         public async void WorkspaceDidChangeWatchedFilesName(JToken arg)
         {
-            if (trace)
+            try
             {
-                System.Console.Error.WriteLine("<-- WorkspaceDidChangeWatchedFiles");
-                System.Console.Error.WriteLine(arg.ToString());
+                if (trace)
+                {
+                    System.Console.Error.WriteLine("<-- WorkspaceDidChangeWatchedFiles");
+                    System.Console.Error.WriteLine(arg.ToString());
+                }
             }
+            catch (Exception eeks)
+            { }
         }
 
         [JsonRpcMethod(Methods.WorkspaceSymbolName)]
         public async System.Threading.Tasks.Task<JToken> WorkspaceSymbolName(JToken arg)
         {
-            if (trace)
+            try
             {
-                System.Console.Error.WriteLine("<-- WorkspaceSymbol");
-                System.Console.Error.WriteLine(arg.ToString());
+                if (trace)
+                {
+                    System.Console.Error.WriteLine("<-- WorkspaceSymbol");
+                    System.Console.Error.WriteLine(arg.ToString());
+                }
             }
+            catch (Exception eeks)
+            { }
             return null;
         }
 
         [JsonRpcMethod(Methods.WorkspaceExecuteCommandName)]
         public async System.Threading.Tasks.Task<JToken> WorkspaceExecuteCommandName(JToken arg)
         {
-            if (trace)
+            try
             {
-                System.Console.Error.WriteLine("<-- WorkspaceExecuteCommand");
-                System.Console.Error.WriteLine(arg.ToString());
+                if (trace)
+                {
+                    System.Console.Error.WriteLine("<-- WorkspaceExecuteCommand");
+                    System.Console.Error.WriteLine(arg.ToString());
+                }
             }
+            catch (Exception eeks)
+            { }
             return null;
         }
 
@@ -297,37 +332,44 @@
         [JsonRpcMethod(Methods.TextDocumentCompletionName)]
         public async System.Threading.Tasks.Task<object[]> TextDocumentCompletionName(JToken arg)
         {
-            if (trace)
+            try
             {
-                System.Console.Error.WriteLine("<-- TextDocumentCompletion");
-                System.Console.Error.WriteLine(arg.ToString());
-            }
-            CompletionParams request = arg.ToObject<CompletionParams>();
-            Document document = CheckDoc(request.TextDocument.Uri);
-            CompletionContext context = request.Context;
-            Position position = request.Position;
-            int line = position.Line;
-            int character = position.Character;
-            int char_index = LanguageServer.Module.GetIndex(line, character, document);
-            if (trace)
-            {
-                System.Console.Error.WriteLine("position index = " + char_index);
-                (int, int) back = LanguageServer.Module.GetLineColumn(char_index, document);
-                System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
-            }
-            List<string> res = LanguageServer.Module.Completion(char_index, document);
-            List<CompletionItem> items = new List<CompletionItem>();
-            foreach (string r in res)
-            {
-                CompletionItem item = new CompletionItem
+                if (trace)
                 {
-                    Label = r,
-                    InsertText = r,
-                    Kind = CompletionItemKind.Variable
-                };
-                items.Add(item);
+                    System.Console.Error.WriteLine("<-- TextDocumentCompletion");
+                    System.Console.Error.WriteLine(arg.ToString());
+                }
+                CompletionParams request = arg.ToObject<CompletionParams>();
+                Document document = CheckDoc(request.TextDocument.Uri);
+                CompletionContext context = request.Context;
+                Position position = request.Position;
+                int line = position.Line;
+                int character = position.Character;
+                int char_index = LanguageServer.Module.GetIndex(line, character, document);
+                if (trace)
+                {
+                    System.Console.Error.WriteLine("position index = " + char_index);
+                    (int, int) back = LanguageServer.Module.GetLineColumn(char_index, document);
+                    System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
+                }
+                List<string> res = LanguageServer.Module.Completion(char_index, document);
+                List<CompletionItem> items = new List<CompletionItem>();
+                foreach (string r in res)
+                {
+                    CompletionItem item = new CompletionItem
+                    {
+                        Label = r,
+                        InsertText = r,
+                        Kind = CompletionItemKind.Variable
+                    };
+                    items.Add(item);
+                }
+                return items.ToArray();
             }
-            return items.ToArray();
+            catch (Exception eeks)
+            {
+            }
+            return null;
         }
 
         [JsonRpcMethod(Methods.TextDocumentCompletionResolveName)]
@@ -890,90 +932,96 @@
         [JsonRpcMethod("CMGetClassifiers")]
         public async System.Threading.Tasks.Task<SymbolInformation[]> CMGetClassifiers(JToken arg)
         {
-            CMGetClassifiersParams request = arg.ToObject<CMGetClassifiersParams>();
-            Document document = CheckDoc(request.TextDocument);
-            int start = request.Start;
-            int end = request.End;
-            if (trace)
+            SymbolInformation[] result = null;
+            try
             {
-                System.Console.Error.WriteLine("<-- CMGetClassifiers");
-                System.Console.Error.WriteLine(arg.ToString());
-                (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
-                System.Console.Error.WriteLine("");
-            }
-            IEnumerable<DocumentSymbol> r = LanguageServer.Module.Get(document);
-            List<SymbolInformation> symbols = new List<SymbolInformation>();
-            foreach (DocumentSymbol s in r)
-            {
-                if (!(start <= s.range.Start.Value && s.range.Start.Value <= end))
+                CMGetClassifiersParams request = arg.ToObject<CMGetClassifiersParams>();
+                Document document = CheckDoc(request.TextDocument);
+                int start = request.Start;
+                int end = request.End;
+                if (trace)
                 {
-                    continue;
+                    System.Console.Error.WriteLine("<-- CMGetClassifiers");
+                    System.Console.Error.WriteLine(arg.ToString());
+                    (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
+                    System.Console.Error.WriteLine("");
                 }
+                IEnumerable<DocumentSymbol> r = LanguageServer.Module.Get(document);
+                List<SymbolInformation> symbols = new List<SymbolInformation>();
+                foreach (DocumentSymbol s in r)
+                {
+                    if (!(start <= s.range.Start.Value && s.range.Start.Value <= end))
+                    {
+                        continue;
+                    }
 
-                SymbolInformation si = new SymbolInformation();
-                if (s.kind == 0)
-                {
-                    si.Kind = SymbolKind.Variable; // Nonterminal
-                }
-                else if (s.kind == 1)
-                {
-                    si.Kind = SymbolKind.Enum; // Terminal
-                }
-                else if (s.kind == 2)
-                {
-                    //si.Kind = 0; // Comment
-                    continue;
-                }
-                else if (s.kind == 3)
-                {
-                    // si.Kind = 0; // Keyword
-                    continue;
-                }
-                else if (s.kind == 4)
-                {
-                    // si.Kind = SymbolKind.Number; // Literal
-                    continue;
-                }
-                else if (s.kind == 5)
-                {
-                    // si.Kind = 0; // Mode
-                    continue;
-                }
-                else if (s.kind == 6)
-                {
-                    // si.Kind = SymbolKind.Enum; // Channel
-                    continue;
-                }
-                else
-                {
-                    // si.Kind = 0; // Default.
-                    continue;
-                }
+                    SymbolInformation si = new SymbolInformation();
+                    if (s.kind == 0)
+                    {
+                        si.Kind = SymbolKind.Variable; // Nonterminal
+                    }
+                    else if (s.kind == 1)
+                    {
+                        si.Kind = SymbolKind.Enum; // Terminal
+                    }
+                    else if (s.kind == 2)
+                    {
+                        //si.Kind = 0; // Comment
+                        continue;
+                    }
+                    else if (s.kind == 3)
+                    {
+                        // si.Kind = 0; // Keyword
+                        continue;
+                    }
+                    else if (s.kind == 4)
+                    {
+                        // si.Kind = SymbolKind.Number; // Literal
+                        continue;
+                    }
+                    else if (s.kind == 5)
+                    {
+                        // si.Kind = 0; // Mode
+                        continue;
+                    }
+                    else if (s.kind == 6)
+                    {
+                        // si.Kind = SymbolKind.Enum; // Channel
+                        continue;
+                    }
+                    else
+                    {
+                        // si.Kind = 0; // Default.
+                        continue;
+                    }
 
-                si.Name = s.name;
-                si.Location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location
+                    si.Name = s.name;
+                    si.Location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location
+                    {
+                        Uri = request.TextDocument
+                    };
+                    (int, int) lcs = LanguageServer.Module.GetLineColumn(s.range.Start.Value, document);
+                    (int, int) lce = LanguageServer.Module.GetLineColumn(s.range.End.Value, document);
+                    si.Location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range
+                    {
+                        Start = new Position(lcs.Item1, lcs.Item2),
+                        End = new Position(lce.Item1, lce.Item2)
+                    };
+                    symbols.Add(si);
+                }
+                if (trace)
                 {
-                    Uri = request.TextDocument
-                };
-                (int, int) lcs = LanguageServer.Module.GetLineColumn(s.range.Start.Value, document);
-                (int, int) lce = LanguageServer.Module.GetLineColumn(s.range.End.Value, document);
-                si.Location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range
-                {
-                    Start = new Position(lcs.Item1, lcs.Item2),
-                    End = new Position(lce.Item1, lce.Item2)
-                };
-                symbols.Add(si);
+                    System.Console.Error.Write("returning ");
+                    System.Console.Error.WriteLine(string.Join(" ", symbols.Select(s =>
+                    {
+                        SymbolInformation v = s;
+                        return "<" + v.Name + "," + v.Kind + ">";
+                    })));
+                }
+                result = symbols.ToArray();
             }
-            if (trace)
-            {
-                System.Console.Error.Write("returning ");
-                System.Console.Error.WriteLine(string.Join(" ", symbols.Select(s =>
-                {
-                    SymbolInformation v = s;
-                    return "<" + v.Name + "," + v.Kind + ">";
-                })));
-            }
-            SymbolInformation[] result = symbols.ToArray();
+            catch (Exception eek)
+            { }
             return result;
         }
 
