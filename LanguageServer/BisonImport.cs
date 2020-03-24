@@ -1,4 +1,4 @@
-﻿// Template generated code from Antlr4BuildTasks.Template v 2.1
+﻿// Template generated code from Antlr4BuildTasks.Template v 3.0
 
 using Antlr4.Runtime.Tree;
 using System;
