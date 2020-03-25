@@ -21,7 +21,7 @@ so Antlrvsix does not enforce this when splitting a combined
 grammar.
 
 Note: This refactoring is a "fold" transformation
-as described in Halupka, Ivan, and J·n Koll·r. "Catalog of grammar refactoring patterns." Open Computer Science 4.4 (2014): 231-241.
+as described in Halupka, Ivan, and J√°n Koll√°r. "Catalog of grammar refactoring patterns." Open Computer Science 4.4 (2014): 231-241.
 However, this refactoring only applies to lexer symbols.
 
 ### Example
@@ -225,6 +225,10 @@ have one grammar for a language.
 Splitting a grammar converts a combined grammar into
 split parser and lexer grammars. Arguments to the Antlr
 tool are applied to the resulting grammars.
+
+Note, in splitting grammars, an option is inserted into the parser
+grammar for tokenVocab. When combining, the tokenVocab is removed.
+If there are no other options in the options spec, then it is removed.
 
 _Before_
 
