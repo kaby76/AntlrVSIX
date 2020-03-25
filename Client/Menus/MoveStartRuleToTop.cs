@@ -134,7 +134,7 @@
                 {
                     return;
                 }
-                Dictionary<string, string> changes = alc.CMMoveStartRuleToTopServer(ffn, pos);
+                Dictionary<string, string> changes = alc.CMMoveStartRuleToTop(ffn, pos);
                 foreach (KeyValuePair<string, string> pair in changes)
                 {
                     string fn = pair.Key;

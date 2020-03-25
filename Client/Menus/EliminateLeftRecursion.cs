@@ -8,15 +8,14 @@
     using System.Collections.Generic;
     using System.ComponentModel.Design;
 
-    internal class SplitCombineGrammars
+    internal class EliminateLeftRecursion
     {
         private readonly AntlrLanguageClient _package;
         private readonly MenuCommand _menu_item1;
-        private readonly MenuCommand _menu_item2;
         private string current_grammar_ffn;
 
 
-        private SplitCombineGrammars(AntlrLanguageClient package)
+        private EliminateLeftRecursion(AntlrLanguageClient package)
         {
             _package = package ?? throw new ArgumentNullException("package");
             OleMenuCommandService commandService = ((IServiceProvider)ServiceProvider).GetService(
@@ -26,34 +25,14 @@
             {
                 throw new ArgumentNullException("OleMenuCommandService");
             }
-
-            //{
-            //    // Set up hook for context menu.
-            //    CommandID menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidVSPackageCommandCodeWindowContextMenuCmdSet), 0x7002);
-            //    _menu_item1 = new MenuCommand(MenuItemCallbackFor, menuCommandID)
-            //    {
-            //        Enabled = true,
-            //        Visible = true
-            //    };
-            //    commandService.AddCommand(_menu_item1);
-            //}
             {
-                CommandID menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidMenuAndCommandsCmdSet), 0x7017);
+                CommandID menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidMenuAndCommandsCmdSet), 0x7020);
                 _menu_item1 = new MenuCommand(MenuItemCallbackSplit, menuCommandID)
                 {
                     Enabled = true,
                     Visible = true
                 };
                 commandService.AddCommand(_menu_item1);
-            }
-            {
-                CommandID menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidMenuAndCommandsCmdSet), 0x7018);
-                _menu_item2 = new MenuCommand(MenuItemCallbackCombine, menuCommandID)
-                {
-                    Enabled = true,
-                    Visible = true
-                };
-                commandService.AddCommand(_menu_item2);
             }
         }
 
@@ -79,13 +58,13 @@
             }
         }
 
-        public static SplitCombineGrammars Instance { get; private set; }
+        public static EliminateLeftRecursion Instance { get; private set; }
 
         private AntlrLanguageClient ServiceProvider => _package;
 
         public static void Initialize(AntlrLanguageClient package)
         {
-            Instance = new SplitCombineGrammars(package);
+            Instance = new EliminateLeftRecursion(package);
         }
 
         private void MenuItemCallbackSplit(object sender, EventArgs e)
@@ -103,7 +82,7 @@
             try
             {
                 ////////////////////////
-                /// Reorder parser productions.
+                /// Eliminate left recursion.
                 ////////////////////////
 
                 IVsTextManager manager = ((IServiceProvider)ServiceProvider).GetService(typeof(VsTextManagerClass)) as IVsTextManager;
@@ -146,7 +125,7 @@
                 {
                     return;
                 }
-                Dictionary<string, string> changes = alc.CMSplitCombineGrammars(ffn, pos, split);
+                Dictionary<string, string> changes = alc.CMEliminateLeftRecursion(ffn, pos);
                 EnvDTE.Project project = null;
                 string the_namespace = "";
                 for (; ; )
@@ -179,3 +158,4 @@
         }
     }
 }
+

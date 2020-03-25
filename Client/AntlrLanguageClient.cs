@@ -55,6 +55,7 @@
             MoveStartRuleToTop.Initialize(this);
             Reorder.Initialize(this);
             SplitCombineGrammars.Initialize(this);
+            EliminateLeftRecursion.Initialize(this);
         }
 
         public event AsyncEventHandler<EventArgs> StartAsync;
@@ -145,7 +146,7 @@
             return Task.CompletedTask;
         }
 
-        public SymbolInformation[] CMGetClassifiersSendServer(int start, int end, string ffn)
+        public SymbolInformation[] CMGetClassifiers(int start, int end, string ffn)
         {
             try
             {
@@ -168,7 +169,7 @@
             return null;
         }
 
-        public int CMNextSymbolSendServer(string ffn, int pos, bool forward)
+        public int CMNextSymbol(string ffn, int pos, bool forward)
         {
             try
             {
@@ -191,7 +192,7 @@
             return -1;
         }
 
-        public CMGotoResult CMGotoVisitorSendServer(string ffn, int pos)
+        public CMGotoResult CMGotoVisitor(string ffn, int pos)
         {
             try
             {
@@ -213,7 +214,7 @@
             return null;
         }
 
-        public CMGotoResult CMGotoListenerSendServer(string ffn, bool is_enter, int pos)
+        public CMGotoResult CMGotoListener(string ffn, bool is_enter, int pos)
         {
             try
             {
@@ -236,7 +237,7 @@
             return null;
         }
 
-        public Dictionary<string, string> CMReplaceLiteralsServer(string ffn, int pos)
+        public Dictionary<string, string> CMReplaceLiterals(string ffn, int pos)
         {
             try
             {
@@ -258,7 +259,7 @@
             return null;
         }
 
-        public Dictionary<string, string> CMRemoveUselessParserProductionsServer(string ffn, int pos)
+        public Dictionary<string, string> CMRemoveUselessParserProductions(string ffn, int pos)
         {
             try
             {
@@ -280,7 +281,7 @@
             return null;
         }
 
-        public Dictionary<string, string> CMMoveStartRuleToTopServer(string ffn, int pos)
+        public Dictionary<string, string> CMMoveStartRuleToTop(string ffn, int pos)
         {
             try
             {
@@ -302,7 +303,7 @@
             return null;
         }
 
-        public Dictionary<string, string> CMReorderParserRulesServer(string ffn, int pos, ReorderType reorder_type)
+        public Dictionary<string, string> CMReorderParserRules(string ffn, int pos, ReorderType reorder_type)
         {
             try
             {
@@ -327,7 +328,7 @@
         }
 
 
-        public Dictionary<string, string> CMSplitCombineGrammarsServer(string ffn, int pos, bool split)
+        public Dictionary<string, string> CMSplitCombineGrammars(string ffn, int pos, bool split)
         {
             try
             {
@@ -351,7 +352,7 @@
             return null;
         }
 
-        public Dictionary<string, string> CMImportGrammarsServer(List<string> ffn)
+        public Dictionary<string, string> CMImportGrammars(List<string> ffn)
         {
             try
             {
@@ -362,6 +363,28 @@
 
                 List<string> p = ffn;
                 Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMImportGrammars", p).Result;
+                return result;
+            }
+            catch (Exception)
+            {
+            }
+            return null;
+        }
+
+        public Dictionary<string, string> CMEliminateLeftRecursion(string ffn, int pos)
+        {
+            try
+            {
+                if (_rpc == null)
+                {
+                    return null;
+                }
+
+                CMEliminateLeftRecursionParams p = new CMEliminateLeftRecursionParams();
+                Uri uri = new Uri(ffn);
+                p.TextDocument = uri;
+                p.Pos = pos;
+                Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMEliminateLeftRecursion", p).Result;
                 return result;
             }
             catch (Exception)

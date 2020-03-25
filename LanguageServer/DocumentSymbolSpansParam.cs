@@ -69,4 +69,12 @@
         public int Pos;
         public bool Split;
     }
+
+    public class CMEliminateLeftRecursionParams
+    {
+        public CMEliminateLeftRecursionParams() { }
+        public System.Uri TextDocument;
+        public int Pos;
+    }
+
 }

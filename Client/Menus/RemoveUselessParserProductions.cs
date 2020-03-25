@@ -134,7 +134,7 @@
                 {
                     return;
                 }
-                Dictionary<string, string> changes = alc.CMRemoveUselessParserProductionsServer(ffn, pos);
+                Dictionary<string, string> changes = alc.CMRemoveUselessParserProductions(ffn, pos);
                 foreach (KeyValuePair<string, string> pair in changes)
                 {
                     string fn = pair.Key;

@@ -1359,5 +1359,30 @@
             { }
             return changes;
         }
+
+        [JsonRpcMethod("CMEliminateLeftRecursion")]
+        public async System.Threading.Tasks.Task<Dictionary<string, string>> CMEliminateLeftRecursion(JToken arg)
+        {
+            Dictionary<string, string> s = null;
+            try
+            {
+                CMEliminateLeftRecursionParams request = arg.ToObject<CMEliminateLeftRecursionParams>();
+                Document document = CheckDoc(request.TextDocument);
+                int pos = request.Pos;
+                if (trace)
+                {
+                    System.Console.Error.WriteLine("<-- CMEliminateLeftRecursion");
+                    System.Console.Error.WriteLine(arg.ToString());
+                    (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
+                    System.Console.Error.WriteLine("");
+                }
+                s = Transform.EliminateLeftRecursion(pos, document);
+            }
+            catch (Exception)
+            { }
+            return s;
+        }
+
+
     }
 }

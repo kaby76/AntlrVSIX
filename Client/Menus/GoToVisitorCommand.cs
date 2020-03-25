@@ -174,12 +174,12 @@
                 CMGotoResult symbol = null;
                 if (visitor)
                 {
-                    symbol = alc.CMGotoVisitorSendServer(orig_ffn, pos);
+                    symbol = alc.CMGotoVisitor(orig_ffn, pos);
                 }
                 else
                 {
                     bool is_enter = CtrlKeyState.GetStateForView(xxx).Enabled;
-                    symbol = alc.CMGotoListenerSendServer(orig_ffn, is_enter, pos);
+                    symbol = alc.CMGotoListener(orig_ffn, is_enter, pos);
                 }
                 if (symbol == null)
                 {
