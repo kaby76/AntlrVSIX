@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Graphs
 {
@@ -60,11 +58,11 @@ namespace Graphs
     public class DepthFirstOrder<T, E> : IEnumerable<T>
         where E : IEdge<T>
     {
-        private Dictionary<T, bool> marked; // marked[v] = has v been marked in dfs?
-        private Dictionary<T, int> pre; // pre[v]    = preorder  number of v
-        private Dictionary<T, int> post; // post[v]   = postorder number of v
-        private Queue<T> preorder; // vertices in preorder
-        private Queue<T> postorder; // vertices in postorder
+        private readonly Dictionary<T, bool> marked; // marked[v] = has v been marked in dfs?
+        private readonly Dictionary<T, int> pre; // pre[v]    = preorder  number of v
+        private readonly Dictionary<T, int> post; // post[v]   = postorder number of v
+        private readonly Queue<T> preorder; // vertices in preorder
+        private readonly Queue<T> postorder; // vertices in postorder
         private int preCounter; // counter or preorder numbering
         private int postCounter; // counter for postorder numbering
 
@@ -75,15 +73,32 @@ namespace Graphs
         public DepthFirstOrder(IGraph<T, E> graph, IEnumerable<T> subset_vertices)
         {
             pre = new Dictionary<T, int>();
-            foreach (var v in graph.Vertices) pre[v] = 0;
+            foreach (T v in graph.Vertices)
+            {
+                pre[v] = 0;
+            }
+
             post = new Dictionary<T, int>();
-            foreach (var v in graph.Vertices) post[v] = 0;
+            foreach (T v in graph.Vertices)
+            {
+                post[v] = 0;
+            }
+
             postorder = new Queue<T>();
             preorder = new Queue<T>();
             marked = new Dictionary<T, bool>();
-            foreach (var v in graph.Vertices) marked[v] = false;
+            foreach (T v in graph.Vertices)
+            {
+                marked[v] = false;
+            }
+
             foreach (T v in subset_vertices)
-                if (!marked[v]) dfs(graph, v);
+            {
+                if (!marked[v])
+                {
+                    dfs(graph, v);
+                }
+            }
         }
 
         /**
@@ -93,15 +108,32 @@ namespace Graphs
         public DepthFirstOrder(IGraph<T, E> graph)
         {
             pre = new Dictionary<T, int>();
-            foreach (var v in graph.Vertices) pre[v] = 0;
+            foreach (T v in graph.Vertices)
+            {
+                pre[v] = 0;
+            }
+
             post = new Dictionary<T, int>();
-            foreach (var v in graph.Vertices) post[v] = 0;
+            foreach (T v in graph.Vertices)
+            {
+                post[v] = 0;
+            }
+
             postorder = new Queue<T>();
             preorder = new Queue<T>();
             marked = new Dictionary<T, bool>();
-            foreach (var v in graph.Vertices) marked[v] = false;
             foreach (T v in graph.Vertices)
-                if (!marked[v]) dfs(graph, v);
+            {
+                marked[v] = false;
+            }
+
+            foreach (T v in graph.Vertices)
+            {
+                if (!marked[v])
+                {
+                    dfs(graph, v);
+                }
+            }
         }
 
         // run DFS in digraph G from vertex v and compute preorder/postorder
@@ -110,7 +142,7 @@ namespace Graphs
             marked[v] = true;
             pre[v] = preCounter++;
             preorder.Enqueue(v);
-            foreach (var w in G.Successors(v))
+            foreach (T w in G.Successors(v))
             {
                 if (!marked[w])
                 {
@@ -189,7 +221,10 @@ namespace Graphs
         {
             Stack<T> reverse = new Stack<T>();
             foreach (T v in postorder)
+            {
                 reverse.Push(v);
+            }
+
             return reverse;
         }
 
@@ -271,7 +306,7 @@ namespace Graphs
             DepthFirstOrder<IntWrapper, DirectedEdge<IntWrapper>> dfs = new DepthFirstOrder<IntWrapper, DirectedEdge<IntWrapper>>(G);
             System.Console.WriteLine("   v  pre post");
             System.Console.WriteLine("--------------");
-            foreach (var v in G.Vertices)
+            foreach (IntWrapper v in G.Vertices)
             {
                 System.Console.Write("{0} {1} {2}\n", v, dfs.Pre(v), dfs.Post(v));
             }
@@ -300,7 +335,7 @@ namespace Graphs
 
         public IEnumerator<T> GetEnumerator()
         {
-            foreach (T v in this.Pre())
+            foreach (T v in Pre())
             {
                 yield return v;
             }
@@ -308,7 +343,7 @@ namespace Graphs
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            foreach (T v in this.Pre())
+            foreach (T v in Pre())
             {
                 yield return v;
             }

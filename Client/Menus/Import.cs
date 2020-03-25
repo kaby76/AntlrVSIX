@@ -52,7 +52,7 @@
 
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            IVsTextManager manager = ((IServiceProvider)ServiceProvider).GetService(typeof(VsTextManagerClass)) as IVsTextManager;
+            IVsTextManager manager = ServiceProvider.GetService(typeof(VsTextManagerClass)) as IVsTextManager;
             if (manager == null)
             {
                 return;
@@ -64,22 +64,34 @@
             for (; ; )
             {
                 manager.GetActiveView(1, null, out IVsTextView view);
-                if (view == null) break;
+                if (view == null)
+                {
+                    break;
+                }
+
                 view.GetBuffer(out IVsTextLines buf);
-                if (buf == null) break;
+                if (buf == null)
+                {
+                    break;
+                }
+
                 IWpfTextView xxx = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view);
                 ITextBuffer buffer = xxx.TextBuffer;
                 string ffn = buffer.GetFFN().Result;
-                if (ffn == null) break;
+                if (ffn == null)
+                {
+                    break;
+                }
+
                 string current_grammar_ffn = ffn;
                 (EnvDTE.Project, EnvDTE.ProjectItem) p_f_original_grammar = LspAntlr.MakeChanges.FindProjectAndItem(current_grammar_ffn);
                 project = p_f_original_grammar.Item1;
                 try
                 {
-                    var prop = p_f_original_grammar.Item2.Properties.Item("CustomToolNamespace").Value;
+                    object prop = p_f_original_grammar.Item2.Properties.Item("CustomToolNamespace").Value;
                     the_namespace = prop.ToString();
                 }
-                catch (Exception eeks)
+                catch (Exception)
                 {
                 }
                 break;
@@ -95,8 +107,11 @@
             Application.Current.Dispatcher.Invoke(delegate
             {
                 dialog_box.ShowDialog();
-                var xx = dialog_box.list;
-                if (xx == null) return;
+                System.Collections.Generic.List<ImportBox.StringValue> xx = dialog_box.list;
+                if (xx == null)
+                {
+                    return;
+                }
                 // Note, the language client cannot be applied here because we
                 // aren't focused on a grammar file, and may not even have a window
                 // open!

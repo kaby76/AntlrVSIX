@@ -11,7 +11,7 @@
             return view.Properties.GetOrCreateSingletonProperty(typeof(CtrlKeyState), () => new CtrlKeyState());
         }
 
-        bool _enabled = false;
+        private bool _enabled = false;
 
         internal bool Enabled
         {
@@ -21,7 +21,9 @@
                 bool ctrlDown = (Keyboard.Modifiers & ModifierKeys.Control) != 0 &&
                                 (Keyboard.Modifiers & ModifierKeys.Shift) == 0;
                 if (ctrlDown != _enabled)
+                {
                     Enabled = ctrlDown;
+                }
 
                 return _enabled;
             }
@@ -31,9 +33,11 @@
                 _enabled = value;
                 if (oldVal != _enabled)
                 {
-                    var temp = CtrlKeyStateChanged;
+                    EventHandler<EventArgs> temp = CtrlKeyStateChanged;
                     if (temp != null)
+                    {
                         temp(this, new EventArgs());
+                    }
                 }
             }
         }

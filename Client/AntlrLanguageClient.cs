@@ -360,11 +360,11 @@
                     return null;
                 }
 
-                var p = ffn;
+                List<string> p = ffn;
                 Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMImportGrammars", p).Result;
                 return result;
             }
-            catch (Exception e)
+            catch (Exception)
             {
             }
             return null;

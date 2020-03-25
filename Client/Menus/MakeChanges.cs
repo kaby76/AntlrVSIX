@@ -1,30 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.TextManager.Interop;
+﻿using Microsoft.VisualStudio.Shell;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 
 namespace LspAntlr
 {
-    class MakeChanges
+    internal class MakeChanges
     {
         public static (EnvDTE.Project, EnvDTE.ProjectItem) FindProjectAndItem(string fn)
         {
-            var f = System.IO.Path.GetFileName(fn);
+            string f = System.IO.Path.GetFileName(fn);
             EnvDTE.DTE dte = (EnvDTE.DTE)Package.GetGlobalService(typeof(EnvDTE.DTE));
             for (int i = 1; i <= dte.Solution.Projects.Count; ++i)
             {
                 EnvDTE.Project project = dte.Solution.Projects.Item(i);
                 for (int j = 1; j <= project.ProjectItems.Count; ++j)
                 {
-                    var item = project.ProjectItems.Item(j);
+                    EnvDTE.ProjectItem item = project.ProjectItems.Item(j);
                     if (item.Name == f)
                     {
                         return (project, item);
@@ -36,7 +27,7 @@ namespace LspAntlr
 
         public static void EnterChanges(Dictionary<string, string> changes, EnvDTE.Project project, string custom_namespace)
         {
-            foreach (var pair in changes)
+            foreach (KeyValuePair<string, string> pair in changes)
             {
                 string fn = pair.Key;
                 string new_code = pair.Value;
@@ -50,7 +41,7 @@ namespace LspAntlr
                     // Add to project.
                     project.ProjectItems.AddFromFile(fn);
                     // Find new item.
-                    var new_item = FindProjectAndItem(fn);
+                    (EnvDTE.Project, EnvDTE.ProjectItem) new_item = FindProjectAndItem(fn);
                     if (fn.EndsWith(".g4"))
                     {
                         // Set attributes, but only for grammar file.
@@ -66,9 +57,11 @@ namespace LspAntlr
                             try
                             {
                                 if (custom_namespace != "")
+                                {
                                     new_item.Item2.Properties.Item("CustomToolNamespace").Value = custom_namespace;
+                                }
                             }
-                            catch (Exception e)
+                            catch (Exception)
                             {
                                 again = true;
                             }
@@ -76,13 +69,13 @@ namespace LspAntlr
                     }
                 }
             }
-            foreach (var pair in changes)
+            foreach (KeyValuePair<string, string> pair in changes)
             {
                 string fn = pair.Key;
                 string new_code = pair.Value;
                 if (new_code == null)
                 {
-                    var p_f = FindProjectAndItem(fn);
+                    (EnvDTE.Project, EnvDTE.ProjectItem) p_f = FindProjectAndItem(fn);
                     if (p_f.Item1 != null && p_f.Item2 != null)
                     {
                         // Delete from project.

@@ -270,7 +270,8 @@
     };
 
         public List<Func<IGrammarDescription, Dictionary<IParseTree, IList<CombinedScopeSymbol>>, IParseTree, bool>>
-            Identify { get; } =
+            Identify
+        { get; } =
             new List<Func<IGrammarDescription, Dictionary<IParseTree, IList<CombinedScopeSymbol>>, IParseTree, bool>>()
             {
             (IGrammarDescription gd, Dictionary<IParseTree, IList<CombinedScopeSymbol>> st,
@@ -359,7 +360,8 @@
             };
 
         public List<Func<IGrammarDescription, Dictionary<IParseTree, IList<CombinedScopeSymbol>>, IParseTree, bool>>
-            IdentifyDefinition { get; } =
+            IdentifyDefinition
+        { get; } =
             new List<Func<IGrammarDescription, Dictionary<IParseTree, IList<CombinedScopeSymbol>>, IParseTree, bool>>()
             {
             (IGrammarDescription gd, Dictionary<IParseTree, IList<CombinedScopeSymbol>> st,

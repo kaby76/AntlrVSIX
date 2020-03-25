@@ -8,7 +8,7 @@
     using System.Collections.Generic;
     using System.ComponentModel.Design;
 
-    class SplitCombineGrammars
+    internal class SplitCombineGrammars
     {
         private readonly AntlrLanguageClient _package;
         private readonly MenuCommand _menu_item1;
@@ -156,10 +156,10 @@
                     project = p_f_original_grammar.Item1;
                     try
                     {
-                        var prop = p_f_original_grammar.Item2.Properties.Item("CustomToolNamespace").Value;
+                        object prop = p_f_original_grammar.Item2.Properties.Item("CustomToolNamespace").Value;
                         the_namespace = prop.ToString();
                     }
-                    catch (Exception eeks)
+                    catch (Exception)
                     {
                     }
                     break;

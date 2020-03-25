@@ -98,7 +98,7 @@
                     System.Console.Error.WriteLine(arg.ToString());
                 }
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
         }
 
@@ -112,7 +112,7 @@
                     System.Console.Error.WriteLine("<-- Shutdown");
                 }
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return null;
         }
@@ -128,7 +128,7 @@
                 }
                 server.Exit();
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
         }
 
@@ -147,7 +147,7 @@
                 //var parameter = arg.ToObject<DidChangeConfigurationParams>();
                 //this.server.SendSettings(parameter);
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
         }
 
@@ -162,7 +162,7 @@
                     System.Console.Error.WriteLine(arg.ToString());
                 }
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
         }
 
@@ -177,7 +177,7 @@
                     System.Console.Error.WriteLine(arg.ToString());
                 }
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return null;
         }
@@ -193,7 +193,7 @@
                     System.Console.Error.WriteLine(arg.ToString());
                 }
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return null;
         }
@@ -366,7 +366,7 @@
                 }
                 return items.ToArray();
             }
-            catch (Exception eeks)
+            catch (Exception)
             {
             }
             return null;
@@ -465,7 +465,7 @@
                 };
                 System.Console.Error.WriteLine("returning " + quick_info.Display.ToString());
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return hover;
         }
@@ -481,7 +481,7 @@
                     System.Console.Error.WriteLine(arg.ToString());
                 }
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return null;
         }
@@ -530,7 +530,7 @@
                 }
                 result = locations.ToArray();
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return result;
         }
@@ -576,7 +576,7 @@
                 }
                 result = locations.ToArray();
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return result;
         }
@@ -622,7 +622,7 @@
                 }
                 result = locations.ToArray();
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return result;
         }
@@ -668,7 +668,7 @@
                 }
                 result = locations.ToArray();
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return result;
         }
@@ -714,7 +714,7 @@
                 }
                 result = locations.ToArray();
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return result;
         }
@@ -801,7 +801,7 @@
                 }
                 result = symbols.ToArray();
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return result;
         }
@@ -817,7 +817,7 @@
                     System.Console.Error.WriteLine(arg.ToString());
                 }
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return null;
         }
@@ -833,7 +833,7 @@
                     System.Console.Error.WriteLine(arg.ToString());
                 }
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return null;
         }
@@ -849,7 +849,7 @@
                     System.Console.Error.WriteLine(arg.ToString());
                 }
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return null;
         }
@@ -865,7 +865,7 @@
                     System.Console.Error.WriteLine(arg.ToString());
                 }
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return null;
         }
@@ -881,7 +881,7 @@
                     System.Console.Error.WriteLine(arg.ToString());
                 }
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return null;
         }
@@ -918,7 +918,7 @@
                 }
                 result = new_list.ToArray();
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return result;
         }
@@ -934,7 +934,7 @@
                     System.Console.Error.WriteLine(arg.ToString());
                 }
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return null;
         }
@@ -950,7 +950,7 @@
                     System.Console.Error.WriteLine(arg.ToString());
                 }
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return null;
         }
@@ -1007,7 +1007,7 @@
                 }
                 edit.Changes = edit_changes_array;
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return edit;
         }
@@ -1023,7 +1023,7 @@
                     System.Console.Error.WriteLine(arg.ToString());
                 }
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return null;
         }
@@ -1120,7 +1120,7 @@
                 }
                 result = symbols.ToArray();
             }
-            catch (Exception eek)
+            catch (Exception)
             { }
             return result;
         }
@@ -1171,7 +1171,7 @@
                     System.Console.Error.WriteLine(next_sym);
                 }
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return next_sym;
         }
@@ -1192,10 +1192,10 @@
                     (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
                     System.Console.Error.WriteLine("");
                 }
-                var key_state = request.IsEnter;
+                bool key_state = request.IsEnter;
                 s = Goto.main(true, key_state, document, pos);
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return s;
         }
@@ -1216,10 +1216,10 @@
                     (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
                     System.Console.Error.WriteLine("");
                 }
-                var is_enter = request.IsEnter;
+                bool is_enter = request.IsEnter;
                 s = Goto.main(false, is_enter, document, pos);
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return s;
         }
@@ -1242,7 +1242,7 @@
                 }
                 changes = LanguageServer.Transform.ReplaceLiterals(pos, document);
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return changes;
         }
@@ -1265,7 +1265,7 @@
                 }
                 changes = LanguageServer.Transform.RemoveUselessParserProductions(pos, document);
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return changes;
         }
@@ -1288,7 +1288,7 @@
                 }
                 changes = LanguageServer.Transform.MoveStartRuleToTop(pos, document);
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return changes;
         }
@@ -1312,7 +1312,7 @@
                 }
                 changes = LanguageServer.Transform.ReorderParserRules(pos, document, type);
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return changes;
         }
@@ -1336,7 +1336,7 @@
                 }
                 changes = LanguageServer.Transform.SplitCombineGrammars(pos, document, split);
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return changes;
         }
@@ -1355,7 +1355,7 @@
                 }
                 changes = LanguageServer.BisonImport.ImportGrammars(request);
             }
-            catch (Exception eeks)
+            catch (Exception)
             { }
             return changes;
         }

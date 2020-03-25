@@ -1,43 +1,58 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Graphs
 {
     public class BreadthFirstOrder<T, E> : IEnumerable<T>
         where E : IEdge<T>
     {
-        private Dictionary<T, int> bfs;
-        private Queue<T> bfsorder;
+        private readonly Dictionary<T, int> bfs;
+        private readonly Queue<T> bfsorder;
         private int bfsCounter;
 
         public BreadthFirstOrder(IGraph<T, E> graph, IEnumerable<T> subset_vertices)
         {
             bfs = new Dictionary<T, int>();
-            foreach (var v in graph.Vertices) bfs[v] = 0;
+            foreach (T v in graph.Vertices)
+            {
+                bfs[v] = 0;
+            }
+
             bfsorder = new Queue<T>();
             foreach (T v in subset_vertices)
+            {
                 order(graph, v);
+            }
         }
 
         private void order(IGraph<T, E> G, T s)
         {
             Queue<T> Q = new Queue<T>();
             Dictionary<T, int> color = new Dictionary<T, int>();
-            foreach (var v in G.Vertices) color[v] = 0;
+            foreach (T v in G.Vertices)
+            {
+                color[v] = 0;
+            }
+
             Dictionary<T, int> d = new Dictionary<T, int>();
-            foreach (var v in G.Vertices) d[v] = 0;
+            foreach (T v in G.Vertices)
+            {
+                d[v] = 0;
+            }
+
             Dictionary<T, T> pi = new Dictionary<T, T>();
-            foreach (var v in G.Vertices) pi[v] = default(T);
+            foreach (T v in G.Vertices)
+            {
+                pi[v] = default(T);
+            }
 
             bfsorder.Enqueue(s);
             foreach (T u in G.Vertices)
             {
-                if (! u.Equals(s))
+                if (!u.Equals(s))
                 {
                     color[u] = 0;
-                    d[u] = Int32.MaxValue;
+                    d[u] = int.MaxValue;
                     pi[u] = default(T);
                 }
             }
@@ -47,8 +62,8 @@ namespace Graphs
             Q.Enqueue(s);
             while (Q.Count > 0)
             {
-                var u = Q.Dequeue();
-                foreach (var v in G.Successors(u))
+                T u = Q.Dequeue();
+                foreach (T v in G.Successors(u))
                 {
                     if (color[v] == 0)
                     {
@@ -74,7 +89,7 @@ namespace Graphs
 
         public IEnumerator<T> GetEnumerator()
         {
-            foreach (T v in this.BFS())
+            foreach (T v in BFS())
             {
                 yield return v;
             }
@@ -82,7 +97,7 @@ namespace Graphs
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            foreach (T v in this.BFS())
+            foreach (T v in BFS())
             {
                 yield return v;
             }

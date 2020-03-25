@@ -3,8 +3,8 @@
 using Antlr4.Runtime.Tree;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
+using System.Text;
 
 
 namespace LanguageServer
@@ -13,10 +13,10 @@ namespace LanguageServer
 
     public class BisonImport
     {
-        private static void Try(string input, ref Dictionary<string,string> results)
+        private static void Try(string input, ref Dictionary<string, string> results)
         {
             bool convert_undefined_to_terminals = true;
-            var now = DateTime.Now.ToString();
+            string now = DateTime.Now.ToString();
             StringBuilder errors = new StringBuilder();
             StringBuilder sb = new StringBuilder();
             AntlrFileStream str = new AntlrFileStream(input);
@@ -26,7 +26,7 @@ namespace LanguageServer
             BisonErrorListener<IToken> elistener = new BisonErrorListener<IToken>(parser, lexer, tokens, errors);
             parser.AddErrorListener(elistener);
             BisonParser.InputContext tree = parser.input();
-            var error_file_name = input.Replace(".g4", ".txt");
+            string error_file_name = input.Replace(".g4", ".txt");
             if (elistener.had_error)
             {
                 results.Add(input.Replace(".y", ".txt"), errors.ToString());
@@ -44,39 +44,39 @@ namespace LanguageServer
 
             // Get list of tokens. Convert this to a list of capitalized names.
             Dictionary<string, Tuple<string, string>> terminals = new Dictionary<string, Tuple<string, string>>();
-            foreach (var token in listener.terminals)
+            foreach (IParseTree token in listener.terminals)
             {
                 Antlr4.Runtime.Tree.IParseTree parent;
                 for (parent = token; parent != null; parent = parent.Parent)
                 {
                     if (parent is BisonParser.Token_declsContext)
                     {
-                        var token_decls = parent as BisonParser.Token_declsContext;
-                        var count = token_decls.ChildCount;
+                        BisonParser.Token_declsContext token_decls = parent as BisonParser.Token_declsContext;
+                        int count = token_decls.ChildCount;
                         if (count == 1)
                         {
-                            var tag = "";
-                            var tok = token.GetText();
-                            var cap_tok = tok.Length == 1 ? Char.ToUpper(tok[0]).ToString() :
-                                (Char.ToUpper(tok[0]) + tok.Substring(1));
+                            string tag = "";
+                            string tok = token.GetText();
+                            string cap_tok = tok.Length == 1 ? char.ToUpper(tok[0]).ToString() :
+                                (char.ToUpper(tok[0]) + tok.Substring(1));
                             terminals.Add(tok, new Tuple<string, string>(tag, cap_tok));
                         }
                         else if (count == 2)
                         {
-                            var tag = parent.GetChild(0).GetText();
+                            string tag = parent.GetChild(0).GetText();
                             tag = tag.Replace("<", "").Replace(">", "");
-                            var tok = token.GetText();
-                            var cap_tok = tok.Length == 1 ? Char.ToUpper(tok[0]).ToString() :
-                                (Char.ToUpper(tok[0]) + tok.Substring(1));
+                            string tok = token.GetText();
+                            string cap_tok = tok.Length == 1 ? char.ToUpper(tok[0]).ToString() :
+                                (char.ToUpper(tok[0]) + tok.Substring(1));
                             terminals.Add(tok, new Tuple<string, string>(tag, cap_tok));
                         }
                         else if (count == 3)
                         {
-                            var tag = parent.GetChild(1).GetText();
+                            string tag = parent.GetChild(1).GetText();
                             tag = tag.Replace("<", "").Replace(">", "");
-                            var tok = token.GetText();
-                            var cap_tok = tok.Length == 1 ? Char.ToUpper(tok[0]).ToString() :
-                                (Char.ToUpper(tok[0]) + tok.Substring(1));
+                            string tok = token.GetText();
+                            string cap_tok = tok.Length == 1 ? char.ToUpper(tok[0]).ToString() :
+                                (char.ToUpper(tok[0]) + tok.Substring(1));
                             terminals.Add(tok, new Tuple<string, string>(tag, cap_tok));
                         }
                     }
@@ -93,19 +93,30 @@ namespace LanguageServer
                         foreach (string c in s)
                         {
                             if (listener.rules.Where(rr => rr.Item1 == c).Any())
+                            {
                                 continue;
+                            }
+
                             if (terminals.ContainsKey(c))
+                            {
                                 continue;
+                            }
+
                             if (c[0] == '\'')
+                            {
                                 continue;
+                            }
+
                             if (c == "error")
+                            {
                                 continue;
+                            }
                             // RHS symbol is not a non-terminal and not a %token terminal.
                             // Enter it as a terminal.
-                            var tag = "";
-                            var tok = c;
-                            var cap_tok = tok.Length == 1 ? Char.ToUpper(tok[0]).ToString() :
-                                (Char.ToUpper(tok[0]) + tok.Substring(1));
+                            string tag = "";
+                            string tok = c;
+                            string cap_tok = tok.Length == 1 ? char.ToUpper(tok[0]).ToString() :
+                                (char.ToUpper(tok[0]) + tok.Substring(1));
                             terminals.Add(tok, new Tuple<string, string>(tag, cap_tok));
                             // Note that in the error list.
                             errors.AppendLine("Symbol " + c + " not declared, assuming it is a terminal.");
@@ -115,7 +126,7 @@ namespace LanguageServer
             }
 
             // Get the name of the grammar.
-            var name = System.IO.Path.GetFileNameWithoutExtension(input);
+            string name = System.IO.Path.GetFileNameWithoutExtension(input);
             sb.AppendLine("// Combined Antlr4 grammar generated by Antlrvsix.");
             sb.AppendLine("// Input grammar: " + input);
             sb.AppendLine("// Date: " + now);
@@ -151,7 +162,6 @@ namespace LanguageServer
             foreach (Tuple<string, List<List<string>>> r in listener.rules)
             {
                 List<List<string>> rhs = r.Item2;
-                bool first = true;
                 foreach (List<string> s in rhs)
                 {
                     foreach (string c in s)
@@ -164,7 +174,7 @@ namespace LanguageServer
                     }
                 }
             }
-            bigexit:
+        bigexit:
             if (found)
             {
                 sb.AppendLine("error : ERROR ;");
@@ -176,7 +186,7 @@ namespace LanguageServer
         public static Dictionary<string, string> ImportGrammars(List<string> args)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
-            foreach (var f in args)
+            foreach (string f in args)
             {
                 Try(f, ref result);
             }

@@ -1,12 +1,10 @@
 ﻿namespace LanguageServer
 {
+    using Antlr4.Runtime.Misc;
+    using Antlr4.Runtime.Tree;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using Antlr4.Runtime.Misc;
-    using Antlr4.Runtime.Tree;
-    using Symtab;
-    using System.Collections.Generic;
 
     public class BisonGrammarListener : BisonParserBaseListener
     {
@@ -59,7 +57,7 @@
 
         public override void EnterToken_decl([NotNull] BisonParser.Token_declContext context)
         {
-            var id = context.GetChild(0) as BisonParser.IdContext;
+            BisonParser.IdContext id = context.GetChild(0) as BisonParser.IdContext;
             terminals.Add(id);
         }
     }

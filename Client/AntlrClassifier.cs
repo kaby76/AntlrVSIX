@@ -92,8 +92,11 @@
                             // Make sure the length doesn't go past the end of the current span.
                             if (start_token_start + length > curLocEnd)
                             {
-                                var new_length = curLocEnd - start_token_start;
-                                if (new_length >= 0) length = new_length;
+                                int new_length = curLocEnd - start_token_start;
+                                if (new_length >= 0)
+                                {
+                                    length = new_length;
+                                }
                             }
 
                             ITextSnapshot a = curSpan.Snapshot.TextBuffer.CurrentSnapshot;

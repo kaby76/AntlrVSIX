@@ -135,12 +135,16 @@
         public override void EnterRules([NotNull] ANTLRv4Parser.RulesContext context)
         {
             if (saw_tokenVocab_option)
+            {
                 return;
+            }
 
             // We didn't see an option to include lexer grammar.
 
             if (Type != GrammarType.Parser)
+            {
                 return;
+            }
 
             // It's a parser grammar, but we didn't see the tokenVocab option for the lexer.
             // We must assume a lexer grammar in this directory.

@@ -12,7 +12,6 @@
     using System.Linq;
     using System.Text;
     using Document = Workspaces.Document;
-    using ISymbol = Symtab.ISymbol;
 
     public class Transform
     {
@@ -80,7 +79,11 @@
             public override void EnterRules([NotNull] ANTLRv4Parser.RulesContext context)
             {
                 ANTLRv4Parser.RuleSpecContext[] rule_spec = context.ruleSpec();
-                if (rule_spec == null) return;
+                if (rule_spec == null)
+                {
+                    return;
+                }
+
                 First = rule_spec[0];
             }
         }
@@ -164,7 +167,7 @@
             }
             return trees;
         }
-        
+
         private class Table
         {
             public class Row
@@ -181,10 +184,10 @@
 
             public List<Row> rules = new List<Row>();
             public Dictionary<string, int> nt_to_index = new Dictionary<string, int>();
-            ExtractRules listener;
-            AntlrGrammarDetails pd_parser;
-            Document document;
-            Dictionary<string, SyntaxTree> trees;
+            private ExtractRules listener;
+            private readonly AntlrGrammarDetails pd_parser;
+            private readonly Document document;
+            private readonly Dictionary<string, SyntaxTree> trees;
 
             public Table(AntlrGrammarDetails p, Document d)
             {
@@ -202,11 +205,11 @@
                 Dictionary<ITerminalNode, List<ITerminalNode>> rhs = listener.RHS;
                 for (int i = 0; i < listener.Rules.Count; ++i)
                 {
-                    this.rules.Add(new Row()
+                    rules.Add(new Row()
                     {
                         rule = listener.Rules[i],
                         LHS = nonterminals[i].GetText(),
-                        is_parser_rule = Char.IsLower(nonterminals[i].GetText()[0]),
+                        is_parser_rule = char.IsLower(nonterminals[i].GetText()[0]),
                         RHS = rhs[nonterminals[i]].Select(t => t.GetText()).ToList(),
                     });
                 }
@@ -219,14 +222,17 @@
 
             public void FindPartitions()
             {
-                var find_first_rule = new FindFirstRule();
+                FindFirstRule find_first_rule = new FindFirstRule();
                 ParseTreeWalker.Default.Walk(find_first_rule, pd_parser.ParseTree);
-                var first_rule = find_first_rule.First;
-                if (first_rule == null) return;
+                IParseTree first_rule = find_first_rule.First;
+                if (first_rule == null)
+                {
+                    return;
+                }
 
-                var insertion = first_rule.SourceInterval.a;
-                var insertion_tok = pd_parser.TokStream.Get(insertion);
-                var insertion_ind = insertion_tok.StartIndex;
+                int insertion = first_rule.SourceInterval.a;
+                Antlr4.Runtime.IToken insertion_tok = pd_parser.TokStream.Get(insertion);
+                int insertion_ind = insertion_tok.StartIndex;
                 string old_code = document.Code;
                 for (int i = 0; i < rules.Count; ++i)
                 {
@@ -236,27 +242,31 @@
                     // that the preceeding whitespace and comments are grouped with a rule all the way
                     // from the end a previous non-whitespace or comment, such as options, headers, or rule.
                     Interval token_interval = rule.SourceInterval;
-                    var end = token_interval.b;
-                    var end_tok = pd_parser.TokStream.Get(end);
+                    int end = token_interval.b;
+                    Antlr4.Runtime.IToken end_tok = pd_parser.TokStream.Get(end);
                     Antlr4.Runtime.IToken last = end_tok;
-                    var end_ind = old_code.Length <= last.StopIndex ? last.StopIndex : last.StopIndex + 1;
-                    bool on_end = false;
+                    int end_ind = old_code.Length <= last.StopIndex ? last.StopIndex : last.StopIndex + 1;
                     for (int j = end_ind; j < old_code.Length; j++)
                     {
                         if (old_code[j] == '\r')
                         {
                             if (j + 1 < old_code.Length && old_code[j + 1] == '\n')
+                            {
                                 end_ind = j + 2;
+                            }
                             else
+                            {
                                 end_ind = j + 1;
+                            }
+
                             break;
                         }
                         end_ind = j;
                     }
-                    var inter = pd_parser.TokStream.GetHiddenTokensToRight(end_tok.TokenIndex);
-                    var start = token_interval.a;
-                    var start_tok = pd_parser.TokStream.Get(start);
-                    var start_ind = start_tok.StartIndex;
+                    IList<Antlr4.Runtime.IToken> inter = pd_parser.TokStream.GetHiddenTokensToRight(end_tok.TokenIndex);
+                    int start = token_interval.a;
+                    Antlr4.Runtime.IToken start_tok = pd_parser.TokStream.Get(start);
+                    int start_ind = start_tok.StartIndex;
                     rules[i].start_index = start_ind;
                     rules[i].end_index = end_ind;
                 }
@@ -267,7 +277,6 @@
                         rules[i].start_index = rules[i - 1].end_index;
                     }
                 }
-                bool bad = false;
                 for (int i = 0; i < rules.Count; ++i)
                 {
                     for (int j = rules[i].start_index; j < rules[i].end_index; ++j)
@@ -275,9 +284,12 @@
                         if (old_code[j] == '\r')
                         {
                             if (j + 1 < rules[i].end_index && old_code[j + 1] == '\n')
+                            {
                                 ;
+                            }
                             else
-                                bad = true;
+                            {
+                            }
                         }
                     }
                 }
@@ -304,13 +316,13 @@
                         {
                             continue;
                         }
-                        var syntax_walker = new FindCalls();
+                        FindCalls syntax_walker = new FindCalls();
                         syntax_walker.Visit(root);
                         for (int i = 0; i < rules.Count; ++i)
                         {
-                            var nt_name = rules[i].LHS;
-                            var call = "." + nt_name + "()";
-                            foreach (var j in syntax_walker.Invocations)
+                            string nt_name = rules[i].LHS;
+                            string call = "." + nt_name + "()";
+                            foreach (string j in syntax_walker.Invocations)
                             {
                                 if (j.Contains(call))
                                 {
@@ -336,36 +348,40 @@
             AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
             ExtractGrammarType egt = new ExtractGrammarType();
             ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
-            var is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
+            bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
                 || egt.Type == ExtractGrammarType.GrammarType.Combined
                 || egt.Type == ExtractGrammarType.GrammarType.Lexer;
-            if (! is_grammar)
+            if (!is_grammar)
             {
                 return result;
             }
 
             // Find all other grammars by walking dependencies (import, vocab, file names).
-            HashSet<string> read_files = new HashSet<string>();
-            read_files.Add(document.FullPath);
+            HashSet<string> read_files = new HashSet<string>
+            {
+                document.FullPath
+            };
             Dictionary<Workspaces.Document, List<TerminalNodeImpl>> every_damn_literal =
                 new Dictionary<Workspaces.Document, List<TerminalNodeImpl>>();
-            for (; ;)
+            for (; ; )
             {
                 int before_count = read_files.Count;
-                foreach (var f in read_files)
+                foreach (string f in read_files)
                 {
-                    var additional = AntlrGrammarDetails._dependent_grammars.Where(
+                    List<string> additional = AntlrGrammarDetails._dependent_grammars.Where(
                         t => t.Value.Contains(f)).Select(
                         t => t.Key).ToList();
                     read_files = read_files.Union(additional).ToHashSet();
                 }
-                foreach (var f in read_files)
+                foreach (string f in read_files)
                 {
-                    var additional = AntlrGrammarDetails._dependent_grammars.Where(
+                    IEnumerable<List<string>> additional = AntlrGrammarDetails._dependent_grammars.Where(
                         t => t.Key == f).Select(
                         t => t.Value);
-                    foreach (var t in additional)
+                    foreach (List<string> t in additional)
+                    {
                         read_files = read_files.Union(t).ToHashSet();
+                    }
                 }
                 int after_count = read_files.Count;
                 if (after_count == before_count)
@@ -384,16 +400,16 @@
                     continue;
                 }
                 AntlrGrammarDetails pd_whatever = ParserDetailsFactory.Create(whatever_document) as AntlrGrammarDetails;
-                
+
                 // Find literals in grammars.
                 LiteralsGrammar lp_whatever = new LiteralsGrammar(pd_whatever);
                 ParseTreeWalker.Default.Walk(lp_whatever, pd_whatever.ParseTree);
                 List<TerminalNodeImpl> list_literals = lp_whatever.Literals;
                 every_damn_literal[whatever_document] = list_literals;
 
-                foreach (var lexer_literal in list_literals)
+                foreach (TerminalNodeImpl lexer_literal in list_literals)
                 {
-                    var old_name = lexer_literal.GetText();
+                    string old_name = lexer_literal.GetText();
                     // Given candidate, walk up tree to find lexer_rule.
                     /*
                         ( ruleSpec
@@ -433,43 +449,107 @@
                      * Make sure it fits the structure of the tree shown above.
                      * 
                      */
-                    var p1 = lexer_literal.Parent;
-                    if (p1.ChildCount != 1) continue;
-                    if (!(p1 is ANTLRv4Parser.TerminalContext)) continue;
-                    var p2 = p1.Parent;
-                    if (p2.ChildCount != 1) continue;
-                    if (!(p2 is ANTLRv4Parser.LexerAtomContext)) continue;
-                    var p3 = p2.Parent;
-                    if (p3.ChildCount != 1) continue;
-                    if (!(p3 is ANTLRv4Parser.LexerElementContext)) continue;
-                    var p4 = p3.Parent;
-                    if (p4.ChildCount != 1) continue;
-                    if (!(p4 is ANTLRv4Parser.LexerElementsContext)) continue;
-                    var p5 = p4.Parent;
-                    if (p5.ChildCount != 1) continue;
-                    if (!(p5 is ANTLRv4Parser.LexerAltContext)) continue;
-                    var p6 = p5.Parent;
-                    if (p6.ChildCount != 1) continue;
-                    if (!(p6 is ANTLRv4Parser.LexerAltListContext)) continue;
-                    var p7 = p6.Parent;
-                    if (p7.ChildCount != 1) continue;
-                    if (!(p7 is ANTLRv4Parser.LexerRuleBlockContext)) continue;
-                    var p8 = p7.Parent;
-                    if (p8.ChildCount != 4) continue;
-                    if (!(p8 is ANTLRv4Parser.LexerRuleSpecContext)) continue;
-                    var alt = p8.GetChild(0);
-                    var new_name = alt.GetText();
+                    IRuleNode p1 = lexer_literal.Parent;
+                    if (p1.ChildCount != 1)
+                    {
+                        continue;
+                    }
+
+                    if (!(p1 is ANTLRv4Parser.TerminalContext))
+                    {
+                        continue;
+                    }
+
+                    IRuleNode p2 = p1.Parent;
+                    if (p2.ChildCount != 1)
+                    {
+                        continue;
+                    }
+
+                    if (!(p2 is ANTLRv4Parser.LexerAtomContext))
+                    {
+                        continue;
+                    }
+
+                    IRuleNode p3 = p2.Parent;
+                    if (p3.ChildCount != 1)
+                    {
+                        continue;
+                    }
+
+                    if (!(p3 is ANTLRv4Parser.LexerElementContext))
+                    {
+                        continue;
+                    }
+
+                    IRuleNode p4 = p3.Parent;
+                    if (p4.ChildCount != 1)
+                    {
+                        continue;
+                    }
+
+                    if (!(p4 is ANTLRv4Parser.LexerElementsContext))
+                    {
+                        continue;
+                    }
+
+                    IRuleNode p5 = p4.Parent;
+                    if (p5.ChildCount != 1)
+                    {
+                        continue;
+                    }
+
+                    if (!(p5 is ANTLRv4Parser.LexerAltContext))
+                    {
+                        continue;
+                    }
+
+                    IRuleNode p6 = p5.Parent;
+                    if (p6.ChildCount != 1)
+                    {
+                        continue;
+                    }
+
+                    if (!(p6 is ANTLRv4Parser.LexerAltListContext))
+                    {
+                        continue;
+                    }
+
+                    IRuleNode p7 = p6.Parent;
+                    if (p7.ChildCount != 1)
+                    {
+                        continue;
+                    }
+
+                    if (!(p7 is ANTLRv4Parser.LexerRuleBlockContext))
+                    {
+                        continue;
+                    }
+
+                    IRuleNode p8 = p7.Parent;
+                    if (p8.ChildCount != 4)
+                    {
+                        continue;
+                    }
+
+                    if (!(p8 is ANTLRv4Parser.LexerRuleSpecContext))
+                    {
+                        continue;
+                    }
+
+                    IParseTree alt = p8.GetChild(0);
+                    string new_name = alt.GetText();
                     subs.Add(old_name, new_name);
                 }
             }
 
             // Find string literals in parser and combined grammars and substitute.
             Dictionary<TerminalNodeImpl, string> rewrites = new Dictionary<TerminalNodeImpl, string>();
-            foreach (var pair in every_damn_literal)
+            foreach (KeyValuePair<Document, List<TerminalNodeImpl>> pair in every_damn_literal)
             {
-                var doc = pair.Key;
-                var list_literals = pair.Value;
-                foreach (var l in list_literals)
+                Document doc = pair.Key;
+                List<TerminalNodeImpl> list_literals = pair.Value;
+                foreach (TerminalNodeImpl l in list_literals)
                 {
                     bool no = false;
                     // Make sure this literal does not appear in lexer rule.
@@ -481,7 +561,11 @@
                             break;
                         }
                     }
-                    if (no) continue;
+                    if (no)
+                    {
+                        continue;
+                    }
+
                     subs.TryGetValue(l.GetText(), out string re);
                     if (re != null)
                     {
@@ -490,17 +574,17 @@
                 }
             }
 
-            var files = rewrites.Select(r => r.Key.Payload.TokenSource.SourceName).OrderBy(q => q).Distinct();
-            var documents = files.Select(f => { return Workspaces.Workspace.Instance.FindDocument(f); }).ToList();
+            IEnumerable<string> files = rewrites.Select(r => r.Key.Payload.TokenSource.SourceName).OrderBy(q => q).Distinct();
+            List<Document> documents = files.Select(f => { return Workspaces.Workspace.Instance.FindDocument(f); }).ToList();
             foreach (Document f in documents)
             {
                 string fn = f.FullPath;
-                var per_file_changes = rewrites.Where(z => z.Key.Payload.TokenSource.SourceName == f.FullPath)
+                List<KeyValuePair<TerminalNodeImpl, string>> per_file_changes = rewrites.Where(z => z.Key.Payload.TokenSource.SourceName == f.FullPath)
                     .OrderBy(z => z.Key.Payload.TokenIndex).ToList();
                 StringBuilder sb = new StringBuilder();
                 int previous = 0;
                 string code = f.Code;
-                foreach (var l in per_file_changes)
+                foreach (KeyValuePair<TerminalNodeImpl, string> l in per_file_changes)
                 {
                     string original_text = l.Key.Payload.Text;
                     int index_start = l.Key.Payload.StartIndex;
@@ -521,13 +605,13 @@
 
         public static Dictionary<string, string> RemoveUselessParserProductions(int pos, Document document)
         {
-            var result = new Dictionary<string, string>();
+            Dictionary<string, string> result = new Dictionary<string, string>();
 
             // Check if lexer grammar.
             AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
             ExtractGrammarType lp = new ExtractGrammarType();
             ParseTreeWalker.Default.Walk(lp, pd_parser.ParseTree);
-            var is_lexer = lp.Type == ExtractGrammarType.GrammarType.Lexer;
+            bool is_lexer = lp.Type == ExtractGrammarType.GrammarType.Lexer;
             if (is_lexer)
             {
                 // We don't consider lexer grammars.
@@ -541,7 +625,7 @@
             table.FindStartRules();
 
             List<Pair<int, int>> deletions = new List<Pair<int, int>>();
-            foreach (var r in table.rules)
+            foreach (Table.Row r in table.rules)
             {
                 if (r.is_parser_rule && r.is_used == false)
                 {
@@ -552,7 +636,7 @@
             StringBuilder sb = new StringBuilder();
             int previous = 0;
             string old_code = document.Code;
-            foreach (var l in deletions)
+            foreach (Pair<int, int> l in deletions)
             {
                 int index_start = l.a;
                 int len = l.b - l.a;
@@ -570,13 +654,13 @@
 
         public static Dictionary<string, string> MoveStartRuleToTop(int pos, Document document)
         {
-            var result = new Dictionary<string, string>();
+            Dictionary<string, string> result = new Dictionary<string, string>();
 
             // Check if lexer grammar.
             AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
             ExtractGrammarType lp = new ExtractGrammarType();
             ParseTreeWalker.Default.Walk(lp, pd_parser.ParseTree);
-            var is_lexer = lp.Type == ExtractGrammarType.GrammarType.Lexer;
+            bool is_lexer = lp.Type == ExtractGrammarType.GrammarType.Lexer;
             if (is_lexer)
             {
                 // We don't consider lexer grammars.
@@ -591,7 +675,7 @@
 
             string old_code = document.Code;
             List<Pair<int, int>> move = new List<Pair<int, int>>();
-            foreach (var r in table.rules)
+            foreach (Table.Row r in table.rules)
             {
                 if (r.is_parser_rule && r.is_start == true)
                 {
@@ -600,13 +684,17 @@
             }
             move = move.OrderBy(p => p.a).ThenBy(p => p.b).ToList();
 
-            var find_first_rule = new FindFirstRule();
+            FindFirstRule find_first_rule = new FindFirstRule();
             ParseTreeWalker.Default.Walk(find_first_rule, pd_parser.ParseTree);
-            var first_rule = find_first_rule.First;
-            if (first_rule == null) return result;
-            var insertion = first_rule.SourceInterval.a;
-            var insertion_tok = pd_parser.TokStream.Get(insertion);
-            var insertion_ind = insertion_tok.StartIndex;
+            IParseTree first_rule = find_first_rule.First;
+            if (first_rule == null)
+            {
+                return result;
+            }
+
+            int insertion = first_rule.SourceInterval.a;
+            Antlr4.Runtime.IToken insertion_tok = pd_parser.TokStream.Get(insertion);
+            int insertion_ind = insertion_tok.StartIndex;
             if (move.Count == 1 && move[0].a == insertion_ind)
             {
                 return result;
@@ -620,14 +708,14 @@
                 sb.Append(pre);
                 previous = index_start + len;
             }
-            foreach (var l in move)
+            foreach (Pair<int, int> l in move)
             {
                 int index_start = l.a;
                 int len = l.b - l.a;
                 string add = old_code.Substring(index_start, len);
                 sb.Append(add);
             }
-            foreach (var l in move)
+            foreach (Pair<int, int> l in move)
             {
                 int index_start = l.a;
                 int len = l.b - l.a;
@@ -645,13 +733,13 @@
 
         public static Dictionary<string, string> ReorderParserRules(int pos, Document document, LspAntlr.ReorderType type)
         {
-            var result = new Dictionary<string, string>();
+            Dictionary<string, string> result = new Dictionary<string, string>();
 
             // Check if lexer grammar.
             AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
             ExtractGrammarType lp = new ExtractGrammarType();
             ParseTreeWalker.Default.Walk(lp, pd_parser.ParseTree);
-            var is_lexer = lp.Type == ExtractGrammarType.GrammarType.Lexer;
+            bool is_lexer = lp.Type == ExtractGrammarType.GrammarType.Lexer;
             if (is_lexer)
             {
                 return result;
@@ -668,86 +756,110 @@
             if (type == LspAntlr.ReorderType.DFS)
             {
                 Digraph<string> graph = new Digraph<string>();
-                foreach (var r in table.rules)
+                foreach (Table.Row r in table.rules)
                 {
                     if (!r.is_parser_rule)
+                    {
                         continue;
+                    }
+
                     graph.AddVertex(r.LHS);
                 }
-                foreach (var r in table.rules)
+                foreach (Table.Row r in table.rules)
                 {
                     if (!r.is_parser_rule)
-                        continue;
-                    var j = r.RHS;
-                    //j.Reverse();
-                    foreach (var rhs in j)
                     {
-                        var sym = table.rules.Where(t => t.LHS == rhs).FirstOrDefault();
+                        continue;
+                    }
+
+                    List<string> j = r.RHS;
+                    //j.Reverse();
+                    foreach (string rhs in j)
+                    {
+                        Table.Row sym = table.rules.Where(t => t.LHS == rhs).FirstOrDefault();
                         if (!sym.is_parser_rule)
+                        {
                             continue;
-                        var e = new DirectedEdge<string>(r.LHS, rhs);
+                        }
+
+                        DirectedEdge<string> e = new DirectedEdge<string>(r.LHS, rhs);
                         graph.AddEdge(e);
                     }
                 }
                 List<string> starts = new List<string>();
-                foreach (var r in table.rules)
+                foreach (Table.Row r in table.rules)
                 {
-                    if (r.is_parser_rule && r.is_start) starts.Add(r.LHS);
+                    if (r.is_parser_rule && r.is_start)
+                    {
+                        starts.Add(r.LHS);
+                    }
                 }
                 Graphs.DepthFirstOrder<string, DirectedEdge<string>> sort = new DepthFirstOrder<string, DirectedEdge<string>>(graph, starts);
-                var ordered = sort.ToList();
-                foreach (var s in ordered)
+                List<string> ordered = sort.ToList();
+                foreach (string s in ordered)
                 {
-                    var row = table.rules[table.nt_to_index[s]];
+                    Table.Row row = table.rules[table.nt_to_index[s]];
                     reorder.Add(new Pair<int, int>(row.start_index, row.end_index));
                 }
             }
             else if (type == LspAntlr.ReorderType.BFS)
             {
                 Digraph<string> graph = new Digraph<string>();
-                foreach (var r in table.rules)
+                foreach (Table.Row r in table.rules)
                 {
                     if (!r.is_parser_rule)
+                    {
                         continue;
+                    }
+
                     graph.AddVertex(r.LHS);
                 }
-                foreach (var r in table.rules)
+                foreach (Table.Row r in table.rules)
                 {
                     if (!r.is_parser_rule)
-                        continue;
-                    var j = r.RHS;
-                    //j.Reverse();
-                    foreach (var rhs in j)
                     {
-                        var sym = table.rules.Where(t => t.LHS == rhs).FirstOrDefault();
+                        continue;
+                    }
+
+                    List<string> j = r.RHS;
+                    //j.Reverse();
+                    foreach (string rhs in j)
+                    {
+                        Table.Row sym = table.rules.Where(t => t.LHS == rhs).FirstOrDefault();
                         if (!sym.is_parser_rule)
+                        {
                             continue;
-                        var e = new DirectedEdge<string>(r.LHS, rhs);
+                        }
+
+                        DirectedEdge<string> e = new DirectedEdge<string>(r.LHS, rhs);
                         graph.AddEdge(e);
                     }
                 }
                 List<string> starts = new List<string>();
-                foreach (var r in table.rules)
+                foreach (Table.Row r in table.rules)
                 {
-                    if (r.is_parser_rule && r.is_start) starts.Add(r.LHS);
+                    if (r.is_parser_rule && r.is_start)
+                    {
+                        starts.Add(r.LHS);
+                    }
                 }
                 Graphs.BreadthFirstOrder<string, DirectedEdge<string>> sort = new BreadthFirstOrder<string, DirectedEdge<string>>(graph, starts);
-                var ordered = sort.ToList();
-                foreach (var s in ordered)
+                List<string> ordered = sort.ToList();
+                foreach (string s in ordered)
                 {
-                    var row = table.rules[table.nt_to_index[s]];
+                    Table.Row row = table.rules[table.nt_to_index[s]];
                     reorder.Add(new Pair<int, int>(row.start_index, row.end_index));
                 }
             }
             else if (type == LspAntlr.ReorderType.Alphabetically)
             {
-                var ordered = table.rules
+                List<string> ordered = table.rules
                     .Where(r => r.is_parser_rule)
                     .Select(r => r.LHS)
                     .OrderBy(r => r).ToList();
-                foreach (var s in ordered)
+                foreach (string s in ordered)
                 {
-                    var row = table.rules[table.nt_to_index[s]];
+                    Table.Row row = table.rules[table.nt_to_index[s]];
                     reorder.Add(new Pair<int, int>(row.start_index, row.end_index));
                 }
             }
@@ -765,7 +877,7 @@
                 sb.Append(pre);
                 previous = index_start + len;
             }
-            foreach (var l in reorder)
+            foreach (Pair<int, int> l in reorder)
             {
                 int index_start = l.a;
                 int len = l.b - l.a;
@@ -773,9 +885,13 @@
                 sb.Append(add);
             }
             // Now add all non-parser rules.
-            foreach (var r in table.rules)
+            foreach (Table.Row r in table.rules)
             {
-                if (r.is_parser_rule) continue;
+                if (r.is_parser_rule)
+                {
+                    continue;
+                }
+
                 int index_start = r.start_index;
                 int len = r.end_index - r.start_index;
                 string add = old_code.Substring(index_start, len);
@@ -791,7 +907,7 @@
 
         public static Dictionary<string, string> SplitCombineGrammars(int pos, Document document, bool split)
         {
-            var result = new Dictionary<string, string>();
+            Dictionary<string, string> result = new Dictionary<string, string>();
 
             // Check if lexer grammar.
             AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
@@ -817,18 +933,22 @@
                 // Create a parser and lexer grammar.
                 StringBuilder sb_parser = new StringBuilder();
                 StringBuilder sb_lexer = new StringBuilder();
-                int previous_parser = 0;
-                int previous_lexer = 0;
-                var root = pd_parser.ParseTree as ANTLRv4Parser.GrammarSpecContext;
+                ANTLRv4Parser.GrammarSpecContext root = pd_parser.ParseTree as ANTLRv4Parser.GrammarSpecContext;
                 if (root == null)
+                {
                     return null;
+                }
+
                 int grammar_type_index = 0;
                 if (root.DOC_COMMENT() != null)
+                {
                     grammar_type_index++;
-                var grammar_type_tree = root.grammarType();
-                var id = root.id();
-                var semi_tree = root.SEMI();
-                var rules_tree = root.rules();
+                }
+
+                ANTLRv4Parser.GrammarTypeContext grammar_type_tree = root.grammarType();
+                ANTLRv4Parser.IdContext id = root.id();
+                ITerminalNode semi_tree = root.SEMI();
+                ANTLRv4Parser.RulesContext rules_tree = root.rules();
                 string pre = old_code.Substring(0, pd_parser.TokStream.Get(grammar_type_tree.SourceInterval.a).StartIndex - 0);
                 sb_parser.Append(pre);
                 sb_lexer.Append(pre);
@@ -842,7 +962,7 @@
                 int end = 0;
                 for (int i = 0; i < table.rules.Count; ++i)
                 {
-                    var r = table.rules[i];
+                    Table.Row r = table.rules[i];
                     // Partition rule symbols.
                     if (r.is_parser_rule)
                     {
@@ -882,14 +1002,16 @@
             else
             {
                 // Parse lexer grammar.
-                HashSet<string> read_files = new HashSet<string>();
-                read_files.Add(document.FullPath);
+                HashSet<string> read_files = new HashSet<string>
+                {
+                    document.FullPath
+                };
                 for (; ; )
                 {
                     int before_count = read_files.Count;
-                    foreach (var f in read_files)
+                    foreach (string f in read_files)
                     {
-                        var additional = AntlrGrammarDetails._dependent_grammars.Where(
+                        List<string> additional = AntlrGrammarDetails._dependent_grammars.Where(
                             t => t.Value.Contains(f)).Select(
                             t => t.Key).ToList();
                         read_files = read_files.Union(additional).ToHashSet();
@@ -912,8 +1034,12 @@
                     lexers.Add(x);
                 }
 
-                if (lexers.Count != 2) return null;
-                var pd_lexer = lexers[1];
+                if (lexers.Count != 2)
+                {
+                    return null;
+                }
+
+                AntlrGrammarDetails pd_lexer = lexers[1];
                 Workspaces.Document ldocument = Workspaces.Workspace.Instance.FindDocument(pd_lexer.FullFileName);
                 Table lexer_table = new Table(pd_lexer, ldocument);
                 lexer_table.ReadRules();
@@ -922,19 +1048,25 @@
 
                 // Create a combined parser grammar.
                 StringBuilder sb_parser = new StringBuilder();
-                var root = pd_parser.ParseTree as ANTLRv4Parser.GrammarSpecContext;
+                ANTLRv4Parser.GrammarSpecContext root = pd_parser.ParseTree as ANTLRv4Parser.GrammarSpecContext;
                 if (root == null)
+                {
                     return null;
+                }
+
                 int grammar_type_index = 0;
                 if (root.DOC_COMMENT() != null)
+                {
                     grammar_type_index++;
-                var grammar_type_tree = root.grammarType();
-                var id = root.id();
-                var semi_tree = root.SEMI();
-                var rules_tree = root.rules();
+                }
+
+                ANTLRv4Parser.GrammarTypeContext grammar_type_tree = root.grammarType();
+                ANTLRv4Parser.IdContext id = root.id();
+                ITerminalNode semi_tree = root.SEMI();
+                ANTLRv4Parser.RulesContext rules_tree = root.rules();
                 string pre = old_code.Substring(0, pd_parser.TokStream.Get(grammar_type_tree.SourceInterval.a).StartIndex - 0);
                 sb_parser.Append(pre);
-                sb_parser.Append("grammar " + id.GetText().Replace("Parser","") + ";" + Environment.NewLine);
+                sb_parser.Append("grammar " + id.GetText().Replace("Parser", "") + ";" + Environment.NewLine);
                 int x1 = pd_parser.TokStream.Get(semi_tree.SourceInterval.b).StopIndex + 1;
                 int x2 = pd_parser.TokStream.Get(rules_tree.SourceInterval.a).StartIndex;
                 string n1 = old_code.Substring(x1, x2 - x1);
@@ -942,7 +1074,7 @@
                 int end = 0;
                 for (int i = 0; i < table.rules.Count; ++i)
                 {
-                    var r = table.rules[i];
+                    Table.Row r = table.rules[i];
                     if (r.is_parser_rule)
                     {
                         string n2 = old_code.Substring(r.start_index, r.end_index - r.start_index);
@@ -956,10 +1088,10 @@
                     sb_parser.Append(rest);
                 }
                 end = 0;
-                var lexer_old_code = ldocument.Code;
+                string lexer_old_code = ldocument.Code;
                 for (int i = 0; i < lexer_table.rules.Count; ++i)
                 {
-                    var r = lexer_table.rules[i];
+                    Table.Row r = lexer_table.rules[i];
                     if (!r.is_parser_rule)
                     {
                         string n2 = lexer_old_code.Substring(r.start_index, r.end_index - r.start_index);
@@ -980,7 +1112,7 @@
                 }
 
                 string orig_name = Path.GetFileName(g4_file_path);
-                var new_name = orig_name.Replace("Parser.g4", "");
+                string new_name = orig_name.Replace("Parser.g4", "");
                 string new_code_parser = sb_parser.ToString();
                 string new_parser_ffn = current_dir + Path.DirectorySeparatorChar
                     + new_name + ".g4";

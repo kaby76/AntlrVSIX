@@ -8,7 +8,7 @@
     using System.Collections.Generic;
     using System.ComponentModel.Design;
 
-    class ReplaceLiteral
+    internal class ReplaceLiteral
     {
         private readonly AntlrLanguageClient _package;
         private readonly MenuCommand _menu_item1;
@@ -134,7 +134,7 @@
                     return;
                 }
                 Dictionary<string, string> changes = alc.CMReplaceLiteralsServer(ffn, pos);
-                foreach (var pair in changes)
+                foreach (KeyValuePair<string, string> pair in changes)
                 {
                     string fn = pair.Key;
                     Workspaces.Document dd = Workspaces.Workspace.Instance.FindDocument(fn);
@@ -143,49 +143,49 @@
                         return;
                     }
                     string new_code = pair.Value;
-                    var edit = buffer.CreateEdit();
-                    var diff = new LanguageServer.diff_match_patch();
-                    var diffs = diff.diff_main(document.Code, new_code);
-                    var patch = diff.patch_make(diffs);
+                    ITextEdit edit = buffer.CreateEdit();
+                    LanguageServer.diff_match_patch diff = new LanguageServer.diff_match_patch();
+                    List<LanguageServer.Diff> diffs = diff.diff_main(document.Code, new_code);
+                    List<LanguageServer.Patch> patch = diff.patch_make(diffs);
                     //patch.Reverse();
 
                     // Start edit session.
                     int times = 0;
                     int delta = 0;
-                    foreach (var p in patch)
+                    foreach (LanguageServer.Patch p in patch)
                     {
                         times++;
-                        var start = p.start1 - delta;
+                        int start = p.start1 - delta;
 
-                        var offset = 0;
-                        foreach (var ed in p.diffs)
+                        int offset = 0;
+                        foreach (LanguageServer.Diff ed in p.diffs)
                         {
                             if (ed.operation == LanguageServer.Operation.EQUAL)
                             {
                                 // Let's verify that.
-                                var len = ed.text.Length;
-                                var tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
+                                int len = ed.text.Length;
+                                SnapshotSpan tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
                                   new Span(start + offset, len));
-                                var tt = tokenSpan.GetText();
+                                string tt = tokenSpan.GetText();
                                 if (ed.text != tt)
                                 { }
                                 offset = offset + len;
                             }
                             else if (ed.operation == LanguageServer.Operation.DELETE)
                             {
-                                var len = ed.text.Length;
-                                var tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
+                                int len = ed.text.Length;
+                                SnapshotSpan tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
                                   new Span(start + offset, len));
-                                var tt = tokenSpan.GetText();
+                                string tt = tokenSpan.GetText();
                                 if (ed.text != tt)
                                 { }
-                                var sp = new Span(start + offset, len);
+                                Span sp = new Span(start + offset, len);
                                 offset = offset + len;
                                 edit.Delete(sp);
                             }
                             else if (ed.operation == LanguageServer.Operation.INSERT)
                             {
-                                var len = ed.text.Length;
+                                int len = ed.text.Length;
                                 edit.Insert(start + offset, ed.text);
                             }
                         }
