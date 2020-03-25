@@ -83,17 +83,20 @@ bad thing MS). If your debug version of the
 .vssix is 5M in size, it did not compute that the server executable needs to be added into the .vsix. Quit
 VS, then reopen. Do not do "rebuild", only "build".
 
-## Work in progress for v6.x:
+## Planned for v6.x:
 
 * Add in Piggy for grammar rewriting and checking. The addition of Piggy will allow for rules to transform the
 grammar e.g., warning/removal of LHS predicates in lexer, replacing factored grammar rules with Kleene star rules (which
 result in faster parsers).
 
+## Planned for v5.7:
+
+* Generalized fold/unfold/pack grammar rule refactorings.
+
 ## Work in progress for v5.6:
 
 * Import of Flex/Bison/Yacc grammars.
-* Generalized fold/unfold/pack grammar rule refactorings.
-* Adjust Antlr4BuildTasks options to directly reflect options for the Java Antlr Tool, using the descriptions in the Antlr documentation.
+* Elimination of left recursion.
 * Bug fixes.
 
 ## Release notes for v5.5:
