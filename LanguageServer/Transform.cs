@@ -88,6 +88,24 @@
             }
         }
 
+        private class FindOptions : ANTLRv4ParserBaseListener
+        {
+            public IParseTree OptionsSpec = null;
+            public List<IParseTree> Options = new List<IParseTree>();
+
+            public override void EnterOption([NotNull] ANTLRv4Parser.OptionContext context)
+            {
+                Options.Add(context);
+                base.EnterOption(context);
+            }
+
+            public override void EnterOptionsSpec([NotNull] ANTLRv4Parser.OptionsSpecContext context)
+            {
+                OptionsSpec = context;
+                base.EnterOptionsSpec(context);
+            }
+        }
+
         private class ExtractRules : ANTLRv4ParserBaseListener
         {
             public List<IParseTree> Rules = new List<IParseTree>();
@@ -129,6 +147,7 @@
                 base.VisitInvocationExpression(node);
             }
         }
+
 
         private static Dictionary<string, SyntaxTree> ReadCsharpSource(Document document)
         {
@@ -959,6 +978,7 @@
                 string n1 = old_code.Substring(x1, x2 - x1);
                 sb_parser.Append(n1);
                 sb_lexer.Append(n1);
+                sb_parser.AppendLine("options { tokenVocab=" + id.GetText() + "Lexer; }");
                 int end = 0;
                 for (int i = 0; i < table.rules.Count; ++i)
                 {
@@ -1001,7 +1021,7 @@
             }
             else
             {
-                // Parse lexer grammar.
+                // Parse grammar.
                 HashSet<string> read_files = new HashSet<string>
                 {
                     document.FullPath
@@ -1022,29 +1042,46 @@
                         break;
                     }
                 }
-                List<AntlrGrammarDetails> lexers = new List<AntlrGrammarDetails>();
+                List<AntlrGrammarDetails> grammars = new List<AntlrGrammarDetails>();
                 foreach (string f in read_files)
                 {
-                    Workspaces.Document lexer_document = Workspaces.Workspace.Instance.FindDocument(f);
-                    if (lexer_document == null)
+                    Workspaces.Document d = Workspaces.Workspace.Instance.FindDocument(f);
+                    if (d == null)
                     {
                         continue;
                     }
-                    AntlrGrammarDetails x = ParserDetailsFactory.Create(lexer_document) as AntlrGrammarDetails;
-                    lexers.Add(x);
+                    AntlrGrammarDetails x = ParserDetailsFactory.Create(d) as AntlrGrammarDetails;
+                    grammars.Add(x);
                 }
 
-                if (lexers.Count != 2)
+                // I'm going to have to assume two grammars, one lexer and one parser grammar each.
+                if (grammars.Count != 2)
                 {
                     return null;
                 }
 
-                AntlrGrammarDetails pd_lexer = lexers[1];
+                // Read now lexer grammar. The parser grammar was already read.
+                AntlrGrammarDetails pd_lexer = grammars[1];
                 Workspaces.Document ldocument = Workspaces.Workspace.Instance.FindDocument(pd_lexer.FullFileName);
                 Table lexer_table = new Table(pd_lexer, ldocument);
                 lexer_table.ReadRules();
                 lexer_table.FindPartitions();
                 lexer_table.FindStartRules();
+
+                // Look for tokenVocab.
+                FindOptions find_options = new FindOptions();
+                ParseTreeWalker.Default.Walk(find_options, pd_parser.ParseTree);
+                ANTLRv4Parser.OptionContext tokenVocab = null;
+                foreach (var o in find_options.Options)
+                {
+                    var oo = o as ANTLRv4Parser.OptionContext;
+                    if (oo.id() != null && oo.id().GetText() == "tokenVocab")
+                    {
+                        tokenVocab = oo;
+                    }
+                }
+                bool remove_options_spec = tokenVocab != null && find_options.Options.Count == 1;
+                bool rewrite_options_spec = tokenVocab != null;
 
                 // Create a combined parser grammar.
                 StringBuilder sb_parser = new StringBuilder();
@@ -1067,10 +1104,57 @@
                 string pre = old_code.Substring(0, pd_parser.TokStream.Get(grammar_type_tree.SourceInterval.a).StartIndex - 0);
                 sb_parser.Append(pre);
                 sb_parser.Append("grammar " + id.GetText().Replace("Parser", "") + ";" + Environment.NewLine);
-                int x1 = pd_parser.TokStream.Get(semi_tree.SourceInterval.b).StopIndex + 1;
-                int x2 = pd_parser.TokStream.Get(rules_tree.SourceInterval.a).StartIndex;
-                string n1 = old_code.Substring(x1, x2 - x1);
-                sb_parser.Append(n1);
+                
+                if (!(remove_options_spec || rewrite_options_spec))
+                {
+                    int x1 = pd_parser.TokStream.Get(semi_tree.SourceInterval.b).StopIndex + 1;
+                    int x2 = pd_parser.TokStream.Get(rules_tree.SourceInterval.a).StartIndex;
+                    string n1 = old_code.Substring(x1, x2 - x1);
+                    sb_parser.Append(n1);
+                }
+                else if (remove_options_spec)
+                {
+                    int x1 = pd_parser.TokStream.Get(semi_tree.SourceInterval.b).StopIndex + 1;
+                    int x2 = pd_parser.TokStream.Get(find_options.OptionsSpec.SourceInterval.a).StartIndex;
+                    int x3 = pd_parser.TokStream.Get(find_options.OptionsSpec.SourceInterval.b).StopIndex + 1;
+                    int x4 = pd_parser.TokStream.Get(rules_tree.SourceInterval.a).StartIndex;
+                    string n1 = old_code.Substring(x1, x2 - x1);
+                    sb_parser.Append(n1);
+                    string n3 = old_code.Substring(x3, x4 - x3);
+                    sb_parser.Append(n3);
+                }
+                else if (rewrite_options_spec)
+                {
+                    int x1 = pd_parser.TokStream.Get(semi_tree.SourceInterval.b).StopIndex + 1;
+                    int x2 = 0;
+                    int x3 = 0;
+                    foreach (var o in find_options.Options)
+                    {
+                        var oo = o as ANTLRv4Parser.OptionContext;
+                        if (oo.id() != null && oo.id().GetText() == "tokenVocab")
+                        {
+                            x2 = pd_parser.TokStream.Get(oo.SourceInterval.a).StartIndex;
+                            int j;
+                            for (j = oo.SourceInterval.b + 1; ; j++)
+                            {
+                                if (pd_parser.TokStream.Get(j).Text == ";")
+                                {
+                                    j++;
+                                    break;
+                                }
+                            }
+                            x3 = pd_parser.TokStream.Get(j).StopIndex + 1;
+                            break;
+                        }
+                    }
+                    int x4 = pd_parser.TokStream.Get(rules_tree.SourceInterval.a).StartIndex;
+                    string n1 = old_code.Substring(x1, x2 - x1);
+                    sb_parser.Append(n1);
+                    string n2 = old_code.Substring(x2, x3 - x2);
+                    sb_parser.Append(n2);
+                    string n4 = old_code.Substring(x3, x4 - x3);
+                    sb_parser.Append(n4);
+                }
                 int end = 0;
                 for (int i = 0; i < table.rules.Count; ++i)
                 {
