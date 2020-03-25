@@ -149,7 +149,7 @@
                     EnvDTE.Projects projects = dte.Solution.Projects;
                     project = projects.Item(EnvDTE.Constants.vsMiscFilesProjectUniqueName);
                 }
-                MakeChanges.EnterChanges(changes, project, the_namespace);
+                //MakeChanges.EnterChanges(changes, project, the_namespace);
             }
             catch (Exception exception)
             {
