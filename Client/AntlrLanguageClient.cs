@@ -56,6 +56,7 @@
             Reorder.Initialize(this);
             SplitCombineGrammars.Initialize(this);
             EliminateLeftRecursion.Initialize(this);
+            EliminateAntlrKeywordsInRules.Initialize(this);
         }
 
         public event AsyncEventHandler<EventArgs> StartAsync;

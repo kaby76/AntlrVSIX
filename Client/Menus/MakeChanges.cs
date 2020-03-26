@@ -1,6 +1,14 @@
 ﻿using Microsoft.VisualStudio.Shell;
 using System;
 using System.Collections.Generic;
+using LanguageServer;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.TextManager.Interop;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.Design;
 
 namespace LspAntlr
 {
@@ -83,6 +91,75 @@ namespace LspAntlr
                         // Delete the file.
                         System.IO.File.Delete(fn);
                     }
+                }
+            }
+        }
+
+        public static void EnterIncrementalChanges(Dictionary<string, string> changes, ITextBuffer buffer)
+        {
+            foreach (KeyValuePair<string, string> pair in changes)
+            {
+                string fn = pair.Key;
+                string new_code = pair.Value;
+                if (new_code == null)
+                {
+                    continue;
+                }
+                {
+                    Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(fn);
+                    if (document == null)
+                    {
+                        return;
+                    }
+                    ITextEdit edit = buffer.CreateEdit();
+                    LanguageServer.diff_match_patch diff = new LanguageServer.diff_match_patch();
+                    List<LanguageServer.Diff> diffs = diff.diff_main(document.Code, new_code);
+                    List<LanguageServer.Patch> patch = diff.patch_make(diffs);
+                    //patch.Reverse();
+
+                    // Start edit session.
+                    int times = 0;
+                    int delta = 0;
+                    foreach (LanguageServer.Patch p in patch)
+                    {
+                        times++;
+                        int start = p.start1 - delta;
+
+                        int offset = 0;
+                        foreach (LanguageServer.Diff ed in p.diffs)
+                        {
+                            if (ed.operation == LanguageServer.Operation.EQUAL)
+                            {
+                                // Let's verify that.
+                                int len = ed.text.Length;
+                                SnapshotSpan tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
+                                  new Span(start + offset, len));
+                                string tt = tokenSpan.GetText();
+                                if (ed.text != tt)
+                                { }
+                                offset = offset + len;
+                            }
+                            else if (ed.operation == LanguageServer.Operation.DELETE)
+                            {
+                                int len = ed.text.Length;
+                                SnapshotSpan tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
+                                  new Span(start + offset, len));
+                                string tt = tokenSpan.GetText();
+                                if (ed.text != tt)
+                                { }
+                                Span sp = new Span(start + offset, len);
+                                offset = offset + len;
+                                edit.Delete(sp);
+                            }
+                            else if (ed.operation == LanguageServer.Operation.INSERT)
+                            {
+                                int len = ed.text.Length;
+                                edit.Insert(start + offset, ed.text);
+                            }
+                        }
+                        delta = delta + (p.length2 - p.length1);
+                    }
+                    edit.Apply();
                 }
             }
         }
