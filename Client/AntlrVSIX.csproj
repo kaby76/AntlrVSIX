@@ -49,6 +49,7 @@
     <Compile Include="Menus\AboutBox.xaml.cs">
       <DependentUpon>AboutBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Menus\EliminateAntlrKeywordsInRules.cs" />
     <Compile Include="Menus\EliminateLeftRecursion.cs" />
     <Compile Include="Menus\ImportBox.xaml.cs">
       <DependentUpon>ImportBox.xaml</DependentUpon>

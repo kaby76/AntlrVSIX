@@ -211,6 +211,7 @@
       <IDSymbol name="CombineGrammarsCmd" value="0x7018" />
       <IDSymbol name="ImportCmd" value="0x7019" />
       <IDSymbol name="EliminateLeftRecursionCmd" value="0x7020" />
+      <IDSymbol name="EliminateAntlrKeywordsInRulesCmd" value="0x7021" />
     </GuidSymbol>
   </Symbols>
 </CommandTable>

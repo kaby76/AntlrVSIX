@@ -1383,6 +1383,26 @@
             return s;
         }
 
+        [JsonRpcMethod("CMEliminateAntlrKeywordsInRules")]
+        public async System.Threading.Tasks.Task<Dictionary<string, string>> CMEliminateAntlrKeywordsInRules(JToken arg)
+        {
+            Dictionary<string, string> s = null;
+            try
+            {
+                Uri request = arg.ToObject<Uri>();
+                Document document = CheckDoc(request);
+                if (trace)
+                {
+                    System.Console.Error.WriteLine("<-- CMEliminateAntlrKeywordsInRules");
+                    System.Console.Error.WriteLine(arg.ToString());
+                }
+                s = Transform.EliminateAntlrKeywordsInRules(document);
+            }
+            catch (Exception)
+            { }
+            return s;
+        }
+
 
     }
 }

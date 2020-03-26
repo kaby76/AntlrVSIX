@@ -393,6 +393,26 @@
             return null;
         }
 
+        public Dictionary<string, string> CMEliminateAntlrKeywordsInRules(string ffn)
+        {
+            try
+            {
+                if (_rpc == null)
+                {
+                    return null;
+                }
+
+                Uri uri = new Uri(ffn);
+                var p = uri;
+                Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMEliminateAntlrKeywordsInRules", p).Result;
+                return result;
+            }
+            catch (Exception)
+            {
+            }
+            return null;
+        }
+
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
             // When initialized asynchronously, the current thread may be a background thread at this point.
