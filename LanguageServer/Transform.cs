@@ -1499,9 +1499,9 @@
             return result;
         }
 
-        public static Dictionary<string, string> EliminateAntlrKeywordsInRules(Document document)
+        public static string EliminateAntlrKeywordsInRules(Document document)
         {
-            Dictionary<string, string> result = new Dictionary<string, string>();
+            string result = null;
 
             // Check if initial file is a parser or combined grammar.
             AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
@@ -1537,9 +1537,7 @@
                     }
                     return r;
                 });
-
-            result.Add(document.FullPath, sb.ToString());
-            return result;
+            return sb.ToString();
         }
 
 

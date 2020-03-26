@@ -1396,7 +1396,12 @@
                     System.Console.Error.WriteLine("<-- CMEliminateAntlrKeywordsInRules");
                     System.Console.Error.WriteLine(arg.ToString());
                 }
-                s = Transform.EliminateAntlrKeywordsInRules(document);
+                var new_code = Transform.EliminateAntlrKeywordsInRules(document);
+                if (new_code != null)
+                {
+                    s = new Dictionary<string, string>();
+                    s.Add(document.FullPath, new_code);
+                }
             }
             catch (Exception)
             { }
