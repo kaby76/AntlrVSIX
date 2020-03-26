@@ -27,7 +27,7 @@
             }
             {
                 CommandID menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidMenuAndCommandsCmdSet), 0x7021);
-                _menu_item1 = new MenuCommand(MenuItemCallbackSplit, menuCommandID)
+                _menu_item1 = new MenuCommand(MenuItemCallback, menuCommandID)
                 {
                     Enabled = true,
                     Visible = true
@@ -67,17 +67,7 @@
             Instance = new EliminateAntlrKeywordsInRules(package);
         }
 
-        private void MenuItemCallbackSplit(object sender, EventArgs e)
-        {
-            MenuItemCallback(sender, e, true);
-        }
-
-        private void MenuItemCallbackCombine(object sender, EventArgs e)
-        {
-            MenuItemCallback(sender, e, false);
-        }
-
-        private void MenuItemCallback(object sender, EventArgs e, bool split)
+        private void MenuItemCallback(object sender, EventArgs e)
         {
             try
             {
@@ -126,30 +116,7 @@
                     return;
                 }
                 Dictionary<string, string> changes = alc.CMEliminateAntlrKeywordsInRules(ffn);
-                EnvDTE.Project project = null;
-                string the_namespace = "";
-                for (; ; )
-                {
-                    string current_grammar_ffn = ffn;
-                    (EnvDTE.Project, EnvDTE.ProjectItem) p_f_original_grammar = LspAntlr.MakeChanges.FindProjectAndItem(current_grammar_ffn);
-                    project = p_f_original_grammar.Item1;
-                    try
-                    {
-                        object prop = p_f_original_grammar.Item2.Properties.Item("CustomToolNamespace").Value;
-                        the_namespace = prop.ToString();
-                    }
-                    catch (Exception)
-                    {
-                    }
-                    break;
-                }
-                if (project == null)
-                {
-                    EnvDTE.DTE dte = (EnvDTE.DTE)Package.GetGlobalService(typeof(EnvDTE.DTE));
-                    EnvDTE.Projects projects = dte.Solution.Projects;
-                    project = projects.Item(EnvDTE.Constants.vsMiscFilesProjectUniqueName);
-                }
-                //MakeChanges.EnterChanges(changes, project, the_namespace);
+                MakeChanges.EnterIncrementalChanges(changes, buffer);
             }
             catch (Exception exception)
             {
