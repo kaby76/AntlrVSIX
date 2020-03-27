@@ -95,8 +95,9 @@ result in faster parsers).
 
 ## Work in progress for v5.6:
 
-* Import of Flex/Bison/Yacc grammars. This will go well beyond anything that was implemented before (e.g., by Parr and
-Cramer 2006 for Antlr3 conversions. For example, it will rewrite terminals and non-terminals to suitable Antlr
+* Import of Flex/Bison/Yacc grammars. This will go well beyond anything that was implemented before (e.g.,
+[Bison to ANTLR translator](https://www.antlr3.org/share/list) by Parr and Cramer 2006 for Antlr3 conversions).
+It will rewrite terminals and non-terminals to suitable Antlr
 symbols, folding of string literals immediately as lexer rules, declare terminals as tokens in the lexer grammar, etc.
 But, there is so much I can't do at this point until more infrastructure is set up.
 * Elimination of left recursion.
