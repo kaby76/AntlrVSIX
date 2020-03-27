@@ -359,30 +359,32 @@
             }
         }
 
-        public static void Reconstruct(StringBuilder sb, IParseTree tree, CommonTokenStream stream, Func<TerminalNodeImpl, string> replace)
+        public static void Reconstruct(StringBuilder sb, IParseTree tree, ref int previous, Func<TerminalNodeImpl, string> replace)
         {
             if (tree as TerminalNodeImpl != null)
             {
                 TerminalNodeImpl tok = tree as TerminalNodeImpl;
-                Interval interval = tok.SourceInterval;
-                var inter = stream.GetHiddenTokensToLeft(tok.Symbol.TokenIndex);
-                if (inter != null)
-                    foreach (var t in inter)
-                    {
-                        sb.Append(t.Text);
-                    }
-                var s = stream.GetText(interval);
+                ICharStream stream = tok.Payload.InputStream;
+                var start = tok.Payload.StartIndex;
+                var stop = tok.Payload.StopIndex + 1;
+                if (previous < start)
+                {
+                    Interval previous_interval = new Interval(previous, start - 1);
+                    string inter = stream.GetText(previous_interval);
+                    sb.Append(inter);
+                }
                 if (tok.Symbol.Type == TokenConstants.EOF)
                     return;
-                var new_s = replace(tok);
+                string new_s = replace(tok);
                 sb.Append(new_s);
+                previous = stop;
             }
             else
             {
                 for (int i = 0; i < tree.ChildCount; ++i)
                 {
                     var c = tree.GetChild(i);
-                    Reconstruct(sb, c, stream, replace);
+                    Reconstruct(sb, c, ref previous, replace);
                 }
             }
         }
@@ -1521,7 +1523,8 @@
             table.FindStartRules();
 
             StringBuilder sb = new StringBuilder();
-            Reconstruct(sb, pd_parser.ParseTree, pd_parser.TokStream,
+            int pre = 0;
+            Reconstruct(sb, pd_parser.ParseTree, ref pre,
                 n =>
                 {
                     var r = n.GetText();
