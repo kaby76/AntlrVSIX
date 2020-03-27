@@ -228,15 +228,17 @@ tool are applied to the resulting grammars.
 
 Notes:
 * When splitting grammars, "option { tokenVocab=....; }" is inserted
-into the parser. When combining grammars, the tokenVocab option is removed.
+into the parser grammar. When combining grammars, the tokenVocab option is removed
+from the combined grammar.
 If there are no other options in the options spec, then the entire option
 is removed.
 * When splitting or combining, the generated Antlr listeners
-and visitors are renamed. The refactoring does not currently
-replace those references.
+and visitors are going to be named differently. The refactoring does not currently
+replace those references in your C# code.
 * When splitting, string literals that do not have a lexer symbol declaration
-for folding will be left alone. You cannot use a string literal without a lexer
-symbol declaration in a split grammar, but you can for a combined grammar.
+for folding will be left alone, and may result in build errors by the Antlr tool.
+You can use a string literal without a lexer
+symbol declaration in a combined grammar, but you cannot for a split grammar.
 
 _Before_
 
