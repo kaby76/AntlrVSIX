@@ -227,7 +227,7 @@ split parser and lexer grammars. Arguments to the Antlr
 tool are applied to the resulting grammars.
 
 Notes:
-* When splitting grammars, "option { tokenVocab=....; |" is inserted
+* When splitting grammars, "option { tokenVocab=....; }" is inserted
 into the parser. When combining grammars, the tokenVocab option is removed.
 If there are no other options in the options spec, then the entire option
 is removed.
