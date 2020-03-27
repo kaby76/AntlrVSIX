@@ -226,9 +226,17 @@ Splitting a grammar converts a combined grammar into
 split parser and lexer grammars. Arguments to the Antlr
 tool are applied to the resulting grammars.
 
-Note, in splitting grammars, an option is inserted into the parser
-grammar for tokenVocab. When combining, the tokenVocab is removed.
-If there are no other options in the options spec, then it is removed.
+Notes:
+* When splitting grammars, "option { tokenVocab=....; |" is inserted
+into the parser. When combining grammars, the tokenVocab option is removed.
+If there are no other options in the options spec, then the entire option
+is removed.
+* When splitting or combining, the generated Antlr listeners
+and visitors are renamed. The refactoring does not currently
+replace those references.
+* When splitting, string literals that do not have a lexer symbol declaration
+for folding will be left alone. You cannot use a string literal without a lexer
+symbol declaration in a split grammar, but you can for a combined grammar.
 
 _Before_
 
