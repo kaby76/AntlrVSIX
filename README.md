@@ -54,20 +54,16 @@ aren't set.
 
 # Documentation
 
-For information on how to use AntlrVSIX, see the [User Guide](doc/readme.md), which is geared specifically for Antlr programs. _Note--all this needs updating due to the new slimmed-down UI, which is now implemented using the Visual Studio LSP Client code._
+For information on how to use AntlrVSIX, see the [User Guide](doc/readme.md).
 
 # Caveats:
-
-* I am in the process of reviewing the collection of Java grammars in
-[Antlr's grammar github repository](https://github.com/antlr/grammars-v4). Currently,
-Antlrvsix uses the slower [Java9 grammar](https://github.com/antlr/grammars-v4/blob/master/java9/Java9.g4).
-The faster, "official" Java grammar is [here](https://github.com/antlr/grammars-v4/tree/master/java).
 
 * Support for VS2017 and older editions has been removed.
 If you are interested in those, you can try using an older version of the extension.
 
 * The grammar used is the standard Antlr4 grammar in the examples: 
-https://github.com/antlr/grammars-v4/tree/master/antlr4.
+https://github.com/antlr/grammars-v4/tree/master/antlr4. This isn't, for whatever reason, the exact same
+as the [grammar](https://github.com/antlr/antlr4/blob/master/tool/src/org/antlr/v4/parse/ANTLRParser.g) used by the tool.
 
 * If you want to make modifications for yourself, you should [reset your
 Experimental Hive for Visual Studio](https://docs.microsoft.com/en-us/visualstudio/extensibility/the-experimental-instance?view=vs-2017). To do that,
