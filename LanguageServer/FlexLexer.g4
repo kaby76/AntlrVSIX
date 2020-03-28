@@ -4,11 +4,14 @@ channels {
 	OFF_CHANNEL		// non-default channel for whitespace and comments
 }
 
+options {
+	superClass = FlexLexerAdaptor ;
+}
+
 tokens {
 SECTEND,
 SCDECL,
 XSCDECL,
-NAME,
 TOK_OPTION,
 TOK_OUTFILE,
 TOK_EXTRA_TYPE,
@@ -53,33 +56,11 @@ CCL_OP_DIFF,
 CCL_OP_UNION
 }
 
-fragment OptWs :
-	[ \t]*
-	;
+// ======================= Common fragments =========================
 
-fragment Ws :
-	[ \t]+
+fragment Underscore
+	: '_'
 	;
-
-fragment Nl :
-	[\r]?[\n]
-	;
-
-fragment Name :
-	NameStartChar NameChar*
-	;
-
-fragment NameChar
-	:	NameStartChar
-	|	'0'..'9'
-	|	'_'
-	|	'\u00B7'
-	|	'\u0300'..'\u036F'
-	|	'\u203F'..'\u2040'
-	| '.'
-	| '-'
-	;
-
 
 fragment NameStartChar
 	:	'A'..'Z'
@@ -97,6 +78,59 @@ fragment NameStartChar
 	|	'\uF900'..'\uFDCF'
 	|	'\uFDF0'..'\uFFFD'
 	| '$' // For PHP
+	;	// ignores | ['\u10000-'\uEFFFF] ;
+
+fragment DQuoteLiteral
+	: DQuote ( EscSeq | ~["\r\n\\] | ( '\\' [\n\r]*) )* DQuote
+	;
+
+fragment DQuote
+	: '"'
+	;
+
+fragment SQuote
+	: '\''
+	;
+
+fragment CharLiteral
+	: SQuote ( EscSeq | ~['\r\n\\] )  SQuote
+	;
+
+fragment SQuoteLiteral
+	: SQuote ( EscSeq | ~['\r\n\\] )* SQuote
+	;
+
+fragment Esc
+	: '\\'
+	;
+
+fragment EscSeq
+	:	Esc
+		([abefnrtv?"'\\]	// The standard escaped character set such as tab, newline, etc.
+		| [xuU]?[0-9]+) // C-style 
+	;
+
+fragment EscAny
+	:	Esc .
+	;
+
+fragment Id
+	: NameStartChar NameChar*
+	;
+
+fragment Type
+	: ([\t\r\n\f a-zA-Z0-9] | '[' | ']' | '{' | '}' | '.' | '_' | '(' | ')' | ',')+
+	;
+
+fragment NameChar
+	:	NameStartChar
+	|	'0'..'9'
+	|	Underscore
+	|	'\u00B7'
+	|	'\u0300'..'\u036F'
+	|	'\u203F'..'\u2040'
+	| '.'
+	| '-'
 	;
 
 fragment BlockComment
@@ -112,6 +146,112 @@ fragment LineComment
 	: '//' ~[\r\n]*
 	;
 
+fragment LineCommentExt
+	: '//' ~'\n'* ( '\n' Hws* '//' ~'\n'* )*
+	;
+
+fragment Ws
+	: Hws
+	| Vws
+	;
+
+fragment Hws
+	: [ \t]
+	;
+
+fragment Vws
+	: [\r\n\f]
+	;
+
+/* Four types of user code:
+    - prologue (code between '%{' '%}' in the first section, before %%);
+    - actions, printers, union, etc, (between braced in the middle section);
+    - epilogue (everything after the second %%).
+    - predicate (code between '%?{' and '{' in middle section); */
+
+// -------------------------
+// Actions
+
+fragment LBrace
+	: '{'
+	;
+
+fragment RBrace
+	: '}'
+	;
+
+fragment PercentLBrace
+	: '%{'
+	;
+
+fragment PercentRBrace
+	: '%}'
+	;
+
+fragment PercentQuestion
+	: '%?{'
+	;
+
+fragment ActionCode
+    : Stuff*
+	;
+
+fragment Stuff
+	: EscAny
+	| DQuoteLiteral
+	| SQuoteLiteral
+	| BlockComment
+	| LineComment
+	| NestedAction
+	| ~('{' | '}' | '\'' | '"')
+	;
+
+fragment NestedPrologue
+	: PercentLBrace ActionCode PercentRBrace
+	;
+
+fragment NestedAction
+	: LBrace ActionCode RBrace
+	;
+
+fragment NestedPredicate
+	: PercentQuestion ActionCode RBrace
+	;
+
+fragment Sp
+	: Ws*
+	;
+
+fragment Eqopt
+	: (Sp [=])?
+	;
+
+fragment Nl :
+    [\r]?[\n]
+	;
+
+fragment OptWs :
+    [ \t]*
+    ;
+
+PercentPercent:   '%%'
+		{
+			++percent_percent_count;
+			if (percent_percent_count == 1)
+			{
+				//this.PushMode(BisonLexer.RuleMode);
+				return;
+			} else if (percent_percent_count == 2)
+			{
+				this.PushMode(BisonLexer.EpilogueMode);
+				return;
+			} else
+			{
+				this.Type = BisonLexer.PERCENT_PERCENT;
+				return;
+			}
+		}
+		;
 
 
 // -------------------------
@@ -148,6 +288,11 @@ OPEN_PAREN : '(' ;
 CLOSE_PAREN : ')' ;
 MINUS : '-' ;
 
+mode INITIAL;
+
+SCDECL : '%s' Id? ;
+XSCDECL : '%x' Id? ;
+NAME : Id ;
 
 mode SECT2;
 
