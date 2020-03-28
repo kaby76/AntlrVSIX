@@ -88,10 +88,12 @@ result in faster parsers).
 ## Planned for v5.7:
 
 * Generalized fold/unfold/pack grammar rule refactorings.
+* Elimination of left recursion.
+* Import of Flex files.
 
-## Work in progress for v5.6:
+## Release notes for v5.6:
 
-* Import of Flex/Bison/Yacc grammars. This will go well beyond anything that was implemented before (e.g.,
+* Import of Bison/Yacc grammars. This will go well beyond anything that was implemented before (e.g.,
 [Bison to ANTLR translator](https://www.antlr3.org/share/list) by Parr and Cramer 2006 for Antlr3 conversions),
 but will stop far short of what I would like.
 It will rewrite terminals and non-terminals to suitable Antlr symbols,
@@ -99,7 +101,6 @@ folding of string literals immediately as lexer rules,
 and declare terminals as tokens in the lexer grammar.
 Additional fixes may be available if I get more transformations working.
 But, there is so much I can't do at this point until more infrastructure is set up.
-* Elimination of left recursion.
 * Bug fixes.
 
 ## Release notes for v5.5:
