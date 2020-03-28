@@ -1409,5 +1409,26 @@
         }
 
 
+        [JsonRpcMethod("CMAddLexerRulesForStringLiterals")]
+        public async System.Threading.Tasks.Task<Dictionary<string, string>> CMAddLexerRulesForStringLiterals(JToken arg)
+        {
+            Dictionary<string, string> s = null;
+            try
+            {
+                Uri request = arg.ToObject<Uri>();
+                Document document = CheckDoc(request);
+                if (trace)
+                {
+                    System.Console.Error.WriteLine("<-- CMAddLexerRulesForStringLiterals");
+                    System.Console.Error.WriteLine(arg.ToString());
+                }
+                s = Transform.AddLexerRulesForStringLiterals(document);
+            }
+            catch (Exception)
+            { }
+            return s;
+        }
+
+
     }
 }

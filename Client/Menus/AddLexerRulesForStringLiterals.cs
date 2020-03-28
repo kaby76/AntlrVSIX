@@ -8,14 +8,14 @@
     using System.Collections.Generic;
     using System.ComponentModel.Design;
 
-    internal class EliminateAntlrKeywordsInRules
+    internal class AddLexerRulesForStringLiterals
     {
         private readonly AntlrLanguageClient _package;
         private readonly MenuCommand _menu_item1;
         private string current_grammar_ffn;
 
 
-        private EliminateAntlrKeywordsInRules(AntlrLanguageClient package)
+        private AddLexerRulesForStringLiterals(AntlrLanguageClient package)
         {
             _package = package ?? throw new ArgumentNullException("package");
             OleMenuCommandService commandService = ((IServiceProvider)ServiceProvider).GetService(
@@ -26,7 +26,7 @@
                 throw new ArgumentNullException("OleMenuCommandService");
             }
             {
-                CommandID menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidMenuAndCommandsCmdSet), 0x7021);
+                CommandID menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidMenuAndCommandsCmdSet), 0x7022);
                 _menu_item1 = new MenuCommand(MenuItemCallback, menuCommandID)
                 {
                     Enabled = true,
@@ -58,13 +58,13 @@
             }
         }
 
-        public static EliminateAntlrKeywordsInRules Instance { get; private set; }
+        public static AddLexerRulesForStringLiterals Instance { get; private set; }
 
         private AntlrLanguageClient ServiceProvider => _package;
 
         public static void Initialize(AntlrLanguageClient package)
         {
-            Instance = new EliminateAntlrKeywordsInRules(package);
+            Instance = new AddLexerRulesForStringLiterals(package);
         }
 
         private void MenuItemCallback(object sender, EventArgs e)
@@ -72,7 +72,7 @@
             try
             {
                 ////////////////////////
-                /// Eliminate Antlr keywords mistakenly used as non-terminal names!
+                /// Add lexer rules for string literals.
                 ////////////////////////
 
                 IVsTextManager manager = ((IServiceProvider)ServiceProvider).GetService(typeof(VsTextManagerClass)) as IVsTextManager;
@@ -115,7 +115,7 @@
                 {
                     return;
                 }
-                Dictionary<string, string> changes = alc.CMEliminateAntlrKeywordsInRules(ffn);
+                Dictionary<string, string> changes = alc.CMAddLexerRulesForStringLiterals(ffn);
                 MakeChanges.EnterIncrementalChanges(ServiceProvider, changes, buffer);
             }
             catch (Exception exception)
