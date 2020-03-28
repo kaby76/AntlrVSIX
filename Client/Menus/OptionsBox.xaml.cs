@@ -15,6 +15,7 @@
             incremental_reformat.IsChecked = Option.GetBoolean("IncrementalReformat");
             override_antlr.IsChecked = Option.GetBoolean("OverrideAntlrPluggins");
             opt_in_reporting.IsChecked = Option.GetBoolean("OptInLogging");
+            enable_completion.IsChecked = Option.GetBoolean("EnableCompletion");
         }
 
         private void btnDialogOk_Click(object sender, RoutedEventArgs e)
@@ -27,6 +28,7 @@
             Option.SetBoolean("IncrementalReformat", inputDialog.incremental_reformat.IsChecked ?? false);
             Option.SetBoolean("OverrideAntlrPluggins", inputDialog.override_antlr.IsChecked ?? false);
             Option.SetBoolean("OptInLogging", inputDialog.opt_in_reporting.IsChecked ?? false);
+            Option.SetBoolean("EnableCompletion", inputDialog.enable_completion.IsChecked ?? false);
             Close();
         }
 

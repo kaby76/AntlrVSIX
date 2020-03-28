@@ -48,11 +48,14 @@
 
                 HoverProvider = true,
 
-                CompletionProvider = new CompletionOptions
-                {
-                    ResolveProvider = true,
-                    TriggerCharacters = new string[] { ",", "." }
-                },
+                CompletionProvider =
+                    ( Options.Option.GetBoolean("EnableCompletion")
+                        ? new CompletionOptions
+                        {
+                            ResolveProvider = true,
+                            TriggerCharacters = new string[] { ",", "." }
+                        }
+                        : null ),
 
                 ReferencesProvider = true,
 

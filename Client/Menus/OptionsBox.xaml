@@ -70,6 +70,11 @@
         </TextBox>
         <CheckBox Name="opt_in_reporting" Grid.Row="7" Grid.Column="1" Margin="10,0,10,10" >Opt-in to help development with logging of crashes.</CheckBox>
 
+        <TextBox Grid.Row="8" Grid.Column="0" TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0">
+            Enable lookahead/completion (note, server is less stable and may crash with it on).
+        </TextBox>
+        <CheckBox Name="enable_completion" Grid.Row="8" Grid.Column="1" Margin="10,0,10,10" >Enable completion.</CheckBox>
+
         <!-- Accept or Cancel -->
         <WrapPanel Grid.Row="14" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="10,0,0,0" >
             <Button IsDefault="True" Name="btnDialogOk" Click="btnDialogOk_Click" MinWidth="60" Margin="0,0,10,0">_Ok</Button>
