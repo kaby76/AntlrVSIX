@@ -86,11 +86,15 @@ VS, then reopen. Do not do "rebuild", only "build".
 grammar e.g., warning/removal of LHS predicates in lexer, replacing factored grammar rules with Kleene star rules (which
 result in faster parsers).
 
-## Planned for v5.8:
+## Planned for v5.9:
 
 * Generalized fold/unfold/pack grammar rule refactorings.
 * Elimination of left recursion.
 * Import of Flex files.
+
+## Release notes for v5.8:
+
+* Added in rename on Antlrvsix tool menu because Microsoft broke LSP rename!
 
 ## Release notes for v5.7:
 
