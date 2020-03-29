@@ -86,11 +86,15 @@ VS, then reopen. Do not do "rebuild", only "build".
 grammar e.g., warning/removal of LHS predicates in lexer, replacing factored grammar rules with Kleene star rules (which
 result in faster parsers).
 
-## Planned for v5.7:
+## Planned for v5.8:
 
 * Generalized fold/unfold/pack grammar rule refactorings.
 * Elimination of left recursion.
 * Import of Flex files.
+
+## Release notes for v5.7:
+
+* Disabled completion since this is crashing the server. An option to enable was added so it can be turned on when fixed.
 
 ## Release notes for v5.6:
 
