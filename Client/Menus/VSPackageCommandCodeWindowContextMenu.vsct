@@ -130,7 +130,14 @@
             <ButtonText>Add lexer rules for string literals</ButtonText>
           </Strings>
         </Button>
-        
+
+        <Button guid="guidMenuAndCommandsCmdSet" id="RenameCmd" priority="0x600" type="Button">
+          <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup"/>
+          <Strings>
+            <ButtonText>Rename (the unbroken version)</ButtonText>
+          </Strings>
+        </Button>
+
         <Button guid="guidMenuAndCommandsCmdSet" id="ImportCmd" priority="0x700" type="Button">
           <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup"/>
           <Strings>
@@ -145,7 +152,7 @@
           </Strings>
         </Button>
        
-        <Button guid="guidMenuAndCommandsCmdSet" id="AboutCmd" priority="0x700" type="Button">
+        <Button guid="guidMenuAndCommandsCmdSet" id="AboutCmd" priority="0x900" type="Button">
           <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup"/>
           <Strings>
             <ButtonText>About</ButtonText>
@@ -214,6 +221,7 @@
       <IDSymbol name="GoToListenerCmd" value="0x7005" />
       <IDSymbol name="GoToVisitorCmd" value="0x7006" />
       <IDSymbol name="OptionsCmd" value="0x7007" />
+      <IDSymbol name="RenameCmd" value="0x7009" />
       <IDSymbol name="AboutCmd" value="0x7010" />
       <IDSymbol name="ReplaceParserLiteralCmd" value="0x7011" />
       <IDSymbol name="RemoveUselessParserProductionsCmd" value="0x7012" />

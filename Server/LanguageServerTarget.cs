@@ -46,36 +46,53 @@
                     }
                 },
 
-                HoverProvider = true,
-
                 CompletionProvider =
-                    ( Options.Option.GetBoolean("EnableCompletion")
+                    (Options.Option.GetBoolean("EnableCompletion")
                         ? new CompletionOptions
                         {
                             ResolveProvider = true,
                             TriggerCharacters = new string[] { ",", "." }
                         }
-                        : null ),
+                        : null),
 
-                ReferencesProvider = true,
+                HoverProvider = true,
+
+                SignatureHelpProvider = null,
+
+                // DeclarationProvider not supported.
 
                 DefinitionProvider = true,
 
                 TypeDefinitionProvider = false, // Does not make sense for Antlr.
-
+                
                 ImplementationProvider = false, // Does not make sense for Antlr.
+
+                ReferencesProvider = true,
 
                 DocumentHighlightProvider = true,
 
                 DocumentSymbolProvider = true,
 
-                WorkspaceSymbolProvider = false,
+                CodeLensProvider = null,
+
+                DocumentLinkProvider = null,
+
+                // ColorProvider not supported.
 
                 DocumentFormattingProvider = true,
 
                 DocumentRangeFormattingProvider = false,
 
-                RenameProvider = true
+                RenameProvider = true,
+
+                FoldingRangeProvider = null,
+
+                ExecuteCommandProvider = null,
+
+                // SelectionRangeProvider not supported.
+
+                WorkspaceSymbolProvider = false,
+
             };
 
             InitializeResult result = new InitializeResult

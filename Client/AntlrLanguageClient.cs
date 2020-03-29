@@ -58,6 +58,7 @@
             EliminateLeftRecursion.Initialize(this);
             EliminateAntlrKeywordsInRules.Initialize(this);
             AddLexerRulesForStringLiterals.Initialize(this);
+            RenameCommand.Initialize(this);
         }
 
         public event AsyncEventHandler<EventArgs> StartAsync;
