@@ -582,57 +582,61 @@
                 found_def = def;
                 break;
             }
+
             List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
             // Go through all files and look for refs.
-            foreach (KeyValuePair<string, List<string>> d in AntlrGrammarDetails._dependent_grammars)
+            if (found_ref != null)
             {
-                Document d_doc = Workspaces.Workspace.Instance.FindDocument(d.Key);
-                ParserDetails d_pd = ParserDetailsFactory.Create(d_doc);
-                if (d_pd.ParseTree == null)
+                foreach (KeyValuePair<string, List<string>> d in AntlrGrammarDetails._dependent_grammars)
                 {
-                    continue;
-                }
-
-                IEnumerable<TerminalNodeImpl> refs = d_pd.Refs.Where(
-                    (t) =>
+                    Document d_doc = Workspaces.Workspace.Instance.FindDocument(d.Key);
+                    ParserDetails d_pd = ParserDetailsFactory.Create(d_doc);
+                    if (d_pd.ParseTree == null)
                     {
-                        Antlr4.Runtime.Tree.TerminalNodeImpl x = t.Key;
-                        if (x.Symbol == found_ref.Token)
-                        {
-                            return true;
-                        }
+                        continue;
+                    }
 
-                        d_pd.Attributes.TryGetValue(x, out IList<Symtab.CombinedScopeSymbol> list_v);
-                        if (list_v == null)
+                    IEnumerable<TerminalNodeImpl> refs = d_pd.Refs.Where(
+                        (t) =>
                         {
-                            return false;
-                        }
-
-                        foreach (CombinedScopeSymbol v in list_v)
-                        {
-                            ISymbol vv = v as Symtab.ISymbol;
-                            if (vv == null)
-                            {
-                                return false;
-                            }
-
-                            if (vv.resolve() == found_def)
+                            Antlr4.Runtime.Tree.TerminalNodeImpl x = t.Key;
+                            if (x.Symbol == found_ref.Token)
                             {
                                 return true;
                             }
 
-                            return false;
-                        }
-                        return false;
-                    }).Select(t => t.Key);
-                foreach (TerminalNodeImpl r in refs)
-                {
-                    result.Add(
-                            new Location()
+                            d_pd.Attributes.TryGetValue(x, out IList<Symtab.CombinedScopeSymbol> list_v);
+                            if (list_v == null)
                             {
-                                Range = new Workspaces.Range(r.Symbol.StartIndex, r.Symbol.StopIndex),
-                                Uri = Workspaces.Workspace.Instance.FindDocument(r.Symbol.InputStream.SourceName)
-                            });
+                                return false;
+                            }
+
+                            foreach (CombinedScopeSymbol v in list_v)
+                            {
+                                ISymbol vv = v as Symtab.ISymbol;
+                                if (vv == null)
+                                {
+                                    return false;
+                                }
+
+                                if (vv.resolve() == found_def)
+                                {
+                                    return true;
+                                }
+
+                                return false;
+                            }
+                            return false;
+                        }).Select(t => t.Key);
+                    foreach (TerminalNodeImpl r in refs)
+                    {
+                        result.Add(
+                                new Location()
+                                {
+                                    Range = new Workspaces.Range(r.Symbol.StartIndex, r.Symbol.StopIndex),
+                                    Uri = Workspaces.Workspace.Instance.FindDocument(r.Symbol.InputStream.SourceName)
+                                });
+                    }
                 }
             }
             if (found_def != null)
