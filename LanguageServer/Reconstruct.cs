@@ -7,7 +7,11 @@
     {
         public static void Doit(StringBuilder sb, IParseTree node)
         {
-            if (node is TerminalNodeImpl)
+            if (node is ANTLRv4Parser.ActionBlockContext)
+            {
+                sb.Append(" { ... }");
+            }
+            else if (node is TerminalNodeImpl)
             {
                 sb.Append(" " + node.GetText());
             }

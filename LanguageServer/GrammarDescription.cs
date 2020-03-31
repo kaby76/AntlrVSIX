@@ -454,18 +454,57 @@
                         sym = sym.resolve();
                     }
 
-                    if (sym is TerminalSymbol) { sb.Append("Terminal "); } else if (sym is NonterminalSymbol) { sb.Append("Nonterminal "); } else { continue; } string def_file = sym.file;
-                    if (def_file == null) { continue; } Workspaces.Document def_document = Workspaces.Workspace.Instance.FindDocument(def_file);
-                    if (def_document == null) { continue; } ParserDetails def_pd = ParserDetailsFactory.Create(def_document);
-                    if (def_pd == null) { continue; } IParseTree fod = def_pd.Attributes.Where(
+                    if (sym is TerminalSymbol) 
+                    {
+                        sb.Append("Terminal ");
+                    }
+                    else if (sym is NonterminalSymbol)
+                    {
+                        sb.Append("Nonterminal ");
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                    string def_file = sym.file;
+                    if (def_file == null)
+                    {
+                        continue;
+                    }
+                    Workspaces.Document def_document = Workspaces.Workspace.Instance.FindDocument(def_file);
+                    if (def_document == null)
+                    {
+                        continue;
+                    }
+                    ParserDetails def_pd = ParserDetailsFactory.Create(def_document);
+                    if (def_pd == null)
+                    {
+                        continue;
+                    }
+                    IParseTree fod = def_pd.Attributes.Where(
                             kvp => kvp.Value.Contains(value))
                         .Select(kvp => kvp.Key).FirstOrDefault();
-                    if (fod == null) { continue; } sb.Append("defined in ");
+                    if (fod == null)
+                    {
+                        continue;
+                    }
+                    sb.Append("defined in ");
                     sb.Append(sym.file);
                     sb.AppendLine();
                     IParseTree node = fod;
-                    for (; node != null; node = node.Parent) { if (node is ANTLRv4Parser.LexerRuleSpecContext ||
-                            node is ANTLRv4Parser.ParserRuleSpecContext) { break; } } if (node == null) { continue; } Reconstruct.Doit(sb, node);
+                    for (; node != null; node = node.Parent)
+                    {
+                        if (node is ANTLRv4Parser.LexerRuleSpecContext ||
+                            node is ANTLRv4Parser.ParserRuleSpecContext)
+                        {
+                            break;
+                        }
+                    }
+                    if (node == null)
+                    {
+                        continue;
+                    }
+                    Reconstruct.Doit(sb, node);
                 }
 
                 return sb.ToString();
