@@ -91,6 +91,7 @@ result in faster parsers).
 * Generalized fold/unfold/pack grammar rule refactorings.
 * Elimination of left recursion.
 * Import of Flex files.
+* Refactoring to sort mode sections in lexer grammars.
 
 ## Release notes for v5.8:
 
