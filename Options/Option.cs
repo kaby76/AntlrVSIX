@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Text.Json;
+    using System.Linq;
 
     public class Option
     {
@@ -16,6 +17,13 @@
             {"OverrideAntlrPluggins", true },
             {"OptInLogging", false },
             {"CorpusLocation", CorpusLocation },
+            {"AntlrTerminal", "Purple" },
+            {"AntlrNonterminal", "Blue" },
+            {"AntlrComment", "Green" },
+            {"AntlrKeyword", "Red" },
+            {"AntlrLiteral", "LightGreen" },
+            {"AntlrMode", "Salmon" },
+            {"AntlrChannel", "Coral" }
         };
         private static readonly string home = System.Environment.GetEnvironmentVariable("HOMEPATH");
         private static bool initialized = false;
@@ -114,7 +122,19 @@
                 if (File.Exists(antlr_options_file_name))
                 {
                     string jsonString = File.ReadAllText(antlr_options_file_name);
-                    defaults = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonString);
+                    var file_values = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonString);
+                    // Sum defaults and file_values.
+                    var new_list = new Dictionary<string, object>(defaults);
+                    foreach (var p in file_values)
+                    {
+                        new_list[p.Key] = p.Value;
+                    }
+                    bool same = file_values.Count == new_list.Count && !file_values.Except(new_list).Any();
+                    defaults = new_list;
+                    if (! same)
+                    {
+                        Write();
+                    }
                 }
                 else
                 {

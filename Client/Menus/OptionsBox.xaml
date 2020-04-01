@@ -1,6 +1,7 @@
 ﻿<Window 
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
     x:Class="LspAntlr.OptionsBox"
     Title="AntlrVSIX Options"
     Height="600"
@@ -27,56 +28,111 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TextBox Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Select this box if you want a visible server window. This might be useful if you want to confirm communication between client and server."/>
-        <CheckBox Name="visible_server_window" Grid.Row="0" Grid.Column="1" Margin="10,0,10,10">Visible LSP server.</CheckBox>
+        <CheckBox Name="visible_server_window" Grid.Row="0" Grid.Column="0" Margin="10,0,10,10">
+            <CheckBox.ToolTip>
+                <TextBlock  Margin="10,0,10,10" TextWrapping="Wrap" >
+                    Select this box if you want a visible server
+                    window. This might be useful if you want to confirm
+                    communication between client and server.
+                </TextBlock>
+            </CheckBox.ToolTip>
+            Visible LSP server.
+        </CheckBox>
 
-        <TextBox Grid.Row="1" Grid.Column="0" TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0">
-            Select this box if you want only search for visitors and listeners in the directory
-            of the grammar.
-        </TextBox>
-        <CheckBox Name="restricted_directory" Grid.Row="1" Grid.Column="1" Margin="10,0,10,10">Visitors/Listeners restricted to directory of grammar.</CheckBox>
+        <CheckBox Name="restricted_directory" Grid.Row="0" Grid.Column="1" Margin="10,0,10,10">
+            <CheckBox.ToolTip>
+                <TextBlock  Margin="10,0,10,10" TextWrapping="Wrap" >
+                    Select this box if you want only search for visitors and listeners
+                    in the directory of the grammar.
+                </TextBlock>
+            </CheckBox.ToolTip>
+            Visitors/Listeners restricted to directory of grammar.
+        </CheckBox>
 
-        <TextBox Grid.Row="2" Grid.Column="0" TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0">
-            Select this box if you want to generate a listener or visitor method if
-            none exists.
-        </TextBox>
-        <CheckBox Name="generate_visitor_listener" Grid.Row="2" Grid.Column="1" Margin="10,0,10,10">Visitors/Listeners generated if missing.</CheckBox>
+        <CheckBox Name="generate_visitor_listener" Grid.Row="1" Grid.Column="0" Margin="10,0,10,10">
+            <CheckBox.ToolTip>
+                <TextBlock  Margin="10,0,10,10" TextWrapping="Wrap" >
+                    Select this box if you want to generate a listener or visitor method if
+                    none exists.
+                </TextBlock>
+            </CheckBox.ToolTip>
+            Visitors/Listeners generated if missing.
+        </CheckBox>
 
-        <TextBox Grid.Row="3" Grid.Column="0" TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0">
-            Set full path of CORPUS_LOCATION directory.
+        <TextBox Name="corpus_location" Grid.Row="1" Grid.Column="1"  Margin="10,0,10,10">
+            <TextBox.ToolTip>
+                <TextBlock  Margin="10,0,10,10" TextWrapping="Wrap" >
+                    Set full path of CORPUS_LOCATION directory.
+                </TextBlock>
+            </TextBox.ToolTip>
+            Not set
         </TextBox>
-        <TextBox Name="corpus_location" Grid.Row="3" Grid.Column="1"  Margin="10,0,10,10">Not set</TextBox>
 
-        <TextBox Grid.Row="4" Grid.Column="0" TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0">
-            Select this box if you want reformat to replace text using Google's diff-match-patch algorithm.
-        </TextBox>
-        <CheckBox Name="incremental_reformat" Grid.Row="4" Grid.Column="1" Margin="10,0,10,10">Incremental replacement.</CheckBox>
+        <CheckBox Name="incremental_reformat" Grid.Row="2" Grid.Column="0" Margin="10,0,10,10">
+            <CheckBox.ToolTip>
+                <TextBlock  Margin="10,0,10,10" TextWrapping="Wrap" >
+                    Select this box if you want reformat to replace text
+                    using Google's diff-match-patch algorithm.
+                </TextBlock>
+            </CheckBox.ToolTip>
+            Incremental replacement.
+        </CheckBox>
 
-        <TextBox Grid.Row="5" Grid.Column="0" TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0">
-            List of grammar description assembly files, separated by semi-colons.
+        <TextBox Name="grammar_description_locations" Grid.Row="2" Grid.Column="1" Margin="10,0,10,10">
+            <TextBox.ToolTip>
+                <TextBlock  Margin="10,0,10,10" TextWrapping="Wrap" >
+                    List of grammar description assembly files, separated by semi-colons.
+                </TextBlock>
+            </TextBox.ToolTip>
+            Not set
         </TextBox>
-        <TextBox Name="grammar_description_locations" Grid.Row="5" Grid.Column="1" Margin="10,0,10,10">Not set</TextBox>
 
-        <TextBox Grid.Row="6" Grid.Column="0" TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0">
-            Override any other Antlr extensions.
-        </TextBox>
-        <CheckBox Name="override_antlr" Grid.Row="6" Grid.Column="1" Margin="10,0,10,10">Override any other ANTLR plugins.</CheckBox>
+        <CheckBox Name="override_antlr" Grid.Row="3" Grid.Column="0" Margin="10,0,10,10">
+            <CheckBox.ToolTip>
+                <TextBlock  Margin="10,0,10,10" TextWrapping="Wrap" >
+                    Override any other Antlr extensions.
+                </TextBlock>
+            </CheckBox.ToolTip>
+            Override any other ANTLR plugins.
+        </CheckBox>
 
-        <TextBox Grid.Row="7" Grid.Column="0" TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0">
-            Report any errors in extension automatically to online server.
-        </TextBox>
-        <CheckBox Name="opt_in_reporting" Grid.Row="7" Grid.Column="1" Margin="10,0,10,10" >Opt-in to help development with logging of crashes.</CheckBox>
+        <CheckBox Name="opt_in_reporting" Grid.Row="3" Grid.Column="1" Margin="10,0,10,10" >
+            <CheckBox.ToolTip>
+                <TextBlock  Margin="10,0,10,10" TextWrapping="Wrap" >
+                    Report any errors in extension automatically to online server.
+                </TextBlock>
+            </CheckBox.ToolTip>
+            Opt-in to help development with logging of crashes.
+        </CheckBox>
 
-        <TextBox Grid.Row="8" Grid.Column="0" TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0">
-            Enable lookahead/completion (note, server is less stable and may crash with it on).
-        </TextBox>
-        <CheckBox Name="enable_completion" Grid.Row="8" Grid.Column="1" Margin="10,0,10,10" >Enable completion.</CheckBox>
+        <CheckBox Name="enable_completion" Grid.Row="4" Grid.Column="0" Margin="10,0,10,10" >
+            <CheckBox.ToolTip>
+                <TextBlock  Margin="10,0,10,10" TextWrapping="Wrap" >
+                    Enable lookahead/completion (note, server is less stable
+                    and may crash with it on).
+                </TextBlock>
+            </CheckBox.ToolTip>
+            Enable completion.
+        </CheckBox>
+
+        <ListView Grid.Row="5" Grid.Column="0" Margin="10,0,10,10" >
+            <TextBox TextWrapping="Wrap" IsReadOnly="True"
+                     BorderThickness="0" Text="Non-terminals color."/>
+            <xctk:ColorPicker Name="nonterminal_color">
+            </xctk:ColorPicker>
+        </ListView>
+
+        <ListView Grid.Row="5" Grid.Column="1" Margin="10,0,10,10" >
+            <TextBox TextWrapping="Wrap" IsReadOnly="True"
+                     BorderThickness="0" Text="Terminals color."/>
+            <xctk:ColorPicker Name="terminal_color">
+            </xctk:ColorPicker>
+        </ListView>
 
         <!-- Accept or Cancel -->
-        <WrapPanel Grid.Row="14" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="10,0,0,0" >
+        <WrapPanel Grid.Row="8" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="10,0,0,0" >
             <Button IsDefault="True" Name="btnDialogOk" Click="btnDialogOk_Click" MinWidth="60" Margin="0,0,10,0">_Ok</Button>
             <Button IsCancel="True" MinWidth="60" Click="btnDialogCancel_Click" >_Cancel</Button>
         </WrapPanel>

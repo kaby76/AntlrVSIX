@@ -8,6 +8,7 @@
     using Microsoft.VisualStudio.TextManager.Interop;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -138,6 +139,16 @@
             }
         }
 
+        internal string Capitalize(string str)
+        {
+            if (str.Length == 0)
+                return str;
+            else if (str.Length == 1)
+                return char.ToUpper(str[0]).ToString();
+            else
+                return char.ToUpper(str[0]) + str.Substring(1);
+        }
+
         internal void Initialize(IClassificationTypeRegistryService service,
             IClassificationFormatMapService ClassificationFormatMapService)
         {
@@ -162,6 +173,16 @@
 
                 Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(ffn);
                 _lsptype_to_classifiertype = new Dictionary<int, IClassificationType>();
+
+                System.Drawing.Color[] colors = new System.Drawing.Color[_grammar_description.Map.Length];
+                for (int i = 0; i < _grammar_description.Map.Length; ++i)
+                {
+                    string[] n = _grammar_description.Map[i].Replace(" - ", " ").Split(' ');
+                    string option_name = String.Join("", n.Select(p => Capitalize(p)));
+                    var v = Options.Option.GetString(option_name);
+                    var w = System.Drawing.Color.FromName(v);
+                    colors[i] = w;
+                }
                 for (int i = 0; i < _grammar_description.Map.Length; ++i)
                 {
                     int key = i;
@@ -172,8 +193,10 @@
                     IClassificationFormatMap classificationFormatMap = ClassificationFormatMapService.GetClassificationFormatMap(category: "text");
                     Microsoft.VisualStudio.Text.Formatting.TextFormattingRunProperties identifierProperties = classificationFormatMap
                         .GetExplicitTextProperties(classificationType);
-                    System.Drawing.Color color = !Themes.IsInvertedTheme() ? _grammar_description.MapColor[key]
-                        : _grammar_description.MapInvertedColor[key];
+                    //System.Drawing.Color color = !Themes.IsInvertedTheme()
+                    //    ? _grammar_description.MapColor[key]
+                    //    : _grammar_description.MapInvertedColor[key];
+                    var color = colors[i];
                     System.Windows.Media.Color newColor = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
                     Microsoft.VisualStudio.Text.Formatting.TextFormattingRunProperties newProperties = identifierProperties.SetForeground(newColor);
                     classificationFormatMap.AddExplicitTextProperties(classificationType, newProperties);

@@ -18,6 +18,11 @@
             enable_completion.IsChecked = Option.GetBoolean("EnableCompletion");
         }
 
+        private void ClrPcker_Background_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<System.Drawing.Color> e)
+        {
+            // "#" + ClrPcker_Background.SelectedColor.R.ToString() + ClrPcker_Background.SelectedColor.G.ToString() + ClrPcker_Background.SelectedColor.B.ToString();
+        }
+
         private void btnDialogOk_Click(object sender, RoutedEventArgs e)
         {
             OptionsBox inputDialog = this;
