@@ -89,6 +89,20 @@
             }
         }
 
+        private class FindFirstMode : ANTLRv4ParserBaseListener
+        {
+            public IParseTree First = null;
+            public IParseTree Last = null;
+
+            public FindFirstMode() { }
+
+
+            public override void EnterModeSpec([NotNull] ANTLRv4Parser.ModeSpecContext context)
+            {
+                First = context;
+            }
+        }
+
         private class FindOptions : ANTLRv4ParserBaseListener
         {
             public IParseTree OptionsSpec = null;
@@ -135,6 +149,16 @@
             public override void EnterRuleref([NotNull] ANTLRv4Parser.RulerefContext context)
             {
                 RHS[current_nonterminal].Add(context.GetChild(0) as ITerminalNode);
+            }
+        }
+
+        private class ExtractModes : ANTLRv4ParserBaseListener
+        {
+            public List<ANTLRv4Parser.ModeSpecContext> Modes = new List<ANTLRv4Parser.ModeSpecContext>();
+
+            public override void EnterModeSpec([NotNull] ANTLRv4Parser.ModeSpecContext context)
+            {
+                Modes.Add(context);
             }
         }
 
@@ -187,7 +211,7 @@
             return trees;
         }
 
-        private class Table
+        private class TableOfRules
         {
             public class Row
             {
@@ -208,7 +232,7 @@
             private readonly Document document;
             private readonly Dictionary<string, SyntaxTree> trees;
 
-            public Table(AntlrGrammarDetails p, Document d)
+            public TableOfRules(AntlrGrammarDetails p, Document d)
             {
                 pd_parser = p;
                 document = d;
@@ -244,6 +268,81 @@
                 FindFirstRule find_first_rule = new FindFirstRule();
                 ParseTreeWalker.Default.Walk(find_first_rule, pd_parser.ParseTree);
                 IParseTree first_rule = find_first_rule.First;
+                if (first_rule == null)
+                {
+                    return;
+                }
+
+                int insertion = first_rule.SourceInterval.a;
+                Antlr4.Runtime.IToken insertion_tok = pd_parser.TokStream.Get(insertion);
+                int insertion_ind = insertion_tok.StartIndex;
+                string old_code = document.Code;
+                for (int i = 0; i < rules.Count; ++i)
+                {
+                    IParseTree rule = rules[i].rule;
+                    // Find range indices for rule including comments. Note, start index is inclusive; end
+                    // index is exclusive. We make the assumption
+                    // that the preceeding whitespace and comments are grouped with a rule all the way
+                    // from the end a previous non-whitespace or comment, such as options, headers, or rule.
+                    Interval token_interval = rule.SourceInterval;
+                    int end = token_interval.b;
+                    Antlr4.Runtime.IToken end_tok = pd_parser.TokStream.Get(end);
+                    Antlr4.Runtime.IToken last = end_tok;
+                    int end_ind = old_code.Length <= last.StopIndex ? last.StopIndex : last.StopIndex + 1;
+                    for (int j = end_ind; j < old_code.Length; j++)
+                    {
+                        if (old_code[j] == '\r')
+                        {
+                            if (j + 1 < old_code.Length && old_code[j + 1] == '\n')
+                            {
+                                end_ind = j + 2;
+                            }
+                            else
+                            {
+                                end_ind = j + 1;
+                            }
+
+                            break;
+                        }
+                        end_ind = j;
+                    }
+                    IList<Antlr4.Runtime.IToken> inter = pd_parser.TokStream.GetHiddenTokensToRight(end_tok.TokenIndex);
+                    int start = token_interval.a;
+                    Antlr4.Runtime.IToken start_tok = pd_parser.TokStream.Get(start);
+                    int start_ind = start_tok.StartIndex;
+                    rules[i].start_index = start_ind;
+                    rules[i].end_index = end_ind;
+                }
+                for (int i = 0; i < rules.Count; ++i)
+                {
+                    if (i > 0)
+                    {
+                        rules[i].start_index = rules[i - 1].end_index;
+                    }
+                }
+                for (int i = 0; i < rules.Count; ++i)
+                {
+                    for (int j = rules[i].start_index; j < rules[i].end_index; ++j)
+                    {
+                        if (old_code[j] == '\r')
+                        {
+                            if (j + 1 < rules[i].end_index && old_code[j + 1] == '\n')
+                            {
+                                ;
+                            }
+                            else
+                            {
+                            }
+                        }
+                    }
+                }
+            }
+
+            public void FindModePartitions()
+            {
+                FindFirstMode find_first_mode = new FindFirstMode();
+                ParseTreeWalker.Default.Walk(find_first_mode, pd_parser.ParseTree);
+                IParseTree first_rule = find_first_mode.First;
                 if (first_rule == null)
                 {
                     return;
@@ -354,6 +453,126 @@
                 }
                 catch
                 {
+                }
+            }
+        }
+
+        private class TableOfModes
+        {
+            public class Row
+            {
+                public ANTLRv4Parser.ModeSpecContext mode;
+                public string name;
+                public int start_index;
+                public int end_index;
+            }
+
+            public List<Row> modes = new List<Row>();
+            public Dictionary<string, int> name_to_index = new Dictionary<string, int>();
+            public ExtractModes listener;
+            private readonly AntlrGrammarDetails pd_parser;
+            private readonly Document document;
+            private readonly Dictionary<string, SyntaxTree> trees;
+
+            public TableOfModes(AntlrGrammarDetails p, Document d)
+            {
+                pd_parser = p;
+                document = d;
+                trees = ReadCsharpSource(document);
+            }
+
+            public void ReadModes()
+            {
+                // Get modes.
+                listener = new ExtractModes();
+                ParseTreeWalker.Default.Walk(listener, pd_parser.ParseTree);
+                for (int i = 0; i < listener.Modes.Count; ++i)
+                {
+                    modes.Add(new Row()
+                    {
+                        mode = listener.Modes[i],
+                        name = listener.Modes[i].id().GetText(),
+                    });
+                }
+                for (int i = 0; i < modes.Count; ++i)
+                {
+                    string t = modes[i].name;
+                    name_to_index[t] = i;
+                }
+            }
+
+            public void FindPartitions()
+            {
+                FindFirstMode find_first_mode = new FindFirstMode();
+                ParseTreeWalker.Default.Walk(find_first_mode, pd_parser.ParseTree);
+                IParseTree first_rule = find_first_mode.First;
+                if (first_rule == null)
+                {
+                    return;
+                }
+
+                int insertion = first_rule.SourceInterval.a;
+                Antlr4.Runtime.IToken insertion_tok = pd_parser.TokStream.Get(insertion);
+                int insertion_ind = insertion_tok.StartIndex;
+                string old_code = document.Code;
+                for (int i = 0; i < modes.Count; ++i)
+                {
+                    var mode = modes[i].mode;
+                    // Find range indices for modes including comments. Note, start index is inclusive; end
+                    // index is exclusive. We make the assumption
+                    // that the preceeding whitespace and comments are grouped with a rule all the way
+                    // from the end a previous non-whitespace or comment, such as options, headers, or rule.
+                    Interval token_interval = mode.SourceInterval;
+                    int end = token_interval.b;
+                    Antlr4.Runtime.IToken end_tok = pd_parser.TokStream.Get(end);
+                    Antlr4.Runtime.IToken last = end_tok;
+                    int end_ind = old_code.Length <= last.StopIndex ? last.StopIndex : last.StopIndex + 1;
+                    for (int j = end_ind; j < old_code.Length; j++)
+                    {
+                        if (old_code[j] == '\r')
+                        {
+                            if (j + 1 < old_code.Length && old_code[j + 1] == '\n')
+                            {
+                                end_ind = j + 2;
+                            }
+                            else
+                            {
+                                end_ind = j + 1;
+                            }
+
+                            break;
+                        }
+                        end_ind = j;
+                    }
+                    IList<Antlr4.Runtime.IToken> inter = pd_parser.TokStream.GetHiddenTokensToRight(end_tok.TokenIndex);
+                    int start = token_interval.a;
+                    Antlr4.Runtime.IToken start_tok = pd_parser.TokStream.Get(start);
+                    int start_ind = start_tok.StartIndex;
+                    modes[i].start_index = start_ind;
+                    modes[i].end_index = end_ind;
+                }
+                for (int i = 0; i < modes.Count; ++i)
+                {
+                    if (i > 0)
+                    {
+                        modes[i].start_index = modes[i - 1].end_index;
+                    }
+                }
+                for (int i = 0; i < modes.Count; ++i)
+                {
+                    for (int j = modes[i].start_index; j < modes[i].end_index; ++j)
+                    {
+                        if (old_code[j] == '\r')
+                        {
+                            if (j + 1 < modes[i].end_index && old_code[j + 1] == '\n')
+                            {
+                                ;
+                            }
+                            else
+                            {
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -654,13 +873,13 @@
             }
 
             // Consider only the target grammar.
-            Table table = new Table(pd_parser, document);
+            TableOfRules table = new TableOfRules(pd_parser, document);
             table.ReadRules();
             table.FindPartitions();
             table.FindStartRules();
 
             List<Pair<int, int>> deletions = new List<Pair<int, int>>();
-            foreach (Table.Row r in table.rules)
+            foreach (TableOfRules.Row r in table.rules)
             {
                 if (r.is_parser_rule && r.is_used == false)
                 {
@@ -703,14 +922,14 @@
             }
 
             // Consider only the target grammar.
-            Table table = new Table(pd_parser, document);
+            TableOfRules table = new TableOfRules(pd_parser, document);
             table.ReadRules();
             table.FindPartitions();
             table.FindStartRules();
 
             string old_code = document.Code;
             List<Pair<int, int>> move = new List<Pair<int, int>>();
-            foreach (Table.Row r in table.rules)
+            foreach (TableOfRules.Row r in table.rules)
             {
                 if (r.is_parser_rule && r.is_start == true)
                 {
@@ -780,18 +999,18 @@
                 return result;
             }
 
-            Table table = new Table(pd_parser, document);
+            TableOfRules table = new TableOfRules(pd_parser, document);
             table.ReadRules();
             table.FindPartitions();
             table.FindStartRules();
 
-            // Find new order or rules.
+            // Find new order of rules.
             string old_code = document.Code;
             List<Pair<int, int>> reorder = new List<Pair<int, int>>();
             if (type == LspAntlr.ReorderType.DFS)
             {
                 Digraph<string> graph = new Digraph<string>();
-                foreach (Table.Row r in table.rules)
+                foreach (TableOfRules.Row r in table.rules)
                 {
                     if (!r.is_parser_rule)
                     {
@@ -800,7 +1019,7 @@
 
                     graph.AddVertex(r.LHS);
                 }
-                foreach (Table.Row r in table.rules)
+                foreach (TableOfRules.Row r in table.rules)
                 {
                     if (!r.is_parser_rule)
                     {
@@ -811,7 +1030,7 @@
                     //j.Reverse();
                     foreach (string rhs in j)
                     {
-                        Table.Row sym = table.rules.Where(t => t.LHS == rhs).FirstOrDefault();
+                        TableOfRules.Row sym = table.rules.Where(t => t.LHS == rhs).FirstOrDefault();
                         if (!sym.is_parser_rule)
                         {
                             continue;
@@ -822,7 +1041,7 @@
                     }
                 }
                 List<string> starts = new List<string>();
-                foreach (Table.Row r in table.rules)
+                foreach (TableOfRules.Row r in table.rules)
                 {
                     if (r.is_parser_rule && r.is_start)
                     {
@@ -833,14 +1052,14 @@
                 List<string> ordered = sort.ToList();
                 foreach (string s in ordered)
                 {
-                    Table.Row row = table.rules[table.nt_to_index[s]];
+                    TableOfRules.Row row = table.rules[table.nt_to_index[s]];
                     reorder.Add(new Pair<int, int>(row.start_index, row.end_index));
                 }
             }
             else if (type == LspAntlr.ReorderType.BFS)
             {
                 Digraph<string> graph = new Digraph<string>();
-                foreach (Table.Row r in table.rules)
+                foreach (TableOfRules.Row r in table.rules)
                 {
                     if (!r.is_parser_rule)
                     {
@@ -849,7 +1068,7 @@
 
                     graph.AddVertex(r.LHS);
                 }
-                foreach (Table.Row r in table.rules)
+                foreach (TableOfRules.Row r in table.rules)
                 {
                     if (!r.is_parser_rule)
                     {
@@ -860,7 +1079,7 @@
                     //j.Reverse();
                     foreach (string rhs in j)
                     {
-                        Table.Row sym = table.rules.Where(t => t.LHS == rhs).FirstOrDefault();
+                        TableOfRules.Row sym = table.rules.Where(t => t.LHS == rhs).FirstOrDefault();
                         if (!sym.is_parser_rule)
                         {
                             continue;
@@ -871,7 +1090,7 @@
                     }
                 }
                 List<string> starts = new List<string>();
-                foreach (Table.Row r in table.rules)
+                foreach (TableOfRules.Row r in table.rules)
                 {
                     if (r.is_parser_rule && r.is_start)
                     {
@@ -882,7 +1101,7 @@
                 List<string> ordered = sort.ToList();
                 foreach (string s in ordered)
                 {
-                    Table.Row row = table.rules[table.nt_to_index[s]];
+                    TableOfRules.Row row = table.rules[table.nt_to_index[s]];
                     reorder.Add(new Pair<int, int>(row.start_index, row.end_index));
                 }
             }
@@ -894,7 +1113,7 @@
                     .OrderBy(r => r).ToList();
                 foreach (string s in ordered)
                 {
-                    Table.Row row = table.rules[table.nt_to_index[s]];
+                    TableOfRules.Row row = table.rules[table.nt_to_index[s]];
                     reorder.Add(new Pair<int, int>(row.start_index, row.end_index));
                 }
             }
@@ -920,7 +1139,7 @@
                 sb.Append(add);
             }
             // Now add all non-parser rules.
-            foreach (Table.Row r in table.rules)
+            foreach (TableOfRules.Row r in table.rules)
             {
                 if (r.is_parser_rule)
                 {
@@ -957,7 +1176,7 @@
                 return null;
             }
 
-            Table table = new Table(pd_parser, document);
+            TableOfRules table = new TableOfRules(pd_parser, document);
             table.ReadRules();
             table.FindPartitions();
             table.FindStartRules();
@@ -998,7 +1217,7 @@
                 int end = 0;
                 for (int i = 0; i < table.rules.Count; ++i)
                 {
-                    Table.Row r = table.rules[i];
+                    TableOfRules.Row r = table.rules[i];
                     // Partition rule symbols.
                     if (r.is_parser_rule)
                     {
@@ -1079,7 +1298,7 @@
                 // Read now lexer grammar. The parser grammar was already read.
                 AntlrGrammarDetails pd_lexer = grammars[1];
                 Workspaces.Document ldocument = Workspaces.Workspace.Instance.FindDocument(pd_lexer.FullFileName);
-                Table lexer_table = new Table(pd_lexer, ldocument);
+                TableOfRules lexer_table = new TableOfRules(pd_lexer, ldocument);
                 lexer_table.ReadRules();
                 lexer_table.FindPartitions();
                 lexer_table.FindStartRules();
@@ -1174,7 +1393,7 @@
                 int end = 0;
                 for (int i = 0; i < table.rules.Count; ++i)
                 {
-                    Table.Row r = table.rules[i];
+                    TableOfRules.Row r = table.rules[i];
                     if (r.is_parser_rule)
                     {
                         string n2 = old_code.Substring(r.start_index, r.end_index - r.start_index);
@@ -1191,7 +1410,7 @@
                 string lexer_old_code = ldocument.Code;
                 for (int i = 0; i < lexer_table.rules.Count; ++i)
                 {
-                    Table.Row r = lexer_table.rules[i];
+                    TableOfRules.Row r = lexer_table.rules[i];
                     if (!r.is_parser_rule)
                     {
                         string n2 = lexer_old_code.Substring(r.start_index, r.end_index - r.start_index);
@@ -1503,7 +1722,7 @@
                 return result;
             }
 
-            Table table = new Table(pd_parser, document);
+            TableOfRules table = new TableOfRules(pd_parser, document);
             table.ReadRules();
             table.FindPartitions();
             table.FindStartRules();
@@ -1824,6 +2043,62 @@
                 var new_code = sb.ToString();
                 result[where_to_stuff] = new_code;
             }
+
+            return result;
+        }
+
+        public static Dictionary<string, string> SortModes(Document document)
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+
+            // Check if lexer grammar.
+            AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
+            ExtractGrammarType lp = new ExtractGrammarType();
+            ParseTreeWalker.Default.Walk(lp, pd_parser.ParseTree);
+            bool is_lexer = lp.Type == ExtractGrammarType.GrammarType.Lexer;
+            if (! is_lexer)
+            {
+                return result;
+            }
+
+            TableOfModes table = new TableOfModes(pd_parser, document);
+            table.ReadModes();
+            table.FindPartitions();
+
+            // Find new order of modes.
+            string old_code = document.Code;
+            List<Pair<int, int>> reorder = new List<Pair<int, int>>();
+            {
+                List<string> ordered = table.modes
+                    .Select(r => r.name)
+                    .OrderBy(r => r).ToList();
+                foreach (string s in ordered)
+                {
+                    TableOfModes.Row row = table.modes[table.name_to_index[s]];
+                    reorder.Add(new Pair<int, int>(row.start_index, row.end_index));
+                }
+            }
+
+            StringBuilder sb = new StringBuilder();
+            int previous = 0;
+            {
+                int index_start = table.modes[0].start_index;
+                int len = 0;
+                string pre = old_code.Substring(previous, index_start - previous);
+                sb.Append(pre);
+                previous = index_start + len;
+            }
+            foreach (Pair<int, int> l in reorder)
+            {
+                int index_start = l.a;
+                int len = l.b - l.a;
+                string add = old_code.Substring(index_start, len);
+                sb.Append(add);
+            }
+            //string rest = old_code.Substring(previous);
+            //sb.Append(rest);
+            string new_code = sb.ToString();
+            result.Add(document.FullPath, new_code);
 
             return result;
         }

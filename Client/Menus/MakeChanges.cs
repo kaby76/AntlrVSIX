@@ -97,6 +97,10 @@ namespace LspAntlr
 
         public static void EnterIncrementalChanges(AntlrLanguageClient ServiceProvider, Dictionary<string, string> changes, ITextBuffer buffsssser)
         {
+            if (changes == null)
+            {
+                return;
+            }
             foreach (KeyValuePair<string, string> pair in changes)
             {
                 string fn = pair.Key;

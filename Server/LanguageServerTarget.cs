@@ -1449,6 +1449,25 @@
             return s;
         }
 
+        [JsonRpcMethod("CMSortModes")]
+        public async System.Threading.Tasks.Task<Dictionary<string, string>> CMSortModes(JToken arg)
+        {
+            Dictionary<string, string> s = null;
+            try
+            {
+                Uri request = arg.ToObject<Uri>();
+                Document document = CheckDoc(request);
+                if (trace)
+                {
+                    System.Console.Error.WriteLine("<-- CMSortModes");
+                    System.Console.Error.WriteLine(arg.ToString());
+                }
+                s = Transform.SortModes(document);
+            }
+            catch (Exception)
+            { }
+            return s;
+        }
 
     }
 }

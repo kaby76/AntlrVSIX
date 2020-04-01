@@ -59,6 +59,7 @@
             EliminateAntlrKeywordsInRules.Initialize(this);
             AddLexerRulesForStringLiterals.Initialize(this);
             RenameCommand.Initialize(this);
+            SortModes.Initialize(this);
         }
 
         public event AsyncEventHandler<EventArgs> StartAsync;
@@ -435,7 +436,27 @@
             }
             return null;
         }
-        
+
+        public Dictionary<string, string> CMSortModes(string ffn)
+        {
+            try
+            {
+                if (_rpc == null)
+                {
+                    return null;
+                }
+
+                Uri uri = new Uri(ffn);
+                var p = uri;
+                Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMSortModes", p).Result;
+                return result;
+            }
+            catch (Exception)
+            {
+            }
+            return null;
+        }
+
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
             // When initialized asynchronously, the current thread may be a background thread at this point.
