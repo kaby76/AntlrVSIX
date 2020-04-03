@@ -80,19 +80,25 @@ bad thing MS). If your debug version of the
 .vssix is 5M in size, it did not compute that the server executable needs to be added into the .vsix. Quit
 VS, then reopen. Do not do "rebuild", only "build".
 
-## Planned for v6.x:
+## Planned for v7.x:
 
 * Add in Piggy for grammar rewriting and checking. The addition of Piggy will allow for rules to transform the
 grammar e.g., warning/removal of LHS predicates in lexer, replacing factored grammar rules with Kleene star rules (which
 result in faster parsers).
 
-## Planned for v5.9:
+## Planned for v6.1:
 
 * Generalized fold/unfold/pack grammar rule refactorings.
 * Elimination of left recursion.
-* Import of Flex files.
-* Refactoring to sort mode sections in lexer grammars.
 
+## Planned for v6.0:
+
+* Import of Flex files.
+* Added selection of colors for grammar symbols in options. (I am now using Dark theme in Visual Studio 2019.)
+* Changed options to use Newtonsoft.Json (breaking change--remove ~/.antlrvsixrc).
+* Refactoring to sort mode sections in lexer grammars.
+* Added code to abbreviate action blocks in hover tool tips.
+ 
 ## Release notes for v5.8:
 
 * Added in rename on Antlrvsix tool menu because Microsoft broke LSP rename!
