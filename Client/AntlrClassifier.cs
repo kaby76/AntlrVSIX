@@ -179,8 +179,7 @@
                 {
                     string[] n = _grammar_description.Map[i].Replace(" - ", " ").Split(' ');
                     string option_name = String.Join("", n.Select(p => Capitalize(p)));
-                    var v = Options.Option.GetString(option_name);
-                    var w = System.Drawing.Color.FromName(v);
+                    var w = Options.Option.GetColor(option_name);
                     colors[i] = w;
                 }
                 for (int i = 0; i < _grammar_description.Map.Length; ++i)

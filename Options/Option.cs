@@ -2,8 +2,17 @@
 {
     using System.Collections.Generic;
     using System.IO;
-    using System.Text.Json;
+    using Newtonsoft.Json;
     using System.Linq;
+
+    public class MyColor
+    {
+        public MyColor(System.Drawing.Color c)
+        {
+            color = c;
+        }
+        public System.Drawing.Color color;
+    }
 
     public class Option
     {
@@ -17,13 +26,13 @@
             {"OverrideAntlrPluggins", true },
             {"OptInLogging", false },
             {"CorpusLocation", CorpusLocation },
-            {"AntlrTerminal", "Purple" },
-            {"AntlrNonterminal", "Blue" },
-            {"AntlrComment", "Green" },
-            {"AntlrKeyword", "Red" },
-            {"AntlrLiteral", "LightGreen" },
-            {"AntlrMode", "Salmon" },
-            {"AntlrChannel", "Coral" }
+            {"AntlrTerminal", new MyColor(System.Drawing.Color.FromName("Purple")) },
+            {"AntlrNonterminal",  new MyColor(System.Drawing.Color.FromName("Blue")) },
+            {"AntlrComment",  new MyColor(System.Drawing.Color.FromName("Green")) },
+            {"AntlrKeyword",  new MyColor(System.Drawing.Color.FromName("Red")) },
+            {"AntlrLiteral",  new MyColor(System.Drawing.Color.FromName("LightGreen")) },
+            {"AntlrMode",  new MyColor(System.Drawing.Color.FromName("Salmon")) },
+            {"AntlrChannel",  new MyColor(System.Drawing.Color.FromName("Coral")) }
         };
         private static readonly string home = System.Environment.GetEnvironmentVariable("HOMEPATH");
         private static bool initialized = false;
@@ -39,10 +48,11 @@
             }
             else
             {
-                JsonSerializerOptions options = new JsonSerializerOptions();
-                options.Converters.Add(new ObjectToBoolConverter());
-                object obj = JsonSerializer.Deserialize<object>(value.ToString().ToLower(), options);
-                default_value = (bool)obj;
+                //System.Text.Json.JsonSerializerOptions options = new System.Text.Json.JsonSerializerOptions();
+                //options.Converters.Add(new ObjectToBoolConverter());
+                //object obj = System.Text.Json.JsonSerializer.Deserialize<object>(value.ToString().ToLower(), options);
+                //default_value = (bool)obj;
+                default_value = (bool) value;
             }
             return default_value;
         }
@@ -58,10 +68,11 @@
             }
             else
             {
-                JsonSerializerOptions options = new JsonSerializerOptions();
-                options.Converters.Add(new ObjectToIntConverter());
-                object obj = JsonSerializer.Deserialize<object>(value.ToString().ToLower(), options);
-                default_value = (int)obj;
+                //System.Text.Json.JsonSerializerOptions options = new System.Text.Json.JsonSerializerOptions();
+                //options.Converters.Add(new ObjectToIntConverter());
+                //object obj = System.Text.Json.JsonSerializer.Deserialize<object>(value.ToString().ToLower(), options);
+                //default_value = (int)obj;
+                default_value = (int)value;
             }
             return default_value;
         }
@@ -78,6 +89,36 @@
             else
             {
                 default_value = value.ToString();
+            }
+            return default_value;
+        }
+
+        public static System.Drawing.Color GetColor(string option)
+        {
+            Initialize();
+            System.Drawing.Color default_value = default(System.Drawing.Color);
+            defaults.TryGetValue(option, out object value);
+            if (value == null)
+            {
+                default_value = default(System.Drawing.Color);
+            }
+            else
+            {
+                //JsonElement je = (JsonElement)value;
+                //var text = je.GetRawText();
+                //object obj = System.Text.Json.JsonSerializer.Deserialize<MyColor>(text);
+                //default_value = ((MyColor)obj).color;
+                Newtonsoft.Json.Linq.JObject jobj = value as Newtonsoft.Json.Linq.JObject;
+                if (jobj != null)
+                {
+                    MyColor my = jobj.ToObject<MyColor>();
+                    default_value = my.color;
+                }
+                else if (value is MyColor)
+                {
+                    MyColor my = (MyColor)value;
+                    default_value = my.color;
+                }
             }
             return default_value;
         }
@@ -102,13 +143,20 @@
             defaults[option] = value;
             Write();
         }
+
+        public static void SetColor(string option, System.Drawing.Color value)
+        {
+            Initialize();
+            defaults[option] = new MyColor(value);
+            Write();
+        }
+
         private static void Initialize()
         {
             if (initialized)
             {
                 return;
             }
-
             Read();
         }
 
@@ -122,7 +170,7 @@
                 if (File.Exists(antlr_options_file_name))
                 {
                     string jsonString = File.ReadAllText(antlr_options_file_name);
-                    var file_values = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonString);
+                    var file_values = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonString);
                     // Sum defaults and file_values.
                     var new_list = new Dictionary<string, object>(defaults);
                     foreach (var p in file_values)
@@ -148,8 +196,9 @@
         {
             if (Path.IsPathRooted(antlr_options_file_name))
             {
-                string jsonString = JsonSerializer.Serialize(defaults);
-                File.WriteAllText(antlr_options_file_name, jsonString);
+                var ser = Newtonsoft.Json.JsonConvert.SerializeObject(defaults);
+                File.WriteAllText(antlr_options_file_name, ser);
+                var o2 = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(ser);
             }
             initialized = true;
         }
