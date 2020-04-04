@@ -93,12 +93,15 @@ result in faster parsers).
 
 ## Planned for v6.0:
 
-* Import of Flex files.
-* Added selection of colors for grammar symbols in options. (I am now using Dark theme in Visual Studio 2019.)
-* Changed options to use Newtonsoft.Json (breaking change--remove ~/.antlrvsixrc).
-* Refactoring to sort mode sections in lexer grammars.
-* Added code to abbreviate action blocks in hover tool tips.
- 
+* Add import of Flex files.
+* Add selection of colors for grammar symbols in options. (I am now using Dark theme in Visual Studio 2019.)
+* Change options to use Newtonsoft.Json (breaking change--remove ~/.antlrvsixrc).
+* Add refactoring to sort mode sections in lexer grammars.
+* Add code to abbreviate action blocks in hover tool tips.
+* Add code to allow multiple definitions of a symbol. This can happen 
+for lexer symbols defined in a tokens section and as a lexer rule.
+* Bug fixes.
+
 ## Release notes for v5.8:
 
 * Added in rename on Antlrvsix tool menu because Microsoft broke LSP rename!
