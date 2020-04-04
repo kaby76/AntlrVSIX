@@ -100,6 +100,7 @@ result in faster parsers).
 * Add code to abbreviate action blocks in hover tool tips.
 * Add code to allow multiple definitions of a symbol. This can happen 
 for lexer symbols defined in a tokens section and as a lexer rule.
+* Bug fixes.
 
 ## Release notes for v5.8:
 
