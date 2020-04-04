@@ -120,23 +120,23 @@
         <ListView Grid.Row="3" Grid.RowSpan="5" Grid.Column="1" Margin="10,0,10,10" >
             <TextBox TextWrapping="Wrap" IsReadOnly="True"
                      BorderThickness="0" Text="Non-terminal color."/>
-            <xctk:ColorPicker Name="nonterminal_color">
+            <xctk:ColorPicker Name="nonterminal_color" DisplayColorAndName="True" >
             </xctk:ColorPicker>
             <TextBox TextWrapping="Wrap" IsReadOnly="True"
                      BorderThickness="0" Text="Terminal color."/>
-            <xctk:ColorPicker Name="terminal_color">
+            <xctk:ColorPicker Name="terminal_color" DisplayColorAndName="True" >
             </xctk:ColorPicker>
             <TextBox TextWrapping="Wrap" IsReadOnly="True"
                      BorderThickness="0" Text="Literal color."/>
-            <xctk:ColorPicker Name="literal_color">
+            <xctk:ColorPicker Name="literal_color" DisplayColorAndName="True" >
             </xctk:ColorPicker>
             <TextBox TextWrapping="Wrap" IsReadOnly="True"
                      BorderThickness="0" Text="Mode color."/>
-            <xctk:ColorPicker Name="mode_color">
+            <xctk:ColorPicker Name="mode_color" DisplayColorAndName="True" >
             </xctk:ColorPicker>
             <TextBox TextWrapping="Wrap" IsReadOnly="True"
                      BorderThickness="0" Text="Channel color."/>
-            <xctk:ColorPicker Name="channel_color">
+            <xctk:ColorPicker Name="channel_color" DisplayColorAndName="True" >
             </xctk:ColorPicker>
         </ListView>
 
