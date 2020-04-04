@@ -38,7 +38,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Symtab", "Symtab\Symtab.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Workspaces", "Workspaces\Workspaces.csproj", "{E138159B-E61C-4CB7-ABBC-7C57DC9BDD79}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Graphs", "Graphs\Graphs.csproj", "{227BB0F6-9DF1-4782-B8C2-77C76E6824AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Algorithms", "Algorithms\Algorithms.csproj", "{227BB0F6-9DF1-4782-B8C2-77C76E6824AE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A704C218-94AE-496B-94D4-C3EE26CF7342}"
 	ProjectSection(SolutionItems) = preProject

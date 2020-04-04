@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Graphs
+namespace Algorithms
 {
     /******************************************************************************
      *  Compilation:  javac DirectedEdge.java

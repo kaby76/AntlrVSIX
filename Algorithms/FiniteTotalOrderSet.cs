@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Graphs
+namespace Algorithms
 {
     public class FiniteTotalOrderSet<SetElementType> : IEnumerable<SetElementType>
     {

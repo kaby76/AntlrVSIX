@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Graphs
+namespace Algorithms
 {
     public class EdgeClassifier
     {

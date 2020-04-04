@@ -84,10 +84,13 @@
         public override IList<ISymbol> resolveMember(string name)
         {
             List<ISymbol> result = new List<ISymbol>();
-            symbols.TryGetValue(name, out ISymbol s);
-            if (s is IMemberSymbol)
+            symbols.TryGetValue(name, out List<ISymbol> ss);
+            foreach (var s in ss)
             {
-                result.Add(s);
+                if (s is IMemberSymbol)
+                {
+                    result.Add(s);
+                }
             }
             // walk superclass chain
             IList<ClassSymbol> superClassScopes = SuperClassScopes;
@@ -96,11 +99,11 @@
                 foreach (ClassSymbol sup in superClassScopes)
                 {
                     IList<ISymbol> list = sup.resolveMember(name);
-                    foreach (ISymbol ss in list)
+                    foreach (ISymbol ss2 in list)
                     {
-                        if (ss is IMemberSymbol)
+                        if (ss2 is IMemberSymbol)
                         {
-                            result.Add(ss);
+                            result.Add(ss2);
                         }
                     }
                 }

@@ -3,7 +3,7 @@
     using Antlr4.Runtime;
     using Antlr4.Runtime.Misc;
     using Antlr4.Runtime.Tree;
-    using Graphs;
+    using Algorithms;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -1048,7 +1048,7 @@
                         starts.Add(r.LHS);
                     }
                 }
-                Graphs.DepthFirstOrder<string, DirectedEdge<string>> sort = new DepthFirstOrder<string, DirectedEdge<string>>(graph, starts);
+                Algorithms.DepthFirstOrder<string, DirectedEdge<string>> sort = new DepthFirstOrder<string, DirectedEdge<string>>(graph, starts);
                 List<string> ordered = sort.ToList();
                 foreach (string s in ordered)
                 {
@@ -1097,7 +1097,7 @@
                         starts.Add(r.LHS);
                     }
                 }
-                Graphs.BreadthFirstOrder<string, DirectedEdge<string>> sort = new BreadthFirstOrder<string, DirectedEdge<string>>(graph, starts);
+                Algorithms.BreadthFirstOrder<string, DirectedEdge<string>> sort = new BreadthFirstOrder<string, DirectedEdge<string>>(graph, starts);
                 List<string> ordered = sort.ToList();
                 foreach (string s in ordered)
                 {

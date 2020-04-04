@@ -1,7 +1,7 @@
-﻿using Graphs.Utils;
+﻿using Algorithms.Utils;
 using System.Collections.Generic;
 
-namespace Graphs
+namespace Algorithms
 {
     public class GraphAdjList<NODE, EDGE> : IGraph<NODE, EDGE>
         where EDGE : IEdge<NODE>

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Graphs
+namespace Algorithms
 {
     public interface IGraph<NODE, EDGE>
         where EDGE : IEdge<NODE>

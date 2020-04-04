@@ -135,6 +135,29 @@ namespace LanguageServer
                 _pd.Attributes[context] = new List<CombinedScopeSymbol>() { s };
                 _pd.Attributes[term] = new List<CombinedScopeSymbol>() { s };
             }
+            else
+            {
+                var p = context.Parent;
+                var add_def = false;
+                for (; p != null; p = p.Parent)
+                {
+                    if (p is ANTLRv4Parser.TokensSpecContext)
+                    {
+                        add_def = true;
+                        break;
+                    }
+                }
+                if (add_def)
+                {
+                    TerminalNodeImpl term = context.GetChild(0) as TerminalNodeImpl;
+                    string id = term.GetText();
+                    ISymbol sym = new TerminalSymbol(id, term.Symbol);
+                    _pd.RootScope.define(ref sym);
+                    CombinedScopeSymbol s = (CombinedScopeSymbol)sym;
+                    _pd.Attributes[context] = new List<CombinedScopeSymbol>() { s };
+                    _pd.Attributes[term] = new List<CombinedScopeSymbol>() { s };
+                }
+            }
         }
     }
 }

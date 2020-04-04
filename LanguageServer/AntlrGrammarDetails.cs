@@ -8,7 +8,7 @@
     public class AntlrGrammarDetails : ParserDetails
     {
         private static readonly Dictionary<string, IScope> _scopes = new Dictionary<string, IScope>();
-        public static Graphs.Utils.MultiMap<string, string> _dependent_grammars = new Graphs.Utils.MultiMap<string, string>();
+        public static Algorithms.Utils.MultiMap<string, string> _dependent_grammars = new Algorithms.Utils.MultiMap<string, string>();
 
         public AntlrGrammarDetails(Workspaces.Document item)
             : base(item)

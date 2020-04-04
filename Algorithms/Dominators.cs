@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace Graphs
+namespace Algorithms
 {
     //Digraph dg = new Digraph(5);
     //dg.AddVertex(0);
@@ -19,20 +19,20 @@ namespace Graphs
     //Dominators<int, DirectedEdge<int>> dom1 = new Dominators<int, DirectedEdge<int>>(dg, dg.Vertices, 4);
     //dom1.run();
     // Naive Iterative
-    public class PostDominators<T, E> : IEnumerable<T>
+    public class Dominators<T, E> : IEnumerable<T>
         where E : IEdge<T>
     {
         public Dictionary<T, HashSet<T>> _doms;
         private readonly bool DEBUG = false;
         private readonly IGraph<T, E> _graph;
         private readonly IEnumerable<T> _work;
-        private readonly T _exit;
+        private readonly T _start;
 
-        public PostDominators(IGraph<T, E> graph, IEnumerable<T> subset_vertices, T exit)
+        public Dominators(IGraph<T, E> graph, IEnumerable<T> subset_vertices, T start)
         {
             _graph = graph;
             _work = subset_vertices;
-            _exit = exit;
+            _start = start;
             _doms = new Dictionary<T, HashSet<T>>();
         }
 
@@ -59,7 +59,7 @@ namespace Graphs
         {
             foreach (T t in _work)
             {
-                _doms[t] = t.Equals(_exit) ? One(_exit) : All();
+                _doms[t] = t.Equals(_start) ? One(_start) : All();
             }
 
             bool changed = true;
@@ -68,13 +68,13 @@ namespace Graphs
                 changed = false;
                 foreach (T v in _work)
                 {
-                    if (v.Equals(_exit))
+                    if (v.Equals(_start))
                     {
                         continue;
                     }
 
                     HashSet<T> new_idom = All();
-                    foreach (T q in _graph.Successors(v))
+                    foreach (T q in _graph.Predecessors(v))
                     {
                         new_idom.IntersectWith(_doms[q]);
                     }

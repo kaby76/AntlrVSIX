@@ -1,7 +1,7 @@
 ﻿namespace LanguageServer
 {
     using Antlr4.Runtime.Tree;
-    using Graphs;
+    using Algorithms;
     using Symtab;
     using System;
     using System.Collections.Generic;

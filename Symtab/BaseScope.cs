@@ -1,5 +1,6 @@
 ﻿namespace Symtab
 {
+    using Algorithms.Utils;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -16,7 +17,7 @@
         ///  variables, or anything else that is a Symbol impl. It does NOT
         ///  include non-Symbol-based things like LocalScope. See nestedScopes.
         /// </summary>
-        internal Dictionary<string, ISymbol> symbols = new Dictionary<string, ISymbol>();
+        internal MultiMap<string, ISymbol> symbols = new MultiMap<string, ISymbol>();
 
         /// <summary>
         /// All directly contained scopes, typically LocalScopes within a
@@ -32,11 +33,11 @@
             EnclosingScope = enclosingScope;
         }
 
-        public virtual IDictionary<string, ISymbol> Members => symbols;
+        public virtual MultiMap<string, ISymbol> Members => symbols;
 
-        public virtual ISymbol getSymbol(string name)
+        public virtual List<ISymbol> getSymbol(string name)
         {
-            symbols.TryGetValue(name, out ISymbol result);
+            symbols.TryGetValue(name, out List<ISymbol> result);
             return result;
         }
 
@@ -104,10 +105,13 @@
             List<ISymbol> result = new List<ISymbol>();
             if (!alias)
             {
-                symbols.TryGetValue(name, out ISymbol s);
-                if (s != null)
+                symbols.TryGetValue(name, out List<ISymbol> ss);
+                if (ss != null)
                 {
-                    result.Add(s);
+                    foreach (var s in ss)
+                    {
+                        result.Add(s);
+                    }
                 }
                 // if not here, check any enclosing scope
                 IScope parent = EnclosingScope;
@@ -141,21 +145,29 @@
             }
             else
             {
-                IEnumerable<KeyValuePair<string, ISymbol>> list = symbols.Where(kvp =>
+                var list = symbols.Where(kvp =>
                 {
-                    TypeAlias a = kvp.Value as TypeAlias;
-                    if (a != null)
+                    List<ISymbol> kvpv = kvp.Value;
+                    foreach (var x in kvpv)
                     {
-                        if (a.targetType.Name == name)
+                        TypeAlias a = x as TypeAlias;
+                        if (a != null)
                         {
-                            return true;
+                            if (a.targetType.Name == name)
+                            {
+                                return true;
+                            }
                         }
                     }
                     return false;
                 });
                 if (list.Any())
                 {
-                    result.AddRange(list.Select(l => l.Value));
+                    var zs = list.Select(l => l.Value).ToList();
+                    foreach (var z in zs)
+                    {
+                        result.AddRange(z);
+                    }
                 }
                 // if not here, check any enclosing scope
                 IScope parent = EnclosingScope;
@@ -192,16 +204,9 @@
 
         public virtual void define(ref ISymbol sym)
         {
-            if (symbols.ContainsKey(sym.Name))
-            {
-                System.Type t = sym.GetType();
-                object s = System.Activator.CreateInstance(t, new object[] { "_generated_" + new System.Random().Next(), null });
-                sym = s as ISymbol;
-                // throw new System.ArgumentException("duplicate symbol " + sym.Name);
-            }
             sym.Scope = this;
             sym.InsertionOrderNumber = symbols.Count; // set to insertion position from 0
-            symbols[sym.Name] = sym;
+            symbols.Add(sym.Name, sym);
         }
 
         public virtual void remove(ISymbol sym)
@@ -276,7 +281,7 @@
         {
             get
             {
-                Dictionary<string, ISymbol>.ValueCollection list = symbols.Values;
+                MultiMap<string, ISymbol>.ValueCollection list = symbols.Values;
                 IList<ISymbol> result = new List<ISymbol>();
                 foreach (ISymbol l in list)
                 {
@@ -311,7 +316,7 @@
             get
             {
                 ISet<string> set = new HashSet<string>();
-                foreach (KeyValuePair<string, ISymbol> t in symbols)
+                foreach (KeyValuePair<string, List<ISymbol>> t in symbols)
                 {
                     set.Add(t.Key);
                 }

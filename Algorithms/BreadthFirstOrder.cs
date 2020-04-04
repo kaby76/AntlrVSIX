@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace Graphs
+namespace Algorithms
 {
     public class BreadthFirstOrder<T, E> : IEnumerable<T>
         where E : IEdge<T>

@@ -2,6 +2,7 @@
 {
     using Antlr4.Runtime;
     using System.Collections.Generic;
+    using Algorithms.Utils;
 
     /// <summary>
     /// A symbol representing a collection of data like a struct or class.
@@ -38,7 +39,7 @@
 
         public override IList<ISymbol> Symbols => base.Symbols;
 
-        public override IDictionary<string, ISymbol> Members => base.Members;
+        public override MultiMap<string, ISymbol> Members => base.Members;
 
         /// <summary>
         /// Look up name within this scope only. Return any kind of MemberSymbol found
@@ -47,10 +48,13 @@
         public virtual IList<ISymbol> resolveMember(string name)
         {
             List<ISymbol> result = new List<ISymbol>();
-            ISymbol s = symbols[name];
-            if (s is IMemberSymbol)
+            List<ISymbol> ss = symbols[name];
+            foreach (var s in ss)
             {
-                result.Add(s);
+                if (s is IMemberSymbol)
+                {
+                    result.Add(s);
+                }
             }
             return result;
         }

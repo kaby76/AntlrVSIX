@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Graphs
+namespace Algorithms
 {
     public class TarjanNoBackEdges<T, E> : IEnumerable<T>
         where E : IEdge<T>

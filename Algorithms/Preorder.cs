@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Utils;
 
-namespace Graphs
+namespace Algorithms
 {
     // Algorithms adapted from "A NEW NON-RECURSIVE ALGORITHM FOR
     // BINARY SEARCH TREE TRAVERSAL", Akram Al-Rawi, Azzedine Lansari, Faouzi Bouslama

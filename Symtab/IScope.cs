@@ -53,7 +53,7 @@
 
         /// <summary>
         /// Get symbol if name defined within this specific scope </summary>
-        ISymbol getSymbol(string name);
+        List<ISymbol> getSymbol(string name);
 
         /// <summary>
         /// Add a nested local scope to this scope; it's like define() but

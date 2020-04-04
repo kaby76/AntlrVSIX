@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Graphs
+namespace Algorithms
 {
     public interface IEdge<NODE> : IComparable<IEdge<NODE>>
     {
