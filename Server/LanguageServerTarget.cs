@@ -720,10 +720,11 @@
                 List<object> locations = new List<object>();
                 foreach (Location f in found)
                 {
-                    Microsoft.VisualStudio.LanguageServer.Protocol.Location location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location
+                    if (f.Uri.FullPath != document.FullPath)
                     {
-                        Uri = new Uri(f.Uri.FullPath)
-                    };
+                        continue;
+                    }
+                    Microsoft.VisualStudio.LanguageServer.Protocol.DocumentHighlight location = new DocumentHighlight();
                     Document def_document = _workspace.FindDocument(f.Uri.FullPath);
                     location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
                     (int, int) lcs = LanguageServer.Module.GetLineColumn(f.Range.Start.Value, def_document);
