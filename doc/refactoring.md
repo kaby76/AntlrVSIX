@@ -117,8 +117,9 @@ There are three different refactorings to reorder parser
 rules in a parser or combined grammar: alphabetic, dfs, bfs.
 For BFS or DFS orderings, Antlrvsix will examine the C#
 source code to determine the start symbols for the grammar.
-Reordering never applies to lexer rules, as recognition by these
-rules is ordered. For combined grammars, the lexer rules are placed
+Reordering never applies to lexer rules, since this is for parser
+rules only, but also because the lexer rules are partially ordered (into modes).
+For combined grammars, the lexer rules are placed
 at the end of the grammar file. Formatting of the rules is
 perserved but formatting between rules may not. Use "reformat"
 to reformat the grammars to your style.
