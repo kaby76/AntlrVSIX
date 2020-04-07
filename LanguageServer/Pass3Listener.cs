@@ -21,18 +21,16 @@
             if (first.Symbol.Type == ANTLRv4Parser.TOKEN_REF)
             {
                 string id = first.GetText();
-                IList<ISymbol> list = _pd.RootScope.LookupType(id);
+                List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
                 if (!list.Any())
                 {
                     ISymbol sym = new TerminalSymbol(id, first.Symbol);
                     _pd.RootScope.define(ref sym);
+                    list = _pd.RootScope.LookupType(id).ToList();
                 }
                 List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
-                foreach (ISymbol sym in list)
-                {
-                    CombinedScopeSymbol s = new RefSymbol(first.Symbol, sym);
-                    new_attrs.Add(s);
-                }
+                CombinedScopeSymbol s = new RefSymbol(first.Symbol, list);
+                new_attrs.Add(s);
                 _pd.Attributes[context] = new_attrs;
                 _pd.Attributes[context.GetChild(0)] = new_attrs;
             }
@@ -42,18 +40,16 @@
         {
             TerminalNodeImpl first = context.GetChild(0) as TerminalNodeImpl;
             string id = context.GetChild(0).GetText();
-            IList<ISymbol> list = _pd.RootScope.LookupType(id);
+            List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
             if (!list.Any())
             {
                 ISymbol sym = new NonterminalSymbol(id, first.Symbol);
                 _pd.RootScope.define(ref sym);
+                list = _pd.RootScope.LookupType(id).ToList();
             }
             List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
-            foreach (ISymbol sym in list)
-            {
-                CombinedScopeSymbol s = new RefSymbol(first.Symbol, sym);
-                new_attrs.Add(s);
-            }
+            CombinedScopeSymbol s = new RefSymbol(first.Symbol, list);
+            new_attrs.Add(s);
             _pd.Attributes[context] = new_attrs;
             _pd.Attributes[context.GetChild(0)] = new_attrs;
         }
@@ -67,18 +63,16 @@
                 {
                     TerminalNodeImpl term = context.GetChild(0) as TerminalNodeImpl;
                     string id = term.GetText();
-                    IList<ISymbol> sym_list = _pd.RootScope.LookupType(id);
+                    List<ISymbol> sym_list = _pd.RootScope.LookupType(id).ToList();
                     if (!sym_list.Any())
                     {
                         ISymbol sym = new ModeSymbol(id, null);
                         _pd.RootScope.define(ref sym);
+                        sym_list = _pd.RootScope.LookupType(id).ToList();
                     }
                     List<CombinedScopeSymbol> ref_list = new List<CombinedScopeSymbol>();
-                    foreach (ISymbol sym in sym_list)
-                    {
-                        CombinedScopeSymbol s = new RefSymbol(term.Symbol, sym);
-                        ref_list.Add(s);
-                    }
+                    CombinedScopeSymbol s = new RefSymbol(term.Symbol, sym_list);
+                    ref_list.Add(s);
                     _pd.Attributes[context] = ref_list;
                     _pd.Attributes[context.GetChild(0)] = ref_list;
                 }
@@ -86,18 +80,16 @@
                 {
                     TerminalNodeImpl term = context.GetChild(0) as TerminalNodeImpl;
                     string id = term.GetText();
-                    IList<ISymbol> sym_list = _pd.RootScope.LookupType(id);
+                    List<ISymbol> sym_list = _pd.RootScope.LookupType(id).ToList();
                     if (!sym_list.Any())
                     {
                         ISymbol sym = new ChannelSymbol(id, null);
                         _pd.RootScope.define(ref sym);
+                        sym_list = _pd.RootScope.LookupType(id).ToList();
                     }
                     List<CombinedScopeSymbol> ref_list = new List<CombinedScopeSymbol>();
-                    foreach (ISymbol sym in sym_list)
-                    {
-                        CombinedScopeSymbol s = new RefSymbol(term.Symbol, sym);
-                        ref_list.Add(s);
-                    }
+                    CombinedScopeSymbol s = new RefSymbol(term.Symbol, sym_list);
+                    ref_list.Add(s);
                     _pd.Attributes[context] = ref_list;
                     _pd.Attributes[context.GetChild(0)] = ref_list;
                 }

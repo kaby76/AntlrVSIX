@@ -1,6 +1,7 @@
 ﻿namespace Symtab
 {
     using Antlr4.Runtime;
+    using System.Collections.Generic;
 
     /// <summary>
     /// A generic programming language symbol. A symbol has to have a name and
@@ -19,7 +20,7 @@
         IToken Token { get; }
 
         // Resolve a ref or def into a def symbol.
-        ISymbol resolve();
+        List<ISymbol> resolve();
 
         // to satisfy adding symbols to sets, hashtables
         int GetHashCode();

@@ -85,9 +85,9 @@
             return Name.GetHashCode();
         }
 
-        public ISymbol resolve()
+        public List<ISymbol> resolve()
         {
-            return this;
+            return new List<ISymbol>() { this };
         }
     }
 

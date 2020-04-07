@@ -182,13 +182,17 @@
                                 continue;
                             }
 
-                            ISymbol def = sym.resolve();
-                            if (def != null && def.file != null && def.file != ""
-                                && def.file != ffn)
+                            List<ISymbol> defs = sym.resolve();
+                            if (defs == null) continue;
+                            foreach (var def in defs)
                             {
-                                Workspaces.Document def_item = Workspaces.Workspace.Instance.FindDocument(def.file);
-                                ParserDetails def_pd = ParserDetailsFactory.Create(def_item);
-                                def_pd.PropagateChangesTo.Add(ffn);
+                                if (def != null && def.file != null && def.file != ""
+                                    && def.file != ffn)
+                                {
+                                    Workspaces.Document def_item = Workspaces.Workspace.Instance.FindDocument(def.file);
+                                    ParserDetails def_pd = ParserDetailsFactory.Create(def_item);
+                                    def_pd.PropagateChangesTo.Add(ffn);
+                                }
                             }
                             Refs.Add(x, classification);
                         }

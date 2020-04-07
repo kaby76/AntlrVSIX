@@ -16,9 +16,9 @@
         protected internal ParserRuleContext defNode; // points at definition node in tree
         protected internal int lexicalOrder; // order seen or insertion order from 0; compilers often need this
 
-        public virtual ISymbol resolve()
+        public virtual List<ISymbol> resolve()
         {
-            return this;
+            return new List<ISymbol>() { this };
         }
 
         public BaseSymbol(string name, IToken token)

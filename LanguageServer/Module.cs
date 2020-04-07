@@ -459,7 +459,7 @@
             return result;
         }
 
-        public static IList<Location> FindDef(int index, Document doc)
+        public static IList<Location> FindDefs(int index, Document doc)
         {
             List<Location> result = new List<Location>();
             if (doc == null)
@@ -498,30 +498,33 @@
                     continue;
                 }
 
-                ISymbol def = @ref.resolve();
-                if (def == null)
+                List<ISymbol> defs = @ref.resolve();
+                if (defs == null)
                 {
                     continue;
                 }
 
-                string def_file = def.file;
-                if (def_file == null)
+                foreach (var def in defs)
                 {
-                    continue;
-                }
+                    string def_file = def.file;
+                    if (def_file == null)
+                    {
+                        continue;
+                    }
 
-                Document def_item = Workspaces.Workspace.Instance.FindDocument(def_file);
-                if (def_item == null)
-                {
-                    continue;
-                }
+                    Document def_item = Workspaces.Workspace.Instance.FindDocument(def_file);
+                    if (def_item == null)
+                    {
+                        continue;
+                    }
 
-                Location new_loc = new Location()
-                {
-                    Range = new Workspaces.Range(def.Token.StartIndex, def.Token.StopIndex),
-                    Uri = def_item
-                };
-                result.Add(new_loc);
+                    Location new_loc = new Location()
+                    {
+                        Range = new Workspaces.Range(def.Token.StartIndex, def.Token.StopIndex),
+                        Uri = def_item
+                    };
+                    result.Add(new_loc);
+                }
             }
             return result;
         }
@@ -547,7 +550,7 @@
                 return result;
             }
 
-            ISymbol found_def = null;
+            List<ISymbol> found_def = null;
             ISymbol found_ref = null;
             foreach (CombinedScopeSymbol value in list_value)
             {
@@ -568,18 +571,12 @@
                 }
 
                 found_ref = @ref;
-                ISymbol def = @ref.resolve();
-                if (def == null)
+                List<ISymbol> defs = @ref.resolve();
+                if (defs == null)
                 {
                     continue;
                 }
-
-                if (def.Token == null)
-                {
-                    continue;
-                }
-
-                found_def = def;
+                found_def = defs;
                 break;
             }
 
@@ -627,7 +624,7 @@
                                 return false;
                             }
                             return false;
-                        }).Select(t => t.Key);
+                        }).Select(t => t.Key).ToList();
                     foreach (TerminalNodeImpl r in refs)
                     {
                         result.Add(
@@ -641,12 +638,15 @@
             }
             if (found_def != null)
             {
-                result.Add(
-                    new Location()
-                    {
-                        Range = new Workspaces.Range(found_def.Token.StartIndex, found_def.Token.StopIndex),
-                        Uri = Workspaces.Workspace.Instance.FindDocument(found_def.file)
-                    });
+                foreach (var def in found_def)
+                {
+                    result.Add(
+                        new Location()
+                        {
+                            Range = new Workspaces.Range(def.Token.StartIndex, def.Token.StopIndex),
+                            Uri = Workspaces.Workspace.Instance.FindDocument(def.file)
+                        });
+                }
             }
             return result;
         }

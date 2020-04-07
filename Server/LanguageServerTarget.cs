@@ -532,7 +532,7 @@
                     (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
                     System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
                 }
-                IList<Location> found = LanguageServer.Module.FindDef(index, document);
+                IList<Location> found = LanguageServer.Module.FindDefs(index, document);
                 List<object> locations = new List<object>();
                 foreach (Location f in found)
                 {
@@ -578,7 +578,7 @@
                     (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
                     System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
                 }
-                IList<Location> found = LanguageServer.Module.FindDef(index, document);
+                IList<Location> found = LanguageServer.Module.FindDefs(index, document);
                 List<object> locations = new List<object>();
                 foreach (Location f in found)
                 {
@@ -624,7 +624,7 @@
                     (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
                     System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
                 }
-                IList<Location> found = LanguageServer.Module.FindDef(index, document);
+                IList<Location> found = LanguageServer.Module.FindDefs(index, document);
                 List<object> locations = new List<object>();
                 foreach (Location f in found)
                 {
