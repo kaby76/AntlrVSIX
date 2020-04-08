@@ -10,13 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="BisonLexer.g4" />
-    <None Remove="BisonParser.g4" />
-    <None Remove="FlexLexer.g4" />
-    <None Remove="FlexParser.g4" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Antlr4 Include="ANTLRv4Lexer.g4">
       <Package>LanguageServer</Package>
     </Antlr4>
@@ -27,12 +20,6 @@
       <Package>LanguageServer</Package>
     </Antlr4>
     <Antlr4 Include="BisonParser.g4">
-      <Package>LanguageServer</Package>
-    </Antlr4>
-    <Antlr4 Include="FlexLexer.g4">
-      <Package>LanguageServer</Package>
-    </Antlr4>
-    <Antlr4 Include="FlexParser.g4">
       <Package>LanguageServer</Package>
     </Antlr4>
   </ItemGroup>

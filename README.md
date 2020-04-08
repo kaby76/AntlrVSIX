@@ -17,7 +17,7 @@ i.e., refactoring grammars in order to make them cleaner, more readable, and mor
 Some of the refactorings implemented, or planned, include
 string literal folding, parser rule orderings,
 useless rule elimination, split combined grammars, combine split grammars,
-Flex/Bison import, removal of indirect left recursion,
+Bison import, removal of indirect left recursion,
 rule folding, rule unfolding, rule packing, and a "linter for Antlr grammars".
 
 The source code for the extension is open source, free of charge, and free of ads. For the latest developments on the extension,
@@ -93,7 +93,6 @@ result in faster parsers).
 
 ## Planned for v6.0:
 
-* Add import of Flex files.
 * Add selection of colors for grammar symbols in options. (I am now using Dark theme in Visual Studio 2019.)
 * Change options to use Newtonsoft.Json (breaking change--remove ~/.antlrvsixrc).
 * Add refactoring to sort mode sections in lexer grammars.
