@@ -18,7 +18,9 @@
 
         public virtual List<ISymbol> resolve()
         {
-            return new List<ISymbol>() { this };
+            // Look for definers in scope.
+            List<ISymbol> res = this.scope.LookupType(this.Name).ToList();
+            return res;
         }
 
         public BaseSymbol(string name, IToken token)
