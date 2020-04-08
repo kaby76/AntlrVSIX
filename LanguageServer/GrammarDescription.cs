@@ -593,8 +593,13 @@
                     {
                         list_of_syms = sym.resolve();
                     }
-                    foreach (var s in list_of_syms)
+                    bool first = false;
+                    foreach (ISymbol s in list_of_syms)
                     {
+                        if (! first)
+                        {
+                            sb.AppendLine();
+                        }
                         if (s is TerminalSymbol)
                         {
                             sb.Append("Terminal ");
@@ -623,7 +628,17 @@
                             continue;
                         }
                         IParseTree fod = def_pd.Attributes.Where(
-                                kvp => kvp.Value.Contains(value))
+                                kvp =>
+                                {
+                                    IParseTree key = kvp.Key;
+                                    if (!(key is TerminalNodeImpl))
+                                        return false;
+                                    TerminalNodeImpl t1 = key as TerminalNodeImpl;
+                                    IToken s1 = t1.Symbol;
+                                    if (s1 == s.Token)
+                                        return true;
+                                    return false;
+                                })
                             .Select(kvp => kvp.Key).FirstOrDefault();
                         if (fod == null)
                         {
@@ -636,7 +651,8 @@
                         for (; node != null; node = node.Parent)
                         {
                             if (node is ANTLRv4Parser.LexerRuleSpecContext ||
-                                node is ANTLRv4Parser.ParserRuleSpecContext)
+                                node is ANTLRv4Parser.ParserRuleSpecContext ||
+                                node is ANTLRv4Parser.TokensSpecContext)
                             {
                                 break;
                             }
@@ -681,8 +697,13 @@
                     {
                         list_of_syms = sym.resolve();
                     }
-                    foreach (var s in list_of_syms)
+                    bool first = false;
+                    foreach (ISymbol s in list_of_syms)
                     {
+                        if (! first)
+                        {
+                            sb.AppendLine();
+                        }
                         if (s is TerminalSymbol)
                         {
                             sb.Append("Terminal ");
@@ -711,7 +732,17 @@
                             continue;
                         }
                         IParseTree fod = def_pd.Attributes.Where(
-                                kvp => kvp.Value.Contains(value))
+                                kvp =>
+                                {
+                                    IParseTree key = kvp.Key;
+                                    if (!(key is TerminalNodeImpl))
+                                        return false;
+                                    TerminalNodeImpl t1 = key as TerminalNodeImpl;
+                                    IToken s1 = t1.Symbol;
+                                    if (s1 == s.Token)
+                                        return true;
+                                    return false;
+                                })
                             .Select(kvp => kvp.Key).FirstOrDefault();
                         if (fod == null)
                         {
@@ -724,7 +755,8 @@
                         for (; node != null; node = node.Parent)
                         {
                             if (node is ANTLRv4Parser.LexerRuleSpecContext ||
-                                node is ANTLRv4Parser.ParserRuleSpecContext)
+                                node is ANTLRv4Parser.ParserRuleSpecContext ||
+                                node is ANTLRv4Parser.TokensSpecContext)
                             {
                                 break;
                             }
