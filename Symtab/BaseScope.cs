@@ -281,7 +281,7 @@
         {
             get
             {
-                MultiMap<string, ISymbol>.ValueCollection list = symbols.Values;
+                IEnumerable<ISymbol> list = symbols.Values;
                 IList<ISymbol> result = new List<ISymbol>();
                 foreach (ISymbol l in list)
                 {
