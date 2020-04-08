@@ -576,6 +576,7 @@
                 {
                     return null;
                 }
+                bool first = true;
                 StringBuilder sb = new StringBuilder();
                 foreach (CombinedScopeSymbol value in list_value)
                 {
@@ -593,13 +594,13 @@
                     {
                         list_of_syms = sym.resolve();
                     }
-                    bool first = false;
                     foreach (ISymbol s in list_of_syms)
                     {
                         if (! first)
                         {
                             sb.AppendLine();
                         }
+                        first = false;
                         if (s is TerminalSymbol)
                         {
                             sb.Append("Terminal ");
@@ -680,6 +681,7 @@
                 {
                     return null;
                 }
+                bool first = true;
                 StringBuilder sb = new StringBuilder();
                 foreach (CombinedScopeSymbol value in list_value)
                 {
@@ -697,13 +699,13 @@
                     {
                         list_of_syms = sym.resolve();
                     }
-                    bool first = false;
                     foreach (ISymbol s in list_of_syms)
                     {
                         if (! first)
                         {
                             sb.AppendLine();
                         }
+                        first = false;
                         if (s is TerminalSymbol)
                         {
                             sb.Append("Terminal ");
