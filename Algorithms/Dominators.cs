@@ -23,7 +23,6 @@ namespace Algorithms
         where E : IEdge<T>
     {
         public Dictionary<T, HashSet<T>> _doms;
-        private readonly bool DEBUG = false;
         private readonly IGraph<T, E> _graph;
         private readonly IEnumerable<T> _work;
         private readonly T _start;

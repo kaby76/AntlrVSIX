@@ -30,6 +30,7 @@
         bool CanReformat { get; }
         List<Func<IGrammarDescription, Dictionary<IParseTree, IList<Symtab.CombinedScopeSymbol>>, IParseTree, bool>> Identify { get; }
         List<Func<IGrammarDescription, Dictionary<IParseTree, IList<Symtab.CombinedScopeSymbol>>, IParseTree, bool>> IdentifyDefinition { get; }
+        Func<IGrammarDescription, Dictionary<IParseTree, IList<Symtab.CombinedScopeSymbol>>, IParseTree, int> Classify { get; }
         bool IsFileType(string ffn);
         string FileExtension { get; }
         string StartRule { get; }

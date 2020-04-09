@@ -216,9 +216,9 @@
                     }
                 }
                 throw new System.Exception("Not implemented.");
-                methods.Clear(); // override method from superclass
-                methods.UnionWith(DefinedMethods);
-                return methods;
+                //methods.Clear(); // override method from superclass
+                //methods.UnionWith(DefinedMethods);
+                //return methods;
             }
         }
 
@@ -236,8 +236,8 @@
                     }
                 }
                 throw new System.Exception("Not implemented.");
-                fields.AddRange(DefinedFields);
-                return fields;
+                //fields.AddRange(DefinedFields);
+                //return fields;
             }
         }
 

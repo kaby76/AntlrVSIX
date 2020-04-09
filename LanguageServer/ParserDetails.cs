@@ -20,7 +20,8 @@
         public virtual Dictionary<TerminalNodeImpl, int> Refs { get; set; } = new Dictionary<TerminalNodeImpl, int>();
         public virtual HashSet<string> PropagateChangesTo { get; set; } = new HashSet<string>();
         public virtual Dictionary<TerminalNodeImpl, int> Defs { get; set; } = new Dictionary<TerminalNodeImpl, int>();
-        public virtual Dictionary<TerminalNodeImpl, int> Tags { get; set; } = new Dictionary<TerminalNodeImpl, int>();
+        public virtual Dictionary<TerminalNodeImpl, int> PopupList { get; set; } = new Dictionary<TerminalNodeImpl, int>();
+        public virtual Dictionary<TerminalNodeImpl, int> ColorizedList { get; set; } = new Dictionary<TerminalNodeImpl, int>();
         public virtual HashSet<string> Imports { get; set; } = new HashSet<string>();
 
         public virtual HashSet<IParseTree> Errors { get; set; } = new HashSet<IParseTree>();
@@ -69,7 +70,7 @@
             Comments = gd.ExtractComments(code);
             Defs = new Dictionary<TerminalNodeImpl, int>();
             Refs = new Dictionary<TerminalNodeImpl, int>();
-            Tags = new Dictionary<TerminalNodeImpl, int>();
+            PopupList = new Dictionary<TerminalNodeImpl, int>();
             Errors = new HashSet<IParseTree>();
             Imports = new HashSet<string>();
             Attributes = new Dictionary<IParseTree, IList<CombinedScopeSymbol>>();
@@ -83,6 +84,18 @@
             return Passes[pass_number]();
         }
 
+        public virtual void Classify()
+        {
+            Workspaces.Document item = Item;
+            string ffn = item.FullPath;
+            IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);
+            if (gd == null)
+            {
+                throw new Exception();
+            }
+
+        }
+
         public virtual void GatherDefs()
         {
             Workspaces.Document item = Item;
@@ -92,117 +105,48 @@
             {
                 throw new Exception();
             }
-
-            for (int classification = 0; classification < gd.IdentifyDefinition.Count; ++classification)
+            Func<IGrammarDescription, Dictionary<IParseTree, IList<CombinedScopeSymbol>>, IParseTree, int> fun = gd.Classify;
+            IEnumerable<IParseTree> it = AllNodes.Where(n => n is TerminalNodeImpl);
+            foreach (var n in it)
             {
-                Func<IGrammarDescription, Dictionary<IParseTree, IList<CombinedScopeSymbol>>, IParseTree, bool> fun = gd.IdentifyDefinition[classification];
-                if (fun == null)
+                var t = n as TerminalNodeImpl;
+                int i = -1;
+                try
                 {
-                    continue;
+                    i = gd.Classify(gd, Attributes, t);
+                    if (i >= 0)
+                        ColorizedList.Add(t, i);
                 }
-
-                IEnumerable<IParseTree> it = AllNodes.Where(t => fun(gd, Attributes, t));
-                foreach (IParseTree t in it)
+                catch (Exception) { }
+                try
                 {
-                    TerminalNodeImpl x = (t as TerminalNodeImpl);
-                    if (x == null)
+                    if (i == 0 || i == 1)
                     {
-                        continue;
-                    }
-
-                    if (x.Symbol == null)
-                    {
-                        continue;
-                    }
-
-                    try
-                    {
-                        Defs.Add(x, classification);
-                        Tags.Add(x, classification);
-                    }
-                    catch (ArgumentException)
-                    {
-                        // Duplicate
+                        if (gd.Identify[i](gd, Attributes, t))
+                        {
+                            Refs.Add(t, i);
+                            PopupList.Add(t, i);
+                        }
                     }
                 }
+                catch (Exception) { }
+                try
+                {
+                    if (i == 0 || i == 1)
+                    {
+                        if (gd.IdentifyDefinition[i](gd, Attributes, t))
+                        {
+                            Defs.Add(t, i);
+                            PopupList.Add(t, i);
+                        }
+                    }
+                }
+                catch (Exception) { }
             }
         }
 
         public virtual void GatherRefs()
         {
-            Workspaces.Document item = Item;
-            string ffn = item.FullPath;
-            IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);
-            if (gd == null)
-            {
-                throw new Exception();
-            }
-
-            for (int classification = 0; classification < gd.Identify.Count; ++classification)
-            {
-                Func<IGrammarDescription, Dictionary<IParseTree, IList<CombinedScopeSymbol>>, IParseTree, bool> fun = gd.Identify[classification];
-                if (fun == null)
-                {
-                    continue;
-                }
-
-                IEnumerable<IParseTree> it = AllNodes.Where(t => fun(gd, Attributes, t));
-                foreach (IParseTree t in it)
-                {
-                    TerminalNodeImpl x = (t as TerminalNodeImpl);
-                    if (x == null)
-                    {
-                        continue;
-                    }
-
-                    if (x.Symbol == null)
-                    {
-                        continue;
-                    }
-
-                    try
-                    {
-                        Attributes.TryGetValue(x, out IList<CombinedScopeSymbol> attr_list);
-                        if (attr_list == null)
-                        {
-                            continue;
-                        }
-
-                        foreach (CombinedScopeSymbol attr in attr_list)
-                        {
-                            Tags.Add(x, classification);
-                            if (attr == null)
-                            {
-                                continue;
-                            }
-
-                            ISymbol sym = attr as Symtab.ISymbol;
-                            if (sym == null)
-                            {
-                                continue;
-                            }
-
-                            List<ISymbol> defs = sym.resolve();
-                            if (defs == null) continue;
-                            foreach (var def in defs)
-                            {
-                                if (def != null && def.file != null && def.file != ""
-                                    && def.file != ffn)
-                                {
-                                    Workspaces.Document def_item = Workspaces.Workspace.Instance.FindDocument(def.file);
-                                    ParserDetails def_pd = ParserDetailsFactory.Create(def_item);
-                                    def_pd.PropagateChangesTo.Add(ffn);
-                                }
-                            }
-                            Refs.Add(x, classification);
-                        }
-                    }
-                    catch (ArgumentException)
-                    {
-                        // Duplicate
-                    }
-                }
-            }
         }
 
         public virtual void GatherErrors()

@@ -163,7 +163,7 @@
 
             TerminalNodeImpl q = p as Antlr4.Runtime.Tree.TerminalNodeImpl;
             Range range = new Workspaces.Range(new Workspaces.Index(q.Symbol.StartIndex), new Workspaces.Index(q.Symbol.StopIndex + 1));
-            bool found = pd.Tags.TryGetValue(q, out int tag_type);
+            bool found = pd.PopupList.TryGetValue(q, out int tag_type);
             if (!found)
             {
                 return null;
@@ -243,7 +243,7 @@
 
             Antlr4.Runtime.Tree.IParseTree p = pt;
             TerminalNodeImpl q = p as Antlr4.Runtime.Tree.TerminalNodeImpl;
-            bool found = pd.Tags.TryGetValue(q, out int tag_type);
+            bool found = pd.PopupList.TryGetValue(q, out int tag_type);
             if (found)
             {
                 return tag_type;
@@ -280,7 +280,7 @@
 
             Antlr4.Runtime.Tree.IParseTree p = pt;
             TerminalNodeImpl q = p as Antlr4.Runtime.Tree.TerminalNodeImpl;
-            bool found = pd.Tags.TryGetValue(q, out int tag_type);
+            bool found = pd.PopupList.TryGetValue(q, out int tag_type);
             if (!found)
             {
                 return null;
@@ -308,7 +308,7 @@
             }
 
             List<DocumentSymbol> combined = new List<DocumentSymbol>();
-            foreach (KeyValuePair<TerminalNodeImpl, int> p in pd.Tags)
+            foreach (KeyValuePair<TerminalNodeImpl, int> p in pd.ColorizedList)
             {
                 if (p.Key.Symbol == null)
                 {
@@ -348,7 +348,7 @@
             }
 
             List<DocumentSymbol> combined = new System.Collections.Generic.List<DocumentSymbol>();
-            foreach (KeyValuePair<TerminalNodeImpl, int> p in pd.Tags)
+            foreach (KeyValuePair<TerminalNodeImpl, int> p in pd.PopupList)
             {
                 if (p.Key.Symbol == null)
                 {
@@ -550,7 +550,7 @@
                 return result;
             }
 
-            List<ISymbol> found_def = null;
+            List<ISymbol> found_defs = null;
             ISymbol found_ref = null;
             foreach (CombinedScopeSymbol value in list_value)
             {
@@ -576,7 +576,7 @@
                 {
                     continue;
                 }
-                found_def = defs;
+                found_defs = defs;
                 break;
             }
 
@@ -615,13 +615,20 @@
                                 {
                                     return false;
                                 }
-
-                                if (vv.resolve() == found_def)
-                                {
+                                var vv_resolved = vv.resolve();
+                                if (vv_resolved == found_defs)
                                     return true;
+                                if (vv_resolved.Count != found_defs.Count)
+                                    return false;
+                                foreach (var a1 in vv_resolved)
+                                {
+                                    if (!found_defs.Contains(a1)) return false;
                                 }
-
-                                return false;
+                                foreach (var a2 in found_defs)
+                                {
+                                    if (!vv_resolved.Contains(a2)) return false;
+                                }
+                                return true;
                             }
                             return false;
                         }).Select(t => t.Key).ToList();
@@ -636,9 +643,9 @@
                     }
                 }
             }
-            if (found_def != null)
+            if (found_defs != null)
             {
-                foreach (var def in found_def)
+                foreach (var def in found_defs)
                 {
                     result.Add(
                         new Location()

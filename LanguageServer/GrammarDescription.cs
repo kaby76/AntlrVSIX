@@ -157,117 +157,117 @@
 
         public string[] Map { get; } = new string[]
         {
-        ClassificationNameNonterminal,
-        ClassificationNameTerminal,
-        ClassificationNameComment,
-        ClassificationNameKeyword,
-        ClassificationNameLiteral,
-        ClassificationNameMode,
-        ClassificationNameChannel,
+            ClassificationNameNonterminal,
+            ClassificationNameTerminal,
+            ClassificationNameComment,
+            ClassificationNameKeyword,
+            ClassificationNameLiteral,
+            ClassificationNameMode,
+            ClassificationNameChannel,
         };
 
         public Dictionary<string, int> InverseMap { get; } = new Dictionary<string, int>()
-    {
-        {ClassificationNameNonterminal, 0},
-        {ClassificationNameTerminal, 1},
-        {ClassificationNameComment, 2},
-        {ClassificationNameKeyword, 3},
-        {ClassificationNameLiteral, 4},
-        {ClassificationNameMode, 5},
-        {ClassificationNameChannel, 6},
-    };
+        {
+            {ClassificationNameNonterminal, 0},
+            {ClassificationNameTerminal, 1},
+            {ClassificationNameComment, 2},
+            {ClassificationNameKeyword, 3},
+            {ClassificationNameLiteral, 4},
+            {ClassificationNameMode, 5},
+            {ClassificationNameChannel, 6},
+        };
 
         /* Color scheme for the tagging. */
         public List<System.Drawing.Color> MapColor { get; } = new List<System.Drawing.Color>()
-    {
-        System.Drawing.Color.FromArgb(43, 145, 175), //ClassificationNameNonterminal
-        System.Drawing.Color.Purple, //ClassificationNameTerminal
-        System.Drawing.Color.FromArgb(0, 128, 0), //ClassificationNameComment
-        System.Drawing.Color.FromArgb(0, 0, 255), //ClassificationNameKeyword
-        System.Drawing.Color.FromArgb(163, 21, 21), //ClassificationNameLiteral
-        System.Drawing.Color.Salmon, //ClassificationNameMode
-        System.Drawing.Color.Coral, //ClassificationNameChannel
-    };
+        {
+            System.Drawing.Color.FromArgb(43, 145, 175), //ClassificationNameNonterminal
+            System.Drawing.Color.Purple, //ClassificationNameTerminal
+            System.Drawing.Color.FromArgb(0, 128, 0), //ClassificationNameComment
+            System.Drawing.Color.FromArgb(0, 0, 255), //ClassificationNameKeyword
+            System.Drawing.Color.FromArgb(163, 21, 21), //ClassificationNameLiteral
+            System.Drawing.Color.Salmon, //ClassificationNameMode
+            System.Drawing.Color.Coral, //ClassificationNameChannel
+        };
 
         public List<System.Drawing.Color> MapInvertedColor { get; } = new List<System.Drawing.Color>()
-    {
-        System.Drawing.Color.LightPink,
-        System.Drawing.Color.LightYellow,
-        System.Drawing.Color.LightGreen,
-        System.Drawing.Color.LightBlue,
-        System.Drawing.Color.Red,
-        System.Drawing.Color.LightSalmon,
-        System.Drawing.Color.LightCoral,
-    };
+        {
+            System.Drawing.Color.LightPink,
+            System.Drawing.Color.LightYellow,
+            System.Drawing.Color.LightGreen,
+            System.Drawing.Color.LightBlue,
+            System.Drawing.Color.Red,
+            System.Drawing.Color.LightSalmon,
+            System.Drawing.Color.LightCoral,
+        };
 
         public List<bool> CanFindAllRefs { get; } = new List<bool>()
-    {
-        true, // nonterminal
-        true, // Terminal
-        false, // comment
-        false, // keyword
-        true, // literal
-        true, // mode
-        true, // channel
-    };
+        {
+            true, // nonterminal
+            true, // Terminal
+            false, // comment
+            false, // keyword
+            true, // literal
+            true, // mode
+            true, // channel
+        };
 
         public List<bool> CanRename { get; } = new List<bool>()
-    {
-        true, // nonterminal
-        true, // Terminal
-        false, // comment
-        false, // keyword
-        false, // literal
-        true, // mode
-        true, // channel
-    };
+        {
+            true, // nonterminal
+            true, // Terminal
+            false, // comment
+            false, // keyword
+            false, // literal
+            true, // mode
+            true, // channel
+        };
 
         public List<bool> CanGotodef { get; } = new List<bool>()
-    {
-        true, // nonterminal
-        true, // Terminal
-        false, // comment
-        false, // keyword
-        false, // literal
-        true, // mode
-        true, // channel
-    };
+        {
+            true, // nonterminal
+            true, // Terminal
+            false, // comment
+            false, // keyword
+            false, // literal
+            true, // mode
+            true, // channel
+        };
 
         public List<bool> CanGotovisitor { get; } = new List<bool>()
-    {
-        true, // nonterminal
-        false, // Terminal
-        false, // comment
-        false, // keyword
-        false, // literal
-        false, // mode
-        false, // channel
-    };
+        {
+            true, // nonterminal
+            false, // Terminal
+            false, // comment
+            false, // keyword
+            false, // literal
+            false, // mode
+            false, // channel
+        };
 
         private static readonly List<string> _antlr_keywords = new List<string>()
-    {
-        "options",
-        "tokens",
-        "channels",
-        "import",
-        "fragment",
-        "lexer",
-        "parser",
-        "grammar",
-        "protected",
-        "public",
-        "returns",
-        "locals",
-        "throws",
-        "catch",
-        "finally",
-        "mode",
-        "pushMode",
-        "popMode",
-        "type",
-        "skip",
-        "channel"
-    };
+        {
+            "options",
+            "tokens",
+            "channels",
+            "import",
+            "fragment",
+            "lexer",
+            "parser",
+            "grammar",
+            "protected",
+            "public",
+            "returns",
+            "locals",
+            "throws",
+            "catch",
+            "finally",
+            "mode",
+            "pushMode",
+            "popMode",
+            "type",
+            "skip",
+            "channel"
+        };
 
         public List<Func<IGrammarDescription, Dictionary<IParseTree, IList<CombinedScopeSymbol>>, IParseTree, bool>>
             Identify
@@ -551,6 +551,95 @@
 
                 return false;
             }
+            };
+
+        public Func<IGrammarDescription, Dictionary<IParseTree, IList<CombinedScopeSymbol>>, IParseTree, int>
+            Classify { get; } = 
+            (IGrammarDescription gd, Dictionary<IParseTree, IList<CombinedScopeSymbol>> st, IParseTree t) =>
+            {
+                TerminalNodeImpl term = t as TerminalNodeImpl;
+                Antlr4.Runtime.Tree.IParseTree p = term;
+                st.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
+                if (list_value != null)
+                {
+                    // There's a symbol table entry for the leaf node.
+                    // So, it is either a terminal, nonterminal,
+                    // channel, mode.
+                    // We don't care if it's a defining occurrence or
+                    // applied occurrence, just what type of symbol it
+                    // is.
+                    foreach (CombinedScopeSymbol value in list_value)
+                    {
+                        if (value is RefSymbol)
+                        {
+                            List<ISymbol> defs = ((RefSymbol) value).Def;
+                            foreach (var d in defs)
+                            {
+                                if (d is NonterminalSymbol)
+                                {
+                                    return 0;
+                                }
+                                else if (d is TerminalSymbol)
+                                {
+                                    return 1;
+                                }
+                                else if (d is ModeSymbol)
+                                {
+                                    return 5;
+                                }
+                                else if (d is ChannelSymbol)
+                                {
+                                    return 6;
+                                }
+                            }
+                        }
+                        else if (value is NonterminalSymbol)
+                        {
+                            return 0;
+                        }
+                        else if (value is TerminalSymbol)
+                        {
+                            return 1;
+                        }
+                        else if (value is ModeSymbol)
+                        {
+                            return 5;
+                        }
+                        else if (value is ChannelSymbol)
+                        {
+                            return 6;
+                        }
+                    }
+                }
+                else
+                {
+                    // It is either a keyword, literal, comment.
+                    string text = term.GetText();
+                    if (_antlr_keywords.Contains(text))
+                    {
+                        return 3;
+                    }
+                    if (!(term.Symbol.Type == ANTLRv4Parser.STRING_LITERAL
+                          || term.Symbol.Type == ANTLRv4Parser.INT
+                          || term.Symbol.Type == ANTLRv4Parser.LEXER_CHAR_SET))
+                    {
+                        return 4;
+                    }
+                    // The token could be part of parserRuleSpec context.
+                    for (IRuleNode r = term.Parent; r != null; r = r.Parent)
+                    {
+                        if (r is ANTLRv4Parser.ParserRuleSpecContext ||
+                              r is ANTLRv4Parser.LexerRuleSpecContext)
+                        {
+                            return 4;
+                        }
+                    }
+                    if (term.Payload.Channel == ANTLRv4Lexer.OFF_CHANNEL)
+                    {
+                        return 2;
+                    }
+                }
+                return -1;
             };
 
         public bool CanNextRule => true;
