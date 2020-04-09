@@ -27,7 +27,6 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <CheckBox Name="visible_server_window" Grid.Row="0" Grid.Column="0" Margin="10,0,10,10">
@@ -117,7 +116,10 @@
             Enable completion.
         </CheckBox>
 
-        <ListView Grid.Row="4" Grid.RowSpan="5" Grid.Column="1" Margin="10,33.333,10.333,-23.333" >
+        <ListView Grid.Row="3"  Grid.Column="1"
+                  Margin="10,10,10,10"
+                  Grid.RowSpan="4"
+                  MaxHeight="400">
             <TextBox TextWrapping="Wrap" IsReadOnly="True"
                      BorderThickness="0" Text="Nonterminal color."/>
             <xctk:ColorPicker Name="nonterminal_color" DisplayColorAndName="True" >
@@ -149,7 +151,7 @@
         </ListView>
 
         <!-- Accept or Cancel -->
-        <WrapPanel Grid.Row="8" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="10,0,0,0" >
+        <WrapPanel Grid.Row="7" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="10,0,0,0" >
             <Button IsDefault="True" Name="btnDialogOk" Click="btnDialogOk_Click" MinWidth="60" Margin="0,0,10,0">_Ok</Button>
             <Button IsCancel="True" MinWidth="60" Click="btnDialogCancel_Click" >_Cancel</Button>
         </WrapPanel>
