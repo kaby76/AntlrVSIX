@@ -210,6 +210,31 @@
                     string val = _grammar_description.Map[1];
                     _lsptype_to_classifiertype[key] = service.GetClassificationType(val);
                 }
+                {
+                    int key = (int)SymbolKind.String;
+                    string val = _grammar_description.Map[2];
+                    _lsptype_to_classifiertype[key] = service.GetClassificationType(val);
+                }
+                {
+                    int key = (int)SymbolKind.Key;
+                    string val = _grammar_description.Map[3];
+                    _lsptype_to_classifiertype[key] = service.GetClassificationType(val);
+                }
+                {
+                    int key = (int)SymbolKind.Constant;
+                    string val = _grammar_description.Map[4];
+                    _lsptype_to_classifiertype[key] = service.GetClassificationType(val);
+                }
+                {
+                    int key = (int)SymbolKind.Event;
+                    string val = _grammar_description.Map[5];
+                    _lsptype_to_classifiertype[key] = service.GetClassificationType(val);
+                }
+                {
+                    int key = (int)SymbolKind.Object;
+                    string val = _grammar_description.Map[6];
+                    _lsptype_to_classifiertype[key] = service.GetClassificationType(val);
+                }
                 initialized = true;
             }
             catch (Exception)

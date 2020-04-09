@@ -25,6 +25,14 @@
                 terminal_color.SelectedColor = System.Windows.Media.Color.FromArgb(c.A, c.R, c.G, c.B);
             }
             {
+                var c = Option.GetColor("AntlrComment");
+                comment_color.SelectedColor = System.Windows.Media.Color.FromArgb(c.A, c.R, c.G, c.B);
+            }
+            {
+                var c = Option.GetColor("AntlrKeyword");
+                keyword_color.SelectedColor = System.Windows.Media.Color.FromArgb(c.A, c.R, c.G, c.B);
+            }
+            {
                 var c = Option.GetColor("AntlrLiteral");
                 literal_color.SelectedColor = System.Windows.Media.Color.FromArgb(c.A, c.R, c.G, c.B);
             }
@@ -69,6 +77,22 @@
                    terminal_color.SelectedColor.Value.G,
                    terminal_color.SelectedColor.Value.B);
                 Option.SetColor("AntlrTerminal", c);
+            }
+            {
+                var c = System.Drawing.Color.FromArgb(
+                   comment_color.SelectedColor.Value.A,
+                   comment_color.SelectedColor.Value.R,
+                   comment_color.SelectedColor.Value.G,
+                   comment_color.SelectedColor.Value.B);
+                Option.SetColor("AntlrComment", c);
+            }
+            {
+                var c = System.Drawing.Color.FromArgb(
+                    keyword_color.SelectedColor.Value.A,
+                    keyword_color.SelectedColor.Value.R,
+                    keyword_color.SelectedColor.Value.G,
+                    keyword_color.SelectedColor.Value.B);
+                Option.SetColor("AntlrKeyword", c);
             }
             {
                 var c = System.Drawing.Color.FromArgb(

@@ -768,28 +768,23 @@
                     }
                     else if (s.kind == 2)
                     {
-                        //si.Kind = 0; // Comment
-                        continue;
+                        si.Kind = SymbolKind.String; // Comment
                     }
                     else if (s.kind == 3)
                     {
-                        // si.Kind = 0; // Keyword
-                        continue;
+                        si.Kind = SymbolKind.Key; // Keyword
                     }
                     else if (s.kind == 4)
                     {
-                        // si.Kind = SymbolKind.Number; // Literal
-                        continue;
+                        si.Kind = SymbolKind.Constant; // Literal
                     }
                     else if (s.kind == 5)
                     {
-                        // si.Kind = 0; // Mode
-                        continue;
+                        si.Kind = SymbolKind.Event; // Mode
                     }
                     else if (s.kind == 6)
                     {
-                        // si.Kind = SymbolKind.Enum; // Channel
-                        continue;
+                        si.Kind = SymbolKind.Object; // Channel
                     }
                     else
                     {
@@ -1087,28 +1082,23 @@
                     }
                     else if (s.kind == 2)
                     {
-                        //si.Kind = 0; // Comment
-                        continue;
+                        si.Kind = SymbolKind.String; // Comment
                     }
                     else if (s.kind == 3)
                     {
-                        // si.Kind = 0; // Keyword
-                        continue;
+                        si.Kind = SymbolKind.Key; // Keyword
                     }
                     else if (s.kind == 4)
                     {
-                        // si.Kind = SymbolKind.Number; // Literal
-                        continue;
+                        si.Kind = SymbolKind.Constant; // Literal
                     }
                     else if (s.kind == 5)
                     {
-                        // si.Kind = 0; // Mode
-                        continue;
+                        si.Kind = SymbolKind.Event; // Mode
                     }
                     else if (s.kind == 6)
                     {
-                        // si.Kind = SymbolKind.Enum; // Channel
-                        continue;
+                        si.Kind = SymbolKind.Object; // Channel
                     }
                     else
                     {

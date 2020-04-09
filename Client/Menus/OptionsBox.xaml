@@ -117,14 +117,22 @@
             Enable completion.
         </CheckBox>
 
-        <ListView Grid.Row="3" Grid.RowSpan="5" Grid.Column="1" Margin="10,0,10,10" >
+        <ListView Grid.Row="4" Grid.RowSpan="5" Grid.Column="1" Margin="10,33.333,10.333,-23.333" >
             <TextBox TextWrapping="Wrap" IsReadOnly="True"
-                     BorderThickness="0" Text="Non-terminal color."/>
+                     BorderThickness="0" Text="Nonterminal color."/>
             <xctk:ColorPicker Name="nonterminal_color" DisplayColorAndName="True" >
             </xctk:ColorPicker>
             <TextBox TextWrapping="Wrap" IsReadOnly="True"
                      BorderThickness="0" Text="Terminal color."/>
             <xctk:ColorPicker Name="terminal_color" DisplayColorAndName="True" >
+            </xctk:ColorPicker>
+            <TextBox TextWrapping="Wrap" IsReadOnly="True"
+                     BorderThickness="0" Text="Comment color."/>
+            <xctk:ColorPicker Name="comment_color" DisplayColorAndName="True" >
+            </xctk:ColorPicker>
+            <TextBox TextWrapping="Wrap" IsReadOnly="True"
+                     BorderThickness="0" Text="Keyword color."/>
+            <xctk:ColorPicker Name="keyword_color" DisplayColorAndName="True" >
             </xctk:ColorPicker>
             <TextBox TextWrapping="Wrap" IsReadOnly="True"
                      BorderThickness="0" Text="Literal color."/>
