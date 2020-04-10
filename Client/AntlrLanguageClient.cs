@@ -150,7 +150,7 @@
             return Task.CompletedTask;
         }
 
-        public SymbolInformation[] CMGetClassifiers(int start, int end, string ffn)
+        public CMClassifierInformation[] CMGetClassifiers(int start, int end, string ffn)
         {
             try
             {
@@ -164,7 +164,7 @@
                 p.TextDocument = uri;
                 p.Start = start;
                 p.End = end;
-                SymbolInformation[] result = _rpc.InvokeAsync<SymbolInformation[]>("CMGetClassifiers", p).Result;
+                CMClassifierInformation[] result = _rpc.InvokeAsync<CMClassifierInformation[]>("CMGetClassifiers", p).Result;
                 return result;
             }
             catch (Exception)

@@ -339,7 +339,14 @@
             return sorted_combined_tokens;
         }
 
-        public static IEnumerable<DocumentSymbol> Get(Workspaces.Range range, Document doc)
+        public class Info
+        {
+            public int start;
+            public int end;
+            public int kind; 
+        }
+
+        public static IEnumerable<Info> Get(int start, int end, Document doc)
         {
             ParserDetails pd = ParserDetailsFactory.Create(doc);
             if (pd.ParseTree == null)
@@ -347,35 +354,53 @@
                 LanguageServer.Module.Compile();
             }
 
-            List<DocumentSymbol> combined = new List<DocumentSymbol>();
+            List<Info> combined = new List<Info>();
             foreach (KeyValuePair<TerminalNodeImpl, int> p in pd.ColorizedList)
             {
                 if (p.Key.Symbol == null)
                 {
                     continue;
                 }
+                var sym = p.Key.Symbol;
+                var st = sym.StartIndex;
+                var en = sym.StopIndex + 1;
+                if (st > end) continue;
+                if (end < st) continue;
+                int s1 = st > start ? st : start;
+                int s2 = en < end ? en : end;
 
                 combined.Add(
-                     new DocumentSymbol()
+                     new Info()
                      {
-                         name = p.Key.Symbol.Text,
-                         range = new Workspaces.Range(p.Key.Symbol.StartIndex, p.Key.Symbol.StopIndex),
+                         start = s1,
+                         end = s2,
                          kind = p.Value
                      });
+                ;
             }
             foreach (KeyValuePair<Antlr4.Runtime.IToken, int> p in pd.Comments)
             {
+                var sym = p.Key;
+                var kind = p.Value;
+                if (kind < 0) continue;
+                var st = sym.StartIndex;
+                var en = sym.StopIndex + 1;
+                if (st > end) continue;
+                if (end < st) continue;
+                int s1 = st > start ? st : start;
+                int s2 = en < end ? en : end;
+
                 combined.Add(
-                    new DocumentSymbol()
+                    new Info()
                     {
-                        name = p.Key.Text,
-                        range = new Workspaces.Range(p.Key.StartIndex, p.Key.StopIndex),
-                        kind = p.Value
+                        start = s1,
+                        end = s2,
+                        kind = kind
                     });
             }
 
             // Sort the list.
-            IOrderedEnumerable<DocumentSymbol> sorted_combined_tokens = combined.OrderBy(t => t.range.Start.Value).ThenBy(t => t.range.End.Value);
+            IOrderedEnumerable<Info> sorted_combined_tokens = combined.OrderBy(t => t.start).ThenBy(t => t.end);
             return sorted_combined_tokens;
         }
 

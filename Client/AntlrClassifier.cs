@@ -18,6 +18,7 @@
         private static readonly Task<int> task;
         private readonly ITextBuffer _buffer;
         private IDictionary<int, IClassificationType> _lsptype_to_classifiertype;
+        private IDictionary<int, IClassificationType> _to_classifiertype;
         private bool initialized = false;
         private readonly object updateLock = new object();
 
@@ -63,24 +64,20 @@
                 string text = curSpan.GetText();
                 int curLocStart = start.Position;
                 int curLocEnd = end.Position;
-                SymbolInformation[] sorted_combined_tokens = alc.CMGetClassifiers(curLocStart, curLocEnd - 1, ffn);
+                LanguageServer.CMClassifierInformation[] sorted_combined_tokens = alc.CMGetClassifiers(curLocStart, curLocEnd - 1, ffn);
                 if (sorted_combined_tokens == null)
                 {
                     continue;
                 }
 
-                foreach (SymbolInformation r in sorted_combined_tokens)
+                foreach (LanguageServer.CMClassifierInformation r in sorted_combined_tokens)
                 {
-                    int l = r.Location.Range.Start.Line;
-                    int c = r.Location.Range.Start.Character;
-                    int i = LanguageServer.Module.GetIndex(l, c, document);
-                    int l2 = r.Location.Range.End.Line;
-                    int c2 = r.Location.Range.End.Character;
-                    int i2 = LanguageServer.Module.GetIndex(l2, c2, document);
-                    int start_token_start = i;
-                    int end_token_end = i2;
                     int type = (int)r.Kind;
-                    int length = end_token_end - start_token_start + 1;
+                    if (type < 0)
+                        continue;
+                    int i = r.start;
+                    int i2 = r.end;
+                    int length = i2 - i + 1;
                     if (length < 0)
                     {
                         continue;
@@ -88,29 +85,16 @@
                     TagSpan<ClassificationTag> result = null;
                     try
                     {
-                        if (type >= 0)
-                        {
-                            // Make sure the length doesn't go past the end of the current span.
-                            if (start_token_start + length > curLocEnd)
-                            {
-                                int new_length = curLocEnd - start_token_start;
-                                if (new_length >= 0)
-                                {
-                                    length = new_length;
-                                }
-                            }
+                        ITextSnapshot a = curSpan.Snapshot.TextBuffer.CurrentSnapshot;
+                        ITextSnapshot b = curSpan.Snapshot;
 
-                            ITextSnapshot a = curSpan.Snapshot.TextBuffer.CurrentSnapshot;
-                            ITextSnapshot b = curSpan.Snapshot;
+                        SnapshotSpan tokenSpan = new SnapshotSpan(
+                            curSpan.Snapshot.TextBuffer.CurrentSnapshot,
+                            //curSpan.Snapshot,
+                            new Span(i, length));
 
-                            SnapshotSpan tokenSpan = new SnapshotSpan(
-                                curSpan.Snapshot.TextBuffer.CurrentSnapshot,
-                                //curSpan.Snapshot,
-                                new Span(start_token_start, length));
-
-                            result = new TagSpan<ClassificationTag>(tokenSpan,
-                                new ClassificationTag(_lsptype_to_classifiertype[type]));
-                        }
+                        result = new TagSpan<ClassificationTag>(tokenSpan,
+                            new ClassificationTag(_to_classifiertype[type]));
                     }
                     catch (Exception)
                     {
@@ -173,6 +157,7 @@
 
                 Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(ffn);
                 _lsptype_to_classifiertype = new Dictionary<int, IClassificationType>();
+                _to_classifiertype = new Dictionary<int, IClassificationType>();
 
                 System.Drawing.Color[] colors = new System.Drawing.Color[_grammar_description.Map.Length];
                 for (int i = 0; i < _grammar_description.Map.Length; ++i)
@@ -203,37 +188,51 @@
                 {
                     int key = (int)SymbolKind.Variable;
                     string val = _grammar_description.Map[0];
-                    _lsptype_to_classifiertype[key] = service.GetClassificationType(val);
+                    var t = service.GetClassificationType(val);
+                    _lsptype_to_classifiertype[key] = t;
+                    _to_classifiertype[0] = t;
                 }
                 {
                     int key = (int)SymbolKind.Enum;
                     string val = _grammar_description.Map[1];
-                    _lsptype_to_classifiertype[key] = service.GetClassificationType(val);
+                    var t = service.GetClassificationType(val);
+                    _lsptype_to_classifiertype[key] = t;
+                    _to_classifiertype[1] = t;
                 }
                 {
                     int key = (int)SymbolKind.String;
                     string val = _grammar_description.Map[2];
-                    _lsptype_to_classifiertype[key] = service.GetClassificationType(val);
+                    var t = service.GetClassificationType(val);
+                    _lsptype_to_classifiertype[key] = t;
+                    _to_classifiertype[2] = t;
                 }
                 {
                     int key = (int)SymbolKind.Key;
                     string val = _grammar_description.Map[3];
-                    _lsptype_to_classifiertype[key] = service.GetClassificationType(val);
+                    var t = service.GetClassificationType(val);
+                    _lsptype_to_classifiertype[key] = t;
+                    _to_classifiertype[3] = t;
                 }
                 {
                     int key = (int)SymbolKind.Constant;
                     string val = _grammar_description.Map[4];
-                    _lsptype_to_classifiertype[key] = service.GetClassificationType(val);
+                    var t = service.GetClassificationType(val);
+                    _lsptype_to_classifiertype[key] = t;
+                    _to_classifiertype[4] = t;
                 }
                 {
                     int key = (int)SymbolKind.Event;
                     string val = _grammar_description.Map[5];
-                    _lsptype_to_classifiertype[key] = service.GetClassificationType(val);
+                    var t = service.GetClassificationType(val);
+                    _lsptype_to_classifiertype[key] = t;
+                    _to_classifiertype[5] = t;
                 }
                 {
                     int key = (int)SymbolKind.Object;
                     string val = _grammar_description.Map[6];
-                    _lsptype_to_classifiertype[key] = service.GetClassificationType(val);
+                    var t = service.GetClassificationType(val);
+                    _lsptype_to_classifiertype[key] = t;
+                    _to_classifiertype[6] = t;
                 }
                 initialized = true;
             }

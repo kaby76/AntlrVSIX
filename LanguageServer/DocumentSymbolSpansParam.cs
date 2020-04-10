@@ -10,6 +10,14 @@
         public int End;
     }
 
+    public class CMClassifierInformation
+    {
+        public CMClassifierInformation() { }
+        public int start { get; set; }
+        public int end { get; set; }
+        public int Kind { get; set; }
+    }
+
     public class CMNextSymbolParams
     {
         public CMNextSymbolParams() { }

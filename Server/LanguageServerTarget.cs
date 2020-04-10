@@ -1049,9 +1049,9 @@
 
 
         [JsonRpcMethod("CMGetClassifiers")]
-        public async System.Threading.Tasks.Task<SymbolInformation[]> CMGetClassifiers(JToken arg)
+        public async System.Threading.Tasks.Task<CMClassifierInformation[]> CMGetClassifiers(JToken arg)
         {
-            SymbolInformation[] result = null;
+            CMClassifierInformation[] result = null;
             try
             {
                 CMGetClassifiersParams request = arg.ToObject<CMGetClassifiersParams>();
@@ -1065,59 +1065,14 @@
                     (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
                     System.Console.Error.WriteLine("");
                 }
-                IEnumerable<DocumentSymbol> r = LanguageServer.Module.Get(
-                    new Workspaces.Range(new Index(start), new Index(end)),
-                    document);
-                List<SymbolInformation> symbols = new List<SymbolInformation>();
-                foreach (DocumentSymbol p in r)
+                IEnumerable<Module.Info> r = LanguageServer.Module.Get(start, end, document);
+                List<CMClassifierInformation> symbols = new List<CMClassifierInformation>();
+                foreach (var p in r)
                 {
-                    SymbolInformation si = new SymbolInformation();
-                    if (p.kind == 0)
-                    {
-                        si.Kind = SymbolKind.Variable; // Nonterminal
-                    }
-                    else if (p.kind == 1)
-                    {
-                        si.Kind = SymbolKind.Enum; // Terminal
-                    }
-                    else if (p.kind == 2)
-                    {
-                        si.Kind = SymbolKind.String; // Comment
-                    }
-                    else if (p.kind == 3)
-                    {
-                        si.Kind = SymbolKind.Key; // Keyword
-                    }
-                    else if (p.kind == 4)
-                    {
-                        si.Kind = SymbolKind.Constant; // Literal
-                    }
-                    else if (p.kind == 5)
-                    {
-                        si.Kind = SymbolKind.Event; // Mode
-                    }
-                    else if (p.kind == 6)
-                    {
-                        si.Kind = SymbolKind.Object; // Channel
-                    }
-                    else
-                    {
-                        // si.Kind = 0; // Default.
-                        continue;
-                    }
-
-                    si.Name = p.name;
-                    si.Location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location
-                    {
-                        Uri = request.TextDocument
-                    };
-                    (int, int) lcs = LanguageServer.Module.GetLineColumn(p.range.Start.Value, document);
-                    (int, int) lce = LanguageServer.Module.GetLineColumn(p.range.End.Value, document);
-                    si.Location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range
-                    {
-                        Start = new Position(lcs.Item1, lcs.Item2),
-                        End = new Position(lce.Item1, lce.Item2)
-                    };
+                    CMClassifierInformation si = new CMClassifierInformation();
+                    si.Kind = p.kind;
+                    si.start = p.start;
+                    si.end = p.end;
                     symbols.Add(si);
                 }
                 if (trace)
@@ -1125,8 +1080,8 @@
                     System.Console.Error.Write("returning ");
                     System.Console.Error.WriteLine(string.Join(" ", symbols.Select(s =>
                     {
-                        SymbolInformation v = s;
-                        return "<" + v.Name + "," + v.Kind + ">";
+                        var v = s;
+                        return "<" + v.start + "," + v.end + "," + v.Kind + ">";
                     })));
                 }
                 result = symbols.ToArray();
