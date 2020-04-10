@@ -347,48 +347,24 @@
                 LanguageServer.Module.Compile();
             }
 
-            List<DocumentSymbol> combined = new System.Collections.Generic.List<DocumentSymbol>();
-            foreach (KeyValuePair<TerminalNodeImpl, int> p in pd.PopupList)
+            List<DocumentSymbol> combined = new List<DocumentSymbol>();
+            foreach (KeyValuePair<TerminalNodeImpl, int> p in pd.ColorizedList)
             {
                 if (p.Key.Symbol == null)
                 {
                     continue;
                 }
 
-                int start_token_start = p.Key.Symbol.StartIndex;
-                int end_token_end = p.Key.Symbol.StopIndex + 1;
-                if (start_token_start > range.End.Value)
-                {
-                    continue;
-                }
-
-                if (end_token_end < range.Start.Value)
-                {
-                    continue;
-                }
-
                 combined.Add(
-                    new DocumentSymbol()
-                    {
-                        name = p.Key.Symbol.Text,
-                        range = new Workspaces.Range(p.Key.Symbol.StartIndex, p.Key.Symbol.StopIndex),
-                        kind = p.Value
-                    });
+                     new DocumentSymbol()
+                     {
+                         name = p.Key.Symbol.Text,
+                         range = new Workspaces.Range(p.Key.Symbol.StartIndex, p.Key.Symbol.StopIndex),
+                         kind = p.Value
+                     });
             }
             foreach (KeyValuePair<Antlr4.Runtime.IToken, int> p in pd.Comments)
             {
-                int start_token_start = p.Key.StartIndex;
-                int end_token_end = p.Key.StopIndex + 1;
-                if (start_token_start > range.End.Value)
-                {
-                    continue;
-                }
-
-                if (end_token_end < range.Start.Value)
-                {
-                    continue;
-                }
-
                 combined.Add(
                     new DocumentSymbol()
                     {
@@ -399,10 +375,8 @@
             }
 
             // Sort the list.
-            IEnumerable<DocumentSymbol> result;
             IOrderedEnumerable<DocumentSymbol> sorted_combined_tokens = combined.OrderBy(t => t.range.Start.Value).ThenBy(t => t.range.End.Value);
-            result = sorted_combined_tokens;
-            return result;
+            return sorted_combined_tokens;
         }
 
         public static IEnumerable<Workspaces.Range> GetErrors(Workspaces.Range range, Document doc)
@@ -884,14 +858,14 @@
                 string result = org.antlr.codebuff.Tool.Main(
                     new object[]
                     {
-                    "-g", grammar_description.Name,
-                    "-lexer", grammar_description.Lexer,
-                    "-parser", grammar_description.Parser,
-                    "-rule", grammar_description.StartRule,
-                    "-files", grammar_description.FileExtension,
-                    "-corpus", corpus_location,
-                    "-inoutstring",
-                    ""
+                "-g", grammar_description.Name,
+                "-lexer", grammar_description.Lexer,
+                "-parser", grammar_description.Parser,
+                "-rule", grammar_description.StartRule,
+                "-files", grammar_description.FileExtension,
+                "-corpus", corpus_location,
+                "-inoutstring",
+                ""
                     });
                 List<TextEdit> edits = new List<TextEdit>();
                 diff_match_patch diff = new diff_match_patch();
@@ -1064,3 +1038,4 @@
         }
     }
 }
+
