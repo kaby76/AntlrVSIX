@@ -768,14 +768,17 @@
                     }
                     else if (s.kind == 2)
                     {
+                        continue;
                         si.Kind = SymbolKind.String; // Comment
                     }
                     else if (s.kind == 3)
                     {
+                        continue;
                         si.Kind = SymbolKind.Key; // Keyword
                     }
                     else if (s.kind == 4)
                     {
+                        continue;
                         si.Kind = SymbolKind.Constant; // Literal
                     }
                     else if (s.kind == 5)
@@ -1062,41 +1065,38 @@
                     (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
                     System.Console.Error.WriteLine("");
                 }
-                IEnumerable<DocumentSymbol> r = LanguageServer.Module.Get(document);
+                IEnumerable<DocumentSymbol> r = LanguageServer.Module.Get(
+                    new Workspaces.Range(new Index(start), new Index(end)),
+                    document);
                 List<SymbolInformation> symbols = new List<SymbolInformation>();
-                foreach (DocumentSymbol s in r)
+                foreach (DocumentSymbol p in r)
                 {
-                    if (!(start <= s.range.Start.Value && s.range.Start.Value <= end))
-                    {
-                        continue;
-                    }
-
                     SymbolInformation si = new SymbolInformation();
-                    if (s.kind == 0)
+                    if (p.kind == 0)
                     {
                         si.Kind = SymbolKind.Variable; // Nonterminal
                     }
-                    else if (s.kind == 1)
+                    else if (p.kind == 1)
                     {
                         si.Kind = SymbolKind.Enum; // Terminal
                     }
-                    else if (s.kind == 2)
+                    else if (p.kind == 2)
                     {
                         si.Kind = SymbolKind.String; // Comment
                     }
-                    else if (s.kind == 3)
+                    else if (p.kind == 3)
                     {
                         si.Kind = SymbolKind.Key; // Keyword
                     }
-                    else if (s.kind == 4)
+                    else if (p.kind == 4)
                     {
                         si.Kind = SymbolKind.Constant; // Literal
                     }
-                    else if (s.kind == 5)
+                    else if (p.kind == 5)
                     {
                         si.Kind = SymbolKind.Event; // Mode
                     }
-                    else if (s.kind == 6)
+                    else if (p.kind == 6)
                     {
                         si.Kind = SymbolKind.Object; // Channel
                     }
@@ -1106,13 +1106,13 @@
                         continue;
                     }
 
-                    si.Name = s.name;
+                    si.Name = p.name;
                     si.Location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location
                     {
                         Uri = request.TextDocument
                     };
-                    (int, int) lcs = LanguageServer.Module.GetLineColumn(s.range.Start.Value, document);
-                    (int, int) lce = LanguageServer.Module.GetLineColumn(s.range.End.Value, document);
+                    (int, int) lcs = LanguageServer.Module.GetLineColumn(p.range.Start.Value, document);
+                    (int, int) lce = LanguageServer.Module.GetLineColumn(p.range.End.Value, document);
                     si.Location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range
                     {
                         Start = new Position(lcs.Item1, lcs.Item2),
