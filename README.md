@@ -91,7 +91,7 @@ result in faster parsers).
 * Generalized fold/unfold/pack grammar rule refactorings.
 * Elimination of left recursion.
 
-## Release notes for v6.0:
+## Release notes for v6.0 (11-Apr-2020):
 
 * Added selection of colors for grammar symbols in options. (I am now using Dark theme in Visual Studio 2019.)
 * Changed options to use Newtonsoft.Json (breaking change--remove ~/.antlrvsixrc).
@@ -101,15 +101,15 @@ result in faster parsers).
 for lexer symbols defined in a tokens section and as a lexer rule.
 * Bug fixes.
 
-## Release notes for v5.8:
+## Release notes for v5.8 (29-Mar-2020):
 
 * Added in rename on Antlrvsix tool menu because Microsoft broke LSP rename!
 
-## Release notes for v5.7:
+## Release notes for v5.7 (29-Mar-2020):
 
 * Disabled completion since this is crashing the server. An option to enable was added so it can be turned on when fixed.
 
-## Release notes for v5.6:
+## Release notes for v5.6 (28-Mar-2020):
 
 * Import of Bison/Yacc grammars. This will go well beyond anything that was implemented before (e.g.,
 [Bison to ANTLR translator](https://www.antlr3.org/share/list) by Parr and Cramer 2006 for Antlr3 conversions),
@@ -121,14 +121,14 @@ Additional fixes may be available if I get more transformations working.
 But, there is so much I can't do at this point until more infrastructure is set up.
 * Bug fixes.
 
-## Release notes for v5.5:
+## Release notes for v5.5 (19-Mar-2020):
 
 * Added in more refactorings:
 a) Sort rules alphabetically, DFS or BFS traversals.
 b) Separate/combine grammars.
 * Bug fixes.
 
-## Release notes for v5.4:
+## Release notes for v5.4 (11-Mar-2020):
 
 * Added in a few refactoring transformations (remove useless parser productions, convert parser string literals to
 lexer token symbols, move start rule to top of grammar). _Note: Lexer rules are prioritized, so transformations on these
@@ -136,26 +136,26 @@ types may not be totally correct at the moment._
 * Fixed goto visitor/listener.
 * Added stability fixes.
 
-## Release notes for v5.3:
+## Release notes for v5.3 (5-Mar-2020):
 
 * Fixed "Find references" of grammar symbols when opening only lexer grammar file.
 * Fixed Format Document.
 * Fixed Go To Listener/Visitor. _Caveat: only works for C# and you must save solution before using._
 * Templates updated, Antlr4BuildTasks 2.2.
 
-## Release notes for v5.2:
+## Release notes for v5.2 (16-Feb-2020):
 
 * Re-added About Box, Options Box, and next/previous grammar symbol.
 * Options are now contained in ~/.antlrvsixrc, a JSON file.
 
-## Release notes for v5.1:
+## Release notes for v5.1 (7-Feb-2020):
 
 * Re-added colorized tagging of grammar. When I switch to the LSP implementation, this functionality was lost because it's not
 directly supported by the LSP Client/Server API that Microsoft provides. Microsoft says to implement this functionality using
 TextMate files, but that is not how it should be done--it duplicates the purpose of the LSP server, and it's hard to
 get right. Instead, it's implemented with a Visual Studio ITagger<> and a custom message to the LSP server.
 
-## Release notes for v5.0:
+## Release notes for v5.0 (25-Jan-2020):
 
 * Restructuring the code as a Language Server Protocol client/server implementation with extensions for VS 2019 (IDE) and VS Code.
 
@@ -239,11 +239,11 @@ be inserted.
 | textDocument/prepareRename | unavailable in API |
 | textDocument/foldingRange | no |
 
-## Release notes for v4.0.5:
+## Release notes for v4.0.5 (12-Nov-2019):
 
 * Fixing #26.
 
-## Release notes for v4.0.4:
+## Release notes for v4.0.4 (12-Nov-2019):
 
 * Fixing solution loading crash.
 * Removing parse tree print code from Python--it was used for debugging and should not have been there.
@@ -252,13 +252,13 @@ back once they are up to snuff.
 
 A shout out to all those folks using this extension and have opted-in to the automatic reporting!!
 
-## Release notes for v4.0.3:
+## Release notes for v4.0.3 (11-Nov-2019):
 
 * Restructuring the code for options.
 * Adding in reporting of caught exceptions to server.
 * Some changes for the stability for Java soruce.
 
-## Release notes for v4.0.2:
+## Release notes for v4.0.2 (1-Nov-2019):
 
 * Updated symbol table with new classes to represent files, directories, and search paths. This will help
 support for better modeling of Java's ClassPath, Antlr's imports, etc., so that scopes can be cleared out quickly and
@@ -269,11 +269,11 @@ easily when the sources have changed.
 * Updated symbol table to allow ambigous code editing.
 * Changing About and Options boxes to non-modal.
 
-## Release notes for v4.0.1:
+## Release notes for v4.0.1 (28-Oct-2019):
 
 * Fixing stability issues with Antlr and Java files.
 
-## Release notes for v4.0:
+## Release notes for v4.0 (26-Oct-2019):
 
 * Major changes to architecture, focusing on separation of GUI from a backend that works like Language Server Protocol (LSP).
 * In the GUI, tagging was improved in quality and speed.
@@ -282,11 +282,11 @@ easily when the sources have changed.
 * For Antlr grammars, Intellisense pop-ups now give the rule definition and location of the file defining the symbol.
 * No specific improvements were made for Python, Rust, and Java support, in favor of focusing on the improved overall design and implementation of the extension.
 
-## Release notes for v3.0:
+## Release notes for v3.0 (28-Aug-2019):
 
 * Supports Java, Python, Rust, Antlr in various stages. Description of languages abstracted into a "Grammar Description".
 
-## Release notes for v2.0:
+## Release notes for v2.0.6 (13-Aug-2019):
 
 * The extension will support VS 2019 and VS 2017.
 
@@ -310,16 +310,28 @@ select the Enter method.
 * An options menu is provided to turn on incremental parsing. By default, incremental
 * parsing is off because it is very slow.
 
-## Release notes for v1.2.4:
+## Release notes for v1.2.4 (11-Mar-2017):
 
 * The extension is now both VS 2017 and 2015 compatible.
 
 * The results windows of Antlr Find All References is now "Antlr Find Results".
 
-## Release notes for v1.2.3:
+## Release notes for v1.2.3 (7-Mar-2017):
 
 * Color selection through VS Options/Environment/Fonts and Colors. Look for "Antlr ..." named items.
 
 * Bug fixes with Context Menu entries for AntlrVSIX. AntlrVSIX commands are now only visible when cursor positioned at an Antlr symbol in the grammar. This fixes the segv's when selecting AntlrVSIX commands in non-Antlr files.
+
+## Release notes for v1.2.2 (10-Feb-2017):
+
+## Release notes for v1.2 (31-Jan-2017):
+
+## Release notes for v1.1.1 (18-Jan-2017):
+
+## Release notes for v1.1 (17-Jan-2017):
+
+## Release notes for v1.0 (17-Jan-2017):
+
+
 
 Any questions, email me at ken.domino <at> gmail.com
