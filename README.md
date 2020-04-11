@@ -91,13 +91,13 @@ result in faster parsers).
 * Generalized fold/unfold/pack grammar rule refactorings.
 * Elimination of left recursion.
 
-## Planned for v6.0:
+## Release notes for v6.0:
 
-* Add selection of colors for grammar symbols in options. (I am now using Dark theme in Visual Studio 2019.)
-* Change options to use Newtonsoft.Json (breaking change--remove ~/.antlrvsixrc).
-* Add refactoring to sort mode sections in lexer grammars.
-* Add code to abbreviate action blocks in hover tool tips.
-* Add code to allow multiple definitions of a symbol. This can happen 
+* Added selection of colors for grammar symbols in options. (I am now using Dark theme in Visual Studio 2019.)
+* Changed options to use Newtonsoft.Json (breaking change--remove ~/.antlrvsixrc).
+* Added refactoring to sort mode sections in lexer grammars.
+* Added code to abbreviate action blocks in hover tool tips.
+* Added code to allow multiple definitions of a symbol. This can happen 
 for lexer symbols defined in a tokens section and as a lexer rule.
 * Bug fixes.
 
