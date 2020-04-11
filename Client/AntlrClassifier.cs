@@ -77,7 +77,7 @@
                         continue;
                     int i = r.start;
                     int i2 = r.end;
-                    int length = i2 - i + 1;
+                    int length = i2 - i;
                     if (length < 0)
                     {
                         continue;

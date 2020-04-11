@@ -384,11 +384,10 @@
                 if (kind < 0) continue;
                 var st = sym.StartIndex;
                 var en = sym.StopIndex + 1;
-                if (st > end) continue;
                 if (end < st) continue;
+                if (en < start) continue;
                 int s1 = st > start ? st : start;
                 int s2 = en < end ? en : end;
-
                 combined.Add(
                     new Info()
                     {
