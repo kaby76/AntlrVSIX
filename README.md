@@ -91,6 +91,10 @@ result in faster parsers).
 * Generalized fold/unfold/pack grammar rule refactorings.
 * Elimination of left recursion.
 
+## Release notes for v6.0.1 (13-Apr-2020):
+
+* Fix colorization after editing.
+
 ## Release notes for v6.0 (11-Apr-2020):
 
 * Added selection of colors for grammar symbols in options. (I am now using Dark theme in Visual Studio 2019.)
