@@ -1326,23 +1326,23 @@
             return changes;
         }
 
-        [JsonRpcMethod("CMEliminateLeftRecursion")]
-        public async System.Threading.Tasks.Task<Dictionary<string, string>> CMEliminateLeftRecursion(JToken arg)
+        [JsonRpcMethod("CMEliminateDirectLeftRecursion")]
+        public async System.Threading.Tasks.Task<Dictionary<string, string>> CMEliminateDirectLeftRecursion(JToken arg)
         {
             Dictionary<string, string> s = null;
             try
             {
-                CMEliminateLeftRecursionParams request = arg.ToObject<CMEliminateLeftRecursionParams>();
+                CMEliminateDirectLeftRecursionParams request = arg.ToObject<CMEliminateDirectLeftRecursionParams>();
                 Document document = CheckDoc(request.TextDocument);
                 int pos = request.Pos;
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- CMEliminateLeftRecursion");
+                    System.Console.Error.WriteLine("<-- CMEliminateDirectLeftRecursion");
                     System.Console.Error.WriteLine(arg.ToString());
                     (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
                     System.Console.Error.WriteLine("");
                 }
-                s = Transform.EliminateLeftRecursion(pos, document);
+                s = Transform.EliminateDirectLeftRecursion(pos, document);
             }
             catch (Exception)
             { }

@@ -74,6 +74,7 @@
             Errors = new HashSet<IParseTree>();
             Imports = new HashSet<string>();
             Attributes = new Dictionary<IParseTree, IList<CombinedScopeSymbol>>();
+            ColorizedList = new Dictionary<TerminalNodeImpl, int>();
             Cleanup();
         }
 

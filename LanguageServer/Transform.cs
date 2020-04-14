@@ -16,6 +16,7 @@
 
     public class Transform
     {
+        private static object ule_alt_list;
 
         private class ExtractGrammarType : ANTLRv4ParserBaseListener
         {
@@ -124,31 +125,31 @@
         private class ExtractRules : ANTLRv4ParserBaseListener
         {
             public List<IParseTree> Rules = new List<IParseTree>();
-            public List<ITerminalNode> LHS = new List<ITerminalNode>();
-            public Dictionary<ITerminalNode, List<ITerminalNode>> RHS = new Dictionary<ITerminalNode, List<ITerminalNode>>();
+            public List<ITerminalNode> LhsSymbol = new List<ITerminalNode>();
+            public Dictionary<ITerminalNode, List<ITerminalNode>> RhsSymbols = new Dictionary<ITerminalNode, List<ITerminalNode>>();
             private ITerminalNode current_nonterminal;
 
             public override void EnterParserRuleSpec([NotNull] ANTLRv4Parser.ParserRuleSpecContext context)
             {
                 Rules.Add(context);
                 ITerminalNode rule_ref = context.RULE_REF();
-                LHS.Add(rule_ref);
+                LhsSymbol.Add(rule_ref);
                 current_nonterminal = rule_ref;
-                RHS[current_nonterminal] = new List<ITerminalNode>();
+                RhsSymbols[current_nonterminal] = new List<ITerminalNode>();
             }
 
             public override void EnterLexerRuleSpec([NotNull] ANTLRv4Parser.LexerRuleSpecContext context)
             {
                 Rules.Add(context);
                 ITerminalNode token_ref = context.TOKEN_REF();
-                LHS.Add(token_ref);
+                LhsSymbol.Add(token_ref);
                 current_nonterminal = token_ref;
-                RHS[current_nonterminal] = new List<ITerminalNode>();
+                RhsSymbols[current_nonterminal] = new List<ITerminalNode>();
             }
 
             public override void EnterRuleref([NotNull] ANTLRv4Parser.RulerefContext context)
             {
-                RHS[current_nonterminal].Add(context.GetChild(0) as ITerminalNode);
+                RhsSymbols[current_nonterminal].Add(context.GetChild(0) as ITerminalNode);
             }
         }
 
@@ -244,8 +245,8 @@
                 // Get rules, lhs, rhs.
                 listener = new ExtractRules();
                 ParseTreeWalker.Default.Walk(listener, pd_parser.ParseTree);
-                List<ITerminalNode> nonterminals = listener.LHS;
-                Dictionary<ITerminalNode, List<ITerminalNode>> rhs = listener.RHS;
+                List<ITerminalNode> nonterminals = listener.LhsSymbol;
+                Dictionary<ITerminalNode, List<ITerminalNode>> rhs = listener.RhsSymbols;
                 for (int i = 0; i < listener.Rules.Count; ++i)
                 {
                     rules.Add(new Row()
@@ -415,12 +416,14 @@
 
             public void FindStartRules()
             {
-                List<ITerminalNode> lhs = listener.LHS;
+                List<ITerminalNode> lhs = listener.LhsSymbol;
                 for (int i = 0; i < rules.Count; ++i)
                 {
                     for (int j = 0; j < rules[i].RHS.Count; ++j)
                     {
-                        rules[nt_to_index[rules[i].RHS[j]]].is_used = true;
+                        string rhs_symbol = rules[i].RHS[j];
+                        if (nt_to_index.ContainsKey(rhs_symbol))
+                            rules[nt_to_index[rules[i].RHS[j]]].is_used = true;
                     }
                 }
                 try
@@ -577,32 +580,58 @@
             }
         }
 
-        public static void Reconstruct(StringBuilder sb, IParseTree tree, ref int previous, Func<TerminalNodeImpl, string> replace)
+        public static void Reconstruct(StringBuilder sb, CommonTokenStream stream, IParseTree tree, ref int previous, Func<IParseTree, string> replace)
         {
             if (tree as TerminalNodeImpl != null)
             {
                 TerminalNodeImpl tok = tree as TerminalNodeImpl;
-                ICharStream stream = tok.Payload.InputStream;
                 var start = tok.Payload.StartIndex;
                 var stop = tok.Payload.StopIndex + 1;
+                ICharStream charstream = tok.Payload.InputStream;
                 if (previous < start)
                 {
                     Interval previous_interval = new Interval(previous, start - 1);
-                    string inter = stream.GetText(previous_interval);
+                    string inter = charstream.GetText(previous_interval);
                     sb.Append(inter);
                 }
                 if (tok.Symbol.Type == TokenConstants.EOF)
                     return;
                 string new_s = replace(tok);
-                sb.Append(new_s);
+                if (new_s != null)
+                    sb.Append(new_s);
+                else
+                    sb.Append(tok.GetText());
                 previous = stop;
             }
             else
             {
-                for (int i = 0; i < tree.ChildCount; ++i)
+                var new_s = replace(tree);
+                if (new_s != null)
                 {
-                    var c = tree.GetChild(i);
-                    Reconstruct(sb, c, ref previous, replace);
+                    Interval source_interval = tree.SourceInterval;
+                    int a = source_interval.a;
+                    int b = source_interval.b;
+                    IToken ta = stream.Get(a);
+                    IToken tb = stream.Get(b);
+                    var start = ta.StartIndex;
+                    var stop = tb.StopIndex + 1;
+                    ICharStream charstream = ta.InputStream;
+                    if (previous < start)
+                    {
+                        Interval previous_interval = new Interval(previous, start - 1);
+                        string inter = charstream.GetText(previous_interval);
+                        sb.Append(inter);
+                    }
+                    sb.Append(new_s);
+                    previous = stop;
+                }
+                else
+                {
+                    for (int i = 0; i < tree.ChildCount; ++i)
+                    {
+                        var c = tree.GetChild(i);
+                        Reconstruct(sb, stream, c, ref previous, replace);
+                    }
                 }
             }
         }
@@ -819,16 +848,21 @@
                 AntlrGrammarDetails pd_whatever = ParserDetailsFactory.Create(whatever_document) as AntlrGrammarDetails;
                 StringBuilder sb = new StringBuilder();
                 int pre = 0;
-                Reconstruct(sb, pd_parser.ParseTree, ref pre,
+                Reconstruct(sb, pd_parser.TokStream, pd_parser.ParseTree, ref pre,
                     n =>
                     {
-                        if (n.Payload.Type != ANTLRv4Lexer.STRING_LITERAL)
+                        if (!(n is TerminalNodeImpl))
                         {
-                            return n.GetText();
+                            return null;
+                        }
+                        var t = n as TerminalNodeImpl;
+                        if (t.Payload.Type != ANTLRv4Lexer.STRING_LITERAL)
+                        {
+                            return t.GetText();
                         }
                         bool no = false;
                         // Make sure this literal does not appear in lexer rule.
-                        for (IRuleNode p = n.Parent; p != null; p = p.Parent)
+                        for (IRuleNode p = t.Parent; p != null; p = p.Parent)
                         {
                             if (p is ANTLRv4Parser.LexerRuleSpecContext)
                             {
@@ -838,9 +872,9 @@
                         }
                         if (no)
                         {
-                            return n.GetText();
+                            return t.GetText();
                         }
-                        var r = n.GetText();
+                        var r = t.GetText();
                         subs.TryGetValue(r, out string value);
                         if (value != null)
                         {
@@ -1443,7 +1477,112 @@
             return result;
         }
 
-        public static Dictionary<string, string> EliminateLeftRecursion(int index, Document document)
+
+        private static bool HasDirectLeftRecursion(IParseTree rule)
+        {
+            if (rule is ANTLRv4Parser.ParserRuleSpecContext)
+            {
+                var r = rule as ANTLRv4Parser.ParserRuleSpecContext;
+                var lhs = r.RULE_REF();
+                var rb = r.ruleBlock();
+
+                TerminalNodeImpl f = (rb as ANTLRv4Parser.RuleBlockContext)?
+                    .ruleAltList()?
+                    .labeledAlt()?
+                    .First()?
+                    .alternative()?
+                    .element()?
+                    .First()?
+                    .atom()?
+                    .ruleref()?
+                    .GetChild(0) as TerminalNodeImpl;
+                if (f != null && f.GetText() == lhs.GetText())
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static string ComputeReplacementRules(string new_symbol_name, IParseTree rule)
+        {
+            if (rule is ANTLRv4Parser.ParserRuleSpecContext)
+            {
+                var r = rule as ANTLRv4Parser.ParserRuleSpecContext;
+                var lhs = r.RULE_REF();
+                var rb = r.ruleBlock();
+                var rule_alt_list = rb.ruleAltList();
+
+                StringBuilder sub1 = new StringBuilder();
+
+                sub1.AppendLine(lhs.ToString());
+                ANTLRv4Parser.LabeledAltContext[] alts = rule_alt_list.labeledAlt();
+                bool first = true;
+                for (int j = 0; j < alts.Length; ++j)
+                {
+                    var labeled_alt = alts[j];
+                    ANTLRv4Parser.ElementContext[] elements = labeled_alt
+                        .alternative()?
+                        .element();
+                    if (elements == null || elements.Length == 0)
+                    {
+                        continue;
+                    }
+                    var element = elements[0];
+                    var rule_ref = element.atom()?.ruleref()?.RULE_REF();
+                    if (rule_ref == null || rule_ref.GetText() != lhs.GetText())
+                    {
+                        if (first)
+                            sub1.Append(" :");
+                        else
+                            sub1.Append(" |");
+                        first = false;
+                        for (int i = 0; i < elements.Length; ++i)
+                        {
+                            sub1.Append(" " + elements[i].GetText());
+                        }
+                        sub1.AppendLine(" " + new_symbol_name);
+                    }
+                }
+                sub1.AppendLine(" ;");
+                sub1.AppendLine();
+                sub1.AppendLine(new_symbol_name);
+                first = true;
+                for (int j = 0; j < alts.Length; ++j)
+                {
+                    var labeled_alt = alts[j];
+                    ANTLRv4Parser.ElementContext[] elements = labeled_alt
+                        .alternative()?
+                        .element();
+                    if (elements == null || elements.Length == 0)
+                    {
+                        continue;
+                    }
+                    var element = elements[0];
+                    var rule_ref = element.atom()?.ruleref()?.RULE_REF();
+                    if (rule_ref != null && rule_ref.GetText() == lhs.GetText())
+                    {
+                        if (first)
+                            sub1.Append(" :");
+                        else
+                            sub1.Append(" |");
+                        first = false;
+                        for (int i = 1; i < elements.Length; ++i)
+                        {
+                            sub1.Append(" " + elements[i].GetText());
+                        }
+                        sub1.AppendLine(" " + new_symbol_name);
+                    }
+                }
+                sub1.AppendLine(" |");
+                sub1.AppendLine(" ;");
+                sub1.AppendLine();
+                return sub1.ToString();
+            }
+            return null;
+        }
+
+        public static Dictionary<string, string> EliminateDirectLeftRecursion(int index, Document document)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
@@ -1493,216 +1632,95 @@
                 }
             }
 
-            // Find rewrite rules, i.e., string literal to symbol name.
-            Dictionary<string, string> subs = new Dictionary<string, string>();
-            foreach (string f in read_files)
+            // Assume cursor positioned at the rule that contains left recursion.
+            // Find rule.
+            IParseTree rule = null;
+            IParseTree it = pd_parser.AllNodes.Where(n => (n is TerminalNodeImpl) && (((TerminalNodeImpl)n).Payload.StartIndex <= index) && (index <= ((TerminalNodeImpl)n).Payload.StopIndex)).FirstOrDefault();
+            if (it == null)
             {
-                Workspaces.Document whatever_document = Workspaces.Workspace.Instance.FindDocument(f);
-                if (whatever_document == null)
+                return result;
+            }
+            rule = it;
+            for (; rule != null; rule = rule.Parent)
+            {
+                if (rule is ANTLRv4Parser.ParserRuleSpecContext || rule is ANTLRv4Parser.LexerRuleSpecContext)
                 {
-                    continue;
-                }
-                AntlrGrammarDetails pd_whatever = ParserDetailsFactory.Create(whatever_document) as AntlrGrammarDetails;
-
-                // Find literals in grammars.
-                LiteralsGrammar lp_whatever = new LiteralsGrammar(pd_whatever);
-                ParseTreeWalker.Default.Walk(lp_whatever, pd_whatever.ParseTree);
-                List<TerminalNodeImpl> list_literals = lp_whatever.Literals;
-                every_damn_literal[whatever_document] = list_literals;
-
-                foreach (TerminalNodeImpl lexer_literal in list_literals)
-                {
-                    string old_name = lexer_literal.GetText();
-                    // Given candidate, walk up tree to find lexer_rule.
-                    /*
-                        ( ruleSpec
-                          ( lexerRuleSpec
-                            ( OFF_CHANNEL text=\r\n\r\n
-                            )
-                            ( OFF_CHANNEL text=...
-                            )
-                            (OFF_CHANNEL text =\r\n\r\n
-                            )
-                            (OFF_CHANNEL text =...
-                            )
-                            (OFF_CHANNEL text =\r\n\r\n
-                            )
-                            (DEFAULT_TOKEN_CHANNEL i = 995 txt = NONASSOC tt = 1
-                            )
-                            (OFF_CHANNEL text =\r\n\t
-                            )
-                            (DEFAULT_TOKEN_CHANNEL i = 997 txt =: tt = 29
-                            )
-                            (lexerRuleBlock
-                              (lexerAltList
-                                (lexerAlt
-                                  (lexerElements
-                                    (lexerElement
-                                      (lexerAtom
-                                        (terminal
-                                          (OFF_CHANNEL text =
-                                          )
-                                          (DEFAULT_TOKEN_CHANNEL i = 999 txt = '%binary' tt = 8
-                            ))))))))
-                            (OFF_CHANNEL text =\r\n\t
-                            )
-                            (DEFAULT_TOKEN_CHANNEL i = 1001 txt =; tt = 32
-                        ) ) )
-
-                     * Make sure it fits the structure of the tree shown above.
-                     * 
-                     */
-                    IRuleNode p1 = lexer_literal.Parent;
-                    if (p1.ChildCount != 1)
-                    {
-                        continue;
-                    }
-
-                    if (!(p1 is ANTLRv4Parser.TerminalContext))
-                    {
-                        continue;
-                    }
-
-                    IRuleNode p2 = p1.Parent;
-                    if (p2.ChildCount != 1)
-                    {
-                        continue;
-                    }
-
-                    if (!(p2 is ANTLRv4Parser.LexerAtomContext))
-                    {
-                        continue;
-                    }
-
-                    IRuleNode p3 = p2.Parent;
-                    if (p3.ChildCount != 1)
-                    {
-                        continue;
-                    }
-
-                    if (!(p3 is ANTLRv4Parser.LexerElementContext))
-                    {
-                        continue;
-                    }
-
-                    IRuleNode p4 = p3.Parent;
-                    if (p4.ChildCount != 1)
-                    {
-                        continue;
-                    }
-
-                    if (!(p4 is ANTLRv4Parser.LexerElementsContext))
-                    {
-                        continue;
-                    }
-
-                    IRuleNode p5 = p4.Parent;
-                    if (p5.ChildCount != 1)
-                    {
-                        continue;
-                    }
-
-                    if (!(p5 is ANTLRv4Parser.LexerAltContext))
-                    {
-                        continue;
-                    }
-
-                    IRuleNode p6 = p5.Parent;
-                    if (p6.ChildCount != 1)
-                    {
-                        continue;
-                    }
-
-                    if (!(p6 is ANTLRv4Parser.LexerAltListContext))
-                    {
-                        continue;
-                    }
-
-                    IRuleNode p7 = p6.Parent;
-                    if (p7.ChildCount != 1)
-                    {
-                        continue;
-                    }
-
-                    if (!(p7 is ANTLRv4Parser.LexerRuleBlockContext))
-                    {
-                        continue;
-                    }
-
-                    IRuleNode p8 = p7.Parent;
-                    if (p8.ChildCount != 4)
-                    {
-                        continue;
-                    }
-
-                    if (!(p8 is ANTLRv4Parser.LexerRuleSpecContext))
-                    {
-                        continue;
-                    }
-
-                    IParseTree alt = p8.GetChild(0);
-                    string new_name = alt.GetText();
-                    subs.Add(old_name, new_name);
+                    break;
                 }
             }
-
-            // Find string literals in parser and combined grammars and substitute.
-            Dictionary<TerminalNodeImpl, string> rewrites = new Dictionary<TerminalNodeImpl, string>();
-            foreach (KeyValuePair<Document, List<TerminalNodeImpl>> pair in every_damn_literal)
+            if (it == null)
             {
-                Document doc = pair.Key;
-                List<TerminalNodeImpl> list_literals = pair.Value;
-                foreach (TerminalNodeImpl l in list_literals)
-                {
-                    bool no = false;
-                    // Make sure this literal does not appear in lexer rule.
-                    for (IRuleNode p = l.Parent; p != null; p = p.Parent)
-                    {
-                        if (p is ANTLRv4Parser.LexerRuleSpecContext)
-                        {
-                            no = true;
-                            break;
-                        }
-                    }
-                    if (no)
-                    {
-                        continue;
-                    }
-
-                    subs.TryGetValue(l.GetText(), out string re);
-                    if (re != null)
-                    {
-                        rewrites.Add(l, re);
-                    }
-                }
+                return result;
             }
 
-            IEnumerable<string> files = rewrites.Select(r => r.Key.Payload.TokenSource.SourceName).OrderBy(q => q).Distinct();
-            List<Document> documents = files.Select(f => { return Workspaces.Workspace.Instance.FindDocument(f); }).ToList();
-            foreach (Document f in documents)
+            // We are now at the rule that the user identified to eliminate direct
+            // left recursion.
+            // Check if the rule has direct left recursion.
+
+            bool has_direct_left_recursion = HasDirectLeftRecursion(rule);
+            if (!has_direct_left_recursion)
             {
-                string fn = f.FullPath;
-                List<KeyValuePair<TerminalNodeImpl, string>> per_file_changes = rewrites.Where(z => z.Key.Payload.TokenSource.SourceName == f.FullPath)
-                    .OrderBy(z => z.Key.Payload.TokenIndex).ToList();
-                StringBuilder sb = new StringBuilder();
-                int previous = 0;
-                string code = f.Code;
-                foreach (KeyValuePair<TerminalNodeImpl, string> l in per_file_changes)
-                {
-                    string original_text = l.Key.Payload.Text;
-                    int index_start = l.Key.Payload.StartIndex;
-                    int len = l.Key.Payload.Text.Length;
-                    string new_text = l.Value;
-                    string pre = code.Substring(previous, index_start - previous);
-                    sb.Append(pre);
-                    sb.Append(new_text);
-                    previous = index_start + len;
-                }
-                string rest = code.Substring(previous);
-                sb.Append(rest);
-                string new_code = sb.ToString();
-                result.Add(fn, new_code);
+                return result;
             }
+
+            // Has direct left recursion.
+
+            // Replace rule with two new rules.
+            //
+            // Original rule:
+            // A
+            //   : A a1
+            //   | A a2
+            //   | A a3
+            //   | B1
+            //   | B2
+            //   ...
+            //   ;
+            // Note a1, a2, a3 ... cannot be empty sequences.
+            // B1, B2, ... cannot start with A.
+            //
+            // New rules.
+            //
+            // A
+            //   : B1 A'
+            //   | B2 A'
+            //   | ...
+            //   ;
+            // A'
+            //   : a1 A'
+            //   | a2 A'
+            //   | ...
+            //   | (empty)
+            //   ;
+            //   
+            string now = DateTime.Now.ToString()
+                .Replace("/", "_")
+                .Replace(":", "_")
+                .Replace(" ", "_");
+            string generated_name = "generated_" + now;
+            var replacement = ComputeReplacementRules(generated_name, rule);
+            if (replacement == null)
+            {
+                return result;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            int pre = 0;
+            Reconstruct(sb, pd_parser.TokStream, pd_parser.ParseTree, ref pre,
+                x =>
+                {
+                    if (x == rule)
+                    {
+                        return replacement;
+                    }
+                    return null;
+                });
+            var new_code = sb.ToString();
+            if (new_code != pd_parser.Code)
+            {
+                result.Add(document.FullPath, new_code);
+            }
+
             return result;
         }
 
@@ -1729,11 +1747,16 @@
 
             StringBuilder sb = new StringBuilder();
             int pre = 0;
-            Reconstruct(sb, pd_parser.ParseTree, ref pre,
+            Reconstruct(sb, pd_parser.TokStream, pd_parser.ParseTree, ref pre,
                 n =>
                 {
-                    var r = n.GetText();
-                    if (n.Symbol.Type == ANTLRv4Lexer.RULE_REF)
+                    if (!(n is TerminalNodeImpl))
+                    {
+                        return null;
+                    }
+                    var t = n as TerminalNodeImpl;
+                    var r = t.GetText();
+                    if (t.Symbol.Type == ANTLRv4Lexer.RULE_REF)
                     {
                         if (r == "options"
                             || r == "grammar"
@@ -1983,16 +2006,21 @@
                 AntlrGrammarDetails pd_whatever = ParserDetailsFactory.Create(whatever_document) as AntlrGrammarDetails;
                 StringBuilder sb = new StringBuilder();
                 int pre = 0;
-                Reconstruct(sb, pd_parser.ParseTree, ref pre,
-                    n =>
+                Reconstruct(sb, pd_parser.TokStream, pd_parser.ParseTree, ref pre,
+                n =>
                 {
-                    if (n.Payload.Type != ANTLRv4Lexer.STRING_LITERAL)
+                    if (!(n is TerminalNodeImpl))
                     {
-                        return n.GetText();
+                        return null;
+                    }
+                    var t = n as TerminalNodeImpl;
+                    if (t.Payload.Type != ANTLRv4Lexer.STRING_LITERAL)
+                    {
+                        return t.GetText();
                     }
                     bool no = false;
                         // Make sure this literal does not appear in lexer rule.
-                        for (IRuleNode p = n.Parent; p != null; p = p.Parent)
+                        for (IRuleNode p = t.Parent; p != null; p = p.Parent)
                     {
                         if (p is ANTLRv4Parser.LexerRuleSpecContext)
                         {
@@ -2002,9 +2030,9 @@
                     }
                     if (no)
                     {
-                        return n.GetText();
+                        return t.GetText();
                     }
-                    var r = n.GetText();
+                    var r = t.GetText();
                     subs.TryGetValue(r, out string value);
                     if (value == null)
                     {

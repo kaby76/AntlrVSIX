@@ -8,14 +8,14 @@
     using System.Collections.Generic;
     using System.ComponentModel.Design;
 
-    internal class EliminateLeftRecursion
+    internal class EliminateDirectLeftRecursion
     {
         private readonly AntlrLanguageClient _package;
         private readonly MenuCommand _menu_item1;
         private string current_grammar_ffn;
 
 
-        private EliminateLeftRecursion(AntlrLanguageClient package)
+        private EliminateDirectLeftRecursion(AntlrLanguageClient package)
         {
             _package = package ?? throw new ArgumentNullException("package");
             OleMenuCommandService commandService = ((IServiceProvider)ServiceProvider).GetService(
@@ -58,13 +58,13 @@
             }
         }
 
-        public static EliminateLeftRecursion Instance { get; private set; }
+        public static EliminateDirectLeftRecursion Instance { get; private set; }
 
         private AntlrLanguageClient ServiceProvider => _package;
 
         public static void Initialize(AntlrLanguageClient package)
         {
-            Instance = new EliminateLeftRecursion(package);
+            Instance = new EliminateDirectLeftRecursion(package);
         }
 
         private void MenuItemCallbackSplit(object sender, EventArgs e)
@@ -125,31 +125,8 @@
                 {
                     return;
                 }
-                Dictionary<string, string> changes = alc.CMEliminateLeftRecursion(ffn, pos);
-                EnvDTE.Project project = null;
-                string the_namespace = "";
-                for (; ; )
-                {
-                    string current_grammar_ffn = ffn;
-                    (EnvDTE.Project, EnvDTE.ProjectItem) p_f_original_grammar = LspAntlr.MakeChanges.FindProjectAndItem(current_grammar_ffn);
-                    project = p_f_original_grammar.Item1;
-                    try
-                    {
-                        object prop = p_f_original_grammar.Item2.Properties.Item("CustomToolNamespace").Value;
-                        the_namespace = prop.ToString();
-                    }
-                    catch (Exception)
-                    {
-                    }
-                    break;
-                }
-                if (project == null)
-                {
-                    EnvDTE.DTE dte = (EnvDTE.DTE)Package.GetGlobalService(typeof(EnvDTE.DTE));
-                    EnvDTE.Projects projects = dte.Solution.Projects;
-                    project = projects.Item(EnvDTE.Constants.vsMiscFilesProjectUniqueName);
-                }
-                //MakeChanges.EnterChanges(changes, project, the_namespace);
+                Dictionary<string, string> changes = alc.CMEliminateDirectLeftRecursion(ffn, pos);
+                MakeChanges.EnterIncrementalChanges(ServiceProvider, changes, buffer);
             }
             catch (Exception exception)
             {

@@ -33,12 +33,13 @@ input
     : prologue_declarations '%%' bison_grammar epilogue_opt
     ;
 
-        /*------------------------------------.
-        | Declarations: before the first %%.  |
-        `------------------------------------*/
+    /*------------------------------------.
+    | Declarations: before the first %%.  |
+    `------------------------------------*/
 
 prologue_declarations
-    : | prologue_declarations prologue_declaration
+    :
+    | prologue_declarations prologue_declaration
     ;
 
 prologue_declaration

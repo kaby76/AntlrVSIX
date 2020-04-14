@@ -55,7 +55,7 @@
             MoveStartRuleToTop.Initialize(this);
             Reorder.Initialize(this);
             SplitCombineGrammars.Initialize(this);
-            EliminateLeftRecursion.Initialize(this);
+            EliminateDirectLeftRecursion.Initialize(this);
             EliminateAntlrKeywordsInRules.Initialize(this);
             AddLexerRulesForStringLiterals.Initialize(this);
             RenameCommand.Initialize(this);
@@ -375,7 +375,7 @@
             return null;
         }
 
-        public Dictionary<string, string> CMEliminateLeftRecursion(string ffn, int pos)
+        public Dictionary<string, string> CMEliminateDirectLeftRecursion(string ffn, int pos)
         {
             try
             {
@@ -384,11 +384,11 @@
                     return null;
                 }
 
-                CMEliminateLeftRecursionParams p = new CMEliminateLeftRecursionParams();
+                CMEliminateDirectLeftRecursionParams p = new CMEliminateDirectLeftRecursionParams();
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
                 p.Pos = pos;
-                Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMEliminateLeftRecursion", p).Result;
+                Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMEliminateDirectLeftRecursion", p).Result;
                 return result;
             }
             catch (Exception)

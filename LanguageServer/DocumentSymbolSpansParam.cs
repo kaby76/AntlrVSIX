@@ -78,9 +78,9 @@
         public bool Split;
     }
 
-    public class CMEliminateLeftRecursionParams
+    public class CMEliminateDirectLeftRecursionParams
     {
-        public CMEliminateLeftRecursionParams() { }
+        public CMEliminateDirectLeftRecursionParams() { }
         public System.Uri TextDocument;
         public int Pos;
     }
