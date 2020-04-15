@@ -1,6 +1,7 @@
 ﻿namespace LanguageServer
 {
     using Antlr4.Runtime.Tree;
+    using GrammarGrammar;
     using System.Text;
 
     internal class Reconstruct

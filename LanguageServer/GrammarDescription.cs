@@ -2,6 +2,7 @@
 {
     using Antlr4.Runtime;
     using Antlr4.Runtime.Tree;
+    using GrammarGrammar;
     using Symtab;
     using System;
     using System.Collections.Generic;
@@ -428,7 +429,7 @@
                 {
                     return false;
                 }
-                if (!(term.Parent is ANTLRv4Parser.IdContext))
+                if (!(term.Parent is ANTLRv4Parser.IdentifierContext))
                 {
                     return false;
                 }

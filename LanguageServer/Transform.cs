@@ -4,6 +4,7 @@
     using Antlr4.Runtime.Misc;
     using Antlr4.Runtime.Tree;
     using Algorithms;
+    using GrammarGrammar;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,6 +13,7 @@
     using System.IO;
     using System.Linq;
     using System.Text;
+    using GrammarGrammar;
     using Document = Workspaces.Document;
 
     public class Transform
@@ -494,7 +496,7 @@
                     modes.Add(new Row()
                     {
                         mode = listener.Modes[i],
-                        name = listener.Modes[i].id().GetText(),
+                        name = listener.Modes[i].identifier().GetText(),
                     });
                 }
                 for (int i = 0; i < modes.Count; ++i)
@@ -1233,9 +1235,9 @@
                     grammar_type_index++;
                 }
 
-                ANTLRv4Parser.GrammarTypeContext grammar_type_tree = root.grammarType();
-                ANTLRv4Parser.IdContext id = root.id();
-                ITerminalNode semi_tree = root.SEMI();
+                ANTLRv4Parser.GrammarDeclContext grammar_type_tree = root.grammarDecl();
+                ANTLRv4Parser.IdentifierContext id = grammar_type_tree.identifier();
+                ITerminalNode semi_tree = grammar_type_tree.SEMI();
                 ANTLRv4Parser.RulesContext rules_tree = root.rules();
                 string pre = old_code.Substring(0, pd_parser.TokStream.Get(grammar_type_tree.SourceInterval.a).StartIndex - 0);
                 sb_parser.Append(pre);
@@ -1344,7 +1346,7 @@
                 foreach (var o in find_options.Options)
                 {
                     var oo = o as ANTLRv4Parser.OptionContext;
-                    if (oo.id() != null && oo.id().GetText() == "tokenVocab")
+                    if (oo.identifier() != null && oo.identifier().GetText() == "tokenVocab")
                     {
                         tokenVocab = oo;
                     }
@@ -1366,9 +1368,9 @@
                     grammar_type_index++;
                 }
 
-                ANTLRv4Parser.GrammarTypeContext grammar_type_tree = root.grammarType();
-                ANTLRv4Parser.IdContext id = root.id();
-                ITerminalNode semi_tree = root.SEMI();
+                ANTLRv4Parser.GrammarDeclContext grammar_type_tree = root.grammarDecl();
+                ANTLRv4Parser.IdentifierContext id = grammar_type_tree.identifier();
+                ITerminalNode semi_tree = grammar_type_tree.SEMI();
                 ANTLRv4Parser.RulesContext rules_tree = root.rules();
                 string pre = old_code.Substring(0, pd_parser.TokStream.Get(grammar_type_tree.SourceInterval.a).StartIndex - 0);
                 sb_parser.Append(pre);
@@ -1400,7 +1402,7 @@
                     foreach (var o in find_options.Options)
                     {
                         var oo = o as ANTLRv4Parser.OptionContext;
-                        if (oo.id() != null && oo.id().GetText() == "tokenVocab")
+                        if (oo.identifier() != null && oo.identifier().GetText() == "tokenVocab")
                         {
                             x2 = pd_parser.TokStream.Get(oo.SourceInterval.a).StartIndex;
                             int j;

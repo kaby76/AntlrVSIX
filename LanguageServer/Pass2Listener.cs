@@ -4,6 +4,7 @@ namespace LanguageServer
     using Antlr4.Runtime.Tree;
     using Symtab;
     using System.Collections.Generic;
+    using GrammarGrammar;
 
     public class Pass2Listener : ANTLRv4ParserBaseListener
     {
@@ -113,7 +114,7 @@ namespace LanguageServer
             _pd.Attributes[context.GetChild(i)] = new List<CombinedScopeSymbol>() { s };
         }
 
-        public override void EnterId([NotNull] ANTLRv4Parser.IdContext context)
+        public override void EnterIdentifier([NotNull] ANTLRv4Parser.IdentifierContext context)
         {
             if (context.Parent is ANTLRv4Parser.ModeSpecContext)
             {

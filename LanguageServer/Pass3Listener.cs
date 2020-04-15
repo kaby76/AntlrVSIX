@@ -5,6 +5,7 @@
     using Symtab;
     using System.Collections.Generic;
     using System.Linq;
+    using GrammarGrammar;
 
     public class Pass3Listener : ANTLRv4ParserBaseListener
     {
@@ -54,7 +55,7 @@
             _pd.Attributes[context.GetChild(0)] = new_attrs;
         }
 
-        public override void EnterId([NotNull] ANTLRv4Parser.IdContext context)
+        public override void EnterIdentifier([NotNull] ANTLRv4Parser.IdentifierContext context)
         {
             if (context.Parent is ANTLRv4Parser.LexerCommandExprContext && context.Parent.Parent is ANTLRv4Parser.LexerCommandContext)
             {

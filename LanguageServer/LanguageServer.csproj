@@ -6,15 +6,14 @@
 
   <ItemGroup>
     <Antlr4 Remove="LexBasic.g4" />
-    <Antlr4 Remove="LexUnicode.g4" />
   </ItemGroup>
 
   <ItemGroup>
     <Antlr4 Include="ANTLRv4Lexer.g4">
-      <Package>LanguageServer</Package>
+      <Package>GrammarGrammar</Package>
     </Antlr4>
     <Antlr4 Include="ANTLRv4Parser.g4">
-      <Package>LanguageServer</Package>
+      <Package>GrammarGrammar</Package>
     </Antlr4>
     <Antlr4 Include="BisonLexer.g4">
       <Package>LanguageServer</Package>
