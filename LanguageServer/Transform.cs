@@ -1635,23 +1635,24 @@
             // Assume cursor positioned at the rule that contains left recursion.
             // Find rule.
             IParseTree rule = null;
-            IParseTree it = pd_parser.AllNodes.Where(n => (n is TerminalNodeImpl) && (((TerminalNodeImpl)n).Payload.StartIndex <= index) && (index <= ((TerminalNodeImpl)n).Payload.StopIndex)).FirstOrDefault();
+            IParseTree it = pd_parser.AllNodes.Where(n =>
+            {
+                if (!(n is ANTLRv4Parser.ParserRuleSpecContext || n is ANTLRv4Parser.LexerRuleSpecContext))
+                    return false;
+                Interval source_interval = n.SourceInterval;
+                int a = source_interval.a;
+                int b = source_interval.b;
+                IToken ta = pd_parser.TokStream.Get(a);
+                IToken tb = pd_parser.TokStream.Get(b);
+                var start = ta.StartIndex;
+                var stop = tb.StopIndex + 1;
+                return start <= index && index < stop;
+            }).FirstOrDefault();
             if (it == null)
             {
                 return result;
             }
             rule = it;
-            for (; rule != null; rule = rule.Parent)
-            {
-                if (rule is ANTLRv4Parser.ParserRuleSpecContext || rule is ANTLRv4Parser.LexerRuleSpecContext)
-                {
-                    break;
-                }
-            }
-            if (it == null)
-            {
-                return result;
-            }
 
             // We are now at the rule that the user identified to eliminate direct
             // left recursion.
@@ -1692,12 +1693,9 @@
             //   | ...
             //   | (empty)
             //   ;
-            //   
-            string now = DateTime.Now.ToString()
-                .Replace("/", "_")
-                .Replace(":", "_")
-                .Replace(" ", "_");
-            string generated_name = "generated_" + now;
+            //
+
+            string generated_name = GenerateNewName(rule, pd_parser);
             var replacement = ComputeReplacementRules(generated_name, rule);
             if (replacement == null)
             {
@@ -1722,6 +1720,35 @@
             }
 
             return result;
+        }
+
+        private static string GenerateNewName(IParseTree rule, AntlrGrammarDetails pd_parser)
+        {
+            var r = rule as ANTLRv4Parser.ParserRuleSpecContext;
+            if (r == null)
+                return null;
+            var b = r.RULE_REF().GetText();
+            var list = pd_parser.AllNodes.Where(n =>
+            {
+                return (n is ANTLRv4Parser.ParserRuleSpecContext || n is ANTLRv4Parser.LexerRuleSpecContext);
+            }).Select(n =>
+            {
+                if (n is ANTLRv4Parser.ParserRuleSpecContext)
+                {
+                    var z = n as ANTLRv4Parser.ParserRuleSpecContext;
+                    var lhs = z.RULE_REF();
+                    return lhs.GetText();
+                }
+                return "";
+            }).ToList();
+            int gnum = 1;
+            for (; ; )
+            {
+                if (!list.Contains(b + gnum.ToString()))
+                    break;
+                gnum++;
+            }
+            return b + gnum.ToString();
         }
 
         public static string EliminateAntlrKeywordsInRules(Document document)
