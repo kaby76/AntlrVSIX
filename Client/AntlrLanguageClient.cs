@@ -56,6 +56,7 @@
             Reorder.Initialize(this);
             SplitCombineGrammars.Initialize(this);
             EliminateDirectLeftRecursion.Initialize(this);
+            EliminateIndirectLeftRecursion.Initialize(this);
             EliminateAntlrKeywordsInRules.Initialize(this);
             AddLexerRulesForStringLiterals.Initialize(this);
             RenameCommand.Initialize(this);
@@ -389,6 +390,28 @@
                 p.TextDocument = uri;
                 p.Pos = pos;
                 Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMEliminateDirectLeftRecursion", p).Result;
+                return result;
+            }
+            catch (Exception)
+            {
+            }
+            return null;
+        }
+
+        public Dictionary<string, string> CMEliminateIndirectLeftRecursion(string ffn, int pos)
+        {
+            try
+            {
+                if (_rpc == null)
+                {
+                    return null;
+                }
+
+                CMEliminateDirectLeftRecursionParams p = new CMEliminateDirectLeftRecursionParams();
+                Uri uri = new Uri(ffn);
+                p.TextDocument = uri;
+                p.Pos = pos;
+                Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMEliminateIndirectLeftRecursion", p).Result;
                 return result;
             }
             catch (Exception)

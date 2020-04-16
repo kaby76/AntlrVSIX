@@ -117,6 +117,13 @@
           </Strings>
         </Button>
 
+        <Button guid="guidMenuAndCommandsCmdSet" id="EliminateIndirectLeftRecursionCmd" priority="0x100" type="Button">
+          <Parent guid="guidMenuAndCommandsCmdSet" id="TransformMenuGroup"/>
+          <Strings>
+            <ButtonText>Eliminate indirect left recursion</ButtonText>
+          </Strings>
+        </Button>
+
         <Button guid="guidMenuAndCommandsCmdSet" id="EliminateAntlrKeywordsInRulesCmd" priority="0x100" type="Button">
           <Parent guid="guidMenuAndCommandsCmdSet" id="TransformMenuGroup"/>
           <Strings>
@@ -243,6 +250,7 @@
       <IDSymbol name="EliminateAntlrKeywordsInRulesCmd" value="0x7021" />
       <IDSymbol name="AddLexerRulesForStringLiteralsCmd" value="0x7022" />
       <IDSymbol name="SortModesCmd" value="0x7023" />
+      <IDSymbol name="EliminateIndirectLeftRecursionCmd" value="0x7024" />
     </GuidSymbol>
   </Symbols>
 </CommandTable>
