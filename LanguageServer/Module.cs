@@ -838,11 +838,7 @@
                 }
                 foreach (ParserDetails v in g.Vertices)
                 {
-                    v.GatherDefs();
-                }
-                foreach (ParserDetails v in g.Vertices)
-                {
-                    v.GatherRefs();
+                    v.GatherRefsDefsAndOthers();
                 }
                 foreach (ParserDetails v in g.Vertices)
                 {

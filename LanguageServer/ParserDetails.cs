@@ -97,57 +97,57 @@
 
         }
 
-        public virtual void GatherDefs()
+        public virtual void GatherRefsDefsAndOthers()
         {
-            Workspaces.Document item = Item;
-            string ffn = item.FullPath;
-            IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);
-            if (gd == null)
+            try
             {
-                throw new Exception();
-            }
-            Func<IGrammarDescription, Dictionary<IParseTree, IList<CombinedScopeSymbol>>, IParseTree, int> fun = gd.Classify;
-            IEnumerable<IParseTree> it = AllNodes.Where(n => n is TerminalNodeImpl);
-            foreach (var n in it)
-            {
-                var t = n as TerminalNodeImpl;
-                int i = -1;
-                try
+                Workspaces.Document item = Item;
+                string ffn = item.FullPath;
+                IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);
+                if (gd == null)
                 {
-                    i = gd.Classify(gd, Attributes, t);
-                    if (i >= 0)
-                        ColorizedList.Add(t, i);
+                    throw new Exception();
                 }
-                catch (Exception) { }
-                try
+                Func<IGrammarDescription, Dictionary<IParseTree, IList<CombinedScopeSymbol>>, IParseTree, int> fun = gd.Classify;
+                IEnumerable<IParseTree> it = AllNodes.Where(n => n is TerminalNodeImpl);
+                foreach (var n in it)
                 {
-                    if (i == 0 || i == 1)
+                    var t = n as TerminalNodeImpl;
+                    int i = -1;
+                    try
                     {
-                        if (gd.Identify[i](gd, Attributes, t))
+                        i = gd.Classify(gd, Attributes, t);
+                        if (i >= 0)
+                            ColorizedList.Add(t, i);
+                    }
+                    catch (Exception) { }
+                    try
+                    {
+                        if (i == 0 || i == 1)
                         {
-                            Refs.Add(t, i);
-                            PopupList.Add(t, i);
+                            if (gd.Identify[i](gd, Attributes, t))
+                            {
+                                Refs.Add(t, i);
+                                PopupList.Add(t, i);
+                            }
                         }
                     }
-                }
-                catch (Exception) { }
-                try
-                {
-                    if (i == 0 || i == 1)
+                    catch (Exception) { }
+                    try
                     {
-                        if (gd.IdentifyDefinition[i](gd, Attributes, t))
+                        if (i == 0 || i == 1)
                         {
-                            Defs.Add(t, i);
-                            PopupList.Add(t, i);
+                            if (gd.IdentifyDefinition[i](gd, Attributes, t))
+                            {
+                                Defs.Add(t, i);
+                                PopupList.Add(t, i);
+                            }
                         }
                     }
+                    catch (Exception) { }
                 }
-                catch (Exception) { }
             }
-        }
-
-        public virtual void GatherRefs()
-        {
+            catch (Exception eeks) { }
         }
 
         public virtual void GatherErrors()
