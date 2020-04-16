@@ -39,6 +39,8 @@
             ANTLRv4Lexer lexer = new ANTLRv4Lexer(ais);
             CommonTokenStream cts = new CommonTokenStream(lexer);
             ANTLRv4Parser parser = new ANTLRv4Parser(cts);
+            var listener = new ErrorListener<IToken>(parser, lexer, cts);
+            parser.AddErrorListener(listener);
             try
             {
                 pt = parser.grammarSpec();
@@ -53,6 +55,14 @@
             //string fn = System.IO.Path.GetFileName(ffn);
             //fn = "c:\\temp\\" + fn;
             //System.IO.File.WriteAllText(fn, sb.ToString());
+            if (listener.had_error)
+            {
+                System.Console.Error.WriteLine("Error in parse of " + ffn);
+            }
+            else
+            {
+                System.Console.Error.WriteLine("Parse completed of " + ffn);
+            }
 
             pd.TokStream = cts;
             pd.Parser = parser;

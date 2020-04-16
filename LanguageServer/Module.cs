@@ -822,11 +822,16 @@
                         int number_of_passes = v.Passes.Count;
                         if (pass < number_of_passes)
                         {
-                            bool reset = v.Pass(pass);
-                            if (reset)
+                            try
                             {
-                                goto DoAgain;
+                                bool reset = v.Pass(pass);
+                                if (reset)
+                                {
+                                    goto DoAgain;
+                                }
                             }
+                            catch (Exception eeks)
+                            { }
                             changed = true;
                         }
                     }
