@@ -21,7 +21,7 @@
         public virtual HashSet<string> PropagateChangesTo { get; set; } = new HashSet<string>();
         public virtual Dictionary<TerminalNodeImpl, int> Defs { get; set; } = new Dictionary<TerminalNodeImpl, int>();
         public virtual Dictionary<TerminalNodeImpl, int> PopupList { get; set; } = new Dictionary<TerminalNodeImpl, int>();
-        public virtual Dictionary<TerminalNodeImpl, int> ColorizedList { get; set; } = new Dictionary<TerminalNodeImpl, int>();
+        public virtual Dictionary<IToken, int> ColorizedList { get; set; } = new Dictionary<IToken, int>();
         public virtual HashSet<string> Imports { get; set; } = new HashSet<string>();
 
         public virtual HashSet<IParseTree> Errors { get; set; } = new HashSet<IParseTree>();
@@ -74,7 +74,7 @@
             Errors = new HashSet<IParseTree>();
             Imports = new HashSet<string>();
             Attributes = new Dictionary<IParseTree, IList<CombinedScopeSymbol>>();
-            ColorizedList = new Dictionary<TerminalNodeImpl, int>();
+            ColorizedList = new Dictionary<Antlr4.Runtime.IToken, int>();
             Cleanup();
         }
 
@@ -83,18 +83,6 @@
         public bool Pass(int pass_number)
         {
             return Passes[pass_number]();
-        }
-
-        public virtual void Classify()
-        {
-            Workspaces.Document item = Item;
-            string ffn = item.FullPath;
-            IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);
-            if (gd == null)
-            {
-                throw new Exception();
-            }
-
         }
 
         public virtual void GatherRefsDefsAndOthers()
@@ -118,7 +106,9 @@
                     {
                         i = gd.Classify(gd, Attributes, t);
                         if (i >= 0)
-                            ColorizedList.Add(t, i);
+                        {
+                            ColorizedList.Add(t.Symbol, i);
+                        }
                     }
                     catch (Exception) { }
                     try
@@ -145,6 +135,11 @@
                         }
                     }
                     catch (Exception) { }
+                }
+                foreach (KeyValuePair<Antlr4.Runtime.IToken, int> p in Comments)
+                {
+                    IToken t = p.Key;
+                    ColorizedList.Add(t, 2);
                 }
             }
             catch (Exception eeks) { }

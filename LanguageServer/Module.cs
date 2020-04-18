@@ -308,23 +308,13 @@
             }
 
             List<DocumentSymbol> combined = new List<DocumentSymbol>();
-            foreach (KeyValuePair<TerminalNodeImpl, int> p in pd.ColorizedList)
+            foreach (KeyValuePair<Antlr4.Runtime.IToken, int> p in pd.ColorizedList)
             {
-                if (p.Key.Symbol == null)
+                if (p.Key == null)
                 {
                     continue;
                 }
 
-                combined.Add(
-                    new DocumentSymbol()
-                    {
-                        name = p.Key.Symbol.Text,
-                        range = new Workspaces.Range(p.Key.Symbol.StartIndex, p.Key.Symbol.StopIndex),
-                        kind = p.Value
-                    });
-            }
-            foreach (KeyValuePair<Antlr4.Runtime.IToken, int> p in pd.Comments)
-            {
                 combined.Add(
                     new DocumentSymbol()
                     {
@@ -355,13 +345,13 @@
             }
 
             List<Info> combined = new List<Info>();
-            foreach (KeyValuePair<TerminalNodeImpl, int> p in pd.ColorizedList)
+            foreach (KeyValuePair<Antlr4.Runtime.IToken, int> p in pd.ColorizedList)
             {
-                if (p.Key.Symbol == null)
+                if (p.Key == null)
                 {
                     continue;
                 }
-                var sym = p.Key.Symbol;
+                var sym = p.Key;
                 var st = sym.StartIndex;
                 var en = sym.StopIndex + 1;
                 if (end < st) continue;
@@ -377,26 +367,6 @@
                      });
                 ;
             }
-            foreach (KeyValuePair<Antlr4.Runtime.IToken, int> p in pd.Comments)
-            {
-                var sym = p.Key;
-                var kind = p.Value;
-                if (kind < 0) continue;
-                var st = sym.StartIndex;
-                var en = sym.StopIndex + 1;
-                if (end < st) continue;
-                if (en < start) continue;
-                int s1 = st > start ? st : start;
-                int s2 = en < end ? en : end;
-                combined.Add(
-                    new Info()
-                    {
-                        start = s1,
-                        end = s2,
-                        kind = kind
-                    });
-            }
-
             // Sort the list.
             IOrderedEnumerable<Info> sorted_combined_tokens = combined.OrderBy(t => t.start).ThenBy(t => t.end);
             return sorted_combined_tokens;

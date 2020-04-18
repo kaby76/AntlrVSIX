@@ -109,7 +109,7 @@
                     new AntlrInputStream(
                         new StreamReader(
                             new MemoryStream(byteArray)).ReadToEnd())),
-                ANTLRv4Lexer.OFF_CHANNEL);
+                ANTLRv4Lexer.COMMENT);
             Dictionary<IToken, int> new_list = new Dictionary<IToken, int>();
             int type = InverseMap[ClassificationNameComment];
             while (cts_off_channel.LA(1) != ANTLRv4Parser.Eof)
