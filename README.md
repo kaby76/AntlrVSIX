@@ -80,16 +80,22 @@ bad thing MS). If your debug version of the
 .vssix is 5M in size, it did not compute that the server executable needs to be added into the .vsix. Quit
 VS, then reopen. Do not do "rebuild", only "build".
 
-## Planned for v7.x:
+## Planned for v8.0:
 
 * Add in Piggy for grammar rewriting and checking. The addition of Piggy will allow for rules to transform the
 grammar e.g., warning/removal of LHS predicates in lexer, replacing factored grammar rules with Kleene star rules (which
 result in faster parsers).
 
-## Planned for v6.1:
+## Planned for v7.0:
 
 * Generalized fold/unfold/pack grammar rule refactorings.
 * Elimination of left recursion.
+* Expand tagging of all parts of grammar file. Client can
+colorize it or not, but it will have all
+identified.
+* Change color selection through Visual Studio
+theme. Options will now allow user to select
+how it maps to code windows in the editor.
 
 ## Release notes for v6.0.1 (13-Apr-2020):
 
