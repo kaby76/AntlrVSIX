@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using System.IO;
-    using Newtonsoft.Json;
     using System.Linq;
 
     public class MyColor
@@ -26,13 +25,19 @@
             {"OverrideAntlrPluggins", true },
             {"OptInLogging", false },
             {"CorpusLocation", CorpusLocation },
-            {"AntlrTerminal", new MyColor(System.Drawing.Color.FromName("Purple")) },
-            {"AntlrNonterminal",  new MyColor(System.Drawing.Color.FromName("Blue")) },
-            {"AntlrComment",  new MyColor(System.Drawing.Color.FromName("Green")) },
-            {"AntlrKeyword",  new MyColor(System.Drawing.Color.FromName("Red")) },
-            {"AntlrLiteral",  new MyColor(System.Drawing.Color.FromName("LightGreen")) },
-            {"AntlrMode",  new MyColor(System.Drawing.Color.FromName("Salmon")) },
-            {"AntlrChannel",  new MyColor(System.Drawing.Color.FromName("Coral")) }
+            {"AntlrNonterminalDef", "type" },
+            {"AntlrNonterminalRef", "symbol definition" },
+            {"AntlrTerminalDef", "type" },
+            {"AntlrTerminalRef", "symbol definition" },
+            {"AntlrComment", "comment" },
+            {"AntlrKeyword", "keyword" },
+            {"AntlrLiteral", "string" },
+            {"AntlrModeDef", "type" },
+            {"AntlrModeRef", "field name" },
+            {"AntlrChannelDef", "type" },
+            {"AntlrChannelRef", "field name" },
+            {"AntlrPunctuation", "field name" },
+            {"AntlrOperator", "field name" },
         };
         private static readonly string home = System.Environment.GetEnvironmentVariable("HOMEPATH");
         private static bool initialized = false;

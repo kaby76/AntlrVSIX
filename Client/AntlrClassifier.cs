@@ -17,7 +17,6 @@
         private static readonly CancellationTokenSource source;
         private static readonly Task<int> task;
         private readonly ITextBuffer _buffer;
-        private IDictionary<int, IClassificationType> _lsptype_to_classifiertype;
         private IDictionary<int, IClassificationType> _to_classifiertype;
         private bool initialized = false;
         private readonly object updateLock = new object();
@@ -156,87 +155,214 @@
                 }
 
                 Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(ffn);
-                _lsptype_to_classifiertype = new Dictionary<int, IClassificationType>();
                 _to_classifiertype = new Dictionary<int, IClassificationType>();
 
-                System.Drawing.Color[] colors = new System.Drawing.Color[_grammar_description.Map.Length];
-                for (int i = 0; i < _grammar_description.Map.Length; ++i)
+                //for (int i = 0; i < _grammar_description.Map.Length; ++i)
+                //{
+                //    string[] n = _grammar_description.Map[i].Replace(" - ", " ").Split(' ');
+                //    string option_name = String.Join("", n.Select(p => Capitalize(p)));
+                //    var w = Options.Option.GetColor(option_name);
+                //    colors[i] = w;
+                //}
+
+                IClassificationFormatMap classificationFormatMap = ClassificationFormatMapService.GetClassificationFormatMap(category: "text");
+                // hardwire colors to VS's colors of selected types.
+                System.Collections.ObjectModel.ReadOnlyCollection<IClassificationType> list_of_formats = classificationFormatMap.CurrentPriorityOrder;
+
+                //for (int i = 0; i < _grammar_description.Map.Length; ++i)
+                //{
+                //    int key = i;
+                //    string val = _grammar_description.Map[i];
+                //    IClassificationType identiferClassificationType = service.GetClassificationType(val);
+                //    IClassificationType classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
+                //            : identiferClassificationType;
+                //    Microsoft.VisualStudio.Text.Formatting.TextFormattingRunProperties identifierProperties = classificationFormatMap
+                //        .GetExplicitTextProperties(classificationType);
+                //    //System.Drawing.Color color = !Themes.IsInvertedTheme()
+                //    //    ? _grammar_description.MapColor[key]
+                //    //    : _grammar_description.MapInvertedColor[key];
+                //    var color = colors[i];
+                //    System.Windows.Media.Color newColor = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+                //    Microsoft.VisualStudio.Text.Formatting.TextFormattingRunProperties newProperties = identifierProperties.SetForeground(newColor);
+                //    classificationFormatMap.AddExplicitTextProperties(classificationType, newProperties);
+                //}
+
                 {
-                    string[] n = _grammar_description.Map[i].Replace(" - ", " ").Split(' ');
-                    string option_name = String.Join("", n.Select(p => Capitalize(p)));
-                    var w = Options.Option.GetColor(option_name);
-                    colors[i] = w;
-                }
-                for (int i = 0; i < _grammar_description.Map.Length; ++i)
-                {
-                    int key = i;
+                    int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationNonterminalDef;
+                    int key = (int)SymbolKind.Variable;
                     string val = _grammar_description.Map[i];
                     IClassificationType identiferClassificationType = service.GetClassificationType(val);
                     IClassificationType classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
                             : identiferClassificationType;
-                    IClassificationFormatMap classificationFormatMap = ClassificationFormatMapService.GetClassificationFormatMap(category: "text");
+                    IClassificationType t = list_of_formats.Where(f => f == null ? false : f.Classification == Options.Option.GetString("AntlrNonterminalDef")).FirstOrDefault();
                     Microsoft.VisualStudio.Text.Formatting.TextFormattingRunProperties identifierProperties = classificationFormatMap
-                        .GetExplicitTextProperties(classificationType);
-                    //System.Drawing.Color color = !Themes.IsInvertedTheme()
-                    //    ? _grammar_description.MapColor[key]
-                    //    : _grammar_description.MapInvertedColor[key];
-                    var color = colors[i];
-                    System.Windows.Media.Color newColor = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
-                    Microsoft.VisualStudio.Text.Formatting.TextFormattingRunProperties newProperties = identifierProperties.SetForeground(newColor);
-                    classificationFormatMap.AddExplicitTextProperties(classificationType, newProperties);
+                        .GetExplicitTextProperties(t);
+                    classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
+                    _to_classifiertype[i] = classificationType;
+
                 }
                 {
-                    int key = (int)SymbolKind.Variable;
-                    string val = _grammar_description.Map[0];
-                    var t = service.GetClassificationType(val);
-                    _lsptype_to_classifiertype[key] = t;
-                    _to_classifiertype[0] = t;
-                }
-                {
+                    int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationNonterminalRef;
                     int key = (int)SymbolKind.Enum;
-                    string val = _grammar_description.Map[1];
-                    var t = service.GetClassificationType(val);
-                    _lsptype_to_classifiertype[key] = t;
-                    _to_classifiertype[1] = t;
+                    string val = _grammar_description.Map[i];
+                    IClassificationType identiferClassificationType = service.GetClassificationType(val);
+                    IClassificationType classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
+                            : identiferClassificationType;
+                    IClassificationType t = list_of_formats.Where(f => f == null ? false : f.Classification == Options.Option.GetString("AntlrNonterminalRef")).FirstOrDefault();
+                    Microsoft.VisualStudio.Text.Formatting.TextFormattingRunProperties identifierProperties = classificationFormatMap
+                        .GetExplicitTextProperties(t);
+                    classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
+                    _to_classifiertype[i] = classificationType;
                 }
                 {
+                    int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationTerminalDef;
+                    int key = (int)SymbolKind.Variable;
+                    string val = _grammar_description.Map[i];
+                    IClassificationType identiferClassificationType = service.GetClassificationType(val);
+                    IClassificationType classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
+                            : identiferClassificationType;
+                    IClassificationType t = list_of_formats.Where(f => f == null ? false : f.Classification == Options.Option.GetString("AntlrTerminalDef")).FirstOrDefault();
+                    Microsoft.VisualStudio.Text.Formatting.TextFormattingRunProperties identifierProperties = classificationFormatMap
+                        .GetExplicitTextProperties(t);
+                    classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
+                    _to_classifiertype[i] = classificationType;
+
+                }
+                {
+                    int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationTerminalRef;
+                    int key = (int)SymbolKind.Enum;
+                    string val = _grammar_description.Map[i];
+                    IClassificationType identiferClassificationType = service.GetClassificationType(val);
+                    IClassificationType classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
+                            : identiferClassificationType;
+                    IClassificationType t = list_of_formats.Where(f => f == null ? false : f.Classification == Options.Option.GetString("AntlrTerminalRef")).FirstOrDefault();
+                    Microsoft.VisualStudio.Text.Formatting.TextFormattingRunProperties identifierProperties = classificationFormatMap
+                        .GetExplicitTextProperties(t);
+                    classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
+                    _to_classifiertype[i] = classificationType;
+                }
+                {
+                    int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationComment;
                     int key = (int)SymbolKind.String;
-                    string val = _grammar_description.Map[2];
-                    var t = service.GetClassificationType(val);
-                    _lsptype_to_classifiertype[key] = t;
-                    _to_classifiertype[2] = t;
+                    string val = _grammar_description.Map[i];
+                    IClassificationType identiferClassificationType = service.GetClassificationType(val);
+                    IClassificationType classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
+                            : identiferClassificationType;
+                    IClassificationType t = list_of_formats.Where(f => f == null ? false : f.Classification == Options.Option.GetString("AntlrComment")).FirstOrDefault();
+                    Microsoft.VisualStudio.Text.Formatting.TextFormattingRunProperties identifierProperties = classificationFormatMap
+                        .GetExplicitTextProperties(t);
+                    classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
+                    _to_classifiertype[i] = classificationType;
                 }
                 {
+                    int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationKeyword;
                     int key = (int)SymbolKind.Key;
-                    string val = _grammar_description.Map[3];
-                    var t = service.GetClassificationType(val);
-                    _lsptype_to_classifiertype[key] = t;
-                    _to_classifiertype[3] = t;
+                    string val = _grammar_description.Map[i];
+                    IClassificationType identiferClassificationType = service.GetClassificationType(val);
+                    IClassificationType classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
+                            : identiferClassificationType;
+                    IClassificationType t = list_of_formats.Where(f => f == null ? false : f.Classification == Options.Option.GetString("AntlrKeyword")).FirstOrDefault();
+                    Microsoft.VisualStudio.Text.Formatting.TextFormattingRunProperties identifierProperties = classificationFormatMap
+                        .GetExplicitTextProperties(t);
+                    classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
+                    _to_classifiertype[i] = classificationType;
                 }
                 {
+                    int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationLiteral;
                     int key = (int)SymbolKind.Constant;
-                    string val = _grammar_description.Map[4];
-                    var t = service.GetClassificationType(val);
-                    _lsptype_to_classifiertype[key] = t;
-                    _to_classifiertype[4] = t;
+                    string val = _grammar_description.Map[i];
+                    IClassificationType identiferClassificationType = service.GetClassificationType(val);
+                    IClassificationType classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
+                            : identiferClassificationType;
+                    IClassificationType t = list_of_formats.Where(f => f == null ? false : f.Classification == Options.Option.GetString("AntlrLiteral")).FirstOrDefault();
+                    Microsoft.VisualStudio.Text.Formatting.TextFormattingRunProperties identifierProperties = classificationFormatMap
+                        .GetExplicitTextProperties(t);
+                    classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
+                    _to_classifiertype[i] = classificationType;
                 }
                 {
+                    int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationModeDef;
+                    int key = (int)SymbolKind.Variable;
+                    string val = _grammar_description.Map[i];
+                    IClassificationType identiferClassificationType = service.GetClassificationType(val);
+                    IClassificationType classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
+                            : identiferClassificationType;
+                    IClassificationType t = list_of_formats.Where(f => f == null ? false : f.Classification == Options.Option.GetString("AntlrModeDef")).FirstOrDefault();
+                    Microsoft.VisualStudio.Text.Formatting.TextFormattingRunProperties identifierProperties = classificationFormatMap
+                        .GetExplicitTextProperties(t);
+                    classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
+                    _to_classifiertype[i] = classificationType;
+
+                }
+                {
+                    int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationModeRef;
+                    int key = (int)SymbolKind.Enum;
+                    string val = _grammar_description.Map[i];
+                    IClassificationType identiferClassificationType = service.GetClassificationType(val);
+                    IClassificationType classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
+                            : identiferClassificationType;
+                    IClassificationType t = list_of_formats.Where(f => f == null ? false : f.Classification == Options.Option.GetString("AntlrModeRef")).FirstOrDefault();
+                    Microsoft.VisualStudio.Text.Formatting.TextFormattingRunProperties identifierProperties = classificationFormatMap
+                        .GetExplicitTextProperties(t);
+                    classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
+                    _to_classifiertype[i] = classificationType;
+                }
+                {
+                    int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationChannelDef;
+                    int key = (int)SymbolKind.Variable;
+                    string val = _grammar_description.Map[i];
+                    IClassificationType identiferClassificationType = service.GetClassificationType(val);
+                    IClassificationType classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
+                            : identiferClassificationType;
+                    IClassificationType t = list_of_formats.Where(f => f == null ? false : f.Classification == Options.Option.GetString("AntlrChannelDef")).FirstOrDefault();
+                    Microsoft.VisualStudio.Text.Formatting.TextFormattingRunProperties identifierProperties = classificationFormatMap
+                        .GetExplicitTextProperties(t);
+                    classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
+                    _to_classifiertype[i] = classificationType;
+
+                }
+                {
+                    int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationChannelRef;
+                    int key = (int)SymbolKind.Enum;
+                    string val = _grammar_description.Map[i];
+                    IClassificationType identiferClassificationType = service.GetClassificationType(val);
+                    IClassificationType classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
+                            : identiferClassificationType;
+                    IClassificationType t = list_of_formats.Where(f => f == null ? false : f.Classification == Options.Option.GetString("AntlrChannelRef")).FirstOrDefault();
+                    Microsoft.VisualStudio.Text.Formatting.TextFormattingRunProperties identifierProperties = classificationFormatMap
+                        .GetExplicitTextProperties(t);
+                    classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
+                    _to_classifiertype[i] = classificationType;
+                }
+                {
+                    int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationPunctuation;
                     int key = (int)SymbolKind.Event;
-                    string val = _grammar_description.Map[5];
-                    var t = service.GetClassificationType(val);
-                    _lsptype_to_classifiertype[key] = t;
-                    _to_classifiertype[5] = t;
+                    string val = _grammar_description.Map[i];
+                    IClassificationType identiferClassificationType = service.GetClassificationType(val);
+                    IClassificationType classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
+                            : identiferClassificationType;
+                    IClassificationType t = list_of_formats.Where(f => f == null ? false : f.Classification == Options.Option.GetString("AntlrPunctuation")).FirstOrDefault();
+                    Microsoft.VisualStudio.Text.Formatting.TextFormattingRunProperties identifierProperties = classificationFormatMap
+                        .GetExplicitTextProperties(t);
+                    classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
+                    _to_classifiertype[i] = classificationType;
                 }
                 {
+                    int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationOperator;
                     int key = (int)SymbolKind.Object;
-                    string val = _grammar_description.Map[6];
-                    var t = service.GetClassificationType(val);
-                    _lsptype_to_classifiertype[key] = t;
-                    _to_classifiertype[6] = t;
+                    string val = _grammar_description.Map[i];
+                    IClassificationType identiferClassificationType = service.GetClassificationType(val);
+                    IClassificationType classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
+                            : identiferClassificationType;
+                    IClassificationType t = list_of_formats.Where(f => f == null ? false : f.Classification == Options.Option.GetString("AntlrOperator")).FirstOrDefault();
+                    Microsoft.VisualStudio.Text.Formatting.TextFormattingRunProperties identifierProperties = classificationFormatMap
+                        .GetExplicitTextProperties(t);
+                    classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
+                    _to_classifiertype[i] = classificationType;
                 }
                 initialized = true;
             }
-            catch (Exception)
+            catch (Exception eeks)
             {
                 //Logger.Log.Notify(exception.StackTrace);
             }

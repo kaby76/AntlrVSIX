@@ -308,7 +308,7 @@
             }
 
             List<DocumentSymbol> combined = new List<DocumentSymbol>();
-            foreach (KeyValuePair<Antlr4.Runtime.IToken, int> p in pd.ColorizedList)
+            foreach (KeyValuePair<TerminalNodeImpl, int> p in pd.Defs)
             {
                 if (p.Key == null)
                 {
@@ -318,8 +318,23 @@
                 combined.Add(
                     new DocumentSymbol()
                     {
-                        name = p.Key.Text,
-                        range = new Workspaces.Range(p.Key.StartIndex, p.Key.StopIndex),
+                        name = p.Key.GetText(),
+                        range = new Workspaces.Range(p.Key.Payload.StartIndex, p.Key.Payload.StopIndex),
+                        kind = p.Value
+                    });
+            }
+            foreach (KeyValuePair<TerminalNodeImpl, int> p in pd.Refs)
+            {
+                if (p.Key == null)
+                {
+                    continue;
+                }
+
+                combined.Add(
+                    new DocumentSymbol()
+                    {
+                        name = p.Key.GetText(),
+                        range = new Workspaces.Range(p.Key.Payload.StartIndex, p.Key.Payload.StopIndex),
                         kind = p.Value
                     });
             }

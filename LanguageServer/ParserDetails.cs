@@ -113,25 +113,27 @@
                     catch (Exception) { }
                     try
                     {
-                        if (i == 0 || i == 1)
+                        if (i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationNonterminalRef
+                            || i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationTerminalRef
+                            || i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationModeRef
+                            || i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationChannelRef
+                            )
                         {
-                            if (gd.Identify[i](gd, Attributes, t))
-                            {
-                                Refs.Add(t, i);
-                                PopupList.Add(t, i);
-                            }
+                            Refs.Add(t, i);
+                            PopupList.Add(t, i);
                         }
                     }
                     catch (Exception) { }
                     try
                     {
-                        if (i == 0 || i == 1)
+                        if (i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationNonterminalDef
+                            || i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationTerminalDef
+                            || i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationModeDef
+                            || i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationChannelDef
+                            )
                         {
-                            if (gd.IdentifyDefinition[i](gd, Attributes, t))
-                            {
-                                Defs.Add(t, i);
-                                PopupList.Add(t, i);
-                            }
+                            Defs.Add(t, i);
+                            PopupList.Add(t, i);
                         }
                     }
                     catch (Exception) { }
@@ -139,7 +141,7 @@
                 foreach (KeyValuePair<Antlr4.Runtime.IToken, int> p in Comments)
                 {
                     IToken t = p.Key;
-                    ColorizedList.Add(t, 2);
+                    ColorizedList.Add(t, (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationComment);
                 }
             }
             catch (Exception eeks) { }

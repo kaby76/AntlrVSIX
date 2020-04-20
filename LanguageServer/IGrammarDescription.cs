@@ -20,16 +20,11 @@
         Dictionary<IToken, int> ExtractComments(string code);
         bool CanNextRule { get; }
         string[] Map { get; }
-        Dictionary<string, int> InverseMap { get; }
-        List<System.Drawing.Color> MapColor { get; }
-        List<System.Drawing.Color> MapInvertedColor { get; }
         List<bool> CanFindAllRefs { get; }
         List<bool> CanRename { get; }
         List<bool> CanGotodef { get; }
         List<bool> CanGotovisitor { get; }
         bool CanReformat { get; }
-        List<Func<IGrammarDescription, Dictionary<IParseTree, IList<Symtab.CombinedScopeSymbol>>, IParseTree, bool>> Identify { get; }
-        List<Func<IGrammarDescription, Dictionary<IParseTree, IList<Symtab.CombinedScopeSymbol>>, IParseTree, bool>> IdentifyDefinition { get; }
         Func<IGrammarDescription, Dictionary<IParseTree, IList<Symtab.CombinedScopeSymbol>>, IParseTree, int> Classify { get; }
         bool IsFileType(string ffn);
         string FileExtension { get; }
