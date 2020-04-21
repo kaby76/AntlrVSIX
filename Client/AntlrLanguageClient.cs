@@ -19,6 +19,11 @@
     using System.Runtime.InteropServices;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.VisualStudio.PlatformUI;
+    using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.Text.Classification;
+    using Microsoft.VisualStudio.Text.Tagging;
+    using Color = System.Drawing.Color;
     using Task = System.Threading.Tasks.Task;
 
     [ContentType("Antlr")]
@@ -28,6 +33,9 @@
     [Guid(AntlrLanguageClient.PackageGuidString)]
     public class AntlrLanguageClient : AsyncPackage, ILanguageClient, ILanguageClientCustomMessage2
     {
+        [Import]
+        public IClassificationFormatMapService ClassificationFormatMapService = null;
+
         public static IVsEditorAdaptersFactoryService AdaptersFactory = null;
         public const string PackageGuidString = "49bf9144-398a-467c-9b87-ac26d1e62737";
         public static MemoryStream _log_from_server = new MemoryStream();

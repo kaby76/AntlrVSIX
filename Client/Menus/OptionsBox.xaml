@@ -120,34 +120,84 @@
                   Margin="10,10,10,10"
                   Grid.RowSpan="4"
                   MaxHeight="400">
-            <TextBox TextWrapping="Wrap" IsReadOnly="True"
-                     BorderThickness="0" Text="Nonterminal color."/>
-            <xctk:ColorPicker Name="nonterminal_color" DisplayColorAndName="True" >
-            </xctk:ColorPicker>
-            <TextBox TextWrapping="Wrap" IsReadOnly="True"
-                     BorderThickness="0" Text="Terminal color."/>
-            <xctk:ColorPicker Name="terminal_color" DisplayColorAndName="True" >
-            </xctk:ColorPicker>
-            <TextBox TextWrapping="Wrap" IsReadOnly="True"
-                     BorderThickness="0" Text="Comment color."/>
-            <xctk:ColorPicker Name="comment_color" DisplayColorAndName="True" >
-            </xctk:ColorPicker>
-            <TextBox TextWrapping="Wrap" IsReadOnly="True"
-                     BorderThickness="0" Text="Keyword color."/>
-            <xctk:ColorPicker Name="keyword_color" DisplayColorAndName="True" >
-            </xctk:ColorPicker>
-            <TextBox TextWrapping="Wrap" IsReadOnly="True"
-                     BorderThickness="0" Text="Literal color."/>
-            <xctk:ColorPicker Name="literal_color" DisplayColorAndName="True" >
-            </xctk:ColorPicker>
-            <TextBox TextWrapping="Wrap" IsReadOnly="True"
-                     BorderThickness="0" Text="Mode color."/>
-            <xctk:ColorPicker Name="mode_color" DisplayColorAndName="True" >
-            </xctk:ColorPicker>
-            <TextBox TextWrapping="Wrap" IsReadOnly="True"
-                     BorderThickness="0" Text="Channel color."/>
-            <xctk:ColorPicker Name="channel_color" DisplayColorAndName="True" >
-            </xctk:ColorPicker>
+
+            <StackPanel Orientation="Horizontal">
+                <TextBox TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Nonterminal Def"/>
+                <ComboBox Name="nonterminal_def_color" SelectionChanged="nonterminal_def_color_SelectionChanged" />
+                <xctk:ColorPicker Name="c1" DisplayColorAndName="True" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <TextBox TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Nonterminal Ref"/>
+                <ComboBox Name="nonterminal_ref_color" SelectionChanged="nonterminal_ref_color_SelectionChanged" />
+                <xctk:ColorPicker Name="c2" DisplayColorAndName="True" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <TextBox TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Terminal Def"/>
+                <ComboBox Name="terminal_def_color" SelectionChanged="terminal_def_color_SelectionChanged" />
+                <xctk:ColorPicker Name="c3" DisplayColorAndName="True" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <TextBox TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Terminal Ref"/>
+                <ComboBox Name="terminal_ref_color" SelectionChanged="terminal_ref_color_SelectionChanged" />
+                <xctk:ColorPicker Name="c4" DisplayColorAndName="True" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <TextBox TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Comment" />
+                <ComboBox Name="comment_color" SelectionChanged="comment_color_SelectionChanged" />
+                <xctk:ColorPicker Name="c5" DisplayColorAndName="True" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <TextBox TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Keyword color"/>
+                <ComboBox Name="keyword_color" SelectionChanged="keyword_color_SelectionChanged" />
+                <xctk:ColorPicker Name="c6" DisplayColorAndName="True" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <TextBox TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Literal color"/>
+                <ComboBox Name="literal_color" SelectionChanged="literal_color_SelectionChanged" />
+                <xctk:ColorPicker Name="c7" DisplayColorAndName="True" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <TextBox TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Mode Def"/>
+                <ComboBox Name="mode_def_color" SelectionChanged="mode_def_color_SelectionChanged" />
+                <xctk:ColorPicker Name="c8" DisplayColorAndName="True" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <TextBox TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Mode Ref"/>
+                <ComboBox Name="mode_ref_color" SelectionChanged="mode_ref_color_SelectionChanged" />
+                <xctk:ColorPicker Name="c9" DisplayColorAndName="True" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <TextBox TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Channel Def"/>
+                <ComboBox Name="channel_def_color" />
+                <xctk:ColorPicker Name="c10" DisplayColorAndName="True" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <TextBox TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Channel Ref"/>
+                <ComboBox Name="channel_ref_color" />
+                <xctk:ColorPicker Name="c11" DisplayColorAndName="True" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <TextBox TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Punctuation"/>
+                <ComboBox Name="punctuation_color" />
+                <xctk:ColorPicker Name="c12" DisplayColorAndName="True" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <TextBox TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Operator"/>
+                <ComboBox Name="operator_color" />
+                <xctk:ColorPicker Name="c13" DisplayColorAndName="True" />
+            </StackPanel>
         </ListView>
 
         <!-- Accept or Cancel -->
