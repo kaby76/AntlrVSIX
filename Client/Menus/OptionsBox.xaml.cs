@@ -54,86 +54,139 @@
             {
                 if (p == null) continue;
                 var name = p.Classification;
+                if (name.Contains("Antlr")) continue;
                 list_of_names.Add(name);
             }
 
             {
-                var c = Option.GetString("AntlrNonterminalDef");
+                var text = Option.GetString("AntlrNonterminalDef");
+                var color = GetColor(text);
                 foreach (var n in list_of_names) nonterminal_def_color.Items.Add(n);
-                nonterminal_def_color.SelectedValue = c;
-                c1.SelectedColor = GetColor(c);
+                nonterminal_def_color.SelectedValue = text;
+                var media_color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+                var brush = new SolidColorBrush();
+                brush.Color = media_color;
+                d1.Fill = brush;
             }
             {
-                var c = Option.GetString("AntlrNonterminalRef");
+                var text = Option.GetString("AntlrNonterminalRef");
+                nonterminal_ref_color.SelectedValue = text;
                 foreach (var n in list_of_names) nonterminal_ref_color.Items.Add(n);
-                nonterminal_ref_color.SelectedValue = c;
-                c2.SelectedColor = GetColor(c);
+                var color = GetColor(text);
+                var media_color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+                var brush = new SolidColorBrush();
+                brush.Color = media_color;
+                d2.Fill = brush;
             }
             {
-                var c = Option.GetString("AntlrTerminalDef");
+                var text = Option.GetString("AntlrTerminalDef");
+                terminal_def_color.SelectedValue = text;
                 foreach (var n in list_of_names) terminal_def_color.Items.Add(n);
-                terminal_def_color.SelectedValue = c;
-                c3.SelectedColor = GetColor(c);
+                var color = GetColor(text);
+                var media_color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+                var brush = new SolidColorBrush();
+                brush.Color = media_color;
+                d3.Fill = brush;
             }
             {
-                var c = Option.GetString("AntlrTerminalRef");
+                var text = Option.GetString("AntlrTerminalRef");
+                terminal_ref_color.SelectedValue = text;
                 foreach (var n in list_of_names) terminal_ref_color.Items.Add(n);
-                terminal_ref_color.SelectedValue = c;
-                c4.SelectedColor = GetColor(c);
+                var color = GetColor(text);
+                var media_color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+                var brush = new SolidColorBrush();
+                brush.Color = media_color;
+                d4.Fill = brush;
             }
             {
-                var c = Option.GetString("AntlrComment");
+                var text = Option.GetString("AntlrComment");
+                comment_color.SelectedValue = text;
                 foreach (var n in list_of_names) comment_color.Items.Add(n);
-                comment_color.SelectedValue = c;
-                c5.SelectedColor = GetColor(c);
+                var color = GetColor(text);
+                var media_color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+                var brush = new SolidColorBrush();
+                brush.Color = media_color;
+                d5.Fill = brush;
             }
             {
-                var c = Option.GetString("AntlrKeyword");
+                var text = Option.GetString("AntlrKeyword");
+                keyword_color.SelectedValue = text;
                 foreach (var n in list_of_names) keyword_color.Items.Add(n);
-                keyword_color.SelectedValue = c;
-                c6.SelectedColor = GetColor(c);
+                var color = GetColor(text);
+                var media_color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+                var brush = new SolidColorBrush();
+                brush.Color = media_color;
+                d6.Fill = brush;
             }
             {
-                var c = Option.GetString("AntlrLiteral");
+                var text = Option.GetString("AntlrLiteral");
+                literal_color.SelectedValue = text;
                 foreach (var n in list_of_names) literal_color.Items.Add(n);
-                literal_color.SelectedValue = c;
-                c7.SelectedColor = GetColor(c);
+                var color = GetColor(text);
+                var media_color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+                var brush = new SolidColorBrush();
+                brush.Color = media_color;
+                d7.Fill = brush;
             }
             {
-                var c = Option.GetString("AntlrModeDef");
+                var text = Option.GetString("AntlrModeDef");
+                mode_def_color.SelectedValue = text;
                 foreach (var n in list_of_names) mode_def_color.Items.Add(n);
-                mode_def_color.SelectedValue = c;
-                c8.SelectedColor = GetColor(c);
+                var color = GetColor(text);
+                var media_color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+                var brush = new SolidColorBrush();
+                brush.Color = media_color;
+                d8.Fill = brush;
             }
             {
-                var c = Option.GetString("AntlrModeRef");
+                var text = Option.GetString("AntlrModeRef");
+                mode_ref_color.SelectedValue = text;
                 foreach (var n in list_of_names) mode_ref_color.Items.Add(n);
-                mode_ref_color.SelectedValue = c;
-                c9.SelectedColor = GetColor(c);
+                var color = GetColor(text);
+                var media_color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+                var brush = new SolidColorBrush();
+                brush.Color = media_color;
+                d9.Fill = brush;
             }
             {
-                var c = Option.GetString("AntlrChannelDef");
+                var text = Option.GetString("AntlrChannelDef");
+                mode_ref_color.SelectedValue = text;
                 foreach (var n in list_of_names) channel_def_color.Items.Add(n);
-                mode_ref_color.SelectedValue = c;
-                c10.SelectedColor = GetColor(c);
+                var color = GetColor(text);
+                var media_color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+                var brush = new SolidColorBrush();
+                brush.Color = media_color;
+                d10.Fill = brush;
             }
             {
-                var c = Option.GetString("AntlrChannelRef");
+                var text = Option.GetString("AntlrChannelRef");
+                channel_ref_color.SelectedValue = text;
                 foreach (var n in list_of_names) channel_ref_color.Items.Add(n);
-                channel_ref_color.SelectedValue = c;
-                c11.SelectedColor = GetColor(c);
+                var color = GetColor(text);
+                var media_color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+                var brush = new SolidColorBrush();
+                brush.Color = media_color;
+                d11.Fill = brush;
             }
             {
-                var c = Option.GetString("AntlrPunctuation");
+                var text = Option.GetString("AntlrPunctuation");
+                punctuation_color.SelectedValue = text;
                 foreach (var n in list_of_names) punctuation_color.Items.Add(n);
-                punctuation_color.SelectedValue = c;
-                c12.SelectedColor = GetColor(c);
+                var color = GetColor(text);
+                var media_color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+                var brush = new SolidColorBrush();
+                brush.Color = media_color;
+                d12.Fill = brush;
             }
             {
-                var c = Option.GetString("AntlrOperator");
+                var text = Option.GetString("AntlrOperator");
+                operator_color.SelectedValue = text;
                 foreach (var n in list_of_names) operator_color.Items.Add(n);
-                operator_color.SelectedValue = c;
-                c13.SelectedColor = GetColor(c);
+                var color = GetColor(text);
+                var media_color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+                var brush = new SolidColorBrush();
+                brush.Color = media_color;
+                d13.Fill = brush;
             }
         }
 
@@ -201,91 +254,130 @@
         {
             string text = (sender as ComboBox).SelectedItem as string;
             var color = GetColor(text);
-            c1.SelectedColor = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
-        }
+            var media_color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            var brush = new SolidColorBrush();
+            brush.Color = media_color;
+            d1.Fill = brush;
+     }
 
         private void nonterminal_ref_color_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string text = (sender as ComboBox).SelectedItem as string;
             var color = GetColor(text);
-            c2.SelectedColor = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            var media_color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            var brush = new SolidColorBrush();
+            brush.Color = media_color;
+            d2.Fill = brush;
         }
 
         private void terminal_def_color_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string text = (sender as ComboBox).SelectedItem as string;
             var color = GetColor(text);
-            c3.SelectedColor = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            var media_color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            var brush = new SolidColorBrush();
+            brush.Color = media_color;
+            d3.Fill = brush;
         }
 
         private void terminal_ref_color_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string text = (sender as ComboBox).SelectedItem as string;
             var color = GetColor(text);
-            c4.SelectedColor = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            var media_color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            var brush = new SolidColorBrush();
+            brush.Color = media_color;
+            d4.Fill = brush;
         }
 
         private void comment_color_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string text = (sender as ComboBox).SelectedItem as string;
             var color = GetColor(text);
-            c5.SelectedColor = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            var media_color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            var brush = new SolidColorBrush();
+            brush.Color = media_color;
+            d5.Fill = brush;
         }
 
         private void keyword_color_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string text = (sender as ComboBox).SelectedItem as string;
             var color = GetColor(text);
-            c6.SelectedColor = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            var media_color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            var brush = new SolidColorBrush();
+            brush.Color = media_color;
+            d6.Fill = brush;
         }
 
         private void literal_color_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string text = (sender as ComboBox).SelectedItem as string;
             var color = GetColor(text);
-            c7.SelectedColor = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            var media_color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            var brush = new SolidColorBrush();
+            brush.Color = media_color;
+            d7.Fill = brush;
         }
 
         private void mode_def_color_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string text = (sender as ComboBox).SelectedItem as string;
             var color = GetColor(text);
-            c8.SelectedColor = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            var media_color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            var brush = new SolidColorBrush();
+            brush.Color = media_color;
+            d8.Fill = brush;
         }
 
         private void mode_ref_color_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string text = (sender as ComboBox).SelectedItem as string;
             var color = GetColor(text);
-            c9.SelectedColor = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            var media_color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            var brush = new SolidColorBrush();
+            brush.Color = media_color;
+            d9.Fill = brush;
         }
 
         private void channel_def_color_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string text = (sender as ComboBox).SelectedItem as string;
             var color = GetColor(text);
-            c10.SelectedColor = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            var media_color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            var brush = new SolidColorBrush();
+            brush.Color = media_color;
+            d10.Fill = brush;
         }
 
         private void channel_ref_color_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string text = (sender as ComboBox).SelectedItem as string;
             var color = GetColor(text);
-            c11.SelectedColor = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            var media_color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            var brush = new SolidColorBrush();
+            brush.Color = media_color;
+            d11.Fill = brush;
         }
 
         private void punctuation_color_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string text = (sender as ComboBox).SelectedItem as string;
             var color = GetColor(text);
-            c12.SelectedColor = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            var media_color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            var brush = new SolidColorBrush();
+            brush.Color = media_color;
+            d12.Fill = brush;
         }
 
         private void operator_color_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string text = (sender as ComboBox).SelectedItem as string;
             var color = GetColor(text);
-            c13.SelectedColor = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            var media_color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+            var brush = new SolidColorBrush();
+            brush.Color = media_color;
+            d13.Fill = brush;
         }
     }
 }
