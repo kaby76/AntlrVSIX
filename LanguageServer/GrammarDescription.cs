@@ -493,6 +493,217 @@
                 }
                 return sb.ToString();
             },
+            (ParserDetails pd, IParseTree t) => // nonterminal
+            {
+                TerminalNodeImpl term = t as TerminalNodeImpl;
+                if (term == null)
+                {
+                    return null;
+                }
+                Antlr4.Runtime.Tree.IParseTree p = term;
+                string dir = System.IO.Path.GetDirectoryName(pd.Item.FullPath);
+                pd.Attributes.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
+                if (list_value == null)
+                {
+                    return null;
+                }
+                bool first = true;
+                StringBuilder sb = new StringBuilder();
+                foreach (CombinedScopeSymbol value in list_value)
+                {
+                    if (value == null)
+                    {
+                        continue;
+                    }
+                    ISymbol sym = value as ISymbol;
+                    if (sym == null)
+                    {
+                        continue;
+                    }
+                    List<ISymbol> list_of_syms = new List<ISymbol>() { sym };
+                    if (sym is RefSymbol)
+                    {
+                        list_of_syms = sym.resolve();
+                    }
+                    foreach (ISymbol s in list_of_syms)
+                    {
+                        if (! first)
+                        {
+                            sb.AppendLine();
+                        }
+                        first = false;
+                        if (s is TerminalSymbol)
+                        {
+                            sb.Append("Terminal ");
+                        }
+                        else if (s is NonterminalSymbol)
+                        {
+                            sb.Append("Nonterminal ");
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                        string def_file = s.file;
+                        if (def_file == null)
+                        {
+                            continue;
+                        }
+                        Workspaces.Document def_document = Workspaces.Workspace.Instance.FindDocument(def_file);
+                        if (def_document == null)
+                        {
+                            continue;
+                        }
+                        ParserDetails def_pd = ParserDetailsFactory.Create(def_document);
+                        if (def_pd == null)
+                        {
+                            continue;
+                        }
+                        IParseTree fod = def_pd.Attributes.Where(
+                                kvp =>
+                                {
+                                    IParseTree key = kvp.Key;
+                                    if (!(key is TerminalNodeImpl))
+                                        return false;
+                                    TerminalNodeImpl t1 = key as TerminalNodeImpl;
+                                    IToken s1 = t1.Symbol;
+                                    if (s1 == s.Token)
+                                        return true;
+                                    return false;
+                                })
+                            .Select(kvp => kvp.Key).FirstOrDefault();
+                        if (fod == null)
+                        {
+                            continue;
+                        }
+                        sb.Append("defined in ");
+                        sb.Append(s.file);
+                        sb.AppendLine();
+                        IParseTree node = fod;
+                        for (; node != null; node = node.Parent)
+                        {
+                            if (node is ANTLRv4Parser.LexerRuleSpecContext ||
+                                node is ANTLRv4Parser.ParserRuleSpecContext ||
+                                node is ANTLRv4Parser.TokensSpecContext)
+                            {
+                                break;
+                            }
+                        }
+                        if (node == null)
+                        {
+                            continue;
+                        }
+                        Reconstruct.Doit(sb, node);
+                    }
+                }
+                return sb.ToString();
+            },
+            (ParserDetails pd, IParseTree t) => // terminal
+            {
+                TerminalNodeImpl term = t as TerminalNodeImpl;
+                if (term == null)
+                {
+                    return null;
+                }
+                Antlr4.Runtime.Tree.IParseTree p = term;
+                string dir = System.IO.Path.GetDirectoryName(pd.Item.FullPath);
+                pd.Attributes.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
+                if (list_value == null)
+                {
+                    return null;
+                }
+                bool first = true;
+                StringBuilder sb = new StringBuilder();
+                foreach (CombinedScopeSymbol value in list_value)
+                {
+                    if (value == null)
+                    {
+                        continue;
+                    }
+                    ISymbol sym = value as ISymbol;
+                    if (sym == null)
+                    {
+                        continue;
+                    }
+                    List<ISymbol> list_of_syms = new List<ISymbol>() { sym };
+                    if (sym is RefSymbol)
+                    {
+                        list_of_syms = sym.resolve();
+                    }
+                    foreach (ISymbol s in list_of_syms)
+                    {
+                        if (! first)
+                        {
+                            sb.AppendLine();
+                        }
+                        first = false;
+                        if (s is TerminalSymbol)
+                        {
+                            sb.Append("Terminal ");
+                        }
+                        else if (s is NonterminalSymbol)
+                        {
+                            sb.Append("Nonterminal ");
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                        string def_file = s.file;
+                        if (def_file == null)
+                        {
+                            continue;
+                        }
+                        Workspaces.Document def_document = Workspaces.Workspace.Instance.FindDocument(def_file);
+                        if (def_document == null)
+                        {
+                            continue;
+                        }
+                        ParserDetails def_pd = ParserDetailsFactory.Create(def_document);
+                        if (def_pd == null)
+                        {
+                            continue;
+                        }
+                        IParseTree fod = def_pd.Attributes.Where(
+                                kvp =>
+                                {
+                                    IParseTree key = kvp.Key;
+                                    if (!(key is TerminalNodeImpl))
+                                        return false;
+                                    TerminalNodeImpl t1 = key as TerminalNodeImpl;
+                                    IToken s1 = t1.Symbol;
+                                    if (s1 == s.Token)
+                                        return true;
+                                    return false;
+                                })
+                            .Select(kvp => kvp.Key).FirstOrDefault();
+                        if (fod == null)
+                        {
+                            continue;
+                        }
+                        sb.Append("defined in ");
+                        sb.Append(s.file);
+                        sb.AppendLine();
+                        IParseTree node = fod;
+                        for (; node != null; node = node.Parent)
+                        {
+                            if (node is ANTLRv4Parser.LexerRuleSpecContext ||
+                                node is ANTLRv4Parser.ParserRuleSpecContext ||
+                                node is ANTLRv4Parser.TokensSpecContext)
+                            {
+                                break;
+                            }
+                        }
+                        if (node == null)
+                        {
+                            continue;
+                        }
+                        Reconstruct.Doit(sb, node);
+                    }
+                }
+
+                return sb.ToString();
+            },
             (ParserDetails pd, IParseTree t) => // terminal
             {
                 TerminalNodeImpl term = t as TerminalNodeImpl;
@@ -602,8 +813,12 @@
             null, // comment
             null, // keyword
             null, // literal
-            null,
-            null,
+            null, // Mode
+            null, // Mode
+            null, // Channel
+            null, // Channel
+            null, // Punctuation
+            null, // Operator
         };
 
 
