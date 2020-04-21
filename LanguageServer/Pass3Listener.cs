@@ -94,6 +94,23 @@
                     _pd.Attributes[context] = ref_list;
                     _pd.Attributes[context.GetChild(0)] = ref_list;
                 }
+                else if (lc.GetChild(0)?.GetChild(0)?.GetText() == "type")
+                {
+                    TerminalNodeImpl term = context.GetChild(0) as TerminalNodeImpl;
+                    string id = term.GetText();
+                    List<ISymbol> sym_list = _pd.RootScope.LookupType(id).ToList();
+                    if (!sym_list.Any())
+                    {
+                        ISymbol sym = new TerminalSymbol(id, null);
+                        _pd.RootScope.define(ref sym);
+                        sym_list = _pd.RootScope.LookupType(id).ToList();
+                    }
+                    List<CombinedScopeSymbol> ref_list = new List<CombinedScopeSymbol>();
+                    CombinedScopeSymbol s = new RefSymbol(term.Symbol, sym_list);
+                    ref_list.Add(s);
+                    _pd.Attributes[context] = ref_list;
+                    _pd.Attributes[context.GetChild(0)] = ref_list;
+                }
             }
         }
     }
