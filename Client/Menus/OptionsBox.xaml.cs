@@ -61,9 +61,9 @@
 
             {
                 var text = Option.GetString("AntlrNonterminalDef");
-                var color = GetColor(text);
-                foreach (var n in list_of_names) nonterminal_def_color.Items.Add(n);
                 nonterminal_def_color.SelectedValue = text;
+                foreach (var n in list_of_names) nonterminal_def_color.Items.Add(n);
+                var color = GetColor(text);
                 var media_color = System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
                 var brush = new SolidColorBrush();
                 brush.Color = media_color;
@@ -189,11 +189,6 @@
                 brush.Color = media_color;
                 d13.Fill = brush;
             }
-        }
-
-        private void ClrPcker_Background_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<System.Drawing.Color> e)
-        {
-            // "#" + ClrPcker_Background.SelectedColor.R.ToString() + ClrPcker_Background.SelectedColor.G.ToString() + ClrPcker_Background.SelectedColor.B.ToString();
         }
 
         private void btnDialogOk_Click(object sender, RoutedEventArgs e)

@@ -123,79 +123,79 @@
             <ListView MaxHeight="200">
                 <StackPanel Orientation="Horizontal">
                     <TextBox TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Nonterminal Def"/>
-                    <ComboBox Name="nonterminal_def_color" SelectionChanged="nonterminal_def_color_SelectionChanged" />
+                    <ComboBox Name="nonterminal_def_color" IsEditable="True" IsReadOnly="True" SelectionChanged="nonterminal_def_color_SelectionChanged" />
                     <Rectangle Name="d1" Width="40" Height="20" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
                     <TextBox TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Nonterminal Ref"/>
-                    <ComboBox Name="nonterminal_ref_color" SelectionChanged="nonterminal_ref_color_SelectionChanged" />
+                    <ComboBox Name="nonterminal_ref_color" IsEditable="True" IsReadOnly="True" SelectionChanged="nonterminal_ref_color_SelectionChanged" />
                     <Rectangle Name="d2" Width="40" Height="20" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
                     <TextBox TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Terminal Def"/>
-                    <ComboBox Name="terminal_def_color" SelectionChanged="terminal_def_color_SelectionChanged" />
+                    <ComboBox Name="terminal_def_color" IsEditable="True" IsReadOnly="True" SelectionChanged="terminal_def_color_SelectionChanged" />
                     <Rectangle Name="d3" Width="40" Height="20" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
                     <TextBox TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Terminal Ref"/>
-                    <ComboBox Name="terminal_ref_color" SelectionChanged="terminal_ref_color_SelectionChanged" />
+                    <ComboBox Name="terminal_ref_color" IsEditable="True" IsReadOnly="True" SelectionChanged="terminal_ref_color_SelectionChanged" />
                     <Rectangle Name="d4" Width="40" Height="20" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
                     <TextBox TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Comment" />
-                    <ComboBox Name="comment_color" SelectionChanged="comment_color_SelectionChanged" />
+                    <ComboBox Name="comment_color" IsEditable="True" IsReadOnly="True" SelectionChanged="comment_color_SelectionChanged" />
                     <Rectangle Name="d5" Width="40" Height="20" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
                     <TextBox TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Keyword color"/>
-                    <ComboBox Name="keyword_color" SelectionChanged="keyword_color_SelectionChanged" />
+                    <ComboBox Name="keyword_color" IsEditable="True" IsReadOnly="True" SelectionChanged="keyword_color_SelectionChanged" />
                     <Rectangle Name="d6" Width="40" Height="20" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
                     <TextBox TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Literal color"/>
-                    <ComboBox Name="literal_color" SelectionChanged="literal_color_SelectionChanged" />
+                    <ComboBox Name="literal_color" IsEditable="True" IsReadOnly="True" SelectionChanged="literal_color_SelectionChanged" />
                     <Rectangle Name="d7" Width="40" Height="20" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
                     <TextBox TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Mode Def"/>
-                    <ComboBox Name="mode_def_color" SelectionChanged="mode_def_color_SelectionChanged" />
+                    <ComboBox Name="mode_def_color" IsEditable="True" IsReadOnly="True" SelectionChanged="mode_def_color_SelectionChanged" />
                     <Rectangle Name="d8" Width="40" Height="20" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
                     <TextBox TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Mode Ref"/>
-                    <ComboBox Name="mode_ref_color" SelectionChanged="mode_ref_color_SelectionChanged" />
+                    <ComboBox Name="mode_ref_color" IsEditable="True" IsReadOnly="True" SelectionChanged="mode_ref_color_SelectionChanged" />
                     <Rectangle Name="d9" Width="40" Height="20" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
                     <TextBox TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Channel Def"/>
-                    <ComboBox Name="channel_def_color" />
+                    <ComboBox Name="channel_def_color" IsEditable="True" IsReadOnly="True" SelectionChanged="channel_def_color_SelectionChanged" />
                     <Rectangle Name="d10" Width="40" Height="20" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
                     <TextBox TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Channel Ref"/>
-                    <ComboBox Name="channel_ref_color" />
+                    <ComboBox Name="channel_ref_color" IsEditable="True" IsReadOnly="True" SelectionChanged="channel_ref_color_SelectionChanged" />
                     <Rectangle Name="d11" Width="40" Height="20" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
                     <TextBox TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Punctuation"/>
-                    <ComboBox Name="punctuation_color" />
+                    <ComboBox Name="punctuation_color" IsEditable="True" IsReadOnly="True" SelectionChanged="punctuation_color_SelectionChanged" />
                     <Rectangle Name="d12" Width="40" Height="20" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
                     <TextBox TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0" Text="Operator"/>
-                    <ComboBox Name="operator_color" />
+                    <ComboBox Name="operator_color" IsEditable="True" IsReadOnly="True" SelectionChanged="operator_color_SelectionChanged" />
                     <Rectangle Name="d13" Width="40" Height="20" />
                 </StackPanel>
             </ListView>
