@@ -57,6 +57,7 @@
                 if (name.Contains("Antlr")) continue;
                 list_of_names.Add(name);
             }
+            list_of_names.Sort();
 
             {
                 var text = Option.GetString("AntlrNonterminalDef");
