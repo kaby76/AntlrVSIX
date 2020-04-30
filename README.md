@@ -87,9 +87,10 @@ VS, then reopen. Do not do "rebuild", only "build".
 grammar e.g., warning/removal of LHS predicates in lexer, replacing factored grammar rules with Kleene star rules (which
 result in faster parsers).
 
-## Planned for v7.0 (2-May-2020):
+## Planned for v7.0 (3-May-2020):
 
 * Elimination of left recursion.
+* Conversion of left or right recursion to Kleene form for *big* improvement in parsing speed!
 * Expand tagging of all parts of grammar file. Client can
 colorize it or not, but it will have all
 identified.
