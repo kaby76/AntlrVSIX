@@ -815,7 +815,17 @@
                     System.Console.Error.WriteLine(string.Join(" ", symbols.Select(s =>
                     {
                         SymbolInformation v = (SymbolInformation)s;
-                        return "<" + v.Name + "," + v.Kind + ">";
+                        return "<" + v.Name + "," + v.Kind
+                            + ",[" + LanguageServer.Module.GetIndex(
+                                v.Location.Range.Start.Line,
+                                v.Location.Range.Start.Character,
+                                document)
+                            + ".."
+                            + LanguageServer.Module.GetIndex(
+                                v.Location.Range.End.Line,
+                                v.Location.Range.End.Character,
+                                document)
+                            + "]>";
                     })));
                 }
                 result = symbols.ToArray();
@@ -1367,7 +1377,7 @@
                 }
                 s = Transform.EliminateIndirectLeftRecursion(pos, document);
             }
-            catch (Exception)
+            catch (Exception eeks)
             { }
             return s;
         }
