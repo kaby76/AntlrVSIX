@@ -1504,23 +1504,73 @@
 
         private static bool HasDirectLeftRecursion(IParseTree rule)
         {
-            if (rule is ANTLRv4Parser.ParserRuleSpecContext)
+            if (!(rule is ANTLRv4Parser.ParserRuleSpecContext))
+                return false;
+            var r = rule as ANTLRv4Parser.ParserRuleSpecContext;
+            var lhs = r.RULE_REF();
+            var rb = r.ruleBlock();
+            if (rb == null) return false;
+            var ral = rb.ruleAltList();
+            foreach (var la in ral.labeledAlt())
             {
-                var r = rule as ANTLRv4Parser.ParserRuleSpecContext;
-                var lhs = r.RULE_REF();
-                var rb = r.ruleBlock();
-
-                TerminalNodeImpl f = (rb as ANTLRv4Parser.RuleBlockContext)?
-                    .ruleAltList()?
-                    .labeledAlt()?
-                    .First()?
+                TerminalNodeImpl t1 = la
                     .alternative()?
                     .element()?
-                    .First()?
+                    .FirstOrDefault()?
                     .atom()?
                     .ruleref()?
                     .GetChild(0) as TerminalNodeImpl;
-                if (f != null && f.GetText() == lhs.GetText())
+                if (t1 != null && t1.GetText() == lhs.GetText())
+                {
+                    return true;
+                }
+                TerminalNodeImpl t2 = la
+                    .alternative()?
+                    .element()?
+                    .FirstOrDefault()?
+                    .labeledElement()?
+                    .atom()?
+                    .ruleref()?
+                    .GetChild(0) as TerminalNodeImpl;
+                if (t2 != null && t2.GetText() == lhs.GetText())
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static bool HasDirectRightRecursion(IParseTree rule)
+        {
+            if (!(rule is ANTLRv4Parser.ParserRuleSpecContext))
+                return false;
+            var r = rule as ANTLRv4Parser.ParserRuleSpecContext;
+            var lhs = r.RULE_REF();
+            var rb = r.ruleBlock();
+            if (rb == null) return false;
+            var ral = rb.ruleAltList();
+            foreach (var la in ral.labeledAlt())
+            {
+                TerminalNodeImpl t1 = la
+                    .alternative()?
+                    .element()?
+                    .LastOrDefault()?
+                    .atom()?
+                    .ruleref()?
+                    .GetChild(0) as TerminalNodeImpl;
+                if (t1 != null && t1.GetText() == lhs.GetText())
+                {
+                    return true;
+                }
+                TerminalNodeImpl t2 = la
+                    .alternative()?
+                    .element()?
+                    .LastOrDefault()?
+                    .labeledElement()?
+                    .atom()?
+                    .ruleref()?
+                    .GetChild(0) as TerminalNodeImpl;
+                if (t2 != null && t2.GetText() == lhs.GetText())
                 {
                     return true;
                 }
@@ -1731,6 +1781,195 @@
             // Now have "A' : alpha1 A' | alpha2 A' | ... ;"
 
             return ((IParseTree)new_a_rule, (IParseTree)new_ap_rule);
+        }
+
+        private static IParseTree ReplaceWithKleeneRules(bool has_direct_left_recursion, bool has_direct_right_recursion, IParseTree rule)
+        {
+            // Convert A -> A beta1 | A beta2 | ... | alpha1 | alpha2 | ... ;
+            // into A ->  (alpha1 | alpha2 | ... ) (beta1 | beta2 | ...)*
+
+            ANTLRv4Parser.ParserRuleSpecContext new_a_rule = new ANTLRv4Parser.ParserRuleSpecContext(null, 0);
+            {
+                var r = rule as ANTLRv4Parser.ParserRuleSpecContext;
+                var lhs = r.RULE_REF()?.GetText();
+                {
+                    CopyTreeRecursive(r.RULE_REF(), new_a_rule);
+                }
+                // Now have "A"
+                {
+                    var token_type2 = r.COLON().Symbol.Type;
+                    var token2 = new CommonToken(token_type2) { Line = 0, Column = 0, Text = ":" };
+                    var new_colon = new TerminalNodeImpl(token2);
+                    new_a_rule.AddChild(new_colon);
+                    new_colon.Parent = new_a_rule;
+                }
+                // Now have "A :"
+                ANTLRv4Parser.RuleAltListContext rule_alt_list = new ANTLRv4Parser.RuleAltListContext(null, 0);
+                ANTLRv4Parser.AltListContext altlist1 = new ANTLRv4Parser.AltListContext(null, 0);
+                ANTLRv4Parser.AltListContext altlist2 = new ANTLRv4Parser.AltListContext(null, 0);
+                {
+                    ANTLRv4Parser.RuleBlockContext new_rule_block_context = new ANTLRv4Parser.RuleBlockContext(new_a_rule, 0);
+                    new_a_rule.AddChild(new_rule_block_context);
+                    new_rule_block_context.Parent = new_a_rule;
+                    new_rule_block_context.AddChild(rule_alt_list);
+                    rule_alt_list.Parent = new_rule_block_context;
+                    ANTLRv4Parser.LabeledAltContext l_alt = new ANTLRv4Parser.LabeledAltContext(null, 0);
+                    rule_alt_list.AddChild(l_alt);
+                    l_alt.Parent = rule_alt_list;
+                    ANTLRv4Parser.AlternativeContext new_alt = new ANTLRv4Parser.AlternativeContext(null, 0);
+                    l_alt.AddChild(new_alt);
+                    new_alt.Parent = l_alt;
+                    {
+                        var new_element = new ANTLRv4Parser.ElementContext(null, 0);
+                        new_alt.AddChild(new_element);
+                        new_element.Parent = new_alt;
+                        var new_ebnf = new ANTLRv4Parser.EbnfContext(null, 0);
+                        new_element.AddChild(new_ebnf);
+                        new_ebnf.Parent = new_element;
+                        var new_block = new ANTLRv4Parser.BlockContext(null, 0);
+                        new_ebnf.AddChild(new_block);
+                        new_block.Parent = new_ebnf;
+                        var lparen_token_type = ANTLRv4Lexer.LPAREN;
+                        var lparen_token = new CommonToken(lparen_token_type) { Line = 0, Column = 0, Text = "(" };
+                        var new_lparen = new TerminalNodeImpl(lparen_token);
+                        new_block.AddChild(new_lparen);
+                        new_lparen.Parent = new_block;
+                        new_block.AddChild(altlist1);
+                        altlist1.Parent = new_block;
+                        var rparen_token_type = ANTLRv4Lexer.RPAREN;
+                        var rparen_token = new CommonToken(rparen_token_type) { Line = 0, Column = 0, Text = ")" };
+                        var new_rparen = new TerminalNodeImpl(rparen_token);
+                        new_block.AddChild(new_rparen);
+                        new_rparen.Parent = new_block;
+                    }
+                    {
+                        var new_element = new ANTLRv4Parser.ElementContext(null, 0);
+                        new_alt.AddChild(new_element);
+                        new_element.Parent = new_alt;
+                        var new_ebnf = new ANTLRv4Parser.EbnfContext(null, 0);
+                        new_element.AddChild(new_ebnf);
+                        new_ebnf.Parent = new_element;
+                        var new_block = new ANTLRv4Parser.BlockContext(null, 0);
+                        new_ebnf.AddChild(new_block);
+                        new_block.Parent = new_ebnf;
+                        var new_blocksuffix = new ANTLRv4Parser.BlockSuffixContext(null, 0);
+                        new_ebnf.AddChild(new_blocksuffix);
+                        new_blocksuffix.Parent = new_ebnf;
+                        var new_ebnfsuffix = new ANTLRv4Parser.EbnfSuffixContext(null, 0);
+                        new_blocksuffix.AddChild(new_ebnfsuffix);
+                        new_ebnfsuffix.Parent = new_blocksuffix;
+                        var star_token_type = ANTLRv4Lexer.STAR;
+                        var star_token = new CommonToken(star_token_type) { Line = 0, Column = 0, Text = "*" };
+                        var new_star = new TerminalNodeImpl(star_token);
+                        new_ebnfsuffix.AddChild(new_star);
+                        new_star.Parent = new_ebnfsuffix;
+                        var lparen_token_type = ANTLRv4Lexer.LPAREN;
+                        var lparen_token = new CommonToken(lparen_token_type) { Line = 0, Column = 0, Text = "(" };
+                        var new_lparen = new TerminalNodeImpl(lparen_token);
+                        new_block.AddChild(new_lparen);
+                        new_lparen.Parent = new_block;
+                        new_block.AddChild(altlist2);
+                        altlist2.Parent = new_block;
+                        var rparen_token_type = ANTLRv4Lexer.RPAREN;
+                        var rparen_token = new CommonToken(rparen_token_type) { Line = 0, Column = 0, Text = ")" };
+                        var new_rparen = new TerminalNodeImpl(rparen_token);
+                        new_block.AddChild(new_rparen);
+                        new_rparen.Parent = new_block;
+                    }
+                }
+                {
+                    var token_type3 = r.SEMI().Symbol.Type;
+                    var token3 = new CommonToken(token_type3) { Line = 0, Column = 0, Text = ";" };
+                    var new_semi = new TerminalNodeImpl(token3);
+                    new_a_rule.AddChild(new_semi);
+                    new_semi.Parent = new_a_rule;
+                }
+                {
+                    CopyTreeRecursive(r.exceptionGroup(), new_a_rule);
+                }
+                // Now have "A : <ruleBlock
+                //                  <ruleAltList
+                //                     <labeledAlt
+                //                        <alternative
+                //                           <element
+                //                              <ebnf
+                //                                 <block
+                //                                    '('
+                //                                       <altList1>
+                //                                    ')'
+                //                           >  >  >
+                //                           <element
+                //                              <ebnf
+                //                                 <block
+                //                                    '('
+                //                                       <altList2>
+                //                                    ')'
+                //                                 >
+                //                                 <blockSuffix
+                //                                    <ebnfSuffix
+                //                                       STAR
+                //               >  >  >  >  >  >  >  >  ;  <eg>"
+                if (has_direct_left_recursion && ! has_direct_right_recursion)
+                {
+                    bool first1 = true;
+                    bool first2 = true;
+                    foreach (ANTLRv4Parser.AlternativeContext alt in EnumeratorOfAlts(rule))
+                    {
+                        ANTLRv4Parser.AtomContext atom = EnumeratorOfRHS(alt)?.FirstOrDefault();
+                        if (lhs == atom?.GetText())
+                        {
+                            if (!first1)
+                            {
+                                var token_type4 = ANTLRv4Lexer.OR;
+                                var token4 = new CommonToken(token_type4) { Line = 0, Column = 0, Text = "|" };
+                                var new_or = new TerminalNodeImpl(token4);
+                                altlist2.AddChild(new_or);
+                                new_or.Parent = altlist2;
+                            }
+                            first1 = false;
+                            ANTLRv4Parser.LabeledAltContext l_alt = new ANTLRv4Parser.LabeledAltContext(null, 0);
+                            altlist2.AddChild(l_alt);
+                            l_alt.Parent = altlist2;
+                            ANTLRv4Parser.AlternativeContext new_alt = new ANTLRv4Parser.AlternativeContext(null, 0);
+                            l_alt.AddChild(new_alt);
+                            new_alt.Parent = l_alt;
+                            bool firsta = true;
+                            foreach (var element in alt.element())
+                            {
+                                if (firsta)
+                                {
+                                    firsta = false;
+                                    continue;
+                                }
+                                CopyTreeRecursive(element, new_alt);
+                            }
+                        }
+                        else
+                        {
+                            if (!first2)
+                            {
+                                var token_type4 = ANTLRv4Lexer.OR;
+                                var token4 = new CommonToken(token_type4) { Line = 0, Column = 0, Text = "|" };
+                                var new_or = new TerminalNodeImpl(token4);
+                                altlist1.AddChild(new_or);
+                                new_or.Parent = altlist1;
+                            }
+                            first2 = false;
+                            ANTLRv4Parser.LabeledAltContext l_alt = new ANTLRv4Parser.LabeledAltContext(null, 0);
+                            altlist1.AddChild(l_alt);
+                            l_alt.Parent = altlist1;
+                            ANTLRv4Parser.AlternativeContext new_alt = new ANTLRv4Parser.AlternativeContext(null, 0);
+                            l_alt.AddChild(new_alt);
+                            new_alt.Parent = l_alt;
+                            foreach (var element in alt.element())
+                            {
+                                CopyTreeRecursive(element, new_alt);
+                            }
+                        }
+                    }
+                }
+            }
+            return (IParseTree)new_a_rule;
         }
 
         private static string ComputeReplacementRules(string new_symbol_name, IParseTree rule)
@@ -1946,6 +2185,121 @@
             if (new_code != pd_parser.Code)
             {
                 result.Add(document.FullPath, new_code);
+            }
+
+            return result;
+        }
+
+        public static Dictionary<string, string> ConvertRecursionToKleeneOperator(int index, Document document)
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+
+            // Check if initial file is a grammar.
+            AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
+            ExtractGrammarType egt = new ExtractGrammarType();
+            ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
+            bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
+                || egt.Type == ExtractGrammarType.GrammarType.Combined
+                || egt.Type == ExtractGrammarType.GrammarType.Lexer;
+            if (!is_grammar)
+            {
+                return result;
+            }
+
+            // Find all other grammars by walking dependencies (import, vocab, file names).
+            HashSet<string> read_files = new HashSet<string>
+            {
+                document.FullPath
+            };
+            Dictionary<Workspaces.Document, List<TerminalNodeImpl>> every_damn_literal =
+                new Dictionary<Workspaces.Document, List<TerminalNodeImpl>>();
+            for (; ; )
+            {
+                int before_count = read_files.Count;
+                foreach (string f in read_files)
+                {
+                    List<string> additional = AntlrGrammarDetails._dependent_grammars.Where(
+                        t => t.Value.Contains(f)).Select(
+                        t => t.Key).ToList();
+                    read_files = read_files.Union(additional).ToHashSet();
+                }
+                foreach (string f in read_files)
+                {
+                    IEnumerable<List<string>> additional = AntlrGrammarDetails._dependent_grammars.Where(
+                        t => t.Key == f).Select(
+                        t => t.Value);
+                    foreach (List<string> t in additional)
+                    {
+                        read_files = read_files.Union(t).ToHashSet();
+                    }
+                }
+                int after_count = read_files.Count;
+                if (after_count == before_count)
+                {
+                    break;
+                }
+            }
+
+            // Assume cursor positioned at the rule that contains left recursion.
+            // Find rule.
+            IParseTree rule = null;
+            IParseTree it = pd_parser.AllNodes.Where(n =>
+            {
+                if (!(n is ANTLRv4Parser.ParserRuleSpecContext || n is ANTLRv4Parser.LexerRuleSpecContext))
+                    return false;
+                Interval source_interval = n.SourceInterval;
+                int a = source_interval.a;
+                int b = source_interval.b;
+                IToken ta = pd_parser.TokStream.Get(a);
+                IToken tb = pd_parser.TokStream.Get(b);
+                var start = ta.StartIndex;
+                var stop = tb.StopIndex + 1;
+                return start <= index && index < stop;
+            }).FirstOrDefault();
+            if (it == null)
+            {
+                return result;
+            }
+            rule = it;
+
+            // We are now at the rule that the user identified to eliminate direct
+            // left recursion.
+            // Check if the rule has direct left recursion.
+
+            bool has_direct_left_recursion = HasDirectLeftRecursion(rule);
+            bool has_direct_right_recursion = HasDirectRightRecursion(rule);
+            if (!(has_direct_left_recursion || has_direct_right_recursion))
+            {
+                return result;
+            }
+
+            // Has direct recursion.
+            rule = ReplaceWithKleeneRules(has_direct_left_recursion, has_direct_right_recursion, rule);
+            {
+                // Now edit the file and return.
+                StringBuilder sb = new StringBuilder();
+                int pre = 0;
+                Reconstruct(sb, pd_parser.TokStream, pd_parser.ParseTree, ref pre,
+                    x =>
+                    {
+                        if (x is ANTLRv4Parser.ParserRuleSpecContext)
+                        {
+                            var y = x as ANTLRv4Parser.ParserRuleSpecContext;
+                            var name = y.RULE_REF()?.GetText();
+                            if (name == Lhs(rule).GetText())
+                            {
+                                StringBuilder sb2 = new StringBuilder();
+                                Output(sb2, pd_parser.TokStream, rule);
+                                return sb2.ToString();
+                            }
+                        }
+                        return null;
+                    });
+                var new_code = sb.ToString();
+                if (new_code != pd_parser.Code)
+                {
+                    result.Add(document.FullPath, new_code);
+                }
             }
 
             return result;

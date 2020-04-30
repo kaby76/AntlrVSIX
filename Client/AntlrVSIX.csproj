@@ -50,6 +50,7 @@
       <DependentUpon>AboutBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Menus\AddLexerRulesForStringLiterals.cs" />
+    <Compile Include="Menus\ConvertRecursionToKleeneOperator.cs" />
     <Compile Include="Menus\EliminateAntlrKeywordsInRules.cs" />
     <Compile Include="Menus\EliminateDirectLeftRecursion.cs" />
     <Compile Include="Menus\EliminateIndirectLeftRecursion.cs" />

@@ -69,6 +69,7 @@
             AddLexerRulesForStringLiterals.Initialize(this);
             RenameCommand.Initialize(this);
             SortModes.Initialize(this);
+            ConvertRecursionToKleeneOperator.Initialize(this);
         }
 
         public event AsyncEventHandler<EventArgs> StartAsync;
@@ -420,6 +421,28 @@
                 p.TextDocument = uri;
                 p.Pos = pos;
                 Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMEliminateIndirectLeftRecursion", p).Result;
+                return result;
+            }
+            catch (Exception)
+            {
+            }
+            return null;
+        }
+        
+        public Dictionary<string, string> CMConvertRecursionToKleeneOperator(string ffn, int pos)
+        {
+            try
+            {
+                if (_rpc == null)
+                {
+                    return null;
+                }
+
+                CMEliminateDirectLeftRecursionParams p = new CMEliminateDirectLeftRecursionParams();
+                Uri uri = new Uri(ffn);
+                p.TextDocument = uri;
+                p.Pos = pos;
+                Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMConvertRecursionToKleeneOperator", p).Result;
                 return result;
             }
             catch (Exception)

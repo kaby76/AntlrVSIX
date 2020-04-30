@@ -1336,6 +1336,30 @@
             return changes;
         }
 
+        [JsonRpcMethod("CMConvertRecursionToKleeneOperator")]
+        public async System.Threading.Tasks.Task<Dictionary<string, string>> CMConvertRecursionToKleeneOperator(JToken arg)
+        {
+            Dictionary<string, string> s = null;
+            try
+            {
+                CMEliminateDirectLeftRecursionParams request = arg.ToObject<CMEliminateDirectLeftRecursionParams>();
+                Document document = CheckDoc(request.TextDocument);
+                int pos = request.Pos;
+                if (trace)
+                {
+                    System.Console.Error.WriteLine("<-- CMConvertRecursionToKleeneOperator");
+                    System.Console.Error.WriteLine(arg.ToString());
+                    (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
+                    System.Console.Error.WriteLine("");
+                }
+                s = Transform.ConvertRecursionToKleeneOperator(pos, document);
+            }
+            catch (Exception)
+            { }
+            return s;
+        }
+
+
         [JsonRpcMethod("CMEliminateDirectLeftRecursion")]
         public async System.Threading.Tasks.Task<Dictionary<string, string>> CMEliminateDirectLeftRecursion(JToken arg)
         {

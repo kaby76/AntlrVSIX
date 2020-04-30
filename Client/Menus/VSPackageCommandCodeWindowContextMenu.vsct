@@ -124,6 +124,13 @@
           </Strings>
         </Button>
 
+        <Button guid="guidMenuAndCommandsCmdSet" id="ConvertRecursionToKleeneOperator" priority="0x100" type="Button">
+          <Parent guid="guidMenuAndCommandsCmdSet" id="TransformMenuGroup"/>
+          <Strings>
+            <ButtonText>Convert recursion to Kleene operator</ButtonText>
+          </Strings>
+        </Button>
+
         <Button guid="guidMenuAndCommandsCmdSet" id="EliminateAntlrKeywordsInRulesCmd" priority="0x100" type="Button">
           <Parent guid="guidMenuAndCommandsCmdSet" id="TransformMenuGroup"/>
           <Strings>
@@ -251,6 +258,7 @@
       <IDSymbol name="AddLexerRulesForStringLiteralsCmd" value="0x7022" />
       <IDSymbol name="SortModesCmd" value="0x7023" />
       <IDSymbol name="EliminateIndirectLeftRecursionCmd" value="0x7024" />
+      <IDSymbol name="ConvertRecursionToKleeneOperator" value="0x7025" />
     </GuidSymbol>
   </Symbols>
 </CommandTable>
