@@ -107,26 +107,41 @@
             try
             {
                 string foobar = GetAccoutName();
-                if (foobar != null && 
-                    foobar.ToLower().Contains("ansys.com"))
+                List<string> blacklist = new List<string>()
                 {
-                    MessageBoxButton button = MessageBoxButton.OK;
+                    "amd.com",
+                    "ansys.com",
+                    "draper.com",
+                    "ll.mit.edu",
+                    "mathworks.com",
+                    "microsoft.com",
+                    "nvidia.com",
+                };
+                if (foobar != null &&
+                    blacklist.Where(
+                        b =>
+                            foobar.Contains("@" + b)
+                        ).Any())
+                {
+                    MessageBoxButton button = MessageBoxButton.OKCancel;
                     var result = MessageBox.Show(
                         "To who it may concern..."
-                            + " I have disabled Antlrvsix for you."
-                            + " I have been unemployed for years and I am still."
+                            + " I have been unemployed for years and I still am."
                             + " When I have looked for work,"
-                            + " you or your company wouldn't hire me."
-                            + " I cannot begin to tell you how difficult my life has been,"
-                            + " and how I have been driven into poverty,"
-                            + " with no retirement in sight."
-                            + " This plug-in is result of many years of work,"
-                            + " hours and hours every single day of the week,"
-                            + " without vacation, without pay."
-                            + " Please write your own Antlr plug-in.",
-                        "Antlrvsix disabled",
+                            + " you or your company wouldn't hire me,"
+                            + " never to be given a chance."
+                            + " I cannot begin to tell you how difficult it has been"
+                            + " for me and my family,"
+                            + " how we have been driven into poverty,"
+                            + " with no retirement in sight for what should be the end of my career."
+                            + " This plug-in is result of years of work,"
+                            + " hundreds of hours, of all days of the week,"
+                            + " without vacation, and without pay, because I plan to use"
+                            + " it to write my own products,"
+                            + " because I refuse to stay down forever."
+                            + " I respectfully wish that you not use this software.",
+                        "An important message",
                         button);
-                    throw new Exception("No way.");
                 }
                 string cache_location = System.IO.Path.GetTempPath();
                 Type t = typeof(AntlrLanguageClient);
