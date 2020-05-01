@@ -5,7 +5,12 @@ using System.Linq;
 
 namespace Algorithms
 {
-    // Rough translation of http://www.logarithmic.net/pfh-files/blog/01208083168/sort.py
+    // Rough translation of the DFS algorithm in Cormen and
+    // pseudo coded in section "Depth-first search"
+    // https://en.wikipedia.org/wiki/Topological_sorting#Depth-first_search
+    // Here, I premark all back edges first given the work set,
+    // then perform the sort. The number of nodes in the order must be all nodes
+    // in the graph.
 
     enum Mark
     {
@@ -55,6 +60,8 @@ namespace Algorithms
                     dfs(v);
                 }
             }
+            if (l.Count != _graph.Vertices.Count())
+                throw new Exception("Topological sort failed, not all vertices in the sort.");
             return l;
         }
 
