@@ -1785,8 +1785,13 @@
 
         private static IParseTree ReplaceWithKleeneRules(bool has_direct_left_recursion, bool has_direct_right_recursion, IParseTree rule)
         {
+            // Left recursion:
             // Convert A -> A beta1 | A beta2 | ... | alpha1 | alpha2 | ... ;
             // into A ->  (alpha1 | alpha2 | ... ) (beta1 | beta2 | ...)*
+            //
+            // Right recursion:
+            // Convert A -> beta1 A | beta2 A | ... | alpha1 | alpha2 | ... ;
+            // into A ->   (beta1 | beta2 | ...)* (alpha1 | alpha2 | ... )
 
             ANTLRv4Parser.ParserRuleSpecContext new_a_rule = new ANTLRv4Parser.ParserRuleSpecContext(null, 0);
             {
@@ -1819,13 +1824,26 @@
                     ANTLRv4Parser.AlternativeContext new_alt = new ANTLRv4Parser.AlternativeContext(null, 0);
                     l_alt.AddChild(new_alt);
                     new_alt.Parent = l_alt;
+                    var element1 = new ANTLRv4Parser.ElementContext(null, 0);
+                    var element2 = new ANTLRv4Parser.ElementContext(null, 0);
+                    if (has_direct_left_recursion && !has_direct_right_recursion)
                     {
-                        var new_element = new ANTLRv4Parser.ElementContext(null, 0);
-                        new_alt.AddChild(new_element);
-                        new_element.Parent = new_alt;
+                        new_alt.AddChild(element1);
+                        element1.Parent = new_alt;
+                        new_alt.AddChild(element2);
+                        element2.Parent = new_alt;
+                    }
+                    else
+                    {
+                        new_alt.AddChild(element2);
+                        element2.Parent = new_alt;
+                        new_alt.AddChild(element1);
+                        element1.Parent = new_alt;
+                    }
+                    {
                         var new_ebnf = new ANTLRv4Parser.EbnfContext(null, 0);
-                        new_element.AddChild(new_ebnf);
-                        new_ebnf.Parent = new_element;
+                        element1.AddChild(new_ebnf);
+                        new_ebnf.Parent = element1;
                         var new_block = new ANTLRv4Parser.BlockContext(null, 0);
                         new_ebnf.AddChild(new_block);
                         new_block.Parent = new_ebnf;
@@ -1843,12 +1861,9 @@
                         new_rparen.Parent = new_block;
                     }
                     {
-                        var new_element = new ANTLRv4Parser.ElementContext(null, 0);
-                        new_alt.AddChild(new_element);
-                        new_element.Parent = new_alt;
                         var new_ebnf = new ANTLRv4Parser.EbnfContext(null, 0);
-                        new_element.AddChild(new_ebnf);
-                        new_ebnf.Parent = new_element;
+                        element2.AddChild(new_ebnf);
+                        new_ebnf.Parent = element2;
                         var new_block = new ANTLRv4Parser.BlockContext(null, 0);
                         new_ebnf.AddChild(new_block);
                         new_block.Parent = new_ebnf;
@@ -1909,13 +1924,16 @@
                 //                                    <ebnfSuffix
                 //                                       STAR
                 //               >  >  >  >  >  >  >  >  ;  <eg>"
-                if (has_direct_left_recursion && ! has_direct_right_recursion)
                 {
                     bool first1 = true;
                     bool first2 = true;
                     foreach (ANTLRv4Parser.AlternativeContext alt in EnumeratorOfAlts(rule))
                     {
-                        ANTLRv4Parser.AtomContext atom = EnumeratorOfRHS(alt)?.FirstOrDefault();
+                        ANTLRv4Parser.AtomContext atom = null;
+                        if (has_direct_left_recursion && !has_direct_right_recursion)
+                            atom = EnumeratorOfRHS(alt)?.FirstOrDefault();
+                        else
+                            atom = EnumeratorOfRHS(alt)?.LastOrDefault();
                         if (lhs == atom?.GetText())
                         {
                             if (!first1)
@@ -1933,14 +1951,12 @@
                             ANTLRv4Parser.AlternativeContext new_alt = new ANTLRv4Parser.AlternativeContext(null, 0);
                             l_alt.AddChild(new_alt);
                             new_alt.Parent = l_alt;
-                            bool firsta = true;
-                            foreach (var element in alt.element())
+                            ANTLRv4Parser.ElementContext[] elements = alt.element();
+                            var i = (has_direct_left_recursion && !has_direct_right_recursion) ? 1 : 0;
+                            var j = (has_direct_left_recursion && !has_direct_right_recursion) ? elements.Length : elements.Length - 1;
+                            for (; i < j; ++i)
                             {
-                                if (firsta)
-                                {
-                                    firsta = false;
-                                    continue;
-                                }
+                                var element = elements[i];
                                 CopyTreeRecursive(element, new_alt);
                             }
                         }
