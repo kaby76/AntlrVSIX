@@ -112,12 +112,18 @@
                 {
                     MessageBoxButton button = MessageBoxButton.OK;
                     var result = MessageBox.Show(
-                        "I have been unemployed for years,"
-                            + " driven into poverty."
+                        "To who it may concern..."
+                            + " I have disabled Antlrvsix for you."
+                            + " I have been unemployed for years and I am still."
                             + " When I have looked for work,"
-                            + " your company wouldn't hire me."
-                            + " So, go ... yourself."
-                            + " Write your own Antlr plug-in.",
+                            + " you or your company wouldn't hire me."
+                            + " I cannot begin to tell you how difficult my life has been,"
+                            + " and how I have been driven into poverty,"
+                            + " with no retirement in sight."
+                            + " This plug-in is result of many years of work,"
+                            + " hours and hours every single day of the week,"
+                            + " without vacation, without pay."
+                            + " Please write your own Antlr plug-in.",
                         "Antlrvsix disabled",
                         button);
                     throw new Exception("No way.");
