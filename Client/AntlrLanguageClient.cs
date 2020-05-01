@@ -16,6 +16,7 @@
     using System.ComponentModel.Composition;
     using System.Diagnostics;
     using System.IO;
+    using System.Linq;
     using System.Runtime.InteropServices;
     using System.Threading;
     using System.Threading.Tasks;
@@ -25,6 +26,8 @@
     using Microsoft.VisualStudio.Text.Tagging;
     using Color = System.Drawing.Color;
     using Task = System.Threading.Tasks.Task;
+    using System.Security.Principal;
+    using System.Windows;
 
     [ContentType("Antlr")]
     [Export(typeof(ILanguageClient))]
@@ -83,11 +86,42 @@
         public object InitializationOptions => null;
         public object MiddleLayer => null;
         public string Name => "Antlr language extension";
+
+
+        public static string GetAccoutName()
+        {
+            var wi = WindowsIdentity.GetCurrent();
+            var groups = from g in wi.Groups
+                         select new SecurityIdentifier(g.Value)
+                         .Translate(typeof(NTAccount)).Value;
+            var msAccount = (from g in groups
+                             where g.StartsWith(@"MicrosoftAccount\")
+                             select g).FirstOrDefault();
+            return msAccount == null ? wi.Name :
+                  msAccount.Substring(@"MicrosoftAccount\".Length);
+        }
+
         public async Task<Connection> ActivateAsync(CancellationToken token)
         {
             await Task.Yield();
             try
             {
+                string foobar = GetAccoutName();
+                if (foobar != null && 
+                    foobar.ToLower().Contains("ansys.com"))
+                {
+                    MessageBoxButton button = MessageBoxButton.OK;
+                    var result = MessageBox.Show(
+                        "I have been unemployed for years,"
+                            + " driven into poverty."
+                            + " When I have looked for work,"
+                            + " your company wouldn't hire me."
+                            + " So, go ... yourself."
+                            + " Write your own Antlr plug-in.",
+                        "Antlrvsix disabled",
+                        button);
+                    throw new Exception("No way.");
+                }
                 string cache_location = System.IO.Path.GetTempPath();
                 Type t = typeof(AntlrLanguageClient);
                 System.Reflection.Assembly a = t.Assembly;
