@@ -2288,6 +2288,10 @@
             {
                 return result;
             }
+            else if (has_direct_left_recursion && has_direct_right_recursion)
+            {
+                return result;
+            }
 
             // Has direct recursion.
             rule = ReplaceWithKleeneRules(has_direct_left_recursion, has_direct_right_recursion, rule);
