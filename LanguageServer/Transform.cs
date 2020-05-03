@@ -2309,6 +2309,9 @@
                             if (name == Lhs(rule).GetText())
                             {
                                 StringBuilder sb2 = new StringBuilder();
+
+                                TreeOutput.OutputTree(rule, pd_parser.TokStream);
+
                                 Output(sb2, pd_parser.TokStream, rule);
                                 return sb2.ToString();
                             }
@@ -2450,12 +2453,44 @@
                     }
                 }
             }
-            var sort = new TopologicalSort<string, DirectedEdge<string>>(graph, starts);
-            List<string> ordered = sort.ToList();
-            if (ordered.Count != parser_lhs_rules.Count)
+
+            // We are only going to eliminate the indirect recursion of what is being pointed to.
+            // Check rule and graph.
+            // Assume cursor positioned at the rule that participates in indirect left recursion.
+            // Find rule.
+            IParseTree rule = null;
+            IParseTree it = pd_parser.AllNodes.Where(n =>
+            {
+                if (!(n is ANTLRv4Parser.ParserRuleSpecContext || n is ANTLRv4Parser.LexerRuleSpecContext))
+                    return false;
+                Interval source_interval = n.SourceInterval;
+                int a = source_interval.a;
+                int b = source_interval.b;
+                IToken ta = pd_parser.TokStream.Get(a);
+                IToken tb = pd_parser.TokStream.Get(b);
+                var start = ta.StartIndex;
+                var stop = tb.StopIndex + 1;
+                return start <= index && index < stop;
+            }).FirstOrDefault();
+            if (it == null)
             {
                 return result;
             }
+            rule = it;
+            var k = (ANTLRv4Parser.ParserRuleSpecContext)rule;
+            var tarjan = new TarjanSCC<string, DirectedEdge<string>>(graph);
+            List<string> ordered = new List<string>();
+            var sccs = tarjan.Compute();
+            var scc = sccs[k.RULE_REF().ToString()];
+            foreach (var v in scc)
+            {
+                ordered.Add(v);
+            }
+
+            // We are now at the rule that the user identified to eliminate indirect
+            // left recursion.
+            // Check if the rule participates in indirect left recursion.
+
             Dictionary<string, IParseTree> rules = new Dictionary<string, IParseTree>();
             foreach (string s in ordered)
             {
@@ -2466,11 +2501,11 @@
             for (int i = 0; i < ordered.Count; ++i)
             {
                 var ai = ordered[i];
-				var ai_tree = rules[ai];
-				ANTLRv4Parser.ParserRuleSpecContext new_a_rule = new ANTLRv4Parser.ParserRuleSpecContext(null, 0);
-				var r = ai_tree as ANTLRv4Parser.ParserRuleSpecContext;
-				var lhs = r.RULE_REF()?.GetText();
-				CopyTreeRecursive(r.RULE_REF(), new_a_rule);
+                var ai_tree = rules[ai];
+                ANTLRv4Parser.ParserRuleSpecContext new_a_rule = new ANTLRv4Parser.ParserRuleSpecContext(null, 0);
+                var r = ai_tree as ANTLRv4Parser.ParserRuleSpecContext;
+                var lhs = r.RULE_REF()?.GetText();
+                CopyTreeRecursive(r.RULE_REF(), new_a_rule);
                 // Now have "A"
                 {
                     var token_type2 = r.COLON().Symbol.Type;
