@@ -125,21 +125,21 @@
                 {
                     MessageBoxButton button = MessageBoxButton.OKCancel;
                     var result = MessageBox.Show(
-                        "To who it may concern..."
-                            + " I have been unemployed for years and I still am."
-                            + " When I have looked for work,"
-                            + " you or your company wouldn't hire me,"
-                            + " never to be given a chance."
-                            + " I cannot begin to tell you how difficult it has been"
-                            + " for me and my family,"
-                            + " how we have been driven into poverty,"
-                            + " with no retirement in sight for what should be the end of my career."
-                            + " This plug-in is result of years of work,"
-                            + " hundreds of hours, of all days of the week,"
-                            + " without vacation, and without pay, because I plan to use"
+                            "I am the developer of Antlrvsix,"
+                            + "and I have been unemployed for many years."
+                            + " This extension is result of"
+                            + " hundreds of hours of work, all hours of the day, all days of the week,"
+                            + " without vacation and without pay."
+                            + " I wrote this software because I plan to use"
                             + " it to write my own products,"
                             + " because I refuse to stay down forever."
-                            + " I respectfully wish that you not use this software.",
+                            + " I tell you this because I have identified that your login domain"
+                            + " is for a company which"
+                            + " has decided to not hire me, and never bothered to"
+                            + " show the respect of even sending me a rejection letter."
+                            + " I respectfully ask that not use Antlrvsix."
+                            + " There are many other good extensions for Antlr."
+                            + " Please use one of those.",
                         "An important message",
                         button);
                 }
