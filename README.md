@@ -87,16 +87,13 @@ VS, then reopen. Do not do "rebuild", only "build".
 grammar e.g., warning/removal of LHS predicates in lexer, replacing factored grammar rules with Kleene star rules (which
 result in faster parsers).
 
-## Planned for v7.0 (sometime in week of 3-May-2020 to 10-May-2020):
+## Release notes for v7.0 (4-May-2020):
 
-* Elimination of left recursion.
-* Conversion of left or right recursion to Kleene form.
-* Expand tagging of all parts of grammar file. Client can
-colorize it or not, but it will have all
-identified.
-* Change color selection through Visual Studio
-theme. Options will now allow user to select
-how it maps to code windows in the editor.
+* Added transforms for the elimination of left recursion.
+* Added transform to convert left or right recursion to Kleene form.
+* Expand tagging of all parts of grammar file.
+* Changed colorizing text to use Visual Studio
+character classes, with a mapping from Antlr classes to VS classes in the options box.
 
 ## Release notes for v6.0.1 (13-Apr-2020):
 
