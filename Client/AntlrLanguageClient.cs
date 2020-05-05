@@ -117,7 +117,7 @@
                     "microsoft.com",
                     "nvidia.com",
                 };
-                if (foobar != null &&
+                if (false && foobar != null &&
                     blacklist.Where(
                         b =>
                             foobar.Contains("@" + b)
