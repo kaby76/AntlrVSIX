@@ -49,6 +49,7 @@
 
         public AntlrLanguageClient()
         {
+            Logger.Log.CleanUpLogFile();
             Instance = this;
             IComponentModel componentModel = Package.GetGlobalService(typeof(SComponentModel)) as IComponentModel;
             AdaptersFactory = componentModel.GetService<IVsEditorAdaptersFactoryService>();

@@ -8,6 +8,32 @@
     public class Log
     {
         static string home = System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile);
+        private static ReaderWriterLockSlim cacheLock = new ReaderWriterLockSlim();
+        private static bool done = false;
+
+        // Call only from client.
+        public static void CleanUpLogFile()
+        {
+            if (done) return;
+            done = true;
+            var log = home
+               + System.IO.Path.DirectorySeparatorChar
+               + ".antlrlog";
+            cacheLock.EnterWriteLock();
+            try
+            {
+                File.Delete(log);
+                using (StreamWriter w = File.AppendText(log))
+                {
+                    w.WriteLine("Logging for Antlrvsix started "
+                        + DateTime.Now.ToString());
+                }
+            }
+            finally
+            {
+                cacheLock.ExitWriteLock();
+            }
+        }
 
         public static void WriteData(string message)
         {
@@ -27,8 +53,6 @@
                 cacheLock.ExitWriteLock();
             }
         }
-
-        private static ReaderWriterLockSlim cacheLock = new ReaderWriterLockSlim();
 
         public static void Notify(string message)
         {
