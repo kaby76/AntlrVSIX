@@ -137,8 +137,9 @@
                     return new Connection(eout, ein);
                 }
             }
-            catch (Exception)
+            catch (Exception eeks)
             {
+                Logger.Log.Notify(eeks.ToString());
             }
 
             return null;
