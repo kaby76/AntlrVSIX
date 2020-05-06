@@ -73,6 +73,7 @@
             RenameCommand.Initialize(this);
             SortModes.Initialize(this);
             ConvertRecursionToKleeneOperator.Initialize(this);
+            Fold.Initialize(this);
         }
 
         public event AsyncEventHandler<EventArgs> StartAsync;
@@ -509,6 +510,28 @@
                 Uri uri = new Uri(ffn);
                 var p = uri;
                 Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMSortModes", p).Result;
+                return result;
+            }
+            catch (Exception)
+            {
+            }
+            return null;
+        }
+
+        public Dictionary<string, string> CMFold(string ffn, int pos)
+        {
+            try
+            {
+                if (_rpc == null)
+                {
+                    return null;
+                }
+
+                CMEliminateDirectLeftRecursionParams p = new CMEliminateDirectLeftRecursionParams();
+                Uri uri = new Uri(ffn);
+                p.TextDocument = uri;
+                p.Pos = pos;
+                Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMFold", ffn, pos).Result;
                 return result;
             }
             catch (Exception)

@@ -54,6 +54,7 @@
     <Compile Include="Menus\EliminateAntlrKeywordsInRules.cs" />
     <Compile Include="Menus\EliminateDirectLeftRecursion.cs" />
     <Compile Include="Menus\EliminateIndirectLeftRecursion.cs" />
+    <Compile Include="Menus\Fold.cs" />
     <Compile Include="Menus\ImportBox.xaml.cs">
       <DependentUpon>ImportBox.xaml</DependentUpon>
     </Compile>
