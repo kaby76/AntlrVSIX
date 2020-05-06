@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="AntlrVSIX.Ken Domino.ace904b7-00bd-4b97-afd3-fd0818eddc46" Version="7.1" Language="en-US" Publisher="Ken Domino" />
+        <Identity Id="AntlrVSIX.Ken Domino.ace904b7-00bd-4b97-afd3-fd0818eddc46" Version="7.2" Language="en-US" Publisher="Ken Domino" />
         <DisplayName>AntlrVSIX</DisplayName>
         <Description xml:space="preserve">VS IDE extension for Antlr4 using Language Server Protocol.</Description>
         <MoreInfo>https://github.com/kaby76/AntlrVSIX</MoreInfo>

@@ -39,7 +39,7 @@
             {"AntlrPunctuation", "field name" },
             {"AntlrOperator", "field name" },
         };
-        private static readonly string home = System.Environment.GetEnvironmentVariable("HOMEPATH");
+        private static readonly string home = System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile);
         private static bool initialized = false;
         private static readonly string s = System.Environment.GetEnvironmentVariable("CORPUS_LOCATION");
         public static bool GetBoolean(string option)
