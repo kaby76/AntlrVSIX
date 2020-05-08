@@ -8,14 +8,14 @@
     using System.Collections.Generic;
     using System.ComponentModel.Design;
 
-    internal class Fold
+    internal class Unfold
     {
         private readonly AntlrLanguageClient _package;
         private readonly MenuCommand _menu_item1;
         private string current_grammar_ffn;
 
 
-        private Fold(AntlrLanguageClient package)
+        private Unfold(AntlrLanguageClient package)
         {
             _package = package ?? throw new ArgumentNullException("package");
             OleMenuCommandService commandService = ((IServiceProvider)ServiceProvider).GetService(
@@ -58,13 +58,13 @@
             }
         }
 
-        public static Fold Instance { get; private set; }
+        public static Unfold Instance { get; private set; }
 
         private AntlrLanguageClient ServiceProvider => _package;
 
         public static void Initialize(AntlrLanguageClient package)
         {
-            Instance = new Fold(package);
+            Instance = new Unfold(package);
         }
 
         private void MenuItemCallbackSplit(object sender, EventArgs e)
@@ -82,7 +82,7 @@
             try
             {
                 ////////////////////////
-                /// Fold
+                /// Unfold (substitute RHS of a rule into uses of the LHS symbol).
                 ////////////////////////
 
                 IVsTextManager manager = ((IServiceProvider)ServiceProvider).GetService(typeof(VsTextManagerClass)) as IVsTextManager;
@@ -125,7 +125,7 @@
                 {
                     return;
                 }
-                Dictionary<string, string> changes = alc.CMFold(ffn, pos);
+                Dictionary<string, string> changes = alc.CMUnfold(ffn, pos);
                 MakeChanges.EnterIncrementalChanges(ServiceProvider, changes, buffer);
             }
             catch (Exception exception)

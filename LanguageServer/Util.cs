@@ -7,7 +7,7 @@
     public class Util
     {
 
-        public static IParseTree Find(int index, Document document)
+        public static TerminalNodeImpl Find(int index, Document document)
         {
             ParserDetails pd = ParserDetailsFactory.Create(document);
             if (pd.ParseTree == null)

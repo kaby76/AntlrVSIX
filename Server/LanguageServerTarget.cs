@@ -1471,8 +1471,8 @@
             { }
             return s;
         }
-        [JsonRpcMethod("CMFold")]
-        public async System.Threading.Tasks.Task<Dictionary<string, string>> CMFold(JToken arg1, JToken arg2)
+        [JsonRpcMethod("CMUnfold")]
+        public async System.Threading.Tasks.Task<Dictionary<string, string>> CMUnfold(JToken arg1, JToken arg2)
         {
             Dictionary<string, string> s = null;
             try
@@ -1488,7 +1488,7 @@
                     (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
                     System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
                 }
-                s = Transform.Fold(pos, document);
+                s = Transform.Unfold(pos, document);
             }
             catch (Exception eeks)
             { }

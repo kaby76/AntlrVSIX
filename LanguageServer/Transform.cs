@@ -12,6 +12,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Security.Principal;
     using System.Text;
     using System.Windows.Forms;
     using Document = Workspaces.Document;
@@ -586,19 +587,29 @@
             }
         }
 
+
         public static void Reconstruct(StringBuilder sb, CommonTokenStream stream, IParseTree tree, ref int previous, Func<IParseTree, string> replace)
         {
             if (tree as TerminalNodeImpl != null)
             {
                 TerminalNodeImpl tok = tree as TerminalNodeImpl;
-                var start = tok.Payload.StartIndex;
-                var stop = tok.Payload.StopIndex + 1;
-                ICharStream charstream = tok.Payload.InputStream;
-                if (previous < start)
+                var payload = tok.Payload;
+                if (payload.Line < 0)
                 {
-                    Interval previous_interval = new Interval(previous, start - 1);
-                    string inter = charstream.GetText(previous_interval);
-                    sb.Append(inter);
+                    sb.Append(" ");
+                }
+                else
+                {
+                    var start = payload.StartIndex;
+                    var stop = payload.StopIndex + 1;
+                    ICharStream charstream = payload.InputStream;
+                    if (previous < start)
+                    {
+                        Interval previous_interval = new Interval(previous, start - 1);
+                        string inter = charstream.GetText(previous_interval);
+                        sb.Append(inter);
+                    }
+                    previous = stop;
                 }
                 if (tok.Symbol.Type == TokenConstants.EOF)
                     return;
@@ -607,7 +618,6 @@
                     sb.Append(new_s);
                 else
                     sb.Append(tok.GetText());
-                previous = stop;
             }
             else
             {
@@ -659,44 +669,6 @@
                     Output(sb, stream, c);
                 }
             }
-        }
-
-        public static bool Replace(IParseTree tree, Func<IParseTree, IParseTree> replace)
-        {
-            var replacement = replace(tree);
-            if (replacement != null)
-            {
-                IParseTree parent = tree.Parent;
-                var c = parent as ParserRuleContext;
-                for (int i = 0; i < c.ChildCount; ++i)
-                {
-                    var child = c.children[i];
-                    if (child == tree)
-                    {
-                        c.children[i] = replacement;
-                        break;
-                    }
-                }
-                return true; // done.
-            }
-            if (tree as TerminalNodeImpl != null)
-            {
-                TerminalNodeImpl tok = tree as TerminalNodeImpl;
-                if (tok.Symbol.Type == TokenConstants.EOF)
-                    return true;
-                else
-                    return false;
-            }
-            else
-            {
-                for (int i = 0; i < tree.ChildCount; ++i)
-                {
-                    var c = tree.GetChild(i);
-                    if (Replace(c, replace))
-                        return true;
-                }
-            }
-            return false;
         }
 
         public static Dictionary<string, string> ReplaceLiterals(int index, Document document)
@@ -1624,12 +1596,12 @@
                 var r = rule as ANTLRv4Parser.ParserRuleSpecContext;
                 var lhs = r.RULE_REF()?.GetText();
                 {
-                    CopyTreeRecursive(r.RULE_REF(), new_a_rule);
+                    TreeEdits.CopyTreeRecursive(r.RULE_REF(), new_a_rule);
                 }
                 // Now have "A"
                 {
                     var token_type2 = r.COLON().Symbol.Type;
-                    var token2 = new CommonToken(token_type2) { Line = 0, Column = 0, Text = ":" };
+                    var token2 = new CommonToken(token_type2) { Line = -1, Column = -1, Text = ":" };
                     var new_colon = new TerminalNodeImpl(token2);
                     new_a_rule.AddChild(new_colon);
                     new_colon.Parent = new_a_rule;
@@ -1646,14 +1618,14 @@
                 // Now have "A : <rb <ral> >"
                 {
                     var token_type3 = r.SEMI().Symbol.Type;
-                    var token3 = new CommonToken(token_type3) { Line = 0, Column = 0, Text = ";" };
+                    var token3 = new CommonToken(token_type3) { Line = -1, Column = -1, Text = ";" };
                     var new_semi = new TerminalNodeImpl(token3);
                     new_a_rule.AddChild(new_semi);
                     new_semi.Parent = new_a_rule;
                 }
                 // Now have "A : <rb <ral> > ;"
                 {
-                    CopyTreeRecursive(r.exceptionGroup(), new_a_rule);
+                    TreeEdits.CopyTreeRecursive(r.exceptionGroup(), new_a_rule);
                 }
                 // Now have "A : <rb <ral> > ; <eg>"
                 bool first = true;
@@ -1669,7 +1641,7 @@
                         if (!first)
                         {
                             var token_type4 = ANTLRv4Lexer.OR;
-                            var token4 = new CommonToken(token_type4) { Line = 0, Column = 0, Text = "|" };
+                            var token4 = new CommonToken(token_type4) { Line = -1, Column = -1, Text = "|" };
                             var new_or = new TerminalNodeImpl(token4);
                             rule_alt_list.AddChild(new_or);
                             new_or.Parent = rule_alt_list;
@@ -1685,10 +1657,10 @@
                     new_alt.Parent = l_alt;
                     foreach (var element in alt.element())
                     {
-                        CopyTreeRecursive(element, new_alt);
+                        TreeEdits.CopyTreeRecursive(element, new_alt);
                     }
                     var token_type = ANTLRv4Lexer.RULE_REF;
-                    var token = new CommonToken(token_type) { Line = 0, Column = 0, Text = new_symbol_name };
+                    var token = new CommonToken(token_type) { Line = -1, Column = -1, Text = new_symbol_name };
                     var new_rule_ref = new TerminalNodeImpl(token);
                     var new_ruleref = new ANTLRv4Parser.RulerefContext(null, 0);
                     new_ruleref.AddChild(new_rule_ref);
@@ -1711,7 +1683,7 @@
                 var lhs = r.RULE_REF()?.GetText();
                 {
                     var token_type = r.RULE_REF().Symbol.Type;
-                    var token = new CommonToken(token_type) { Line = 0, Column = 0, Text = new_symbol_name };
+                    var token = new CommonToken(token_type) { Line = -1, Column = -1, Text = new_symbol_name };
                     var new_rule_ref = new TerminalNodeImpl(token);
                     new_ap_rule.AddChild(new_rule_ref);
                     new_rule_ref.Parent = new_ap_rule;
@@ -1719,7 +1691,7 @@
                 // Now have "A'"
                 {
                     var token_type2 = r.COLON().Symbol.Type;
-                    var token2 = new CommonToken(token_type2) { Line = 0, Column = 0, Text = ":" };
+                    var token2 = new CommonToken(token_type2) { Line = -1, Column = -1, Text = ":" };
                     var new_colon = new TerminalNodeImpl(token2);
                     new_ap_rule.AddChild(new_colon);
                     new_colon.Parent = new_ap_rule;
@@ -1736,14 +1708,14 @@
                 // Now have "A' : <rb <ral> >"
                 {
                     var token_type3 = r.SEMI().Symbol.Type;
-                    var token3 = new CommonToken(token_type3) { Line = 0, Column = 0, Text = ";" };
+                    var token3 = new CommonToken(token_type3) { Line = -1, Column = -1, Text = ";" };
                     var new_semi = new TerminalNodeImpl(token3);
                     new_ap_rule.AddChild(new_semi);
                     new_semi.Parent = new_ap_rule;
                 }
                 // Now have "A : <rb <ral> > ;"
                 {
-                    CopyTreeRecursive(r.exceptionGroup(), new_a_rule);
+                    TreeEdits.CopyTreeRecursive(r.exceptionGroup(), new_a_rule);
                 }
                 // Now have "A' : <rb <ral> > ; <eg>"
                 bool first = true;
@@ -1759,7 +1731,7 @@
                         if (!first)
                         {
                             var token_type4 = ANTLRv4Lexer.OR;
-                            var token4 = new CommonToken(token_type4) { Line = 0, Column = 0, Text = "|" };
+                            var token4 = new CommonToken(token_type4) { Line = -1, Column = -1, Text = "|" };
                             var new_or = new TerminalNodeImpl(token4);
                             rule_alt_list.AddChild(new_or);
                             new_or.Parent = rule_alt_list;
@@ -1781,10 +1753,10 @@
                             first2 = false;
                             continue;
                         }
-                        CopyTreeRecursive(element, new_alt);
+                        TreeEdits.CopyTreeRecursive(element, new_alt);
                     }
                     var token_type = r.RULE_REF().Symbol.Type;
-                    var token = new CommonToken(token_type) { Line = 0, Column = 0, Text = new_symbol_name };
+                    var token = new CommonToken(token_type) { Line = -1, Column = -1, Text = new_symbol_name };
                     var new_rule_ref = new TerminalNodeImpl(token);
                     var new_ruleref = new ANTLRv4Parser.RulerefContext(null, 0);
                     new_ruleref.AddChild(new_rule_ref);
@@ -1802,7 +1774,7 @@
                     if (!first)
                     {
                         var token_type4 = ANTLRv4Lexer.OR;
-                        var token4 = new CommonToken(token_type4) { Line = 0, Column = 0, Text = "|" };
+                        var token4 = new CommonToken(token_type4) { Line = -1, Column = -1, Text = "|" };
                         var new_or = new TerminalNodeImpl(token4);
                         rule_alt_list.AddChild(new_or);
                         new_or.Parent = rule_alt_list;
@@ -1837,12 +1809,12 @@
                 var r = rule as ANTLRv4Parser.ParserRuleSpecContext;
                 var lhs = r.RULE_REF()?.GetText();
                 {
-                    CopyTreeRecursive(r.RULE_REF(), new_a_rule);
+                    TreeEdits.CopyTreeRecursive(r.RULE_REF(), new_a_rule);
                 }
                 // Now have "A"
                 {
                     var token_type2 = r.COLON().Symbol.Type;
-                    var token2 = new CommonToken(token_type2) { Line = 0, Column = 0, Text = ":" };
+                    var token2 = new CommonToken(token_type2) { Line = -1, Column = -1, Text = ":" };
                     var new_colon = new TerminalNodeImpl(token2);
                     new_a_rule.AddChild(new_colon);
                     new_colon.Parent = new_a_rule;
@@ -1887,14 +1859,14 @@
                         new_ebnf.AddChild(new_block);
                         new_block.Parent = new_ebnf;
                         var lparen_token_type = ANTLRv4Lexer.LPAREN;
-                        var lparen_token = new CommonToken(lparen_token_type) { Line = 0, Column = 0, Text = "(" };
+                        var lparen_token = new CommonToken(lparen_token_type) { Line = -1, Column = -1, Text = "(" };
                         var new_lparen = new TerminalNodeImpl(lparen_token);
                         new_block.AddChild(new_lparen);
                         new_lparen.Parent = new_block;
                         new_block.AddChild(altlist1);
                         altlist1.Parent = new_block;
                         var rparen_token_type = ANTLRv4Lexer.RPAREN;
-                        var rparen_token = new CommonToken(rparen_token_type) { Line = 0, Column = 0, Text = ")" };
+                        var rparen_token = new CommonToken(rparen_token_type) { Line = -1, Column = -1, Text = ")" };
                         var new_rparen = new TerminalNodeImpl(rparen_token);
                         new_block.AddChild(new_rparen);
                         new_rparen.Parent = new_block;
@@ -1913,19 +1885,19 @@
                         new_blocksuffix.AddChild(new_ebnfsuffix);
                         new_ebnfsuffix.Parent = new_blocksuffix;
                         var star_token_type = ANTLRv4Lexer.STAR;
-                        var star_token = new CommonToken(star_token_type) { Line = 0, Column = 0, Text = "*" };
+                        var star_token = new CommonToken(star_token_type) { Line = -1, Column = -1, Text = "*" };
                         var new_star = new TerminalNodeImpl(star_token);
                         new_ebnfsuffix.AddChild(new_star);
                         new_star.Parent = new_ebnfsuffix;
                         var lparen_token_type = ANTLRv4Lexer.LPAREN;
-                        var lparen_token = new CommonToken(lparen_token_type) { Line = 0, Column = 0, Text = "(" };
+                        var lparen_token = new CommonToken(lparen_token_type) { Line = -1, Column = -1, Text = "(" };
                         var new_lparen = new TerminalNodeImpl(lparen_token);
                         new_block.AddChild(new_lparen);
                         new_lparen.Parent = new_block;
                         new_block.AddChild(altlist2);
                         altlist2.Parent = new_block;
                         var rparen_token_type = ANTLRv4Lexer.RPAREN;
-                        var rparen_token = new CommonToken(rparen_token_type) { Line = 0, Column = 0, Text = ")" };
+                        var rparen_token = new CommonToken(rparen_token_type) { Line = -1, Column = -1, Text = ")" };
                         var new_rparen = new TerminalNodeImpl(rparen_token);
                         new_block.AddChild(new_rparen);
                         new_rparen.Parent = new_block;
@@ -1933,13 +1905,13 @@
                 }
                 {
                     var token_type3 = r.SEMI().Symbol.Type;
-                    var token3 = new CommonToken(token_type3) { Line = 0, Column = 0, Text = ";" };
+                    var token3 = new CommonToken(token_type3) { Line = -1, Column = -1, Text = ";" };
                     var new_semi = new TerminalNodeImpl(token3);
                     new_a_rule.AddChild(new_semi);
                     new_semi.Parent = new_a_rule;
                 }
                 {
-                    CopyTreeRecursive(r.exceptionGroup(), new_a_rule);
+                    TreeEdits.CopyTreeRecursive(r.exceptionGroup(), new_a_rule);
                 }
                 // Now have "A : <ruleBlock
                 //                  <ruleAltList
@@ -1978,7 +1950,7 @@
                             if (!first1)
                             {
                                 var token_type4 = ANTLRv4Lexer.OR;
-                                var token4 = new CommonToken(token_type4) { Line = 0, Column = 0, Text = "|" };
+                                var token4 = new CommonToken(token_type4) { Line = -1, Column = -1, Text = "|" };
                                 var new_or = new TerminalNodeImpl(token4);
                                 altlist2.AddChild(new_or);
                                 new_or.Parent = altlist2;
@@ -1996,7 +1968,7 @@
                             for (; i < j; ++i)
                             {
                                 var element = elements[i];
-                                CopyTreeRecursive(element, new_alt);
+                                TreeEdits.CopyTreeRecursive(element, new_alt);
                             }
                         }
                         else
@@ -2004,7 +1976,7 @@
                             if (!first2)
                             {
                                 var token_type4 = ANTLRv4Lexer.OR;
-                                var token4 = new CommonToken(token_type4) { Line = 0, Column = 0, Text = "|" };
+                                var token4 = new CommonToken(token_type4) { Line = -1, Column = -1, Text = "|" };
                                 var new_or = new TerminalNodeImpl(token4);
                                 altlist1.AddChild(new_or);
                                 new_or.Parent = altlist1;
@@ -2018,7 +1990,7 @@
                             new_alt.Parent = l_alt;
                             foreach (var element in alt.element())
                             {
-                                CopyTreeRecursive(element, new_alt);
+                                TreeEdits.CopyTreeRecursive(element, new_alt);
                             }
                         }
                     }
@@ -2345,7 +2317,7 @@
                         {
                             var y = x as ANTLRv4Parser.ParserRuleSpecContext;
                             var name = y.RULE_REF()?.GetText();
-                            if (name == Lhs(rule).GetText())
+                            if (name == Lhs((ANTLRv4Parser.ParserRuleSpecContext)rule).GetText())
                             {
                                 StringBuilder sb2 = new StringBuilder();
 
@@ -2535,7 +2507,7 @@
             {
                 var ai = table.rules.Where(r => r.LHS == s).First();
                 var air = (ANTLRv4Parser.ParserRuleSpecContext)ai.rule;
-                rules[s] = CopyTreeRecursive(air, null);
+                rules[s] = TreeEdits.CopyTreeRecursive(air, null);
             }
             for (int i = 0; i < ordered.Count; ++i)
             {
@@ -2544,11 +2516,11 @@
                 ANTLRv4Parser.ParserRuleSpecContext new_a_rule = new ANTLRv4Parser.ParserRuleSpecContext(null, 0);
                 var r = ai_tree as ANTLRv4Parser.ParserRuleSpecContext;
                 var lhs = r.RULE_REF()?.GetText();
-                CopyTreeRecursive(r.RULE_REF(), new_a_rule);
+                TreeEdits.CopyTreeRecursive(r.RULE_REF(), new_a_rule);
                 // Now have "A"
                 {
                     var token_type2 = r.COLON().Symbol.Type;
-                    var token2 = new CommonToken(token_type2) { Line = 0, Column = 0, Text = ":" };
+                    var token2 = new CommonToken(token_type2) { Line = -1, Column = -1, Text = ":" };
                     var new_colon = new TerminalNodeImpl(token2);
                     new_a_rule.AddChild(new_colon);
                     new_colon.Parent = new_a_rule;
@@ -2565,14 +2537,14 @@
                 // Now have "A : <rb <ral> >"
                 {
                     var token_type3 = r.SEMI().Symbol.Type;
-                    var token3 = new CommonToken(token_type3) { Line = 0, Column = 0, Text = ";" };
+                    var token3 = new CommonToken(token_type3) { Line = -1, Column = -1, Text = ";" };
                     var new_semi = new TerminalNodeImpl(token3);
                     new_a_rule.AddChild(new_semi);
                     new_semi.Parent = new_a_rule;
                 }
                 // Now have "A : <rb <ral> > ;"
                 {
-                    CopyTreeRecursive(r.exceptionGroup(), new_a_rule);
+                    TreeEdits.CopyTreeRecursive(r.exceptionGroup(), new_a_rule);
                 }
                 // Now have "A : <rb <ral> > ; <eg>"
                 for (int j = 0; j < i; ++j)
@@ -2603,7 +2575,7 @@
                             ANTLRv4Parser.AlternativeContext new_alt = new ANTLRv4Parser.AlternativeContext(null, 0);
                             foreach (var element in alt2.element())
                             {
-                                CopyTreeRecursive(element, new_alt);
+                                TreeEdits.CopyTreeRecursive(element, new_alt);
                             }
                             bool first = true;
                             foreach (var element in alt.element())
@@ -2613,7 +2585,7 @@
                                     first = false;
                                     continue;
                                 }
-                                CopyTreeRecursive(element, new_alt);
+                                TreeEdits.CopyTreeRecursive(element, new_alt);
                             }
                             new_alts.Add(new_alt);
                         }
@@ -2625,7 +2597,7 @@
                             if (!first)
                             {
                                 var token_type4 = ANTLRv4Lexer.OR;
-                                var token4 = new CommonToken(token_type4) { Line = 0, Column = 0, Text = "|" };
+                                var token4 = new CommonToken(token_type4) { Line = -1, Column = -1, Text = "|" };
                                 var new_or = new TerminalNodeImpl(token4);
                                 rule_alt_list.AddChild(new_or);
                                 new_or.Parent = rule_alt_list;
@@ -2726,47 +2698,10 @@
             return result;
         }
 
-        public static ITerminalNode Lhs(IParseTree ai)
+        public static ITerminalNode Lhs(ANTLRv4Parser.ParserRuleSpecContext ai)
         {
-            var r = ai as ANTLRv4Parser.ParserRuleSpecContext;
-            ITerminalNode lhs = r.RULE_REF();
+            ITerminalNode lhs = ai.RULE_REF();
             return lhs;
-        }
-
-        private static IParseTree CopyTreeRecursive(IParseTree original, IParseTree parent)
-        {
-            if (original == null) return null;
-            if (original is ParserRuleContext)
-            {
-                var type = original.GetType();
-                var new_node = (ParserRuleContext)Activator.CreateInstance(type, null, 0);
-                if (parent != null)
-                {
-                    var parent_rule_context = (ParserRuleContext)parent;
-                    new_node.Parent = parent_rule_context;
-                    parent_rule_context.AddChild(new_node);
-                }
-                int child_count = original.ChildCount;
-                for (int i = 0; i < child_count; ++i)
-                {
-                    var child = original.GetChild(i);
-                    CopyTreeRecursive(child, new_node);
-                }
-                return new_node;
-            }
-            else if (original is TerminalNodeImpl)
-            {
-                var o = original as TerminalNodeImpl;
-                var new_node = new TerminalNodeImpl(o.Symbol);
-                if (parent != null)
-                {
-                    var parent_rule_context = (ParserRuleContext)parent;
-                    new_node.Parent = parent_rule_context;
-                    parent_rule_context.AddChild(new_node);
-                }
-                return new_node;
-            }
-            else return null;
         }
 
         public static IEnumerable<ANTLRv4Parser.AlternativeContext> EnumeratorOfAlts(IParseTree ai)
@@ -3207,7 +3142,7 @@
             return result;
         }
 
-        public static Dictionary<string, string> Fold(int index, Document document)
+        public static Dictionary<string, string> Unfold(int index, Document document)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
@@ -3289,52 +3224,113 @@
             // Find all occurences of LHS symbol.
             var locations = Module.FindRefsAndDefs((rule as ANTLRv4Parser.ParserRuleSpecContext).RULE_REF().Symbol.StartIndex, document);
             var def = Module.GetDocumentSymbol((rule as ANTLRv4Parser.ParserRuleSpecContext).RULE_REF().Symbol.StartIndex, document);
+            
+            if (locations.Count() <= 1)
+            {
+                // You can't replace a symbol if there's no use.
+                // Note that there's always one use as long as there's a
+                // definition.
+                return result;
+            }
+
+            // Get all intertoken text immediately for source reconstruction.
+            var text_before = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
 
             // Substitute RHS into all applied occurences.
             foreach (var location in locations)
             {
-                DoFold(rule, location);
+                // For symbol rule.RULE_REF(), replace occurrence in parse tree
+                // with modified RHS list.
+                var parser_rule = rule as ANTLRv4Parser.ParserRuleSpecContext;
+                var td = location.Uri;
+                AntlrGrammarDetails pd = ParserDetailsFactory.Create(td) as AntlrGrammarDetails;
+                var range = location.Range;
+                var rhs = parser_rule.ruleBlock();
+                var pt = pd.ParseTree;
+                var sym_pt = LanguageServer.Util.Find(index, td);
+                if (sym_pt == null) throw new Exception("Inexplicably can't find document symbol in DoFold.");
+
+                var sym = Module.GetDocumentSymbol(range.Start.Value, td);
+                if (sym == null) throw new Exception("Inexplicably can't find document symbol in DoFold.");
+
+                TreeEdits.Replace(pt, (t) =>
+                {
+                    if (!(t is ANTLRv4Parser.ElementContext))
+                        return null;
+                    if (t.GetText() == sym.name)
+                    {
+                        var element_p = t;
+                        var alternative_p = t.Parent;
+                        var element = element_p as ANTLRv4Parser.ElementContext;
+                        var alternative = alternative_p as ANTLRv4Parser.AlternativeContext;
+                        var element1 = new ANTLRv4Parser.ElementContext(null, 0);
+                        bool modified = false;
+                        int i = 0;
+                        for (; i < alternative.ChildCount; ++i)
+                        {
+                            if (alternative.children[i] == element)
+                            {
+                                modified = true;
+                                break;
+                            }
+                        }
+                        if (!modified) return null;
+                        var new_ebnf = new ANTLRv4Parser.EbnfContext(null, 0);
+                        element1.AddChild(new_ebnf);
+                        new_ebnf.Parent = element1;
+                        var new_block = new ANTLRv4Parser.BlockContext(null, 0);
+                        new_ebnf.AddChild(new_block);
+                        new_block.Parent = new_ebnf;
+                        var lparen_token_type = ANTLRv4Lexer.LPAREN;
+                        var lparen_token = new CommonToken(lparen_token_type) { Line = -1, Column = -1, Text = "(" };
+                        var new_lparen = new TerminalNodeImpl(lparen_token);
+                        new_block.AddChild(new_lparen);
+                        new_lparen.Parent = new_block;
+                        text_before.Add(new_lparen, " ");
+                        ANTLRv4Parser.AltListContext altlist1 = new ANTLRv4Parser.AltListContext(null, 0);
+                        new_block.AddChild(altlist1);
+                        altlist1.Parent = new_block;
+                        var rparen_token_type = ANTLRv4Lexer.RPAREN;
+                        var rparen_token = new CommonToken(rparen_token_type) { Line = -1, Column = -1, Text = ")" };
+                        var new_rparen = new TerminalNodeImpl(rparen_token);
+                        new_block.AddChild(new_rparen);
+                        new_rparen.Parent = new_block;
+
+                        // RHS of rule is wrapped in <ruleBlock <ruleAltList ...>>
+                        // Peel off each alternative in ruleAltList/labeledAlt, and
+                        // insert in newly constructed altlist.
+
+                        var ruleAltList = rhs.ruleAltList();
+                        bool first = true;
+                        foreach (var labeledAlt in ruleAltList.labeledAlt())
+                        {
+                            if (!first)
+                            {
+                                var token_type4 = ANTLRv4Lexer.OR;
+                                var token4 = new CommonToken(token_type4) { Line = -1, Column = -1, Text = "|" };
+                                var new_or = new TerminalNodeImpl(token4);
+                                altlist1.AddChild(new_or);
+                                new_or.Parent = altlist1;
+                            }
+                            first = false;
+                            var a = labeledAlt.alternative();
+                            var copy = TreeEdits.CopyTreeRecursive(a, altlist1);
+                        }
+                        return element1;
+                    }
+                    return null;
+                });
             }
 
-            //StringBuilder sb = new StringBuilder();
-            //int pre = 0;
-            //Reconstruct(sb, pd_parser.TokStream, pd_parser.ParseTree, ref pre,
-            //    x =>
-            //    {
-            //        if (x == rule)
-            //        {
-            //            return replacement;
-            //        }
-            //        return null;
-            //    });
-            //var new_code = sb.ToString();
-            //if (new_code != pd_parser.Code)
-            //{
-            //    result.Add(document.FullPath, new_code);
-            //}
+            StringBuilder sb = new StringBuilder();
+            TreeEdits.Reconstruct(sb, pd_parser.ParseTree, text_before);
+            var new_code = sb.ToString();
+            if (new_code != pd_parser.Code)
+            {
+                result.Add(document.FullPath, new_code);
+            }
 
             return result;
-        }
-
-        private static void DoFold(IParseTree rule, Location location)
-        {
-            // For symbol rule.RULE_REF(), replace occurrence in parse tree
-            // with modified RHS list.
-            var parser_rule = rule as ANTLRv4Parser.ParserRuleSpecContext;
-            var document = location.Uri;
-            AntlrGrammarDetails pd = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
-            var range = location.Range;
-            var rhs = parser_rule.ruleBlock();
-            var pt = pd.ParseTree;
-            var sym = Module.GetDocumentSymbol(range.Start.Value, document);
-            Replace(pt, (t) =>
-            {
-                if (t == sym)
-                {
-
-                }
-                return null;
-            });
         }
     }
 }
