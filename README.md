@@ -87,6 +87,12 @@ VS, then reopen. Do not do "rebuild", only "build".
 grammar e.g., warning/removal of LHS predicates in lexer, replacing factored grammar rules with Kleene star rules (which
 result in faster parsers).
 
+## Release notes for v7.2 (6-May-2020):
+
+* Fix for [Options window not working #38](https://github.com/kaby76/AntlrVSIX/issues/38).
+* Fix for [Remote language server is not working until identity is checked #39, with a fix for logging to ~/.antlrlog](https://github.com/kaby76/AntlrVSIX/issues/39).
+* (Note, the UI contains the Fold transformation, but it is just a stub.)
+
 ## Release notes for v7.0 (4-May-2020):
 
 * Added transforms for the elimination of left recursion.
