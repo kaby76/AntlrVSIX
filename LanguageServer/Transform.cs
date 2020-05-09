@@ -1997,84 +1997,6 @@
             return (IParseTree)new_a_rule;
         }
 
-        private static string ComputeReplacementRules(string new_symbol_name, IParseTree rule)
-        {
-            if (!(rule is ANTLRv4Parser.ParserRuleSpecContext))
-            {
-                throw new Exception("Internal error in language server: expecting tree node is an ANTLRv4Parser.ParserRuleSpecContext");
-            }
-            var r = rule as ANTLRv4Parser.ParserRuleSpecContext;
-            var lhs = r.RULE_REF();
-            var rb = r.ruleBlock();
-            var rule_alt_list = rb.ruleAltList();
-
-            StringBuilder sub1 = new StringBuilder();
-
-            sub1.AppendLine(lhs.ToString());
-            ANTLRv4Parser.LabeledAltContext[] alts = rule_alt_list.labeledAlt();
-            bool first = true;
-            for (int j = 0; j < alts.Length; ++j)
-            {
-                var labeled_alt = alts[j];
-                ANTLRv4Parser.ElementContext[] elements = labeled_alt
-                    .alternative()?
-                    .element();
-                if (elements == null || elements.Length == 0)
-                {
-                    continue;
-                }
-                var element = elements[0];
-                var rule_ref = element.atom()?.ruleref()?.RULE_REF();
-                if (rule_ref == null || rule_ref.GetText() != lhs.GetText())
-                {
-                    if (first)
-                        sub1.Append(" :");
-                    else
-                        sub1.Append(" |");
-                    first = false;
-                    for (int i = 0; i < elements.Length; ++i)
-                    {
-                        sub1.Append(" " + elements[i].GetText());
-                    }
-                    sub1.AppendLine(" " + new_symbol_name);
-                }
-            }
-            sub1.AppendLine(" ;");
-            sub1.AppendLine();
-            sub1.AppendLine(new_symbol_name);
-            first = true;
-            for (int j = 0; j < alts.Length; ++j)
-            {
-                var labeled_alt = alts[j];
-                ANTLRv4Parser.ElementContext[] elements = labeled_alt
-                    .alternative()?
-                    .element();
-                if (elements == null || elements.Length == 0)
-                {
-                    continue;
-                }
-                var element = elements[0];
-                var rule_ref = element.atom()?.ruleref()?.RULE_REF();
-                if (rule_ref != null && rule_ref.GetText() == lhs.GetText())
-                {
-                    if (first)
-                        sub1.Append(" :");
-                    else
-                        sub1.Append(" |");
-                    first = false;
-                    for (int i = 1; i < elements.Length; ++i)
-                    {
-                        sub1.Append(" " + elements[i].GetText());
-                    }
-                    sub1.AppendLine(" " + new_symbol_name);
-                }
-            }
-            sub1.AppendLine(" |");
-            sub1.AppendLine(" ;");
-            sub1.AppendLine();
-            return sub1.ToString();
-        }
-
         public static Dictionary<string, string> EliminateDirectLeftRecursion(int index, Document document)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
@@ -2193,7 +2115,83 @@
             //
 
             string generated_name = GenerateNewName(rule, pd_parser);
-            var replacement = ComputeReplacementRules(generated_name, rule);
+            string replacement = null;
+            {
+                if (!(rule is ANTLRv4Parser.ParserRuleSpecContext))
+                {
+                    throw new Exception("Internal error in language server: expecting tree node is an ANTLRv4Parser.ParserRuleSpecContext");
+                }
+                var r = rule as ANTLRv4Parser.ParserRuleSpecContext;
+                var lhs = r.RULE_REF();
+                var rb = r.ruleBlock();
+                var rule_alt_list = rb.ruleAltList();
+
+                StringBuilder sub1 = new StringBuilder();
+
+                sub1.AppendLine(lhs.ToString());
+                ANTLRv4Parser.LabeledAltContext[] alts = rule_alt_list.labeledAlt();
+                bool first = true;
+                for (int j = 0; j < alts.Length; ++j)
+                {
+                    var labeled_alt = alts[j];
+                    ANTLRv4Parser.ElementContext[] elements = labeled_alt
+                        .alternative()?
+                        .element();
+                    if (elements == null || elements.Length == 0)
+                    {
+                        continue;
+                    }
+                    var element = elements[0];
+                    var rule_ref = element.atom()?.ruleref()?.RULE_REF();
+                    if (rule_ref == null || rule_ref.GetText() != lhs.GetText())
+                    {
+                        if (first)
+                            sub1.Append(" :");
+                        else
+                            sub1.Append(" |");
+                        first = false;
+                        for (int i = 0; i < elements.Length; ++i)
+                        {
+                            sub1.Append(" " + elements[i].GetText());
+                        }
+                        sub1.AppendLine(" " + generated_name);
+                    }
+                }
+                sub1.AppendLine(" ;");
+                sub1.AppendLine();
+                sub1.AppendLine(generated_name);
+                first = true;
+                for (int j = 0; j < alts.Length; ++j)
+                {
+                    var labeled_alt = alts[j];
+                    ANTLRv4Parser.ElementContext[] elements = labeled_alt
+                        .alternative()?
+                        .element();
+                    if (elements == null || elements.Length == 0)
+                    {
+                        continue;
+                    }
+                    var element = elements[0];
+                    var rule_ref = element.atom()?.ruleref()?.RULE_REF();
+                    if (rule_ref != null && rule_ref.GetText() == lhs.GetText())
+                    {
+                        if (first)
+                            sub1.Append(" :");
+                        else
+                            sub1.Append(" |");
+                        first = false;
+                        for (int i = 1; i < elements.Length; ++i)
+                        {
+                            sub1.Append(" " + elements[i].GetText());
+                        }
+                        sub1.AppendLine(" " + generated_name);
+                    }
+                }
+                sub1.AppendLine(" |");
+                sub1.AppendLine(" ;");
+                sub1.AppendLine();
+                replacement = sub1.ToString();
+            }
             if (replacement == null)
             {
                 return result;
