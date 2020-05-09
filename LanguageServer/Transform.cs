@@ -1997,6 +1997,157 @@
             return (IParseTree)new_a_rule;
         }
 
+        public static Dictionary<string, string> ConvertRecursionToKleeneOperator(int index, Document document)
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+
+            // Check if initial file is a grammar.
+            AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
+            ExtractGrammarType egt = new ExtractGrammarType();
+            ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
+            bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
+                || egt.Type == ExtractGrammarType.GrammarType.Combined
+                || egt.Type == ExtractGrammarType.GrammarType.Lexer;
+            if (!is_grammar)
+            {
+                return result;
+            }
+
+            // Find all other grammars by walking dependencies (import, vocab, file names).
+            HashSet<string> read_files = new HashSet<string>
+            {
+                document.FullPath
+            };
+            Dictionary<Workspaces.Document, List<TerminalNodeImpl>> every_damn_literal =
+                new Dictionary<Workspaces.Document, List<TerminalNodeImpl>>();
+            for (; ; )
+            {
+                int before_count = read_files.Count;
+                foreach (string f in read_files)
+                {
+                    List<string> additional = AntlrGrammarDetails._dependent_grammars.Where(
+                        t => t.Value.Contains(f)).Select(
+                        t => t.Key).ToList();
+                    read_files = read_files.Union(additional).ToHashSet();
+                }
+                foreach (string f in read_files)
+                {
+                    IEnumerable<List<string>> additional = AntlrGrammarDetails._dependent_grammars.Where(
+                        t => t.Key == f).Select(
+                        t => t.Value);
+                    foreach (List<string> t in additional)
+                    {
+                        read_files = read_files.Union(t).ToHashSet();
+                    }
+                }
+                int after_count = read_files.Count;
+                if (after_count == before_count)
+                {
+                    break;
+                }
+            }
+
+            // Assume cursor positioned at the rule that contains left recursion.
+            // Find rule.
+            IParseTree rule = null;
+            IParseTree it = pd_parser.AllNodes.Where(n =>
+            {
+                if (!(n is ANTLRv4Parser.ParserRuleSpecContext || n is ANTLRv4Parser.LexerRuleSpecContext))
+                    return false;
+                Interval source_interval = n.SourceInterval;
+                int a = source_interval.a;
+                int b = source_interval.b;
+                IToken ta = pd_parser.TokStream.Get(a);
+                IToken tb = pd_parser.TokStream.Get(b);
+                var start = ta.StartIndex;
+                var stop = tb.StopIndex + 1;
+                return start <= index && index < stop;
+            }).FirstOrDefault();
+            if (it == null)
+            {
+                return result;
+            }
+            rule = it;
+
+            // We are now at the rule that the user identified to eliminate direct
+            // left recursion.
+            // Check if the rule has direct left recursion.
+
+            bool has_direct_left_recursion = HasDirectLeftRecursion(rule);
+            bool has_direct_right_recursion = HasDirectRightRecursion(rule);
+            if (!(has_direct_left_recursion || has_direct_right_recursion))
+            {
+                return result;
+            }
+            else if (has_direct_left_recursion && has_direct_right_recursion)
+            {
+                return result;
+            }
+
+            // Has direct recursion.
+            rule = ReplaceWithKleeneRules(has_direct_left_recursion, has_direct_right_recursion, rule);
+            {
+                // Now edit the file and return.
+                StringBuilder sb = new StringBuilder();
+                int pre = 0;
+                Reconstruct(sb, pd_parser.TokStream, pd_parser.ParseTree, ref pre,
+                    x =>
+                    {
+                        if (x is ANTLRv4Parser.ParserRuleSpecContext)
+                        {
+                            var y = x as ANTLRv4Parser.ParserRuleSpecContext;
+                            var name = y.RULE_REF()?.GetText();
+                            if (name == Lhs((ANTLRv4Parser.ParserRuleSpecContext)rule).GetText())
+                            {
+                                StringBuilder sb2 = new StringBuilder();
+
+                                TreeOutput.OutputTree(rule, pd_parser.TokStream);
+
+                                Output(sb2, pd_parser.TokStream, rule);
+                                return sb2.ToString();
+                            }
+                        }
+                        return null;
+                    });
+                var new_code = sb.ToString();
+                if (new_code != pd_parser.Code)
+                {
+                    result.Add(document.FullPath, new_code);
+                }
+            }
+
+            return result;
+        }
+
+        private static string GenerateNewName(IParseTree rule, AntlrGrammarDetails pd_parser)
+        {
+            var r = rule as ANTLRv4Parser.ParserRuleSpecContext;
+            if (r == null)
+                return null;
+            var b = r.RULE_REF().GetText();
+            var list = pd_parser.AllNodes.Where(n =>
+            {
+                return (n is ANTLRv4Parser.ParserRuleSpecContext || n is ANTLRv4Parser.LexerRuleSpecContext);
+            }).Select(n =>
+            {
+                if (n is ANTLRv4Parser.ParserRuleSpecContext)
+                {
+                    var z = n as ANTLRv4Parser.ParserRuleSpecContext;
+                    var lhs = z.RULE_REF();
+                    return lhs.GetText();
+                }
+                return "";
+            }).ToList();
+            int gnum = 1;
+            for (; ; )
+            {
+                if (!list.Contains(b + gnum.ToString()))
+                    break;
+                gnum++;
+            }
+            return b + gnum.ToString();
+        }
+
         public static Dictionary<string, string> EliminateDirectLeftRecursion(int index, Document document)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
@@ -2215,157 +2366,6 @@
             }
 
             return result;
-        }
-
-        public static Dictionary<string, string> ConvertRecursionToKleeneOperator(int index, Document document)
-        {
-            Dictionary<string, string> result = new Dictionary<string, string>();
-
-            // Check if initial file is a grammar.
-            AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
-            ExtractGrammarType egt = new ExtractGrammarType();
-            ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
-            bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
-                || egt.Type == ExtractGrammarType.GrammarType.Combined
-                || egt.Type == ExtractGrammarType.GrammarType.Lexer;
-            if (!is_grammar)
-            {
-                return result;
-            }
-
-            // Find all other grammars by walking dependencies (import, vocab, file names).
-            HashSet<string> read_files = new HashSet<string>
-            {
-                document.FullPath
-            };
-            Dictionary<Workspaces.Document, List<TerminalNodeImpl>> every_damn_literal =
-                new Dictionary<Workspaces.Document, List<TerminalNodeImpl>>();
-            for (; ; )
-            {
-                int before_count = read_files.Count;
-                foreach (string f in read_files)
-                {
-                    List<string> additional = AntlrGrammarDetails._dependent_grammars.Where(
-                        t => t.Value.Contains(f)).Select(
-                        t => t.Key).ToList();
-                    read_files = read_files.Union(additional).ToHashSet();
-                }
-                foreach (string f in read_files)
-                {
-                    IEnumerable<List<string>> additional = AntlrGrammarDetails._dependent_grammars.Where(
-                        t => t.Key == f).Select(
-                        t => t.Value);
-                    foreach (List<string> t in additional)
-                    {
-                        read_files = read_files.Union(t).ToHashSet();
-                    }
-                }
-                int after_count = read_files.Count;
-                if (after_count == before_count)
-                {
-                    break;
-                }
-            }
-
-            // Assume cursor positioned at the rule that contains left recursion.
-            // Find rule.
-            IParseTree rule = null;
-            IParseTree it = pd_parser.AllNodes.Where(n =>
-            {
-                if (!(n is ANTLRv4Parser.ParserRuleSpecContext || n is ANTLRv4Parser.LexerRuleSpecContext))
-                    return false;
-                Interval source_interval = n.SourceInterval;
-                int a = source_interval.a;
-                int b = source_interval.b;
-                IToken ta = pd_parser.TokStream.Get(a);
-                IToken tb = pd_parser.TokStream.Get(b);
-                var start = ta.StartIndex;
-                var stop = tb.StopIndex + 1;
-                return start <= index && index < stop;
-            }).FirstOrDefault();
-            if (it == null)
-            {
-                return result;
-            }
-            rule = it;
-
-            // We are now at the rule that the user identified to eliminate direct
-            // left recursion.
-            // Check if the rule has direct left recursion.
-
-            bool has_direct_left_recursion = HasDirectLeftRecursion(rule);
-            bool has_direct_right_recursion = HasDirectRightRecursion(rule);
-            if (!(has_direct_left_recursion || has_direct_right_recursion))
-            {
-                return result;
-            }
-            else if (has_direct_left_recursion && has_direct_right_recursion)
-            {
-                return result;
-            }
-
-            // Has direct recursion.
-            rule = ReplaceWithKleeneRules(has_direct_left_recursion, has_direct_right_recursion, rule);
-            {
-                // Now edit the file and return.
-                StringBuilder sb = new StringBuilder();
-                int pre = 0;
-                Reconstruct(sb, pd_parser.TokStream, pd_parser.ParseTree, ref pre,
-                    x =>
-                    {
-                        if (x is ANTLRv4Parser.ParserRuleSpecContext)
-                        {
-                            var y = x as ANTLRv4Parser.ParserRuleSpecContext;
-                            var name = y.RULE_REF()?.GetText();
-                            if (name == Lhs((ANTLRv4Parser.ParserRuleSpecContext)rule).GetText())
-                            {
-                                StringBuilder sb2 = new StringBuilder();
-
-                                TreeOutput.OutputTree(rule, pd_parser.TokStream);
-
-                                Output(sb2, pd_parser.TokStream, rule);
-                                return sb2.ToString();
-                            }
-                        }
-                        return null;
-                    });
-                var new_code = sb.ToString();
-                if (new_code != pd_parser.Code)
-                {
-                    result.Add(document.FullPath, new_code);
-                }
-            }
-
-            return result;
-        }
-
-        private static string GenerateNewName(IParseTree rule, AntlrGrammarDetails pd_parser)
-        {
-            var r = rule as ANTLRv4Parser.ParserRuleSpecContext;
-            if (r == null)
-                return null;
-            var b = r.RULE_REF().GetText();
-            var list = pd_parser.AllNodes.Where(n =>
-            {
-                return (n is ANTLRv4Parser.ParserRuleSpecContext || n is ANTLRv4Parser.LexerRuleSpecContext);
-            }).Select(n =>
-            {
-                if (n is ANTLRv4Parser.ParserRuleSpecContext)
-                {
-                    var z = n as ANTLRv4Parser.ParserRuleSpecContext;
-                    var lhs = z.RULE_REF();
-                    return lhs.GetText();
-                }
-                return "";
-            }).ToList();
-            int gnum = 1;
-            for (; ; )
-            {
-                if (!list.Contains(b + gnum.ToString()))
-                    break;
-                gnum++;
-            }
-            return b + gnum.ToString();
         }
 
         public static Dictionary<string, string> EliminateIndirectLeftRecursion(int index, Document document)
