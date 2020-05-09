@@ -4,9 +4,9 @@
     using Microsoft.VisualStudio.ComponentModelHost;
     using Microsoft.VisualStudio.Editor;
     using Microsoft.VisualStudio.LanguageServer.Client;
-    using Microsoft.VisualStudio.LanguageServer.Protocol;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Shell.Interop;
+    using Microsoft.VisualStudio.Text.Classification;
     using Microsoft.VisualStudio.Threading;
     using Microsoft.VisualStudio.Utilities;
     using Options;
@@ -16,18 +16,10 @@
     using System.ComponentModel.Composition;
     using System.Diagnostics;
     using System.IO;
-    using System.Linq;
     using System.Runtime.InteropServices;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.VisualStudio.PlatformUI;
-    using Microsoft.VisualStudio.Text;
-    using Microsoft.VisualStudio.Text.Classification;
-    using Microsoft.VisualStudio.Text.Tagging;
-    using Color = System.Drawing.Color;
     using Task = System.Threading.Tasks.Task;
-    using System.Security.Principal;
-    using System.Windows;
 
     [ContentType("Antlr")]
     [Export(typeof(ILanguageClient))]

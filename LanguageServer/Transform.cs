@@ -12,9 +12,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Security.Principal;
     using System.Text;
-    using System.Windows.Forms;
     using Document = Workspaces.Document;
 
     public class Transform
@@ -2001,80 +1999,80 @@
 
         private static string ComputeReplacementRules(string new_symbol_name, IParseTree rule)
         {
-            if (rule is ANTLRv4Parser.ParserRuleSpecContext)
+            if (!(rule is ANTLRv4Parser.ParserRuleSpecContext))
             {
-                var r = rule as ANTLRv4Parser.ParserRuleSpecContext;
-                var lhs = r.RULE_REF();
-                var rb = r.ruleBlock();
-                var rule_alt_list = rb.ruleAltList();
-
-                StringBuilder sub1 = new StringBuilder();
-
-                sub1.AppendLine(lhs.ToString());
-                ANTLRv4Parser.LabeledAltContext[] alts = rule_alt_list.labeledAlt();
-                bool first = true;
-                for (int j = 0; j < alts.Length; ++j)
-                {
-                    var labeled_alt = alts[j];
-                    ANTLRv4Parser.ElementContext[] elements = labeled_alt
-                        .alternative()?
-                        .element();
-                    if (elements == null || elements.Length == 0)
-                    {
-                        continue;
-                    }
-                    var element = elements[0];
-                    var rule_ref = element.atom()?.ruleref()?.RULE_REF();
-                    if (rule_ref == null || rule_ref.GetText() != lhs.GetText())
-                    {
-                        if (first)
-                            sub1.Append(" :");
-                        else
-                            sub1.Append(" |");
-                        first = false;
-                        for (int i = 0; i < elements.Length; ++i)
-                        {
-                            sub1.Append(" " + elements[i].GetText());
-                        }
-                        sub1.AppendLine(" " + new_symbol_name);
-                    }
-                }
-                sub1.AppendLine(" ;");
-                sub1.AppendLine();
-                sub1.AppendLine(new_symbol_name);
-                first = true;
-                for (int j = 0; j < alts.Length; ++j)
-                {
-                    var labeled_alt = alts[j];
-                    ANTLRv4Parser.ElementContext[] elements = labeled_alt
-                        .alternative()?
-                        .element();
-                    if (elements == null || elements.Length == 0)
-                    {
-                        continue;
-                    }
-                    var element = elements[0];
-                    var rule_ref = element.atom()?.ruleref()?.RULE_REF();
-                    if (rule_ref != null && rule_ref.GetText() == lhs.GetText())
-                    {
-                        if (first)
-                            sub1.Append(" :");
-                        else
-                            sub1.Append(" |");
-                        first = false;
-                        for (int i = 1; i < elements.Length; ++i)
-                        {
-                            sub1.Append(" " + elements[i].GetText());
-                        }
-                        sub1.AppendLine(" " + new_symbol_name);
-                    }
-                }
-                sub1.AppendLine(" |");
-                sub1.AppendLine(" ;");
-                sub1.AppendLine();
-                return sub1.ToString();
+                throw new Exception("Internal error in language server: expecting tree node is an ANTLRv4Parser.ParserRuleSpecContext");
             }
-            return null;
+            var r = rule as ANTLRv4Parser.ParserRuleSpecContext;
+            var lhs = r.RULE_REF();
+            var rb = r.ruleBlock();
+            var rule_alt_list = rb.ruleAltList();
+
+            StringBuilder sub1 = new StringBuilder();
+
+            sub1.AppendLine(lhs.ToString());
+            ANTLRv4Parser.LabeledAltContext[] alts = rule_alt_list.labeledAlt();
+            bool first = true;
+            for (int j = 0; j < alts.Length; ++j)
+            {
+                var labeled_alt = alts[j];
+                ANTLRv4Parser.ElementContext[] elements = labeled_alt
+                    .alternative()?
+                    .element();
+                if (elements == null || elements.Length == 0)
+                {
+                    continue;
+                }
+                var element = elements[0];
+                var rule_ref = element.atom()?.ruleref()?.RULE_REF();
+                if (rule_ref == null || rule_ref.GetText() != lhs.GetText())
+                {
+                    if (first)
+                        sub1.Append(" :");
+                    else
+                        sub1.Append(" |");
+                    first = false;
+                    for (int i = 0; i < elements.Length; ++i)
+                    {
+                        sub1.Append(" " + elements[i].GetText());
+                    }
+                    sub1.AppendLine(" " + new_symbol_name);
+                }
+            }
+            sub1.AppendLine(" ;");
+            sub1.AppendLine();
+            sub1.AppendLine(new_symbol_name);
+            first = true;
+            for (int j = 0; j < alts.Length; ++j)
+            {
+                var labeled_alt = alts[j];
+                ANTLRv4Parser.ElementContext[] elements = labeled_alt
+                    .alternative()?
+                    .element();
+                if (elements == null || elements.Length == 0)
+                {
+                    continue;
+                }
+                var element = elements[0];
+                var rule_ref = element.atom()?.ruleref()?.RULE_REF();
+                if (rule_ref != null && rule_ref.GetText() == lhs.GetText())
+                {
+                    if (first)
+                        sub1.Append(" :");
+                    else
+                        sub1.Append(" |");
+                    first = false;
+                    for (int i = 1; i < elements.Length; ++i)
+                    {
+                        sub1.Append(" " + elements[i].GetText());
+                    }
+                    sub1.AppendLine(" " + new_symbol_name);
+                }
+            }
+            sub1.AppendLine(" |");
+            sub1.AppendLine(" ;");
+            sub1.AppendLine();
+            return sub1.ToString();
         }
 
         public static Dictionary<string, string> EliminateDirectLeftRecursion(int index, Document document)
@@ -2083,6 +2081,10 @@
 
             // Check if initial file is a grammar.
             AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
+            if (pd_parser == null)
+            {
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            }
             ExtractGrammarType egt = new ExtractGrammarType();
             ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
             bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
@@ -2090,7 +2092,7 @@
                 || egt.Type == ExtractGrammarType.GrammarType.Lexer;
             if (!is_grammar)
             {
-                return result;
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
 
             // Find all other grammars by walking dependencies (import, vocab, file names).
@@ -2145,7 +2147,7 @@
             }).FirstOrDefault();
             if (it == null)
             {
-                return result;
+                throw new LanguageServerException("A parser rule is not selected. Please select one first.");
             }
             rule = it;
 
@@ -2156,7 +2158,7 @@
             bool has_direct_left_recursion = HasDirectLeftRecursion(rule);
             if (!has_direct_left_recursion)
             {
-                return result;
+                throw new LanguageServerException("Parser rule selected does not have direct left recursion. Please select another rule.");
             }
 
             // Has direct left recursion.

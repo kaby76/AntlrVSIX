@@ -1378,8 +1378,14 @@
                 }
                 s = Transform.EliminateDirectLeftRecursion(pos, document);
             }
-            catch (Exception)
-            { }
+            catch (LanguageServerException e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
+            catch (Exception e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
             return s;
         }
 
