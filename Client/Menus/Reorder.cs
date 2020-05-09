@@ -159,6 +159,7 @@
                     return;
                 }
                 Dictionary<string, string> changes = alc.CMReorderParserRules(ffn, pos, type);
+                if (changes == null) return;
                 foreach (KeyValuePair<string, string> pair in changes)
                 {
                     string fn = pair.Key;

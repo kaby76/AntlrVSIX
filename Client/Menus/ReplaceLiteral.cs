@@ -134,6 +134,7 @@
                     return;
                 }
                 Dictionary<string, string> changes = alc.CMReplaceLiterals(ffn, pos);
+                if (changes == null) return;
                 foreach (KeyValuePair<string, string> pair in changes)
                 {
                     string fn = pair.Key;

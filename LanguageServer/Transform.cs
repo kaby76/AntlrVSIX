@@ -675,6 +675,10 @@
 
             // Check if initial file is a grammar.
             AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
+            if (pd_parser == null)
+            {
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            }
             ExtractGrammarType egt = new ExtractGrammarType();
             ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
             bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
@@ -930,6 +934,10 @@
 
             // Check if lexer grammar.
             AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
+            if (pd_parser == null)
+            {
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            }
             ExtractGrammarType lp = new ExtractGrammarType();
             ParseTreeWalker.Default.Walk(lp, pd_parser.ParseTree);
             bool is_lexer = lp.Type == ExtractGrammarType.GrammarType.Lexer;
@@ -979,6 +987,10 @@
 
             // Check if lexer grammar.
             AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
+            if (pd_parser == null)
+            {
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            }
             ExtractGrammarType lp = new ExtractGrammarType();
             ParseTreeWalker.Default.Walk(lp, pd_parser.ParseTree);
             bool is_lexer = lp.Type == ExtractGrammarType.GrammarType.Lexer;
@@ -1058,6 +1070,10 @@
 
             // Check if lexer grammar.
             AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
+            if (pd_parser == null)
+            {
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            }
             ExtractGrammarType lp = new ExtractGrammarType();
             ParseTreeWalker.Default.Walk(lp, pd_parser.ParseTree);
             bool is_lexer = lp.Type == ExtractGrammarType.GrammarType.Lexer;
@@ -1232,6 +1248,10 @@
 
             // Check if lexer grammar.
             AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
+            if (pd_parser == null)
+            {
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            }
             ExtractGrammarType lp = new ExtractGrammarType();
             ParseTreeWalker.Default.Walk(lp, pd_parser.ParseTree);
             if (split && lp.Type != ExtractGrammarType.GrammarType.Combined)
@@ -2003,6 +2023,10 @@
 
             // Check if initial file is a grammar.
             AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
+            if (pd_parser == null)
+            {
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            }
             ExtractGrammarType egt = new ExtractGrammarType();
             ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
             bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
@@ -2515,6 +2539,10 @@
 
             // Check if initial file is a grammar.
             AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
+            if (pd_parser == null)
+            {
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            }
             ExtractGrammarType egt = new ExtractGrammarType();
             ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
             bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
@@ -2882,6 +2910,10 @@
 
             // Check if initial file is a parser or combined grammar.
             AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
+            if (pd_parser == null)
+            {
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            }
             ExtractGrammarType egt = new ExtractGrammarType();
             ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
             bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
@@ -2929,6 +2961,10 @@
 
             // Check if initial file is a grammar.
             AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
+            if (pd_parser == null)
+            {
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            }
             ExtractGrammarType egt = new ExtractGrammarType();
             ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
             bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
@@ -3233,6 +3269,10 @@
 
             // Check if lexer grammar.
             AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
+            if (pd_parser == null)
+            {
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            }
             ExtractGrammarType lp = new ExtractGrammarType();
             ParseTreeWalker.Default.Walk(lp, pd_parser.ParseTree);
             bool is_lexer = lp.Type == ExtractGrammarType.GrammarType.Lexer;
@@ -3289,6 +3329,10 @@
 
             // Check if initial file is a grammar.
             AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
+            if (pd_parser == null)
+            {
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            }
             ExtractGrammarType egt = new ExtractGrammarType();
             ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
             bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser

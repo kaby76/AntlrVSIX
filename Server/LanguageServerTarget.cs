@@ -1096,8 +1096,14 @@
                 }
                 result = symbols.ToArray();
             }
-            catch (Exception)
-            { }
+            catch (LanguageServerException e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
+            catch (Exception e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
             return result;
         }
 
@@ -1147,8 +1153,14 @@
                     System.Console.Error.WriteLine(next_sym);
                 }
             }
-            catch (Exception)
-            { }
+            catch (LanguageServerException e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
+            catch (Exception e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
             return next_sym;
         }
 
@@ -1171,8 +1183,14 @@
                 bool key_state = request.IsEnter;
                 s = Goto.main(true, key_state, document, pos);
             }
-            catch (Exception)
-            { }
+            catch (LanguageServerException e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
+            catch (Exception e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
             return s;
         }
 
@@ -1195,8 +1213,14 @@
                 bool is_enter = request.IsEnter;
                 s = Goto.main(false, is_enter, document, pos);
             }
-            catch (Exception)
-            { }
+            catch (LanguageServerException e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
+            catch (Exception e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
             return s;
         }
 
@@ -1218,8 +1242,14 @@
                 }
                 changes = LanguageServer.Transform.ReplaceLiterals(pos, document);
             }
-            catch (Exception)
-            { }
+            catch (LanguageServerException e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
+            catch (Exception e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
             return changes;
         }
 
@@ -1241,8 +1271,14 @@
                 }
                 changes = LanguageServer.Transform.RemoveUselessParserProductions(pos, document);
             }
-            catch (Exception)
-            { }
+            catch (LanguageServerException e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
+            catch (Exception e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
             return changes;
         }
 
@@ -1264,8 +1300,14 @@
                 }
                 changes = LanguageServer.Transform.MoveStartRuleToTop(pos, document);
             }
-            catch (Exception)
-            { }
+            catch (LanguageServerException e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
+            catch (Exception e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
             return changes;
         }
 
@@ -1288,8 +1330,14 @@
                 }
                 changes = LanguageServer.Transform.ReorderParserRules(pos, document, type);
             }
-            catch (Exception)
-            { }
+            catch (LanguageServerException e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
+            catch (Exception e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
             return changes;
         }
 
@@ -1312,8 +1360,14 @@
                 }
                 changes = LanguageServer.Transform.SplitCombineGrammars(pos, document, split);
             }
-            catch (Exception)
-            { }
+            catch (LanguageServerException e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
+            catch (Exception e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
             return changes;
         }
 
@@ -1331,8 +1385,14 @@
                 }
                 changes = LanguageServer.BisonImport.ImportGrammars(request);
             }
-            catch (Exception)
-            { }
+            catch (LanguageServerException e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
+            catch (Exception e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
             return changes;
         }
 
@@ -1354,8 +1414,14 @@
                 }
                 s = Transform.ConvertRecursionToKleeneOperator(pos, document);
             }
-            catch (Exception)
-            { }
+            catch (LanguageServerException e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
+            catch (Exception e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
             return s;
         }
 
@@ -1407,8 +1473,14 @@
                 }
                 s = Transform.EliminateIndirectLeftRecursion(pos, document);
             }
-            catch (Exception eeks)
-            { }
+            catch (LanguageServerException e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
+            catch (Exception e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
             return s;
         }
 
@@ -1432,8 +1504,14 @@
                     s.Add(document.FullPath, new_code);
                 }
             }
-            catch (Exception)
-            { }
+            catch (LanguageServerException e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
+            catch (Exception e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
             return s;
         }
 
@@ -1453,8 +1531,14 @@
                 }
                 s = Transform.AddLexerRulesForStringLiterals(document);
             }
-            catch (Exception)
-            { }
+            catch (LanguageServerException e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
+            catch (Exception e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
             return s;
         }
 
@@ -1473,8 +1557,14 @@
                 }
                 s = Transform.SortModes(document);
             }
-            catch (Exception)
-            { }
+            catch (LanguageServerException e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
+            catch (Exception e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
             return s;
         }
         [JsonRpcMethod("CMUnfold")]
@@ -1496,8 +1586,14 @@
                 }
                 s = Transform.Unfold(pos, document);
             }
-            catch (Exception eeks)
-            { }
+            catch (LanguageServerException e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
+            catch (Exception e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
             return s;
         }
 
