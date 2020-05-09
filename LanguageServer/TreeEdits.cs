@@ -25,7 +25,12 @@ namespace LanguageServer
                     var child = c.children[i];
                     if (child == tree)
                     {
+                        var temp = c.children[i];
+                        var t = temp as ParserRuleContext;
+                        t.Parent = null;
                         c.children[i] = replacement;
+                        var r = replacement as ParserRuleContext;
+                        r.Parent = c;
                         break;
                     }
                 }
