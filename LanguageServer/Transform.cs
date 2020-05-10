@@ -3442,12 +3442,14 @@
                 {
                     if (!(t is ANTLRv4Parser.ElementContext))
                         return null;
-                    if (t.GetText() == sym.name)
+                    var u = t as ANTLRv4Parser.ElementContext;
+                    if (u.atom()?.GetText() == sym.name)
                     {
                         var element_p = t;
                         var alternative_p = t.Parent;
                         var element = element_p as ANTLRv4Parser.ElementContext;
                         var alternative = alternative_p as ANTLRv4Parser.AlternativeContext;
+                        var ebnf_suffix = element.ebnfSuffix();
                         var element1 = new ANTLRv4Parser.ElementContext(null, 0);
                         bool modified = false;
                         int i = 0;
@@ -3466,6 +3468,11 @@
                         var new_block = new ANTLRv4Parser.BlockContext(null, 0);
                         new_ebnf.AddChild(new_block);
                         new_block.Parent = new_ebnf;
+                        if (ebnf_suffix != null)
+                        {
+                            var blocksuffix = new ANTLRv4Parser.BlockSuffixContext(null, 0);
+                            TreeEdits.CopyTreeRecursive(ebnf_suffix, new_ebnf, text_before);
+                        }
                         var lparen_token_type = ANTLRv4Lexer.LPAREN;
                         var lparen_token = new CommonToken(lparen_token_type) { Line = -1, Column = -1, Text = "(" };
                         var new_lparen = new TerminalNodeImpl(lparen_token);
