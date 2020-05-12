@@ -3377,21 +3377,60 @@
                 }
             }
 
-            // Assume cursor positioned at the rule that is to be folded into applied occurrences.
-            // Find rule.
+            // Check cursor position. It is either the LHS symbol of a rule,
+            // which means the user wants to unroll all applied occurrences of the rule
+            // or it is on a symbol in the RHS of the rule, which means the
+            // user wants to unroll this specific applied occurrence of the rule.
+            var refs_and_defs = Module.FindRefsAndDefs(index, document);
+            var defs = Module.FindDefs(index, document);
+            var sym = Module.GetDocumentSymbol(index, document);
+            bool is_cursor_on_def = false;
+            bool is_cursor_on_ref = false;
+            IEnumerable<Location> locations = null;
+            foreach (var d in defs)
+            {
+                if (sym.range.Start.Value == d.Range.Start.Value
+                    && sym.range.End.Value == d.Range.End.Value)
+                {
+                    is_cursor_on_def = true;
+                    // This means that user wants to unfold all occurrences on RHS,
+                    // not a specific instance.
+                    // This means that user wants to unfold a specific
+                    // instance of a RHS symbol.
+                    locations = refs_and_defs.Where(t =>
+                    {
+                        foreach (var x in defs)
+                        {
+                            if (x.Range.Start.Value == t.Range.Start.Value
+                                && x.Range.End.Value == t.Range.End.Value)
+                                return false;
+                        }
+                        return true;
+                    });
+                    break;
+                }
+            }
+            foreach (var d in refs_and_defs)
+            {
+                if (sym.range.Start.Value == d.Range.Start.Value
+                    && sym.range.End.Value == d.Range.End.Value
+                    && !is_cursor_on_def)
+                {
+                    is_cursor_on_ref = true;
+                    // This means that user wants to unfold a specific occurrence on RHS.
+                    locations = new List<Location>() { d };
+                    break;
+                }
+            }
+
             IParseTree rule = null;
             IParseTree it = pd_parser.AllNodes.Where(n =>
             {
-                if (!(n is ANTLRv4Parser.ParserRuleSpecContext || n is ANTLRv4Parser.LexerRuleSpecContext))
+                if (!(n is ANTLRv4Parser.ParserRuleSpecContext))
                     return false;
-                Interval source_interval = n.SourceInterval;
-                int a = source_interval.a;
-                int b = source_interval.b;
-                IToken ta = pd_parser.TokStream.Get(a);
-                IToken tb = pd_parser.TokStream.Get(b);
-                var start = ta.StartIndex;
-                var stop = tb.StopIndex + 1;
-                return start <= index && index < stop;
+                var r = n as ANTLRv4Parser.ParserRuleSpecContext;
+                var lhs = r.RULE_REF();
+                return lhs.GetText() == sym.name;
             }).FirstOrDefault();
             if (it == null)
             {
@@ -3399,23 +3438,28 @@
             }
             rule = it;
 
-            // We are now at the rule that the user identified.
+            if (!(is_cursor_on_def || is_cursor_on_ref))
+            {
+                throw new LanguageServerException("Please position the cursor on either a LHS symbol (which means "
+                    + " to replace all RHS occurrences of the symbol), or on a RHS symbol (which means"
+                    + " to replace the specific RHS occurrence of the symbol, then try again.");
+            }
+
             // Make sure it's a parser rule.
             if (!(rule is ANTLRv4Parser.ParserRuleSpecContext))
             {
-                return result;
+                throw new LanguageServerException("Please position the cursor on either a LHS symbol (which means "
+                    + " to replace all RHS occurrences of the symbol), or on a RHS symbol (which means"
+                    + " to replace the specific RHS occurrence of the symbol, then try again.");
             }
 
-            // Find all occurences of LHS symbol.
-            var locations = Module.FindRefsAndDefs((rule as ANTLRv4Parser.ParserRuleSpecContext).RULE_REF().Symbol.StartIndex, document);
-            var def = Module.GetDocumentSymbol((rule as ANTLRv4Parser.ParserRuleSpecContext).RULE_REF().Symbol.StartIndex, document);
-            
-            if (locations.Count() <= 1)
+            if (locations.Count() == 0)
             {
                 // You can't replace a symbol if there's no use.
                 // Note that there's always one use as long as there's a
                 // definition.
-                return result;
+                throw new LanguageServerException("There is no use of the symbol "
+                    + sym.name + ". Position the cursor to another symbol and try again.");
             }
 
             // Get all intertoken text immediately for source reconstruction.
@@ -3435,15 +3479,21 @@
                 var sym_pt = LanguageServer.Util.Find(index, td);
                 if (sym_pt == null) throw new Exception("Inexplicably can't find document symbol in DoFold.");
 
-                var sym = Module.GetDocumentSymbol(range.Start.Value, td);
-                if (sym == null) throw new Exception("Inexplicably can't find document symbol in DoFold.");
+                var s = Module.GetDocumentSymbol(range.Start.Value, td);
+                if (s == null) throw new Exception("Inexplicably can't find document symbol in DoFold.");
 
                 TreeEdits.Replace(pt, (t) =>
                 {
                     if (!(t is ANTLRv4Parser.ElementContext))
                         return null;
                     var u = t as ANTLRv4Parser.ElementContext;
-                    if (u.atom()?.GetText() == sym.name)
+                    var id = u.atom()?.ruleref()?.RULE_REF();
+                    if (id == null) return null;
+                    if (id.GetText() != s.name) return null;
+                    if (!(id is TerminalNodeImpl)) return null;
+                    var tni = id as TerminalNodeImpl;
+                    if (tni.Payload.StartIndex == range.Start.Value
+                        && tni.Payload.StopIndex == range.End.Value)
                     {
                         var element_p = t;
                         var alternative_p = t.Parent;
