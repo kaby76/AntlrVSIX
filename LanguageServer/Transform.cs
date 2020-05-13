@@ -589,7 +589,6 @@
             }
         }
 
-
         public static void Reconstruct(StringBuilder sb, CommonTokenStream stream, IParseTree tree, ref int previous, Func<IParseTree, string> replace)
         {
             if (tree as TerminalNodeImpl != null)
@@ -1531,7 +1530,6 @@
 
             return result;
         }
-
 
         private static bool HasDirectLeftRecursion(IParseTree rule)
         {
@@ -2904,7 +2902,6 @@
                 }
             }
         }
-
 
         public static string EliminateAntlrKeywordsInRules(Document document)
         {
