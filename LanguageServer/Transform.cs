@@ -174,7 +174,11 @@
 
             public override void VisitInvocationExpression(InvocationExpressionSyntax node)
             {
-                Invocations.Add(node.ToString());
+                var t = node.GetText().ToString();
+                if (t.IndexOf("context.") == -1)
+                {
+                    Invocations.Add(t);
+                }
                 base.VisitInvocationExpression(node);
             }
         }
@@ -1077,7 +1081,7 @@
             bool is_lexer = lp.Type == ExtractGrammarType.GrammarType.Lexer;
             if (is_lexer)
             {
-                throw new LanguageServerException("A parser or combined grammar file is not selected. Please select one first.");
+                throw new LanguageServerException("A parser or combined grammar file is not selected. Reordering only applies to grammars that contain parser rules; lexer rules cannot be reordered. Please select one first.");
             }
 
             TableOfRules table = new TableOfRules(pd_parser, document);
