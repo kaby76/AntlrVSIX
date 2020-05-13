@@ -1,8 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-
-namespace Algorithms
+﻿namespace Algorithms
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class BreadthFirstOrder<T, E> : IEnumerable<T>
         where E : IEdge<T>
     {
@@ -23,10 +25,29 @@ namespace Algorithms
             {
                 order(graph, v);
             }
+
+            foreach (T v in graph.Vertices)
+            {
+                if (!bfsorder.Contains(v))
+                {
+                    order(graph, v);
+                }
+            }
+
+            if (bfsorder.Count != graph.Vertices.Count())
+            {
+                throw new System.Exception("Internal error: Not all vertices of graph in BFS ordering.");
+            }    
         }
 
         private void order(IGraph<T, E> G, T s)
         {
+            if (bfsorder.Contains(s))
+            {
+                return;
+            }
+            bfsorder.Enqueue(s);
+
             Queue<T> Q = new Queue<T>();
             Dictionary<T, int> color = new Dictionary<T, int>();
             foreach (T v in G.Vertices)
@@ -46,7 +67,6 @@ namespace Algorithms
                 pi[v] = default(T);
             }
 
-            bfsorder.Enqueue(s);
             foreach (T u in G.Vertices)
             {
                 if (!u.Equals(s))

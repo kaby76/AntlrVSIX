@@ -686,7 +686,7 @@
                 || egt.Type == ExtractGrammarType.GrammarType.Lexer;
             if (!is_grammar)
             {
-                return result;
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
 
             // Find all other grammars by walking dependencies (import, vocab, file names).
@@ -943,8 +943,7 @@
             bool is_lexer = lp.Type == ExtractGrammarType.GrammarType.Lexer;
             if (is_lexer)
             {
-                // We don't consider lexer grammars.
-                return result;
+                throw new LanguageServerException("A parser or combined grammar file is not selected. Please select one first.");
             }
 
             // Consider only the target grammar.
@@ -996,8 +995,7 @@
             bool is_lexer = lp.Type == ExtractGrammarType.GrammarType.Lexer;
             if (is_lexer)
             {
-                // We don't consider lexer grammars.
-                return result;
+                throw new LanguageServerException("A parser or combined grammar file is not selected. Please select one first.");
             }
 
             // Consider only the target grammar.
@@ -1079,7 +1077,7 @@
             bool is_lexer = lp.Type == ExtractGrammarType.GrammarType.Lexer;
             if (is_lexer)
             {
-                return result;
+                throw new LanguageServerException("A parser or combined grammar file is not selected. Please select one first.");
             }
 
             TableOfRules table = new TableOfRules(pd_parser, document);
@@ -1256,11 +1254,11 @@
             ParseTreeWalker.Default.Walk(lp, pd_parser.ParseTree);
             if (split && lp.Type != ExtractGrammarType.GrammarType.Combined)
             {
-                return null;
+                throw new LanguageServerException("A combined grammar file is not selected. Please select one first.");
             }
             if ((!split) && lp.Type != ExtractGrammarType.GrammarType.Parser)
             {
-                return null;
+                throw new LanguageServerException("A split grammar file is not selected. Please select one first.");
             }
 
             TableOfRules table = new TableOfRules(pd_parser, document);
@@ -2034,7 +2032,7 @@
                 || egt.Type == ExtractGrammarType.GrammarType.Lexer;
             if (!is_grammar)
             {
-                return result;
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
 
             // Find all other grammars by walking dependencies (import, vocab, file names).
@@ -2550,7 +2548,7 @@
                 || egt.Type == ExtractGrammarType.GrammarType.Lexer;
             if (!is_grammar)
             {
-                return result;
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
 
             // Find all other grammars by walking dependencies (import, vocab, file names).
@@ -2921,7 +2919,7 @@
                 ;
             if (!is_grammar)
             {
-                return result;
+                throw new LanguageServerException("A parser or combined grammar file is not selected. Please select one first.");
             }
 
             TableOfRules table = new TableOfRules(pd_parser, document);
@@ -3278,7 +3276,7 @@
             bool is_lexer = lp.Type == ExtractGrammarType.GrammarType.Lexer;
             if (! is_lexer)
             {
-                return result;
+                throw new LanguageServerException("A lexer grammar file is not selected. Please select one first.");
             }
 
             TableOfModes table = new TableOfModes(pd_parser, document);
@@ -3434,7 +3432,8 @@
             }).FirstOrDefault();
             if (it == null)
             {
-                return result;
+                throw new Exception("Cannot find a rule corresponding to symbol "
+                    + sym.name);
             }
             rule = it;
 
