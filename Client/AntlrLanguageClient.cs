@@ -520,8 +520,9 @@
                     return null;
                 }
 
-                Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMUnfold", ffn, pos).Result;
-                return result;
+                //    Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMUnfold", ffn, pos).Result;
+                _rpc.InvokeAsync("CMUnfold", ffn, pos);
+                //return result;
             }
             catch (Exception)
             {

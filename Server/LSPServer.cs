@@ -182,6 +182,21 @@
             rpc.NotifyWithParameterObjectAsync(Methods.WindowLogMessageName, parameter);
         }
 
+        public bool ApplyEdit(Dictionary<string, TextEdit[]> changes)
+        {
+            WorkspaceEdit edit = new WorkspaceEdit()
+            {
+                Changes = changes
+            };
+            ApplyWorkspaceEditParams parameter = new ApplyWorkspaceEditParams
+            {
+                Label = "Random change",
+                Edit = edit
+            };
+            var r = rpc.InvokeAsync<ApplyWorkspaceEditResponse>(Methods.WorkspaceApplyEditName, parameter).Result;
+            return true;
+        }
+
         public void ShowMessage(string message, MessageType messageType)
         {
             ShowMessageParams parameter = new ShowMessageParams
