@@ -19,6 +19,7 @@
         private readonly bool trace = true;
         private readonly Workspaces.Workspace _workspace;
         private static readonly object _object = new object();
+        private Dictionary<string, bool> ignore_next_change = new Dictionary<string, bool>();
 
         public LanguageServerTarget(LSPServer server)
         {
@@ -257,35 +258,42 @@
             Document document = CheckDoc(request.TextDocument.Uri);
             lock (_object)
             {
-                ParserDetails pd = ParserDetailsFactory.Create(document);
-                string code = pd.Code;
-                int start_index = 0;
-                int end_index = 0;
-                foreach (TextDocumentContentChangeEvent change in request.ContentChanges)
+                if (!ignore_next_change.ContainsKey(document.FullPath))
                 {
-                    Microsoft.VisualStudio.LanguageServer.Protocol.Range range = change.Range;
-                    int length = change.RangeLength; // Why? range encodes start and end => length!
-                    string text = change.Text;
+                    ParserDetails pd = ParserDetailsFactory.Create(document);
+                    string code = pd.Code;
+                    int start_index = 0;
+                    int end_index = 0;
+                    foreach (TextDocumentContentChangeEvent change in request.ContentChanges)
                     {
-                        int line = range.Start.Line;
-                        int character = range.Start.Character;
-                        start_index = LanguageServer.Module.GetIndex(line, character, document);
+                        Microsoft.VisualStudio.LanguageServer.Protocol.Range range = change.Range;
+                        int length = change.RangeLength; // Why? range encodes start and end => length!
+                        string text = change.Text;
+                        {
+                            int line = range.Start.Line;
+                            int character = range.Start.Character;
+                            start_index = LanguageServer.Module.GetIndex(line, character, document);
+                        }
+                        {
+                            int line = range.End.Line;
+                            int character = range.End.Character;
+                            end_index = LanguageServer.Module.GetIndex(line, character, document);
+                        }
+                        (int, int) bs = LanguageServer.Module.GetLineColumn(start_index, document);
+                        (int, int) be = LanguageServer.Module.GetLineColumn(end_index, document);
+                        string original = code.Substring(start_index, end_index - start_index);
+                        string n = code.Substring(0, start_index)
+                                + text
+                                + code.Substring(0 + start_index + end_index - start_index);
+                        code = n;
                     }
-                    {
-                        int line = range.End.Line;
-                        int character = range.End.Character;
-                        end_index = LanguageServer.Module.GetIndex(line, character, document);
-                    }
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(start_index, document);
-                    (int, int) be = LanguageServer.Module.GetLineColumn(end_index, document);
-                    string original = code.Substring(start_index, end_index - start_index);
-                    string n = code.Substring(0, start_index)
-                            + text
-                            + code.Substring(0 + start_index + end_index - start_index);
-                    code = n;
+                    document.Code = code;
+                    List<ParserDetails> to_do = LanguageServer.Module.Compile();
                 }
-                document.Code = code;
-                List<ParserDetails> to_do = LanguageServer.Module.Compile();
+                else
+                {
+                    ignore_next_change.Remove(document.FullPath);
+                }
             }
         }
 
@@ -1591,13 +1599,15 @@
 
         void ApplyChanges(Dictionary<string, string> ch)
         {
+            Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]> a = new Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]>();
             foreach (var pair in ch)
             {
                 var fn = pair.Key;
                 var new_code = pair.Value;
                 Document document = CheckDoc(new Uri(fn));
-
                 var code = document.Code;
+                document.Code = new_code;
+                List<ParserDetails> to_do = LanguageServer.Module.Compile();
                 List<LanguageServer.TextEdit> edits = new List<LanguageServer.TextEdit>();
                 diff_match_patch diff = new diff_match_patch();
                 List<Diff> diffs = diff.diff_main(code, new_code);
@@ -1678,12 +1688,13 @@
                     count++;
                 }
                 var result = new_list.ToArray();
-
-                Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]> a = new Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]>();
                 a[fn] = result;
-
-                server.ApplyEdit(a);
+                lock (_object)
+                {
+                    ignore_next_change[fn] = true;
+                }
             }
+            server.ApplyEdit(a);
         }
     }
 }
