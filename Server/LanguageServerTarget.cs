@@ -1610,8 +1610,6 @@
                 var new_code = pair.Value;
                 Document document = CheckDoc(new Uri(fn));
                 var code = document.Code;
-                document.Code = new_code;
-                List<ParserDetails> to_do = LanguageServer.Module.Compile();
                 List<LanguageServer.TextEdit> edits = new List<LanguageServer.TextEdit>();
                 diff_match_patch diff = new diff_match_patch();
                 List<Diff> diffs = diff.diff_main(code, new_code);
@@ -1697,7 +1695,12 @@
                 {
                     ignore_next_change[fn] = true;
                 }
+                // This must be done after computing changes since offsets/line/column computations
+                // depend on what is currently the source.
+                document.Code = new_code;
             }
+            // Recompile only after every single change everywhere is in.
+            List<ParserDetails> to_do = LanguageServer.Module.Compile();
             server.ApplyEdit(a);
         }
     }
