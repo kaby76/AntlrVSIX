@@ -87,6 +87,16 @@ VS, then reopen. Do not do "rebuild", only "build".
 grammar e.g., warning/removal of LHS predicates in lexer, replacing factored grammar rules with Kleene star rules (which
 result in faster parsers).
 
+## Planned for v7.3:
+
+* Generalized fold/unfold/pack grammar rule refactorings.
+* Fix [#46 Output message when operation does nothing](https://github.com/kaby76/AntlrVSIX/issues/46).
+* Fix [#45 LanguageServer is net472, should be netstandard2.0](https://github.com/kaby76/AntlrVSIX/issues/45).
+* Fix [#44 BFS ordering not working with multiple start states; Start symbols not computed correctly for LeftFactored grammar](https://github.com/kaby76/AntlrVSIX/issues/44).
+* Fix [#43 Colorizing of text after transformation is messed up](https://github.com/kaby76/AntlrVSIX/issues/43).
+* Fix [#41 Add in UI to indicate if transform doesn't work and why](https://github.com/kaby76/AntlrVSIX/issues/41).
+* Fix [#40 Replace all hacks in transformations with tree editing](https://github.com/kaby76/AntlrVSIX/issues/40).
+
 ## Release notes for v7.2 (6-May-2020):
 
 * Fix for [Options window not working #38](https://github.com/kaby76/AntlrVSIX/issues/38).
