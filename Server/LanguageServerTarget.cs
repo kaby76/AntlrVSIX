@@ -1579,7 +1579,7 @@
                 int pos = a2;
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- CMFold");
+                    System.Console.Error.WriteLine("<-- CMUnfold");
                     System.Console.Error.WriteLine(a1);
                     (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
                     System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
