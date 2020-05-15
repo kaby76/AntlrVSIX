@@ -1599,6 +1599,10 @@
 
         void ApplyChanges(Dictionary<string, string> ch)
         {
+            if (!ch.Any())
+            {
+                throw new LanguageServerException("No changes were needed, none made.");
+            }
             Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]> a = new Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]>();
             foreach (var pair in ch)
             {
