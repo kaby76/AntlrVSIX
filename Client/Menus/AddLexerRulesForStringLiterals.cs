@@ -115,8 +115,7 @@
                 {
                     return;
                 }
-                Dictionary<string, string> changes = alc.CMAddLexerRulesForStringLiterals(ffn);
-                MakeChanges.EnterIncrementalChanges(ServiceProvider, changes, buffer);
+                alc.CMAddLexerRulesForStringLiterals(ffn);
             }
             catch (Exception exception)
             {

@@ -115,8 +115,7 @@
                 {
                     return;
                 }
-                Dictionary<string, string> changes = alc.CMEliminateAntlrKeywordsInRules(ffn);
-                MakeChanges.EnterIncrementalChanges(ServiceProvider, changes, buffer);
+                alc.CMEliminateAntlrKeywordsInRules(ffn);
             }
             catch (Exception exception)
             {

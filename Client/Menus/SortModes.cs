@@ -115,8 +115,7 @@
                 {
                     return;
                 }
-                Dictionary<string, string> changes = alc.CMSortModes(ffn);
-                MakeChanges.EnterIncrementalChanges(ServiceProvider, changes, buffer);
+                alc.CMSortModes(ffn);
             }
             catch (Exception exception)
             {

@@ -158,67 +158,7 @@
                 {
                     return;
                 }
-                Dictionary<string, string> changes = alc.CMReorderParserRules(ffn, pos, type);
-                if (changes == null) return;
-                foreach (KeyValuePair<string, string> pair in changes)
-                {
-                    string fn = pair.Key;
-                    Workspaces.Document dd = Workspaces.Workspace.Instance.FindDocument(fn);
-                    if (dd == null)
-                    {
-                        return;
-                    }
-                    string new_code = pair.Value;
-                    ITextEdit edit = buffer.CreateEdit();
-                    LanguageServer.diff_match_patch diff = new LanguageServer.diff_match_patch();
-                    List<LanguageServer.Diff> diffs = diff.diff_main(document.Code, new_code);
-                    List<LanguageServer.Patch> patch = diff.patch_make(diffs);
-                    //patch.Reverse();
-
-                    // Start edit session.
-                    int times = 0;
-                    int delta = 0;
-                    foreach (LanguageServer.Patch p in patch)
-                    {
-                        times++;
-                        int start = p.start1 - delta;
-
-                        int offset = 0;
-                        foreach (LanguageServer.Diff ed in p.diffs)
-                        {
-                            if (ed.operation == LanguageServer.Operation.EQUAL)
-                            {
-                                // Let's verify that.
-                                int len = ed.text.Length;
-                                SnapshotSpan tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
-                                  new Span(start + offset, len));
-                                string tt = tokenSpan.GetText();
-                                if (ed.text != tt)
-                                { }
-                                offset = offset + len;
-                            }
-                            else if (ed.operation == LanguageServer.Operation.DELETE)
-                            {
-                                int len = ed.text.Length;
-                                SnapshotSpan tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
-                                  new Span(start + offset, len));
-                                string tt = tokenSpan.GetText();
-                                if (ed.text != tt)
-                                { }
-                                Span sp = new Span(start + offset, len);
-                                offset = offset + len;
-                                edit.Delete(sp);
-                            }
-                            else if (ed.operation == LanguageServer.Operation.INSERT)
-                            {
-                                int len = ed.text.Length;
-                                edit.Insert(start + offset, ed.text);
-                            }
-                        }
-                        delta = delta + (p.length2 - p.length1);
-                    }
-                    edit.Apply();
-                }
+                alc.CMReorderParserRules(ffn, pos, type);
             }
             catch (Exception exception)
             {

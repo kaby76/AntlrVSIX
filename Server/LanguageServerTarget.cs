@@ -1225,7 +1225,7 @@
         }
 
         [JsonRpcMethod("CMReplaceLiterals")]
-        public async System.Threading.Tasks.Task<Dictionary<string, string>> CMReplaceLiterals(JToken arg)
+        public async void CMReplaceLiterals(JToken arg)
         {
             Dictionary<string, string> changes = null;
             try
@@ -1240,7 +1240,8 @@
                     (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
                     System.Console.Error.WriteLine("");
                 }
-                changes = LanguageServer.Transform.ReplaceLiterals(pos, document);
+                var s = LanguageServer.Transform.ReplaceLiterals(pos, document);
+                ApplyChanges(s);
             }
             catch (LanguageServerException e)
             {
@@ -1250,13 +1251,11 @@
             {
                 server.ShowMessage(e.Message, MessageType.Info);
             }
-            return changes;
         }
 
         [JsonRpcMethod("CMRemoveUselessParserProductions")]
-        public async System.Threading.Tasks.Task<Dictionary<string, string>> CMRemoveUselessParserProductions(JToken arg)
+        public async void CMRemoveUselessParserProductions(JToken arg)
         {
-            Dictionary<string, string> changes = null;
             try
             {
                 CMReplaceLiteralsParams request = arg.ToObject<CMReplaceLiteralsParams>();
@@ -1269,7 +1268,8 @@
                     (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
                     System.Console.Error.WriteLine("");
                 }
-                changes = LanguageServer.Transform.RemoveUselessParserProductions(pos, document);
+                var s = LanguageServer.Transform.RemoveUselessParserProductions(pos, document);
+                ApplyChanges(s);
             }
             catch (LanguageServerException e)
             {
@@ -1279,13 +1279,11 @@
             {
                 server.ShowMessage(e.Message, MessageType.Info);
             }
-            return changes;
         }
 
         [JsonRpcMethod("CMMoveStartRuleToTop")]
-        public async System.Threading.Tasks.Task<Dictionary<string, string>> CMMoveStartRuleToTop(JToken arg)
+        public async void CMMoveStartRuleToTop(JToken arg)
         {
-            Dictionary<string, string> changes = null;
             try
             {
                 CMReplaceLiteralsParams request = arg.ToObject<CMReplaceLiteralsParams>();
@@ -1298,7 +1296,8 @@
                     (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
                     System.Console.Error.WriteLine("");
                 }
-                changes = LanguageServer.Transform.MoveStartRuleToTop(pos, document);
+                var s = LanguageServer.Transform.MoveStartRuleToTop(pos, document);
+                ApplyChanges(s);
             }
             catch (LanguageServerException e)
             {
@@ -1308,13 +1307,11 @@
             {
                 server.ShowMessage(e.Message, MessageType.Info);
             }
-            return changes;
         }
 
         [JsonRpcMethod("CMReorderParserRules")]
-        public async System.Threading.Tasks.Task<Dictionary<string, string>> CMReorderParserRules(JToken arg)
+        public async void CMReorderParserRules(JToken arg)
         {
-            Dictionary<string, string> changes = null;
             try
             {
                 CMReorderParserRulesParams request = arg.ToObject<CMReorderParserRulesParams>();
@@ -1328,7 +1325,8 @@
                     (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
                     System.Console.Error.WriteLine("");
                 }
-                changes = LanguageServer.Transform.ReorderParserRules(pos, document, type);
+                var s = LanguageServer.Transform.ReorderParserRules(pos, document, type);
+                ApplyChanges(s);
             }
             catch (LanguageServerException e)
             {
@@ -1338,7 +1336,6 @@
             {
                 server.ShowMessage(e.Message, MessageType.Info);
             }
-            return changes;
         }
 
         [JsonRpcMethod("CMSplitCombineGrammars")]
@@ -1397,9 +1394,8 @@
         }
 
         [JsonRpcMethod("CMConvertRecursionToKleeneOperator")]
-        public async System.Threading.Tasks.Task<Dictionary<string, string>> CMConvertRecursionToKleeneOperator(JToken arg)
+        public async void CMConvertRecursionToKleeneOperator(JToken arg)
         {
-            Dictionary<string, string> s = null;
             try
             {
                 CMEliminateDirectLeftRecursionParams request = arg.ToObject<CMEliminateDirectLeftRecursionParams>();
@@ -1412,7 +1408,8 @@
                     (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
                     System.Console.Error.WriteLine("");
                 }
-                s = Transform.ConvertRecursionToKleeneOperator(pos, document);
+                var s = Transform.ConvertRecursionToKleeneOperator(pos, document);
+                ApplyChanges(s);
             }
             catch (LanguageServerException e)
             {
@@ -1422,14 +1419,12 @@
             {
                 server.ShowMessage(e.Message, MessageType.Info);
             }
-            return s;
         }
 
 
         [JsonRpcMethod("CMEliminateDirectLeftRecursion")]
-        public async System.Threading.Tasks.Task<Dictionary<string, string>> CMEliminateDirectLeftRecursion(JToken arg)
+        public async void CMEliminateDirectLeftRecursion(JToken arg)
         {
-            Dictionary<string, string> s = null;
             try
             {
                 CMEliminateDirectLeftRecursionParams request = arg.ToObject<CMEliminateDirectLeftRecursionParams>();
@@ -1442,7 +1437,8 @@
                     (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
                     System.Console.Error.WriteLine("");
                 }
-                s = Transform.EliminateDirectLeftRecursion(pos, document);
+                var s = Transform.EliminateDirectLeftRecursion(pos, document);
+                ApplyChanges(s);
             }
             catch (LanguageServerException e)
             {
@@ -1452,13 +1448,11 @@
             {
                 server.ShowMessage(e.Message, MessageType.Info);
             }
-            return s;
         }
 
         [JsonRpcMethod("CMEliminateIndirectLeftRecursion")]
-        public async System.Threading.Tasks.Task<Dictionary<string, string>> CMEliminateIndirectLeftRecursion(JToken arg)
+        public async void CMEliminateIndirectLeftRecursion(JToken arg)
         {
-            Dictionary<string, string> s = null;
             try
             {
                 CMEliminateDirectLeftRecursionParams request = arg.ToObject<CMEliminateDirectLeftRecursionParams>();
@@ -1471,7 +1465,8 @@
                     (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
                     System.Console.Error.WriteLine("");
                 }
-                s = Transform.EliminateIndirectLeftRecursion(pos, document);
+                var s = Transform.EliminateIndirectLeftRecursion(pos, document);
+                ApplyChanges(s);
             }
             catch (LanguageServerException e)
             {
@@ -1481,13 +1476,11 @@
             {
                 server.ShowMessage(e.Message, MessageType.Info);
             }
-            return s;
         }
 
         [JsonRpcMethod("CMEliminateAntlrKeywordsInRules")]
-        public async System.Threading.Tasks.Task<Dictionary<string, string>> CMEliminateAntlrKeywordsInRules(JToken arg)
+        public async void CMEliminateAntlrKeywordsInRules(JToken arg)
         {
-            Dictionary<string, string> s = null;
             try
             {
                 Uri request = arg.ToObject<Uri>();
@@ -1500,8 +1493,9 @@
                 var new_code = Transform.EliminateAntlrKeywordsInRules(document);
                 if (new_code != null)
                 {
-                    s = new Dictionary<string, string>();
+                    var s = new Dictionary<string, string>();
                     s.Add(document.FullPath, new_code);
+                    ApplyChanges(s);
                 }
             }
             catch (LanguageServerException e)
@@ -1512,14 +1506,12 @@
             {
                 server.ShowMessage(e.Message, MessageType.Info);
             }
-            return s;
         }
 
 
         [JsonRpcMethod("CMAddLexerRulesForStringLiterals")]
-        public async System.Threading.Tasks.Task<Dictionary<string, string>> CMAddLexerRulesForStringLiterals(JToken arg)
+        public async void CMAddLexerRulesForStringLiterals(JToken arg)
         {
-            Dictionary<string, string> s = null;
             try
             {
                 Uri request = arg.ToObject<Uri>();
@@ -1529,7 +1521,8 @@
                     System.Console.Error.WriteLine("<-- CMAddLexerRulesForStringLiterals");
                     System.Console.Error.WriteLine(arg.ToString());
                 }
-                s = Transform.AddLexerRulesForStringLiterals(document);
+                var s = Transform.AddLexerRulesForStringLiterals(document);
+                ApplyChanges(s);
             }
             catch (LanguageServerException e)
             {
@@ -1539,13 +1532,11 @@
             {
                 server.ShowMessage(e.Message, MessageType.Info);
             }
-            return s;
         }
 
         [JsonRpcMethod("CMSortModes")]
-        public async System.Threading.Tasks.Task<Dictionary<string, string>> CMSortModes(JToken arg)
+        public async void CMSortModes(JToken arg)
         {
-            Dictionary<string, string> s = null;
             try
             {
                 Uri request = arg.ToObject<Uri>();
@@ -1555,7 +1546,8 @@
                     System.Console.Error.WriteLine("<-- CMSortModes");
                     System.Console.Error.WriteLine(arg.ToString());
                 }
-                s = Transform.SortModes(document);
+                var s = Transform.SortModes(document);
+                ApplyChanges(s);
             }
             catch (LanguageServerException e)
             {
@@ -1565,11 +1557,9 @@
             {
                 server.ShowMessage(e.Message, MessageType.Info);
             }
-            return s;
         }
         
         [JsonRpcMethod("CMUnfold")]
-        //public async System.Threading.Tasks.Task<Dictionary<string, string>> CMUnfold(JToken arg1, JToken arg2)
         public async void CMUnfold(JToken arg1, JToken arg2)
         {
             Dictionary<string, string> s = null;
@@ -1586,104 +1576,8 @@
                     (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
                     System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
                 }
-
-                {
-                    var code = document.Code;
-                    var new_code = Environment.NewLine + "// Hi there." + Environment.NewLine + code;
-           //         document.Code = new_code;
-              //      List<ParserDetails> to_do = LanguageServer.Module.Compile();
-                    List<LanguageServer.TextEdit> edits = new List<LanguageServer.TextEdit>();
-                    diff_match_patch diff = new diff_match_patch();
-                    List<Diff> diffs = diff.diff_main(code, new_code);
-                    List<Patch> patch = diff.patch_make(diffs);
-                    //patch.Reverse();
-
-                    {
-                        // Start edit session.
-                        int times = 0;
-                        int delta = 0;
-                        foreach (Patch p in patch)
-                        {
-                            times++;
-                            int start = p.start1 - delta;
-
-                            int offset = 0;
-                            foreach (Diff ed in p.diffs)
-                            {
-                                if (ed.operation == Operation.EQUAL)
-                                {
-                                    //// Let's verify that.
-                                    int len = ed.text.Length;
-                                    //var tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
-                                    //  new Span(start + offset, len));
-                                    //var tt = tokenSpan.GetText();
-                                    //if (ed.text != tt)
-                                    //{ }
-                                    offset = offset + len;
-                                }
-                                else if (ed.operation == Operation.DELETE)
-                                {
-                                    int len = ed.text.Length;
-                                    //var tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
-                                    //  new Span(start + offset, len));
-                                    //var tt = tokenSpan.GetText();
-                                    //if (ed.text != tt)
-                                    //{ }
-                                    LanguageServer.TextEdit edit = new LanguageServer.TextEdit()
-                                    {
-                                        range = new Workspaces.Range(
-                                            new Workspaces.Index(start + offset),
-                                            new Workspaces.Index(start + offset + len)),
-                                        NewText = ""
-                                    };
-                                    offset = offset + len;
-                                    edits.Add(edit);
-                                }
-                                else if (ed.operation == Operation.INSERT)
-                                {
-                                    int len = ed.text.Length;
-                                    LanguageServer.TextEdit edit = new LanguageServer.TextEdit()
-                                    {
-                                        range = new Workspaces.Range(
-                                            new Workspaces.Index(start + offset),
-                                            new Workspaces.Index(start + offset)),
-                                        NewText = ed.text
-                                    };
-                                    edits.Add(edit);
-                                }
-                            }
-                            delta = delta + (p.length2 - p.length1);
-                        }
-                    }
-                    var changes = edits.ToArray();
-
-                    List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit> new_list = new List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit>();
-                    int count = 0;
-                    foreach (LanguageServer.TextEdit delta in changes)
-                    {
-                        Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit new_edit = new Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit
-                        {
-                            Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range()
-                        };
-                        (int, int) lcs = LanguageServer.Module.GetLineColumn(delta.range.Start.Value, document);
-                        (int, int) lce = LanguageServer.Module.GetLineColumn(delta.range.End.Value, document);
-                        new_edit.Range.Start = new Position(lcs.Item1, lcs.Item2);
-                        new_edit.Range.End = new Position(lce.Item1, lce.Item2);
-                        new_edit.NewText = delta.NewText;
-                        new_list.Add(new_edit);
-                        count++;
-                    }
-                    var result = new_list.ToArray();
-
-                    Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]> a = new Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]>();
-                    a[document.FullPath] = result;
-
-                    server.ApplyEdit(a);
-                }
-
-
-                s = null;
-//                s = Transform.Unfold(pos, document);
+                s = Transform.Unfold(pos, document);
+                ApplyChanges(s);
             }
             catch (LanguageServerException e)
             {
@@ -1693,8 +1587,103 @@
             {
                 server.ShowMessage(e.Message, MessageType.Info);
             }
-           // return s;
         }
 
+        void ApplyChanges(Dictionary<string, string> ch)
+        {
+            foreach (var pair in ch)
+            {
+                var fn = pair.Key;
+                var new_code = pair.Value;
+                Document document = CheckDoc(new Uri(fn));
+
+                var code = document.Code;
+                List<LanguageServer.TextEdit> edits = new List<LanguageServer.TextEdit>();
+                diff_match_patch diff = new diff_match_patch();
+                List<Diff> diffs = diff.diff_main(code, new_code);
+                List<Patch> patch = diff.patch_make(diffs);
+                {
+                    // Start edit session.
+                    int times = 0;
+                    int delta = 0;
+                    foreach (Patch p in patch)
+                    {
+                        times++;
+                        int start = p.start1 - delta;
+
+                        int offset = 0;
+                        foreach (Diff ed in p.diffs)
+                        {
+                            if (ed.operation == Operation.EQUAL)
+                            {
+                                //// Let's verify that.
+                                int len = ed.text.Length;
+                                //var tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
+                                //  new Span(start + offset, len));
+                                //var tt = tokenSpan.GetText();
+                                //if (ed.text != tt)
+                                //{ }
+                                offset = offset + len;
+                            }
+                            else if (ed.operation == Operation.DELETE)
+                            {
+                                int len = ed.text.Length;
+                                //var tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
+                                //  new Span(start + offset, len));
+                                //var tt = tokenSpan.GetText();
+                                //if (ed.text != tt)
+                                //{ }
+                                LanguageServer.TextEdit edit = new LanguageServer.TextEdit()
+                                {
+                                    range = new Workspaces.Range(
+                                        new Workspaces.Index(start + offset),
+                                        new Workspaces.Index(start + offset + len)),
+                                    NewText = ""
+                                };
+                                offset = offset + len;
+                                edits.Add(edit);
+                            }
+                            else if (ed.operation == Operation.INSERT)
+                            {
+                                int len = ed.text.Length;
+                                LanguageServer.TextEdit edit = new LanguageServer.TextEdit()
+                                {
+                                    range = new Workspaces.Range(
+                                        new Workspaces.Index(start + offset),
+                                        new Workspaces.Index(start + offset)),
+                                    NewText = ed.text
+                                };
+                                edits.Add(edit);
+                            }
+                        }
+                        delta = delta + (p.length2 - p.length1);
+                    }
+                }
+                var changes = edits.ToArray();
+
+                List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit> new_list = new List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit>();
+                int count = 0;
+                foreach (LanguageServer.TextEdit delta in changes)
+                {
+                    Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit new_edit = new Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit
+                    {
+                        Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range()
+                    };
+                    (int, int) lcs = LanguageServer.Module.GetLineColumn(delta.range.Start.Value, document);
+                    (int, int) lce = LanguageServer.Module.GetLineColumn(delta.range.End.Value, document);
+                    new_edit.Range.Start = new Position(lcs.Item1, lcs.Item2);
+                    new_edit.Range.End = new Position(lce.Item1, lce.Item2);
+                    new_edit.NewText = delta.NewText;
+                    new_list.Add(new_edit);
+                    count++;
+                }
+                var result = new_list.ToArray();
+
+                Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]> a = new Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]>();
+                a[fn] = result;
+
+                server.ApplyEdit(a);
+            }
+        }
     }
 }

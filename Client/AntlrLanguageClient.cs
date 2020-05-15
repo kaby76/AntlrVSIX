@@ -251,79 +251,73 @@
             return null;
         }
 
-        public Dictionary<string, string> CMReplaceLiterals(string ffn, int pos)
+        public void CMReplaceLiterals(string ffn, int pos)
         {
             try
             {
                 if (_rpc == null)
                 {
-                    return null;
+                    return;
                 }
 
                 CMReplaceLiteralsParams p = new CMReplaceLiteralsParams();
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
                 p.Pos = pos;
-                Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMReplaceLiterals", p).Result;
-                return result;
+                _rpc.InvokeAsync("CMReplaceLiterals", p);
             }
             catch (Exception)
             {
             }
-            return null;
         }
 
-        public Dictionary<string, string> CMRemoveUselessParserProductions(string ffn, int pos)
+        public void CMRemoveUselessParserProductions(string ffn, int pos)
         {
             try
             {
                 if (_rpc == null)
                 {
-                    return null;
+                    return;
                 }
 
                 CMRemoveUselessParserProductionsParams p = new CMRemoveUselessParserProductionsParams();
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
                 p.Pos = pos;
-                Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMRemoveUselessParserProductions", p).Result;
-                return result;
+                _rpc.InvokeAsync("CMRemoveUselessParserProductions", p);
             }
             catch (Exception)
             {
             }
-            return null;
         }
 
-        public Dictionary<string, string> CMMoveStartRuleToTop(string ffn, int pos)
+        public void CMMoveStartRuleToTop(string ffn, int pos)
         {
             try
             {
                 if (_rpc == null)
                 {
-                    return null;
+                    return;
                 }
 
                 CMMoveStartRuleToTopParams p = new CMMoveStartRuleToTopParams();
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
                 p.Pos = pos;
-                Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMMoveStartRuleToTop", p).Result;
-                return result;
+                _rpc.InvokeAsync("CMMoveStartRuleToTop", p);
             }
             catch (Exception)
             {
             }
-            return null;
         }
 
-        public Dictionary<string, string> CMReorderParserRules(string ffn, int pos, ReorderType reorder_type)
+        public void CMReorderParserRules(string ffn, int pos, ReorderType reorder_type)
         {
             try
             {
                 if (_rpc == null)
                 {
-                    return null;
+                    return;
                 }
 
                 CMReorderParserRulesParams p = new CMReorderParserRulesParams();
@@ -332,13 +326,11 @@
                 p.Pos = pos;
                 p.Type = reorder_type;
 
-                Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMReorderParserRules", p).Result;
-                return result;
+                _rpc.InvokeAsync("CMReorderParserRules", p);
             }
             catch (Exception)
             {
             }
-            return null;
         }
 
 
@@ -385,149 +377,133 @@
             return null;
         }
 
-        public Dictionary<string, string> CMEliminateDirectLeftRecursion(string ffn, int pos)
+        public void CMEliminateDirectLeftRecursion(string ffn, int pos)
         {
             try
             {
                 if (_rpc == null)
                 {
-                    return null;
+                    return;
                 }
 
                 CMEliminateDirectLeftRecursionParams p = new CMEliminateDirectLeftRecursionParams();
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
                 p.Pos = pos;
-                Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMEliminateDirectLeftRecursion", p).Result;
-                return result;
+                _rpc.InvokeAsync("CMEliminateDirectLeftRecursion", p);
             }
             catch (Exception)
             {
             }
-            return null;
         }
 
-        public Dictionary<string, string> CMEliminateIndirectLeftRecursion(string ffn, int pos)
+        public void CMEliminateIndirectLeftRecursion(string ffn, int pos)
         {
             try
             {
                 if (_rpc == null)
                 {
-                    return null;
+                    return;
                 }
 
                 CMEliminateDirectLeftRecursionParams p = new CMEliminateDirectLeftRecursionParams();
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
                 p.Pos = pos;
-                Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMEliminateIndirectLeftRecursion", p).Result;
-                return result;
+                _rpc.InvokeAsync("CMEliminateIndirectLeftRecursion", p);
             }
             catch (Exception)
             {
             }
-            return null;
         }
         
-        public Dictionary<string, string> CMConvertRecursionToKleeneOperator(string ffn, int pos)
+        public void CMConvertRecursionToKleeneOperator(string ffn, int pos)
         {
             try
             {
                 if (_rpc == null)
                 {
-                    return null;
+                    return;
                 }
 
                 CMEliminateDirectLeftRecursionParams p = new CMEliminateDirectLeftRecursionParams();
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
                 p.Pos = pos;
-                Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMConvertRecursionToKleeneOperator", p).Result;
-                return result;
+                _rpc.InvokeAsync("CMConvertRecursionToKleeneOperator", p);
             }
             catch (Exception)
             {
             }
-            return null;
         }
 
-        public Dictionary<string, string> CMEliminateAntlrKeywordsInRules(string ffn)
+        public void CMEliminateAntlrKeywordsInRules(string ffn)
         {
             try
             {
                 if (_rpc == null)
                 {
-                    return null;
+                    return;
                 }
 
                 Uri uri = new Uri(ffn);
                 var p = uri;
-                Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMEliminateAntlrKeywordsInRules", p).Result;
-                return result;
+                _rpc.InvokeAsync("CMEliminateAntlrKeywordsInRules", p);
             }
             catch (Exception)
             {
             }
-            return null;
         }
 
-        public Dictionary<string, string> CMAddLexerRulesForStringLiterals(string ffn)
+        public void CMAddLexerRulesForStringLiterals(string ffn)
         {
             try
             {
                 if (_rpc == null)
                 {
-                    return null;
+                    return;
                 }
 
                 Uri uri = new Uri(ffn);
                 var p = uri;
-                Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMAddLexerRulesForStringLiterals", p).Result;
-                return result;
+                _rpc.InvokeAsync("CMAddLexerRulesForStringLiterals", p);
             }
             catch (Exception)
             {
             }
-            return null;
         }
 
-        public Dictionary<string, string> CMSortModes(string ffn)
+        public void CMSortModes(string ffn)
         {
             try
             {
                 if (_rpc == null)
                 {
-                    return null;
+                    return;
                 }
 
                 Uri uri = new Uri(ffn);
                 var p = uri;
-                Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMSortModes", p).Result;
-                return result;
+                _rpc.InvokeAsync("CMSortModes", p);
             }
             catch (Exception)
             {
             }
-            return null;
         }
 
-        public Dictionary<string, string> CMUnfold(string ffn, int pos)
+        public void CMUnfold(string ffn, int pos)
         {
             try
             {
                 if (_rpc == null)
                 {
-                    return null;
+                    return;
                 }
-
-                //    Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMUnfold", ffn, pos).Result;
                 _rpc.InvokeAsync("CMUnfold", ffn, pos);
-                //return result;
             }
             catch (Exception)
             {
             }
-            return null;
         }
 
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)

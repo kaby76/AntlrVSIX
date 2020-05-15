@@ -125,8 +125,7 @@
                 {
                     return;
                 }
-                Dictionary<string, string> changes = alc.CMConvertRecursionToKleeneOperator(ffn, pos);
-                MakeChanges.EnterIncrementalChanges(ServiceProvider, changes, buffer);
+                alc.CMConvertRecursionToKleeneOperator(ffn, pos);
             }
             catch (Exception exception)
             {

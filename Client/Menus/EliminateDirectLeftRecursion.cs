@@ -125,8 +125,7 @@
                 {
                     return;
                 }
-                Dictionary<string, string> changes = alc.CMEliminateDirectLeftRecursion(ffn, pos);
-                MakeChanges.EnterIncrementalChanges(ServiceProvider, changes, buffer);
+                alc.CMEliminateDirectLeftRecursion(ffn, pos);
             }
             catch (Exception exception)
             {

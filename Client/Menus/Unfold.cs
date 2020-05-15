@@ -125,8 +125,7 @@
                 {
                     return;
                 }
-                Dictionary<string, string> changes = alc.CMUnfold(ffn, pos);
-                MakeChanges.EnterIncrementalChanges(ServiceProvider, changes, buffer);
+                alc.CMUnfold(ffn, pos);
             }
             catch (Exception exception)
             {
