@@ -695,6 +695,7 @@
                     locations.Add(location);
                 }
                 result = locations.ToArray();
+                server.ShowMessage(result.Length.ToString() + " results.", MessageType.Info);
             }
             catch (Exception)
             { }
