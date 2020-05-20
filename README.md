@@ -89,7 +89,8 @@ result in faster parsers).
 
 ## Planned for v7.3:
 
-* Generalized fold/unfold/pack grammar rule refactorings.
+* Generalized fold/unfold/pack/expression recursion replace grammar rule refactorings.
+* Fix [Rename via right-click context menu does not work--VS 2019 broken, MS needs to fix. #48](https://github.com/kaby76/AntlrVSIX/issues/48).
 * Fix [#46 Output message when operation does nothing](https://github.com/kaby76/AntlrVSIX/issues/46).
 * Fix [#45 LanguageServer is net472, should be netstandard2.0](https://github.com/kaby76/AntlrVSIX/issues/45).
 * Fix [#44 BFS ordering not working with multiple start states; Start symbols not computed correctly for LeftFactored grammar](https://github.com/kaby76/AntlrVSIX/issues/44).
