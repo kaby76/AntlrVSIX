@@ -63,7 +63,6 @@
             EliminateIndirectLeftRecursion.Initialize(this);
             EliminateAntlrKeywordsInRules.Initialize(this);
             AddLexerRulesForStringLiterals.Initialize(this);
-            RenameCommand.Initialize(this);
             SortModes.Initialize(this);
             ConvertRecursionToKleeneOperator.Initialize(this);
             Unfold.Initialize(this);
