@@ -695,10 +695,33 @@
                     locations.Add(location);
                 }
                 result = locations.ToArray();
+                if (trace)
+                {
+                    System.Console.Error.Write("returning ");
+                    System.Console.Error.WriteLine(string.Join(
+                        System.Environment.NewLine, result.Select(s =>
+                    {
+                        var v = (Microsoft.VisualStudio.LanguageServer.Protocol.Location)s;
+                        var dd = CheckDoc(v.Uri);
+                        return "<" + v.Uri +
+                            ",[" + LanguageServer.Module.GetIndex(
+                                v.Range.Start.Line,
+                                v.Range.Start.Character,
+                                dd)
+                            + ".."
+                            + LanguageServer.Module.GetIndex(
+                                v.Range.End.Line,
+                                v.Range.End.Character,
+                                dd)
+                            + "]>";
+                    })));
+                }
                 server.ShowMessage(result.Length.ToString() + " results.", MessageType.Info);
             }
-            catch (Exception)
-            { }
+            catch (Exception eeks)
+            {
+                System.Console.Error.WriteLine("Exception: " + eeks.ToString());
+            }
             return result;
         }
 
@@ -1567,7 +1590,7 @@
                 server.ShowMessage(e.Message, MessageType.Info);
             }
         }
-        
+
         [JsonRpcMethod("CMUnfold")]
         public async void CMUnfold(JToken arg1, JToken arg2)
         {
@@ -1586,6 +1609,38 @@
                     System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
                 }
                 s = Transform.Unfold(pos, document);
+                ApplyChanges(s);
+            }
+            catch (LanguageServerException e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
+            catch (Exception e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
+        }
+
+        [JsonRpcMethod("CMFold")]
+        public async void CMFold(JToken arg1, JToken arg2, JToken arg3)
+        {
+            Dictionary<string, string> s = null;
+            try
+            {
+                string a1 = arg1.ToObject<string>();
+                int a2 = arg2.ToObject<int>();
+                int a3 = arg3.ToObject<int>();
+                Document document = CheckDoc(new Uri(a1));
+                int start = a2;
+                int end = a3;
+                if (trace)
+                {
+                    System.Console.Error.WriteLine("<-- CMFold");
+                    System.Console.Error.WriteLine(a1);
+                    (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
+                    System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
+                }
+                s = Transform.Fold(start, end, document);
                 ApplyChanges(s);
             }
             catch (LanguageServerException e)

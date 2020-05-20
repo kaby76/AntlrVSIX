@@ -2971,7 +2971,7 @@
                 ;
             if (!is_grammar)
             {
-                return result;
+                throw new LanguageServerException("A parser or combined grammar file is not selected. Please select one first.");
             }
 
             // Find all other grammars by walking dependencies (import, vocab, file names).
@@ -3339,7 +3339,7 @@
                 || egt.Type == ExtractGrammarType.GrammarType.Lexer;
             if (!is_grammar)
             {
-                return result;
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
 
             // Find all other grammars by walking dependencies (import, vocab, file names).
@@ -3560,6 +3560,293 @@
                         }
                         return element1;
                     }
+                    return null;
+                });
+            }
+
+            StringBuilder sb = new StringBuilder();
+            TreeEdits.Reconstruct(sb, pd_parser.ParseTree, text_before);
+            var new_code = sb.ToString();
+            if (new_code != pd_parser.Code)
+            {
+                result.Add(document.FullPath, new_code);
+            }
+
+            return result;
+        }
+
+        public static Dictionary<string, string> Fold(int start, int end, Document document)
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+
+            // Check if initial file is a grammar.
+            AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
+            if (pd_parser == null)
+            {
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            }
+            ExtractGrammarType egt = new ExtractGrammarType();
+            ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
+            bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
+                || egt.Type == ExtractGrammarType.GrammarType.Combined
+                || egt.Type == ExtractGrammarType.GrammarType.Lexer;
+            if (!is_grammar)
+            {
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            }
+
+            // Find all other grammars by walking dependencies (import, vocab, file names).
+            HashSet<string> read_files = new HashSet<string>
+            {
+                document.FullPath
+            };
+            Dictionary<Workspaces.Document, List<TerminalNodeImpl>> every_damn_literal =
+                new Dictionary<Workspaces.Document, List<TerminalNodeImpl>>();
+            for (; ; )
+            {
+                int before_count = read_files.Count;
+                foreach (string f in read_files)
+                {
+                    List<string> additional = AntlrGrammarDetails._dependent_grammars.Where(
+                        t => t.Value.Contains(f)).Select(
+                        t => t.Key).ToList();
+                    read_files = read_files.Union(additional).ToHashSet();
+                }
+                foreach (string f in read_files)
+                {
+                    IEnumerable<List<string>> additional = AntlrGrammarDetails._dependent_grammars.Where(
+                        t => t.Key == f).Select(
+                        t => t.Value);
+                    foreach (List<string> t in additional)
+                    {
+                        read_files = read_files.Union(t).ToHashSet();
+                    }
+                }
+                int after_count = read_files.Count;
+                if (after_count == before_count)
+                {
+                    break;
+                }
+            }
+
+            // Check cursor position. Many things can happen here, but we have to try
+            // and make some sense of what the user is pointing out.
+            // It is either the LHS symbol of a rule,
+            // which means the user wants to fold all occurrences of the rule
+            // RHS or it is a selection of symbols in the RHS of the rule, which means the
+            // user wants to fold this specific sequence and then create a new rule.
+            IEnumerable<Location> refs_and_defs = null;
+            IList<Location> defs = null;
+            TerminalNodeImpl sym_start = null;
+            TerminalNodeImpl sym_end = null;
+            if (start == end)
+            {
+                // Selection is a single point.
+                sym_end = sym_start = LanguageServer.Util.Find(start, document);
+            }
+            else
+            {
+                // Selection is of a list of characters. Go up the tree to find an
+                // exact match.
+                if (start >= end)
+                {
+                    var temp = end;
+                    end = start;
+                    start = temp;
+                }
+                sym_start = LanguageServer.Util.Find(start, document);
+                sym_end = LanguageServer.Util.Find(end-1, document);
+            }
+            if (sym_end == null || sym_start == null)
+            {
+                throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
+            }
+            // Go up tree to find a common parent.
+            List<IParseTree> lhs_path = new List<IParseTree>();
+            List<IParseTree> rhs_path = new List<IParseTree>();
+            for (var p = (IParseTree)sym_start; p != null; p = p.Parent) lhs_path.Insert(0, p);
+            for (var p = (IParseTree)sym_end; p != null; p = p.Parent) rhs_path.Insert(0, p);
+            //List<Type> lhs_types = new List<Type>();
+            //List<Type> rhs_types = new List<Type>();
+            //for (var p = (IParseTree)sym_start; p != null; p = p.Parent) lhs_types.Insert(0, p.GetType());
+            //for (var p = (IParseTree)sym_end; p != null; p = p.Parent) rhs_types.Insert(0, p.GetType());
+            //List<string> lhs_string = new List<string>();
+            //List<string> rhs_string = new List<string>();
+            //for (var p = (IParseTree)sym_start; p != null; p = p.Parent) lhs_string.Insert(0, p.GetText());
+            //for (var p = (IParseTree)sym_end; p != null; p = p.Parent) rhs_string.Insert(0, p.GetText());
+
+            int i = 0;
+            for (; ; )
+            {
+                if (lhs_path[i] != rhs_path[i])
+                {
+                    --i;
+                    break;
+                }
+                ++i;
+                if (i >= lhs_path.Count || i > rhs_path.Count)
+                {
+                    --i;
+                    break;
+                }
+            }
+            if (i < 0)
+            {
+                throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
+            }
+            if (lhs_path[i] is ANTLRv4Parser.ParserRuleSpecContext)
+            {
+                throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
+            }
+            if (lhs_path[i] is ANTLRv4Parser.RuleAltListContext)
+            {
+                throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
+            }
+            int j = i;
+            for (; j >= 0; --j)
+            {
+                if (lhs_path[j] is ANTLRv4Parser.ParserRuleSpecContext)
+                    break;
+            }
+            if (j < 0)
+            {
+                throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
+            }
+            if (lhs_path[j] is ANTLRv4Parser.ParserRuleSpecContext
+                && j + 2 == lhs_path.Count
+                && sym_start != sym_end)
+            {
+                throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
+            }
+
+            bool replace_all = sym_start == sym_end && sym_start.Parent is ANTLRv4Parser.ParserRuleSpecContext;
+
+            // Get all intertoken text immediately for source reconstruction.
+            var text_before = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
+
+            if (replace_all)
+            {
+                // Find complete RHS elsewhere and use LHS symbol if there's a match.
+            }
+            else
+            {
+                AntlrGrammarDetails pd = pd_parser;
+                var pt = pd.ParseTree;
+                var replace_this = lhs_path[i];
+
+                // Pull out selected symbols on RHS and make a rule out of it.
+                // For symbol rule.RULE_REF(), replace occurrence in parse tree
+                // with modified RHS list.
+                //var parser_rule = rule as ANTLRv4Parser.ParserRuleSpecContext;
+                //var td = location.Uri;
+                //var range = location.Range;
+                //var rhs = parser_rule.ruleBlock();
+                //var sym_pt = LanguageServer.Util.Find(index, td);
+                //if (sym_pt == null) throw new Exception("Inexplicably can't find document symbol in DoFold.");
+
+                //var s = Module.GetDocumentSymbol(range.Start.Value, td);
+                //if (s == null) throw new Exception("Inexplicably can't find document symbol in DoFold.");
+
+
+
+                TreeEdits.Replace(pt, (t) =>
+                {
+                    if (t != replace_this) return null;
+                    // It's either a single symbol ()
+                    // or a list of symbols ().
+                    if (t is ANTLRv4Parser.BlockContext)
+                    {
+                        // Replace entire block.
+                        
+                    }
+                    else if (t is ANTLRv4Parser.AlternativeContext)
+                    {
+
+                    }
+                    else if (t is ANTLRv4Parser.EbnfContext)
+                    {
+
+                    }
+                    else if (t is TerminalNodeImpl)
+                    {
+
+                    }
+                    else
+                        return null;
+                    //var u = t as ANTLRv4Parser.ElementContext;
+                    //var id = u.atom()?.ruleref()?.RULE_REF();
+                    //if (id == null) return null;
+                    //if (id.GetText() != s.name) return null;
+                    //if (!(id is TerminalNodeImpl)) return null;
+                    //var tni = id as TerminalNodeImpl;
+                    //if (tni.Payload.StartIndex == range.Start.Value
+                    //    && tni.Payload.StopIndex == range.End.Value)
+                    //{
+                    //    var element_p = t;
+                    //    var alternative_p = t.Parent;
+                    //    var element = element_p as ANTLRv4Parser.ElementContext;
+                    //    var alternative = alternative_p as ANTLRv4Parser.AlternativeContext;
+                    //    var ebnf_suffix = element.ebnfSuffix();
+                    //    var element1 = new ANTLRv4Parser.ElementContext(null, 0);
+                    //    bool modified = false;
+                    //    int i = 0;
+                    //    for (; i < alternative.ChildCount; ++i)
+                    //    {
+                    //        if (alternative.children[i] == element)
+                    //        {
+                    //            modified = true;
+                    //            break;
+                    //        }
+                    //    }
+                    //    if (!modified) return null;
+                    //    var new_ebnf = new ANTLRv4Parser.EbnfContext(null, 0);
+                    //    element1.AddChild(new_ebnf);
+                    //    new_ebnf.Parent = element1;
+                    //    var new_block = new ANTLRv4Parser.BlockContext(null, 0);
+                    //    new_ebnf.AddChild(new_block);
+                    //    new_block.Parent = new_ebnf;
+                    //    if (ebnf_suffix != null)
+                    //    {
+                    //        var blocksuffix = new ANTLRv4Parser.BlockSuffixContext(null, 0);
+                    //        TreeEdits.CopyTreeRecursive(ebnf_suffix, new_ebnf, text_before);
+                    //    }
+                    //    var lparen_token_type = ANTLRv4Lexer.LPAREN;
+                    //    var lparen_token = new CommonToken(lparen_token_type) { Line = -1, Column = -1, Text = "(" };
+                    //    var new_lparen = new TerminalNodeImpl(lparen_token);
+                    //    new_block.AddChild(new_lparen);
+                    //    new_lparen.Parent = new_block;
+                    //    text_before.Add(new_lparen, " ");
+                    //    ANTLRv4Parser.AltListContext altlist1 = new ANTLRv4Parser.AltListContext(null, 0);
+                    //    new_block.AddChild(altlist1);
+                    //    altlist1.Parent = new_block;
+                    //    var rparen_token_type = ANTLRv4Lexer.RPAREN;
+                    //    var rparen_token = new CommonToken(rparen_token_type) { Line = -1, Column = -1, Text = ")" };
+                    //    var new_rparen = new TerminalNodeImpl(rparen_token);
+                    //    new_block.AddChild(new_rparen);
+                    //    new_rparen.Parent = new_block;
+
+                    //        // RHS of rule is wrapped in <ruleBlock <ruleAltList ...>>
+                    //        // Peel off each alternative in ruleAltList/labeledAlt, and
+                    //        // insert in newly constructed altlist.
+
+                    //        var ruleAltList = rhs.ruleAltList();
+                    //    bool first = true;
+                    //    foreach (var labeledAlt in ruleAltList.labeledAlt())
+                    //    {
+                    //        if (!first)
+                    //        {
+                    //            var token_type4 = ANTLRv4Lexer.OR;
+                    //            var token4 = new CommonToken(token_type4) { Line = -1, Column = -1, Text = "|" };
+                    //            var new_or = new TerminalNodeImpl(token4);
+                    //            altlist1.AddChild(new_or);
+                    //            new_or.Parent = altlist1;
+                    //        }
+                    //        first = false;
+                    //        var a = labeledAlt.alternative();
+                    //        var copy = TreeEdits.CopyTreeRecursive(a, altlist1);
+                    //    }
+                    //    return element1;
+                    //}
                     return null;
                 });
             }

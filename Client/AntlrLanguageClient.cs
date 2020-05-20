@@ -67,6 +67,7 @@
             SortModes.Initialize(this);
             ConvertRecursionToKleeneOperator.Initialize(this);
             Unfold.Initialize(this);
+            Fold.Initialize(this);
         }
 
         public event AsyncEventHandler<EventArgs> StartAsync;
@@ -500,6 +501,21 @@
                     return;
                 }
                 _rpc.InvokeAsync("CMUnfold", ffn, pos);
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        public void CMFold(string ffn, int start, int end)
+        {
+            try
+            {
+                if (_rpc == null)
+                {
+                    return;
+                }
+                _rpc.InvokeAsync("CMFold", ffn, start, end);
             }
             catch (Exception)
             {

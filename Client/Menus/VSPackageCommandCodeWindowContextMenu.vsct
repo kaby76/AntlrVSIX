@@ -151,7 +151,7 @@
             <ButtonText>Sort lexer modes</ButtonText>
           </Strings>
         </Button>
-        
+
         <Button guid="guidMenuAndCommandsCmdSet" id="UnfoldCmd" priority="0x100" type="Button">
           <Parent guid="guidMenuAndCommandsCmdSet" id="TransformMenuGroup"/>
           <Strings>
@@ -159,11 +159,10 @@
           </Strings>
         </Button>
 
-
-        <Button guid="guidMenuAndCommandsCmdSet" id="RenameCmd" priority="0x600" type="Button">
-          <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup"/>
+        <Button guid="guidMenuAndCommandsCmdSet" id="FoldCmd" priority="0x100" type="Button">
+          <Parent guid="guidMenuAndCommandsCmdSet" id="TransformMenuGroup"/>
           <Strings>
-            <ButtonText>Rename (the unbroken version)</ButtonText>
+            <ButtonText>Fold (extract RHS into rule)</ButtonText>
           </Strings>
         </Button>
 
@@ -250,7 +249,6 @@
       <IDSymbol name="GoToListenerCmd" value="0x7005" />
       <IDSymbol name="GoToVisitorCmd" value="0x7006" />
       <IDSymbol name="OptionsCmd" value="0x7007" />
-      <IDSymbol name="RenameCmd" value="0x7009" />
       <IDSymbol name="AboutCmd" value="0x7010" />
       <IDSymbol name="ReplaceParserLiteralCmd" value="0x7011" />
       <IDSymbol name="RemoveUselessParserProductionsCmd" value="0x7012" />
@@ -268,6 +266,7 @@
       <IDSymbol name="EliminateIndirectLeftRecursionCmd" value="0x7024" />
       <IDSymbol name="ConvertRecursionToKleeneOperator" value="0x7025" />
       <IDSymbol name="UnfoldCmd" value="0x7026" />
+      <IDSymbol name="FoldCmd" value="0x7027" />
     </GuidSymbol>
   </Symbols>
 </CommandTable>
