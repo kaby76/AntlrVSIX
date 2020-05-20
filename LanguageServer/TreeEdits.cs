@@ -56,6 +56,87 @@ namespace LanguageServer
             return false;
         }
 
+        public static bool InsertAfter(IParseTree tree, Func<IParseTree, IParseTree> insert_point)
+        {
+            var insert_this = insert_point(tree);
+            if (insert_this != null)
+            {
+                IParseTree parent = tree.Parent;
+                var c = parent as ParserRuleContext;
+                for (int i = 0; i < c.ChildCount; ++i)
+                {
+                    var child = c.children[i];
+                    if (child == tree)
+                    {
+                        c.children.Insert(i+1, insert_this);
+                        var r = insert_this as ParserRuleContext;
+                        r.Parent = c;
+                        break;
+                    }
+                }
+                return true; // done.
+            }
+            if (tree as TerminalNodeImpl != null)
+            {
+                TerminalNodeImpl tok = tree as TerminalNodeImpl;
+                if (tok.Symbol.Type == TokenConstants.EOF)
+                    return true;
+                else
+                    return false;
+            }
+            else
+            {
+                for (int i = 0; i < tree.ChildCount; ++i)
+                {
+                    var c = tree.GetChild(i);
+                    if (InsertAfter(c, insert_point))
+                        return true;
+                }
+            }
+            return false;
+        }
+
+        public static bool Delete(IParseTree tree, Func<IParseTree, bool> delete)
+        {
+            bool delete_this = delete(tree);
+            if (delete_this)
+            {
+                IParseTree parent = tree.Parent;
+                var c = parent as ParserRuleContext;
+                for (int i = 0; i < c.ChildCount; ++i)
+                {
+                    var child = c.children[i];
+                    if (child == tree)
+                    {
+                        var temp = c.children[i];
+                        var t = temp as ParserRuleContext;
+                        t.Parent = null;
+                        c.children.RemoveAt(i);
+                        break;
+                    }
+                }
+                return true; // done.
+            }
+            if (tree as TerminalNodeImpl != null)
+            {
+                TerminalNodeImpl tok = tree as TerminalNodeImpl;
+                if (tok.Symbol.Type == TokenConstants.EOF)
+                    return true;
+                else
+                    return false;
+            }
+            else
+            {
+                for (int i = 0; i < tree.ChildCount; ++i)
+                {
+                    var c = tree.GetChild(i);
+                    if (Delete(c, delete))
+                        return true;
+                }
+            }
+            return false;
+        }
+
         public static TerminalNodeImpl LeftMostToken(IParseTree tree)
         {
             if (tree is TerminalNodeImpl)

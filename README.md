@@ -82,7 +82,6 @@ VS, then reopen. Do not do "rebuild", only "build".
 
 ## Planned for v8.0:
 
-* Generalized fold/unfold/pack grammar rule refactorings.
 * Add in Piggy for grammar rewriting and checking. The addition of Piggy will allow for rules to transform the
 grammar e.g., warning/removal of LHS predicates in lexer, replacing factored grammar rules with Kleene star rules (which
 result in faster parsers).
