@@ -86,10 +86,16 @@ VS, then reopen. Do not do "rebuild", only "build".
 grammar e.g., warning/removal of LHS predicates in lexer, replacing factored grammar rules with Kleene star rules (which
 result in faster parsers).
 
-## Planned for v7.3:
+## Planned for v7.3 (1st week in June 2020):
 
-* Fold/unfold/pack/expression recursion grammar rule refactorings.
-* Show cycles--use to show where to detangle production chains in order to replace it with Antlr recursions.
+* New refactorings:
+  * Fold
+  * Unfold
+  * Pack
+  * Useless parentheses removal
+  * Expression rule compression
+* New analyses:
+  * Show cycles
 * Fix [#48 Rename via right-click context menu does not work--VS 2019 broken, MS needs to fix](https://github.com/kaby76/AntlrVSIX/issues/48).
 * Fix [#46 Output message when operation does nothing](https://github.com/kaby76/AntlrVSIX/issues/46).
 * Fix [#45 LanguageServer is net472, should be netstandard2.0](https://github.com/kaby76/AntlrVSIX/issues/45).
