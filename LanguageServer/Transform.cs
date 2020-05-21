@@ -3997,311 +3997,163 @@
                 }
             }
 
-            // Check cursor position. Many things can happen here, but we have to try
-            // and make some sense of what the user is pointing out.
-            // It is either the LHS symbol of a rule,
-            // which means the user wants to fold all occurrences of the rule
-            // RHS or it is a selection of symbols in the RHS of the rule, which means the
-            // user wants to fold this specific sequence and then create a new rule.
-            IEnumerable<Location> refs_and_defs = null;
-            IList<Location> defs = null;
-            TerminalNodeImpl sym_start = null;
-            TerminalNodeImpl sym_end = null;
-            if (start == end)
-            {
-                // Selection is a single point.
-                sym_end = sym_start = LanguageServer.Util.Find(start, document);
-            }
-            else
-            {
-                // Selection is of a list of characters. Go up the tree to find an
-                // exact match.
-                if (start >= end)
-                {
-                    var temp = end;
-                    end = start;
-                    start = temp;
-                }
-                sym_start = LanguageServer.Util.Find(start, document);
-                sym_end = LanguageServer.Util.Find(end - 1, document);
-            }
-            if (sym_end == null || sym_start == null)
-            {
-                throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
-            }
-            // Go up tree to find a common parent.
-            List<IParseTree> lhs_path = new List<IParseTree>();
-            List<IParseTree> rhs_path = new List<IParseTree>();
-            for (var p = (IParseTree)sym_start; p != null; p = p.Parent) lhs_path.Insert(0, p);
-            for (var p = (IParseTree)sym_end; p != null; p = p.Parent) rhs_path.Insert(0, p);
-            //List<Type> lhs_types = new List<Type>();
-            //List<Type> rhs_types = new List<Type>();
-            //for (var p = (IParseTree)sym_start; p != null; p = p.Parent) lhs_types.Insert(0, p.GetType());
-            //for (var p = (IParseTree)sym_end; p != null; p = p.Parent) rhs_types.Insert(0, p.GetType());
-            //List<string> lhs_string = new List<string>();
-            //List<string> rhs_string = new List<string>();
-            //for (var p = (IParseTree)sym_start; p != null; p = p.Parent) lhs_string.Insert(0, p.GetText());
-            //for (var p = (IParseTree)sym_end; p != null; p = p.Parent) rhs_string.Insert(0, p.GetText());
+            //// Check cursor position. Many things can happen here, but we have to try
+            //// and make some sense of what the user is pointing out.
+            //// It is either the LHS symbol of a rule,
+            //// which means the user wants to fold all occurrences of the rule
+            //// RHS or it is a selection of symbols in the RHS of the rule, which means the
+            //// user wants to fold this specific sequence and then create a new rule.
+            //IEnumerable<Location> refs_and_defs = null;
+            //IList<Location> defs = null;
+            //TerminalNodeImpl sym_start = null;
+            //TerminalNodeImpl sym_end = null;
+            //if (start == end)
+            //{
+            //    // Selection is a single point.
+            //    sym_end = sym_start = LanguageServer.Util.Find(start, document);
+            //}
+            //else
+            //{
+            //    // Selection is of a list of characters. Go up the tree to find an
+            //    // exact match.
+            //    if (start >= end)
+            //    {
+            //        var temp = end;
+            //        end = start;
+            //        start = temp;
+            //    }
+            //    sym_start = LanguageServer.Util.Find(start, document);
+            //    sym_end = LanguageServer.Util.Find(end - 1, document);
+            //}
+            //if (sym_end == null || sym_start == null)
+            //{
+            //    throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
+            //}
+            //// Go up tree to find a common parent.
+            //List<IParseTree> lhs_path = new List<IParseTree>();
+            //List<IParseTree> rhs_path = new List<IParseTree>();
+            //for (var p = (IParseTree)sym_start; p != null; p = p.Parent) lhs_path.Insert(0, p);
+            //for (var p = (IParseTree)sym_end; p != null; p = p.Parent) rhs_path.Insert(0, p);
+            ////List<Type> lhs_types = new List<Type>();
+            ////List<Type> rhs_types = new List<Type>();
+            ////for (var p = (IParseTree)sym_start; p != null; p = p.Parent) lhs_types.Insert(0, p.GetType());
+            ////for (var p = (IParseTree)sym_end; p != null; p = p.Parent) rhs_types.Insert(0, p.GetType());
+            ////List<string> lhs_string = new List<string>();
+            ////List<string> rhs_string = new List<string>();
+            ////for (var p = (IParseTree)sym_start; p != null; p = p.Parent) lhs_string.Insert(0, p.GetText());
+            ////for (var p = (IParseTree)sym_end; p != null; p = p.Parent) rhs_string.Insert(0, p.GetText());
 
-            int i = 0;
-            for (; ; )
-            {
-                if (lhs_path[i] != rhs_path[i])
-                {
-                    --i;
-                    break;
-                }
-                ++i;
-                if (i >= lhs_path.Count || i > rhs_path.Count)
-                {
-                    --i;
-                    break;
-                }
-            }
-            if (i < 0)
-            {
-                throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
-            }
-            if (lhs_path[i] is ANTLRv4Parser.ParserRuleSpecContext)
-            {
-                throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
-            }
-            if (lhs_path[i] is ANTLRv4Parser.RuleAltListContext)
-            {
-                throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
-            }
-            int j = i;
-            for (; j >= 0; --j)
-            {
-                if (lhs_path[j] is ANTLRv4Parser.ParserRuleSpecContext)
-                    break;
-            }
-            if (j < 0)
-            {
-                throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
-            }
-            if (lhs_path[j] is ANTLRv4Parser.ParserRuleSpecContext
-                && j + 2 == lhs_path.Count
-                && sym_start != sym_end)
-            {
-                throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
-            }
+            //int i = 0;
+            //for (; ; )
+            //{
+            //    if (lhs_path[i] != rhs_path[i])
+            //    {
+            //        --i;
+            //        break;
+            //    }
+            //    ++i;
+            //    if (i >= lhs_path.Count || i > rhs_path.Count)
+            //    {
+            //        --i;
+            //        break;
+            //    }
+            //}
+            //if (i < 0)
+            //{
+            //    throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
+            //}
+            //if (lhs_path[i] is ANTLRv4Parser.ParserRuleSpecContext)
+            //{
+            //    throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
+            //}
+            //if (lhs_path[i] is ANTLRv4Parser.RuleAltListContext)
+            //{
+            //    throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
+            //}
+            //int j = i;
+            //for (; j >= 0; --j)
+            //{
+            //    if (lhs_path[j] is ANTLRv4Parser.ParserRuleSpecContext)
+            //        break;
+            //}
+            //if (j < 0)
+            //{
+            //    throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
+            //}
+            //if (lhs_path[j] is ANTLRv4Parser.ParserRuleSpecContext
+            //    && j + 2 == lhs_path.Count
+            //    && sym_start != sym_end)
+            //{
+            //    throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
+            //}
 
-            bool replace_all = sym_start == sym_end && sym_start.Parent is ANTLRv4Parser.ParserRuleSpecContext;
+            //bool replace_all = sym_start == sym_end && sym_start.Parent is ANTLRv4Parser.ParserRuleSpecContext;
+
+            bool replace_all = true;
 
             // Get all intertoken text immediately for source reconstruction.
             var text_before = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
 
             if (replace_all)
             {
-                // Find complete RHS elsewhere and use LHS symbol if there's a match.
-                var rule = lhs_path[j] as ANTLRv4Parser.ParserRuleSpecContext;
                 AntlrGrammarDetails pd = pd_parser;
                 var pt = pd.ParseTree;
-                var replace_name = rule.RULE_REF().GetText();
-                var rule_block = rule.ruleBlock();
-                var rule_alt_list = rule_block.ruleAltList();
-                var str = rule_alt_list.GetText();
                 foreach (var replace_this in TreeEdits.FindTopDown(pt,
                     (in IParseTree t, out bool c) =>
                     {
-                        if (str == t.GetText())
+                        c = true;
+                        if (t is ANTLRv4Parser.BlockContext)
                         {
-                            for (var p = t; p != null; p = p.Parent)
+                            var block = t as ANTLRv4Parser.BlockContext;
+                            if (block.COLON() != null)
                             {
-                                if (p == rule)
+                                return null;
+                            }
+                            var p = block.Parent;
+                            if (p is ANTLRv4Parser.EbnfContext)
+                            {
+                                var ebnf = p as ANTLRv4Parser.EbnfContext;
+                                if (ebnf.blockSuffix() != null)
                                 {
-                                    c = false;
                                     return null;
                                 }
                             }
-                            c = false;
+                            var alt_list = block.altList();
+                            if (alt_list.ChildCount > 1)
+                            {
+                                return null;
+                            }
                             return t;
                         }
-                        c = true;
                         return null;
                     }))
                 {
-                    // Replace entire block.
-                    // Create a new block with one symbol.
-                    var new_block = new ANTLRv4Parser.BlockContext(null, 0);
+                    // Remove block by hoisting all parts of altList of the block into an element.
+                    var block = replace_this as ANTLRv4Parser.BlockContext;
+                    var ebnf = block?.Parent as ANTLRv4Parser.EbnfContext;
+                    var element = ebnf?.Parent as ANTLRv4Parser.ElementContext;
+                    var parent_alternative = element?.Parent as ANTLRv4Parser.AlternativeContext;
+                    int i = 0;
+                    for (; i < parent_alternative.ChildCount; )
                     {
-                        var lparen_token = new CommonToken(ANTLRv4Lexer.LPAREN) { Line = -1, Column = -1, Text = "(" };
-                        var new_lparen = new TerminalNodeImpl(lparen_token);
-                        new_block.AddChild(new_lparen);
-                        new_lparen.Parent = new_block;
-                        text_before.Add(new_lparen, " ");
-                        ANTLRv4Parser.AltListContext l_alt = new ANTLRv4Parser.AltListContext(null, 0);
-                        new_block.AddChild(l_alt);
-                        l_alt.Parent = new_block;
-                        var rparen_token = new CommonToken(ANTLRv4Lexer.RPAREN) { Line = -1, Column = -1, Text = ")" };
-                        var new_rparen = new TerminalNodeImpl(rparen_token);
-                        new_block.AddChild(new_rparen);
-                        new_rparen.Parent = new_block;
-                        ANTLRv4Parser.AlternativeContext new_alt = new ANTLRv4Parser.AlternativeContext(null, 0);
-                        l_alt.AddChild(new_alt);
-                        new_alt.Parent = l_alt;
-                        var new_element = new ANTLRv4Parser.ElementContext(null, 0);
-                        new_alt.AddChild(new_element);
-                        new_element.Parent = new_alt;
-                        var new_atom = new ANTLRv4Parser.AtomContext(null, 0);
-                        new_element.AddChild(new_atom);
-                        new_atom.Parent = new_element;
-                        var new_ruleref = new ANTLRv4Parser.RulerefContext(null, 0);
-                        new_atom.AddChild(new_ruleref);
-                        new_ruleref.Parent = new_atom;
-                        var token = new CommonToken(ANTLRv4Lexer.RULE_REF) { Line = -1, Column = -1, Text = replace_name };
-                        var new_rule_ref = new TerminalNodeImpl(token);
-                        new_ruleref.AddChild(new_rule_ref);
-                        new_rule_ref.Parent = new_ruleref;
-
-                        TreeEdits.Replace(pt, (t) =>
-                        {
-                            if (t != replace_this)
-                                return null;
-                            return new_block;
-                        });
+                        if (parent_alternative.children[i] == element)
+                            break;
+                        ++i;
+                    }
+                    parent_alternative.children.RemoveAt(i);
+                    var alt_list = block?.altList();
+                    var alternative = alt_list?.GetChild(0) as ANTLRv4Parser.AlternativeContext;
+                    foreach (var e in alternative.element())
+                    {
+                        var copy = TreeEdits.CopyTreeRecursive(e, null) as ANTLRv4Parser.ElementContext;
+                        parent_alternative.children.Insert(i, copy);
+                        copy.Parent = parent_alternative;
+                        i++;
                     }
                 }
             }
             else
             {
-                var rule = lhs_path[j] as ANTLRv4Parser.ParserRuleSpecContext;
-                AntlrGrammarDetails pd = pd_parser;
-                var pt = pd.ParseTree;
-                var replace_this = lhs_path[i];
-                string generated_name = "fold" + fold_number++;
-                if (replace_this is ANTLRv4Parser.BlockContext
-                    && replace_this.Parent is ANTLRv4Parser.EbnfContext)
-                {
-                    // Replace entire block.
-                    // Create a new block with one symbol.
-                    var new_block = new ANTLRv4Parser.BlockContext(null, 0);
-                    {
-                        var lparen_token = new CommonToken(ANTLRv4Lexer.LPAREN) { Line = -1, Column = -1, Text = "(" };
-                        var new_lparen = new TerminalNodeImpl(lparen_token);
-                        new_block.AddChild(new_lparen);
-                        new_lparen.Parent = new_block;
-                        text_before.Add(new_lparen, " ");
-                        ANTLRv4Parser.AltListContext l_alt = new ANTLRv4Parser.AltListContext(null, 0);
-                        new_block.AddChild(l_alt);
-                        l_alt.Parent = new_block;
-                        var rparen_token = new CommonToken(ANTLRv4Lexer.RPAREN) { Line = -1, Column = -1, Text = ")" };
-                        var new_rparen = new TerminalNodeImpl(rparen_token);
-                        new_block.AddChild(new_rparen);
-                        new_rparen.Parent = new_block;
-                        ANTLRv4Parser.AlternativeContext new_alt = new ANTLRv4Parser.AlternativeContext(null, 0);
-                        l_alt.AddChild(new_alt);
-                        new_alt.Parent = l_alt;
-                        var new_element = new ANTLRv4Parser.ElementContext(null, 0);
-                        new_alt.AddChild(new_element);
-                        new_element.Parent = new_alt;
-                        var new_atom = new ANTLRv4Parser.AtomContext(null, 0);
-                        new_element.AddChild(new_atom);
-                        new_atom.Parent = new_element;
-                        var new_ruleref = new ANTLRv4Parser.RulerefContext(null, 0);
-                        new_atom.AddChild(new_ruleref);
-                        new_ruleref.Parent = new_atom;
-                        var token = new CommonToken(ANTLRv4Lexer.RULE_REF) { Line = -1, Column = -1, Text = generated_name };
-                        var new_rule_ref = new TerminalNodeImpl(token);
-                        new_ruleref.AddChild(new_rule_ref);
-                        new_rule_ref.Parent = new_ruleref;
-
-                        TreeEdits.Replace(pt, (t) =>
-                        {
-                            if (t != replace_this)
-                                return null;
-                            return new_block;
-                        });
-                    }
-
-                    // Now create a new rule.
-                    var rule_spec = new ANTLRv4Parser.RuleSpecContext(null, 0);
-                    {
-                        ANTLRv4Parser.ParserRuleSpecContext new_ap_rule = new ANTLRv4Parser.ParserRuleSpecContext(null, 0);
-                        rule_spec.AddChild(new_ap_rule);
-                        new_ap_rule.Parent = rule_spec;
-                        ANTLRv4Parser.ParserRuleSpecContext r = rule;
-                        var lhs = generated_name;
-                        {
-                            var token = new CommonToken(ANTLRv4Parser.RULE_REF) { Line = -1, Column = -1, Text = generated_name };
-                            var new_rule_ref = new TerminalNodeImpl(token);
-                            text_before.Add(new_rule_ref,
-                                System.Environment.NewLine + System.Environment.NewLine);
-                            new_ap_rule.AddChild(new_rule_ref);
-                            new_rule_ref.Parent = new_ap_rule;
-                        }
-                        // Now have "A'"
-                        {
-                            var token2 = new CommonToken(ANTLRv4Parser.COLON) { Line = -1, Column = -1, Text = ":" };
-                            var new_colon = new TerminalNodeImpl(token2);
-                            new_ap_rule.AddChild(new_colon);
-                            new_colon.Parent = new_ap_rule;
-                        }
-                        // Now have "A' :"
-                        ANTLRv4Parser.RuleAltListContext rule_alt_list = new ANTLRv4Parser.RuleAltListContext(null, 0);
-                        {
-                            ANTLRv4Parser.RuleBlockContext new_rule_block_context = new ANTLRv4Parser.RuleBlockContext(null, 0);
-                            new_ap_rule.AddChild(new_rule_block_context);
-                            new_rule_block_context.Parent = new_ap_rule;
-                            new_rule_block_context.AddChild(rule_alt_list);
-                            rule_alt_list.Parent = new_rule_block_context;
-                        }
-                        // Now have "A' : <rb <ral> >"
-                        {
-                            var token3 = new CommonToken(ANTLRv4Parser.SEMI) { Line = -1, Column = -1, Text = ";" };
-                            var new_semi = new TerminalNodeImpl(token3);
-                            new_ap_rule.AddChild(new_semi);
-                            new_semi.Parent = new_ap_rule;
-                        }
-                        // Now have "A : <rb <ral> > ;"
-                        {
-                            TreeEdits.CopyTreeRecursive(r.exceptionGroup(), new_ap_rule);
-                        }
-                        // Now have "A' : <rb <ral> > ; <eg>"
-                        {
-                            ANTLRv4Parser.LabeledAltContext l_alt = new ANTLRv4Parser.LabeledAltContext(rule_alt_list, 0);
-                            rule_alt_list.AddChild(l_alt);
-                            l_alt.Parent = rule_alt_list;
-                            // Create new alt "alpha A'".
-                            ANTLRv4Parser.AlternativeContext new_alt = new ANTLRv4Parser.AlternativeContext(null, 0);
-                            l_alt.AddChild(new_alt);
-                            new_alt.Parent = l_alt;
-                            var new_element = new ANTLRv4Parser.ElementContext(null, 0);
-                            new_alt.AddChild(new_element);
-                            new_element.Parent = new_alt;
-                            var new_ebnf = new ANTLRv4Parser.EbnfContext(null, 0);
-                            new_element.AddChild(new_ebnf);
-                            new_ebnf.Parent = new_element;
-                            TreeEdits.CopyTreeRecursive(replace_this, new_ebnf);
-                        }
-
-                        // Now have "A' : ... ;"
-                        TreeEdits.InsertAfter(pt, (t) =>
-                        {
-                            if (t != rule.Parent)
-                                return null;
-                            return rule_spec;
-                        });
-                    }
-                }
-                else if (replace_this is ANTLRv4Parser.BlockContext
-                    && replace_this is ANTLRv4Parser.AlternativeContext)
-                {
-
-                }
-                else if (replace_this is ANTLRv4Parser.BlockContext
-                    && replace_this is ANTLRv4Parser.EbnfContext)
-                {
-
-                }
-                else if (replace_this is ANTLRv4Parser.BlockContext
-                    && replace_this is TerminalNodeImpl)
-                {
-
-                }
-                else
-                    ;
             }
 
             StringBuilder sb = new StringBuilder();
