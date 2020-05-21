@@ -68,6 +68,7 @@
             Unfold.Initialize(this);
             Fold.Initialize(this);
             RemoveUselessParentheses.Initialize(this);
+            ShowCycles.Initialize(this);
         }
 
         public event AsyncEventHandler<EventArgs> StartAsync;
@@ -466,6 +467,18 @@
             {
                 if (_rpc == null) return;
                 _rpc.InvokeAsync("CMRemoveUselessParentheses", ffn, start, end);
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        public void CMShowCycles(string ffn, int start)
+        {
+            try
+            {
+                if (_rpc == null) return;
+                _rpc.InvokeAsync("CMShowCycles", ffn, start);
             }
             catch (Exception)
             {

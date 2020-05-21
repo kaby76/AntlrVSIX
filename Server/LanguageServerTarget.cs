@@ -1685,6 +1685,35 @@
             }
         }
 
+        [JsonRpcMethod("CMShowCycles")]
+        public async void CMShowCycles(JToken arg1, JToken arg2)
+        {
+            Dictionary<string, string> s = null;
+            try
+            {
+                string a1 = arg1.ToObject<string>();
+                int a2 = arg2.ToObject<int>();
+                Document document = CheckDoc(new Uri(a1));
+                int start = a2;
+                if (trace)
+                {
+                    System.Console.Error.WriteLine("<-- CMShowCycles");
+                    System.Console.Error.WriteLine(a1);
+                    (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
+                    System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
+                }
+                LanguageServer.Module.ShowCycles(a2, document);
+            }
+            catch (LanguageServerException e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
+            catch (Exception e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
+        }
+
         void ApplyChanges(Dictionary<string, string> ch)
         {
             if (!ch.Any())

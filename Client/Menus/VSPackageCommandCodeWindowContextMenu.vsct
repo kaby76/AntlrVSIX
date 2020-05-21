@@ -173,14 +173,21 @@
 			  </Strings>
 		  </Button>
 
-		  <Button guid="guidMenuAndCommandsCmdSet" id="ImportCmd" priority="0x700" type="Button">
-          <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup"/>
-          <Strings>
-            <ButtonText>Import</ButtonText>
-          </Strings>
-        </Button>
+		  <Button guid="guidMenuAndCommandsCmdSet" id="ShowCyclesCmd" priority="0x700" type="Button">
+			  <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup"/>
+			  <Strings>
+				  <ButtonText>Show grammar cycles</ButtonText>
+			  </Strings>
+		  </Button>
 
-        <Button guid="guidMenuAndCommandsCmdSet" id="OptionsCmd" priority="0x700" type="Button">
+		  <Button guid="guidMenuAndCommandsCmdSet" id="ImportCmd" priority="0x700" type="Button">
+			  <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup"/>
+			  <Strings>
+				  <ButtonText>Import</ButtonText>
+			  </Strings>
+		  </Button>
+
+		  <Button guid="guidMenuAndCommandsCmdSet" id="OptionsCmd" priority="0x700" type="Button">
           <Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup"/>
           <Strings>
             <ButtonText>Options</ButtonText>
@@ -275,6 +282,7 @@
       <IDSymbol name="UnfoldCmd" value="0x7026" />
       <IDSymbol name="FoldCmd" value="0x7027" />
       <IDSymbol name="RemoveUselessParenthesesCmd" value="0x7028" />
+      <IDSymbol name="ShowCyclesCmd" value="0x7029" />
 	</GuidSymbol>
   </Symbols>
 </CommandTable>

@@ -18,9 +18,7 @@
 
     public class Transform
     {
-        private static object ule_alt_list;
-
-        private class ExtractGrammarType : ANTLRv4ParserBaseListener
+        public class ExtractGrammarType : ANTLRv4ParserBaseListener
         {
             public enum GrammarType
             {
@@ -53,7 +51,7 @@
             }
         }
 
-        private class LiteralsGrammar : ANTLRv4ParserBaseListener
+        public class LiteralsGrammar : ANTLRv4ParserBaseListener
         {
             public List<TerminalNodeImpl> Literals = new List<TerminalNodeImpl>();
             private readonly AntlrGrammarDetails _pd;
@@ -73,7 +71,7 @@
             }
         }
 
-        private class FindFirstRule : ANTLRv4ParserBaseListener
+        public class FindFirstRule : ANTLRv4ParserBaseListener
         {
             public IParseTree First = null;
             public IParseTree Last = null;
@@ -92,7 +90,7 @@
             }
         }
 
-        private class FindFirstMode : ANTLRv4ParserBaseListener
+        public class FindFirstMode : ANTLRv4ParserBaseListener
         {
             public IParseTree First = null;
             public IParseTree Last = null;
@@ -106,7 +104,7 @@
             }
         }
 
-        private class FindOptions : ANTLRv4ParserBaseListener
+        public class FindOptions : ANTLRv4ParserBaseListener
         {
             public IParseTree OptionsSpec = null;
             public List<IParseTree> Options = new List<IParseTree>();
@@ -124,7 +122,7 @@
             }
         }
 
-        private class ExtractRules : ANTLRv4ParserBaseListener
+        public class ExtractRules : ANTLRv4ParserBaseListener
         {
             public List<ANTLRv4Parser.ParserRuleSpecContext> ParserRules = new List<ANTLRv4Parser.ParserRuleSpecContext>();
             public List<ANTLRv4Parser.LexerRuleSpecContext> LexerRules = new List<ANTLRv4Parser.LexerRuleSpecContext>();
@@ -159,7 +157,7 @@
             }
         }
 
-        private class ExtractModes : ANTLRv4ParserBaseListener
+        public class ExtractModes : ANTLRv4ParserBaseListener
         {
             public List<ANTLRv4Parser.ModeSpecContext> Modes = new List<ANTLRv4Parser.ModeSpecContext>();
 
@@ -169,7 +167,7 @@
             }
         }
 
-        private class FindCalls : CSharpSyntaxWalker
+        public class FindCalls : CSharpSyntaxWalker
         {
             public List<string> Invocations = new List<string>();
 
@@ -184,7 +182,7 @@
             }
         }
 
-        private static Dictionary<string, SyntaxTree> ReadCsharpSource(Document document)
+        public static Dictionary<string, SyntaxTree> ReadCsharpSource(Document document)
         {
             Dictionary<string, SyntaxTree> trees = new Dictionary<string, SyntaxTree>();
             string g4_file_path = document.FullPath;
@@ -222,7 +220,7 @@
             return trees;
         }
 
-        private class TableOfRules
+        public class TableOfRules
         {
             public class Row
             {
@@ -470,7 +468,7 @@
             }
         }
 
-        private class TableOfModes
+        public class TableOfModes
         {
             public class Row
             {
