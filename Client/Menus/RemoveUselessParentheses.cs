@@ -25,7 +25,7 @@
                 throw new ArgumentNullException("OleMenuCommandService");
             }
             {
-                CommandID menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidMenuAndCommandsCmdSet), 0x7027);
+                CommandID menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidMenuAndCommandsCmdSet), 0x7028);
                 _menu_item1 = new MenuCommand(MenuItemCallbackSplit, menuCommandID)
                 {
                     Enabled = true,
