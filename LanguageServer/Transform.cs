@@ -13,6 +13,7 @@
     using System.IO;
     using System.Linq;
     using System.Text;
+    using System.Text.RegularExpressions;
     using Document = Workspaces.Document;
 
     public class Transform
@@ -3694,6 +3695,74 @@
             if (replace_all)
             {
                 // Find complete RHS elsewhere and use LHS symbol if there's a match.
+                var rule = lhs_path[j] as ANTLRv4Parser.ParserRuleSpecContext;
+                AntlrGrammarDetails pd = pd_parser;
+                var pt = pd.ParseTree;
+                var replace_name = rule.RULE_REF().GetText();
+                var rule_block = rule.ruleBlock();
+                var rule_alt_list = rule_block.ruleAltList();
+                var str = rule_alt_list.GetText();
+                foreach (var replace_this in TreeEdits.FindTopDown(pt,
+                    (in IParseTree t, out bool c) =>
+                    {
+                        if (str == t.GetText())
+                        {
+                            for (var p = t; p != null; p = p.Parent)
+                            {
+                                if (p == rule)
+                                {
+                                    c = false;
+                                    return null;
+                                }
+                            }
+                            c = false;
+                            return t;
+                        }
+                        c = true;
+                        return null;
+                    }))
+                {
+                    // Replace entire block.
+                    // Create a new block with one symbol.
+                    var new_block = new ANTLRv4Parser.BlockContext(null, 0);
+                    {
+                        var lparen_token = new CommonToken(ANTLRv4Lexer.LPAREN) { Line = -1, Column = -1, Text = "(" };
+                        var new_lparen = new TerminalNodeImpl(lparen_token);
+                        new_block.AddChild(new_lparen);
+                        new_lparen.Parent = new_block;
+                        text_before.Add(new_lparen, " ");
+                        ANTLRv4Parser.AltListContext l_alt = new ANTLRv4Parser.AltListContext(null, 0);
+                        new_block.AddChild(l_alt);
+                        l_alt.Parent = new_block;
+                        var rparen_token = new CommonToken(ANTLRv4Lexer.RPAREN) { Line = -1, Column = -1, Text = ")" };
+                        var new_rparen = new TerminalNodeImpl(rparen_token);
+                        new_block.AddChild(new_rparen);
+                        new_rparen.Parent = new_block;
+                        ANTLRv4Parser.AlternativeContext new_alt = new ANTLRv4Parser.AlternativeContext(null, 0);
+                        l_alt.AddChild(new_alt);
+                        new_alt.Parent = l_alt;
+                        var new_element = new ANTLRv4Parser.ElementContext(null, 0);
+                        new_alt.AddChild(new_element);
+                        new_element.Parent = new_alt;
+                        var new_atom = new ANTLRv4Parser.AtomContext(null, 0);
+                        new_element.AddChild(new_atom);
+                        new_atom.Parent = new_element;
+                        var new_ruleref = new ANTLRv4Parser.RulerefContext(null, 0);
+                        new_atom.AddChild(new_ruleref);
+                        new_ruleref.Parent = new_atom;
+                        var token = new CommonToken(ANTLRv4Lexer.RULE_REF) { Line = -1, Column = -1, Text = replace_name };
+                        var new_rule_ref = new TerminalNodeImpl(token);
+                        new_ruleref.AddChild(new_rule_ref);
+                        new_rule_ref.Parent = new_ruleref;
+
+                        TreeEdits.Replace(pt, (t) =>
+                        {
+                            if (t != replace_this)
+                                return null;
+                            return new_block;
+                        });
+                    }
+                }
             }
             else
             {
@@ -3844,6 +3913,36 @@
             }
 
             return result;
+        }
+
+        static bool Match(IParseTree a, IParseTree b)
+        {
+            if ((a is ANTLRv4Parser.RuleAltListContext && b is ANTLRv4Parser.AltListContext)
+                || (a is ANTLRv4Parser.ElementContext && b is ANTLRv4Parser.ElementContext)
+                || (a is ANTLRv4Parser.AlternativeContext && b is ANTLRv4Parser.AlternativeContext)
+                || (a is ANTLRv4Parser.AtomContext && b is ANTLRv4Parser.AtomContext)
+                || (a is ANTLRv4Parser.LabeledElementContext && b is ANTLRv4Parser.LabeledElementContext)
+                || (a is ANTLRv4Parser.EbnfContext && b is ANTLRv4Parser.EbnfContext)
+                || (a is ANTLRv4Parser.EbnfSuffixContext && b is ANTLRv4Parser.EbnfSuffixContext)
+                || (a is ANTLRv4Parser.ElementOptionsContext && b is ANTLRv4Parser.ElementOptionsContext)
+                )
+            {
+                if (a.ChildCount != b.ChildCount)
+                    return false;
+                for (int i = 0; i < a.ChildCount; ++i)
+                {
+                    if (!Match(a.GetChild(i), b.GetChild(i)))
+                        return false;
+                }
+                return true;
+            }
+            else if (a is ANTLRv4Parser.LabeledAltContext)
+                return Match(a.GetChild(0), b);
+            else if (a is TerminalNodeImpl && b is TerminalNodeImpl)
+            {
+                return a.GetText() == b.GetText();
+            }
+            return false;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,6 +14,34 @@ namespace LanguageServer
     // and tree copying.
     public class TreeEdits
     {
+        public delegate IParseTree Fun(in IParseTree arg1, out bool arg2);
+
+        public static System.Collections.Generic.IEnumerable<IParseTree> FindTopDown(
+            IParseTree tree,
+            Fun find)
+        {
+            Stack<IParseTree> stack = new Stack<IParseTree>();
+            stack.Push(tree);
+            while (stack.Any())
+            {
+                var n = stack.Pop();
+                var found = find(n, out bool @continue);
+                if (found != null)
+                    yield return found;
+                if (!@continue) { }
+                else if (n as TerminalNodeImpl != null) { }
+                else
+                {
+                    for (int i = n.ChildCount - 1; i >= 0; --i)
+                    {
+                        var c = n.GetChild(i);
+                        stack.Push(c);
+                    }
+                }
+            }
+        }
+
+
         public static bool Replace(IParseTree tree, Func<IParseTree, IParseTree> replace)
         {
             var replacement = replace(tree);
