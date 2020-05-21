@@ -67,6 +67,7 @@
             ConvertRecursionToKleeneOperator.Initialize(this);
             Unfold.Initialize(this);
             Fold.Initialize(this);
+            RemoveUselessParentheses.Initialize(this);
         }
 
         public event AsyncEventHandler<EventArgs> StartAsync;
@@ -210,11 +211,7 @@
         {
             try
             {
-                if (_rpc == null)
-                {
-                    return null;
-                }
-
+                if (_rpc == null) return null;
                 CMGotoParams p = new CMGotoParams();
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
@@ -232,11 +229,7 @@
         {
             try
             {
-                if (_rpc == null)
-                {
-                    return null;
-                }
-
+                if (_rpc == null) return null;
                 CMGotoParams p = new CMGotoParams();
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
@@ -255,11 +248,7 @@
         {
             try
             {
-                if (_rpc == null)
-                {
-                    return;
-                }
-
+                if (_rpc == null) return;
                 CMReplaceLiteralsParams p = new CMReplaceLiteralsParams();
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
@@ -275,11 +264,7 @@
         {
             try
             {
-                if (_rpc == null)
-                {
-                    return;
-                }
-
+                if (_rpc == null) return;
                 CMRemoveUselessParserProductionsParams p = new CMRemoveUselessParserProductionsParams();
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
@@ -295,11 +280,7 @@
         {
             try
             {
-                if (_rpc == null)
-                {
-                    return;
-                }
-
+                if (_rpc == null) return;
                 CMMoveStartRuleToTopParams p = new CMMoveStartRuleToTopParams();
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
@@ -315,11 +296,7 @@
         {
             try
             {
-                if (_rpc == null)
-                {
-                    return;
-                }
-
+                if (_rpc == null) return;
                 CMReorderParserRulesParams p = new CMReorderParserRulesParams();
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
@@ -338,11 +315,7 @@
         {
             try
             {
-                if (_rpc == null)
-                {
-                    return null;
-                }
-
+                if (_rpc == null) return null;
                 CMSplitCombineGrammarsParams p = new CMSplitCombineGrammarsParams();
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
@@ -362,11 +335,7 @@
         {
             try
             {
-                if (_rpc == null)
-                {
-                    return null;
-                }
-
+                if (_rpc == null) return null;
                 List<string> p = ffn;
                 Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMImportGrammars", p).Result;
                 return result;
@@ -381,11 +350,7 @@
         {
             try
             {
-                if (_rpc == null)
-                {
-                    return;
-                }
-
+                if (_rpc == null) return;
                 CMEliminateDirectLeftRecursionParams p = new CMEliminateDirectLeftRecursionParams();
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
@@ -401,11 +366,7 @@
         {
             try
             {
-                if (_rpc == null)
-                {
-                    return;
-                }
-
+                if (_rpc == null) return;
                 CMEliminateDirectLeftRecursionParams p = new CMEliminateDirectLeftRecursionParams();
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
@@ -421,11 +382,7 @@
         {
             try
             {
-                if (_rpc == null)
-                {
-                    return;
-                }
-
+                if (_rpc == null) return;
                 CMEliminateDirectLeftRecursionParams p = new CMEliminateDirectLeftRecursionParams();
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
@@ -441,11 +398,7 @@
         {
             try
             {
-                if (_rpc == null)
-                {
-                    return;
-                }
-
+                if (_rpc == null) return;
                 Uri uri = new Uri(ffn);
                 var p = uri;
                 _rpc.InvokeAsync("CMEliminateAntlrKeywordsInRules", p);
@@ -459,11 +412,7 @@
         {
             try
             {
-                if (_rpc == null)
-                {
-                    return;
-                }
-
+                if (_rpc == null) return;
                 Uri uri = new Uri(ffn);
                 var p = uri;
                 _rpc.InvokeAsync("CMAddLexerRulesForStringLiterals", p);
@@ -477,11 +426,7 @@
         {
             try
             {
-                if (_rpc == null)
-                {
-                    return;
-                }
-
+                if (_rpc == null) return;
                 Uri uri = new Uri(ffn);
                 var p = uri;
                 _rpc.InvokeAsync("CMSortModes", p);
@@ -495,10 +440,7 @@
         {
             try
             {
-                if (_rpc == null)
-                {
-                    return;
-                }
+                if (_rpc == null) return;
                 _rpc.InvokeAsync("CMUnfold", ffn, pos);
             }
             catch (Exception)
@@ -510,11 +452,20 @@
         {
             try
             {
-                if (_rpc == null)
-                {
-                    return;
-                }
+                if (_rpc == null) return;
                 _rpc.InvokeAsync("CMFold", ffn, start, end);
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        public void CMRemoveUselessParentheses(string ffn, int start, int end)
+        {
+            try
+            {
+                if (_rpc == null) return;
+                _rpc.InvokeAsync("CMRemoveUselessParentheses", ffn, start, end);
             }
             catch (Exception)
             {

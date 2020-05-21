@@ -1653,6 +1653,38 @@
             }
         }
 
+        [JsonRpcMethod("CMRemoveUselessParentheses")]
+        public async void CMRemoveUselessParentheses(JToken arg1, JToken arg2, JToken arg3)
+        {
+            Dictionary<string, string> s = null;
+            try
+            {
+                string a1 = arg1.ToObject<string>();
+                int a2 = arg2.ToObject<int>();
+                int a3 = arg3.ToObject<int>();
+                Document document = CheckDoc(new Uri(a1));
+                int start = a2;
+                int end = a3;
+                if (trace)
+                {
+                    System.Console.Error.WriteLine("<-- CMRemoveUselessParentheses");
+                    System.Console.Error.WriteLine(a1);
+                    (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
+                    System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
+                }
+                s = Transform.RemoveUselessParentheses(start, end, document);
+                ApplyChanges(s);
+            }
+            catch (LanguageServerException e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
+            catch (Exception e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
+        }
+
         void ApplyChanges(Dictionary<string, string> ch)
         {
             if (!ch.Any())
