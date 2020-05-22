@@ -6,8 +6,9 @@ It is implemented using Microsoft's [Language Server Protocol (LSP)](https://lan
 [server](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/) APIs,
 [Antlr](https://www.antlr.org/), [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks),
 and a number of other tools.
-Most of the extension is implemented in C#. (There is a client for VS Code, written in Typescript,
-but I am not currently developing it any further until the VS2019 extension is more or less complete.)
+Most of the extension is implemented in C#.
+There is a client for VS Code, written in Typescript,
+but I am deferring further developing it until the server is more or less complete.
 Supported are colorized tagging, hover, go to def, find all refs,
 replace, command completion, reformat, and go to visitor/listener.
 
