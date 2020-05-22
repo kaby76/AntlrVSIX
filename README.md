@@ -8,7 +8,7 @@ It is implemented using Microsoft's [Language Server Protocol (LSP)](https://lan
 and a number of other tools.
 Most of the extension is implemented in C#.
 There is a client for VS Code, written in Typescript,
-but I am deferring further developing it until the server is more or less complete.
+but I am deferring further development of the client until the server is more or less complete.
 Supported are colorized tagging, hover, go to def, find all refs,
 replace, command completion, reformat, and go to visitor/listener.
 
