@@ -89,9 +89,8 @@ result in faster parsers).
 ## Planned for v7.3 (1st week in June 2020):
 
 * New refactorings:
-  * Fold
+  * Fold/Pack
   * Unfold
-  * Pack
   * Useless parentheses removal
   * Expression rule compression
 * New analyses:
