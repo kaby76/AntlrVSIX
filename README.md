@@ -82,11 +82,13 @@ bad thing MS). If your debug version of the
 .vssix is 5M in size, it did not compute that the server executable needs to be added into the .vsix. Quit
 VS, then reopen. Do not do "rebuild", only "build".
 
-## Planned for v8.0:
+## Planned for v8.0 (July 2020):
 
-* Add in Piggy for grammar rewriting and checking. The addition of Piggy will allow for rules to transform the
-grammar e.g., warning/removal of LHS predicates in lexer, replacing factored grammar rules with Kleene star rules (which
-result in faster parsers).
+* Add in Piggy, a transformational system for trees using a specialized
+tree rewrite language, into Antlrvsix.
+* Start rewriting existing transforms and analyses into Piggy.
+* Add in left factoring and inverse.
+* Add in empty string alternative hoist transforms.
 
 ## Planned for v7.3 (1st week in June 2020):
 
