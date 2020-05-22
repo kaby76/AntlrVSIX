@@ -13,7 +13,9 @@ replace, command completion, reformat, and go to visitor/listener.
 
 Instead of providing railroad diagrams and ATN graphs,
 this extension focuses on features useful for maintaining grammars,
-i.e., refactoring grammars in order to make them cleaner, more readable, and more efficient.
+i.e., refactoring grammars in order to make them cleaner (reformatting),
+more readable (reducing the length of the RHS of a rule),
+and more efficient (reducing the number of non-terminals).
 Some of the refactorings implemented, or planned, include
 string literal folding, parser rule orderings,
 useless rule elimination, split combined grammars, combine split grammars,
@@ -89,9 +91,8 @@ result in faster parsers).
 ## Planned for v7.3 (1st week in June 2020):
 
 * New refactorings:
-  * Fold
+  * Fold/Pack
   * Unfold
-  * Pack
   * Useless parentheses removal
   * Expression rule compression
 * New analyses:
