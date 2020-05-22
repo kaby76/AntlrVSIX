@@ -3893,10 +3893,191 @@
                 {
 
                 }
-                else if (replace_this is ANTLRv4Parser.BlockContext
-                    && replace_this is TerminalNodeImpl)
+                else if (replace_this is TerminalNodeImpl)
                 {
+                    // Replace the symbol on the RHS with another symbol.
+                    var old_sym = replace_this as TerminalNodeImpl;
+                    {
+                        var token = new CommonToken(ANTLRv4Parser.RULE_REF) { Line = -1, Column = -1, Text = generated_name };
+                        var new_rule_ref = new TerminalNodeImpl(token);
+                        text_before.Add(new_rule_ref, text_before[old_sym]);
+                        TreeEdits.Replace(pt, (t) =>
+                        {
+                            if (t != replace_this)
+                                return null;
+                            return new_rule_ref;
+                        });
+                    }
 
+                    // Now create a new rule.
+                    var rule_spec = new ANTLRv4Parser.RuleSpecContext(null, 0);
+                    {
+                        ANTLRv4Parser.ParserRuleSpecContext new_ap_rule = new ANTLRv4Parser.ParserRuleSpecContext(null, 0);
+                        rule_spec.AddChild(new_ap_rule);
+                        new_ap_rule.Parent = rule_spec;
+                        ANTLRv4Parser.ParserRuleSpecContext r = rule;
+                        var lhs = generated_name;
+                        {
+                            var token = new CommonToken(ANTLRv4Parser.RULE_REF) { Line = -1, Column = -1, Text = generated_name };
+                            var new_rule_ref = new TerminalNodeImpl(token);
+                            text_before.Add(new_rule_ref,
+                                System.Environment.NewLine + System.Environment.NewLine);
+                            new_ap_rule.AddChild(new_rule_ref);
+                            new_rule_ref.Parent = new_ap_rule;
+                        }
+                        // Now have "A'"
+                        {
+                            var token2 = new CommonToken(ANTLRv4Parser.COLON) { Line = -1, Column = -1, Text = ":" };
+                            var new_colon = new TerminalNodeImpl(token2);
+                            new_ap_rule.AddChild(new_colon);
+                            new_colon.Parent = new_ap_rule;
+                        }
+                        // Now have "A' :"
+                        ANTLRv4Parser.RuleAltListContext rule_alt_list = new ANTLRv4Parser.RuleAltListContext(null, 0);
+                        {
+                            ANTLRv4Parser.RuleBlockContext new_rule_block_context = new ANTLRv4Parser.RuleBlockContext(null, 0);
+                            new_ap_rule.AddChild(new_rule_block_context);
+                            new_rule_block_context.Parent = new_ap_rule;
+                            new_rule_block_context.AddChild(rule_alt_list);
+                            rule_alt_list.Parent = new_rule_block_context;
+                        }
+                        // Now have "A' : <rb <ral> >"
+                        {
+                            var token3 = new CommonToken(ANTLRv4Parser.SEMI) { Line = -1, Column = -1, Text = ";" };
+                            var new_semi = new TerminalNodeImpl(token3);
+                            new_ap_rule.AddChild(new_semi);
+                            new_semi.Parent = new_ap_rule;
+                        }
+                        // Now have "A : <rb <ral> > ;"
+                        {
+                            TreeEdits.CopyTreeRecursive(r.exceptionGroup(), new_ap_rule);
+                        }
+                        // Now have "A' : <rb <ral> > ; <eg>"
+                        {
+                            ANTLRv4Parser.LabeledAltContext l_alt = new ANTLRv4Parser.LabeledAltContext(rule_alt_list, 0);
+                            rule_alt_list.AddChild(l_alt);
+                            l_alt.Parent = rule_alt_list;
+                            // Create new alt "alpha A'".
+                            ANTLRv4Parser.AlternativeContext new_alt = new ANTLRv4Parser.AlternativeContext(null, 0);
+                            l_alt.AddChild(new_alt);
+                            new_alt.Parent = l_alt;
+                            var new_element = new ANTLRv4Parser.ElementContext(null, 0);
+                            new_alt.AddChild(new_element);
+                            new_element.Parent = new_alt;
+                            var new_ebnf = new ANTLRv4Parser.EbnfContext(null, 0);
+                            new_element.AddChild(new_ebnf);
+                            new_ebnf.Parent = new_element;
+                            TreeEdits.CopyTreeRecursive(replace_this, new_ebnf);
+                        }
+
+                        // Now have "A' : ... ;"
+                        TreeEdits.InsertAfter(pt, (t) =>
+                        {
+                            if (t != rule.Parent)
+                                return null;
+                            return rule_spec;
+                        });
+                    }
+                }
+                else if (replace_this is ANTLRv4Parser.AltListContext)
+                {
+                    // The only possible parent is a block, so just replace the
+                    // altlist with new altlist with just the symbol.
+                    {
+                        ANTLRv4Parser.AltListContext l_alt = new ANTLRv4Parser.AltListContext(null, 0);
+                        ANTLRv4Parser.AlternativeContext new_alt = new ANTLRv4Parser.AlternativeContext(null, 0);
+                        l_alt.AddChild(new_alt);
+                        new_alt.Parent = l_alt;
+                        var new_element = new ANTLRv4Parser.ElementContext(null, 0);
+                        new_alt.AddChild(new_element);
+                        new_element.Parent = new_alt;
+                        var new_atom = new ANTLRv4Parser.AtomContext(null, 0);
+                        new_element.AddChild(new_atom);
+                        new_atom.Parent = new_element;
+                        var new_ruleref = new ANTLRv4Parser.RulerefContext(null, 0);
+                        new_atom.AddChild(new_ruleref);
+                        new_ruleref.Parent = new_atom;
+                        var token = new CommonToken(ANTLRv4Lexer.RULE_REF) { Line = -1, Column = -1, Text = generated_name };
+                        var new_rule_ref = new TerminalNodeImpl(token);
+                        new_ruleref.AddChild(new_rule_ref);
+                        new_rule_ref.Parent = new_ruleref;
+                        TreeEdits.Replace(pt, (t) =>
+                        {
+                            if (t != replace_this)
+                                return null;
+                            return l_alt;
+                        });
+                    }
+
+                    // Now create a new rule.
+                    var rule_spec = new ANTLRv4Parser.RuleSpecContext(null, 0);
+                    {
+                        ANTLRv4Parser.ParserRuleSpecContext new_ap_rule = new ANTLRv4Parser.ParserRuleSpecContext(null, 0);
+                        rule_spec.AddChild(new_ap_rule);
+                        new_ap_rule.Parent = rule_spec;
+                        ANTLRv4Parser.ParserRuleSpecContext r = rule;
+                        var lhs = generated_name;
+                        {
+                            var token = new CommonToken(ANTLRv4Parser.RULE_REF) { Line = -1, Column = -1, Text = generated_name };
+                            var new_rule_ref = new TerminalNodeImpl(token);
+                            text_before.Add(new_rule_ref,
+                                System.Environment.NewLine + System.Environment.NewLine);
+                            new_ap_rule.AddChild(new_rule_ref);
+                            new_rule_ref.Parent = new_ap_rule;
+                        }
+                        // Now have "A'"
+                        {
+                            var token2 = new CommonToken(ANTLRv4Parser.COLON) { Line = -1, Column = -1, Text = ":" };
+                            var new_colon = new TerminalNodeImpl(token2);
+                            new_ap_rule.AddChild(new_colon);
+                            new_colon.Parent = new_ap_rule;
+                        }
+                        // Now have "A' :"
+                        ANTLRv4Parser.RuleAltListContext rule_alt_list = new ANTLRv4Parser.RuleAltListContext(null, 0);
+                        {
+                            ANTLRv4Parser.RuleBlockContext new_rule_block_context = new ANTLRv4Parser.RuleBlockContext(null, 0);
+                            new_ap_rule.AddChild(new_rule_block_context);
+                            new_rule_block_context.Parent = new_ap_rule;
+                            new_rule_block_context.AddChild(rule_alt_list);
+                            rule_alt_list.Parent = new_rule_block_context;
+                        }
+                        // Now have "A' : <rb <ral> >"
+                        {
+                            var token3 = new CommonToken(ANTLRv4Parser.SEMI) { Line = -1, Column = -1, Text = ";" };
+                            var new_semi = new TerminalNodeImpl(token3);
+                            new_ap_rule.AddChild(new_semi);
+                            new_semi.Parent = new_ap_rule;
+                        }
+                        // Now have "A : <rb <ral> > ;"
+                        {
+                            TreeEdits.CopyTreeRecursive(r.exceptionGroup(), new_ap_rule);
+                        }
+                        // Now have "A' : <rb <ral> > ; <eg>"
+                        {
+                            ANTLRv4Parser.LabeledAltContext l_alt = new ANTLRv4Parser.LabeledAltContext(rule_alt_list, 0);
+                            rule_alt_list.AddChild(l_alt);
+                            l_alt.Parent = rule_alt_list;
+                            // Create new alt "alpha A'".
+                            ANTLRv4Parser.AlternativeContext new_alt = new ANTLRv4Parser.AlternativeContext(null, 0);
+                            l_alt.AddChild(new_alt);
+                            new_alt.Parent = l_alt;
+                            var new_element = new ANTLRv4Parser.ElementContext(null, 0);
+                            new_alt.AddChild(new_element);
+                            new_element.Parent = new_alt;
+                            var new_ebnf = new ANTLRv4Parser.EbnfContext(null, 0);
+                            new_element.AddChild(new_ebnf);
+                            new_ebnf.Parent = new_element;
+                            TreeEdits.CopyTreeRecursive(replace_this, new_ebnf);
+                        }
+
+                        // Now have "A' : ... ;"
+                        TreeEdits.InsertAfter(pt, (t) =>
+                        {
+                            if (t != rule.Parent)
+                                return null;
+                            return rule_spec;
+                        });
+                    }
                 }
                 else
                     ;

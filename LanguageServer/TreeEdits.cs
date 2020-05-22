@@ -1,12 +1,9 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace LanguageServer
 {
@@ -41,7 +38,6 @@ namespace LanguageServer
             }
         }
 
-
         public static bool Replace(IParseTree tree, Func<IParseTree, IParseTree> replace)
         {
             var replacement = replace(tree);
@@ -55,11 +51,24 @@ namespace LanguageServer
                     if (child == tree)
                     {
                         var temp = c.children[i];
-                        var t = temp as ParserRuleContext;
-                        t.Parent = null;
-                        c.children[i] = replacement;
-                        var r = replacement as ParserRuleContext;
-                        r.Parent = c;
+                        if (temp is TerminalNodeImpl)
+                        {
+                            var t = temp as TerminalNodeImpl;
+                            t.Parent = null;
+                            c.children[i] = replacement;
+                            var r = replacement as TerminalNodeImpl;
+                            r.Parent = c;
+                        }
+                        else if (temp is ParserRuleContext)
+                        {
+                            var t = temp as ParserRuleContext;
+                            t.Parent = null;
+                            c.children[i] = replacement;
+                            var r = replacement as ParserRuleContext;
+                            r.Parent = c;
+                        }
+                        else
+                            throw new LanguageServerException("Tree contains something other than TerminalNodeImpl or ParserRuleContext");
                         break;
                     }
                 }
