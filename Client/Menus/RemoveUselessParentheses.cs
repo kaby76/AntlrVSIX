@@ -18,15 +18,11 @@
         {
             _package = package ?? throw new ArgumentNullException(nameof(package));
             OleMenuCommandService commandService = ((IServiceProvider)ServiceProvider).GetService(
-                typeof(IMenuCommandService)) as OleMenuCommandService;
+                typeof(IMenuCommandService)) as OleMenuCommandService ?? throw new Exception("Command service not found.");
 
-            if (commandService == null)
-            {
-                throw new ArgumentNullException("OleMenuCommandService");
-            }
             {
                 CommandID menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidMenuAndCommandsCmdSet), 0x7028);
-                _menu_item1 = new MenuCommand(MenuItemCallbackSplit, menuCommandID)
+                _menu_item1 = new MenuCommand(MenuItemCallback, menuCommandID)
                 {
                     Enabled = true,
                     Visible = true
@@ -66,17 +62,9 @@
             Instance = new RemoveUselessParentheses(package);
         }
 
-        private async void MenuItemCallbackSplit(object sender, EventArgs e)
-        {
-            MenuItemCallback(sender, e, true);
-        }
-
-        private async void MenuItemCallbackCombine(object sender, EventArgs e)
-        {
-            MenuItemCallback(sender, e, false);
-        }
-
-        private async void MenuItemCallback(object sender, EventArgs e, bool split)
+#pragma warning disable VSTHRD100
+        private async void MenuItemCallback(object sender, EventArgs e)
+#pragma warning restore VSTHRD100
         {
             try
             {

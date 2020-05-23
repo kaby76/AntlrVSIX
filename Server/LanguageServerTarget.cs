@@ -801,17 +801,17 @@
                     else if (s.kind == 2)
                     {
                         continue;
-                        si.Kind = SymbolKind.String; // Comment
+                        // si.Kind = SymbolKind.String; // Comment
                     }
                     else if (s.kind == 3)
                     {
                         continue;
-                        si.Kind = SymbolKind.Key; // Keyword
+                        // si.Kind = SymbolKind.Key; // Keyword
                     }
                     else if (s.kind == 4)
                     {
                         continue;
-                        si.Kind = SymbolKind.Constant; // Literal
+                        // si.Kind = SymbolKind.Constant; // Literal
                     }
                     else if (s.kind == 5)
                     {
@@ -1259,7 +1259,6 @@
         [JsonRpcMethod("CMReplaceLiterals")]
         public void CMReplaceLiterals(JToken arg)
         {
-            Dictionary<string, string> changes = null;
             try
             {
                 CMReplaceLiteralsParams request = arg.ToObject<CMReplaceLiteralsParams>();

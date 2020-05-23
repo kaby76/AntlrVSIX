@@ -11,18 +11,9 @@
 
         private OptionsCommand(Microsoft.VisualStudio.Shell.Package package)
         {
-            if (package == null)
-            {
-                _package = package ?? throw new ArgumentNullException(nameof(package));
-            }
-            _package = package;
-            OleMenuCommandService commandService = ServiceProvider.GetService(
-                typeof(IMenuCommandService)) as OleMenuCommandService;
-
-            if (commandService == null)
-            {
-                throw new ArgumentNullException("OleMenuCommandService");
-            }
+            _package = package ?? throw new ArgumentNullException(nameof(package));
+            OleMenuCommandService commandService = ((IServiceProvider)ServiceProvider).GetService(
+                typeof(IMenuCommandService)) as OleMenuCommandService ?? throw new Exception("Command service not found.");
 
             {
                 // Set up hook for context menu.

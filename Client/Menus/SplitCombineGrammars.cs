@@ -20,12 +20,7 @@
         {
             _package = package ?? throw new ArgumentNullException(nameof(package));
             OleMenuCommandService commandService = ((IServiceProvider)ServiceProvider).GetService(
-                typeof(IMenuCommandService)) as OleMenuCommandService;
-
-            if (commandService == null)
-            {
-                throw new ArgumentNullException("OleMenuCommandService");
-            }
+                typeof(IMenuCommandService)) as OleMenuCommandService ?? throw new Exception("Command service not found.");
 
             //{
             //    // Set up hook for context menu.
@@ -88,17 +83,19 @@
             Instance = new SplitCombineGrammars(package);
         }
 
-        private async void MenuItemCallbackSplit(object sender, EventArgs e)
+        private void MenuItemCallbackSplit(object sender, EventArgs e)
         {
             MenuItemCallback(sender, e, true);
         }
 
-        private async void MenuItemCallbackCombine(object sender, EventArgs e)
+        private void MenuItemCallbackCombine(object sender, EventArgs e)
         {
             MenuItemCallback(sender, e, false);
         }
 
+#pragma warning disable VSTHRD100
         private async void MenuItemCallback(object sender, EventArgs e, bool split)
+#pragma warning restore VSTHRD100
         {
             try
             {

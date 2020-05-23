@@ -111,7 +111,9 @@
                 parameter.Diagnostics = parameter.Diagnostics.Take(maxProblems).ToArray();
             }
 
+#pragma warning disable VSTHRD110
             rpc.NotifyWithParameterObjectAsync(Methods.TextDocumentPublishDiagnosticsName, parameter);
+#pragma warning restore VSTHRD110
         }
 
         public void SendDiagnostics(string uri, string text)
@@ -159,7 +161,9 @@
                 parameter.Diagnostics = parameter.Diagnostics.Take(maxProblems).ToArray();
             }
 
+#pragma warning disable VSTHRD110
             rpc.NotifyWithParameterObjectAsync(Methods.TextDocumentPublishDiagnosticsName, parameter);
+#pragma warning restore VSTHRD110
         }
 
         public void LogMessage(object arg)
@@ -179,7 +183,9 @@
                 Message = message,
                 MessageType = messageType
             };
+#pragma warning disable VSTHRD110
             rpc.NotifyWithParameterObjectAsync(Methods.WindowLogMessageName, parameter);
+#pragma warning restore VSTHRD110
         }
 
         public bool ApplyEdit(Dictionary<string, TextEdit[]> changes)
@@ -204,7 +210,9 @@
                 Message = message,
                 MessageType = messageType
             };
+#pragma warning disable VSTHRD110
             rpc.NotifyWithParameterObjectAsync(Methods.WindowShowMessageName, parameter);
+#pragma warning restore VSTHRD110
         }
 
         public async Task<MessageActionItem> ShowMessageRequestAsync(string message, MessageType messageType, string[] actionItems)

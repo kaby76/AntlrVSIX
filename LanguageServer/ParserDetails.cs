@@ -144,7 +144,9 @@
                     ColorizedList.Add(t, (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationComment);
                 }
             }
+#pragma warning disable 0168
             catch (Exception eeks) { }
+#pragma warning restore 0168
         }
 
         public virtual void GatherErrors()

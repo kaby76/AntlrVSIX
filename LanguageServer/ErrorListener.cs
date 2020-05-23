@@ -19,21 +19,18 @@ namespace LanguageServer
         private Parser _parser;
         private Lexer _lexer;
         private CommonTokenStream _token_stream;
-        private bool _first_time;
 
         public ErrorListener(Parser parser, Lexer lexer, CommonTokenStream token_stream)
         {
             _parser = parser;
             _lexer = lexer;
             _token_stream = token_stream;
-            _first_time = true;
         }
 
         public override void SyntaxError(TextWriter output, IRecognizer recognizer, S offendingSymbol, int line,
             int col, string msg, RecognitionException e)
         {
             had_error = true;
-            //base.SyntaxError(output, recognizer, offendingSymbol, line, col, msg, e);
         }
     }
 }

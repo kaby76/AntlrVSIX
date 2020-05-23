@@ -22,12 +22,7 @@
         {
             _package = package ?? throw new ArgumentNullException(nameof(package));
             OleMenuCommandService commandService = ((IServiceProvider)ServiceProvider).GetService(
-                typeof(IMenuCommandService)) as OleMenuCommandService;
-
-            if (commandService == null)
-            {
-                throw new ArgumentNullException("OleMenuCommandService");
-            }
+                typeof(IMenuCommandService)) as OleMenuCommandService ?? throw new Exception("Command service not found.");
 
             {
                 // Set up hook for context menu.
@@ -112,17 +107,19 @@
             Instance = new NextSymCommand(package);
         }
 
-        private async void MenuItemCallbackFor(object sender, EventArgs e)
+        private void MenuItemCallbackFor(object sender, EventArgs e)
         {
             MenuItemCallback(sender, e, true);
         }
 
-        private async void MenuItemCallbackRev(object sender, EventArgs e)
+        private void MenuItemCallbackRev(object sender, EventArgs e)
         {
             MenuItemCallback(sender, e, false);
         }
 
+#pragma warning disable VSTHRD100
         private async void MenuItemCallback(object sender, EventArgs e, bool forward)
+#pragma warning restore VSTHRD100
         {
             try
             {

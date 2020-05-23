@@ -20,12 +20,7 @@
         {
             _package = package ?? throw new ArgumentNullException(nameof(package));
             OleMenuCommandService commandService = ((IServiceProvider)ServiceProvider).GetService(
-                typeof(IMenuCommandService)) as OleMenuCommandService;
-
-            if (commandService == null)
-            {
-                throw new ArgumentNullException("OleMenuCommandService");
-            }
+                typeof(IMenuCommandService)) as OleMenuCommandService ?? throw new Exception("Command service not found.");
 
             {
                 // Set up hook for context menu.
@@ -150,7 +145,7 @@
 
                 IWpfTextView xxx = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view);
                 ITextBuffer buffer = xxx.TextBuffer;
-                string orig_ffn = buffer.GetFFN().Result;
+                string orig_ffn = await buffer.GetFFN().ConfigureAwait(false);
                 if (orig_ffn == null)
                 {
                     return;

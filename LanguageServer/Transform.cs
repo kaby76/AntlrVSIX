@@ -2492,7 +2492,6 @@
             }
 
             StringBuilder sb = new StringBuilder();
-            int pre = 0;
             TreeEdits.Reconstruct(sb, pd_parser.ParseTree, text_before);
             var new_code = sb.ToString();
             if (new_code != pd_parser.Code)
@@ -2872,8 +2871,6 @@
 
         public static string EliminateAntlrKeywordsInRules(Document document)
         {
-            string result = null;
-
             // Check if initial file is a parser or combined grammar.
             AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
             if (pd_parser == null)
@@ -3601,8 +3598,6 @@
             // which means the user wants to fold all occurrences of the rule
             // RHS or it is a selection of symbols in the RHS of the rule, which means the
             // user wants to fold this specific sequence and then create a new rule.
-            IEnumerable<Location> refs_and_defs = null;
-            IList<Location> defs = null;
             TerminalNodeImpl sym_start = null;
             TerminalNodeImpl sym_end = null;
             if (start == end)

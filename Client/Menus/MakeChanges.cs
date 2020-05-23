@@ -177,9 +177,9 @@ namespace LspAntlr
                         }
                         edit.Apply();
                     }
-#pragma warning disable 0169
+#pragma warning disable 0168
                     catch (Exception eeks)
-#pragma warning restore 0169
+#pragma warning restore 0168
                     {
                         edit.Cancel();
                     }

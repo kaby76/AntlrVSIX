@@ -18,13 +18,8 @@
         private Import(Microsoft.VisualStudio.Shell.Package package)
         {
             _package = package ?? throw new ArgumentNullException(nameof(package));
-            OleMenuCommandService commandService = ServiceProvider.GetService(
-                typeof(IMenuCommandService)) as OleMenuCommandService;
-
-            if (commandService == null)
-            {
-                throw new ArgumentNullException("OleMenuCommandService");
-            }
+            OleMenuCommandService commandService = ((IServiceProvider)ServiceProvider).GetService(
+                typeof(IMenuCommandService)) as OleMenuCommandService ?? throw new Exception("Command service not found.");
 
             {
                 // Set up hook for context menu.

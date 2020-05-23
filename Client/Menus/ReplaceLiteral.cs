@@ -17,12 +17,7 @@
         {
             _package = package ?? throw new ArgumentNullException(nameof(package));
             OleMenuCommandService commandService = ((IServiceProvider)ServiceProvider).GetService(
-                typeof(IMenuCommandService)) as OleMenuCommandService;
-
-            if (commandService == null)
-            {
-                throw new ArgumentNullException("OleMenuCommandService");
-            }
+                typeof(IMenuCommandService)) as OleMenuCommandService ?? throw new Exception("Command service not found.");
 
             //{
             //    // Set up hook for context menu.

@@ -65,7 +65,6 @@
     <Compile Include="Menus\GoToVisitorCommand.cs" />
     <Compile Include="Menus\Import.cs" />
     <Compile Include="Menus\MakeChanges.cs" />
-    <Compile Include="Menus\Menus.cs" />
     <Compile Include="Menus\MoveStartRuleToTop.cs" />
     <Compile Include="Menus\NextSymCommand.cs" />
     <Compile Include="Menus\OptionsBox.xaml.cs">

@@ -19,12 +19,7 @@
         {
             _package = package ?? throw new ArgumentNullException(nameof(package));
             OleMenuCommandService commandService = ((IServiceProvider)ServiceProvider).GetService(
-                typeof(IMenuCommandService)) as OleMenuCommandService;
-
-            if (commandService == null)
-            {
-                throw new ArgumentNullException("OleMenuCommandService");
-            }
+                typeof(IMenuCommandService)) as OleMenuCommandService ?? throw new Exception("Command service not found.");
 
             //{
             //    // Set up hook for context menu.
@@ -96,22 +91,24 @@
             Instance = new Reorder(package);
         }
 
-        private async void MenuItemCallbackAlphabetically(object sender, EventArgs e)
+        private void MenuItemCallbackAlphabetically(object sender, EventArgs e)
         {
             MenuItemCallback(sender, e, ReorderType.Alphabetically);
         }
 
-        private async void MenuItemCallbackBFS(object sender, EventArgs e)
+        private void MenuItemCallbackBFS(object sender, EventArgs e)
         {
             MenuItemCallback(sender, e, ReorderType.BFS);
         }
 
-        private async void MenuItemCallbackDFS(object sender, EventArgs e)
+        private void MenuItemCallbackDFS(object sender, EventArgs e)
         {
             MenuItemCallback(sender, e, ReorderType.DFS);
         }
 
+#pragma warning disable VSTHRD100
         private async void MenuItemCallback(object sender, EventArgs e, ReorderType type)
+#pragma warning restore VSTHRD100
         {
             try
             {

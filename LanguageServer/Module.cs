@@ -819,9 +819,9 @@
                                     goto DoAgain;
                                 }
                             }
-#pragma warning disable 0169
+#pragma warning disable 0168
                             catch (Exception eeks) { }
-#pragma warning restore 0169
+#pragma warning restore 0168
                             changed = true;
                         }
                     }
@@ -1180,12 +1180,10 @@
                 if (scc.Value.Count() <= 1) continue;
                 if (!done.Contains(scc.Value))
                 {
-                    bool first = true;
                     foreach (var s in scc.Value)
                     {
                         sb.Append(" ");
                         sb.Append(s);
-                        first = false;
                     }
                     sb.AppendLine();
                     sb.AppendLine();

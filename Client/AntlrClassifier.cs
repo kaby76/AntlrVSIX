@@ -174,9 +174,9 @@
                                 .GetExplicitTextProperties(t);
                             classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
                         }
-#pragma warning disable 0169
+#pragma warning disable 0168
                         catch (Exception eeks) { }
-#pragma warning restore 0169
+#pragma warning restore 0168
                     }
                     _to_classifiertype[i] = classificationType;
                 }
@@ -196,9 +196,9 @@
                                 .GetExplicitTextProperties(t);
                             classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
                         }
-#pragma warning disable 0169
+#pragma warning disable 0168
                         catch (Exception eeks) { }
-#pragma warning restore 0169
+#pragma warning restore 0168
                     }
                     _to_classifiertype[i] = classificationType;
                 }
@@ -218,9 +218,9 @@
                                 .GetExplicitTextProperties(t);
                             classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
                         }
-#pragma warning disable 0169
+#pragma warning disable 0168
                         catch (Exception eeks) { }
-#pragma warning restore 0169
+#pragma warning restore 0168
                     }
                     _to_classifiertype[i] = classificationType;
                 }
@@ -240,9 +240,9 @@
                                 .GetExplicitTextProperties(t);
                             classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
                         }
-#pragma warning disable 0169
+#pragma warning disable 0168
                         catch (Exception eeks) { }
-#pragma warning restore 0169
+#pragma warning restore 0168
                     }
                     _to_classifiertype[i] = classificationType;
                 }
@@ -262,9 +262,9 @@
                                 .GetExplicitTextProperties(t);
                             classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
                         }
-#pragma warning disable 0169
+#pragma warning disable 0168
                         catch (Exception eeks) { }
-#pragma warning restore 0169
+#pragma warning restore 0168
                     }
                     _to_classifiertype[i] = classificationType;
                 }
@@ -284,9 +284,9 @@
                                 .GetExplicitTextProperties(t);
                             classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
                         }
-#pragma warning disable 0169
+#pragma warning disable 0168
                         catch (Exception eeks) { }
-#pragma warning restore 0169
+#pragma warning restore 0168
                     }
                     _to_classifiertype[i] = classificationType;
                 }
@@ -306,9 +306,9 @@
                                 .GetExplicitTextProperties(t);
                             classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
                         }
-#pragma warning disable 0169
+#pragma warning disable 0168
                         catch (Exception eeks) { }
-#pragma warning restore 0169
+#pragma warning restore 0168
                     }
                     _to_classifiertype[i] = classificationType;
                 }
@@ -328,9 +328,9 @@
                                 .GetExplicitTextProperties(t);
                             classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
                         }
-#pragma warning disable 0169
+#pragma warning disable 0168
                         catch (Exception eeks) { }
-#pragma warning restore 0169
+#pragma warning restore 0168
                     }
                     _to_classifiertype[i] = classificationType;
                 }
@@ -350,9 +350,9 @@
                                 .GetExplicitTextProperties(t);
                             classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
                         }
-#pragma warning disable 0169
+#pragma warning disable 0168
                         catch (Exception eeks) { }
-#pragma warning restore 0169
+#pragma warning restore 0168
                     }
                     _to_classifiertype[i] = classificationType;
                 }
@@ -372,9 +372,9 @@
                                 .GetExplicitTextProperties(t);
                             classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
                         }
-#pragma warning disable 0169
+#pragma warning disable 0168
                         catch (Exception eeks) { }
-#pragma warning restore 0169
+#pragma warning restore 0168
                     }
                     _to_classifiertype[i] = classificationType;
                 }
@@ -394,9 +394,9 @@
                                 .GetExplicitTextProperties(t);
                             classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
                         }
-#pragma warning disable 0169
+#pragma warning disable 0168
                         catch (Exception eeks) { }
-#pragma warning restore 0169
+#pragma warning restore 0168
                     }
                     _to_classifiertype[i] = classificationType;
                 }
@@ -416,9 +416,9 @@
                                 .GetExplicitTextProperties(t);
                             classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
                         }
-#pragma warning disable 0169
+#pragma warning disable 0168
                         catch (Exception eeks) { }
-#pragma warning restore 0169
+#pragma warning restore 0168
                     }
                     _to_classifiertype[i] = classificationType;
                 }
@@ -438,17 +438,17 @@
                                 .GetExplicitTextProperties(t);
                             classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
                         }
-#pragma warning disable 0169
+#pragma warning disable 0168
                         catch (Exception eeks) { }
-#pragma warning restore 0169
+#pragma warning restore 0168
                     }
                     _to_classifiertype[i] = classificationType;
                 }
                 initialized = true;
             }
-#pragma warning disable 0169
+#pragma warning disable 0168
             catch (Exception eeks) { }
-#pragma warning restore 0169
+#pragma warning restore 0168
         }
 
         private async void OnTextChanged(object sender, TextContentChangedEventArgs args)
