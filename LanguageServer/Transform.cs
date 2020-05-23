@@ -4286,10 +4286,6 @@
                         if (t is ANTLRv4Parser.BlockContext)
                         {
                             var block = t as ANTLRv4Parser.BlockContext;
-                            if (block.COLON() != null)
-                            {
-                                return null;
-                            }
                             var p = block.Parent;
                             if (p is ANTLRv4Parser.EbnfContext)
                             {
@@ -4299,12 +4295,33 @@
                                     return null;
                                 }
                             }
+                            var pp = p.Parent; // element
+                            var ppp = pp.Parent; // alternative
+                            var pppp = ppp.Parent; // altList or labeledAlt
+                            if (pppp is ANTLRv4Parser.AltListContext)
+                            {
+                                if (pppp.ChildCount != 1)
+                                    return null;
+                            }
+                            if (pppp is ANTLRv4Parser.LabeledAltContext)
+                            {
+                                if (pppp.ChildCount != 1)
+                                    return null;
+                            }
+                            if (block.COLON() != null)
+                            {
+                                return null;
+                            }
                             var alt_list = block.altList();
-                            if (alt_list.ChildCount > 1)
+                            if (alt_list.ChildCount > 1 && ppp.ChildCount > 1)
                             {
                                 return null;
                             }
                             return t;
+                        }
+                        if (t is ANTLRv4Parser.RuleBlockContext)
+                        {
+
                         }
                         return null;
                     }))
@@ -4323,13 +4340,43 @@
                     }
                     parent_alternative.children.RemoveAt(i);
                     var alt_list = block?.altList();
-                    var alternative = alt_list?.GetChild(0) as ANTLRv4Parser.AlternativeContext;
-                    foreach (var e in alternative.element())
+                    var alternatives = alt_list?.alternative();
+                    if (alternatives.Length > 1)
                     {
-                        var copy = TreeEdits.CopyTreeRecursive(e, null) as ANTLRv4Parser.ElementContext;
-                        parent_alternative.children.Insert(i, copy);
-                        copy.Parent = parent_alternative;
-                        i++;
+                        IParseTree rule_alt_list_p = block;
+                        for (; rule_alt_list_p != null; rule_alt_list_p = rule_alt_list_p.Parent)
+                        {
+                            if (rule_alt_list_p is ANTLRv4Parser.RuleAltListContext)
+                                break;
+                        }
+                        var rule_alt_list = rule_alt_list_p as ANTLRv4Parser.RuleAltListContext;
+                        bool first = true;
+                        foreach (var alternative in alternatives)
+                        {
+                            if (! first)
+                            {
+                                var token4 = new CommonToken(ANTLRv4Lexer.OR) { Line = -1, Column = -1, Text = "|" };
+                                var new_or = new TerminalNodeImpl(token4);
+                                rule_alt_list.AddChild(new_or);
+                                new_or.Parent = rule_alt_list;
+                            }
+                            first = false;
+                            var labeled_alt = new ANTLRv4Parser.LabeledAltContext(null, 0);
+                            TreeEdits.CopyTreeRecursive(alternative, labeled_alt);
+                            rule_alt_list.AddChild(labeled_alt);
+                            labeled_alt.Parent = rule_alt_list;
+                        }
+                    }
+                    else
+                    {
+                        var alternative = alt_list?.GetChild(0) as ANTLRv4Parser.AlternativeContext;
+                        foreach (var e in alternative.element())
+                        {
+                            var copy = TreeEdits.CopyTreeRecursive(e, null) as ANTLRv4Parser.ElementContext;
+                            parent_alternative.children.Insert(i, copy);
+                            copy.Parent = parent_alternative;
+                            i++;
+                        }
                     }
                 }
             }
