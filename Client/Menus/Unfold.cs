@@ -17,13 +17,13 @@
 
         private Unfold(AntlrLanguageClient package)
         {
-            _package = package ?? throw new ArgumentNullException("package");
+            _package = package ?? throw new ArgumentNullException(nameof(package));
             OleMenuCommandService commandService = ((IServiceProvider)ServiceProvider).GetService(
                 typeof(IMenuCommandService)) as OleMenuCommandService;
 
             if (commandService == null)
             {
-                throw new ArgumentNullException("OleMenuCommandService");
+                throw new Exception("Command service not found.");
             }
             {
                 CommandID menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidMenuAndCommandsCmdSet), 0x7026);
@@ -69,15 +69,10 @@
 
         private void MenuItemCallbackSplit(object sender, EventArgs e)
         {
-            MenuItemCallback(sender, e, true);
+            MenuItemCallback();
         }
 
-        private void MenuItemCallbackCombine(object sender, EventArgs e)
-        {
-            MenuItemCallback(sender, e, false);
-        }
-
-        private void MenuItemCallback(object sender, EventArgs e, bool split)
+        private void MenuItemCallback()
         {
             try
             {

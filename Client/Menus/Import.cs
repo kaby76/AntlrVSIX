@@ -17,11 +17,7 @@
 
         private Import(Microsoft.VisualStudio.Shell.Package package)
         {
-            if (package == null)
-            {
-                throw new ArgumentNullException("package");
-            }
-            _package = package;
+            _package = package ?? throw new ArgumentNullException(nameof(package));
             OleMenuCommandService commandService = ServiceProvider.GetService(
                 typeof(IMenuCommandService)) as OleMenuCommandService;
 

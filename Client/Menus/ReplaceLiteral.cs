@@ -15,7 +15,7 @@
 
         private ReplaceLiteral(AntlrLanguageClient package)
         {
-            _package = package ?? throw new ArgumentNullException("package");
+            _package = package ?? throw new ArgumentNullException(nameof(package));
             OleMenuCommandService commandService = ((IServiceProvider)ServiceProvider).GetService(
                 typeof(IMenuCommandService)) as OleMenuCommandService;
 

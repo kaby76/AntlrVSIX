@@ -59,7 +59,7 @@
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other cannot be null");
+                throw new ArgumentNullException(nameof(other));
             }
             foreach (T t in other)
             {
@@ -71,7 +71,7 @@
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other cannot be null");
+                throw new ArgumentNullException(nameof(other));
             }
             T[] ts = new T[Count];
             CopyTo(ts, 0);
@@ -88,7 +88,7 @@
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other cannot be null");
+                throw new ArgumentNullException(nameof(other));
             }
             int contains = 0;
             int noContains = 0;
@@ -110,7 +110,7 @@
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other cannot be null");
+                throw new ArgumentNullException(nameof(other));
             }
             int otherCount = System.Linq.Enumerable.Count(other);
             if (Count <= otherCount)
@@ -137,7 +137,7 @@
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other cannot be null");
+                throw new ArgumentNullException(nameof(other));
             }
             foreach (T t in this)
             {
@@ -153,7 +153,7 @@
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other cannot be null");
+                throw new ArgumentNullException(nameof(other));
             }
             foreach (T t in other)
             {
@@ -169,7 +169,7 @@
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other cannot be null");
+                throw new ArgumentNullException(nameof(other));
             }
             foreach (T t in other)
             {
@@ -185,7 +185,7 @@
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other cannot be null");
+                throw new ArgumentNullException(nameof(other));
             }
             int otherCount = System.Linq.Enumerable.Count(other);
             if (Count != otherCount)
@@ -199,7 +199,7 @@
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other cannot be null");
+                throw new ArgumentNullException(nameof(other));
             }
             T[] ts = new T[Count];
             CopyTo(ts, 0);
@@ -222,7 +222,7 @@
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other cannot be null");
+                throw new ArgumentNullException(nameof(other));
             }
             foreach (T t in other)
             {

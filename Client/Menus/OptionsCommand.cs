@@ -13,7 +13,7 @@
         {
             if (package == null)
             {
-                throw new ArgumentNullException("package");
+                _package = package ?? throw new ArgumentNullException(nameof(package));
             }
             _package = package;
             OleMenuCommandService commandService = ServiceProvider.GetService(
