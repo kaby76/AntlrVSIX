@@ -39,7 +39,7 @@
                     return;
                 }
 
-                string ffn = await buffer.GetFFN();
+                string ffn = await buffer.GetFFN().ConfigureAwait(false);
                 if (ffn == null)
                 {
                     return;

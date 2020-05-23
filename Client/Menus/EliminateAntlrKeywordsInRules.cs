@@ -67,7 +67,9 @@
             Instance = new EliminateAntlrKeywordsInRules(package);
         }
 
-        private void MenuItemCallback(object sender, EventArgs e)
+#pragma warning disable VSTHRD100
+        private async void MenuItemCallback(object sender, EventArgs e)
+#pragma warning restore VSTHRD100
         {
             try
             {
@@ -96,7 +98,7 @@
 
                 IWpfTextView xxx = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view);
                 ITextBuffer buffer = xxx.TextBuffer;
-                string ffn = buffer.GetFFN().Result;
+                string ffn = await buffer.GetFFN().ConfigureAwait(false);
                 if (ffn == null)
                 {
                     return;

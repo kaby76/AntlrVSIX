@@ -88,17 +88,17 @@
             Instance = new SplitCombineGrammars(package);
         }
 
-        private void MenuItemCallbackSplit(object sender, EventArgs e)
+        private async void MenuItemCallbackSplit(object sender, EventArgs e)
         {
             MenuItemCallback(sender, e, true);
         }
 
-        private void MenuItemCallbackCombine(object sender, EventArgs e)
+        private async void MenuItemCallbackCombine(object sender, EventArgs e)
         {
             MenuItemCallback(sender, e, false);
         }
 
-        private void MenuItemCallback(object sender, EventArgs e, bool split)
+        private async void MenuItemCallback(object sender, EventArgs e, bool split)
         {
             try
             {
@@ -127,7 +127,7 @@
 
                 IWpfTextView xxx = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view);
                 ITextBuffer buffer = xxx.TextBuffer;
-                string ffn = buffer.GetFFN().Result;
+                string ffn = await buffer.GetFFN().ConfigureAwait(false);
                 if (ffn == null)
                 {
                     return;

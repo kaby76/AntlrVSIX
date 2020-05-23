@@ -46,7 +46,7 @@
             Instance = new Import(package);
         }
 
-        private void MenuItemCallback(object sender, EventArgs e)
+        private async void MenuItemCallback(object sender, EventArgs e)
         {
             IVsTextManager manager = ServiceProvider.GetService(typeof(VsTextManagerClass)) as IVsTextManager;
             if (manager == null)

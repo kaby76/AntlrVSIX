@@ -41,9 +41,11 @@
             Instance = new AboutCommand(package);
         }
 
-        private void MenuItemCallback(object sender, EventArgs e)
+#pragma warning disable VSTHRD100
+        private async void MenuItemCallback(object sender, EventArgs e)
+#pragma warning restore VSTHRD100
         {
-            Application.Current.Dispatcher.Invoke(delegate
+            await Application.Current.Dispatcher.InvokeAsync(delegate
             {
                 AboutBox inputDialog = new AboutBox();
                 inputDialog.Show();

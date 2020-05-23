@@ -19,15 +19,11 @@
         {
             _package = package ?? throw new ArgumentNullException(nameof(package));
             OleMenuCommandService commandService = ((IServiceProvider)ServiceProvider).GetService(
-                typeof(IMenuCommandService)) as OleMenuCommandService;
-
-            if (commandService == null)
-            {
-                throw new Exception("Command service not found.");
-            }
+                typeof(IMenuCommandService)) as OleMenuCommandService ?? throw new Exception("Command service not found.");
+            
             {
                 CommandID menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidMenuAndCommandsCmdSet), 0x7026);
-                _menu_item1 = new MenuCommand(MenuItemCallbackSplit, menuCommandID)
+                _menu_item1 = new MenuCommand(MenuItemCallback, menuCommandID)
                 {
                     Enabled = true,
                     Visible = true
@@ -67,12 +63,9 @@
             Instance = new Unfold(package);
         }
 
-        private void MenuItemCallbackSplit(object sender, EventArgs e)
-        {
-            MenuItemCallback();
-        }
-
-        private void MenuItemCallback()
+#pragma warning disable VSTHRD100 
+        private async void MenuItemCallback(object sender, EventArgs e)
+#pragma warning restore VSTHRD100 
         {
             try
             {
@@ -101,7 +94,7 @@
 
                 IWpfTextView xxx = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view);
                 ITextBuffer buffer = xxx.TextBuffer;
-                string ffn = buffer.GetFFN().Result;
+                string ffn = await buffer.GetFFN().ConfigureAwait(false);
                 if (ffn == null)
                 {
                     return;

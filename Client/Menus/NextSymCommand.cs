@@ -112,17 +112,17 @@
             Instance = new NextSymCommand(package);
         }
 
-        private void MenuItemCallbackFor(object sender, EventArgs e)
+        private async void MenuItemCallbackFor(object sender, EventArgs e)
         {
             MenuItemCallback(sender, e, true);
         }
 
-        private void MenuItemCallbackRev(object sender, EventArgs e)
+        private async void MenuItemCallbackRev(object sender, EventArgs e)
         {
             MenuItemCallback(sender, e, false);
         }
 
-        private void MenuItemCallback(object sender, EventArgs e, bool forward)
+        private async void MenuItemCallback(object sender, EventArgs e, bool forward)
         {
             try
             {
@@ -151,7 +151,7 @@
 
                 IWpfTextView xxx = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view);
                 ITextBuffer buffer = xxx.TextBuffer;
-                string ffn = buffer.GetFFN().Result;
+                string ffn = await buffer.GetFFN().ConfigureAwait(false);
                 if (ffn == null)
                 {
                     return;

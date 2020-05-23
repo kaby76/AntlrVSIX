@@ -26,7 +26,7 @@
             }
             {
                 CommandID menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidMenuAndCommandsCmdSet), 0x7027);
-                _menu_item1 = new MenuCommand(MenuItemCallbackSplit, menuCommandID)
+                _menu_item1 = new MenuCommand(MenuItemCallback, menuCommandID)
                 {
                     Enabled = true,
                     Visible = true
@@ -66,17 +66,9 @@
             Instance = new Fold(package);
         }
 
-        private void MenuItemCallbackSplit(object sender, EventArgs e)
-        {
-            MenuItemCallback(sender, e, true);
-        }
-
-        private void MenuItemCallbackCombine(object sender, EventArgs e)
-        {
-            MenuItemCallback(sender, e, false);
-        }
-
-        private void MenuItemCallback(object sender, EventArgs e, bool split)
+#pragma warning disable VSTHRD100
+        private async void MenuItemCallback(object sender, EventArgs e)
+#pragma warning restore VSTHRD100
         {
             try
             {
@@ -107,7 +99,7 @@
 
                 IWpfTextView xxx = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view);
                 ITextBuffer buffer = xxx.TextBuffer;
-                string ffn = buffer.GetFFN().Result;
+                string ffn = await buffer.GetFFN().ConfigureAwait(false);
                 if (ffn == null)
                 {
                     return;

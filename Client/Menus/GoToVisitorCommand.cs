@@ -119,7 +119,9 @@
             MenuItemCallback(sender, e, false);
         }
 
-        private void MenuItemCallback(object sender, EventArgs e, bool visitor)
+#pragma warning disable VSTHRD100
+        private async void MenuItemCallback(object sender, EventArgs e, bool visitor)
+#pragma warning restore VSTHRD100
         {
             try
             {

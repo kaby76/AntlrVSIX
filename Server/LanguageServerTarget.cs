@@ -109,7 +109,7 @@
         }
 
         [JsonRpcMethod(Methods.InitializedName)]
-        public async void InitializedName(JToken arg)
+        public void InitializedName(JToken arg)
         {
             try
             {
@@ -124,7 +124,7 @@
         }
 
         [JsonRpcMethod(Methods.ShutdownName)]
-        public async System.Threading.Tasks.Task<JToken> ShutdownName()
+        public JToken ShutdownName()
         {
             try
             {
@@ -139,7 +139,7 @@
         }
 
         [JsonRpcMethod(Methods.ExitName)]
-        public async void ExitName()
+        public void ExitName()
         {
             try
             {
@@ -156,7 +156,7 @@
         // ======= WINDOW ========
 
         [JsonRpcMethod(Methods.WorkspaceDidChangeConfigurationName)]
-        public async void WorkspaceDidChangeConfigurationName(JToken arg)
+        public void WorkspaceDidChangeConfigurationName(JToken arg)
         {
             try
             {
@@ -173,7 +173,7 @@
         }
 
         [JsonRpcMethod(Methods.WorkspaceDidChangeWatchedFilesName)]
-        public async void WorkspaceDidChangeWatchedFilesName(JToken arg)
+        public void WorkspaceDidChangeWatchedFilesName(JToken arg)
         {
             try
             {
@@ -188,7 +188,7 @@
         }
 
         [JsonRpcMethod(Methods.WorkspaceSymbolName)]
-        public async System.Threading.Tasks.Task<JToken> WorkspaceSymbolName(JToken arg)
+        public JToken WorkspaceSymbolName(JToken arg)
         {
             try
             {
@@ -204,7 +204,7 @@
         }
 
         [JsonRpcMethod(Methods.WorkspaceExecuteCommandName)]
-        public async System.Threading.Tasks.Task<JToken> WorkspaceExecuteCommandName(JToken arg)
+        public JToken WorkspaceExecuteCommandName(JToken arg)
         {
             try
             {
@@ -220,7 +220,7 @@
         }
 
         [JsonRpcMethod(Methods.WorkspaceApplyEditName)]
-        public async System.Threading.Tasks.Task<JToken> WorkspaceApplyEditName(JToken arg)
+        public JToken WorkspaceApplyEditName(JToken arg)
         {
             if (trace)
             {
@@ -233,7 +233,7 @@
         // ======= TEXT SYNCHRONIZATION ========
 
         [JsonRpcMethod(Methods.TextDocumentDidOpenName)]
-        public async void TextDocumentDidOpenName(JToken arg)
+        public void TextDocumentDidOpenName(JToken arg)
         {
             if (trace)
             {
@@ -246,7 +246,7 @@
         }
 
         [JsonRpcMethod(Methods.TextDocumentDidChangeName)]
-        public async void TextDocumentDidChangeName(JToken arg)
+        public void TextDocumentDidChangeName(JToken arg)
         {
             if (trace)
             {
@@ -298,7 +298,7 @@
         }
 
         [JsonRpcMethod(Methods.TextDocumentWillSaveName)]
-        public async void TextDocumentWillSaveName(JToken arg)
+        public void TextDocumentWillSaveName(JToken arg)
         {
             if (trace)
             {
@@ -309,7 +309,7 @@
         }
 
         [JsonRpcMethod(Methods.TextDocumentWillSaveWaitUntilName)]
-        public async System.Threading.Tasks.Task<JToken> TextDocumentWillSaveWaitUntilName(JToken arg)
+        public JToken TextDocumentWillSaveWaitUntilName(JToken arg)
         {
             if (trace)
             {
@@ -322,7 +322,7 @@
         }
 
         [JsonRpcMethod(Methods.TextDocumentDidSaveName)]
-        public async void TextDocumentDidSaveName(JToken arg)
+        public void TextDocumentDidSaveName(JToken arg)
         {
             if (trace)
             {
@@ -333,7 +333,7 @@
         }
 
         [JsonRpcMethod(Methods.TextDocumentDidCloseName)]
-        public async void TextDocumentDidCloseName(JToken arg)
+        public void TextDocumentDidCloseName(JToken arg)
         {
             if (trace)
             {
@@ -346,7 +346,7 @@
         // ======= DIAGNOSTICS ========
 
         [JsonRpcMethod(Methods.TextDocumentPublishDiagnosticsName)]
-        public async void TextDocumentPublishDiagnosticsName(JToken arg)
+        public void TextDocumentPublishDiagnosticsName(JToken arg)
         {
             if (trace)
             {
@@ -358,7 +358,7 @@
         // ======= LANGUAGE FEATURES ========
 
         [JsonRpcMethod(Methods.TextDocumentCompletionName)]
-        public async System.Threading.Tasks.Task<object[]> TextDocumentCompletionName(JToken arg)
+        public object[] TextDocumentCompletionName(JToken arg)
         {
             try
             {
@@ -401,7 +401,7 @@
         }
 
         [JsonRpcMethod(Methods.TextDocumentCompletionResolveName)]
-        public async System.Threading.Tasks.Task<JToken> TextDocumentCompletionResolveName(JToken arg)
+        public JToken TextDocumentCompletionResolveName(JToken arg)
         {
             if (trace)
             {
@@ -446,7 +446,7 @@
         }
 
         [JsonRpcMethod(Methods.TextDocumentHoverName)]
-        public async System.Threading.Tasks.Task<object> TextDocumentHoverName(JToken arg)
+        public object TextDocumentHoverName(JToken arg)
         {
             Hover hover = null;
             try
@@ -499,7 +499,7 @@
         }
 
         [JsonRpcMethod(Methods.TextDocumentSignatureHelpName)]
-        public async System.Threading.Tasks.Task<JToken> TextDocumentSignatureHelpName(JToken arg)
+        public JToken TextDocumentSignatureHelpName(JToken arg)
         {
             try
             {
@@ -518,7 +518,7 @@
         // but does in version 3.14 of LSP.
 
         [JsonRpcMethod(Methods.TextDocumentDefinitionName)]
-        public async System.Threading.Tasks.Task<object[]> TextDocumentDefinitionName(JToken arg)
+        public object[] TextDocumentDefinitionName(JToken arg)
         {
             object[] result = null;
             try
@@ -564,7 +564,7 @@
         }
 
         [JsonRpcMethod(Methods.TextDocumentTypeDefinitionName)]
-        public async System.Threading.Tasks.Task<object[]> TextDocumentTypeDefinitionName(JToken arg)
+        public object[] TextDocumentTypeDefinitionName(JToken arg)
         {
             object[] result = null;
             try
@@ -610,7 +610,7 @@
         }
 
         [JsonRpcMethod(Methods.TextDocumentImplementationName)]
-        public async System.Threading.Tasks.Task<object[]> TextDocumentImplementationName(JToken arg)
+        public object[] TextDocumentImplementationName(JToken arg)
         {
             object[] result = null;
             try
@@ -656,7 +656,7 @@
         }
 
         [JsonRpcMethod(Methods.TextDocumentReferencesName)]
-        public async System.Threading.Tasks.Task<object[]> TextDocumentReferencesName(JToken arg)
+        public object[] TextDocumentReferencesName(JToken arg)
         {
             object[] result = null;
             try
@@ -726,7 +726,7 @@
         }
 
         [JsonRpcMethod(Methods.TextDocumentDocumentHighlightName)]
-        public async System.Threading.Tasks.Task<object[]> TextDocumentDocumentHighlightName(JToken arg)
+        public object[] TextDocumentDocumentHighlightName(JToken arg)
         {
             object[] result = null;
             try
@@ -773,7 +773,7 @@
         }
 
         [JsonRpcMethod(Methods.TextDocumentDocumentSymbolName)]
-        public async System.Threading.Tasks.Task<object[]> TextDocumentDocumentSymbolName(JToken arg)
+        public object[] TextDocumentDocumentSymbolName(JToken arg)
         {
             object[] result = null;
             try
@@ -868,7 +868,7 @@
         }
 
         [JsonRpcMethod(Methods.TextDocumentCodeActionName)]
-        public async System.Threading.Tasks.Task<JToken> TextDocumentCodeActionName(JToken arg)
+        public JToken TextDocumentCodeActionName(JToken arg)
         {
             try
             {
@@ -884,7 +884,7 @@
         }
 
         [JsonRpcMethod(Methods.TextDocumentCodeLensName)]
-        public async System.Threading.Tasks.Task<JToken> TextDocumentCodeLensName(JToken arg)
+        public JToken TextDocumentCodeLensName(JToken arg)
         {
             try
             {
@@ -900,7 +900,7 @@
         }
 
         [JsonRpcMethod(Methods.CodeLensResolveName)]
-        public async System.Threading.Tasks.Task<JToken> CodeLensResolveName(JToken arg)
+        public JToken CodeLensResolveName(JToken arg)
         {
             try
             {
@@ -916,7 +916,7 @@
         }
 
         [JsonRpcMethod(Methods.TextDocumentDocumentLinkName)]
-        public async System.Threading.Tasks.Task<JToken> TextDocumentDocumentLinkName(JToken arg)
+        public JToken TextDocumentDocumentLinkName(JToken arg)
         {
             try
             {
@@ -932,7 +932,7 @@
         }
 
         [JsonRpcMethod(Methods.DocumentLinkResolveName)]
-        public async System.Threading.Tasks.Task<JToken> DocumentLinkResolveName(JToken arg)
+        public JToken DocumentLinkResolveName(JToken arg)
         {
             try
             {
@@ -948,7 +948,7 @@
         }
 
         [JsonRpcMethod(Methods.TextDocumentFormattingName)]
-        public async System.Threading.Tasks.Task<object[]> TextDocumentFormattingName(JToken arg)
+        public object[] TextDocumentFormattingName(JToken arg)
         {
             object[] result = null;
             try
@@ -985,7 +985,7 @@
         }
 
         [JsonRpcMethod(Methods.TextDocumentRangeFormattingName)]
-        public async System.Threading.Tasks.Task<JToken> TextDocumentRangeFormattingName(JToken arg)
+        public JToken TextDocumentRangeFormattingName(JToken arg)
         {
             try
             {
@@ -1001,7 +1001,7 @@
         }
 
         [JsonRpcMethod(Methods.TextDocumentOnTypeFormattingName)]
-        public async System.Threading.Tasks.Task<JToken> TextDocumentOnTypeFormattingName(JToken arg)
+        public JToken TextDocumentOnTypeFormattingName(JToken arg)
         {
             try
             {
@@ -1017,7 +1017,7 @@
         }
 
         [JsonRpcMethod(Methods.TextDocumentRenameName)]
-        public async System.Threading.Tasks.Task<WorkspaceEdit> TextDocumentRenameName(JToken arg)
+        public WorkspaceEdit TextDocumentRenameName(JToken arg)
         {
             WorkspaceEdit edit = null;
             try
@@ -1074,7 +1074,7 @@
         }
 
         [JsonRpcMethod(Methods.TextDocumentFoldingRangeName)]
-        public async System.Threading.Tasks.Task<JToken> TextDocumentFoldingRangeName(JToken arg)
+        public JToken TextDocumentFoldingRangeName(JToken arg)
         {
             try
             {
@@ -1091,7 +1091,7 @@
 
 
         [JsonRpcMethod("CMGetClassifiers")]
-        public async System.Threading.Tasks.Task<CMClassifierInformation[]> CMGetClassifiers(JToken arg)
+        public CMClassifierInformation[] CMGetClassifiers(JToken arg)
         {
             CMClassifierInformation[] result = null;
             try
@@ -1140,7 +1140,7 @@
         }
 
         [JsonRpcMethod("CMNextSymbol")]
-        public async System.Threading.Tasks.Task<int> CMNextSymbol(JToken arg)
+        public int CMNextSymbol(JToken arg)
         {
             CMNextSymbolParams request = arg.ToObject<CMNextSymbolParams>();
             int pos = request.Pos;
@@ -1197,7 +1197,7 @@
         }
 
         [JsonRpcMethod("CMGotoVisitor")]
-        public async System.Threading.Tasks.Task<CMGotoResult> CMGotoVisitor(JToken arg)
+        public CMGotoResult CMGotoVisitor(JToken arg)
         {
             CMGotoResult s = null;
             try
@@ -1227,7 +1227,7 @@
         }
 
         [JsonRpcMethod("CMGotoListener")]
-        public async System.Threading.Tasks.Task<CMGotoResult> CMGotoListener(JToken arg)
+        public CMGotoResult CMGotoListener(JToken arg)
         {
             CMGotoResult s = null;
             try
@@ -1257,7 +1257,7 @@
         }
 
         [JsonRpcMethod("CMReplaceLiterals")]
-        public async void CMReplaceLiterals(JToken arg)
+        public void CMReplaceLiterals(JToken arg)
         {
             Dictionary<string, string> changes = null;
             try
@@ -1286,7 +1286,7 @@
         }
 
         [JsonRpcMethod("CMRemoveUselessParserProductions")]
-        public async void CMRemoveUselessParserProductions(JToken arg)
+        public void CMRemoveUselessParserProductions(JToken arg)
         {
             try
             {
@@ -1314,7 +1314,7 @@
         }
 
         [JsonRpcMethod("CMMoveStartRuleToTop")]
-        public async void CMMoveStartRuleToTop(JToken arg)
+        public void CMMoveStartRuleToTop(JToken arg)
         {
             try
             {
@@ -1342,7 +1342,7 @@
         }
 
         [JsonRpcMethod("CMReorderParserRules")]
-        public async void CMReorderParserRules(JToken arg)
+        public void CMReorderParserRules(JToken arg)
         {
             try
             {
@@ -1371,7 +1371,7 @@
         }
 
         [JsonRpcMethod("CMSplitCombineGrammars")]
-        public async System.Threading.Tasks.Task<Dictionary<string, string>> CMSplitCombineGrammars(JToken arg)
+        public Dictionary<string, string> CMSplitCombineGrammars(JToken arg)
         {
             Dictionary<string, string> changes = null;
             try
@@ -1401,7 +1401,7 @@
         }
 
         [JsonRpcMethod("CMImportGrammars")]
-        public async System.Threading.Tasks.Task<Dictionary<string, string>> CMImportGrammars(JToken arg)
+        public Dictionary<string, string> CMImportGrammars(JToken arg)
         {
             Dictionary<string, string> changes = null;
             try
@@ -1426,7 +1426,7 @@
         }
 
         [JsonRpcMethod("CMConvertRecursionToKleeneOperator")]
-        public async void CMConvertRecursionToKleeneOperator(JToken arg)
+        public void CMConvertRecursionToKleeneOperator(JToken arg)
         {
             try
             {
@@ -1455,7 +1455,7 @@
 
 
         [JsonRpcMethod("CMEliminateDirectLeftRecursion")]
-        public async void CMEliminateDirectLeftRecursion(JToken arg)
+        public void CMEliminateDirectLeftRecursion(JToken arg)
         {
             try
             {
@@ -1483,7 +1483,7 @@
         }
 
         [JsonRpcMethod("CMEliminateIndirectLeftRecursion")]
-        public async void CMEliminateIndirectLeftRecursion(JToken arg)
+        public void CMEliminateIndirectLeftRecursion(JToken arg)
         {
             try
             {
@@ -1511,7 +1511,7 @@
         }
 
         [JsonRpcMethod("CMEliminateAntlrKeywordsInRules")]
-        public async void CMEliminateAntlrKeywordsInRules(JToken arg)
+        public void CMEliminateAntlrKeywordsInRules(JToken arg)
         {
             try
             {
@@ -1542,7 +1542,7 @@
 
 
         [JsonRpcMethod("CMAddLexerRulesForStringLiterals")]
-        public async void CMAddLexerRulesForStringLiterals(JToken arg)
+        public void CMAddLexerRulesForStringLiterals(JToken arg)
         {
             try
             {
@@ -1567,7 +1567,7 @@
         }
 
         [JsonRpcMethod("CMSortModes")]
-        public async void CMSortModes(JToken arg)
+        public void CMSortModes(JToken arg)
         {
             try
             {
@@ -1592,7 +1592,7 @@
         }
 
         [JsonRpcMethod("CMUnfold")]
-        public async void CMUnfold(JToken arg1, JToken arg2)
+        public void CMUnfold(JToken arg1, JToken arg2)
         {
             Dictionary<string, string> s = null;
             try
@@ -1622,9 +1622,8 @@
         }
 
         [JsonRpcMethod("CMFold")]
-        public async void CMFold(JToken arg1, JToken arg2, JToken arg3)
+        public void CMFold(JToken arg1, JToken arg2, JToken arg3)
         {
-            Dictionary<string, string> s = null;
             try
             {
                 string a1 = arg1.ToObject<string>();
@@ -1640,7 +1639,7 @@
                     (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
                     System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
                 }
-                s = Transform.Fold(start, end, document);
+                var s = Transform.Fold(start, end, document);
                 ApplyChanges(s);
             }
             catch (LanguageServerException e)
@@ -1654,9 +1653,8 @@
         }
 
         [JsonRpcMethod("CMRemoveUselessParentheses")]
-        public async void CMRemoveUselessParentheses(JToken arg1, JToken arg2, JToken arg3)
+        public void CMRemoveUselessParentheses(JToken arg1, JToken arg2, JToken arg3)
         {
-            Dictionary<string, string> s = null;
             try
             {
                 string a1 = arg1.ToObject<string>();
@@ -1672,7 +1670,7 @@
                     (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
                     System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
                 }
-                s = Transform.RemoveUselessParentheses(start, end, document);
+                var s = Transform.RemoveUselessParentheses(start, end, document);
                 ApplyChanges(s);
             }
             catch (LanguageServerException e)
@@ -1686,7 +1684,7 @@
         }
 
         [JsonRpcMethod("CMShowCycles")]
-        public async void CMShowCycles(JToken arg1, JToken arg2)
+        public void CMShowCycles(JToken arg1, JToken arg2)
         {
             Dictionary<string, string> s = null;
             try

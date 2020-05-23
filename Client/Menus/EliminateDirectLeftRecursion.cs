@@ -77,7 +77,9 @@
             MenuItemCallback(sender, e, false);
         }
 
-        private void MenuItemCallback(object sender, EventArgs e, bool split)
+#pragma warning disable VSTHRD100
+        private async void MenuItemCallback(object sender, EventArgs e, bool split)
+#pragma warning restore VSTHRD100
         {
             try
             {
@@ -106,7 +108,7 @@
 
                 IWpfTextView xxx = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view);
                 ITextBuffer buffer = xxx.TextBuffer;
-                string ffn = buffer.GetFFN().Result;
+                string ffn = await buffer.GetFFN().ConfigureAwait(false);
                 if (ffn == null)
                 {
                     return;

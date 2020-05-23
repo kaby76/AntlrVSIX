@@ -45,7 +45,7 @@
             Instance = new OptionsCommand(package);
         }
 
-        private void MenuItemCallback(object sender, EventArgs e)
+        private async void MenuItemCallback(object sender, EventArgs e)
         {
             System.Windows.Application.Current.Dispatcher.Invoke(delegate
             {

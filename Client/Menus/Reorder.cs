@@ -96,22 +96,22 @@
             Instance = new Reorder(package);
         }
 
-        private void MenuItemCallbackAlphabetically(object sender, EventArgs e)
+        private async void MenuItemCallbackAlphabetically(object sender, EventArgs e)
         {
             MenuItemCallback(sender, e, ReorderType.Alphabetically);
         }
 
-        private void MenuItemCallbackBFS(object sender, EventArgs e)
+        private async void MenuItemCallbackBFS(object sender, EventArgs e)
         {
             MenuItemCallback(sender, e, ReorderType.BFS);
         }
 
-        private void MenuItemCallbackDFS(object sender, EventArgs e)
+        private async void MenuItemCallbackDFS(object sender, EventArgs e)
         {
             MenuItemCallback(sender, e, ReorderType.DFS);
         }
 
-        private void MenuItemCallback(object sender, EventArgs e, ReorderType type)
+        private async void MenuItemCallback(object sender, EventArgs e, ReorderType type)
         {
             try
             {
@@ -140,7 +140,7 @@
 
                 IWpfTextView xxx = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view);
                 ITextBuffer buffer = xxx.TextBuffer;
-                string ffn = buffer.GetFFN().Result;
+                string ffn = await buffer.GetFFN().ConfigureAwait(false);
                 if (ffn == null)
                 {
                     return;
