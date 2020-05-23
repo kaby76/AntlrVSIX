@@ -11,7 +11,6 @@ namespace LanguageServer
         private readonly Parser _parser;
         private readonly Lexer _lexer;
         private readonly CommonTokenStream _token_stream;
-        private readonly bool _first_time;
         private readonly StringBuilder _errors;
 
         public BisonErrorListener(Parser parser, Lexer lexer, CommonTokenStream token_stream, StringBuilder errors)
@@ -19,7 +18,6 @@ namespace LanguageServer
             _parser = parser;
             _lexer = lexer;
             _token_stream = token_stream;
-            _first_time = true;
             _errors = errors;
         }
 

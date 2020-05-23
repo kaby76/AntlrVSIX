@@ -16,11 +16,8 @@
     [TextViewRole(PredefinedTextViewRoles.Editable)]
     public class ViewCreationListener : IVsTextViewCreationListener
     {
-
-        public static Dictionary<string, IContentType> PreviousContentType = new Dictionary<string, IContentType>();
-
         [Import]
-        public IVsEditorAdaptersFactoryService AdaptersFactory = null;
+        internal IVsEditorAdaptersFactoryService AdaptersFactory = null;
 
         [Import]
         internal IContentTypeRegistryService ContentTypeRegistryService { get; set; }
@@ -64,10 +61,6 @@
                 Type type_of_content_type = new_content_type.GetType();
                 System.Reflection.Assembly assembly = type_of_content_type.Assembly;
                 buffer.ChangeContentType(new_content_type, null);
-                if (!PreviousContentType.ContainsKey(ffn))
-                {
-                    PreviousContentType[ffn] = content_type;
-                }
             }
             catch (Exception)
             {

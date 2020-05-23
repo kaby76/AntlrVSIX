@@ -14,8 +14,6 @@
 
     internal sealed class AntlrClassifier : ITagger<ClassificationTag>
     {
-        private static readonly CancellationTokenSource source;
-        private static readonly Task<int> task;
         private readonly ITextBuffer _buffer;
         private IDictionary<int, IClassificationType> _to_classifiertype;
         private bool initialized = false;
@@ -176,7 +174,9 @@
                                 .GetExplicitTextProperties(t);
                             classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
                         }
+#pragma warning disable 0169
                         catch (Exception eeks) { }
+#pragma warning restore 0169
                     }
                     _to_classifiertype[i] = classificationType;
                 }
@@ -196,7 +196,9 @@
                                 .GetExplicitTextProperties(t);
                             classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
                         }
+#pragma warning disable 0169
                         catch (Exception eeks) { }
+#pragma warning restore 0169
                     }
                     _to_classifiertype[i] = classificationType;
                 }
@@ -216,7 +218,9 @@
                                 .GetExplicitTextProperties(t);
                             classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
                         }
+#pragma warning disable 0169
                         catch (Exception eeks) { }
+#pragma warning restore 0169
                     }
                     _to_classifiertype[i] = classificationType;
                 }
@@ -236,7 +240,9 @@
                                 .GetExplicitTextProperties(t);
                             classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
                         }
+#pragma warning disable 0169
                         catch (Exception eeks) { }
+#pragma warning restore 0169
                     }
                     _to_classifiertype[i] = classificationType;
                 }
@@ -256,7 +262,9 @@
                                 .GetExplicitTextProperties(t);
                             classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
                         }
+#pragma warning disable 0169
                         catch (Exception eeks) { }
+#pragma warning restore 0169
                     }
                     _to_classifiertype[i] = classificationType;
                 }
@@ -276,7 +284,9 @@
                                 .GetExplicitTextProperties(t);
                             classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
                         }
+#pragma warning disable 0169
                         catch (Exception eeks) { }
+#pragma warning restore 0169
                     }
                     _to_classifiertype[i] = classificationType;
                 }
@@ -296,7 +306,9 @@
                                 .GetExplicitTextProperties(t);
                             classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
                         }
+#pragma warning disable 0169
                         catch (Exception eeks) { }
+#pragma warning restore 0169
                     }
                     _to_classifiertype[i] = classificationType;
                 }
@@ -316,7 +328,9 @@
                                 .GetExplicitTextProperties(t);
                             classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
                         }
+#pragma warning disable 0169
                         catch (Exception eeks) { }
+#pragma warning restore 0169
                     }
                     _to_classifiertype[i] = classificationType;
                 }
@@ -336,7 +350,9 @@
                                 .GetExplicitTextProperties(t);
                             classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
                         }
+#pragma warning disable 0169
                         catch (Exception eeks) { }
+#pragma warning restore 0169
                     }
                     _to_classifiertype[i] = classificationType;
                 }
@@ -356,7 +372,9 @@
                                 .GetExplicitTextProperties(t);
                             classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
                         }
+#pragma warning disable 0169
                         catch (Exception eeks) { }
+#pragma warning restore 0169
                     }
                     _to_classifiertype[i] = classificationType;
                 }
@@ -376,7 +394,9 @@
                                 .GetExplicitTextProperties(t);
                             classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
                         }
+#pragma warning disable 0169
                         catch (Exception eeks) { }
+#pragma warning restore 0169
                     }
                     _to_classifiertype[i] = classificationType;
                 }
@@ -396,7 +416,9 @@
                                 .GetExplicitTextProperties(t);
                             classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
                         }
+#pragma warning disable 0169
                         catch (Exception eeks) { }
+#pragma warning restore 0169
                     }
                     _to_classifiertype[i] = classificationType;
                 }
@@ -416,16 +438,17 @@
                                 .GetExplicitTextProperties(t);
                             classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
                         }
+#pragma warning disable 0169
                         catch (Exception eeks) { }
+#pragma warning restore 0169
                     }
                     _to_classifiertype[i] = classificationType;
                 }
                 initialized = true;
             }
-            catch (Exception eeks)
-            {
-                //Logger.Log.Notify(exception.StackTrace);
-            }
+#pragma warning disable 0169
+            catch (Exception eeks) { }
+#pragma warning restore 0169
         }
 
         private async void OnTextChanged(object sender, TextContentChangedEventArgs args)

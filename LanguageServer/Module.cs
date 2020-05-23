@@ -819,8 +819,9 @@
                                     goto DoAgain;
                                 }
                             }
-                            catch (Exception eeks)
-                            { }
+#pragma warning disable 0169
+                            catch (Exception eeks) { }
+#pragma warning restore 0169
                             changed = true;
                         }
                     }

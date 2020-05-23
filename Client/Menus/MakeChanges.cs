@@ -1,14 +1,9 @@
 ﻿using Microsoft.VisualStudio.Shell;
-using System;
-using System.Collections.Generic;
-using LanguageServer;
-using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.TextManager.Interop;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 
 namespace LspAntlr
 {
@@ -182,7 +177,9 @@ namespace LspAntlr
                         }
                         edit.Apply();
                     }
+#pragma warning disable 0169
                     catch (Exception eeks)
+#pragma warning restore 0169
                     {
                         edit.Cancel();
                     }
