@@ -250,7 +250,7 @@
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
                 p.Pos = pos;
-                _rpc.InvokeAsync("CMReplaceLiterals", p);
+                _ = _rpc.InvokeAsync("CMReplaceLiterals", p);
             }
             catch (Exception)
             {
@@ -266,7 +266,7 @@
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
                 p.Pos = pos;
-                _rpc.InvokeAsync("CMRemoveUselessParserProductions", p);
+                _ = _rpc.InvokeAsync("CMRemoveUselessParserProductions", p);
             }
             catch (Exception)
             {
@@ -282,7 +282,7 @@
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
                 p.Pos = pos;
-                _rpc.InvokeAsync("CMMoveStartRuleToTop", p);
+                _ = _rpc.InvokeAsync("CMMoveStartRuleToTop", p);
             }
             catch (Exception)
             {
@@ -300,7 +300,7 @@
                 p.Pos = pos;
                 p.Type = reorder_type;
 
-                _rpc.InvokeAsync("CMReorderParserRules", p);
+                _ = _rpc.InvokeAsync("CMReorderParserRules", p);
             }
             catch (Exception)
             {
@@ -351,7 +351,7 @@
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
                 p.Pos = pos;
-                _rpc.InvokeAsync("CMEliminateDirectLeftRecursion", p);
+                _ = _rpc.InvokeAsync("CMEliminateDirectLeftRecursion", p);
             }
             catch (Exception)
             {
@@ -367,7 +367,7 @@
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
                 p.Pos = pos;
-                _rpc.InvokeAsync("CMEliminateIndirectLeftRecursion", p);
+                _ = _rpc.InvokeAsync("CMEliminateIndirectLeftRecursion", p);
             }
             catch (Exception)
             {
@@ -383,7 +383,7 @@
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
                 p.Pos = pos;
-                _rpc.InvokeAsync("CMConvertRecursionToKleeneOperator", p);
+                _ = _rpc.InvokeAsync("CMConvertRecursionToKleeneOperator", p);
             }
             catch (Exception)
             {
@@ -397,7 +397,7 @@
                 if (_rpc == null) return;
                 Uri uri = new Uri(ffn);
                 var p = uri;
-                _rpc.InvokeAsync("CMEliminateAntlrKeywordsInRules", p);
+                _ = _rpc.InvokeAsync("CMEliminateAntlrKeywordsInRules", p);
             }
             catch (Exception)
             {
@@ -411,7 +411,7 @@
                 if (_rpc == null) return;
                 Uri uri = new Uri(ffn);
                 var p = uri;
-                _rpc.InvokeAsync("CMAddLexerRulesForStringLiterals", p);
+                _ = _rpc.InvokeAsync("CMAddLexerRulesForStringLiterals", p);
             }
             catch (Exception)
             {
@@ -425,7 +425,7 @@
                 if (_rpc == null) return;
                 Uri uri = new Uri(ffn);
                 var p = uri;
-                _rpc.InvokeAsync("CMSortModes", p);
+                _ = _rpc.InvokeAsync("CMSortModes", p);
             }
             catch (Exception)
             {
