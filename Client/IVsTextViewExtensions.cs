@@ -142,6 +142,7 @@
 
         internal static IVsWindowFrame FindWindowFrame(string filePath)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             foreach (IVsWindowFrame currentFrame in EnumerateDocumentWindowFrames())
             {
                 if (IsFrameForFilePath(currentFrame, filePath))

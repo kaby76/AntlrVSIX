@@ -54,11 +54,9 @@
         public class LiteralsGrammar : ANTLRv4ParserBaseListener
         {
             public List<TerminalNodeImpl> Literals = new List<TerminalNodeImpl>();
-            private readonly AntlrGrammarDetails _pd;
 
-            public LiteralsGrammar(AntlrGrammarDetails pd)
+            public LiteralsGrammar()
             {
-                _pd = pd;
             }
 
             public override void EnterTerminal([NotNull] ANTLRv4Parser.TerminalContext context)
@@ -282,9 +280,6 @@
                     return;
                 }
 
-                int insertion = first_rule.SourceInterval.a;
-                Antlr4.Runtime.IToken insertion_tok = pd_parser.TokStream.Get(insertion);
-                int insertion_ind = insertion_tok.StartIndex;
                 string old_code = document.Code;
                 for (int i = 0; i < rules.Count; ++i)
                 {
@@ -315,7 +310,6 @@
                         }
                         end_ind = j;
                     }
-                    IList<Antlr4.Runtime.IToken> inter = pd_parser.TokStream.GetHiddenTokensToRight(end_tok.TokenIndex);
                     int start = token_interval.a;
                     Antlr4.Runtime.IToken start_tok = pd_parser.TokStream.Get(start);
                     int start_ind = start_tok.StartIndex;
@@ -357,9 +351,6 @@
                     return;
                 }
 
-                int insertion = first_rule.SourceInterval.a;
-                Antlr4.Runtime.IToken insertion_tok = pd_parser.TokStream.Get(insertion);
-                int insertion_ind = insertion_tok.StartIndex;
                 string old_code = document.Code;
                 for (int i = 0; i < rules.Count; ++i)
                 {
@@ -390,7 +381,6 @@
                         }
                         end_ind = j;
                     }
-                    IList<Antlr4.Runtime.IToken> inter = pd_parser.TokStream.GetHiddenTokensToRight(end_tok.TokenIndex);
                     int start = token_interval.a;
                     Antlr4.Runtime.IToken start_tok = pd_parser.TokStream.Get(start);
                     int start_ind = start_tok.StartIndex;
@@ -424,7 +414,6 @@
 
             public void FindStartRules()
             {
-                List<ITerminalNode> lhs = listener.LhsSymbol;
                 for (int i = 0; i < rules.Count; ++i)
                 {
                     for (int j = 0; j < rules[i].RHS.Count; ++j)
@@ -483,13 +472,11 @@
             public ExtractModes listener;
             private readonly AntlrGrammarDetails pd_parser;
             private readonly Document document;
-            private readonly Dictionary<string, SyntaxTree> trees;
 
             public TableOfModes(AntlrGrammarDetails p, Document d)
             {
                 pd_parser = p;
                 document = d;
-                trees = ReadCsharpSource(document);
             }
 
             public void ReadModes()
@@ -522,9 +509,6 @@
                     return;
                 }
 
-                int insertion = first_rule.SourceInterval.a;
-                Antlr4.Runtime.IToken insertion_tok = pd_parser.TokStream.Get(insertion);
-                int insertion_ind = insertion_tok.StartIndex;
                 string old_code = document.Code;
                 for (int i = 0; i < modes.Count; ++i)
                 {
@@ -555,7 +539,6 @@
                         }
                         end_ind = j;
                     }
-                    IList<Antlr4.Runtime.IToken> inter = pd_parser.TokStream.GetHiddenTokensToRight(end_tok.TokenIndex);
                     int start = token_interval.a;
                     Antlr4.Runtime.IToken start_tok = pd_parser.TokStream.Get(start);
                     int start_ind = start_tok.StartIndex;
@@ -676,11 +659,9 @@
             Dictionary<string, string> result = new Dictionary<string, string>();
 
             // Check if initial file is a grammar.
-            AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
-            if (pd_parser == null)
-            {
+            if (!(ParserDetailsFactory.Create(document) is AntlrGrammarDetails pd_parser))
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
-            }
+
             ExtractGrammarType egt = new ExtractGrammarType();
             ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
             bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
@@ -737,7 +718,7 @@
                 AntlrGrammarDetails pd_whatever = ParserDetailsFactory.Create(whatever_document) as AntlrGrammarDetails;
 
                 // Find literals in grammars.
-                LiteralsGrammar lp_whatever = new LiteralsGrammar(pd_whatever);
+                LiteralsGrammar lp_whatever = new LiteralsGrammar();
                 ParseTreeWalker.Default.Walk(lp_whatever, pd_whatever.ParseTree);
                 List<TerminalNodeImpl> list_literals = lp_whatever.Literals;
                 foreach (TerminalNodeImpl lexer_literal in list_literals)
@@ -935,8 +916,7 @@
             Dictionary<string, string> result = new Dictionary<string, string>();
 
             // Check if lexer grammar.
-            AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
-            if (pd_parser == null)
+            if (!(ParserDetailsFactory.Create(document) is AntlrGrammarDetails pd_parser))
             {
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
@@ -987,11 +967,8 @@
             Dictionary<string, string> result = new Dictionary<string, string>();
 
             // Check if lexer grammar.
-            AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
-            if (pd_parser == null)
-            {
+            if (!(ParserDetailsFactory.Create(document) is AntlrGrammarDetails pd_parser))
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
-            }
             ExtractGrammarType lp = new ExtractGrammarType();
             ParseTreeWalker.Default.Walk(lp, pd_parser.ParseTree);
             bool is_lexer = lp.Type == ExtractGrammarType.GrammarType.Lexer;
@@ -1064,16 +1041,13 @@
             return result;
         }
 
-        public static Dictionary<string, string> ReorderParserRules(int pos, Document document, LspAntlr.ReorderType type)
+        public static Dictionary<string, string> ReorderParserRules(Document document, LspAntlr.ReorderType type)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
             // Check if lexer grammar.
-            AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
-            if (pd_parser == null)
-            {
+            if (!(ParserDetailsFactory.Create(document) is AntlrGrammarDetails pd_parser))
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
-            }
             ExtractGrammarType lp = new ExtractGrammarType();
             ParseTreeWalker.Default.Walk(lp, pd_parser.ParseTree);
             bool is_lexer = lp.Type == ExtractGrammarType.GrammarType.Lexer;
@@ -1247,11 +1221,8 @@
             Dictionary<string, string> result = new Dictionary<string, string>();
 
             // Check if lexer grammar.
-            AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
-            if (pd_parser == null)
-            {
+            if (!(ParserDetailsFactory.Create(document) is AntlrGrammarDetails pd_parser))
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
-            }
             ExtractGrammarType lp = new ExtractGrammarType();
             ParseTreeWalker.Default.Walk(lp, pd_parser.ParseTree);
             if (split && lp.Type != ExtractGrammarType.GrammarType.Combined)
@@ -1274,8 +1245,7 @@
                 // Create a parser and lexer grammar.
                 StringBuilder sb_parser = new StringBuilder();
                 StringBuilder sb_lexer = new StringBuilder();
-                ANTLRv4Parser.GrammarSpecContext root = pd_parser.ParseTree as ANTLRv4Parser.GrammarSpecContext;
-                if (root == null)
+                if (!(pd_parser.ParseTree is ANTLRv4Parser.GrammarSpecContext root))
                 {
                     return null;
                 }
@@ -1407,8 +1377,7 @@
 
                 // Create a combined parser grammar.
                 StringBuilder sb_parser = new StringBuilder();
-                ANTLRv4Parser.GrammarSpecContext root = pd_parser.ParseTree as ANTLRv4Parser.GrammarSpecContext;
-                if (root == null)
+                if (!(pd_parser.ParseTree is ANTLRv4Parser.GrammarSpecContext root))
                 {
                     return null;
                 }
@@ -1541,26 +1510,25 @@
             var ral = rb.ruleAltList();
             foreach (var la in ral.labeledAlt())
             {
-                TerminalNodeImpl t1 = la
+                if (la
                     .alternative()?
                     .element()?
                     .FirstOrDefault()?
                     .atom()?
                     .ruleref()?
-                    .GetChild(0) as TerminalNodeImpl;
-                if (t1 != null && t1.GetText() == lhs.GetText())
+                    .GetChild(0) is TerminalNodeImpl t1 && t1.GetText() == lhs.GetText())
                 {
                     return true;
                 }
-                TerminalNodeImpl t2 = la
+
+                if (la
                     .alternative()?
                     .element()?
                     .FirstOrDefault()?
                     .labeledElement()?
                     .atom()?
                     .ruleref()?
-                    .GetChild(0) as TerminalNodeImpl;
-                if (t2 != null && t2.GetText() == lhs.GetText())
+                    .GetChild(0) is TerminalNodeImpl t2 && t2.GetText() == lhs.GetText())
                 {
                     return true;
                 }
@@ -1579,26 +1547,24 @@
             var ral = rb.ruleAltList();
             foreach (var la in ral.labeledAlt())
             {
-                TerminalNodeImpl t1 = la
+                if (la
                     .alternative()?
                     .element()?
                     .LastOrDefault()?
                     .atom()?
                     .ruleref()?
-                    .GetChild(0) as TerminalNodeImpl;
-                if (t1 != null && t1.GetText() == lhs.GetText())
+                    .GetChild(0) is TerminalNodeImpl t1 && t1.GetText() == lhs.GetText())
                 {
                     return true;
                 }
-                TerminalNodeImpl t2 = la
+                if (la
                     .alternative()?
                     .element()?
                     .LastOrDefault()?
                     .labeledElement()?
                     .atom()?
                     .ruleref()?
-                    .GetChild(0) as TerminalNodeImpl;
-                if (t2 != null && t2.GetText() == lhs.GetText())
+                    .GetChild(0) is TerminalNodeImpl t2 && t2.GetText() == lhs.GetText())
                 {
                     return true;
                 }
@@ -2002,8 +1968,7 @@
             Dictionary<string, string> result = new Dictionary<string, string>();
 
             // Check if initial file is a grammar.
-            AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
-            if (pd_parser == null)
+            if (!(ParserDetailsFactory.Create(document) is AntlrGrammarDetails pd_parser))
             {
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
@@ -2125,9 +2090,9 @@
 
         private static string GenerateNewName(IParseTree rule, AntlrGrammarDetails pd_parser)
         {
-            var r = rule as ANTLRv4Parser.ParserRuleSpecContext;
-            if (r == null)
+            if (!(rule is ANTLRv4Parser.ParserRuleSpecContext r))
                 return null;
+
             var b = r.RULE_REF().GetText();
             var list = pd_parser.AllNodes.Where(n =>
             {
@@ -2157,8 +2122,7 @@
             Dictionary<string, string> result = new Dictionary<string, string>();
 
             // Check if initial file is a grammar.
-            AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
-            if (pd_parser == null)
+            if (!(ParserDetailsFactory.Create(document) is AntlrGrammarDetails pd_parser))
             {
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
@@ -2507,8 +2471,7 @@
             Dictionary<string, string> result = new Dictionary<string, string>();
 
             // Check if initial file is a grammar.
-            AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
-            if (pd_parser == null)
+            if (!(ParserDetailsFactory.Create(document) is AntlrGrammarDetails pd_parser))
             {
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
@@ -2872,8 +2835,7 @@
         public static string EliminateAntlrKeywordsInRules(Document document)
         {
             // Check if initial file is a parser or combined grammar.
-            AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
-            if (pd_parser == null)
+            if (!(ParserDetailsFactory.Create(document) is AntlrGrammarDetails pd_parser))
             {
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
@@ -2923,8 +2885,7 @@
             Dictionary<string, string> result = new Dictionary<string, string>();
 
             // Check if initial file is a grammar.
-            AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
-            if (pd_parser == null)
+            if (!(ParserDetailsFactory.Create(document) is AntlrGrammarDetails pd_parser))
             {
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
@@ -2984,7 +2945,7 @@
                 AntlrGrammarDetails pd_whatever = ParserDetailsFactory.Create(whatever_document) as AntlrGrammarDetails;
 
                 // Find literals in grammars.
-                LiteralsGrammar lp_whatever = new LiteralsGrammar(pd_whatever);
+                LiteralsGrammar lp_whatever = new LiteralsGrammar();
                 ParseTreeWalker.Default.Walk(lp_whatever, pd_whatever.ParseTree);
                 List<TerminalNodeImpl> list_literals = lp_whatever.Literals;
                 foreach (TerminalNodeImpl lexer_literal in list_literals)
@@ -3231,19 +3192,12 @@
             Dictionary<string, string> result = new Dictionary<string, string>();
 
             // Check if lexer grammar.
-            AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
-            if (pd_parser == null)
-            {
+            if (!(ParserDetailsFactory.Create(document) is AntlrGrammarDetails pd_parser))
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
-            }
             ExtractGrammarType lp = new ExtractGrammarType();
             ParseTreeWalker.Default.Walk(lp, pd_parser.ParseTree);
-            bool is_lexer = lp.Type == ExtractGrammarType.GrammarType.Lexer;
-            if (! is_lexer)
-            {
+            if (lp.Type != ExtractGrammarType.GrammarType.Lexer)
                 throw new LanguageServerException("A lexer grammar file is not selected. Please select one first.");
-            }
-
             TableOfModes table = new TableOfModes(pd_parser, document);
             table.ReadModes();
             table.FindPartitions();
@@ -3291,8 +3245,7 @@
             Dictionary<string, string> result = new Dictionary<string, string>();
 
             // Check if initial file is a grammar.
-            AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
-            if (pd_parser == null)
+            if (!(ParserDetailsFactory.Create(document) is AntlrGrammarDetails pd_parser))
             {
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
@@ -3543,8 +3496,7 @@
             Dictionary<string, string> result = new Dictionary<string, string>();
 
             // Check if initial file is a grammar.
-            AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
-            if (pd_parser == null)
+            if (!(ParserDetailsFactory.Create(document) is AntlrGrammarDetails pd_parser))
             {
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
@@ -4075,7 +4027,9 @@
                     }
                 }
                 else
+#pragma warning disable CS0642 // Possible mistaken empty statement
                     ;
+#pragma warning restore CS0642 // Possible mistaken empty statement
             }
 
             StringBuilder sb = new StringBuilder();
@@ -4124,8 +4078,7 @@
             Dictionary<string, string> result = new Dictionary<string, string>();
 
             // Check if initial file is a grammar.
-            AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
-            if (pd_parser == null)
+            if (!(ParserDetailsFactory.Create(document) is AntlrGrammarDetails pd_parser))
             {
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }

@@ -11,7 +11,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class LSPServer : INotifyPropertyChanged
+    public class LSPServer : INotifyPropertyChanged, IDisposable
     {
         private int maxProblems = -1;
         private readonly JsonRpc rpc;
@@ -19,7 +19,7 @@
         private readonly ManualResetEvent disconnectEvent = new ManualResetEvent(false);
         private Dictionary<string, DiagnosticSeverity> diagnostics;
         private TextDocumentItem textDocument = null;
-
+        private bool isDisposed;
         private int counter = 100;
 
         public LSPServer(Stream sender, Stream reader, Dictionary<string, DiagnosticSeverity> initialDiagnostics = null)
@@ -116,7 +116,7 @@
 #pragma warning restore VSTHRD110
         }
 
-        public void SendDiagnostics(string uri, string text)
+        public void SendDiagnostics(string str, string text)
         {
             string[] lines = text.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
 
@@ -152,7 +152,7 @@
 
             PublishDiagnosticParams parameter = new PublishDiagnosticParams
             {
-                Uri = new Uri(uri),
+                Uri = new Uri(str),
                 Diagnostics = diagnostics.ToArray()
             };
 
@@ -223,8 +223,7 @@
                 MessageType = messageType,
                 Actions = actionItems.Select(a => new MessageActionItem { Title = a }).ToArray()
             };
-
-            JToken response = await rpc.InvokeWithParameterObjectAsync<JToken>(Methods.WindowShowMessageRequestName, parameter);
+            JToken response = await rpc.InvokeWithParameterObjectAsync<JToken>(Methods.WindowShowMessageRequestName, parameter).ConfigureAwait(false); ;
             return response.ToObject<MessageActionItem>();
         }
 
@@ -289,6 +288,29 @@
         private void NotifyPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (isDisposed) return;
+            if (disposing)
+            {
+                // free managed resources
+                disconnectEvent.Dispose();
+            }
+            isDisposed = true;
+        }
+
+        ~LSPServer()
+        {
+            // Finalizer calls Dispose(false)
+            Dispose(false);
         }
     }
 }

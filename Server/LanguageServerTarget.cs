@@ -715,7 +715,7 @@
                             + "]>";
                     })));
                 }
-                server.ShowMessage(result.Length.ToString() + " results.", MessageType.Info);
+                server.ShowMessage("" + result.Length + " results.", MessageType.Info);
             }
             catch (Exception eeks)
             {
@@ -1348,16 +1348,13 @@
             {
                 CMReorderParserRulesParams request = arg.ToObject<CMReorderParserRulesParams>();
                 Document document = CheckDoc(request.TextDocument);
-                int pos = request.Pos;
                 LspAntlr.ReorderType type = request.Type;
                 if (trace)
                 {
                     System.Console.Error.WriteLine("<-- CMReorderParserRules");
                     System.Console.Error.WriteLine(arg.ToString());
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
-                    System.Console.Error.WriteLine("");
                 }
-                var s = LanguageServer.Transform.ReorderParserRules(pos, document, type);
+                var s = LanguageServer.Transform.ReorderParserRules(document, type);
                 ApplyChanges(s);
             }
             catch (LanguageServerException e)

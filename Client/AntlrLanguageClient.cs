@@ -68,7 +68,9 @@
 
         public event AsyncEventHandler<EventArgs> StartAsync;
 
+#pragma warning disable 0067
         public event AsyncEventHandler<EventArgs> StopAsync;
+#pragma warning restore 0067
 
         public static AntlrLanguageClient Instance { get; set; }
         public IEnumerable<string> ConfigurationSections => null;
@@ -298,9 +300,7 @@
                 CMReorderParserRulesParams p = new CMReorderParserRulesParams();
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
-                p.Pos = pos;
                 p.Type = reorder_type;
-
                 _ = _rpc.InvokeAsync("CMReorderParserRules", p);
             }
             catch (Exception)

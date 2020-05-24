@@ -49,7 +49,7 @@
 
         private void OnLanguageServerPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName.Equals("CurrentSettings"))
+            if (e.PropertyName == "CurrentSettings")
             {
                 CurrentSettings = languageServer.CurrentSettings;
             }
