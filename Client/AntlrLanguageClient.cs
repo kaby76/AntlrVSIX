@@ -175,7 +175,10 @@
                 p.TextDocument = uri;
                 p.Start = start;
                 p.End = end;
-                CMClassifierInformation[] result = _rpc.InvokeAsync<CMClassifierInformation[]>("CMGetClassifiers", p).Result;
+                //CMClassifierInformation[] result;
+                var context = ThreadHelper.JoinableTaskContext;
+                var jtf = new JoinableTaskFactory(context);
+                var result = jtf.Run(() => _rpc.InvokeAsync<CMClassifierInformation[]>("CMGetClassifiers", p));
                 return result;
             }
             catch (Exception)
@@ -198,7 +201,9 @@
                 p.TextDocument = uri;
                 p.Pos = pos;
                 p.Forward = forward;
-                int result = _rpc.InvokeAsync<int>("CMNextSymbol", p).Result;
+                var context = ThreadHelper.JoinableTaskContext;
+                var jtf = new JoinableTaskFactory(context);
+                var result = jtf.Run(() => _rpc.InvokeAsync<int>("CMNextSymbol", p));
                 return result;
             }
             catch (Exception)
@@ -216,7 +221,9 @@
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;
                 p.Pos = pos;
-                CMGotoResult result = _rpc.InvokeAsync<CMGotoResult>("CMGotoVisitor", p).Result;
+                var context = ThreadHelper.JoinableTaskContext;
+                var jtf = new JoinableTaskFactory(context);
+                var result = jtf.Run(() => _rpc.InvokeAsync<CMGotoResult>("CMGotoVisitor", p));
                 return result;
             }
             catch (Exception)
@@ -235,7 +242,9 @@
                 p.TextDocument = uri;
                 p.Pos = pos;
                 p.IsEnter = is_enter;
-                CMGotoResult result = _rpc.InvokeAsync<CMGotoResult>("CMGotoListener", p).Result;
+                var context = ThreadHelper.JoinableTaskContext;
+                var jtf = new JoinableTaskFactory(context);
+                var result = jtf.Run(() => _rpc.InvokeAsync<CMGotoResult>("CMGotoListener", p));
                 return result;
             }
             catch (Exception)
@@ -319,7 +328,9 @@
                 p.Pos = pos;
                 p.Split = split;
 
-                Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMSplitCombineGrammars", p).Result;
+                var context = ThreadHelper.JoinableTaskContext;
+                var jtf = new JoinableTaskFactory(context);
+                var result = jtf.Run(() => _rpc.InvokeAsync<Dictionary<string, string>>("CMSplitCombineGrammars", p));
                 return result;
             }
             catch (Exception)
@@ -334,7 +345,9 @@
             {
                 if (_rpc == null) return null;
                 List<string> p = ffn;
-                Dictionary<string, string> result = _rpc.InvokeAsync<Dictionary<string, string>>("CMImportGrammars", p).Result;
+                var context = ThreadHelper.JoinableTaskContext;
+                var jtf = new JoinableTaskFactory(context);
+                var result = jtf.Run(() => _rpc.InvokeAsync<Dictionary<string, string>>("CMImportGrammars", p));
                 return result;
             }
             catch (Exception)
