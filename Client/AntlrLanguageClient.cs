@@ -93,7 +93,7 @@
                 string antlr_executable = p + System.IO.Path.DirectorySeparatorChar
                                          + @"Server\net472\Server.exe";
                 string workspace_path = cache_location;
-                if (workspace_path == null || workspace_path == "")
+                if (string.IsNullOrEmpty(workspace_path))
                 {
                     workspace_path = cache_location;
                 }
@@ -145,7 +145,7 @@
 
         public async Task OnLoadedAsync()
         {
-            await StartAsync.InvokeAsync(this, EventArgs.Empty);
+            _ = StartAsync.InvokeAsync(this, EventArgs.Empty);
         }
 
         public Task OnServerInitializedAsync()
@@ -166,7 +166,6 @@
                 {
                     return null;
                 }
-
                 CMGetClassifiersParams p = new CMGetClassifiersParams();
                 Uri uri = new Uri(ffn);
                 p.TextDocument = uri;

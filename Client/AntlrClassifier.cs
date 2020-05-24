@@ -114,14 +114,13 @@
             }
         }
 
-        internal string Capitalize(string str)
+        internal string Capitalize(string s)
         {
-            if (str.Length == 0)
-                return str;
-            else if (str.Length == 1)
-                return char.ToUpper(str[0]).ToString();
-            else
-                return char.ToUpper(str[0]) + str.Substring(1);
+            if (string.IsNullOrEmpty(s))
+                return string.Empty;
+            char[] a = s.ToCharArray();
+            a[0] = char.ToUpper(a[0], System.Globalization.CultureInfo.CurrentCulture);
+            return new string(a);
         }
 
         internal void Initialize(IClassificationTypeRegistryService service,

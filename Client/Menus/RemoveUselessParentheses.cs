@@ -10,8 +10,6 @@
     {
         private readonly AntlrLanguageClient _package;
         private readonly MenuCommand _menu_item1;
-        private string current_grammar_ffn;
-
 
         private RemoveUselessParentheses(AntlrLanguageClient package)
         {
