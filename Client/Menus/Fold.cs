@@ -59,7 +59,7 @@
             Instance = new Fold(package);
         }
 
-        private async void MenuItemCallback(object sender, EventArgs e)
+        private void MenuItemCallback(object sender, EventArgs e)
         {
             try
             {

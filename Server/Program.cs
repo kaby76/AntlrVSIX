@@ -59,11 +59,11 @@
 
         internal void SendMessageRequest()
         {
-            Task.Run(async () =>
-            {
-                MessageActionItem selectedAction = await languageServer.ShowMessageRequestAsync(message: LogMessage, messageType: MessageType, actionItems: new string[] { "option 1", "option 2", "option 3" });
-                ResponseText = $"The user selected: {selectedAction?.Title ?? "cancelled"}";
-            });
+            _ = Task.Run(async () =>
+              {
+                  MessageActionItem selectedAction = await languageServer.ShowMessageRequestAsync(message: LogMessage, messageType: MessageType, actionItems: new string[] { "option 1", "option 2", "option 3" });
+                  ResponseText = $"The user selected: {selectedAction?.Title ?? "cancelled"}";
+              });
         }
 
         private void OnDisconnected(object sender, System.EventArgs e)
