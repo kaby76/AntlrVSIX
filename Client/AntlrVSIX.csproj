@@ -129,7 +129,6 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="$(ProjectDir)\bin\Debug\Server\**\*.*">
-      <Link>Server\%(RecursiveDir)%(Filename)%(Extension)</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
