@@ -1685,7 +1685,6 @@
         [JsonRpcMethod("CMShowCycles")]
         public void CMShowCycles(JToken arg1, JToken arg2)
         {
-            Dictionary<string, string> s = null;
             try
             {
                 string a1 = arg1.ToObject<string>();
