@@ -71,9 +71,7 @@
             Instance = new ReplaceLiteral(package);
         }
 
-#pragma warning disable VSTHRD100
-        private async void MenuItemCallback(object sender, EventArgs e)
-#pragma warning restore VSTHRD100
+        private void MenuItemCallback(object sender, EventArgs e)
         {
             try
             {
@@ -82,38 +80,17 @@
                 ////////////////////////
 
                 IVsTextManager manager = ((IServiceProvider)ServiceProvider).GetService(typeof(VsTextManagerClass)) as IVsTextManager;
-                if (manager == null)
-                {
-                    return;
-                }
-
+                if (manager == null) return;
                 manager.GetActiveView(1, null, out IVsTextView view);
-                if (view == null)
-                {
-                    return;
-                }
-
+                if (view == null) return;
                 view.GetCaretPos(out int l, out int c);
                 view.GetBuffer(out IVsTextLines buf);
-                if (buf == null)
-                {
-                    return;
-                }
-
-                IWpfTextView xxx = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view);
-                ITextBuffer buffer = xxx.TextBuffer;
+                if (buf == null) return;
+                ITextBuffer buffer = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view)?.TextBuffer;
                 string ffn = buffer.GetFFN();
-                if (ffn == null)
-                {
-                    return;
-                }
-
+                if (ffn == null) return;
                 Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(ffn);
-                if (document == null)
-                {
-                    return;
-                }
-
+                if (document == null) return;
                 int pos = LanguageServer.Module.GetIndex(l, c, document);
                 AntlrLanguageClient.CMReplaceLiterals(ffn, pos);
             }

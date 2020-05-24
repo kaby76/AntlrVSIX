@@ -114,9 +114,7 @@
             MenuItemCallback(sender, e, false);
         }
 
-#pragma warning disable VSTHRD100
-        private async void MenuItemCallback(object sender, EventArgs e, bool visitor)
-#pragma warning restore VSTHRD100
+        private void MenuItemCallback(object sender, EventArgs e, bool visitor)
         {
             try
             {
@@ -125,53 +123,23 @@
                 ////////////////////////
 
                 IVsTextManager manager = ((IServiceProvider)ServiceProvider).GetService(typeof(VsTextManagerClass)) as IVsTextManager;
-                if (manager == null)
-                {
-                    return;
-                }
-
+                if (manager == null) return;
                 manager.GetActiveView(1, null, out IVsTextView view);
-                if (view == null)
-                {
-                    return;
-                }
-
+                if (view == null) return;
                 view.GetCaretPos(out int l, out int c);
                 view.GetBuffer(out IVsTextLines buf);
-                if (buf == null)
-                {
-                    return;
-                }
-
-                IWpfTextView xxx = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view);
-                ITextBuffer buffer = xxx.TextBuffer;
+                if (buf == null) return;
+                ITextBuffer buffer = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view)?.TextBuffer;
+                bool is_enter = CtrlKeyState.GetStateForView(AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view)).Enabled;
                 string orig_ffn = buffer.GetFFN();
-                if (orig_ffn == null)
-                {
-                    return;
-                }
-
+                if (orig_ffn == null) return;
                 Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(orig_ffn);
-                if (document == null)
-                {
-                    return;
-                }
-
+                if (document == null) return;
                 int pos = LanguageServer.Module.GetIndex(l, c, document);
                 CMGotoResult symbol = null;
-                if (visitor)
-                {
-                    symbol = AntlrLanguageClient.CMGotoVisitor(orig_ffn, pos);
-                }
-                else
-                {
-                    bool is_enter = CtrlKeyState.GetStateForView(xxx).Enabled;
-                    symbol = AntlrLanguageClient.CMGotoListener(orig_ffn, is_enter, pos);
-                }
-                if (symbol == null)
-                {
-                    return;
-                }
+                symbol = visitor ? AntlrLanguageClient.CMGotoVisitor(orig_ffn, pos)
+                    : AntlrLanguageClient.CMGotoListener(orig_ffn, is_enter, pos);
+                if (symbol == null) return;
 
                 {
                     string class_file_path = symbol.TextDocument.LocalPath;

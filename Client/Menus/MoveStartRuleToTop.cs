@@ -1,12 +1,9 @@
 ﻿namespace LspAntlr
 {
-    using LanguageServer;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text;
-    using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.TextManager.Interop;
     using System;
-    using System.Collections.Generic;
     using System.ComponentModel.Design;
 
     internal class MoveStartRuleToTop
@@ -20,16 +17,6 @@
             OleMenuCommandService commandService = ((IServiceProvider)ServiceProvider).GetService(
                 typeof(IMenuCommandService)) as OleMenuCommandService ?? throw new Exception("Command service not found.");
 
-            //{
-            //    // Set up hook for context menu.
-            //    CommandID menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidVSPackageCommandCodeWindowContextMenuCmdSet), 0x7002);
-            //    _menu_item1 = new MenuCommand(MenuItemCallbackFor, menuCommandID)
-            //    {
-            //        Enabled = true,
-            //        Visible = true
-            //    };
-            //    commandService.AddCommand(_menu_item1);
-            //}
             {
                 CommandID menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidMenuAndCommandsCmdSet), 0x7013);
                 _menu_item1 = new MenuCommand(MenuItemCallback, menuCommandID)
@@ -72,9 +59,7 @@
             Instance = new MoveStartRuleToTop(package);
         }
 
-#pragma warning disable VSTHRD100
-        private async void MenuItemCallback(object sender, EventArgs e)
-#pragma warning restore VSTHRD100
+        private void MenuItemCallback(object sender, EventArgs e)
         {
             try
             {
@@ -83,38 +68,17 @@
                 ////////////////////////
 
                 IVsTextManager manager = ((IServiceProvider)ServiceProvider).GetService(typeof(VsTextManagerClass)) as IVsTextManager;
-                if (manager == null)
-                {
-                    return;
-                }
-
+                if (manager == null) return;
                 manager.GetActiveView(1, null, out IVsTextView view);
-                if (view == null)
-                {
-                    return;
-                }
-
+                if (view == null) return;
                 view.GetCaretPos(out int l, out int c);
                 view.GetBuffer(out IVsTextLines buf);
-                if (buf == null)
-                {
-                    return;
-                }
-
-                IWpfTextView xxx = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view);
-                ITextBuffer buffer = xxx.TextBuffer;
+                if (buf == null) return;
+                ITextBuffer buffer = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view)?.TextBuffer;
                 string ffn = buffer.GetFFN();
-                if (ffn == null)
-                {
-                    return;
-                }
-
+                if (ffn == null) return;
                 Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(ffn);
-                if (document == null)
-                {
-                    return;
-                }
-
+                if (document == null) return;
                 int pos = LanguageServer.Module.GetIndex(l, c, document);
                 AntlrLanguageClient.CMMoveStartRuleToTop(ffn, pos);
             }

@@ -117,9 +117,7 @@
             MenuItemCallback(sender, e, false);
         }
 
-#pragma warning disable VSTHRD100
-        private async void MenuItemCallback(object sender, EventArgs e, bool forward)
-#pragma warning restore VSTHRD100
+        private void MenuItemCallback(object sender, EventArgs e, bool forward)
         {
             try
             {
@@ -128,59 +126,26 @@
                 ////////////////////////
 
                 IVsTextManager manager = ((IServiceProvider)ServiceProvider).GetService(typeof(VsTextManagerClass)) as IVsTextManager;
-                if (manager == null)
-                {
-                    return;
-                }
-
+                if (manager == null) return;
                 manager.GetActiveView(1, null, out IVsTextView view);
-                if (view == null)
-                {
-                    return;
-                }
-
+                if (view == null) return;
                 view.GetCaretPos(out int l, out int c);
                 view.GetBuffer(out IVsTextLines buf);
-                if (buf == null)
-                {
-                    return;
-                }
-
-                IWpfTextView xxx = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view);
-                ITextBuffer buffer = xxx.TextBuffer;
+                if (buf == null) return;
+                ITextBuffer buffer = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view)?.TextBuffer;
                 string ffn = buffer.GetFFN();
-                if (ffn == null)
-                {
-                    return;
-                }
-
+                if (ffn == null) return;
                 Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(ffn);
-                if (document == null)
-                {
-                    return;
-                }
-
+                if (document == null) return;
                 int pos = LanguageServer.Module.GetIndex(l, c, document);
                 int new_pos = AntlrLanguageClient.CMNextSymbol(ffn, pos, forward);
-                if (new_pos < 0)
-                {
-                    return;
-                }
-
+                if (new_pos < 0) return;
                 List<IToken> where = new List<IToken>();
                 List<ParserDetails> where_details = new List<ParserDetails>();
                 IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(ffn);
-                if (vstv == null)
-                {
-                    return;
-                }
-
+                if (vstv == null) return;
                 IWpfTextView wpftv = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(vstv);
-                if (wpftv == null)
-                {
-                    return;
-                }
-
+                if (wpftv == null) return;
                 vstv.GetLineAndColumn(new_pos, out int line_number, out int colum_number);
                 ITextSnapshot cc = wpftv.TextBuffer.CurrentSnapshot;
                 SnapshotSpan ss = new SnapshotSpan(cc, new_pos, 1);

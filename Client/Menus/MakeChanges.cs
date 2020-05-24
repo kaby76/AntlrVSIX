@@ -1,16 +1,17 @@
-﻿using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.TextManager.Interop;
-using System;
-using System.Collections.Generic;
-
-namespace LspAntlr
+﻿namespace LspAntlr
 {
+    using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Text;
+    using Microsoft.VisualStudio.Text.Editor;
+    using Microsoft.VisualStudio.TextManager.Interop;
+    using System;
+    using System.Collections.Generic;
+
     internal class MakeChanges
     {
         public static (EnvDTE.Project, EnvDTE.ProjectItem) FindProjectAndItem(string fn)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             string f = System.IO.Path.GetFileName(fn);
             EnvDTE.DTE dte = (EnvDTE.DTE)Package.GetGlobalService(typeof(EnvDTE.DTE));
             for (int i = 1; i <= dte.Solution.Projects.Count; ++i)

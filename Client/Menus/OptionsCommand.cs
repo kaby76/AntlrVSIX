@@ -16,7 +16,6 @@
                 typeof(IMenuCommandService)) as OleMenuCommandService ?? throw new Exception("Command service not found.");
 
             {
-                // Set up hook for context menu.
                 CommandID menuCommandID = new CommandID(new Guid(LspAntlr.Constants.guidMenuAndCommandsCmdSet), 0x7007);
                 _menu_item1 = new MenuCommand(MenuItemCallback, menuCommandID)
                 {
@@ -36,7 +35,7 @@
             Instance = new OptionsCommand(package);
         }
 
-        private async void MenuItemCallback(object sender, EventArgs e)
+        private void MenuItemCallback(object sender, EventArgs e)
         {
             System.Windows.Application.Current.Dispatcher.Invoke(delegate
             {

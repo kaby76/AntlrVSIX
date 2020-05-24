@@ -13,7 +13,6 @@
     {
         private readonly Microsoft.VisualStudio.Shell.Package _package;
         private readonly MenuCommand _menu_item1;
-        //private readonly MenuCommand _menu_item2;
 
         private Import(Microsoft.VisualStudio.Shell.Package package)
         {
@@ -44,10 +43,7 @@
         private async void MenuItemCallback(object sender, EventArgs e)
         {
             IVsTextManager manager = ServiceProvider.GetService(typeof(VsTextManagerClass)) as IVsTextManager;
-            if (manager == null)
-            {
-                return;
-            }
+            if (manager == null) return;
             // If we have a view, we'll place the imported file in the parent project.
             // Otherwise the "misc project".
             EnvDTE.Project project = null;
@@ -55,25 +51,13 @@
             for (; ; )
             {
                 manager.GetActiveView(1, null, out IVsTextView view);
-                if (view == null)
-                {
-                    break;
-                }
-
+                if (view == null) break;
                 view.GetBuffer(out IVsTextLines buf);
-                if (buf == null)
-                {
-                    break;
-                }
-
+                if (buf == null) break;
                 IWpfTextView xxx = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view);
                 ITextBuffer buffer = xxx.TextBuffer;
                 string ffn = buffer.GetFFN();
-                if (ffn == null)
-                {
-                    break;
-                }
-
+                if (ffn == null) break;
                 string current_grammar_ffn = ffn;
                 (EnvDTE.Project, EnvDTE.ProjectItem) p_f_original_grammar = LspAntlr.MakeChanges.FindProjectAndItem(current_grammar_ffn);
                 project = p_f_original_grammar.Item1;
@@ -93,7 +77,6 @@
                 EnvDTE.Projects projects = dte.Solution.Projects;
                 project = projects.Item(EnvDTE.Constants.vsMiscFilesProjectUniqueName);
             }
-
             ImportBox dialog_box = new ImportBox();
             Application.Current.Dispatcher.Invoke(delegate
             {
