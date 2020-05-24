@@ -6,29 +6,14 @@ namespace LspAntlr
 
     public partial class ImportBox : Window
     {
-        public readonly List<StringValue> list = new List<StringValue>();
+        private readonly List<StringValue> list = new List<StringValue>();
+
+        public List<StringValue> List => list;
 
         public ImportBox()
         {
             InitializeComponent();
             Files.ItemsSource = list;
-        }
-
-        public class StringValue
-        {
-
-            public StringValue(string s)
-            {
-                _ffn = s;
-                _bison = System.IO.Path.GetFileName(_ffn);
-                _antlr = System.IO.Path.GetFileName(_ffn).Replace(".y", ".g4");
-            }
-            //public string FFN { get { return _ffn; } set { _ffn = value; } }
-            public string Bison { get => _bison; set => _bison = value; }
-            public string Antlr { get => _antlr; set => _antlr = value; }
-            public string _ffn;
-            private string _antlr;
-            private string _bison;
         }
 
         private void BtnDialogFind_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -48,10 +33,10 @@ namespace LspAntlr
                     files = openFileDialog.FileNames;
                 }
             }
-            list.Clear();
+            List.Clear();
             foreach (string r in files)
             {
-                list.Add(new StringValue(r));
+                List.Add(new StringValue(r));
             }
             //Files.ItemsSource = list;
             Files.Items.Refresh();

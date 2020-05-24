@@ -7,7 +7,7 @@
     using System.Linq;
     using System.Threading.Tasks;
 
-    internal class Program
+    internal class Program : IDisposable
     {
         private string logMessage;
         private readonly ObservableCollection<DiagnosticTag> tags = new ObservableCollection<DiagnosticTag>();
@@ -15,6 +15,7 @@
         private string responseText;
         private string currentSettings;
         private MessageType messageType;
+        private bool isDisposed;
 
         public static void Main(string[] args)
         {
@@ -143,6 +144,29 @@
         private void NotifyPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (isDisposed) return;
+            if (disposing)
+            {
+                // free managed resources
+                languageServer.Dispose();
+            }
+            isDisposed = true;
+        }
+
+        ~Program()
+        {
+            // Finalizer calls Dispose(false)
+            Dispose(false);
         }
     }
 

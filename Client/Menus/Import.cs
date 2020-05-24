@@ -79,7 +79,7 @@
             }
             ImportBox dialog_box = new ImportBox();
             dialog_box.ShowDialog();
-            System.Collections.Generic.List<ImportBox.StringValue> xx = dialog_box.list;
+            System.Collections.Generic.List<StringValue> xx = dialog_box.List;
             if (xx == null)
             {
                 return;
@@ -87,7 +87,7 @@
             // Note, the language client cannot be applied here because we
             // aren't focused on a grammar file, and may not even have a window
             // open!
-            System.Collections.Generic.Dictionary<string, string> changes = LanguageServer.BisonImport.ImportGrammars(xx.Select(t => t._ffn).ToList());
+            System.Collections.Generic.Dictionary<string, string> changes = LanguageServer.BisonImport.ImportGrammars(xx.Select(t => t.Ffn).ToList());
             LspAntlr.MakeChanges.EnterChanges(changes, project, the_namespace);
         }
     }

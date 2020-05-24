@@ -113,8 +113,7 @@
                 if (ffn == null) return;
                 Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(ffn);
                 if (document == null) return;
-                int pos = LanguageServer.Module.GetIndex(l, c, document);
-                AntlrLanguageClient.CMReorderParserRules(ffn, pos, type);
+                AntlrLanguageClient.CMReorderParserRules(ffn, type);
             }
             catch (Exception exception)
             {

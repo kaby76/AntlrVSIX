@@ -301,7 +301,7 @@
             }
         }
 
-        public static void CMReorderParserRules(string ffn, int pos, ReorderType reorder_type)
+        public static void CMReorderParserRules(string ffn, ReorderType reorder_type)
         {
             try
             {
