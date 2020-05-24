@@ -110,6 +110,7 @@ tree rewrite language, into Antlrvsix.
   * Expression rule compression
 * New analyses:
   * Show cycles
+* Fix [Clean up the 400+ compiler warnings #51](https://github.com/kaby76/AntlrVSIX/issues/51).
 * Fix [#48 Rename via right-click context menu does not work--VS 2019 broken, MS needs to fix](https://github.com/kaby76/AntlrVSIX/issues/48).
 * Fix [#46 Output message when operation does nothing](https://github.com/kaby76/AntlrVSIX/issues/46).
 * Fix [#45 LanguageServer is net472, should be netstandard2.0](https://github.com/kaby76/AntlrVSIX/issues/45).
