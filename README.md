@@ -10,18 +10,28 @@ Most of the extension is implemented in C#.
 There is a client for VS Code, written in Typescript,
 but I am deferring further development of the client until the server is more or less complete.
 Supported are colorized tagging, hover, go to def, find all refs,
-replace, command completion, reformat, and go to visitor/listener.
+replace, command completion, reformat, and go to visitor/listener. But, there is so much more to Antlrvsix
+than these basic LSP commands.
 
-Instead of providing railroad diagrams and ATN graphs,
-this extension focuses on features useful for maintaining grammars,
-i.e., refactoring grammars in order to make them cleaner (reformatting),
+## Refactoring
+
+Refactoring helps to make grammars cleaner (reformatting),
 more readable (reducing the length of the RHS of a rule),
-and more efficient (reducing the number of non-terminals).
+and more efficient (reducing the number of non-terminals) for Antlr.
 Some of the refactorings implemented, or planned, include
 string literal folding, parser rule orderings,
 useless rule elimination, split combined grammars, combine split grammars,
 Bison import, removal of indirect left recursion,
-rule folding, rule unfolding, rule packing, and a "linter for Antlr grammars".
+rule folding, rule unfolding, rule packing.
+
+## Analysis
+
+(This is not implemented yet.)
+
+Antlrvsix will make recommendations on what you should change.
+For performance, link to a special version of the Antlr library to perform analysis.
+
+---------
 
 The source code for the extension is open source, free of charge, and free of ads. For the latest developments on the extension,
 check out my [blog](http://codinggorilla.com).
