@@ -37,12 +37,8 @@
 
         private void MenuItemCallback(object sender, EventArgs e)
         {
-            System.Windows.Application.Current.Dispatcher.Invoke(delegate
-            {
-
-                OptionsBox inputDialog = new OptionsBox();
-                inputDialog.Show();
-            });
+            OptionsBox inputDialog = new OptionsBox();
+            inputDialog.Show();
         }
     }
 }

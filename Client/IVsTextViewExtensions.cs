@@ -120,6 +120,7 @@
 
         internal static IVsTextView OpenStupidFile(IServiceProvider isp, string full_file_name)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             if (isp == null) return null;
             ServiceProvider sp = new ServiceProvider(isp);
             if (!VsShellUtilities.IsDocumentOpen(sp, full_file_name, Guid.Empty, out _, out _, out _))
@@ -154,7 +155,7 @@
 
         private static bool GetPhysicalPathFromFrame(IVsWindowFrame frame, out string frameFilePath)
         {
-
+            ThreadHelper.ThrowIfNotOnUIThread();
             int hr = frame.GetProperty((int)__VSFPROPID.VSFPROPID_pszMkDocument, out object propertyValue);
             if (hr == VSConstants.S_OK && propertyValue != null)
             {
@@ -175,7 +176,7 @@
 
         private static bool IsFrameForFilePath(IVsWindowFrame frame, string filePath)
         {
-
+            ThreadHelper.ThrowIfNotOnUIThread();
             if (GetPhysicalPathFromFrame(frame, out string frameFilePath))
             {
                 return string.Equals(filePath, frameFilePath, StringComparison.OrdinalIgnoreCase);

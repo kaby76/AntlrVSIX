@@ -23,11 +23,16 @@
             //Thread.Sleep((int)delay.TotalMilliseconds);
             Console.Error.WriteLine("Starting");
             Program program = new Program();
+#pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
             program.MainAsync(args).GetAwaiter().GetResult();
+#pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>")]
+#pragma warning disable IDE0060 // Remove unused parameter
+#pragma warning disable CA1801
         private async Task MainAsync(string[] args)
+#pragma warning restore CA1801
+#pragma warning restore IDE0060 // Remove unused parameter
         {
             System.IO.Stream stdin = Console.OpenStandardInput();
             System.IO.Stream stdout = Console.OpenStandardOutput();
@@ -37,7 +42,9 @@
             Tags.Add(new DiagnosticTag());
             LogMessage = string.Empty;
             ResponseText = string.Empty;
+#pragma warning disable CA2007 // Do not directly await a Task
             await Task.Delay(-1);
+#pragma warning restore CA2007 // Do not directly await a Task
         }
 
         private void OnLanguageServerPropertyChanged(object sender, PropertyChangedEventArgs e)
