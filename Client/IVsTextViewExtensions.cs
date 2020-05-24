@@ -35,10 +35,10 @@
 
         public static IVsCodeWindow GetCodeWindow(this IVsTextView text_view)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             Contract.Requires<ArgumentNullException>(text_view != null, "textView");
 
-            IObjectWithSite object_with_site = text_view as IObjectWithSite;
-            if (object_with_site == null)
+            if (!(text_view is IObjectWithSite object_with_site))
             {
                 return null;
             }
@@ -88,10 +88,9 @@
                 return null;
             }
 
-            IVsCodeWindow code_window = null;
             try
             {
-                code_window = Marshal.GetObjectForIUnknown(ppvObject) as IVsCodeWindow;
+                var code_window = Marshal.GetObjectForIUnknown(ppvObject) as IVsCodeWindow;
                 return code_window;
             }
             finally
@@ -103,17 +102,13 @@
 
         internal static IEnumerable<IVsWindowFrame> EnumerateDocumentWindowFrames()
         {
-            IVsUIShell shell = Package.GetGlobalService(typeof(SVsUIShell)) as IVsUIShell;
-
-            if (shell != null)
+            ThreadHelper.ThrowIfNotOnUIThread();
+            if (Package.GetGlobalService(typeof(SVsUIShell)) is IVsUIShell shell)
             {
-
                 int hr = shell.GetDocumentWindowEnum(out IEnumWindowFrames framesEnum);
-
                 if (hr == VSConstants.S_OK && framesEnum != null)
                 {
                     IVsWindowFrame[] frames = new IVsWindowFrame[1];
-
                     while (framesEnum.Next(1, frames, out uint fetched) == VSConstants.S_OK && fetched == 1)
                     {
                         yield return frames[0];
@@ -124,23 +119,22 @@
 
         internal static IVsTextView OpenStupidFile(IServiceProvider isp, string full_file_name)
         {
+            if (isp == null) return null;
             ServiceProvider sp = new ServiceProvider(isp);
-            if (!VsShellUtilities.IsDocumentOpen(sp, full_file_name, Guid.Empty,
-                out IVsUIHierarchy ivsuih, out uint item_id, out IVsWindowFrame ivswf))
+            if (!VsShellUtilities.IsDocumentOpen(sp, full_file_name, Guid.Empty, out _, out _, out _))
             {
                 VsShellUtilities.OpenDocument(sp, full_file_name);
             }
             return FindTextViewFor(full_file_name);
         }
 
-        internal static void ShowFrame(IServiceProvider isp, string full_file_name)
+        internal static void ShowFrame(string full_file_name)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
             object dte2 = Package.GetGlobalService(typeof(SDTE));
-            var XXX = (Microsoft.VisualStudio.OLE.Interop.IServiceProvider)dte2;
-            IVsTextView xx = OpenStupidFile(XXX, full_file_name);
-            ServiceProvider sp = new ServiceProvider(XXX);
-            VsShellUtilities.IsDocumentOpen(sp, full_file_name, Guid.Empty, out IVsUIHierarchy ivsuih, out uint item_id, out IVsWindowFrame ivswf);
+            if (OpenStupidFile(dte2 as Microsoft.VisualStudio.OLE.Interop.IServiceProvider, full_file_name) == null) return;
+            ServiceProvider sp = new ServiceProvider(dte2 as Microsoft.VisualStudio.OLE.Interop.IServiceProvider);
+            _ = VsShellUtilities.IsDocumentOpen(sp, full_file_name, Guid.Empty, out _, out _, out IVsWindowFrame ivswf);
             ivswf?.Show();
         }
 

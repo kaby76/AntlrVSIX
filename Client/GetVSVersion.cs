@@ -5,7 +5,7 @@
     using System.IO;
     using System.Text.RegularExpressions;
 
-    public class GetVSVersion
+    public static class GetVSVersion
     {
         /// Setup to get the VS version number including the correct minor version, 
         /// since the DTE.Version does not seem to accurately reflect that. 

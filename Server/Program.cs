@@ -18,7 +18,7 @@
 
         public static void Main(string[] args)
         {
-            TimeSpan delay = new TimeSpan(0, 0, 0, 20);
+            //TimeSpan delay = new TimeSpan(0, 0, 0, 20);
             //Console.Error.WriteLine("Waiting " + delay + " seconds...");
             //Thread.Sleep((int)delay.TotalMilliseconds);
             Console.Error.WriteLine("Starting");
@@ -26,6 +26,7 @@
             program.MainAsync(args).GetAwaiter().GetResult();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>")]
         private async Task MainAsync(string[] args)
         {
             System.IO.Stream stdin = Console.OpenStandardInput();

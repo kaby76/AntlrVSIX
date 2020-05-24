@@ -106,15 +106,17 @@
 
         private void MenuItemCallbackVisitor(object sender, EventArgs e)
         {
-            MenuItemCallback(sender, e, true);
+            ThreadHelper.ThrowIfNotOnUIThread();
+            MenuItemCallback(true);
         }
 
         private void MenuItemCallbackListener(object sender, EventArgs e)
         {
-            MenuItemCallback(sender, e, false);
+            ThreadHelper.ThrowIfNotOnUIThread();
+            MenuItemCallback(false);
         }
 
-        private void MenuItemCallback(object sender, EventArgs e, bool visitor)
+        private void MenuItemCallback(bool visitor)
         {
             try
             {
@@ -122,8 +124,8 @@
                 /// Go to visitor.
                 ////////////////////////
 
-                IVsTextManager manager = ((IServiceProvider)ServiceProvider).GetService(typeof(VsTextManagerClass)) as IVsTextManager;
-                if (manager == null) return;
+                ThreadHelper.ThrowIfNotOnUIThread();
+                if (!(((IServiceProvider)ServiceProvider).GetService(typeof(VsTextManagerClass)) is IVsTextManager manager)) return;
                 manager.GetActiveView(1, null, out IVsTextView view);
                 if (view == null) return;
                 view.GetCaretPos(out int l, out int c);
@@ -147,7 +149,7 @@
                     // Open to this line in editor.
                     IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(class_file_path);
                     {
-                        IVsTextViewExtensions.ShowFrame(ServiceProvider, class_file_path);
+                        IVsTextViewExtensions.ShowFrame(class_file_path);
                         vstv = IVsTextViewExtensions.FindTextViewFor(class_file_path);
                     }
 

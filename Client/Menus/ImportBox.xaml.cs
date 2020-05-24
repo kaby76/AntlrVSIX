@@ -31,9 +31,8 @@ namespace LspAntlr
             private string _bison;
         }
 
-        private void btnDialogFind_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void BtnDialogFind_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            string fileContent = string.Empty;
             string[] files = null;
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
@@ -58,13 +57,13 @@ namespace LspAntlr
             Files.Items.Refresh();
         }
 
-        private void btnDialogOk_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void BtnDialogOk_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             // Import files.
             Close();
         }
 
-        private void btnDialogCancel_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void BtnDialogCancel_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             Close();
         }

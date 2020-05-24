@@ -33,8 +33,8 @@
 
         private static IVsEditorAdaptersFactoryService adaptersFactory = null;
         public const string PackageGuidString = "49bf9144-398a-467c-9b87-ac26d1e62737";
-        private static MemoryStream _log_from_server = new MemoryStream();
-        private static MemoryStream _log_to_server = new MemoryStream();
+        private static readonly MemoryStream _log_from_server = new MemoryStream();
+        private static readonly MemoryStream _log_to_server = new MemoryStream();
         private static JsonRpc _rpc;
 
         public AntlrLanguageClient()
@@ -143,7 +143,9 @@
             _rpc = rpc;
         }
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         public async Task OnLoadedAsync()
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             _ = StartAsync.InvokeAsync(this, EventArgs.Empty);
         }
@@ -436,7 +438,7 @@
             try
             {
                 if (_rpc == null) return;
-                _rpc.InvokeAsync("CMUnfold", ffn, pos);
+                _ = _rpc.InvokeAsync("CMUnfold", ffn, pos);
             }
             catch (Exception)
             {
@@ -448,7 +450,7 @@
             try
             {
                 if (_rpc == null) return;
-                _rpc.InvokeAsync("CMFold", ffn, start, end);
+                _ = _rpc.InvokeAsync("CMFold", ffn, start, end);
             }
             catch (Exception)
             {
@@ -460,7 +462,7 @@
             try
             {
                 if (_rpc == null) return;
-                _rpc.InvokeAsync("CMRemoveUselessParentheses", ffn, start, end);
+                _ = _rpc.InvokeAsync("CMRemoveUselessParentheses", ffn, start, end);
             }
             catch (Exception)
             {
@@ -472,7 +474,7 @@
             try
             {
                 if (_rpc == null) return;
-                _rpc.InvokeAsync("CMShowCycles", ffn, start);
+                _ = _rpc.InvokeAsync("CMShowCycles", ffn, start);
             }
             catch (Exception)
             {

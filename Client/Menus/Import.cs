@@ -40,10 +40,10 @@
             Instance = new Import(package);
         }
 
-        private async void MenuItemCallback(object sender, EventArgs e)
+        private void MenuItemCallback(object sender, EventArgs e)
         {
-            IVsTextManager manager = ServiceProvider.GetService(typeof(VsTextManagerClass)) as IVsTextManager;
-            if (manager == null) return;
+            ThreadHelper.ThrowIfNotOnUIThread();
+            if (!(ServiceProvider.GetService(typeof(VsTextManagerClass)) is IVsTextManager manager)) return;
             // If we have a view, we'll place the imported file in the parent project.
             // Otherwise the "misc project".
             EnvDTE.Project project = null;
