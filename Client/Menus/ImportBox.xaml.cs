@@ -6,7 +6,7 @@ namespace LspAntlr
 
     public partial class ImportBox : Window
     {
-        public List<StringValue> list = new List<StringValue>();
+        public readonly List<StringValue> list = new List<StringValue>();
 
         public ImportBox()
         {

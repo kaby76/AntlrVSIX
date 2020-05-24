@@ -72,24 +72,26 @@
 
         private void MenuItemCallbackSplit(object sender, EventArgs e)
         {
-            MenuItemCallback(sender, e, true);
+            ThreadHelper.ThrowIfNotOnUIThread();
+            MenuItemCallback(true);
         }
 
         private void MenuItemCallbackCombine(object sender, EventArgs e)
         {
-            MenuItemCallback(sender, e, false);
+            ThreadHelper.ThrowIfNotOnUIThread();
+            MenuItemCallback(false);
         }
 
-        private void MenuItemCallback(object sender, EventArgs e, bool split)
+        private void MenuItemCallback(bool split)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             try
             {
                 ////////////////////////
                 /// Reorder parser productions.
                 ////////////////////////
 
-                IVsTextManager manager = ((IServiceProvider)ServiceProvider).GetService(typeof(VsTextManagerClass)) as IVsTextManager;
-                if (manager == null) return;
+                if (!(((IServiceProvider)ServiceProvider).GetService(typeof(VsTextManagerClass)) is IVsTextManager manager)) return;
                 manager.GetActiveView(1, null, out IVsTextView view);
                 if (view == null) return;
                 view.GetCaretPos(out int l, out int c);

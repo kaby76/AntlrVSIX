@@ -81,20 +81,20 @@
 
         private void MenuItemCallbackAlphabetically(object sender, EventArgs e)
         {
-            MenuItemCallback(sender, e, ReorderType.Alphabetically);
+            MenuItemCallback(ReorderType.Alphabetically);
         }
 
         private void MenuItemCallbackBFS(object sender, EventArgs e)
         {
-            MenuItemCallback(sender, e, ReorderType.BFS);
+            MenuItemCallback(ReorderType.BFS);
         }
 
         private void MenuItemCallbackDFS(object sender, EventArgs e)
         {
-            MenuItemCallback(sender, e, ReorderType.DFS);
+            MenuItemCallback(ReorderType.DFS);
         }
 
-        private void MenuItemCallback(object sender, EventArgs e, ReorderType type)
+        private void MenuItemCallback(ReorderType type)
         {
             try
             {
@@ -102,8 +102,7 @@
                 /// Reorder parser productions.
                 ////////////////////////
 
-                IVsTextManager manager = ((IServiceProvider)ServiceProvider).GetService(typeof(VsTextManagerClass)) as IVsTextManager;
-                if (manager == null) return;
+                if (!(((IServiceProvider)ServiceProvider).GetService(typeof(VsTextManagerClass)) is IVsTextManager manager)) return;
                 manager.GetActiveView(1, null, out IVsTextView view);
                 if (view == null) return;
                 view.GetCaretPos(out int l, out int c);

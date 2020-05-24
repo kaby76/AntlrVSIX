@@ -19,7 +19,7 @@
         private readonly bool trace = true;
         private readonly Workspaces.Workspace _workspace;
         private static readonly object _object = new object();
-        private Dictionary<string, bool> ignore_next_change = new Dictionary<string, bool>();
+        private readonly Dictionary<string, bool> ignore_next_change = new Dictionary<string, bool>();
 
         public LanguageServerTarget(LSPServer server)
         {
@@ -241,7 +241,7 @@
                 System.Console.Error.WriteLine(arg.ToString());
             }
             DidOpenTextDocumentParams request = arg.ToObject<DidOpenTextDocumentParams>();
-            Document document = CheckDoc(request.TextDocument.Uri);
+            _ = CheckDoc(request.TextDocument.Uri);
             server.SendDiagnostics(request.TextDocument.Uri.AbsoluteUri, "");
         }
 
@@ -254,7 +254,6 @@
                 System.Console.Error.WriteLine(arg.ToString());
             }
             DidChangeTextDocumentParams request = arg.ToObject<DidChangeTextDocumentParams>();
-            int? version = request.TextDocument.Version;
             Document document = CheckDoc(request.TextDocument.Uri);
             lock (_object)
             {
@@ -439,8 +438,8 @@
                 }
                 project.AddDocument(document);
                 document.Changed = true;
-                ParserDetails pd = ParserDetailsFactory.Create(document);
-                List<ParserDetails> to_do = LanguageServer.Module.Compile();
+                _ = ParserDetailsFactory.Create(document);
+                _ = LanguageServer.Module.Compile();
             }
             return document;
         }
@@ -491,7 +490,7 @@
                     Start = new Position(lcs.Item1, lcs.Item2),
                     End = new Position(lce.Item1, lce.Item2)
                 };
-                System.Console.Error.WriteLine("returning " + quick_info.Display.ToString());
+                System.Console.Error.WriteLine("returning " + quick_info.Display);
             }
             catch (Exception)
             { }
@@ -1111,10 +1110,12 @@
                 List<CMClassifierInformation> symbols = new List<CMClassifierInformation>();
                 foreach (var p in r)
                 {
-                    CMClassifierInformation si = new CMClassifierInformation();
-                    si.Kind = p.kind;
-                    si.start = p.start;
-                    si.end = p.end;
+                    CMClassifierInformation si = new CMClassifierInformation
+                    {
+                        Kind = p.kind,
+                        start = p.start,
+                        end = p.end
+                    };
                     symbols.Add(si);
                 }
                 if (trace)
@@ -1524,8 +1525,10 @@
                 var new_code = Transform.EliminateAntlrKeywordsInRules(document);
                 if (new_code != null)
                 {
-                    var s = new Dictionary<string, string>();
-                    s.Add(document.FullPath, new_code);
+                    var s = new Dictionary<string, string>
+                    {
+                        { document.FullPath, new_code }
+                    };
                     ApplyChanges(s);
                 }
             }
@@ -1593,7 +1596,6 @@
         [JsonRpcMethod("CMUnfold")]
         public void CMUnfold(JToken arg1, JToken arg2)
         {
-            Dictionary<string, string> s = null;
             try
             {
                 string a1 = arg1.ToObject<string>();
@@ -1607,7 +1609,7 @@
                     (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
                     System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
                 }
-                s = Transform.Unfold(pos, document);
+                var s = Transform.Unfold(pos, document);
                 ApplyChanges(s);
             }
             catch (LanguageServerException e)
@@ -1748,7 +1750,7 @@
                                 //var tt = tokenSpan.GetText();
                                 //if (ed.text != tt)
                                 //{ }
-                                offset = offset + len;
+                                offset += len;
                             }
                             else if (ed.operation == Operation.DELETE)
                             {
@@ -1765,7 +1767,7 @@
                                         new Workspaces.Index(start + offset + len)),
                                     NewText = ""
                                 };
-                                offset = offset + len;
+                                offset += len;
                                 edits.Add(edit);
                             }
                             else if (ed.operation == Operation.INSERT)
@@ -1781,7 +1783,7 @@
                                 edits.Add(edit);
                             }
                         }
-                        delta = delta + (p.length2 - p.length1);
+                        delta += (p.length2 - p.length1);
                     }
                 }
                 var changes = edits.ToArray();
@@ -1813,7 +1815,7 @@
                 document.Code = new_code;
             }
             // Recompile only after every single change everywhere is in.
-            List<ParserDetails> to_do = LanguageServer.Module.Compile();
+            _ = LanguageServer.Module.Compile();
             server.ApplyEdit(a);
         }
     }

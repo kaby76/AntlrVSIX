@@ -40,7 +40,9 @@
         private async void MenuItemCallback(object sender, EventArgs e)
 #pragma warning restore VSTHRD100
         {
+#pragma warning disable VSTHRD001 // Avoid legacy thread switching APIs
             await Application.Current.Dispatcher.InvokeAsync(delegate
+#pragma warning restore VSTHRD001 // Avoid legacy thread switching APIs
             {
                 AboutBox inputDialog = new AboutBox();
                 inputDialog.Show();

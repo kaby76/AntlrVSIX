@@ -168,15 +168,15 @@
 
         public void LogMessage(object arg)
         {
-            LogMessage(arg, MessageType.Info);
+            LogMessage(MessageType.Info);
         }
 
-        public void LogMessage(object arg, MessageType messageType)
+        public void LogMessage(MessageType messageType)
         {
-            LogMessage(arg, "testing " + counter++, messageType);
+            LogMessage("testing " + counter++, messageType);
         }
 
-        public void LogMessage(object arg, string message, MessageType messageType)
+        public void LogMessage(string message, MessageType messageType)
         {
             LogMessageParams parameter = new LogMessageParams
             {
@@ -199,7 +199,7 @@
                 Label = "Random change",
                 Edit = edit
             };
-            var r = rpc.InvokeAsync<ApplyWorkspaceEditResponse>(Methods.WorkspaceApplyEditName, parameter).Result;
+            _ = rpc.InvokeAsync<ApplyWorkspaceEditResponse>(Methods.WorkspaceApplyEditName, parameter);
             return true;
         }
 
@@ -272,7 +272,7 @@
                         },
                         Code = "Test" + Enum.GetName(typeof(DiagnosticSeverity), severity)
                     };
-                    characterOffset = characterOffset + wordToMatch.Length;
+                    characterOffset += wordToMatch.Length;
 
                     return diagnostic;
                 }

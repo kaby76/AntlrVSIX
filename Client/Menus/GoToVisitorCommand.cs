@@ -66,6 +66,10 @@
 
         public bool Enabled
         {
+            get
+            {
+                return _menu_item1.Enabled;
+            }
             set
             {
                 if (_menu_item1 != null)
@@ -92,7 +96,32 @@
 
         public bool Visible
         {
-            set { }
+            get
+            {
+                return _menu_item1.Visible;
+            }
+            set
+            {
+                if (_menu_item1 != null)
+                {
+                    _menu_item1.Visible = value;
+                }
+
+                if (_menu_item2 != null)
+                {
+                    _menu_item2.Visible = value;
+                }
+
+                if (_menu_item3 != null)
+                {
+                    _menu_item3.Visible = value;
+                }
+
+                if (_menu_item4 != null)
+                {
+                    _menu_item4.Visible = value;
+                }
+            }
         }
 
         public static GoToVisitorCommand Instance { get; private set; }
@@ -118,13 +147,13 @@
 
         private void MenuItemCallback(bool visitor)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             try
             {
                 ////////////////////////
                 /// Go to visitor.
                 ////////////////////////
 
-                ThreadHelper.ThrowIfNotOnUIThread();
                 if (!(((IServiceProvider)ServiceProvider).GetService(typeof(VsTextManagerClass)) is IVsTextManager manager)) return;
                 manager.GetActiveView(1, null, out IVsTextView view);
                 if (view == null) return;

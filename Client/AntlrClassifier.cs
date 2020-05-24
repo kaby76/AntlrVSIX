@@ -1,16 +1,13 @@
 ﻿namespace LspAntlr
 {
-    using Microsoft.VisualStudio.LanguageServer.Protocol;
     using Microsoft.VisualStudio.PlatformUI;
+    using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Classification;
     using Microsoft.VisualStudio.Text.Tagging;
-    using Microsoft.VisualStudio.TextManager.Interop;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
 
     internal sealed class AntlrClassifier : ITagger<ClassificationTag>
     {
@@ -36,6 +33,7 @@
 
         public IEnumerable<ITagSpan<ClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             // Checks to partially fix https://github.com/kaby76/AntlrVSIX/issues/31#.
             string ffn = _buffer.GetFFN();
             if (ffn == null)
@@ -48,7 +46,7 @@
                 yield break;
             }
             Workspaces.Workspace.Instance.FindDocument(ffn);
-            IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(ffn);
+            _ = IVsTextViewExtensions.FindTextViewFor(ffn);
             foreach (SnapshotSpan curSpan in spans)
             {
                 SnapshotPoint start = curSpan.Start;

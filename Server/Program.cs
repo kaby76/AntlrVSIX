@@ -50,7 +50,7 @@
 
         internal void SendLogMessage()
         {
-            languageServer.LogMessage(arg: null, message: LogMessage, messageType: MessageType);
+            languageServer.LogMessage(message: LogMessage, messageType: MessageType);
         }
 
         internal void SendMessage()

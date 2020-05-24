@@ -59,16 +59,16 @@
             Instance = new EliminateIndirectLeftRecursion(package);
         }
 
-        private async void MenuItemCallback(object sender, EventArgs e)
+        private void MenuItemCallback(object sender, EventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             try
             {
                 ////////////////////////
                 /// Eliminate left recursion.
                 ////////////////////////
 
-                IVsTextManager manager = ((IServiceProvider)ServiceProvider).GetService(typeof(VsTextManagerClass)) as IVsTextManager;
-                if (manager == null) return;
+                if (!(((IServiceProvider)ServiceProvider).GetService(typeof(VsTextManagerClass)) is IVsTextManager manager)) return;
                 manager.GetActiveView(1, null, out IVsTextView view);
                 if (view == null) return;
                 view.GetCaretPos(out int l, out int c);

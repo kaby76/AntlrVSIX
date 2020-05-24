@@ -21,6 +21,7 @@
         // Therefore, call ShowFrame() only if there really is no view for the file.
         public static IVsTextView FindTextViewFor(string filePath)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             IVsWindowFrame frame = FindWindowFrame(filePath);
             if (frame != null)
             {

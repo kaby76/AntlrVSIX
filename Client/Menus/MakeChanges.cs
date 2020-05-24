@@ -31,6 +31,7 @@
 
         public static void EnterChanges(Dictionary<string, string> changes, EnvDTE.Project project, string custom_namespace)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             foreach (KeyValuePair<string, string> pair in changes)
             {
                 string fn = pair.Key;
@@ -60,7 +61,7 @@
                             new_item.Item2.Properties.Item("ItemType").Value = "Antlr4";
                             try
                             {
-                                if (custom_namespace != "")
+                                if (!string.IsNullOrEmpty(custom_namespace))
                                 {
                                     new_item.Item2.Properties.Item("CustomToolNamespace").Value = custom_namespace;
                                 }

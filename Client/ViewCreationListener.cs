@@ -5,7 +5,6 @@
     using Microsoft.VisualStudio.TextManager.Interop;
     using Microsoft.VisualStudio.Utilities;
     using System;
-    using System.Collections.Generic;
     using System.ComponentModel.Composition;
     using System.IO;
     using System.Linq;
@@ -22,39 +21,18 @@
         [Import]
         internal IContentTypeRegistryService ContentTypeRegistryService { get; set; }
 
-        public async void VsTextViewCreated(IVsTextView textViewAdapter)
+        public void VsTextViewCreated(IVsTextView textViewAdapter)
         {
             try
             {
-                IWpfTextView view = AdaptersFactory.GetWpfTextView(textViewAdapter);
-                if (view == null)
-                {
-                    return;
-                }
-
+                if(!(AdaptersFactory.GetWpfTextView(textViewAdapter) is IWpfTextView view)) return;
                 view.Closed += OnViewClosed;
                 Microsoft.VisualStudio.Text.ITextBuffer buffer = view.TextBuffer;
-                if (buffer == null)
-                {
-                    return;
-                }
-
+                if (buffer == null) return;
                 string ffn = buffer.GetFFN();
-                if (ffn == null)
-                {
-                    return;
-                }
-
-                if (!(Path.GetExtension(ffn) == ".g4" || Path.GetExtension(ffn) == ".g"))
-                {
-                    return;
-                }
-
-                if (!Options.Option.GetBoolean("OverrideAntlrPluggins"))
-                {
-                    return;
-                }
-
+                if (ffn == null) return;
+                if (!(Path.GetExtension(ffn) == ".g4" || Path.GetExtension(ffn) == ".g")) return;
+                if (!Options.Option.GetBoolean("OverrideAntlrPluggins")) return;
                 IContentType content_type = buffer.ContentType;
                 System.Collections.Generic.List<IContentType> content_types = ContentTypeRegistryService.ContentTypes.ToList();
                 IContentType new_content_type = content_types.Find(ct => ct.TypeName == "Antlr");
@@ -69,12 +47,7 @@
 
         private void OnViewClosed(object sender, EventArgs e)
         {
-            IWpfTextView view = sender as IWpfTextView;
-            if (view == null)
-            {
-                return;
-            }
-
+            if (!(sender is IWpfTextView view)) return;
             view.Closed -= OnViewClosed;
         }
     }
