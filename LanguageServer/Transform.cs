@@ -654,7 +654,9 @@
             }
         }
 
+#pragma warning disable IDE0060
         public static Dictionary<string, string> ReplaceLiterals(int index, Document document)
+#pragma warning restore IDE0060
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
@@ -911,7 +913,9 @@
             return result;
         }
 
+#pragma warning disable IDE0060
         public static Dictionary<string, string> RemoveUselessParserProductions(int pos, Document document)
+#pragma warning restore IDE0060
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
@@ -962,7 +966,9 @@
             return result;
         }
 
+#pragma warning disable IDE0060
         public static Dictionary<string, string> MoveStartRuleToTop(int pos, Document document)
+#pragma warning restore IDE0060
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
@@ -1216,7 +1222,9 @@
             return result;
         }
 
+#pragma warning disable IDE0060
         public static Dictionary<string, string> SplitCombineGrammars(int pos, Document document, bool split)
+#pragma warning restore IDE0060
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
@@ -1752,7 +1760,9 @@
                         rule_alt_list.AddChild(new_or);
                         new_or.Parent = rule_alt_list;
                     }
+#pragma warning disable IDE0059
                     first = false;
+#pragma warning restore IDE0059
                     ANTLRv4Parser.LabeledAltContext l_alt = new ANTLRv4Parser.LabeledAltContext(rule_alt_list, 0);
                     rule_alt_list.AddChild(l_alt);
                     l_alt.Parent = rule_alt_list;
@@ -2186,11 +2196,7 @@
                 var stop = tb.StopIndex + 1;
                 return start <= index && index < stop;
             }).FirstOrDefault();
-            if (it == null)
-            {
-                throw new LanguageServerException("A parser rule is not selected. Please select one first.");
-            }
-            rule = it;
+            rule = it ?? throw new LanguageServerException("A parser rule is not selected. Please select one first.");
 
             // We are now at the rule that the user identified to eliminate direct
             // left recursion.
@@ -2820,7 +2826,6 @@
             {
                 ANTLRv4Parser.LabeledElementContext le = element.labeledElement();
                 ANTLRv4Parser.AtomContext atom = element.atom();
-                ANTLRv4Parser.EbnfContext ebnf = element.ebnf();
                 if (le != null)
                 {
                     yield return le.atom();
@@ -3348,12 +3353,8 @@
                 var lhs = r.RULE_REF();
                 return lhs.GetText() == sym.name;
             }).FirstOrDefault();
-            if (it == null)
-            {
-                throw new Exception("Cannot find a rule corresponding to symbol "
+            rule = it ?? throw new Exception("Cannot find a rule corresponding to symbol "
                     + sym.name);
-            }
-            rule = it;
 
             if (!(is_cursor_on_def || is_cursor_on_ref))
             {
@@ -4073,7 +4074,9 @@
             return false;
         }
 
+#pragma warning disable IDE0060
         public static Dictionary<string, string> RemoveUselessParentheses(int start, int end, Document document)
+#pragma warning restore IDE0060
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
