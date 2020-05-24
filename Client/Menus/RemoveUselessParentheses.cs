@@ -95,7 +95,7 @@
 
                 IWpfTextView xxx = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view);
                 ITextBuffer buffer = xxx.TextBuffer;
-                string ffn = await buffer.GetFFN().ConfigureAwait(false);
+                string ffn = buffer.GetFFN();
                 if (ffn == null)
                 {
                     return;
@@ -111,12 +111,7 @@
                 int pos = LanguageServer.Module.GetIndex(l, c, document);
                 int start = LanguageServer.Module.GetIndex(ls, cs, document);
                 int end = LanguageServer.Module.GetIndex(le, ce, document);
-                AntlrLanguageClient alc = AntlrLanguageClient.Instance;
-                if (alc == null)
-                {
-                    return;
-                }
-                alc.CMRemoveUselessParentheses(ffn, start, end);
+                AntlrLanguageClient.CMRemoveUselessParentheses(ffn, start, end);
             }
             catch (Exception exception)
             {

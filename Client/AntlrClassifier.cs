@@ -25,7 +25,7 @@
             {
                 _buffer = buffer;
                 _buffer.Changed += new EventHandler<TextContentChangedEventArgs>(OnTextChanged);
-                string ffn = _buffer.GetFFN().Result;
+                string ffn = buffer.GetFFN();
             }
             catch (Exception)
             {
@@ -37,12 +37,7 @@
         public IEnumerable<ITagSpan<ClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
             // Checks to partially fix https://github.com/kaby76/AntlrVSIX/issues/31#.
-            AntlrLanguageClient alc = AntlrLanguageClient.Instance;
-            if (alc == null)
-            {
-                yield break;
-            }
-            string ffn = _buffer.GetFFN().Result;
+            string ffn = _buffer.GetFFN();
             if (ffn == null)
             {
                 yield break;
@@ -52,7 +47,7 @@
             {
                 yield break;
             }
-            Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(ffn);
+            Workspaces.Workspace.Instance.FindDocument(ffn);
             IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(ffn);
             foreach (SnapshotSpan curSpan in spans)
             {
@@ -61,7 +56,7 @@
                 string text = curSpan.GetText();
                 int curLocStart = start.Position;
                 int curLocEnd = end.Position;
-                LanguageServer.CMClassifierInformation[] sorted_combined_tokens = alc.CMGetClassifiers(curLocStart, curLocEnd - 1, ffn);
+                LanguageServer.CMClassifierInformation[] sorted_combined_tokens = AntlrLanguageClient.CMGetClassifiers(curLocStart, curLocEnd - 1, ffn);
                 if (sorted_combined_tokens == null)
                 {
                     continue;
@@ -139,7 +134,7 @@
                     return;
                 }
 
-                string ffn = _buffer.GetFFN().Result;
+                string ffn = _buffer.GetFFN();
                 if (ffn == null)
                 {
                     return;
@@ -160,12 +155,10 @@
 
                 {
                     int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationNonterminalDef;
-                    int key = (int)SymbolKind.Variable;
                     string val = _grammar_description.Map[i];
                     IClassificationType identiferClassificationType = service.GetClassificationType(val);
-                    IClassificationType classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
-                            : identiferClassificationType;
-                    IClassificationType t = list_of_formats.Where(f => f == null ? false : f.Classification == Options.Option.GetString("AntlrNonterminalDef")).FirstOrDefault();
+                    IClassificationType classificationType = identiferClassificationType ?? service.CreateClassificationType(val, Array.Empty<IClassificationType>());
+                    IClassificationType t = list_of_formats.Where(f => f != null && f.Classification == Options.Option.GetString("AntlrNonterminalDef")).FirstOrDefault();
                     if (t != null)
                     {
                         try
@@ -174,20 +167,18 @@
                                 .GetExplicitTextProperties(t);
                             classificationFormatMap.AddExplicitTextProperties(classificationType, identifierProperties);
                         }
-#pragma warning disable 0168
+#pragma warning disable CS0168 // Variable is declared but never used
                         catch (Exception eeks) { }
-#pragma warning restore 0168
+#pragma warning restore CS0168 // Variable is declared but never used
                     }
                     _to_classifiertype[i] = classificationType;
                 }
                 {
                     int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationNonterminalRef;
-                    int key = (int)SymbolKind.Enum;
                     string val = _grammar_description.Map[i];
                     IClassificationType identiferClassificationType = service.GetClassificationType(val);
-                    IClassificationType classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
-                            : identiferClassificationType;
-                    IClassificationType t = list_of_formats.Where(f => f == null ? false : f.Classification == Options.Option.GetString("AntlrNonterminalRef")).FirstOrDefault();
+                    IClassificationType classificationType = identiferClassificationType ?? service.CreateClassificationType(val, Array.Empty<IClassificationType>());
+                    IClassificationType t = list_of_formats.Where(f => f != null && f.Classification == Options.Option.GetString("AntlrNonterminalRef")).FirstOrDefault();
                     if (t != null)
                     {
                         try
@@ -204,12 +195,10 @@
                 }
                 {
                     int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationTerminalDef;
-                    int key = (int)SymbolKind.Variable;
                     string val = _grammar_description.Map[i];
                     IClassificationType identiferClassificationType = service.GetClassificationType(val);
-                    IClassificationType classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
-                            : identiferClassificationType;
-                    IClassificationType t = list_of_formats.Where(f => f == null ? false : f.Classification == Options.Option.GetString("AntlrTerminalDef")).FirstOrDefault();
+                    IClassificationType classificationType = identiferClassificationType ?? service.CreateClassificationType(val, Array.Empty<IClassificationType>());
+                    IClassificationType t = list_of_formats.Where(f => f != null && f.Classification == Options.Option.GetString("AntlrTerminalDef")).FirstOrDefault();
                     if (t != null)
                     {
                         try
@@ -226,12 +215,10 @@
                 }
                 {
                     int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationTerminalRef;
-                    int key = (int)SymbolKind.Enum;
                     string val = _grammar_description.Map[i];
                     IClassificationType identiferClassificationType = service.GetClassificationType(val);
-                    IClassificationType classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
-                            : identiferClassificationType;
-                    IClassificationType t = list_of_formats.Where(f => f == null ? false : f.Classification == Options.Option.GetString("AntlrTerminalRef")).FirstOrDefault();
+                    IClassificationType classificationType = identiferClassificationType ?? service.CreateClassificationType(val, Array.Empty<IClassificationType>());
+                    IClassificationType t = list_of_formats.Where(f => f != null && f.Classification == Options.Option.GetString("AntlrTerminalRef")).FirstOrDefault();
                     if (t != null)
                     {
                         try
@@ -248,12 +235,10 @@
                 }
                 {
                     int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationComment;
-                    int key = (int)SymbolKind.String;
                     string val = _grammar_description.Map[i];
                     IClassificationType identiferClassificationType = service.GetClassificationType(val);
-                    IClassificationType classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
-                            : identiferClassificationType;
-                    IClassificationType t = list_of_formats.Where(f => f == null ? false : f.Classification == Options.Option.GetString("AntlrComment")).FirstOrDefault();
+                    IClassificationType classificationType = identiferClassificationType ?? service.CreateClassificationType(val, Array.Empty<IClassificationType>());
+                    IClassificationType t = list_of_formats.Where(f => f != null && f.Classification == Options.Option.GetString("AntlrComment")).FirstOrDefault();
                     if (t != null)
                     {
                         try
@@ -270,12 +255,10 @@
                 }
                 {
                     int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationKeyword;
-                    int key = (int)SymbolKind.Key;
                     string val = _grammar_description.Map[i];
                     IClassificationType identiferClassificationType = service.GetClassificationType(val);
-                    IClassificationType classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
-                            : identiferClassificationType;
-                    IClassificationType t = list_of_formats.Where(f => f == null ? false : f.Classification == Options.Option.GetString("AntlrKeyword")).FirstOrDefault();
+                    IClassificationType classificationType = identiferClassificationType ?? service.CreateClassificationType(val, Array.Empty<IClassificationType>());
+                    IClassificationType t = list_of_formats.Where(f => f != null && f.Classification == Options.Option.GetString("AntlrKeyword")).FirstOrDefault();
                     if (t != null)
                     {
                         try
@@ -292,12 +275,10 @@
                 }
                 {
                     int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationLiteral;
-                    int key = (int)SymbolKind.Constant;
                     string val = _grammar_description.Map[i];
                     IClassificationType identiferClassificationType = service.GetClassificationType(val);
-                    IClassificationType classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
-                            : identiferClassificationType;
-                    IClassificationType t = list_of_formats.Where(f => f == null ? false : f.Classification == Options.Option.GetString("AntlrLiteral")).FirstOrDefault();
+                    IClassificationType classificationType = identiferClassificationType ?? service.CreateClassificationType(val, Array.Empty<IClassificationType>());
+                    IClassificationType t = list_of_formats.Where(f => f != null && f.Classification == Options.Option.GetString("AntlrLiteral")).FirstOrDefault();
                     if (t != null)
                     {
                         try
@@ -314,12 +295,10 @@
                 }
                 {
                     int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationModeDef;
-                    int key = (int)SymbolKind.Variable;
                     string val = _grammar_description.Map[i];
                     IClassificationType identiferClassificationType = service.GetClassificationType(val);
-                    IClassificationType classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
-                            : identiferClassificationType;
-                    IClassificationType t = list_of_formats.Where(f => f == null ? false : f.Classification == Options.Option.GetString("AntlrModeDef")).FirstOrDefault();
+                    IClassificationType classificationType = identiferClassificationType ?? service.CreateClassificationType(val, Array.Empty<IClassificationType>());
+                    IClassificationType t = list_of_formats.Where(f => f != null && f.Classification == Options.Option.GetString("AntlrModeDef")).FirstOrDefault();
                     if (t != null)
                     {
                         try
@@ -336,12 +315,10 @@
                 }
                 {
                     int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationModeRef;
-                    int key = (int)SymbolKind.Enum;
                     string val = _grammar_description.Map[i];
                     IClassificationType identiferClassificationType = service.GetClassificationType(val);
-                    IClassificationType classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
-                            : identiferClassificationType;
-                    IClassificationType t = list_of_formats.Where(f => f == null ? false : f.Classification == Options.Option.GetString("AntlrModeRef")).FirstOrDefault();
+                    IClassificationType classificationType = identiferClassificationType ?? service.CreateClassificationType(val, Array.Empty<IClassificationType>());
+                    IClassificationType t = list_of_formats.Where(f => f != null && f.Classification == Options.Option.GetString("AntlrModeRef")).FirstOrDefault();
                     if (t != null)
                     {
                         try
@@ -358,12 +335,10 @@
                 }
                 {
                     int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationChannelDef;
-                    int key = (int)SymbolKind.Variable;
                     string val = _grammar_description.Map[i];
                     IClassificationType identiferClassificationType = service.GetClassificationType(val);
-                    IClassificationType classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
-                            : identiferClassificationType;
-                    IClassificationType t = list_of_formats.Where(f => f == null ? false : f.Classification == Options.Option.GetString("AntlrChannelDef")).FirstOrDefault();
+                    IClassificationType classificationType = identiferClassificationType ?? service.CreateClassificationType(val, Array.Empty<IClassificationType>());
+                    IClassificationType t = list_of_formats.Where(f => f != null && f.Classification == Options.Option.GetString("AntlrChannelDef")).FirstOrDefault();
                     if (t != null)
                     {
                         try
@@ -380,12 +355,10 @@
                 }
                 {
                     int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationChannelRef;
-                    int key = (int)SymbolKind.Enum;
                     string val = _grammar_description.Map[i];
                     IClassificationType identiferClassificationType = service.GetClassificationType(val);
-                    IClassificationType classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
-                            : identiferClassificationType;
-                    IClassificationType t = list_of_formats.Where(f => f == null ? false : f.Classification == Options.Option.GetString("AntlrChannelRef")).FirstOrDefault();
+                    IClassificationType classificationType = identiferClassificationType ?? service.CreateClassificationType(val, Array.Empty<IClassificationType>());
+                    IClassificationType t = list_of_formats.Where(f => f != null && f.Classification == Options.Option.GetString("AntlrChannelRef")).FirstOrDefault();
                     if (t != null)
                     {
                         try
@@ -402,12 +375,10 @@
                 }
                 {
                     int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationPunctuation;
-                    int key = (int)SymbolKind.Event;
                     string val = _grammar_description.Map[i];
                     IClassificationType identiferClassificationType = service.GetClassificationType(val);
-                    IClassificationType classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
-                            : identiferClassificationType;
-                    IClassificationType t = list_of_formats.Where(f => f == null ? false : f.Classification == Options.Option.GetString("AntlrPunctuation")).FirstOrDefault();
+                    IClassificationType classificationType = identiferClassificationType ?? service.CreateClassificationType(val, Array.Empty<IClassificationType>());
+                    IClassificationType t = list_of_formats.Where(f => f != null && f.Classification == Options.Option.GetString("AntlrPunctuation")).FirstOrDefault();
                     if (t != null)
                     {
                         try
@@ -424,12 +395,10 @@
                 }
                 {
                     int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationOperator;
-                    int key = (int)SymbolKind.Object;
                     string val = _grammar_description.Map[i];
                     IClassificationType identiferClassificationType = service.GetClassificationType(val);
-                    IClassificationType classificationType = identiferClassificationType == null ? service.CreateClassificationType(val, new IClassificationType[] { })
-                            : identiferClassificationType;
-                    IClassificationType t = list_of_formats.Where(f => f == null ? false : f.Classification == Options.Option.GetString("AntlrOperator")).FirstOrDefault();
+                    IClassificationType classificationType = identiferClassificationType ?? service.CreateClassificationType(val, Array.Empty<IClassificationType>());
+                    IClassificationType t = list_of_formats.Where(f => f != null && f.Classification == Options.Option.GetString("AntlrOperator")).FirstOrDefault();
                     if (t != null)
                     {
                         try
@@ -451,7 +420,7 @@
 #pragma warning restore 0168
         }
 
-        private async void OnTextChanged(object sender, TextContentChangedEventArgs args)
+        private void OnTextChanged(object sender, TextContentChangedEventArgs args)
         {
             AntlrLanguageClient alc = AntlrLanguageClient.Instance;
             if (alc == null)
@@ -459,7 +428,7 @@
                 return;
             }
 
-            string ffn = _buffer.GetFFN().Result;
+            string ffn = _buffer.GetFFN();
             if (ffn == null)
             {
                 return;

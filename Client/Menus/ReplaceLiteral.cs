@@ -102,7 +102,7 @@
 
                 IWpfTextView xxx = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view);
                 ITextBuffer buffer = xxx.TextBuffer;
-                string ffn = await buffer.GetFFN().ConfigureAwait(false);
+                string ffn = buffer.GetFFN();
                 if (ffn == null)
                 {
                     return;
@@ -115,12 +115,7 @@
                 }
 
                 int pos = LanguageServer.Module.GetIndex(l, c, document);
-                AntlrLanguageClient alc = AntlrLanguageClient.Instance;
-                if (alc == null)
-                {
-                    return;
-                }
-                alc.CMReplaceLiterals(ffn, pos);
+                AntlrLanguageClient.CMReplaceLiterals(ffn, pos);
             }
             catch (Exception exception)
             {

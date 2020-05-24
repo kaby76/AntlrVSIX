@@ -135,8 +135,11 @@
 
         internal static void ShowFrame(IServiceProvider isp, string full_file_name)
         {
-            IVsTextView xx = OpenStupidFile(AntlrLanguageClient.XXX, full_file_name);
-            ServiceProvider sp = new ServiceProvider(AntlrLanguageClient.XXX);
+            ThreadHelper.ThrowIfNotOnUIThread();
+            object dte2 = Package.GetGlobalService(typeof(SDTE));
+            var XXX = (Microsoft.VisualStudio.OLE.Interop.IServiceProvider)dte2;
+            IVsTextView xx = OpenStupidFile(XXX, full_file_name);
+            ServiceProvider sp = new ServiceProvider(XXX);
             VsShellUtilities.IsDocumentOpen(sp, full_file_name, Guid.Empty, out IVsUIHierarchy ivsuih, out uint item_id, out IVsWindowFrame ivswf);
             ivswf?.Show();
         }

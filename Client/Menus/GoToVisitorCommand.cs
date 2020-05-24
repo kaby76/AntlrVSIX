@@ -145,7 +145,7 @@
 
                 IWpfTextView xxx = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view);
                 ITextBuffer buffer = xxx.TextBuffer;
-                string orig_ffn = await buffer.GetFFN().ConfigureAwait(false);
+                string orig_ffn = buffer.GetFFN();
                 if (orig_ffn == null)
                 {
                     return;
@@ -158,21 +158,15 @@
                 }
 
                 int pos = LanguageServer.Module.GetIndex(l, c, document);
-                AntlrLanguageClient alc = AntlrLanguageClient.Instance;
-                if (alc == null)
-                {
-                    return;
-                }
-
                 CMGotoResult symbol = null;
                 if (visitor)
                 {
-                    symbol = alc.CMGotoVisitor(orig_ffn, pos);
+                    symbol = AntlrLanguageClient.CMGotoVisitor(orig_ffn, pos);
                 }
                 else
                 {
                     bool is_enter = CtrlKeyState.GetStateForView(xxx).Enabled;
-                    symbol = alc.CMGotoListener(orig_ffn, is_enter, pos);
+                    symbol = AntlrLanguageClient.CMGotoListener(orig_ffn, is_enter, pos);
                 }
                 if (symbol == null)
                 {

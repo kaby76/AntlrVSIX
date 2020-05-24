@@ -68,7 +68,7 @@
 
                 IWpfTextView xxx = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view);
                 ITextBuffer buffer = xxx.TextBuffer;
-                string ffn = buffer.GetFFN().Result;
+                string ffn = buffer.GetFFN();
                 if (ffn == null)
                 {
                     break;

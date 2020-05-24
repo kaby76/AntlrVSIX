@@ -5,8 +5,9 @@
 
     public static class Helpers
     {
-        public static async Task<string> GetFFN(this ITextBuffer buffer)
+        public static string GetFFN(this ITextBuffer buffer)
         {
+            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
             if (buffer == null)
             {
                 return null;
@@ -16,12 +17,11 @@
             if (projection != null)
             {
                 ITextBuffer source_buffer = projection.SourceBuffer;
-                return await source_buffer.GetFFN();
+                return source_buffer.GetFFN();
             }
             buffer.Properties.TryGetProperty(typeof(Microsoft.VisualStudio.TextManager.Interop.IVsTextBuffer), out Microsoft.VisualStudio.TextManager.Interop.IVsTextBuffer bufferAdapter);
             if (bufferAdapter != null)
             {
-                await Microsoft.VisualStudio.Shell.ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
                 Microsoft.VisualStudio.Shell.Interop.IPersistFileFormat persistFileFormat = bufferAdapter as Microsoft.VisualStudio.Shell.Interop.IPersistFileFormat;
                 string ppzsFilename = null;
                 if (persistFileFormat != null)

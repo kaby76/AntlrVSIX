@@ -29,15 +29,13 @@
     public class AntlrLanguageClient : AsyncPackage, ILanguageClient, ILanguageClientCustomMessage2
     {
         [Import]
-        public IClassificationFormatMapService ClassificationFormatMapService = null;
+        internal IClassificationFormatMapService ClassificationFormatMapService = null;
 
-        public static IVsEditorAdaptersFactoryService AdaptersFactory = null;
+        private static IVsEditorAdaptersFactoryService adaptersFactory = null;
         public const string PackageGuidString = "49bf9144-398a-467c-9b87-ac26d1e62737";
-        public static MemoryStream _log_from_server = new MemoryStream();
-        public static MemoryStream _log_to_server = new MemoryStream();
+        private static MemoryStream _log_from_server = new MemoryStream();
+        private static MemoryStream _log_to_server = new MemoryStream();
         private static JsonRpc _rpc;
-        public static Microsoft.VisualStudio.OLE.Interop.IServiceProvider XXX;
-        private readonly JsonRpcMethodAttribute junk;
 
         public AntlrLanguageClient()
         {
@@ -45,9 +43,6 @@
             Instance = this;
             IComponentModel componentModel = Package.GetGlobalService(typeof(SComponentModel)) as IComponentModel;
             AdaptersFactory = componentModel.GetService<IVsEditorAdaptersFactoryService>();
-            object dte2 = Package.GetGlobalService(typeof(SDTE));
-            XXX = (Microsoft.VisualStudio.OLE.Interop.IServiceProvider)dte2;
-            ServiceProvider sp = new ServiceProvider(XXX);
             //AdaptersFactory = this.GetService(typeof(IVsEditorAdaptersFactoryService)) as IVsEditorAdaptersFactoryService;
             Import.Initialize(this);
             OptionsCommand.Initialize(this);
@@ -83,6 +78,7 @@
         public object MiddleLayer => null;
         public string Name => "Antlr language extension";
 
+        public static IVsEditorAdaptersFactoryService AdaptersFactory { get => adaptersFactory; set => adaptersFactory = value; }
 
         public async Task<Connection> ActivateAsync(CancellationToken token)
         {
@@ -162,7 +158,7 @@
             return Task.CompletedTask;
         }
 
-        public CMClassifierInformation[] CMGetClassifiers(int start, int end, string ffn)
+        public static CMClassifierInformation[] CMGetClassifiers(int start, int end, string ffn)
         {
             try
             {
@@ -185,7 +181,7 @@
             return null;
         }
 
-        public int CMNextSymbol(string ffn, int pos, bool forward)
+        public static int CMNextSymbol(string ffn, int pos, bool forward)
         {
             try
             {
@@ -208,7 +204,7 @@
             return -1;
         }
 
-        public CMGotoResult CMGotoVisitor(string ffn, int pos)
+        public static CMGotoResult CMGotoVisitor(string ffn, int pos)
         {
             try
             {
@@ -226,7 +222,7 @@
             return null;
         }
 
-        public CMGotoResult CMGotoListener(string ffn, bool is_enter, int pos)
+        public static CMGotoResult CMGotoListener(string ffn, bool is_enter, int pos)
         {
             try
             {
@@ -245,7 +241,7 @@
             return null;
         }
 
-        public void CMReplaceLiterals(string ffn, int pos)
+        public static void CMReplaceLiterals(string ffn, int pos)
         {
             try
             {
@@ -261,7 +257,7 @@
             }
         }
 
-        public void CMRemoveUselessParserProductions(string ffn, int pos)
+        public static void CMRemoveUselessParserProductions(string ffn, int pos)
         {
             try
             {
@@ -277,7 +273,7 @@
             }
         }
 
-        public void CMMoveStartRuleToTop(string ffn, int pos)
+        public static void CMMoveStartRuleToTop(string ffn, int pos)
         {
             try
             {
@@ -293,7 +289,7 @@
             }
         }
 
-        public void CMReorderParserRules(string ffn, int pos, ReorderType reorder_type)
+        public static void CMReorderParserRules(string ffn, int pos, ReorderType reorder_type)
         {
             try
             {
@@ -311,8 +307,7 @@
             }
         }
 
-
-        public Dictionary<string, string> CMSplitCombineGrammars(string ffn, int pos, bool split)
+        public static Dictionary<string, string> CMSplitCombineGrammars(string ffn, int pos, bool split)
         {
             try
             {
@@ -332,7 +327,7 @@
             return null;
         }
 
-        public Dictionary<string, string> CMImportGrammars(List<string> ffn)
+        public static Dictionary<string, string> CMImportGrammars(List<string> ffn)
         {
             try
             {
@@ -347,7 +342,7 @@
             return null;
         }
 
-        public void CMEliminateDirectLeftRecursion(string ffn, int pos)
+        public static void CMEliminateDirectLeftRecursion(string ffn, int pos)
         {
             try
             {
@@ -363,7 +358,7 @@
             }
         }
 
-        public void CMEliminateIndirectLeftRecursion(string ffn, int pos)
+        public static void CMEliminateIndirectLeftRecursion(string ffn, int pos)
         {
             try
             {
@@ -379,7 +374,7 @@
             }
         }
         
-        public void CMConvertRecursionToKleeneOperator(string ffn, int pos)
+        public static void CMConvertRecursionToKleeneOperator(string ffn, int pos)
         {
             try
             {
@@ -395,7 +390,7 @@
             }
         }
 
-        public void CMEliminateAntlrKeywordsInRules(string ffn)
+        public static void CMEliminateAntlrKeywordsInRules(string ffn)
         {
             try
             {
@@ -409,7 +404,7 @@
             }
         }
 
-        public void CMAddLexerRulesForStringLiterals(string ffn)
+        public static void CMAddLexerRulesForStringLiterals(string ffn)
         {
             try
             {
@@ -423,7 +418,7 @@
             }
         }
 
-        public void CMSortModes(string ffn)
+        public static void CMSortModes(string ffn)
         {
             try
             {
@@ -437,7 +432,7 @@
             }
         }
 
-        public void CMUnfold(string ffn, int pos)
+        public static void CMUnfold(string ffn, int pos)
         {
             try
             {
@@ -449,7 +444,7 @@
             }
         }
 
-        public void CMFold(string ffn, int start, int end)
+        public static void CMFold(string ffn, int start, int end)
         {
             try
             {
@@ -461,7 +456,7 @@
             }
         }
 
-        public void CMRemoveUselessParentheses(string ffn, int start, int end)
+        public static void CMRemoveUselessParentheses(string ffn, int start, int end)
         {
             try
             {
@@ -473,7 +468,7 @@
             }
         }
 
-        public void CMShowCycles(string ffn, int start)
+        public static void CMShowCycles(string ffn, int start)
         {
             try
             {
