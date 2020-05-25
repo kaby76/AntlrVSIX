@@ -42,8 +42,7 @@ check out my [blog](http://codinggorilla.com).
 
 * Downloaded the Java-based Antlr tool chain. [Complete ANTLR 4.8 Java binaries jar](https://www.antlr.org/download/antlr-4.8-complete.jar).
 
-* Set the environment variable "JAVA_HOME" to the directory of the java installation. See [this](https://confluence.atlassian.com/doc/setting-the-java_home-variable-in-windows-8895.html) for some instructions on how to do this
-on Windows.
+* Set the environment variable "JAVA_EXEC" to the full path of the java executable.
 
 * Set the environment variable "Antlr4ToolPath" to the path of the downloaded Antlr jar file.
 
@@ -54,14 +53,14 @@ on Windows.
 # Verify Prerequisites
 
 Please verify that you have these variables set up as expected. Try
-*"$JAVA_HOME/bin/java.exe" -jar "$Antlr4ToolPath"*
+*"$JAVA_EXEC" -jar "$Antlr4ToolPath"*
 from a Git Bash or
-*"%JAVA_HOME%\bin\java.exe" -jar "%Antlr4ToolPath%"*
+*"%JAVA_EXEC%" -jar "%Antlr4ToolPath%"*
 from a Cmd.exe.
 That should execute the Antlr tool and print out the options expected
 for the command. If it doesn't
-work, adjust JAVA_HOME and Antlr4ToolPath. JAVA_HOME should be the full
-path of the JDK; Antlr4ToolPath should be the full path of the Antlr
+work, adjust JAVA_EXEC and Antlr4ToolPath. JAVA_EXEC should be the full
+path of the Java executable; Antlr4ToolPath should be the full path of the Antlr
 tool jar file. If you look at the generated .csproj file for the Antlr
 Console program generated, you should see what it defaults if they
 aren't set.
