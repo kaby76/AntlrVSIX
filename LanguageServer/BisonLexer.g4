@@ -468,5 +468,6 @@ PROLOGUE
 //mode RuleMode;
 
 mode EpilogueMode;
+// Expected: Warning AC0131 greedy block ()+ contains wildcard; the non-greedy syntax ()+? may be preferred	LanguageServer
 	EPILOGUE: .+ ;
 
