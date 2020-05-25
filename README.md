@@ -48,12 +48,15 @@ as described in the instructions of [Antlr4BuildTasks](https://github.com/kaby76
 
 # Installation
 
-You can install the extension in one of two ways:
+You can install the extension in one of three ways:
 
 * [Download the .vsix](https://marketplace.visualstudio.com/items?itemName=KenDomino.AntlrVSIX)
 from a web browser, then executing the .vsix file from a Windows Explorer.
 * Download and install the extension within Visual Studio 2019 via "Extensions | Manage Extensions",
 search for Antlrvsix, and "install".
+* Build a copy of the .vsix from the sources and install. NB: I sometimes check in non-compilable code
+into the repository. This is because I am making huge changes the the code.
+Grab the source for a released version to be safe.
 
 # Documentation
 
