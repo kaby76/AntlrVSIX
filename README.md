@@ -39,13 +39,12 @@ check out my [blog](http://codinggorilla.com).
 # Installation of Prerequisites
 
 There are no prerequsites for Antlrvsix other than you use Visual Studio 2019.
-I recommend that you use version 16.6 since it has the latest bug fixes that the
-extension uses.
+I recommend that you use version 16.6 since it has the latest bug fixes.
 
 If you are building and running an Antlr application--as opposed to
 simply opening an Antlr grammar file to view--then you will want to set up the build environment. There is support for
 Antlr in C# and C++ programs using Antlr4BuildTasks. If you plan to build Antlrvsix, then you must set up the build environment
-as described in the instructions of pAntlr4BUildTasks](https://github.com/kaby76/Antlr4BuildTasks).
+as described in the instructions of [Antlr4BUildTasks](https://github.com/kaby76/Antlr4BuildTasks).
 
 # Installation
 
