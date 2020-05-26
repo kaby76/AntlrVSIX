@@ -33,11 +33,7 @@
                 _enabled = value;
                 if (oldVal != _enabled)
                 {
-                    EventHandler<EventArgs> temp = CtrlKeyStateChanged;
-                    if (temp != null)
-                    {
-                        temp(this, new EventArgs());
-                    }
+                    CtrlKeyStateChanged?.Invoke(this, new EventArgs());
                 }
             }
         }

@@ -95,18 +95,18 @@ tree rewrite language, into Antlrvsix.
 * New analyses:
   * Show cycles
 * Fix [Clean up the 400+ compiler warnings #51](https://github.com/kaby76/AntlrVSIX/issues/51).
-* Fix [#48 Rename via right-click context menu does not work--VS 2019 broken, MS needs to fix](https://github.com/kaby76/AntlrVSIX/issues/48).
-* Fix [#46 Output message when operation does nothing](https://github.com/kaby76/AntlrVSIX/issues/46).
-* Fix [#45 LanguageServer is net472, should be netstandard2.0](https://github.com/kaby76/AntlrVSIX/issues/45).
-* Fix [#44 BFS ordering not working with multiple start states; Start symbols not computed correctly for LeftFactored grammar](https://github.com/kaby76/AntlrVSIX/issues/44).
-* Partial fix [#43 Colorizing of text after transformation is messed up](https://github.com/kaby76/AntlrVSIX/issues/43). Colorization after undo still messed up.
-* Fix [#41 Add in UI to indicate if transform doesn't work and why](https://github.com/kaby76/AntlrVSIX/issues/41).
-* Partial fix [#40 Replace all hacks in transformations with tree editing](https://github.com/kaby76/AntlrVSIX/issues/40). Deferring all additional hacks with integration of Piggy, which will replace everything.
+* Fix [Rename via right-click context menu does not work--VS 2019 broken, MS needs to fix. #48](https://github.com/kaby76/AntlrVSIX/issues/48).
+* Fix [Output message when operation does nothing. #46](https://github.com/kaby76/AntlrVSIX/issues/46).
+* Fix [LanguageServer is net472, should be netstandard2.0 #45](https://github.com/kaby76/AntlrVSIX/issues/45).
+* Fix [BFS ordering not working with multiple start states; Start symbols not computed correctly for LeftFactored grammar. #44](https://github.com/kaby76/AntlrVSIX/issues/44).
+* Partial fix [Colorizing of text after transformation is messed up. #43](https://github.com/kaby76/AntlrVSIX/issues/43). Colorization after undo still messed up.
+* Fix [Add in UI to indicate if transform doesn't work and why #41](https://github.com/kaby76/AntlrVSIX/issues/41).
+* Partial fix [Replace all hacks in transformations with tree editing #40](https://github.com/kaby76/AntlrVSIX/issues/40). Deferring all additional hacks with integration of Piggy, which will replace everything.
 
 ## Release notes for v7.2 (6-May-2020):
 
-* Fix [#39 Remote language server is not working until identity is checked, with a fix for logging to ~/.antlrlog](https://github.com/kaby76/AntlrVSIX/issues/39).
-* Fix [#38 Options window not working](https://github.com/kaby76/AntlrVSIX/issues/38).
+* Fix [Remote language server is not working until identity is checked #39](https://github.com/kaby76/AntlrVSIX/issues/39).
+* Fix [Options window not working #38](https://github.com/kaby76/AntlrVSIX/issues/38).
 * (Note, the UI contains the Fold transformation, but it is just a stub.)
 
 ## Release notes for v7.0 (4-May-2020):
