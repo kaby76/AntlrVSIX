@@ -256,7 +256,7 @@ namespace LanguageServer
             return (result, result2);
         }
 
-        public static IParseTree CopyTreeRecursive(IParseTree original, IParseTree parent, Dictionary<TerminalNodeImpl, string> text_to_left = null)
+        public static IParseTree CopyTreeRecursive(IParseTree original, IParseTree parent, Dictionary<TerminalNodeImpl, string> text_to_left)
         {
             if (original == null) return null;
             else if (original is TerminalNodeImpl)

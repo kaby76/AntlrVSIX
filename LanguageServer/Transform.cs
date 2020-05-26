@@ -1580,14 +1580,14 @@
             return false;
         }
 
-        private static (IParseTree, IParseTree) GenerateReplacementRules(string new_symbol_name, IParseTree rule)
+        private static (IParseTree, IParseTree) GenerateReplacementRules(string new_symbol_name, IParseTree rule, Dictionary<TerminalNodeImpl, string> text_before)
         {
             ANTLRv4Parser.ParserRuleSpecContext new_a_rule = new ANTLRv4Parser.ParserRuleSpecContext(null, 0);
             {
                 var r = rule as ANTLRv4Parser.ParserRuleSpecContext;
                 var lhs = r.RULE_REF()?.GetText();
                 {
-                    TreeEdits.CopyTreeRecursive(r.RULE_REF(), new_a_rule);
+                    TreeEdits.CopyTreeRecursive(r.RULE_REF(), new_a_rule, text_before);
                 }
                 // Now have "A"
                 {
@@ -1614,7 +1614,7 @@
                 }
                 // Now have "A : <rb <ral> > ;"
                 {
-                    TreeEdits.CopyTreeRecursive(r.exceptionGroup(), new_a_rule);
+                    TreeEdits.CopyTreeRecursive(r.exceptionGroup(), new_a_rule, text_before);
                 }
                 // Now have "A : <rb <ral> > ; <eg>"
                 bool first = true;
@@ -1645,7 +1645,7 @@
                     new_alt.Parent = l_alt;
                     foreach (var element in alt.element())
                     {
-                        TreeEdits.CopyTreeRecursive(element, new_alt);
+                        TreeEdits.CopyTreeRecursive(element, new_alt, text_before);
                     }
                     var token = new CommonToken(ANTLRv4Lexer.RULE_REF) { Line = -1, Column = -1, Text = new_symbol_name };
                     var new_rule_ref = new TerminalNodeImpl(token);
@@ -1699,7 +1699,7 @@
                 }
                 // Now have "A : <rb <ral> > ;"
                 {
-                    TreeEdits.CopyTreeRecursive(r.exceptionGroup(), new_a_rule);
+                    TreeEdits.CopyTreeRecursive(r.exceptionGroup(), new_a_rule, text_before);
                 }
                 // Now have "A' : <rb <ral> > ; <eg>"
                 bool first = true;
@@ -1736,7 +1736,7 @@
                             first2 = false;
                             continue;
                         }
-                        TreeEdits.CopyTreeRecursive(element, new_alt);
+                        TreeEdits.CopyTreeRecursive(element, new_alt, text_before);
                     }
                     var token = new CommonToken(ANTLRv4Parser.RULE_REF) { Line = -1, Column = -1, Text = new_symbol_name };
                     var new_rule_ref = new TerminalNodeImpl(token);
@@ -1777,7 +1777,7 @@
             return ((IParseTree)new_a_rule, (IParseTree)new_ap_rule);
         }
 
-        private static IParseTree ReplaceWithKleeneRules(bool has_direct_left_recursion, bool has_direct_right_recursion, IParseTree rule)
+        private static IParseTree ReplaceWithKleeneRules(bool has_direct_left_recursion, bool has_direct_right_recursion, IParseTree rule, Dictionary<TerminalNodeImpl, string> text_before)
         {
             // Left recursion:
             // Convert A -> A beta1 | A beta2 | ... | alpha1 | alpha2 | ... ;
@@ -1792,7 +1792,7 @@
                 var r = rule as ANTLRv4Parser.ParserRuleSpecContext;
                 var lhs = r.RULE_REF()?.GetText();
                 {
-                    TreeEdits.CopyTreeRecursive(r.RULE_REF(), new_a_rule);
+                    TreeEdits.CopyTreeRecursive(r.RULE_REF(), new_a_rule, text_before);
                 }
                 // Now have "A"
                 {
@@ -1887,7 +1887,7 @@
                     new_semi.Parent = new_a_rule;
                 }
                 {
-                    TreeEdits.CopyTreeRecursive(r.exceptionGroup(), new_a_rule);
+                    TreeEdits.CopyTreeRecursive(r.exceptionGroup(), new_a_rule, text_before);
                 }
                 // Now have "A : <ruleBlock
                 //                  <ruleAltList
@@ -1943,7 +1943,7 @@
                             for (; i < j; ++i)
                             {
                                 var element = elements[i];
-                                TreeEdits.CopyTreeRecursive(element, new_alt);
+                                TreeEdits.CopyTreeRecursive(element, new_alt, text_before);
                             }
                         }
                         else
@@ -1964,7 +1964,7 @@
                             new_alt.Parent = l_alt;
                             foreach (var element in alt.element())
                             {
-                                TreeEdits.CopyTreeRecursive(element, new_alt);
+                                TreeEdits.CopyTreeRecursive(element, new_alt, text_before);
                             }
                         }
                     }
@@ -2057,8 +2057,11 @@
                 throw new LanguageServerException("The rule selected has both direct left or right recursion. Please select one first.");
             }
 
+            // Get all intertoken text immediately for source reconstruction.
+            var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
+
             // Has direct recursion.
-            rule = ReplaceWithKleeneRules(has_direct_left_recursion, has_direct_right_recursion, rule);
+            rule = ReplaceWithKleeneRules(has_direct_left_recursion, has_direct_right_recursion, rule, text_before);
             {
                 // Now edit the file and return.
                 StringBuilder sb = new StringBuilder();
@@ -2452,7 +2455,6 @@
                             break;
                     }
                     rules.children.Insert(i + 1, new_rs);
-                    rules.AddChild(new_rs);
                     new_rs.Parent = rules;
                 }
             }
@@ -2603,12 +2605,15 @@
             // left recursion.
             // Check if the rule participates in indirect left recursion.
 
+            // Get all intertoken text immediately for source reconstruction.
+            var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
+
             Dictionary<string, IParseTree> rules = new Dictionary<string, IParseTree>();
             foreach (string s in ordered)
             {
                 var ai = table.rules.Where(r => r.LHS == s).First();
                 var air = (ANTLRv4Parser.ParserRuleSpecContext)ai.rule;
-                rules[s] = TreeEdits.CopyTreeRecursive(air, null);
+                rules[s] = TreeEdits.CopyTreeRecursive(air, null, text_before);
             }
             for (int i = 0; i < ordered.Count; ++i)
             {
@@ -2617,7 +2622,7 @@
                 ANTLRv4Parser.ParserRuleSpecContext new_a_rule = new ANTLRv4Parser.ParserRuleSpecContext(null, 0);
                 var r = ai_tree as ANTLRv4Parser.ParserRuleSpecContext;
                 var lhs = r.RULE_REF()?.GetText();
-                TreeEdits.CopyTreeRecursive(r.RULE_REF(), new_a_rule);
+                TreeEdits.CopyTreeRecursive(r.RULE_REF(), new_a_rule, text_before);
                 // Now have "A"
                 {
                     var token2 = new CommonToken(ANTLRv4Parser.COLON) { Line = -1, Column = -1, Text = ":" };
@@ -2643,7 +2648,7 @@
                 }
                 // Now have "A : <rb <ral> > ;"
                 {
-                    TreeEdits.CopyTreeRecursive(r.exceptionGroup(), new_a_rule);
+                    TreeEdits.CopyTreeRecursive(r.exceptionGroup(), new_a_rule, text_before);
                 }
                 // Now have "A : <rb <ral> > ; <eg>"
                 for (int j = 0; j < i; ++j)
@@ -2674,7 +2679,7 @@
                             ANTLRv4Parser.AlternativeContext new_alt = new ANTLRv4Parser.AlternativeContext(null, 0);
                             foreach (var element in alt2.element())
                             {
-                                TreeEdits.CopyTreeRecursive(element, new_alt);
+                                TreeEdits.CopyTreeRecursive(element, new_alt, text_before);
                             }
                             bool first = true;
                             foreach (var element in alt.element())
@@ -2684,7 +2689,7 @@
                                     first = false;
                                     continue;
                                 }
-                                TreeEdits.CopyTreeRecursive(element, new_alt);
+                                TreeEdits.CopyTreeRecursive(element, new_alt, text_before);
                             }
                             new_alts.Add(new_alt);
                         }
@@ -2750,7 +2755,7 @@
                 //
 
                 string generated_name = GenerateNewName(rules[ai], pd_parser);
-                var (fixed_rule, new_rule) = GenerateReplacementRules(generated_name, rules[ai]);
+                var (fixed_rule, new_rule) = GenerateReplacementRules(generated_name, rules[ai], text_before);
                 rules[ai] = fixed_rule;
                 rules[generated_name] = new_rule;
             }
@@ -3459,7 +3464,7 @@
                             }
                             first = false;
                             var a = labeledAlt.alternative();
-                            var copy = TreeEdits.CopyTreeRecursive(a, altlist1);
+                            var copy = TreeEdits.CopyTreeRecursive(a, altlist1, text_before);
                         }
                         return element1;
                     }
@@ -3788,7 +3793,7 @@
                         }
                         // Now have "A : <rb <ral> > ;"
                         {
-                            TreeEdits.CopyTreeRecursive(r.exceptionGroup(), new_ap_rule);
+                            TreeEdits.CopyTreeRecursive(r.exceptionGroup(), new_ap_rule, text_before);
                         }
                         // Now have "A' : <rb <ral> > ; <eg>"
                         {
@@ -3805,7 +3810,7 @@
                             var new_ebnf = new ANTLRv4Parser.EbnfContext(null, 0);
                             new_element.AddChild(new_ebnf);
                             new_ebnf.Parent = new_element;
-                            TreeEdits.CopyTreeRecursive(replace_this, new_ebnf);
+                            TreeEdits.CopyTreeRecursive(replace_this, new_ebnf, text_before);
                         }
 
                         // Now have "A' : ... ;"
@@ -3884,7 +3889,7 @@
                         }
                         // Now have "A : <rb <ral> > ;"
                         {
-                            TreeEdits.CopyTreeRecursive(r.exceptionGroup(), new_ap_rule);
+                            TreeEdits.CopyTreeRecursive(r.exceptionGroup(), new_ap_rule, text_before);
                         }
                         // Now have "A' : <rb <ral> > ; <eg>"
                         {
@@ -3901,7 +3906,7 @@
                             var new_ebnf = new ANTLRv4Parser.EbnfContext(null, 0);
                             new_element.AddChild(new_ebnf);
                             new_ebnf.Parent = new_element;
-                            TreeEdits.CopyTreeRecursive(replace_this, new_ebnf);
+                            TreeEdits.CopyTreeRecursive(replace_this, new_ebnf, text_before);
                         }
 
                         // Now have "A' : ... ;"
@@ -3984,7 +3989,7 @@
                         }
                         // Now have "A : <rb <ral> > ;"
                         {
-                            TreeEdits.CopyTreeRecursive(r.exceptionGroup(), new_ap_rule);
+                            TreeEdits.CopyTreeRecursive(r.exceptionGroup(), new_ap_rule, text_before);
                         }
                         // Now have "A' : <rb <ral> > ; <eg>"
                         {
@@ -4001,7 +4006,7 @@
                             var new_ebnf = new ANTLRv4Parser.EbnfContext(null, 0);
                             new_element.AddChild(new_ebnf);
                             new_ebnf.Parent = new_element;
-                            TreeEdits.CopyTreeRecursive(replace_this, new_ebnf);
+                            TreeEdits.CopyTreeRecursive(replace_this, new_ebnf, text_before);
                         }
 
                         // Now have "A' : ... ;"
@@ -4297,7 +4302,7 @@
                             }
                             first = false;
                             var labeled_alt = new ANTLRv4Parser.LabeledAltContext(null, 0);
-                            TreeEdits.CopyTreeRecursive(alternative, labeled_alt);
+                            TreeEdits.CopyTreeRecursive(alternative, labeled_alt, text_before);
                             rule_alt_list.AddChild(labeled_alt);
                             labeled_alt.Parent = rule_alt_list;
                         }
@@ -4307,7 +4312,7 @@
                         var alternative = alt_list?.GetChild(0) as ANTLRv4Parser.AlternativeContext;
                         foreach (var e in alternative.element())
                         {
-                            var copy = TreeEdits.CopyTreeRecursive(e, null) as ANTLRv4Parser.ElementContext;
+                            var copy = TreeEdits.CopyTreeRecursive(e, null, text_before) as ANTLRv4Parser.ElementContext;
                             parent_alternative.children.Insert(i, copy);
                             copy.Parent = parent_alternative;
                             i++;
