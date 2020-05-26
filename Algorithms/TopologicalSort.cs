@@ -38,7 +38,7 @@ namespace Algorithms
             }
         }
 
-        public List<T> topological_sort()
+        public List<T> Topological_sort()
         {
             l = new List<T>();
             _marked = new Dictionary<T, Mark>();
@@ -50,14 +50,14 @@ namespace Algorithms
             {
                 if (_marked[v] == Mark.None)
                 {
-                    dfs(v);
+                    Dfs(v);
                 }
             }
             foreach (T v in _graph.Vertices)
             {
                 if (_marked[v] == Mark.None)
                 {
-                    dfs(v);
+                    Dfs(v);
                 }
             }
             if (l.Count != _graph.Vertices.Count())
@@ -65,7 +65,7 @@ namespace Algorithms
             return l;
         }
 
-        private void dfs(T v)
+        private void Dfs(T v)
         {
             if (_marked[v] == Mark.Permenent)
                 return;
@@ -75,7 +75,7 @@ namespace Algorithms
             _marked[v] = Mark.Temporary;
             foreach (T w in _graph.Successors(v))
             {
-                dfs(w);
+                Dfs(w);
             }
 
             _marked[v] = Mark.Permenent;
@@ -86,7 +86,7 @@ namespace Algorithms
 
         public IEnumerable<T> GetEnumerable()
         {
-            var x = topological_sort();
+            var x = Topological_sort();
             foreach (T v in x.Reverse<T>())
             {
                 yield return v;
@@ -95,7 +95,7 @@ namespace Algorithms
 
         public IEnumerator<T> GetEnumerator()
         {
-            var x = topological_sort();
+            var x = Topological_sort();
             foreach (T v in x.Reverse<T>())
             {
                 yield return v;
@@ -104,7 +104,7 @@ namespace Algorithms
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            var x = topological_sort();
+            var x = Topological_sort();
             foreach (T v in x.Reverse<T>())
             {
                 yield return v;

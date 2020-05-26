@@ -54,7 +54,7 @@ namespace Algorithms
             return d;
         }
 
-        public void run()
+        public void Run()
         {
             foreach (T t in _work)
             {

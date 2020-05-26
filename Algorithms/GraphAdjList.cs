@@ -66,20 +66,11 @@ namespace Algorithms
 
         public virtual NODE AddVertex(NODE v)
         {
-            //System.Console.Error.WriteLine("List "
-            //    + String.Join(" ", VertexSpace.Select(x => x.ToString())));
-            //System.Console.Error.WriteLine("V " + v.ToString()
-            //                              + " Contains " 
-            //                              + (VertexSpace.ContainsKey(v)?"true":"false"));
             if (VertexSpace.ContainsKey(v))
             {
                 return VertexSpace[v];
             }
-
             VertexSpace[v] = v;
-            //System.Console.Error.WriteLine("aV " + v.ToString()
-            //                                    + " Contains "
-            //                                    + (VertexSpace.ContainsKey(v) ? "true" : "false"));
             return v;
         }
 
@@ -89,8 +80,8 @@ namespace Algorithms
 
         public virtual EDGE AddEdge(EDGE e)
         {
-            NODE vf = AddVertex(e.From);
-            NODE vt = AddVertex(e.To);
+            _ = AddVertex(e.From);
+            _ = AddVertex(e.To);
             ForwardEdgeSpace.Add(e.From, e);
             ReverseEdgeSpace.Add(e.To, e);
             return e;
@@ -112,7 +103,8 @@ namespace Algorithms
                     }
                 }
             }
-            done = ReverseEdgeSpace.TryGetValue(vf, out List<EDGE> listr);
+
+            done = ReverseEdgeSpace.TryGetValue(vf, out _);
             if (done)
             {
                 for (int i = 0; i < list.Count; ++i)
@@ -342,7 +334,7 @@ namespace Algorithms
 
         public bool IsLeaf(NODE name)
         {
-            if (ForwardEdgeSpace.TryGetValue(name, out List<EDGE> list))
+            if (ForwardEdgeSpace.TryGetValue(name, out _))
             {
                 return false;
             }

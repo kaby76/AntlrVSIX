@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System;
 
 namespace Algorithms
 {
@@ -96,7 +98,7 @@ namespace Algorithms
             {
                 if (!marked[v])
                 {
-                    dfs(graph, v);
+                    Dfs(graph, v);
                 }
             }
         }
@@ -131,13 +133,13 @@ namespace Algorithms
             {
                 if (!marked[v])
                 {
-                    dfs(graph, v);
+                    Dfs(graph, v);
                 }
             }
         }
 
         // run DFS in digraph G from vertex v and compute preorder/postorder
-        private void dfs(IGraph<T, E> G, T v)
+        private void Dfs(IGraph<T, E> G, T v)
         {
             marked[v] = true;
             pre[v] = preCounter++;
@@ -146,7 +148,7 @@ namespace Algorithms
             {
                 if (!marked[w])
                 {
-                    dfs(G, w);
+                    Dfs(G, w);
                 }
             }
             postorder.Enqueue(v);
@@ -179,7 +181,7 @@ namespace Algorithms
          */
         public int Pre(T v)
         {
-            validateVertex(v);
+            ValidateVertex(v);
             return pre[v];
         }
 
@@ -191,7 +193,7 @@ namespace Algorithms
          */
         public int Post(T v)
         {
-            validateVertex(v);
+            ValidateVertex(v);
             return post[v];
         }
 
@@ -217,7 +219,7 @@ namespace Algorithms
          * Returns the vertices in reverse postorder.
          * @return the vertices in reverse postorder, as an iterable of vertices
          */
-        public IEnumerable<T> reversePost()
+        public IEnumerable<T> ReversePost()
         {
             Stack<T> reverse = new Stack<T>();
             foreach (T v in postorder)
@@ -230,7 +232,7 @@ namespace Algorithms
 
 
         // check that pre() and post() are consistent with pre(v) and post(v)
-        private bool check()
+        private bool Check()
         {
             // check that post(v) is consistent with post()
             int r = 0;
@@ -260,11 +262,10 @@ namespace Algorithms
         }
 
         // throw an IllegalArgumentException unless {@code 0 <= v < V}
-        private void validateVertex(T v)
+        private void ValidateVertex(T v)
         {
-            //int V = marked.Count;
-            //if (v < 0 || v >= V)
-            //    throw new Exception("vertex " + v + " is not between 0 and " + (V - 1));
+            if (!marked.ContainsKey(v))
+                throw new Exception("Vertex " + v + " is not in marked list.");
         }
 
         /**
@@ -272,7 +273,7 @@ namespace Algorithms
          *
          * @param args the command-line arguments
          */
-        public static void test()
+        public static void Test()
         {
             string tiny = $@"
 13
@@ -326,7 +327,7 @@ namespace Algorithms
             System.Console.WriteLine();
 
             System.Console.Write("Reverse postorder: ");
-            foreach (IntWrapper v in dfs.reversePost())
+            foreach (IntWrapper v in dfs.ReversePost())
             {
                 System.Console.Write(v + " ");
             }

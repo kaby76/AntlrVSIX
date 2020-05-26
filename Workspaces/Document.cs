@@ -57,6 +57,10 @@
 
         public string GetProperty(string name)
         {
+            if (name is null)
+            {
+                throw new System.ArgumentNullException(nameof(name));
+            }
             return null;
         }
 

@@ -30,7 +30,7 @@ namespace Algorithms
             where E : IEdge<T>
         {
             color[u] = Color.Gray;
-            time = time + 1;
+            time += 1;
             d[u] = time;
             foreach (E e in graph.SuccessorEdges(u))
             {
@@ -57,7 +57,7 @@ namespace Algorithms
             }
 
             color[u] = Color.Black;
-            time = time + 1;
+            time += 1;
             f[u] = time;
         }
 

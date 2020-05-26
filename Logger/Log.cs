@@ -7,11 +7,12 @@
 
     public class Log
     {
-        static string home = System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile);
-        private static ReaderWriterLockSlim cacheLock = new ReaderWriterLockSlim();
+        private static readonly string home = System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile);
+        private static readonly ReaderWriterLockSlim cacheLock = new ReaderWriterLockSlim();
         private static bool done = false;
 
-        // Call only from client.
+        // This method must only be called from the client so multiple instances of the
+        // server doesn't blow away the file after the client already had.
         public static void CleanUpLogFile()
         {
             if (done) return;

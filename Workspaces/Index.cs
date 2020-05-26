@@ -118,7 +118,7 @@
         /// <param name="value">An object to compare with this object</param>
         public override bool Equals(object value)
         {
-            return value is Index && _value == ((Index)value)._value;
+            return value is Index index && _value == index._value;
         }
 
         /// <summary>Indicates whether the current Index object is equal to another Index object.</summary>

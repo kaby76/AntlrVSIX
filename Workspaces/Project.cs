@@ -64,18 +64,8 @@
 
         public string GetProperty(string name)
         {
-            _lazy_evaluated.TryGetValue(name, out bool evaluated);
+            _lazy_evaluated.TryGetValue(name, out _);
             string result = null;
-            //if (_get_property != null && !evaluated)
-            //{
-            //    result = _get_property(name, _get_property_data);
-            //    _properties[name] = result;
-            //}
-            //else
-            //{
-            //    _properties.TryGetValue(name, out string r);
-            //    result = r;
-            //}
             return result;
         }
 

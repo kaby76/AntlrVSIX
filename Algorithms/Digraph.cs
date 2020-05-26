@@ -97,7 +97,7 @@ namespace Algorithms
                     T t = parser(strings[2 + 2 * v + 1]);
                     AddVertex(f);
                     AddVertex(t);
-                    addEdge(new DirectedEdge<T>(f, t));
+                    AddEdge(new DirectedEdge<T>(f, t));
                 }
             }
             catch (Exception e)
@@ -122,7 +122,7 @@ namespace Algorithms
             }
             foreach (DirectedEdge<T> e in G.Edges)
             {
-                AddEdge(e);
+                base.AddEdge(e);
             }
         }
 
@@ -141,11 +141,10 @@ namespace Algorithms
         public int E => Edges.Count();
 
 
-        // throw an IllegalArgumentException unless {@code 0 <= v < V}
-        private void validateVertex(T v)
+#pragma warning disable IDE0060 // Remove unused parameter
+        private void ValidateVertex(T v)
+#pragma warning restore IDE0060 // Remove unused parameter
         {
-            //if (v < 0 || v >= V)
-            //    throw new Exception("vertex " + v + " is not between 0 and " + (V - 1));
         }
 
         /**
@@ -155,10 +154,10 @@ namespace Algorithms
          * @param  w the head vertex
          * @throws IllegalArgumentException unless both {@code 0 <= v < V} and {@code 0 <= w < V}
          */
-        public void addEdge(DirectedEdge<T> e)
+        public void AddEdge(DirectedEdge<T> e)
         {
-            validateVertex(e.From);
-            validateVertex(e.To);
+            ValidateVertex(e.From);
+            ValidateVertex(e.To);
             base.AddEdge(e);
         }
 
@@ -169,9 +168,9 @@ namespace Algorithms
          * @return the vertices adjacent from vertex {@code v} in this digraph, as an iterable
          * @throws Exception unless {@code 0 <= v < V}
          */
-        public IEnumerable<T> adj(T v)
+        public IEnumerable<T> Adj(T v)
         {
-            validateVertex(v);
+            ValidateVertex(v);
             return Successors(v);
         }
 
@@ -183,10 +182,10 @@ namespace Algorithms
          * @return the outdegree of vertex {@code v}               
          * @throws Exception unless {@code 0 <= v < V}
          */
-        public int outdegree(T v)
+        public int Outdegree(T v)
         {
-            validateVertex(v);
-            return adj(v).Count();
+            ValidateVertex(v);
+            return Adj(v).Count();
         }
 
         /**
@@ -197,9 +196,9 @@ namespace Algorithms
          * @return the indegree of vertex {@code v}               
          * @throws IllegalArgumentException unless {@code 0 <= v < V}
          */
-        public int indegree(T v)
+        public int Indegree(T v)
         {
-            validateVertex(v);
+            ValidateVertex(v);
             return Predecessors(v).Count();
         }
 
@@ -208,12 +207,12 @@ namespace Algorithms
          *
          * @return the reverse of the digraph
          */
-        public Digraph<T> reverse()
+        public Digraph<T> Reverse()
         {
             Digraph<T> reverse = new Digraph<T>();
             foreach (T v in Vertices)
             {
-                object nv = v.Clone();
+                _ = v.Clone();
             }
             foreach (T v in Vertices)
             {
@@ -238,7 +237,7 @@ namespace Algorithms
             foreach (T v in Vertices)
             {
                 s.Append(string.Format("{0}: ", v));
-                foreach (T w in adj(v))
+                foreach (T w in Adj(v))
                 {
                     s.Append(string.Format("{0} ", w));
                 }
@@ -252,7 +251,7 @@ namespace Algorithms
          *
          * @param args the command-line arguments
          */
-        public static void test()
+        public static void Test()
         {
             string input = $@"
 13

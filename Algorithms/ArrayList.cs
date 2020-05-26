@@ -28,7 +28,7 @@ namespace Algorithms
 		public override bool Equals(object o)
 		{
 			return o == this
-				|| (o is List<T> && this.Equals((List<T>)o));
+				|| (o is List<T> list && Equals(list));
 		}
 
 

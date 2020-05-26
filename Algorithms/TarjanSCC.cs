@@ -8,8 +8,6 @@ namespace Algorithms
     public class TarjanSCC<T, E>
         where E : IEdge<T>
     {
-        private readonly Dictionary<T, bool> visited = new Dictionary<T, bool>();
-        private readonly Dictionary<T, bool> closed = new Dictionary<T, bool>();
         private readonly IGraph<T, E> _graph;
         private int index = 0; // number of nodes
         private readonly Stack<T> S = new Stack<T>();
@@ -32,7 +30,6 @@ namespace Algorithms
         public IDictionary<T, IEnumerable<T>> Compute()
         {
             index = 0;
-            Stack<T> stack = new Stack<T>();
             foreach (var v in _graph.Vertices)
             {
                 if (Index[v] < 0)

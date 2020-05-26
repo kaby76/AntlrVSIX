@@ -8,8 +8,6 @@ namespace Algorithms
     public class TarjanNoBackEdges<T, E> : IEnumerable<T>
         where E : IEdge<T>
     {
-        private readonly Dictionary<T, bool> visited = new Dictionary<T, bool>();
-        private readonly Dictionary<T, bool> closed = new Dictionary<T, bool>();
         private readonly IGraph<T, E> _graph;
         private int index = 0; // number of nodes
         private readonly Stack<T> S = new Stack<T>();

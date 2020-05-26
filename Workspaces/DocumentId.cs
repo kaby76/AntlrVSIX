@@ -37,9 +37,7 @@
 
         public bool Equals(DocumentId other)
         {
-            return
-                !ReferenceEquals(other, null) &&
-                Id == other.Id;
+            return other is object && Id == other.Id;
         }
 
         public override int GetHashCode()

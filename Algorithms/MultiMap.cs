@@ -72,12 +72,12 @@ namespace Algorithms.Utils
         public void Add(K key)
         {
             //System.Console.WriteLine("In Add of MultiMap " + key);
-            if (the_list.TryGetValue(key, out List<V> valueList))
+            if (the_list.TryGetValue(key, out _))
             {
             }
             else
             {
-                valueList = new List<V>();
+                List<V> valueList = new List<V>();
                 the_list.Add(key, valueList);
             }
         }

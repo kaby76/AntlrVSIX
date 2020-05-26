@@ -171,7 +171,7 @@ namespace Algorithms
                 // Convert ordered pairs into ordered list, making sure
                 // the pairs define a total order.
                 bool first = true;
-                SetElementType min = default(SetElementType);
+                SetElementType min = default;
                 foreach (Tuple<SetElementType, SetElementType> t in relation)
                 {
                     // Find least set element.

@@ -98,7 +98,7 @@ namespace Algorithms
          *
          * @param args the command-line arguments
          */
-        public static void test()
+        public static void Test()
         {
             DirectedEdge<int> e = new DirectedEdge<int>(12, 34, 5.67);
             System.Console.Error.WriteLine(e);

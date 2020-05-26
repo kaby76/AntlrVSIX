@@ -22,7 +22,7 @@ namespace Utils
             _items = new List<T>(_size);
             for (int i = 0; i < _size; ++i)
             {
-                _items.Add(default(T));
+                _items.Add(default);
             }
         }
 
@@ -33,7 +33,7 @@ namespace Utils
             _items = new List<T>(_size);
             for (int i = 0; i < _size; ++i)
             {
-                _items.Add(default(T));
+                _items.Add(default);
             }
 
             _items[_top++] = value;
@@ -46,7 +46,7 @@ namespace Utils
             _items = new List<T>(_size);
             for (int i = 0; i < _size; ++i)
             {
-                _items.Add(default(T));
+                _items.Add(default);
             }
 
             _items.AddRange(other._items);
@@ -68,20 +68,20 @@ namespace Utils
                 _items.Capacity = _size;
                 for (int i = old; i < _size; ++i)
                 {
-                    _items.Add(default(T));
+                    _items.Add(default);
                 }
             }
             if (_top > 0)
             {
                 int index = _top - 1;
                 T cur = _items[index];
-                _items[index] = default(T);
-                _top = _top - 1;
+                _items[index] = default;
+                _top -= 1;
                 return cur;
             }
             else
             {
-                return default(T);
+                return default;
             }
         }
 
@@ -100,7 +100,7 @@ namespace Utils
                 _items.Capacity = _size;
                 for (int i = old; i < _size; ++i)
                 {
-                    _items.Add(default(T));
+                    _items.Add(default);
                 }
             }
             if (_top > 0)
@@ -111,7 +111,7 @@ namespace Utils
             }
             else
             {
-                return default(T);
+                return default;
             }
         }
 
@@ -124,12 +124,12 @@ namespace Utils
                 _items.Capacity = _size;
                 for (int i = old; i < _size; ++i)
                 {
-                    _items.Add(default(T));
+                    _items.Add(default);
                 }
             }
             if (n >= _top)
             {
-                return default(T);
+                return default;
             }
 
             T cur = _items[n];
@@ -145,7 +145,7 @@ namespace Utils
                 _items.Capacity = _size;
                 for (int i = old; i < _size; ++i)
                 {
-                    _items.Add(default(T));
+                    _items.Add(default);
                 }
             }
             _items[_top++] = value;
@@ -162,7 +162,7 @@ namespace Utils
                     _items.Capacity = _size;
                     for (int i = old; i < _size; ++i)
                     {
-                        _items.Add(default(T));
+                        _items.Add(default);
                     }
                 }
                 _items[_top++] = t;
@@ -228,7 +228,7 @@ namespace Utils
             }
             else
             {
-                return default(T);
+                return default;
             }
         }
 

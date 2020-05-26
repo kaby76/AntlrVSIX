@@ -48,7 +48,7 @@ namespace Algorithms
             }
         }
 
-        public static void test()
+        public static void Test()
         {
             {
                 string input = @"

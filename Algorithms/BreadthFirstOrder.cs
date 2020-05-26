@@ -23,14 +23,14 @@
             bfsorder = new Queue<T>();
             foreach (T v in subset_vertices)
             {
-                order(graph, v);
+                Order(graph, v);
             }
 
             foreach (T v in graph.Vertices)
             {
                 if (!bfsorder.Contains(v))
                 {
-                    order(graph, v);
+                    Order(graph, v);
                 }
             }
 
@@ -40,7 +40,7 @@
             }    
         }
 
-        private void order(IGraph<T, E> G, T s)
+        private void Order(IGraph<T, E> G, T s)
         {
             if (bfsorder.Contains(s))
             {
@@ -64,7 +64,7 @@
             Dictionary<T, T> pi = new Dictionary<T, T>();
             foreach (T v in G.Vertices)
             {
-                pi[v] = default(T);
+                pi[v] = default;
             }
 
             foreach (T u in G.Vertices)
@@ -73,12 +73,12 @@
                 {
                     color[u] = 0;
                     d[u] = int.MaxValue;
-                    pi[u] = default(T);
+                    pi[u] = default;
                 }
             }
             color[s] = 1;
             d[s] = 0;
-            pi[s] = default(T);
+            pi[s] = default;
             Q.Enqueue(s);
             while (Q.Count > 0)
             {
