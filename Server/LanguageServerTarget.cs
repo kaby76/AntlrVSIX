@@ -1733,9 +1733,9 @@
                 Document document = CheckDoc(new Uri(fn));
                 var code = document.Code;
                 List<LanguageServer.TextEdit> edits = new List<LanguageServer.TextEdit>();
-                diff_match_patch diff = new diff_match_patch();
-                List<Diff> diffs = diff.diff_main(code, new_code);
-                List<Patch> patch = diff.patch_make(diffs);
+                Diff_match_patch diff = new Diff_match_patch();
+                List<Diff> diffs = diff.Diff_main(code, new_code);
+                List<Patch> patch = diff.Patch_make(diffs);
                 {
                     // Start edit session.
                     int times = 0;

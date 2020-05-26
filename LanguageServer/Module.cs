@@ -882,9 +882,9 @@
                 ""
                     });
                 List<TextEdit> edits = new List<TextEdit>();
-                diff_match_patch diff = new diff_match_patch();
-                List<Diff> diffs = diff.diff_main(code, result);
-                List<Patch> patch = diff.patch_make(diffs);
+                Diff_match_patch diff = new Diff_match_patch();
+                List<Diff> diffs = diff.Diff_main(code, result);
+                List<Patch> patch = diff.Patch_make(diffs);
                 //patch.Reverse();
 
                 // Start edit session.
@@ -977,9 +977,9 @@
                 sb.Append(rest);
                 string new_code = sb.ToString();
                 List<TextEdit> edits = new List<TextEdit>();
-                diff_match_patch diff = new diff_match_patch();
-                List<Diff> diffs = diff.diff_main(code, new_code);
-                List<Patch> patch = diff.patch_make(diffs);
+                Diff_match_patch diff = new Diff_match_patch();
+                List<Diff> diffs = diff.Diff_main(code, new_code);
+                List<Patch> patch = diff.Patch_make(diffs);
                 int times = 0;
                 int delta = 0;
                 foreach (Patch p in patch)

@@ -155,7 +155,7 @@
         private List<List<Edge>> EnterState(Edge t)
         {
             int here = ++entry_value;
-            int index_on_transition = t._index_at_transition;
+            // unused int index_on_transition = t._index_at_transition;
             int token_index = t._index;
             ATNState state = t._to;
             IToken input_token = _input[token_index];
@@ -415,7 +415,7 @@
             return result;
         }
 
-        private HashSet<ATNState> closure(ATNState start)
+        private HashSet<ATNState> Closure(ATNState start)
         {
             if (start == null)
             {
@@ -442,10 +442,10 @@
                             {
                                 RuleTransition rule = (RuleTransition)transition;
                                 ATNState sub_state = rule.target;
-                                HashSet<ATNState> cl = closure(sub_state);
+                                HashSet<ATNState> cl = Closure(sub_state);
                                 if (cl.Where(s => _stop_states.Contains(s) && s.atn == sub_state.atn).Any())
                                 {
-                                    HashSet<ATNState> cl2 = closure(rule.followState);
+                                    HashSet<ATNState> cl2 = Closure(rule.followState);
                                     cl.UnionWith(cl2);
                                 }
                                 foreach (ATNState c in cl)
@@ -521,7 +521,7 @@
                 {
                     System.Console.Error.WriteLine("Getting closure of " + current_state.stateNumber);
                 }
-                HashSet<ATNState> c = closure(current_state);
+                HashSet<ATNState> c = Closure(current_state);
                 if (_log_closure)
                 {
                     System.Console.Error.WriteLine("closure " + string.Join(" ", c.Select(s => s.stateNumber)));
