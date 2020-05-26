@@ -219,9 +219,10 @@ namespace LanguageServer
             return sb.ToString();
         }
 
-        public static Dictionary<TerminalNodeImpl, string> TextToLeftOfLeaves(CommonTokenStream stream, IParseTree tree)
+        public static (Dictionary<TerminalNodeImpl, string>, List<string>) TextToLeftOfLeaves(CommonTokenStream stream, IParseTree tree)
         {
             var result = new Dictionary<TerminalNodeImpl, string>();
+            var result2 = new List<string>();
             Stack<IParseTree> stack = new Stack<IParseTree>();
             stack.Push(tree);
             while (stack.Any())
@@ -235,12 +236,12 @@ namespace LanguageServer
                         var p2 = stream.GetHiddenTokensToLeft(p1);
                         var p3 = TreeEdits.GetText(p2);
                         result.Add(nn, p3);
+                        result2.Add(nn.GetText());
                     }
                 }
                 else
                 {
-                    var p = n as ParserRuleContext;
-                    if (p == null)
+                    if (!(n is ParserRuleContext p))
                         continue;
                     if (p.children == null)
                         continue;
@@ -252,7 +253,7 @@ namespace LanguageServer
                     }
                 }
             }
-            return result;
+            return (result, result2);
         }
 
         public static IParseTree CopyTreeRecursive(IParseTree original, IParseTree parent, Dictionary<TerminalNodeImpl, string> text_to_left = null)
@@ -289,7 +290,7 @@ namespace LanguageServer
                 for (int i = 0; i < child_count; ++i)
                 {
                     var child = original.GetChild(i);
-                    CopyTreeRecursive(child, new_node);
+                    CopyTreeRecursive(child, new_node, text_to_left);
                 }
                 return new_node;
             }

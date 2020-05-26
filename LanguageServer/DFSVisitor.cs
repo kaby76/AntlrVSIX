@@ -23,16 +23,14 @@
 
                         if (node as TerminalNodeImpl != null)
                         {
-                            TerminalNodeImpl leaf = node as TerminalNodeImpl;
                         }
                         else
                         {
                             ParserRuleContext internal_node = node as ParserRuleContext;
                             int child_count = internal_node.children.Count;
-                            for (int i = node.ChildCount - 1; i >= 0; --i)
+                            for (int i = child_count - 1; i >= 0; --i)
                             {
                                 IParseTree o = internal_node.children[i];
-                                Type t = o.GetType();
                                 toVisit.Push(o);
                             }
                             continue;

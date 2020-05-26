@@ -913,9 +913,7 @@
             return result;
         }
 
-#pragma warning disable IDE0060
         public static Dictionary<string, string> RemoveUselessParserProductions(int pos, Document document)
-#pragma warning restore IDE0060
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
@@ -968,9 +966,7 @@
             return result;
         }
 
-#pragma warning disable IDE0060
         public static Dictionary<string, string> MoveStartRuleToTop(int pos, Document document)
-#pragma warning restore IDE0060
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
@@ -1228,9 +1224,7 @@
             return result;
         }
 
-#pragma warning disable IDE0060
         public static Dictionary<string, string> SplitCombineGrammars(int pos, Document document, bool split)
-#pragma warning restore IDE0060
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
@@ -2238,16 +2232,18 @@
             //
 
             // Get all intertoken text immediately for source reconstruction.
-            var text_before = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
+            var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
+            
             string generated_name = GenerateNewName(rule, pd_parser);
 
             {
                 ANTLRv4Parser.ParserRuleSpecContext new_a_rule = new ANTLRv4Parser.ParserRuleSpecContext(null, 0);
                 {
                     var r = rule as ANTLRv4Parser.ParserRuleSpecContext;
-                    var lhs = r.RULE_REF()?.GetText();
+                    var old_lhs = r.RULE_REF();
+                    var lhs = old_lhs.GetText();
                     {
-                        TreeEdits.CopyTreeRecursive(r.RULE_REF(), new_a_rule);
+                        var new_lhs = TreeEdits.CopyTreeRecursive(old_lhs, new_a_rule, text_before);
                     }
                     // Now have "A"
                     {
@@ -2274,7 +2270,7 @@
                     }
                     // Now have "A : <rb <ral> > ;"
                     {
-                        TreeEdits.CopyTreeRecursive(r.exceptionGroup(), new_a_rule);
+                        TreeEdits.CopyTreeRecursive(r.exceptionGroup(), new_a_rule, text_before);
                     }
                     // Now have "A : <rb <ral> > ; <eg>"
                     bool first = true;
@@ -2305,7 +2301,7 @@
                         new_alt.Parent = l_alt;
                         foreach (var element in alt.element())
                         {
-                            TreeEdits.CopyTreeRecursive(element, new_alt);
+                            TreeEdits.CopyTreeRecursive(element, new_alt, text_before);
                         }
                         var token = new CommonToken(ANTLRv4Lexer.RULE_REF) { Line = -1, Column = -1, Text = generated_name };
                         var new_rule_ref = new TerminalNodeImpl(token);
@@ -2331,6 +2327,8 @@
                     {
                         var token = new CommonToken(ANTLRv4Parser.RULE_REF) { Line = -1, Column = -1, Text = generated_name };
                         var new_rule_ref = new TerminalNodeImpl(token);
+                        text_before.Add(new_rule_ref,
+                            System.Environment.NewLine + System.Environment.NewLine);
                         new_ap_rule.AddChild(new_rule_ref);
                         new_rule_ref.Parent = new_ap_rule;
                     }
@@ -2359,7 +2357,7 @@
                     }
                     // Now have "A : <rb <ral> > ;"
                     {
-                        TreeEdits.CopyTreeRecursive(r.exceptionGroup(), new_a_rule);
+                        TreeEdits.CopyTreeRecursive(r.exceptionGroup(), new_a_rule, text_before);
                     }
                     // Now have "A' : <rb <ral> > ; <eg>"
                     bool first = true;
@@ -2396,7 +2394,7 @@
                                 first2 = false;
                                 continue;
                             }
-                            TreeEdits.CopyTreeRecursive(element, new_alt);
+                            TreeEdits.CopyTreeRecursive(element, new_alt, text_before);
                         }
                         var token = new CommonToken(ANTLRv4Parser.RULE_REF) { Line = -1, Column = -1, Text = generated_name };
                         var new_rule_ref = new TerminalNodeImpl(token);
@@ -3371,7 +3369,7 @@
             }
 
             // Get all intertoken text immediately for source reconstruction.
-            var text_before = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
+            var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
 
             // Substitute RHS into all applied occurences.
             foreach (var location in locations)
@@ -3624,7 +3622,7 @@
             bool replace_all = sym_start == sym_end && sym_start.Parent is ANTLRv4Parser.ParserRuleSpecContext;
 
             // Get all intertoken text immediately for source reconstruction.
-            var text_before = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
+            var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
 
             if (replace_all)
             {
@@ -4210,7 +4208,7 @@
             bool replace_all = true;
 
             // Get all intertoken text immediately for source reconstruction.
-            var text_before = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
+            var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
 
             if (replace_all)
             {
