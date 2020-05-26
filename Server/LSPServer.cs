@@ -188,7 +188,7 @@
 #pragma warning restore VSTHRD110
         }
 
-        public bool ApplyEdit(Dictionary<string, TextEdit[]> changes)
+        public bool ApplyEdit(string transaction_name, Dictionary<string, TextEdit[]> changes)
         {
             WorkspaceEdit edit = new WorkspaceEdit()
             {
@@ -196,7 +196,7 @@
             };
             ApplyWorkspaceEditParams parameter = new ApplyWorkspaceEditParams
             {
-                Label = "Random change",
+                Label = transaction_name,
                 Edit = edit
             };
             _ = rpc.InvokeAsync<ApplyWorkspaceEditResponse>(Methods.WorkspaceApplyEditName, parameter);

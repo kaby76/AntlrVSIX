@@ -1273,7 +1273,7 @@
                     System.Console.Error.WriteLine("");
                 }
                 var s = LanguageServer.Transform.ReplaceLiterals(pos, document);
-                ApplyChanges(s);
+                ApplyChanges("Replace String Literals", s);
             }
             catch (LanguageServerException e)
             {
@@ -1301,7 +1301,7 @@
                     System.Console.Error.WriteLine("");
                 }
                 var s = LanguageServer.Transform.RemoveUselessParserProductions(pos, document);
-                ApplyChanges(s);
+                ApplyChanges("Remove Useless Rules", s);
             }
             catch (LanguageServerException e)
             {
@@ -1329,7 +1329,7 @@
                     System.Console.Error.WriteLine("");
                 }
                 var s = LanguageServer.Transform.MoveStartRuleToTop(pos, document);
-                ApplyChanges(s);
+                ApplyChanges("Move Start Rule To Top", s);
             }
             catch (LanguageServerException e)
             {
@@ -1355,7 +1355,17 @@
                     System.Console.Error.WriteLine(arg.ToString());
                 }
                 var s = LanguageServer.Transform.ReorderParserRules(document, type);
-                ApplyChanges(s);
+                string na = "";
+                switch (type)
+                {
+                    case LspAntlr.ReorderType.Alphabetically:
+                        na = "Alphabetically"; break;
+                    case LspAntlr.ReorderType.BFS:
+                        na = "BFS"; break;
+                    case LspAntlr.ReorderType.DFS:
+                        na = "DFS"; break;
+                }
+                ApplyChanges("Reorder Parser Rules " + na, s);
             }
             catch (LanguageServerException e)
             {
@@ -1438,7 +1448,7 @@
                     System.Console.Error.WriteLine("");
                 }
                 var s = Transform.ConvertRecursionToKleeneOperator(pos, document);
-                ApplyChanges(s);
+                ApplyChanges("Convert to Kleene Syntax", s);
             }
             catch (LanguageServerException e)
             {
@@ -1467,7 +1477,7 @@
                     System.Console.Error.WriteLine("");
                 }
                 var s = Transform.EliminateDirectLeftRecursion(pos, document);
-                ApplyChanges(s);
+                ApplyChanges("Elimiate Direct Left Recursion", s);
             }
             catch (LanguageServerException e)
             {
@@ -1495,7 +1505,7 @@
                     System.Console.Error.WriteLine("");
                 }
                 var s = Transform.EliminateIndirectLeftRecursion(pos, document);
-                ApplyChanges(s);
+                ApplyChanges("Elimiate Indirect Left Recursion", s);
             }
             catch (LanguageServerException e)
             {
@@ -1526,7 +1536,7 @@
                     {
                         { document.FullPath, new_code }
                     };
-                    ApplyChanges(s);
+                    ApplyChanges("Eliminate Keywords", s);
                 }
             }
             catch (LanguageServerException e)
@@ -1553,7 +1563,7 @@
                     System.Console.Error.WriteLine(arg.ToString());
                 }
                 var s = Transform.AddLexerRulesForStringLiterals(document);
-                ApplyChanges(s);
+                ApplyChanges("Replace String Literals", s);
             }
             catch (LanguageServerException e)
             {
@@ -1578,7 +1588,7 @@
                     System.Console.Error.WriteLine(arg.ToString());
                 }
                 var s = Transform.SortModes(document);
-                ApplyChanges(s);
+                ApplyChanges("Sort Modes", s);
             }
             catch (LanguageServerException e)
             {
@@ -1607,7 +1617,7 @@
                     System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
                 }
                 var s = Transform.Unfold(pos, document);
-                ApplyChanges(s);
+                ApplyChanges("Unfold", s);
             }
             catch (LanguageServerException e)
             {
@@ -1638,7 +1648,7 @@
                     System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
                 }
                 var s = Transform.Fold(start, end, document);
-                ApplyChanges(s);
+                ApplyChanges("Fold", s);
             }
             catch (LanguageServerException e)
             {
@@ -1669,7 +1679,7 @@
                     System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
                 }
                 var s = Transform.RemoveUselessParentheses(start, end, document);
-                ApplyChanges(s);
+                ApplyChanges("Remove Useless Parentheses", s);
             }
             catch (LanguageServerException e)
             {
@@ -1709,7 +1719,7 @@
             }
         }
 
-        void ApplyChanges(Dictionary<string, string> ch)
+        void ApplyChanges(string transaction_name, Dictionary<string, string> ch)
         {
             if (!ch.Any())
             {
@@ -1813,7 +1823,7 @@
             }
             // Recompile only after every single change everywhere is in.
             _ = LanguageServer.Module.Compile();
-            server.ApplyEdit(a);
+            server.ApplyEdit(transaction_name, a);
         }
     }
 }

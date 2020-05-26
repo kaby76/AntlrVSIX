@@ -961,8 +961,10 @@
             string rest = old_code.Substring(previous);
             sb.Append(rest);
             string new_code = sb.ToString();
-            result.Add(document.FullPath, new_code);
-
+            if (new_code != pd_parser.Code)
+            {
+                result.Add(pd_parser.FullFileName, new_code);
+            }
             return result;
         }
 
@@ -1042,8 +1044,10 @@
             string rest = old_code.Substring(previous);
             sb.Append(rest);
             string new_code = sb.ToString();
-            result.Add(document.FullPath, new_code);
-
+            if (new_code != pd_parser.Code)
+            {
+                result.Add(document.FullPath, new_code);
+            }
             return result;
         }
 
@@ -1217,8 +1221,10 @@
             //string rest = old_code.Substring(previous);
             //sb.Append(rest);
             string new_code = sb.ToString();
-            result.Add(document.FullPath, new_code);
-
+            if (new_code != pd_parser.Code)
+            {
+                result.Add(document.FullPath, new_code);
+            }
             return result;
         }
 
@@ -2042,11 +2048,7 @@
                 var stop = tb.StopIndex + 1;
                 return start <= index && index < stop;
             }).FirstOrDefault();
-            if (it == null)
-            {
-                return result;
-            }
-            rule = it;
+            rule = it ?? throw new LanguageServerException("A parser rule is not selected. Please select one first.");
 
             // We are now at the rule that the user identified to eliminate direct
             // left recursion.
@@ -2056,11 +2058,11 @@
             bool has_direct_right_recursion = HasDirectRightRecursion(rule);
             if (!(has_direct_left_recursion || has_direct_right_recursion))
             {
-                return result;
+                throw new LanguageServerException("The rule selected does not have direct left or right recursion. Please select one first.");
             }
             else if (has_direct_left_recursion && has_direct_right_recursion)
             {
-                return result;
+                throw new LanguageServerException("The rule selected has both direct left or right recursion. Please select one first.");
             }
 
             // Has direct recursion.
@@ -2796,9 +2798,7 @@
                 {
                     result.Add(document.FullPath, new_code);
                 }
-
             }
-
             return result;
         }
 
@@ -3240,8 +3240,10 @@
             //string rest = old_code.Substring(previous);
             //sb.Append(rest);
             string new_code = sb.ToString();
-            result.Add(document.FullPath, new_code);
-
+            if (new_code != pd_parser.Code)
+            {
+                result.Add(document.FullPath, new_code);
+            }
             return result;
         }
 
