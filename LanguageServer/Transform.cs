@@ -654,9 +654,7 @@
             }
         }
 
-#pragma warning disable IDE0060
         public static Dictionary<string, string> ReplaceLiterals(int index, Document document)
-#pragma warning restore IDE0060
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
@@ -708,7 +706,7 @@
                 }
             }
 
-            // Find rewrite rules, i.e., string literal to symbol name.
+            // Find rewrite rules, i.e., string literal to string symbol name.
             Dictionary<string, string> subs = new Dictionary<string, string>();
             foreach (string f in read_files)
             {
@@ -868,9 +866,11 @@
                     continue;
                 }
                 AntlrGrammarDetails pd_whatever = ParserDetailsFactory.Create(whatever_document) as AntlrGrammarDetails;
-                StringBuilder sb = new StringBuilder();
-                int pre = 0;
-                Reconstruct(sb, pd_parser.TokStream, pd_parser.ParseTree, ref pre,
+
+                // Get all intertoken text immediately for source reconstruction.
+                var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_whatever.TokStream, pd_whatever.ParseTree);
+
+                TreeEdits.Replace(pd_whatever.ParseTree,
                     n =>
                     {
                         if (!(n is TerminalNodeImpl))
@@ -880,7 +880,7 @@
                         var t = n as TerminalNodeImpl;
                         if (t.Payload.Type != ANTLRv4Lexer.STRING_LITERAL)
                         {
-                            return t.GetText();
+                            return null;
                         }
                         bool no = false;
                         // Make sure this literal does not appear in lexer rule.
@@ -894,20 +894,26 @@
                         }
                         if (no)
                         {
-                            return t.GetText();
+                            return null;
                         }
-                        var r = t.GetText();
-                        subs.TryGetValue(r, out string value);
-                        if (value != null)
+                        subs.TryGetValue(t.GetText(), out string value);
+                        if (value == null)
                         {
-                            r = value;
+                            return null;
                         }
-                        return r;
+                        var token = new CommonToken(ANTLRv4Lexer.TOKEN_REF) { Line = -1, Column = -1, Text = value };
+                        var new_sym = new TerminalNodeImpl(token);
+                        text_before.TryGetValue(t, out string v);
+                        if (v != null)
+                            text_before.Add(new_sym, v);
+                        return new_sym;
                     });
+                StringBuilder sb = new StringBuilder();
+                TreeEdits.Reconstruct(sb, pd_whatever.ParseTree, text_before);
                 var new_code = sb.ToString();
                 if (new_code != pd_parser.Code)
                 {
-                    result.Add(f, new_code);
+                    result.Add(whatever_document.FullPath, new_code);
                 }
             }
             return result;
