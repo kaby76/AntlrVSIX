@@ -1,6 +1,7 @@
 # AntlrVSIX
 
-AntlrVSIX is an extension for Visual Studio 2019 to support editing and refactoring of Antlr v4 grammars.
+AntlrVSIX is an extension for Visual Studio 2019 to support editing, analysis, refactoring, and conversion
+of Antlr v4 grammars.
 It is implemented using Microsoft's [Language Server Protocol (LSP)](https://langserver.org/) 
 [client](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Client/) and
 [server](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/) APIs,
@@ -12,6 +13,13 @@ but I am deferring further development of the client until the server is more or
 Supported are colorized tagging, hover, go to def, find all refs,
 replace, command completion, reformat, and go to visitor/listener. But, there is so much more to Antlrvsix
 than these basic LSP commands.
+
+## Analysis
+
+(This is not implemented yet.)
+
+Antlrvsix will make recommendations on what you should change.
+For performance, link to a special version of the Antlr library to perform analysis.
 
 ## Refactoring
 
@@ -38,16 +46,9 @@ Some of the refactorings implemented, or planned, include:
 * Fold.
 * Remove useless parentheses.
 
-## Conversion tools
+## Conversion
 
 * Bison import.
-
-## Analysis
-
-(This is not implemented yet.)
-
-Antlrvsix will make recommendations on what you should change.
-For performance, link to a special version of the Antlr library to perform analysis.
 
 ---------
 
