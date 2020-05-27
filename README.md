@@ -18,11 +18,29 @@ than these basic LSP commands.
 Refactoring helps to make grammars cleaner (reformatting),
 more readable (reducing the length of the RHS of a rule),
 and more efficient (reducing the number of non-terminals) for Antlr.
-Some of the refactorings implemented, or planned, include
-string literal folding, parser rule orderings,
-useless rule elimination, split combined grammars, combine split grammars,
-Bison import, removal of indirect left recursion,
-rule folding, rule unfolding, rule packing.
+Some of the refactorings implemented, or planned, include:
+
+* Replace string literals in parser with lexer symbols.
+* Remove useless parser rules.
+* Move start rule to top.
+* Reorder parser rules alphabetically.
+* Reorder parser rules DFS from start rule.
+* Reorder parser rules BFS from start rule.
+* Split combined grammars.
+* Combine splitted grammars.
+* Replace direct left recursion with right recursion.
+* Replace indirect left recursion with right recursion.
+* Replace parser rule symbols that conflict with Antlr keywords.
+* Add lexer rules for string literals in parser.
+* Sort lexer modes alphabetically.
+* Replace direct left/right recursion with Kleene operator.
+* Unfold.
+* Fold.
+* Remove useless parentheses.
+
+## Conversion tools
+
+* Bison import.
 
 ## Analysis
 
