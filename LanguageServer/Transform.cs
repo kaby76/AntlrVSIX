@@ -1093,106 +1093,8 @@
 
             // Find new order of rules.
             string old_code = document.Code;
-            List<Pair<int, int>> reorder = new List<Pair<int, int>>();
-            if (type == LspAntlr.ReorderType.DFS)
-            {
-                Digraph<string> graph = new Digraph<string>();
-                foreach (TableOfRules.Row r in table.rules)
-                {
-                    if (!r.is_parser_rule)
-                    {
-                        continue;
-                    }
-
-                    graph.AddVertex(r.LHS);
-                }
-                foreach (TableOfRules.Row r in table.rules)
-                {
-                    if (!r.is_parser_rule)
-                    {
-                        continue;
-                    }
-
-                    List<string> j = r.RHS;
-                    //j.Reverse();
-                    foreach (string rhs in j)
-                    {
-                        TableOfRules.Row sym = table.rules.Where(t => t.LHS == rhs).FirstOrDefault();
-                        if (!sym.is_parser_rule)
-                        {
-                            continue;
-                        }
-
-                        DirectedEdge<string> e = new DirectedEdge<string>(r.LHS, rhs);
-                        graph.AddEdge(e);
-                    }
-                }
-                List<string> starts = new List<string>();
-                foreach (TableOfRules.Row r in table.rules)
-                {
-                    if (r.is_parser_rule && r.is_start)
-                    {
-                        starts.Add(r.LHS);
-                    }
-                }
-                Algorithms.DepthFirstOrder<string, DirectedEdge<string>> sort = new DepthFirstOrder<string, DirectedEdge<string>>(graph, starts);
-                List<string> ordered = sort.ToList();
-                foreach (string s in ordered)
-                {
-                    TableOfRules.Row row = table.rules[table.nt_to_index[s]];
-                    reorder.Add(new Pair<int, int>(row.start_index, row.end_index));
-                }
-            }
-            else if (type == LspAntlr.ReorderType.BFS)
-            {
-                Digraph<string> graph = new Digraph<string>();
-                foreach (TableOfRules.Row r in table.rules)
-                {
-                    if (!r.is_parser_rule)
-                    {
-                        continue;
-                    }
-
-                    graph.AddVertex(r.LHS);
-                }
-                foreach (TableOfRules.Row r in table.rules)
-                {
-                    if (!r.is_parser_rule)
-                    {
-                        continue;
-                    }
-
-                    List<string> j = r.RHS;
-                    //j.Reverse();
-                    foreach (string rhs in j)
-                    {
-                        TableOfRules.Row sym = table.rules.Where(t => t.LHS == rhs).FirstOrDefault();
-                        if (!sym.is_parser_rule)
-                        {
-                            continue;
-                        }
-
-                        DirectedEdge<string> e = new DirectedEdge<string>(r.LHS, rhs);
-                        graph.AddEdge(e);
-                    }
-                }
-                List<string> starts = new List<string>();
-                foreach (TableOfRules.Row r in table.rules)
-                {
-                    if (r.is_parser_rule && r.is_start)
-                    {
-                        starts.Add(r.LHS);
-                    }
-                }
-                Algorithms.BreadthFirstOrder<string, DirectedEdge<string>> sort = new BreadthFirstOrder<string, DirectedEdge<string>>(graph, starts);
-                List<string> ordered = sort.ToList();
-                foreach (string s in ordered)
-                {
-                    TableOfRules.Row row = table.rules[table.nt_to_index[s]];
-                    reorder.Add(new Pair<int, int>(row.start_index, row.end_index));
-                }
-            }
-            else if (type == LspAntlr.ReorderType.Alphabetically)
+            List<IParseTree> reorder = new List<IParseTree>();
+            if (type == LspAntlr.ReorderType.Alphabetically)
             {
                 List<string> ordered = table.rules
                     .Where(r => r.is_parser_rule)
@@ -1201,46 +1103,105 @@
                 foreach (string s in ordered)
                 {
                     TableOfRules.Row row = table.rules[table.nt_to_index[s]];
-                    reorder.Add(new Pair<int, int>(row.start_index, row.end_index));
+                    reorder.Add(row.rule);
                 }
             }
             else
             {
+                Digraph<string> graph = new Digraph<string>();
+                foreach (TableOfRules.Row r in table.rules)
+                {
+                    if (!r.is_parser_rule)
+                    {
+                        continue;
+                    }
+                    graph.AddVertex(r.LHS);
+                }
+                foreach (TableOfRules.Row r in table.rules)
+                {
+                    if (!r.is_parser_rule)
+                    {
+                        continue;
+                    }
+                    List<string> j = r.RHS;
+                    //j.Reverse();
+                    foreach (string rhs in j)
+                    {
+                        TableOfRules.Row sym = table.rules.Where(t => t.LHS == rhs).FirstOrDefault();
+                        if (!sym.is_parser_rule)
+                        {
+                            continue;
+                        }
+
+                        DirectedEdge<string> e = new DirectedEdge<string>(r.LHS, rhs);
+                        graph.AddEdge(e);
+                    }
+                }
+                List<string> starts = new List<string>();
+                foreach (TableOfRules.Row r in table.rules)
+                {
+                    if (r.is_parser_rule && r.is_start)
+                    {
+                        starts.Add(r.LHS);
+                    }
+                }
+                List<string> ordered;
+                if (type == LspAntlr.ReorderType.DFS)
+                {
+                    Algorithms.DepthFirstOrder<string, DirectedEdge<string>> sort = new DepthFirstOrder<string, DirectedEdge<string>>(graph, starts);
+                    ordered = sort.ToList();
+                }
+                else if (type == LspAntlr.ReorderType.BFS)
+                {
+                    Algorithms.BreadthFirstOrder<string, DirectedEdge<string>> sort = new BreadthFirstOrder<string, DirectedEdge<string>>(graph, starts);
+                    ordered = sort.ToList();
+                }
+                else
+                {
+                    return result;
+                }
+                foreach (string s in ordered)
+                {
+                    TableOfRules.Row row = table.rules[table.nt_to_index[s]];
+                    reorder.Add(row.rule);
+                }
+            }
+            foreach (TableOfRules.Row r in table.rules)
+            {
+                if (r.is_parser_rule) continue;
+                reorder.Add(r.rule);
+            }
+            bool has_new_order = false;
+            for (int i = 0; i < table.rules.Count; ++i)
+            {
+                TableOfRules.Row r = table.rules[i];
+                if (reorder[i] != r.rule)
+                {
+                    has_new_order = true;
+                    break;
+                }
+            }
+            if (!has_new_order)
+            {
+                // No changes, no error.
                 return result;
             }
 
-            StringBuilder sb = new StringBuilder();
-            int previous = 0;
-            {
-                int index_start = table.rules[0].start_index;
-                int len = 0;
-                string pre = old_code.Substring(previous, index_start - previous);
-                sb.Append(pre);
-                previous = index_start + len;
-            }
-            foreach (Pair<int, int> l in reorder)
-            {
-                int index_start = l.a;
-                int len = l.b - l.a;
-                string add = old_code.Substring(index_start, len);
-                sb.Append(add);
-            }
-            // Now add all non-parser rules.
-            foreach (TableOfRules.Row r in table.rules)
-            {
-                if (r.is_parser_rule)
-                {
-                    continue;
-                }
+            // Get all intertoken text immediately for source reconstruction.
+            var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
 
-                int index_start = r.start_index;
-                int len = r.end_index - r.start_index;
-                string add = old_code.Substring(index_start, len);
-                sb.Append(add);
+            ANTLRv4Parser.RulesContext rules;
+            {
+                var first = reorder.First();
+                var rule = first as ANTLRv4Parser.ParserRuleSpecContext;
+                var rs = rule.Parent as ANTLRv4Parser.RuleSpecContext;
+                rules = rs.Parent as ANTLRv4Parser.RulesContext;
+                rules.children = reorder.Select(t => t.Parent).ToArray();
             }
-            //string rest = old_code.Substring(previous);
-            //sb.Append(rest);
-            string new_code = sb.ToString();
+
+            StringBuilder sb = new StringBuilder();
+            TreeEdits.Reconstruct(sb, pd_parser.ParseTree, text_before);
+            var new_code = sb.ToString();
             if (new_code != pd_parser.Code)
             {
                 result.Add(document.FullPath, new_code);
