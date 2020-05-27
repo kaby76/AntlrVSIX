@@ -94,7 +94,8 @@ Experimental Hive for Visual Studio](https://docs.microsoft.com/en-us/visualstud
 Microsoft recommends using CreateExpInstance.exe.
 Unfortunately, I've found CreateExpInstance doesn't always work because it copies from
 previous hives stored under the AppData directory. It is often easier to
-just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio\16.0_*.
+just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio\16.0_*. I've included a
+Bash script "clean.sh" in the Antlrvsix source to clean out the build files so one can build from scratch.
 
 ## Planned for v8.0 (July 2020):
 
