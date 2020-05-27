@@ -942,32 +942,58 @@
             table.FindPartitions();
             table.FindStartRules();
 
-            List<Pair<int, int>> deletions = new List<Pair<int, int>>();
+            // Get all intertoken text immediately for source reconstruction.
+            var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
+
+            List<IParseTree> deletions = new List<IParseTree>();
             foreach (TableOfRules.Row r in table.rules)
             {
                 if (r.is_parser_rule && r.is_used == false)
                 {
-                    deletions.Add(new Pair<int, int>(r.start_index, r.end_index));
+                    deletions.Add(r.rule);
                 }
             }
-            deletions = deletions.OrderBy(p => p.a).ThenBy(p => p.b).ToList();
-            StringBuilder sb = new StringBuilder();
-            int previous = 0;
-            string old_code = document.Code;
-            foreach (Pair<int, int> l in deletions)
+            if (! deletions.Any())
             {
-                int index_start = l.a;
-                int len = l.b - l.a;
-                string pre = old_code.Substring(previous, index_start - previous);
-                sb.Append(pre);
-                previous = index_start + len;
+                return result;
             }
-            string rest = old_code.Substring(previous);
-            sb.Append(rest);
-            string new_code = sb.ToString();
+
+            ANTLRv4Parser.RulesContext rules;
+            {
+                var first = deletions.First();
+                var rule = first as ANTLRv4Parser.ParserRuleSpecContext;
+                var rs = rule.Parent as ANTLRv4Parser.RuleSpecContext;
+                rules = rs.Parent as ANTLRv4Parser.RulesContext;
+            }
+
+            for (int i = rules.ChildCount - 1; i >= 0; --i)
+            {
+                if (!deletions.Select(r => r.Parent as ANTLRv4Parser.RuleSpecContext).Contains(rules.children[i]))
+                    continue;
+                var rule = rules.children[i];
+                var first_token = TreeEdits.LeftMostToken(rule);
+                var prior_text = text_before[first_token];
+                var last_token = TreeEdits.RightMostToken(rule);
+                var next_token = TreeEdits.NextToken(last_token);
+                if (next_token == null) continue; // EOF
+                var next_token_prior_text = text_before[next_token];
+                text_before[next_token] = prior_text + next_token_prior_text;
+            }
+
+            for (int i = rules.ChildCount - 1; i >= 0; --i)
+            {
+                if (deletions.Select(r => r.Parent as ANTLRv4Parser.RuleSpecContext).Contains(rules.children[i]))
+                {
+                    rules.children.RemoveAt(i);
+                }
+            }
+
+            StringBuilder sb = new StringBuilder();
+            TreeEdits.Reconstruct(sb, pd_parser.ParseTree, text_before);
+            var new_code = sb.ToString();
             if (new_code != pd_parser.Code)
             {
-                result.Add(pd_parser.FullFileName, new_code);
+                result.Add(document.FullPath, new_code);
             }
             return result;
         }

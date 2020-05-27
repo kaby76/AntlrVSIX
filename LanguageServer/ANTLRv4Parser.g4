@@ -41,6 +41,7 @@ parser grammar ANTLRv4Parser;
 
 
 options { tokenVocab = ANTLRv4Lexer; }
+
 // The main entry point for parsing a v4 grammar.
 grammarSpec
    : DOC_COMMENT* grammarDecl prequelConstruct* rules modeSpec* EOF

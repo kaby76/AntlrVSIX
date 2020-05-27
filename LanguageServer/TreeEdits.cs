@@ -207,6 +207,34 @@ namespace LanguageServer
             return null;
         }
 
+        public static TerminalNodeImpl NextToken(TerminalNodeImpl leaf)
+        {
+            if (leaf == null)
+                throw new ArgumentNullException(nameof(leaf));
+            for (IParseTree v = leaf as IParseTree; v != null; v = v.Parent as IParseTree)
+            {
+                if (v == null) return null;
+                var p = v.Parent as ParserRuleContext;
+                int start = -1;
+                for (int i = 0; i < p.children.Count; ++i)
+                {
+                    if (p.children[i] == v && i + 1 < p.children.Count)
+                    {
+                        start = i + 1;
+                        break;
+                    }
+                }
+                if (start < 0) continue;
+                for (; start < p.children.Count; ++start)
+                {
+                    var found = LeftMostToken(p.children[start]);
+                    if (found != null)
+                        return found;
+                }
+            }
+            return null;
+        }
+
         public static string GetText(IList<IToken> list)
         {
             if (list == null)
