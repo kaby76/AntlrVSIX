@@ -43,7 +43,8 @@ I recommend that you use version 16.6 since it has the latest bug fixes.
 
 If you are building and running an Antlr application--as opposed to
 simply opening an Antlr grammar file to view--then you will want to set up the build environment. There is support for
-Antlr in C# and C++ programs using Antlr4BuildTasks. If you plan to build Antlrvsix, then you must set up the build environment
+Antlr C# programs using Antlr4BuildTasks. (Note, you can also develop Antlr programs for other languages that VS2019 supports.)
+If you plan to build Antlrvsix, then you must set up the build environment
 as described in the instructions of [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks).
 
 # Installation
@@ -54,8 +55,8 @@ You can install the extension in one of three ways:
 from a web browser, then executing the .vsix file from a Windows Explorer.
 * Download and install the extension within Visual Studio 2019 via "Extensions | Manage Extensions",
 search for Antlrvsix, and "install".
-* Build a copy of the .vsix from the sources and install. NB: I sometimes check in non-compilable code
-into the repository. This is because I am making huge changes the the code.
+* Build a copy of the .vsix from the sources and install. NB: I sometimes check in code
+into the repository that does not compile. This is because I am making huge changes the the code.
 Grab the source for a released version to be safe.
 
 # Documentation
