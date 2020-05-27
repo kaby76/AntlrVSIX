@@ -966,7 +966,7 @@
                 rules = rs.Parent as ANTLRv4Parser.RulesContext;
             }
 
-            for (int i = rules.ChildCount - 1; i >= 0; --i)
+            for (int i = 0; i < rules.ChildCount; --i)
             {
                 if (!deletions.Select(r => r.Parent as ANTLRv4Parser.RuleSpecContext).Contains(rules.children[i]))
                     continue;
@@ -1009,9 +1009,7 @@
             ParseTreeWalker.Default.Walk(lp, pd_parser.ParseTree);
             bool is_lexer = lp.Type == ExtractGrammarType.GrammarType.Lexer;
             if (is_lexer)
-            {
                 throw new LanguageServerException("A parser or combined grammar file is not selected. Please select one first.");
-            }
 
             // Consider only the target grammar.
             TableOfRules table = new TableOfRules(pd_parser, document);
@@ -1020,58 +1018,52 @@
             table.FindStartRules();
 
             string old_code = document.Code;
-            List<Pair<int, int>> move = new List<Pair<int, int>>();
+	        List<IParseTree> reorder = new List<IParseTree>();
             foreach (TableOfRules.Row r in table.rules)
             {
                 if (r.is_parser_rule && r.is_start == true)
                 {
-                    move.Add(new Pair<int, int>(r.start_index, r.end_index));
+                    reorder.Add(r.rule);
                 }
             }
-            move = move.OrderBy(p => p.a).ThenBy(p => p.b).ToList();
+	        foreach (TableOfRules.Row r in table.rules)
+	        {
+		        if (!reorder.Contains(r.rule))
+		        {
+			        reorder.Add(r.rule);
+		        }
+	        }
+	        bool has_new_order = false;
+	        for (int i = 0; i < table.rules.Count; ++i)
+	        {
+		        TableOfRules.Row r = table.rules[i];
+		        if (reorder[i] != r.rule)
+		        {
+			        has_new_order = true;
+			        break;
+		        }
+	        }
+	        if (!has_new_order)
+	        {
+                // No changes, no error.
+		        return result;
+	        }
 
-            FindFirstRule find_first_rule = new FindFirstRule();
-            ParseTreeWalker.Default.Walk(find_first_rule, pd_parser.ParseTree);
-            IParseTree first_rule = find_first_rule.First;
-            if (first_rule == null)
-            {
-                return result;
-            }
+            // Get all intertoken text immediately for source reconstruction.
+            var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
 
-            int insertion = first_rule.SourceInterval.a;
-            Antlr4.Runtime.IToken insertion_tok = pd_parser.TokStream.Get(insertion);
-            int insertion_ind = insertion_tok.StartIndex;
-            if (move.Count == 1 && move[0].a == insertion_ind)
-            {
-                return result;
-            }
+            ANTLRv4Parser.RulesContext rules;
+	        {
+		        var first = reorder.First();
+		        var rule = first as ANTLRv4Parser.ParserRuleSpecContext;
+		        var rs = rule.Parent as ANTLRv4Parser.RuleSpecContext;
+		        rules = rs.Parent as ANTLRv4Parser.RulesContext;
+                rules.children = reorder.Select(t => t.Parent).ToArray();
+	        }
+
             StringBuilder sb = new StringBuilder();
-            int previous = 0;
-            {
-                int index_start = insertion_ind;
-                int len = 0;
-                string pre = old_code.Substring(previous, index_start - previous);
-                sb.Append(pre);
-                previous = index_start + len;
-            }
-            foreach (Pair<int, int> l in move)
-            {
-                int index_start = l.a;
-                int len = l.b - l.a;
-                string add = old_code.Substring(index_start, len);
-                sb.Append(add);
-            }
-            foreach (Pair<int, int> l in move)
-            {
-                int index_start = l.a;
-                int len = l.b - l.a;
-                string pre = old_code.Substring(previous, index_start - previous);
-                sb.Append(pre);
-                previous = index_start + len;
-            }
-            string rest = old_code.Substring(previous);
-            sb.Append(rest);
-            string new_code = sb.ToString();
+            TreeEdits.Reconstruct(sb, pd_parser.ParseTree, text_before);
+            var new_code = sb.ToString();
             if (new_code != pd_parser.Code)
             {
                 result.Add(document.FullPath, new_code);

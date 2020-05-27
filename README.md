@@ -18,7 +18,8 @@ than these basic LSP commands.
 
 (This is not implemented yet.)
 
-Antlrvsix will make recommendations on what you should change.
+Antlrvsix will make recommendations on what you should change
+for readability and performance.
 For performance, link to a special version of the Antlr library to perform analysis.
 
 ## Refactoring
