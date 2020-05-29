@@ -2048,10 +2048,7 @@
             // Has direct recursion.
             rule = ReplaceWithKleeneRules(has_direct_left_recursion, has_direct_right_recursion, rule, text_before);
             {
-                // Now edit the file and return.
-                StringBuilder sb = new StringBuilder();
-                int pre = 0;
-                Reconstruct(sb, pd_parser.TokStream, pd_parser.ParseTree, ref pre,
+                TreeEdits.Replace(pd_parser.ParseTree,
                     x =>
                     {
                         if (x is ANTLRv4Parser.ParserRuleSpecContext)
@@ -2060,16 +2057,13 @@
                             var name = y.RULE_REF()?.GetText();
                             if (name == Lhs((ANTLRv4Parser.ParserRuleSpecContext)rule).GetText())
                             {
-                                StringBuilder sb2 = new StringBuilder();
-
-                                TreeOutput.OutputTree(rule, pd_parser.TokStream);
-
-                                Output(sb2, pd_parser.TokStream, rule);
-                                return sb2.ToString();
+                                return rule;
                             }
                         }
                         return null;
                     });
+                StringBuilder sb = new StringBuilder();
+                TreeEdits.Reconstruct(sb, pd_parser.ParseTree, text_before);
                 var new_code = sb.ToString();
                 if (new_code != pd_parser.Code)
                 {
