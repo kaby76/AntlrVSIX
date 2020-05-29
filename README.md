@@ -24,10 +24,14 @@ For performance, link to a special version of the Antlr library to perform analy
 
 ## Refactoring
 
-Refactoring helps to make grammars cleaner (reformatting),
+Antlrvsix provides a number of transformations that can help to make grammars cleaner (reformatting),
 more readable (reducing the length of the RHS of a rule),
 and more efficient (reducing the number of non-terminals) for Antlr.
-Some of the refactorings implemented, or planned, include:
+
+Some of these refactorings are very specific for Antlr due to the way
+the parser works, e.g., converting a prioritized chain of productions recognizing
+an arithmetic expression to a recursive alternate form.
+The refactorings implemented are:
 
 * Replace string literals in parser with lexer symbols.
 * Remove useless parser rules.

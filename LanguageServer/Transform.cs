@@ -3089,7 +3089,20 @@
                 where_to_stuff = f;
             }
 
+            Dictionary<string, Dictionary<TerminalNodeImpl, string>> text_before = new Dictionary<string, Dictionary<TerminalNodeImpl, string>>();
             // Find string literals in parser and combined grammars and substitute.
+            foreach (string f in read_files)
+            {
+                Workspaces.Document whatever_document = Workspaces.Workspace.Instance.FindDocument(f);
+                if (whatever_document == null)
+                {
+                    continue;
+                }
+                AntlrGrammarDetails pd_whatever = ParserDetailsFactory.Create(whatever_document) as AntlrGrammarDetails;
+                // Get all intertoken text immediately for source reconstruction.
+                var (tb, other) = TreeEdits.TextToLeftOfLeaves(pd_whatever.TokStream, pd_whatever.ParseTree);
+                text_before[f] = tb;
+            }
             Dictionary<string, string> new_subs = new Dictionary<string, string>();
             foreach (string f in read_files)
             {
@@ -3099,10 +3112,7 @@
                     continue;
                 }
                 AntlrGrammarDetails pd_whatever = ParserDetailsFactory.Create(whatever_document) as AntlrGrammarDetails;
-                StringBuilder sb = new StringBuilder();
-                int pre = 0;
-                Reconstruct(sb, pd_parser.TokStream, pd_parser.ParseTree, ref pre,
-                n =>
+                TreeEdits.Replace(pd_parser.ParseTree, n =>
                 {
                     if (!(n is TerminalNodeImpl))
                     {
@@ -3111,11 +3121,12 @@
                     var t = n as TerminalNodeImpl;
                     if (t.Payload.Type != ANTLRv4Lexer.STRING_LITERAL)
                     {
-                        return t.GetText();
+                        return null;
                     }
                     bool no = false;
-                        // Make sure this literal does not appear in lexer rule.
-                        for (IRuleNode p = t.Parent; p != null; p = p.Parent)
+                    // Make sure this literal does not appear in lexer rule
+                    // because we are going to create a new lexer rule for the literal.
+                    for (IRuleNode p = t.Parent; p != null; p = p.Parent)
                     {
                         if (p is ANTLRv4Parser.LexerRuleSpecContext)
                         {
@@ -3125,10 +3136,10 @@
                     }
                     if (no)
                     {
-                        return t.GetText();
+                        return null;
                     }
-                    var r = t.GetText();
-                    subs.TryGetValue(r, out string value);
+                    var literal = t.GetText();
+                    subs.TryGetValue(literal, out string value);
                     if (value == null)
                     {
                         string now = DateTime.Now.ToString()
@@ -3136,35 +3147,109 @@
                             .Replace(":", "_")
                             .Replace(" ", "_");
                         var new_r = "GENERATED_" + now;
-                        subs[r] = new_r;
-                        new_subs[r] = new_r;
+                        subs[literal] = new_r;
+                        new_subs[literal] = new_r;
+                        value = new_r;
                     }
-                    return r;
+                    var token = new CommonToken(ANTLRv4Parser.TOKEN_REF) { Line = -1, Column = -1, Text = value };
+                    return new TerminalNodeImpl(token);
                 });
+                StringBuilder sb = new StringBuilder();
+                TreeEdits.Reconstruct(sb, pd_parser.ParseTree, text_before[f]);
                 var new_code = sb.ToString();
                 if (new_code != pd_parser.Code)
                 {
-                    result.Add(f, new_code);
+                    result[document.FullPath] = new_code;
                 }
             }
             if (new_subs.Count > 0)
             {
-                result.TryGetValue(where_to_stuff, out string old_code);
-                if (old_code == null)
+                Workspaces.Document whatever_document = Workspaces.Workspace.Instance.FindDocument(where_to_stuff);
+                AntlrGrammarDetails pd_whatever = ParserDetailsFactory.Create(whatever_document) as AntlrGrammarDetails;
+                string old_code = pd_whatever.Code;
+                if (result.TryGetValue(where_to_stuff, out string other))
+                    old_code = other;
+                var rules = TreeEdits.FindTopDown(pd_whatever.ParseTree,
+                    (in IParseTree t, out bool c) =>
+                    {
+                        if (t is ANTLRv4Parser.RulesContext)
+                        {
+                            c = false;
+                            return t;
+                        }
+                        c = true;
+                        return null;
+                    }).First() as ANTLRv4Parser.RulesContext;
+                foreach (var pair in new_subs)
                 {
-                    Workspaces.Document whatever_document = Workspaces.Workspace.Instance.FindDocument(where_to_stuff);
-                    AntlrGrammarDetails pd_whatever = ParserDetailsFactory.Create(whatever_document) as AntlrGrammarDetails;
-                    old_code = pd_whatever.Code;
+                    var literal = pair.Key;
+                    var gen_name = pair.Value;
+                    ANTLRv4Parser.LexerRuleSpecContext new_a_rule = new ANTLRv4Parser.LexerRuleSpecContext(null, 0);
+                    {
+                        var token = new CommonToken(ANTLRv4Parser.TOKEN_REF) { Line = -1, Column = -1, Text = gen_name };
+                        var new_rule_ref = new TerminalNodeImpl(token);
+                        text_before[where_to_stuff].Add(new_rule_ref,
+                            System.Environment.NewLine + System.Environment.NewLine);
+                        new_a_rule.AddChild(new_rule_ref);
+                        new_rule_ref.Parent = new_a_rule;
+                        // Now have "A"
+                        {
+                            var token2 = new CommonToken(ANTLRv4Parser.COLON) { Line = -1, Column = -1, Text = ":" };
+                            var new_colon = new TerminalNodeImpl(token2);
+                            new_a_rule.AddChild(new_colon);
+                            new_colon.Parent = new_a_rule;
+                        }
+                        // Now have "A :"
+                        ANTLRv4Parser.LexerAltListContext lexer_alt_list = new ANTLRv4Parser.LexerAltListContext(null, 0);
+                        {
+                            ANTLRv4Parser.LexerRuleBlockContext new_rule_block_context = new ANTLRv4Parser.LexerRuleBlockContext(new_a_rule, 0);
+                            new_a_rule.AddChild(new_rule_block_context);
+                            new_rule_block_context.Parent = new_a_rule;
+                            new_rule_block_context.AddChild(lexer_alt_list);
+                            lexer_alt_list.Parent = new_rule_block_context;
+                        }
+                        ANTLRv4Parser.LexerAltContext lexer_alt = new ANTLRv4Parser.LexerAltContext(null, 0);
+                        lexer_alt_list.AddChild(lexer_alt);
+                        lexer_alt.Parent = lexer_alt_list;
+                        ANTLRv4Parser.LexerElementsContext lexer_elements = new ANTLRv4Parser.LexerElementsContext(null, 0);
+                        lexer_alt.AddChild(lexer_elements);
+                        lexer_elements.Parent = lexer_alt;
+                        ANTLRv4Parser.LexerElementContext lexer_element = new ANTLRv4Parser.LexerElementContext(null, 0);
+                        lexer_elements.AddChild(lexer_element);
+                        lexer_element.Parent = lexer_elements;
+                        ANTLRv4Parser.LexerAtomContext lexer_atom = new ANTLRv4Parser.LexerAtomContext(null, 0);
+                        lexer_element.AddChild(lexer_atom);
+                        lexer_atom.Parent = lexer_element;
+                        ANTLRv4Parser.TerminalContext terminal = new ANTLRv4Parser.TerminalContext(null, 0);
+                        lexer_atom.AddChild(terminal);
+                        terminal.Parent = lexer_atom;
+                        {
+                            var t = new CommonToken(ANTLRv4Parser.STRING_LITERAL) { Line = -1, Column = -1, Text = literal };
+                            var sl = new TerminalNodeImpl(t);
+                            terminal.AddChild(sl);
+                            sl.Parent = terminal;
+                        }
+                        {
+                            var token3 = new CommonToken(ANTLRv4Parser.SEMI) { Line = -1, Column = -1, Text = ";" };
+                            var new_semi = new TerminalNodeImpl(token3);
+                            new_a_rule.AddChild(new_semi);
+                            new_semi.Parent = new_a_rule;
+                        }
+                        // Now have "A : 'string-literal' ;"
+                        var rule_spec = new ANTLRv4Parser.RuleSpecContext(null, 0);
+                        rule_spec.AddChild(new_a_rule);
+                        new_a_rule.Parent = rule_spec;
+                        rules.AddChild(rule_spec);
+                        rule_spec.Parent = rules;
+                    }
                 }
                 StringBuilder sb = new StringBuilder();
-                sb.Append(old_code);
-                sb.AppendLine();
-                foreach (var sub in new_subs)
-                {
-                    sb.AppendLine(sub.Value + " : " + sub.Key + " ;");
-                }
+                TreeEdits.Reconstruct(sb, pd_parser.ParseTree, text_before[where_to_stuff]);
                 var new_code = sb.ToString();
-                result[where_to_stuff] = new_code;
+                if (new_code != pd_parser.Code)
+                {
+                    result[document.FullPath] = new_code;
+                }
             }
 
             return result;
