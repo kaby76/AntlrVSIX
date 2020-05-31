@@ -108,18 +108,20 @@ Bash script "clean.sh" in the Antlrvsix source to clean out the build files so o
 * Add in Piggy, a transformational system for trees using a specialized
 tree rewrite language, into Antlrvsix.
 * Start rewriting existing transforms and analyses into Piggy.
-* Add in left factoring and inverse.
+* Add left factoring and inverse.
 * Add in empty string alternative hoist transforms.
 
-## Planned for v7.3 (1st week in June 2020):
+## Planned for v7.4:
+
+* Expression rule compression.
+* Add analysis show cycles.
+  
+## Release notes for v7.3 (31 May 2020):
 
 * New refactorings:
   * Fold/Pack
   * Unfold
   * Useless parentheses removal
-  * Expression rule compression
-* New analyses:
-  * Show cycles
 * Fix [Clean up the 400+ compiler warnings #51](https://github.com/kaby76/AntlrVSIX/issues/51).
 * Fix [Rename via right-click context menu does not work--VS 2019 broken, MS needs to fix. #48](https://github.com/kaby76/AntlrVSIX/issues/48).
 * Fix [Output message when operation does nothing. #46](https://github.com/kaby76/AntlrVSIX/issues/46).
