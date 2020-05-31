@@ -13,9 +13,7 @@ namespace LanguageServer
     {
         public delegate IParseTree Fun(in IParseTree arg1, out bool arg2);
 
-        public static System.Collections.Generic.IEnumerable<IParseTree> FindTopDown(
-            IParseTree tree,
-            Fun find)
+        public static System.Collections.Generic.IEnumerable<IParseTree> FindTopDown(IParseTree tree, Fun find)
         {
             Stack<IParseTree> stack = new Stack<IParseTree>();
             stack.Push(tree);
@@ -38,60 +36,60 @@ namespace LanguageServer
             }
         }
 
-        public static bool Replace(IParseTree tree, Func<IParseTree, IParseTree> replace)
+        public static void Replace(IParseTree tree, Fun find)
         {
-            var replacement = replace(tree);
-            if (replacement != null)
+            Stack<IParseTree> stack = new Stack<IParseTree>();
+            stack.Push(tree);
+            while (stack.Any())
             {
-                IParseTree parent = tree.Parent;
-                var c = parent as ParserRuleContext;
-                for (int i = 0; i < c.ChildCount; ++i)
+                var n = stack.Pop();
+                var found = find(n, out bool @continue);
+                if (found != null)
                 {
-                    var child = c.children[i];
-                    if (child == tree)
+                    IParseTree parent = n.Parent;
+                    var c = parent as ParserRuleContext;
+                    if (c != null)
                     {
-                        var temp = c.children[i];
-                        if (temp is TerminalNodeImpl)
+                        for (int i = 0; i < c.ChildCount; ++i)
                         {
-                            var t = temp as TerminalNodeImpl;
-                            t.Parent = null;
-                            c.children[i] = replacement;
-                            var r = replacement as TerminalNodeImpl;
-                            r.Parent = c;
+                            var child = c.children[i];
+                            if (child == n)
+                            {
+                                var temp = c.children[i];
+                                if (temp is TerminalNodeImpl)
+                                {
+                                    var t = temp as TerminalNodeImpl;
+                                    t.Parent = null;
+                                    c.children[i] = found;
+                                    var r = found as TerminalNodeImpl;
+                                    r.Parent = c;
+                                }
+                                else if (temp is ParserRuleContext)
+                                {
+                                    var t = temp as ParserRuleContext;
+                                    t.Parent = null;
+                                    c.children[i] = found;
+                                    var r = found as ParserRuleContext;
+                                    r.Parent = c;
+                                }
+                                else
+                                    throw new LanguageServerException("Tree contains something other than TerminalNodeImpl or ParserRuleContext");
+                                break;
+                            }
                         }
-                        else if (temp is ParserRuleContext)
-                        {
-                            var t = temp as ParserRuleContext;
-                            t.Parent = null;
-                            c.children[i] = replacement;
-                            var r = replacement as ParserRuleContext;
-                            r.Parent = c;
-                        }
-                        else
-                            throw new LanguageServerException("Tree contains something other than TerminalNodeImpl or ParserRuleContext");
-                        break;
                     }
                 }
-                return true; // done.
-            }
-            if (tree as TerminalNodeImpl != null)
-            {
-                TerminalNodeImpl tok = tree as TerminalNodeImpl;
-                if (tok.Symbol.Type == TokenConstants.EOF)
-                    return true;
+                if (!@continue) { }
+                else if (n as TerminalNodeImpl != null) { }
                 else
-                    return false;
-            }
-            else
-            {
-                for (int i = 0; i < tree.ChildCount; ++i)
                 {
-                    var c = tree.GetChild(i);
-                    if (Replace(c, replace))
-                        return true;
+                    for (int i = n.ChildCount - 1; i >= 0; --i)
+                    {
+                        var c = n.GetChild(i);
+                        stack.Push(c);
+                    }
                 }
             }
-            return false;
         }
 
         public static bool InsertAfter(IParseTree tree, Func<IParseTree, IParseTree> insert_point)

@@ -571,70 +571,6 @@
             }
         }
 
-        public static void Reconstruct(StringBuilder sb, CommonTokenStream stream, IParseTree tree, ref int previous, Func<IParseTree, string> replace)
-        {
-            if (tree as TerminalNodeImpl != null)
-            {
-                TerminalNodeImpl tok = tree as TerminalNodeImpl;
-                var payload = tok.Payload;
-                if (payload.Line < 0)
-                {
-                    sb.Append(" ");
-                }
-                else
-                {
-                    var start = payload.StartIndex;
-                    var stop = payload.StopIndex + 1;
-                    ICharStream charstream = payload.InputStream;
-                    if (previous < start)
-                    {
-                        Interval previous_interval = new Interval(previous, start - 1);
-                        string inter = charstream.GetText(previous_interval);
-                        sb.Append(inter);
-                    }
-                    previous = stop;
-                }
-                if (tok.Symbol.Type == TokenConstants.EOF)
-                    return;
-                string new_s = replace(tok);
-                if (new_s != null)
-                    sb.Append(new_s);
-                else
-                    sb.Append(tok.GetText());
-            }
-            else
-            {
-                var new_s = replace(tree);
-                if (new_s != null)
-                {
-                    Interval source_interval = tree.SourceInterval;
-                    int a = source_interval.a;
-                    int b = source_interval.b;
-                    IToken ta = stream.Get(a);
-                    IToken tb = stream.Get(b);
-                    var start = ta.StartIndex;
-                    var stop = tb.StopIndex + 1;
-                    ICharStream charstream = ta.InputStream;
-                    if (previous < start)
-                    {
-                        Interval previous_interval = new Interval(previous, start - 1);
-                        string inter = charstream.GetText(previous_interval);
-                        sb.Append(inter);
-                    }
-                    sb.Append(new_s);
-                    previous = stop;
-                }
-                else
-                {
-                    for (int i = 0; i < tree.ChildCount; ++i)
-                    {
-                        var c = tree.GetChild(i);
-                        Reconstruct(sb, stream, c, ref previous, replace);
-                    }
-                }
-            }
-        }
-
         public static void Output(StringBuilder sb, CommonTokenStream stream, IParseTree tree)
         {
             if (tree as TerminalNodeImpl != null)
@@ -871,8 +807,9 @@
                 var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_whatever.TokStream, pd_whatever.ParseTree);
 
                 TreeEdits.Replace(pd_whatever.ParseTree,
-                    n =>
+                    (in IParseTree n, out bool c) =>
                     {
+                        c = true;
                         if (!(n is TerminalNodeImpl))
                         {
                             return null;
@@ -1656,6 +1593,7 @@
                 {
                     var token = new CommonToken(ANTLRv4Parser.RULE_REF) { Line = -1, Column = -1, Text = new_symbol_name };
                     var new_rule_ref = new TerminalNodeImpl(token);
+                    text_before[new_rule_ref] = System.Environment.NewLine + System.Environment.NewLine;
                     new_ap_rule.AddChild(new_rule_ref);
                     new_rule_ref.Parent = new_ap_rule;
                 }
@@ -2049,7 +1987,7 @@
             rule = ReplaceWithKleeneRules(has_direct_left_recursion, has_direct_right_recursion, rule, text_before);
             {
                 TreeEdits.Replace(pd_parser.ParseTree,
-                    x =>
+                    (in IParseTree x, out bool c) =>
                     {
                         if (x is ANTLRv4Parser.ParserRuleSpecContext)
                         {
@@ -2057,9 +1995,11 @@
                             var name = y.RULE_REF()?.GetText();
                             if (name == Lhs((ANTLRv4Parser.ParserRuleSpecContext)rule).GetText())
                             {
+                                c = false;
                                 return rule;
                             }
                         }
+                        c = true;
                         return null;
                     });
                 StringBuilder sb = new StringBuilder();
@@ -2418,12 +2358,17 @@
                     var rule_spec = rs as ANTLRv4Parser.RuleSpecContext;
                     var r = rule_spec.Parent;
                     var rules = r as ANTLRv4Parser.RulesContext;
-                    TreeEdits.Replace(rule_spec, n =>
-                    {
-                        if (n == rule)
-                            return new_a_rule;
-                        return null;
-                    });
+                    TreeEdits.Replace(rule_spec,
+                        (in IParseTree n, out bool c) =>
+                        {
+                            if (n == rule)
+                            {
+                                c = false;
+                                return new_a_rule;
+                            }
+                            c = true;
+                            return null;
+                        });
                     var new_rs = new ANTLRv4Parser.RuleSpecContext(null, 0);
                     new_rs.AddChild(new_ap_rule);
                     new_ap_rule.Parent = new_rs;
@@ -2574,6 +2519,8 @@
             var tarjan = new TarjanSCC<string, DirectedEdge<string>>(graph);
             List<string> ordered = new List<string>();
             var sccs = tarjan.Compute();
+
+            // We are only going to note in "ordered" rules that are going to change.
             var scc = sccs[k.RULE_REF().ToString()];
             foreach (var v in scc)
             {
@@ -2586,7 +2533,19 @@
 
             // Get all intertoken text immediately for source reconstruction.
             var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
+            var rules_tree = TreeEdits.FindTopDown(pd_parser.ParseTree,
+                (in IParseTree t, out bool c) =>
+                {
+                    if (t is ANTLRv4Parser.RulesContext)
+                    {
+                        c = false;
+                        return t;
+                    }
+                    c = true;
+                    return null;
+                }).First() as ANTLRv4Parser.RulesContext;
 
+            // Keep a list of rules that are part of the SCC.
             Dictionary<string, IParseTree> rules = new Dictionary<string, IParseTree>();
             foreach (string s in ordered)
             {
@@ -2739,13 +2698,15 @@
                 rules[generated_name] = new_rule;
             }
 
+
             {
-                // Now edit the file and return.
-                StringBuilder sb = new StringBuilder();
-                int pre = 0;
-                Reconstruct(sb, pd_parser.TokStream, pd_parser.ParseTree, ref pre,
-                    x =>
+                // Replace original rule.
+                IParseTree last = null;
+                int last_index = -1;
+                TreeEdits.Replace(pd_parser.ParseTree,
+                    (in IParseTree x, out bool c) =>
                     {
+                        c = true;
                         if (x is ANTLRv4Parser.ParserRuleSpecContext)
                         {
                             var y = x as ANTLRv4Parser.ParserRuleSpecContext;
@@ -2753,26 +2714,45 @@
                             rules.TryGetValue(name, out IParseTree replacement);
                             if (replacement != null)
                             {
-                                StringBuilder sb2 = new StringBuilder();
-                                Output(sb2, pd_parser.TokStream, replacement);
-                                foreach (var r in rules)
-                                {
-                                    var z = r.Key != name && r.Key.Contains(name);
-                                    if (z)
+                                last_index = rules_tree.children.FindIndex(
+                                    w =>
                                     {
-                                        sb2.AppendLine();
-                                        Output(sb2, pd_parser.TokStream, r.Value);
-                                    }
-                                }
-                                return sb2.ToString();
+                                        var xxxx = w as ANTLRv4Parser.RuleSpecContext;
+                                        var yyyy = xxxx.parserRuleSpec();
+                                        if (yyyy == null)
+                                            return false;
+                                        return y == yyyy;
+                                    });
+                                last = replacement;
+                                return replacement;
                             }
                         }
                         return null;
                     });
+
+
+                // Add in new rules.
+                last_index++;
+                foreach (var r in rules)
+                {
+                    var key = r.Key;
+                    var value = r.Value;
+                    var prc = value as ANTLRv4Parser.ParserRuleSpecContext;
+                    if (!ordered.Contains(key))
+                    {
+                        var rule_spec = new ANTLRv4Parser.RuleSpecContext(null, 0);
+                        rule_spec.AddChild(prc);
+                        prc.Parent = rule_spec;
+                        rules_tree.children.Insert(last_index++, rule_spec);
+                        rule_spec.Parent = rules_tree;
+                    }
+                }
+                StringBuilder sb = new StringBuilder();
+                TreeEdits.Reconstruct(sb, pd_parser.ParseTree, text_before);
                 var new_code = sb.ToString();
                 if (new_code != pd_parser.Code)
                 {
-                    result.Add(document.FullPath, new_code);
+                    result[document.FullPath] = new_code;
                 }
             }
             return result;
@@ -2813,8 +2793,9 @@
             }
         }
 
-        public static string EliminateAntlrKeywordsInRules(Document document)
+        public static Dictionary<string, string> EliminateAntlrKeywordsInRules(Document document)
         {
+            Dictionary<string, string> result = new Dictionary<string, string>();
             // Check if initial file is a parser or combined grammar.
             if (!(ParserDetailsFactory.Create(document) is AntlrGrammarDetails pd_parser))
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
@@ -2833,11 +2814,12 @@
             table.FindPartitions();
             table.FindStartRules();
 
-            StringBuilder sb = new StringBuilder();
-            int pre = 0;
-            Reconstruct(sb, pd_parser.TokStream, pd_parser.ParseTree, ref pre,
-                n =>
+            var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
+
+            TreeEdits.Replace(pd_parser.ParseTree,
+                (in IParseTree n, out bool c) =>
                 {
+                    c = true;
                     if (!(n is TerminalNodeImpl))
                     {
                         return null;
@@ -2852,11 +2834,22 @@
                             || r == "lexer"
                             || r == "parser"
                             || r == "rule")
-                            return r + "_nonterminal";
+                        {
+                            var token = new CommonToken(ANTLRv4Parser.RULE_REF) { Line = -1, Column = -1, Text = r + "_nonterminal" };
+                            var new_rule_ref = new TerminalNodeImpl(token);
+                            text_before.Add(new_rule_ref, text_before[t]);
+                        }
                     }
-                    return r;
+                    return null;
                 });
-            return sb.ToString();
+            StringBuilder sb = new StringBuilder();
+            TreeEdits.Reconstruct(sb, pd_parser.ParseTree, text_before);
+            var new_code = sb.ToString();
+            if (new_code != pd_parser.Code)
+            {
+                result.Add(document.FullPath, new_code);
+            }
+            return result;
         }
 
         public static Dictionary<string, string> AddLexerRulesForStringLiterals(Document document)
@@ -3106,8 +3099,10 @@
                     continue;
                 }
                 AntlrGrammarDetails pd_whatever = ParserDetailsFactory.Create(whatever_document) as AntlrGrammarDetails;
-                TreeEdits.Replace(pd_parser.ParseTree, n =>
+                TreeEdits.Replace(pd_parser.ParseTree,
+                (in IParseTree n, out bool c) =>
                 {
+                    c = true;
                     if (!(n is TerminalNodeImpl))
                     {
                         return null;
@@ -3457,8 +3452,10 @@
                 var s = Module.GetDocumentSymbol(range.Start.Value, td);
                 if (s == null) throw new Exception("Inexplicably can't find document symbol in DoFold.");
 
-                TreeEdits.Replace(pt, (t) =>
+                TreeEdits.Replace(pt,
+                (in IParseTree t, out bool c) =>
                 {
+                    c = true;
                     if (!(t is ANTLRv4Parser.ElementContext))
                         return null;
                     var u = t as ANTLRv4Parser.ElementContext;
@@ -3624,7 +3621,7 @@
                     start = temp;
                 }
                 sym_start = LanguageServer.Util.Find(start, document);
-                sym_end = LanguageServer.Util.Find(end-1, document);
+                sym_end = LanguageServer.Util.Find(end - 1, document);
             }
             if (sym_end == null || sym_start == null)
             {
@@ -3756,12 +3753,15 @@
                         new_ruleref.AddChild(new_rule_ref);
                         new_rule_ref.Parent = new_ruleref;
 
-                        TreeEdits.Replace(pt, (t) =>
-                        {
-                            if (t != replace_this)
-                                return null;
-                            return new_block;
-                        });
+                        TreeEdits.Replace(pt,
+                            (in IParseTree t, out bool c) =>
+                            {
+                                c = true;
+                                if (t != replace_this)
+                                    return null;
+                                c = false;
+                                return new_block;
+                            });
                     }
                 }
             }
@@ -3808,12 +3808,15 @@
                         new_ruleref.AddChild(new_rule_ref);
                         new_rule_ref.Parent = new_ruleref;
 
-                        TreeEdits.Replace(pt, (t) =>
-                        {
-                            if (t != replace_this)
-                                return null;
-                            return new_block;
-                        });
+                        TreeEdits.Replace(pt,
+                            (in IParseTree t, out bool c) =>
+                            {
+                                c = true;
+                                if (t != replace_this)
+                                    return null;
+                                c = false;
+                                return new_block;
+                            });
                     }
 
                     // Now create a new rule.
@@ -3904,12 +3907,15 @@
                         var token = new CommonToken(ANTLRv4Parser.RULE_REF) { Line = -1, Column = -1, Text = generated_name };
                         var new_rule_ref = new TerminalNodeImpl(token);
                         text_before.Add(new_rule_ref, text_before[old_sym]);
-                        TreeEdits.Replace(pt, (t) =>
-                        {
-                            if (t != replace_this)
-                                return null;
-                            return new_rule_ref;
-                        });
+                        TreeEdits.Replace(pt,
+                            (in IParseTree t, out bool c) =>
+                            {
+                                c = true;
+                                if (t != replace_this)
+                                    return null;
+                                c = false;
+                                return new_rule_ref;
+                            });
                     }
 
                     // Now create a new rule.
@@ -4004,12 +4010,15 @@
                         var new_rule_ref = new TerminalNodeImpl(token);
                         new_ruleref.AddChild(new_rule_ref);
                         new_rule_ref.Parent = new_ruleref;
-                        TreeEdits.Replace(pt, (t) =>
-                        {
-                            if (t != replace_this)
-                                return null;
-                            return l_alt;
-                        });
+                        TreeEdits.Replace(pt,
+                            (in IParseTree t, out bool c) =>
+                            {
+                                c = true;
+                                if (t != replace_this)
+                                    return null;
+                                c = false;
+                                return l_alt;
+                            });
                     }
 
                     // Now create a new rule.

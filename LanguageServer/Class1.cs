@@ -18,5 +18,19 @@ namespace LanguageServer
             // Don't pre-allocate based on knowledge of size as potentially many elements will be dropped.
             return new HashSet<TSource>(source, comparer);
         }
+
+        public static int FindIndex<T>(this IEnumerable<T> items, Func<T, bool> predicate)
+        {
+            if (items == null) throw new ArgumentNullException("items");
+            if (predicate == null) throw new ArgumentNullException("predicate");
+
+            int retVal = 0;
+            foreach (var item in items)
+            {
+                if (predicate(item)) return retVal;
+                retVal++;
+            }
+            return -1;
+        }
     }
 }

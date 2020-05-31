@@ -1529,15 +1529,8 @@
                     System.Console.Error.WriteLine("<-- CMEliminateAntlrKeywordsInRules");
                     System.Console.Error.WriteLine(arg.ToString());
                 }
-                var new_code = Transform.EliminateAntlrKeywordsInRules(document);
-                if (new_code != null)
-                {
-                    var s = new Dictionary<string, string>
-                    {
-                        { document.FullPath, new_code }
-                    };
-                    ApplyChanges("Eliminate Keywords", s);
-                }
+                var s = Transform.EliminateAntlrKeywordsInRules(document);
+                ApplyChanges("Eliminate Keywords", s);
             }
             catch (LanguageServerException e)
             {
