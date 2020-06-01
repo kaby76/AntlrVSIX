@@ -51,6 +51,7 @@
       <DependentUpon>AboutBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Menus\AddLexerRulesForStringLiterals.cs" />
+    <Compile Include="Menus\ReplacePriorization.cs" />
     <Compile Include="Menus\StringValue.cs" />
     <Compile Include="Menus\ConvertRecursionToKleeneOperator.cs" />
     <Compile Include="Menus\EliminateAntlrKeywordsInRules.cs" />

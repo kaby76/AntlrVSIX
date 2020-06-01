@@ -357,38 +357,45 @@
 
         public static IEnumerable<Info> Get(int start, int end, Document doc)
         {
-            ParserDetails pd = ParserDetailsFactory.Create(doc);
-            if (pd.ParseTree == null)
+            try
             {
-                LanguageServer.Module.Compile();
-            }
-
-            List<Info> combined = new List<Info>();
-            foreach (KeyValuePair<Antlr4.Runtime.IToken, int> p in pd.ColorizedList)
-            {
-                if (p.Key == null)
+                ParserDetails pd = ParserDetailsFactory.Create(doc);
+                if (pd.ParseTree == null)
                 {
-                    continue;
+                    LanguageServer.Module.Compile();
                 }
-                var sym = p.Key;
-                var st = sym.StartIndex;
-                var en = sym.StopIndex + 1;
-                if (end < st) continue;
-                if (en < start) continue;
-                int s1 = st > start ? st : start;
-                int s2 = en < end ? en : end;
-                combined.Add(
-                     new Info()
-                     {
-                         start = s1,
-                         end = s2,
-                         kind = p.Value
-                     });
-                ;
+
+                List<Info> combined = new List<Info>();
+                foreach (KeyValuePair<Antlr4.Runtime.IToken, int> p in pd.ColorizedList)
+                {
+                    if (p.Key == null)
+                    {
+                        continue;
+                    }
+                    var sym = p.Key;
+                    var st = sym.StartIndex;
+                    var en = sym.StopIndex + 1;
+                    if (end < st) continue;
+                    if (en < start) continue;
+                    int s1 = st > start ? st : start;
+                    int s2 = en < end ? en : end;
+                    combined.Add(
+                         new Info()
+                         {
+                             start = s1,
+                             end = s2,
+                             kind = p.Value
+                         });
+                    ;
+                }
+                // Sort the list.
+                IOrderedEnumerable<Info> sorted_combined_tokens = combined.OrderBy(t => t.start).ThenBy(t => t.end);
+                return sorted_combined_tokens;
             }
-            // Sort the list.
-            IOrderedEnumerable<Info> sorted_combined_tokens = combined.OrderBy(t => t.start).ThenBy(t => t.end);
-            return sorted_combined_tokens;
+            catch (Exception eeks)
+            {
+            }
+            return new List<Info>();
         }
 
         public static IEnumerable<Workspaces.Range> GetErrors(Workspaces.Range range, Document doc)

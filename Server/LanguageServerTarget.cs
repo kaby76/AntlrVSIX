@@ -27,6 +27,114 @@
             _workspace = Workspaces.Workspace.Instance;
         }
 
+
+        void ApplyChanges(string transaction_name, Dictionary<string, string> ch)
+        {
+            if (!ch.Any())
+            {
+                throw new LanguageServerException("No changes were needed, none made.");
+            }
+            Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]> a = new Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]>();
+            foreach (var pair in ch)
+            {
+                var fn = pair.Key;
+                var new_code = pair.Value;
+                Document document = CheckDoc(new Uri(fn));
+                var code = document.Code;
+                List<LanguageServer.TextEdit> edits = new List<LanguageServer.TextEdit>();
+                Diff_match_patch diff = new Diff_match_patch();
+                List<Diff> diffs = diff.Diff_main(code, new_code);
+                List<Patch> patch = diff.Patch_make(diffs);
+                {
+                    // Start edit session.
+                    int times = 0;
+                    int delta = 0;
+                    foreach (Patch p in patch)
+                    {
+                        times++;
+                        int start = p.start1 - delta;
+
+                        int offset = 0;
+                        foreach (Diff ed in p.diffs)
+                        {
+                            if (ed.operation == Operation.EQUAL)
+                            {
+                                //// Let's verify that.
+                                int len = ed.text.Length;
+                                //var tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
+                                //  new Span(start + offset, len));
+                                //var tt = tokenSpan.GetText();
+                                //if (ed.text != tt)
+                                //{ }
+                                offset += len;
+                            }
+                            else if (ed.operation == Operation.DELETE)
+                            {
+                                int len = ed.text.Length;
+                                //var tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
+                                //  new Span(start + offset, len));
+                                //var tt = tokenSpan.GetText();
+                                //if (ed.text != tt)
+                                //{ }
+                                LanguageServer.TextEdit edit = new LanguageServer.TextEdit()
+                                {
+                                    range = new Workspaces.Range(
+                                        new Workspaces.Index(start + offset),
+                                        new Workspaces.Index(start + offset + len)),
+                                    NewText = ""
+                                };
+                                offset += len;
+                                edits.Add(edit);
+                            }
+                            else if (ed.operation == Operation.INSERT)
+                            {
+                                int len = ed.text.Length;
+                                LanguageServer.TextEdit edit = new LanguageServer.TextEdit()
+                                {
+                                    range = new Workspaces.Range(
+                                        new Workspaces.Index(start + offset),
+                                        new Workspaces.Index(start + offset)),
+                                    NewText = ed.text
+                                };
+                                edits.Add(edit);
+                            }
+                        }
+                        delta += (p.length2 - p.length1);
+                    }
+                }
+                var changes = edits.ToArray();
+
+                List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit> new_list = new List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit>();
+                int count = 0;
+                foreach (LanguageServer.TextEdit delta in changes)
+                {
+                    Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit new_edit = new Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit
+                    {
+                        Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range()
+                    };
+                    (int, int) lcs = LanguageServer.Module.GetLineColumn(delta.range.Start.Value, document);
+                    (int, int) lce = LanguageServer.Module.GetLineColumn(delta.range.End.Value, document);
+                    new_edit.Range.Start = new Position(lcs.Item1, lcs.Item2);
+                    new_edit.Range.End = new Position(lce.Item1, lce.Item2);
+                    new_edit.NewText = delta.NewText;
+                    new_list.Add(new_edit);
+                    count++;
+                }
+                var result = new_list.ToArray();
+                a[fn] = result;
+                lock (_object)
+                {
+                    ignore_next_change[fn] = true;
+                }
+                // This must be done after computing changes since offsets/line/column computations
+                // depend on what is currently the source.
+                document.Code = new_code;
+            }
+            // Recompile only after every single change everywhere is in.
+            _ = LanguageServer.Module.Compile();
+            server.ApplyEdit(transaction_name, a);
+        }
+
         [JsonRpcMethod(Methods.InitializeName)]
         public object Initialize(JToken arg)
         {
@@ -1712,111 +1820,36 @@
             }
         }
 
-        void ApplyChanges(string transaction_name, Dictionary<string, string> ch)
+        [JsonRpcMethod("CMReplacePriorization")]
+        public void CMReplacePriorization(JToken arg1, JToken arg2, JToken arg3)
         {
-            if (!ch.Any())
+            try
             {
-                throw new LanguageServerException("No changes were needed, none made.");
+                string a1 = arg1.ToObject<string>();
+                int a2 = arg2.ToObject<int>();
+                int a3 = arg3.ToObject<int>();
+                Document document = CheckDoc(new Uri(a1));
+                int start = a2;
+                int end = a3;
+                if (trace)
+                {
+                    System.Console.Error.WriteLine("<-- CMReplacePriorization");
+                    System.Console.Error.WriteLine(a1);
+                    (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
+                    System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
+                }
+                var s = Transform.ReplacePriorization(start, end, document);
+                ApplyChanges("Replace priorization rules", s);
             }
-            Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]> a = new Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]>();
-            foreach (var pair in ch)
+            catch (LanguageServerException e)
             {
-                var fn = pair.Key;
-                var new_code = pair.Value;
-                Document document = CheckDoc(new Uri(fn));
-                var code = document.Code;
-                List<LanguageServer.TextEdit> edits = new List<LanguageServer.TextEdit>();
-                Diff_match_patch diff = new Diff_match_patch();
-                List<Diff> diffs = diff.Diff_main(code, new_code);
-                List<Patch> patch = diff.Patch_make(diffs);
-                {
-                    // Start edit session.
-                    int times = 0;
-                    int delta = 0;
-                    foreach (Patch p in patch)
-                    {
-                        times++;
-                        int start = p.start1 - delta;
-
-                        int offset = 0;
-                        foreach (Diff ed in p.diffs)
-                        {
-                            if (ed.operation == Operation.EQUAL)
-                            {
-                                //// Let's verify that.
-                                int len = ed.text.Length;
-                                //var tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
-                                //  new Span(start + offset, len));
-                                //var tt = tokenSpan.GetText();
-                                //if (ed.text != tt)
-                                //{ }
-                                offset += len;
-                            }
-                            else if (ed.operation == Operation.DELETE)
-                            {
-                                int len = ed.text.Length;
-                                //var tokenSpan = new SnapshotSpan(buffer.CurrentSnapshot,
-                                //  new Span(start + offset, len));
-                                //var tt = tokenSpan.GetText();
-                                //if (ed.text != tt)
-                                //{ }
-                                LanguageServer.TextEdit edit = new LanguageServer.TextEdit()
-                                {
-                                    range = new Workspaces.Range(
-                                        new Workspaces.Index(start + offset),
-                                        new Workspaces.Index(start + offset + len)),
-                                    NewText = ""
-                                };
-                                offset += len;
-                                edits.Add(edit);
-                            }
-                            else if (ed.operation == Operation.INSERT)
-                            {
-                                int len = ed.text.Length;
-                                LanguageServer.TextEdit edit = new LanguageServer.TextEdit()
-                                {
-                                    range = new Workspaces.Range(
-                                        new Workspaces.Index(start + offset),
-                                        new Workspaces.Index(start + offset)),
-                                    NewText = ed.text
-                                };
-                                edits.Add(edit);
-                            }
-                        }
-                        delta += (p.length2 - p.length1);
-                    }
-                }
-                var changes = edits.ToArray();
-
-                List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit> new_list = new List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit>();
-                int count = 0;
-                foreach (LanguageServer.TextEdit delta in changes)
-                {
-                    Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit new_edit = new Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit
-                    {
-                        Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range()
-                    };
-                    (int, int) lcs = LanguageServer.Module.GetLineColumn(delta.range.Start.Value, document);
-                    (int, int) lce = LanguageServer.Module.GetLineColumn(delta.range.End.Value, document);
-                    new_edit.Range.Start = new Position(lcs.Item1, lcs.Item2);
-                    new_edit.Range.End = new Position(lce.Item1, lce.Item2);
-                    new_edit.NewText = delta.NewText;
-                    new_list.Add(new_edit);
-                    count++;
-                }
-                var result = new_list.ToArray();
-                a[fn] = result;
-                lock (_object)
-                {
-                    ignore_next_change[fn] = true;
-                }
-                // This must be done after computing changes since offsets/line/column computations
-                // depend on what is currently the source.
-                document.Code = new_code;
+                server.ShowMessage(e.Message, MessageType.Info);
             }
-            // Recompile only after every single change everywhere is in.
-            _ = LanguageServer.Module.Compile();
-            server.ApplyEdit(transaction_name, a);
+            catch (Exception e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
         }
+
     }
 }

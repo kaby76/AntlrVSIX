@@ -5,7 +5,6 @@
     using Microsoft.VisualStudio.Editor;
     using Microsoft.VisualStudio.LanguageServer.Client;
     using Microsoft.VisualStudio.Shell;
-    using Microsoft.VisualStudio.Shell.Interop;
     using Microsoft.VisualStudio.Text.Classification;
     using Microsoft.VisualStudio.Threading;
     using Microsoft.VisualStudio.Utilities;
@@ -81,6 +80,14 @@
         public string Name => "Antlr language extension";
 
         public static IVsEditorAdaptersFactoryService AdaptersFactory { get => adaptersFactory; set => adaptersFactory = value; }
+
+        protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
+        {
+            // When initialized asynchronously, the current thread may be a background thread at this point.
+            // Do any initialization that requires the UI thread after switching to the UI thread.
+            await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+            //await Command1.InitializeAsync(this);
+        }
 
         public async Task<Connection> ActivateAsync(CancellationToken token)
         {
@@ -494,12 +501,16 @@
             }
         }
 
-        protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
+        public static void CMReplacePriorization(string ffn, int start, int end)
         {
-            // When initialized asynchronously, the current thread may be a background thread at this point.
-            // Do any initialization that requires the UI thread after switching to the UI thread.
-            await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
-            //await Command1.InitializeAsync(this);
+            try
+            {
+                if (_rpc == null) return;
+                _ = _rpc.InvokeAsync("CMReplacePriorization", ffn, start, end);
+            }
+            catch (Exception)
+            {
+            }
         }
     }
 }

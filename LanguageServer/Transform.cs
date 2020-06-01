@@ -3136,6 +3136,17 @@
                             .Replace(":", "_")
                             .Replace(" ", "_");
                         var new_r = "GENERATED_" + now;
+                        if (subs.ContainsValue(new_r))
+                        {
+                            for (int i = 0; ; ++i)
+                            {
+                                if (!subs.ContainsValue(new_r + "_" + i))
+                                {
+                                    new_r = new_r + "_" + i;
+                                    break;
+                                }
+                            }
+                        }
                         subs[literal] = new_r;
                         new_subs[literal] = new_r;
                         value = new_r;
@@ -4138,9 +4149,7 @@
             return false;
         }
 
-#pragma warning disable IDE0060
         public static Dictionary<string, string> RemoveUselessParentheses(int start, int end, Document document)
-#pragma warning restore IDE0060
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
@@ -4345,7 +4354,7 @@
                     var element = ebnf?.Parent as ANTLRv4Parser.ElementContext;
                     var parent_alternative = element?.Parent as ANTLRv4Parser.AlternativeContext;
                     int i = 0;
-                    for (; i < parent_alternative.ChildCount; )
+                    for (; i < parent_alternative.ChildCount;)
                     {
                         if (parent_alternative.children[i] == element)
                             break;
@@ -4366,7 +4375,7 @@
                         bool first = true;
                         foreach (var alternative in alternatives)
                         {
-                            if (! first)
+                            if (!first)
                             {
                                 var token4 = new CommonToken(ANTLRv4Lexer.OR) { Line = -1, Column = -1, Text = "|" };
                                 var new_or = new TerminalNodeImpl(token4);
@@ -4408,6 +4417,180 @@
             return result;
         }
 
+        public static Dictionary<string, string> ReplacePriorization(int start, int end, Document document)
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
 
+            // Check if initial file is a grammar.
+            if (!(ParserDetailsFactory.Create(document) is AntlrGrammarDetails pd_parser))
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            ExtractGrammarType egt = new ExtractGrammarType();
+            ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
+            bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
+                || egt.Type == ExtractGrammarType.GrammarType.Combined
+                || egt.Type == ExtractGrammarType.GrammarType.Lexer;
+            if (!is_grammar)
+            {
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            }
+
+            // Find all other grammars by walking dependencies (import, vocab, file names).
+            HashSet<string> read_files = new HashSet<string>
+            {
+                document.FullPath
+            };
+            Dictionary<Workspaces.Document, List<TerminalNodeImpl>> every_damn_literal =
+                new Dictionary<Workspaces.Document, List<TerminalNodeImpl>>();
+            for (; ; )
+            {
+                int before_count = read_files.Count;
+                foreach (string f in read_files)
+                {
+                    List<string> additional = AntlrGrammarDetails._dependent_grammars.Where(
+                        t => t.Value.Contains(f)).Select(
+                        t => t.Key).ToList();
+                    read_files = read_files.Union(additional).ToHashSet();
+                }
+                foreach (string f in read_files)
+                {
+                    IEnumerable<List<string>> additional = AntlrGrammarDetails._dependent_grammars.Where(
+                        t => t.Key == f).Select(
+                        t => t.Value);
+                    foreach (List<string> t in additional)
+                    {
+                        read_files = read_files.Union(t).ToHashSet();
+                    }
+                }
+                int after_count = read_files.Count;
+                if (after_count == before_count)
+                {
+                    break;
+                }
+            }
+
+            bool replace_all = true;
+
+            // Get all intertoken text immediately for source reconstruction.
+            var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
+
+            if (replace_all)
+            {
+                AntlrGrammarDetails pd = pd_parser;
+                var pt = pd.ParseTree;
+                foreach (var replace_this in TreeEdits.FindTopDown(pt,
+                    (in IParseTree t, out bool c) =>
+                    {
+                        c = true;
+                        if (t is ANTLRv4Parser.BlockContext)
+                        {
+                            var block = t as ANTLRv4Parser.BlockContext;
+                            var p = block.Parent;
+                            if (p is ANTLRv4Parser.EbnfContext)
+                            {
+                                var ebnf = p as ANTLRv4Parser.EbnfContext;
+                                if (ebnf.blockSuffix() != null)
+                                {
+                                    return null;
+                                }
+                            }
+                            var pp = p.Parent; // element
+                            var ppp = pp.Parent; // alternative
+                            var pppp = ppp.Parent; // altList or labeledAlt
+                            if (pppp is ANTLRv4Parser.AltListContext)
+                            {
+                                if (pppp.ChildCount != 1)
+                                    return null;
+                            }
+                            if (pppp is ANTLRv4Parser.LabeledAltContext)
+                            {
+                                if (pppp.ChildCount != 1)
+                                    return null;
+                            }
+                            if (block.COLON() != null)
+                            {
+                                return null;
+                            }
+                            var alt_list = block.altList();
+                            if (alt_list.ChildCount > 1 && ppp.ChildCount > 1)
+                            {
+                                return null;
+                            }
+                            return t;
+                        }
+                        if (t is ANTLRv4Parser.RuleBlockContext)
+                        {
+
+                        }
+                        return null;
+                    }))
+                {
+                    // Remove block by hoisting all parts of altList of the block into an element.
+                    var block = replace_this as ANTLRv4Parser.BlockContext;
+                    var ebnf = block?.Parent as ANTLRv4Parser.EbnfContext;
+                    var element = ebnf?.Parent as ANTLRv4Parser.ElementContext;
+                    var parent_alternative = element?.Parent as ANTLRv4Parser.AlternativeContext;
+                    int i = 0;
+                    for (; i < parent_alternative.ChildCount;)
+                    {
+                        if (parent_alternative.children[i] == element)
+                            break;
+                        ++i;
+                    }
+                    parent_alternative.children.RemoveAt(i);
+                    var alt_list = block?.altList();
+                    var alternatives = alt_list?.alternative();
+                    if (alternatives.Length > 1)
+                    {
+                        IParseTree rule_alt_list_p = block;
+                        for (; rule_alt_list_p != null; rule_alt_list_p = rule_alt_list_p.Parent)
+                        {
+                            if (rule_alt_list_p is ANTLRv4Parser.RuleAltListContext)
+                                break;
+                        }
+                        var rule_alt_list = rule_alt_list_p as ANTLRv4Parser.RuleAltListContext;
+                        bool first = true;
+                        foreach (var alternative in alternatives)
+                        {
+                            if (!first)
+                            {
+                                var token4 = new CommonToken(ANTLRv4Lexer.OR) { Line = -1, Column = -1, Text = "|" };
+                                var new_or = new TerminalNodeImpl(token4);
+                                rule_alt_list.AddChild(new_or);
+                                new_or.Parent = rule_alt_list;
+                            }
+                            first = false;
+                            var labeled_alt = new ANTLRv4Parser.LabeledAltContext(null, 0);
+                            TreeEdits.CopyTreeRecursive(alternative, labeled_alt, text_before);
+                            rule_alt_list.AddChild(labeled_alt);
+                            labeled_alt.Parent = rule_alt_list;
+                        }
+                    }
+                    else
+                    {
+                        var alternative = alt_list?.GetChild(0) as ANTLRv4Parser.AlternativeContext;
+                        foreach (var e in alternative.element())
+                        {
+                            var copy = TreeEdits.CopyTreeRecursive(e, null, text_before) as ANTLRv4Parser.ElementContext;
+                            parent_alternative.children.Insert(i, copy);
+                            copy.Parent = parent_alternative;
+                            i++;
+                        }
+                    }
+                }
+            }
+            else
+            {
+            }
+
+            StringBuilder sb = new StringBuilder();
+            TreeEdits.Reconstruct(sb, pd_parser.ParseTree, text_before);
+            var new_code = sb.ToString();
+            if (new_code != pd_parser.Code)
+            {
+                result.Add(document.FullPath, new_code);
+            }
+
+            return result;
+        }
     }
 }
