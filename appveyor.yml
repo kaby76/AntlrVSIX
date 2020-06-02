@@ -8,7 +8,7 @@ branches:
 
 build_script:
   - curl -fsS -o antlr-4.8-complete.jar https://www.antlr.org/download/antlr-4.8-complete.jar
-  - set Antlr4ToolPath="c:\\projects\\antlrvsix\\antlr-4.8-complete.jar"
-  - set JAVA_EXEC="C:\\Program Files\\Java\\jdk1.8.0\\bin\\java.exe"
+  - set Antlr4ToolPath="c:/projects/antlrvsix/antlr-4.8-complete.jar"
+  - set JAVA_EXEC="C:/Program Files/Java/jdk1.8.0/bin/java.exe"
   - MSBuild.exe /t:restore /p:Configuration=Debug AntlrVSIX.sln
   - MSBuild.exe /p:Configuration=Debug AntlrVSIX.sln
