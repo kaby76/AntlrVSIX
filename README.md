@@ -89,6 +89,8 @@ For information on how to use AntlrVSIX, see the [User Guide](doc/readme.md).
 
 # Building Antlrvsix:
 
+[![Build status](https://ci.appveyor.com/api/projects/status/ekyhff3c28p5qgox?svg=true)](https://ci.appveyor.com/project/kaby76/antlrvsix)
+
 * From a clean "git" root directory, open a "Developer command prompt", and execute:
   * msbuild /t:restore
   * msbuild
