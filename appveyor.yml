@@ -1,0 +1,11 @@
+# Absolutely essential: we must build using VS 2019.
+os: Visual Studio 2019
+
+branches:
+  only:
+  - master
+
+build_script:
+  - cmd: >-
+      MSBuild.exe /t:restore
+      MSBuild.exe
