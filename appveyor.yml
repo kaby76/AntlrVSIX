@@ -11,5 +11,5 @@ build_script:
   - cmd: set Antlr4ToolPath="C:\projects\antlrvsix\antlr-4.8-complete.jar"
   - cmd: set JAVA_EXEC="C:\Progra~1\Java\jdk1.8.0\bin\java.exe"
   - cmd: set
-  - cmd: MSBuild.exe /t:restore /p:Configuration=Debug AntlrVSIX.sln
-  - cmd: MSBuild.exe /p:Configuration=Debug AntlrVSIX.sln
+  - cmd: MSBuild.exe /t:restore /p:Configuration=Debug /v:diag AntlrVSIX.sln
+  - cmd: MSBuild.exe /p:Configuration=Debug /v:diag AntlrVSIX.sln
