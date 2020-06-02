@@ -6,7 +6,7 @@ branches:
   - master
 
 environment:
-  Antlr4TooPath: "antlr-4.8-complete.jar"
+  Antlr4TooPath: "c:\\projects\\antlrvsix\\antlr-4.8-complete.jar"
   JAVA_EXEC: "C:\\Program Files\\Java\\jdk1.8.0\\bin\\java.exe"
 
 build_script:
