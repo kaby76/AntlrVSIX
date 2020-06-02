@@ -6,6 +6,6 @@ branches:
   - master
 
 build_script:
-  - cmd: >-
-      MSBuild.exe /t:restore
-      MSBuild.exe
+  - cmd:
+      - MSBuild.exe /t:restore /p:Configuration=Debug
+      - MSBuild.exe /p:Configuration=Debug
