@@ -79,8 +79,9 @@ You can install the extension in one of four ways:
 with a web browser, then executing the .vsix file from a Windows Explorer.
 * Download and install the extension within Visual Studio 2019 via "Extensions | Manage Extensions",
 search for Antlrvsix, and "install".
-* Build a copy of the .vsix from the sources and install. NB: I sometimes check in code
-into the repository that does not compile. This is because I am making huge changes the the code.
+* Build a copy of the .vsix from the sources in this repository and install. NB: I sometimes check in code
+into the repository that does not compile. This is because I alone make changes to the code, and it is undergoing
+huge changes.
 Grab the source for a released version to be safe.
 * Each night at 0h 0m UTC, Appveyor builds the latest source. The output of the build can be downloaded
 at https://ci.appveyor.com/api/projects/kaby76/antlrvsix/artifacts/bin/Client\bin\Debug\AntlrVSIX.vsix.
