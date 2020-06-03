@@ -73,7 +73,7 @@ as described in the instructions of [Antlr4BuildTasks](https://github.com/kaby76
 
 # Installation
 
-You can install the extension in one of three ways:
+You can install the extension in one of four ways:
 
 * [Download the .vsix](https://marketplace.visualstudio.com/items?itemName=KenDomino.AntlrVSIX)
 from a web browser, then executing the .vsix file from a Windows Explorer.
@@ -82,6 +82,9 @@ search for Antlrvsix, and "install".
 * Build a copy of the .vsix from the sources and install. NB: I sometimes check in code
 into the repository that does not compile. This is because I am making huge changes the the code.
 Grab the source for a released version to be safe.
+* Each night at 0h 0m UTC, Appveyor builds the latest source. The output of the build can be downloaded
+at https://ci.appveyor.com/api/projects/kaby76/antlrvsix/artifacts/bin/Client\bin\Debug\AntlrVSIX.vsix.
+However, there is no guarantee that this version will work.
 
 # Documentation
 
