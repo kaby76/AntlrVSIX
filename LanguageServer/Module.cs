@@ -13,7 +13,6 @@
     using System.Text;
     using Workspaces;
 
-
     public class Module
     {
 
@@ -1203,6 +1202,14 @@
             //{
             //    ordered.Add(v);
             //}
+        }
+
+        public static string AntlrVersion()
+        {
+            Type parser_type = typeof(ANTLRv4Parser);
+            System.CodeDom.Compiler.GeneratedCodeAttribute MyAttribute =
+                (System.CodeDom.Compiler.GeneratedCodeAttribute)Attribute.GetCustomAttribute(parser_type, typeof(System.CodeDom.Compiler.GeneratedCodeAttribute));
+            return MyAttribute?.Version;
         }
     }
 }

@@ -512,5 +512,21 @@
             {
             }
         }
+
+        public static string CMVersion()
+        {
+            try
+            {
+                if (_rpc == null) return null;
+                var context = ThreadHelper.JoinableTaskContext;
+                var jtf = new JoinableTaskFactory(context);
+                var result = jtf.Run(() => _rpc.InvokeAsync<string>("CMVersion"));
+                return result;
+            }
+            catch (Exception)
+            {
+            }
+            return null;
+        }
     }
 }

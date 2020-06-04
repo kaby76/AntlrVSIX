@@ -1851,5 +1851,28 @@
             }
         }
 
+        [JsonRpcMethod("CMVersion")]
+        public string CMVersion()
+        {
+            try
+            {
+                if (trace)
+                {
+                    System.Console.Error.WriteLine("<-- CMVersion");
+                }
+                var s = Module.AntlrVersion();
+                return s;
+            }
+            catch (LanguageServerException e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
+            catch (Exception e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
+            return null;
+        }
+
     }
 }
