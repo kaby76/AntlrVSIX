@@ -134,12 +134,6 @@
             }
         }
 
-        public void SendDiagnostics()
-        {
-            System.Collections.Generic.Dictionary<string, DiagnosticSeverity> diagnosticTags = Tags.ToDictionary((d) => d.Text, (d) => d.Severity);
-            languageServer.SetDiagnostics(diagnosticTags);
-        }
-
         private void NotifyPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

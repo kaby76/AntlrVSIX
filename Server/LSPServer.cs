@@ -1,5 +1,6 @@
 ﻿namespace Server
 {
+    using LanguageServer;
     using Microsoft.VisualStudio.LanguageServer.Protocol;
     using Newtonsoft.Json.Linq;
     using StreamJsonRpc;
@@ -60,38 +61,39 @@
             this.diagnostics = diagnostics;
         }
 
-        public void SendDiagnostics(string str, string text)
+        public void SendDiagnostics(string str, List<DiagnosticInfo> list)
         {
-            string[] lines = text.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
-
             List<Diagnostic> diagnostics = new List<Diagnostic>();
-            for (int i = 0; i < lines.Length; i++)
+            foreach (var info in list)
             {
-                string line = lines[i];
-
-                int j = 0;
-                while (j < line.Length)
+                DiagnosticSeverity severity = default;
+                switch (info.Severify)
                 {
-                    Diagnostic diagnostic = null;
-                    foreach (KeyValuePair<string, DiagnosticSeverity> tag in this.diagnostics)
-                    {
-                        diagnostic = GetDiagnostic(line, i, ref j, tag.Key, tag.Value);
-
-                        if (diagnostic != null)
-                        {
-                            break;
-                        }
-                    }
-
-                    if (diagnostic == null)
-                    {
-                        ++j;
-                    }
-                    else
-                    {
-                        diagnostics.Add(diagnostic);
-                    }
+                    case DiagnosticInfo.Severity.Info:
+                        severity = DiagnosticSeverity.Information;
+                        break;
+                    case DiagnosticInfo.Severity.Warning:
+                        severity = DiagnosticSeverity.Warning;
+                        break;
+                    case DiagnosticInfo.Severity.Error:
+                        severity = DiagnosticSeverity.Error;
+                        break;
                 }
+                var document = LanguageServerTarget.CheckDoc(new Uri(info.Document));
+                (int, int) bs = LanguageServer.Module.GetLineColumn(info.Start, document);
+                (int, int) be = LanguageServer.Module.GetLineColumn(info.End, document);
+                Diagnostic diagnostic = new Diagnostic
+                {
+                    Message = info.Message,
+                    Severity = severity,
+                    Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range
+                    {
+                        Start = new Position(bs.Item1, bs.Item2),
+                        End = new Position(be.Item1, be.Item2)
+                    },
+                    Code = "Test" + Enum.GetName(typeof(DiagnosticSeverity), severity)
+                };
+                diagnostics.Add(diagnostic);
             }
 
             PublishDiagnosticParams parameter = new PublishDiagnosticParams
@@ -132,7 +134,7 @@
 #pragma warning restore VSTHRD110
         }
 
-        public bool ApplyEdit(string transaction_name, Dictionary<string, TextEdit[]> changes)
+        public bool ApplyEdit(string transaction_name, Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]> changes)
         {
             WorkspaceEdit edit = new WorkspaceEdit()
             {

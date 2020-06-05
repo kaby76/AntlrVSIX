@@ -183,10 +183,10 @@
 				</Strings>
 			</Button>
 
-			<Button guid="guidMenuAndCommandsCmdSet" id="ShowCyclesCmd" priority="0x700" type="Button">
+			<Button guid="guidMenuAndCommandsCmdSet" id="PerformAnalysisCmd" priority="0x700" type="Button">
 				<Parent guid="guidMenuAndCommandsCmdSet" id="AnalyzeMenuGroup"/>
 				<Strings>
-					<ButtonText>Show grammar cycles</ButtonText>
+					<ButtonText>Analyze grammar</ButtonText>
 				</Strings>
 			</Button>
 
@@ -301,7 +301,7 @@
 			<IDSymbol name="UnfoldCmd" value="0x7026" />
 			<IDSymbol name="FoldCmd" value="0x7027" />
 			<IDSymbol name="RemoveUselessParenthesesCmd" value="0x7028" />
-			<IDSymbol name="ShowCyclesCmd" value="0x7029" />
+			<IDSymbol name="PerformAnalysisCmd" value="0x7029" />
 			<IDSymbol name="ReplacePrioritizationCmd" value="0x702A"/>
 		</GuidSymbol>
 	</Symbols>

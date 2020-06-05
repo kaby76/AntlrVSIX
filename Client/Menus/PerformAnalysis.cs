@@ -6,12 +6,12 @@
     using System;
     using System.ComponentModel.Design;
 
-    internal class ShowCycles
+    internal class PerformAnalysis
     {
         private readonly AntlrLanguageClient _package;
         private readonly MenuCommand _menu_item1;
 
-        private ShowCycles(AntlrLanguageClient package)
+        private PerformAnalysis(AntlrLanguageClient package)
         {
             _package = package ?? throw new ArgumentNullException(nameof(package));
             OleMenuCommandService commandService = ((IServiceProvider)ServiceProvider).GetService(
@@ -50,23 +50,19 @@
             }
         }
 
-        public static ShowCycles Instance { get; private set; }
+        public static PerformAnalysis Instance { get; private set; }
 
         private AntlrLanguageClient ServiceProvider => _package;
 
         public static void Initialize(AntlrLanguageClient package)
         {
-            Instance = new ShowCycles(package);
+            Instance = new PerformAnalysis(package);
         }
 
         private void MenuItemCallback(object sender, EventArgs e)
         {
             try
             {
-                ////////////////////////
-                /// Show cycles.
-                ////////////////////////
-
                 IVsTextManager manager = ((IServiceProvider)ServiceProvider).GetService(typeof(VsTextManagerClass)) as IVsTextManager;
                 if (manager == null) return;
                 manager.GetActiveView(1, null, out IVsTextView view);
@@ -79,8 +75,7 @@
                 if (ffn == null) return;
                 Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(ffn);
                 if (document == null) return;
-                int pos = LanguageServer.Module.GetIndex(l, c, document);
-                AntlrLanguageClient.CMShowCycles(ffn, pos);
+                AntlrLanguageClient.CMPerformAnalysis(ffn);
             }
             catch (Exception exception)
             {

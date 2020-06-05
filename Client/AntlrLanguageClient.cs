@@ -62,7 +62,7 @@
             Unfold.Initialize(this);
             Fold.Initialize(this);
             RemoveUselessParentheses.Initialize(this);
-            ShowCycles.Initialize(this);
+            PerformAnalysis.Initialize(this);
         }
 
         public event AsyncEventHandler<EventArgs> StartAsync;
@@ -489,12 +489,12 @@
             }
         }
 
-        public static void CMShowCycles(string ffn, int start)
+        public static void CMPerformAnalysis(string ffn)
         {
             try
             {
                 if (_rpc == null) return;
-                _ = _rpc.InvokeAsync("CMShowCycles", ffn, start);
+                _ = _rpc.InvokeAsync("CMPerformAnalysis", ffn);
             }
             catch (Exception)
             {

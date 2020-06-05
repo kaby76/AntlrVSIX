@@ -517,11 +517,11 @@
             return null;
         }
 
-        private Document CheckDoc(System.Uri uri)
+        public static Document CheckDoc(System.Uri uri)
         {
             string decoded = System.Web.HttpUtility.UrlDecode(uri.AbsoluteUri);
             string file_name = new Uri(decoded).LocalPath;
-            Document document = _workspace.FindDocument(file_name);
+            Document document = Workspaces.Workspace.Instance.FindDocument(file_name);
             if (document == null)
             {
                 document = new Workspaces.Document(file_name);
@@ -537,11 +537,11 @@
                 catch (IOException)
                 {
                 }
-                Project project = _workspace.FindProject("Misc");
+                Project project = Workspaces.Workspace.Instance.FindProject("Misc");
                 if (project == null)
                 {
                     project = new Project("Misc", "Misc", "Misc");
-                    _workspace.AddChild(project);
+                    Workspaces.Workspace.Instance.AddChild(project);
                 }
                 project.AddDocument(document);
                 document.Changed = true;
@@ -1791,24 +1791,20 @@
             }
         }
 
-        [JsonRpcMethod("CMShowCycles")]
-        public void CMShowCycles(JToken arg1, JToken arg2)
+        [JsonRpcMethod("CMPerformAnalysis")]
+        public void CMPerformAnalysis(JToken arg1)
         {
             try
             {
                 string a1 = arg1.ToObject<string>();
-                int a2 = arg2.ToObject<int>();
                 Document document = CheckDoc(new Uri(a1));
-                int start = a2;
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- CMShowCycles");
+                    System.Console.Error.WriteLine("<-- CMPerformAnalysis");
                     System.Console.Error.WriteLine(a1);
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
-                    System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
                 }
-                LanguageServer.Module.ShowCycles(a2, document);
-                server.SendDiagnostics(a1, "hithere");
+                List<DiagnosticInfo> results = LanguageServer.Analysis.PerformAnalysis(document);
+                server.SendDiagnostics(a1, results);
             }
             catch (LanguageServerException e)
             {
