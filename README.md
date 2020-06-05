@@ -16,10 +16,8 @@ than these basic LSP commands.
 
 ## Analysis
 
-(This is not implemented yet.)
-
-Antlrvsix will make recommendations on what you should change
-for readability and performance.
+When invoked in the UI, Antlrvsix will perform an analysis of the document and
+make recommendations on what you may want to change. Results are place in the Error List grid box of VS 2019.
 For performance, link to a special version of the Antlr library to perform analysis.
 
 ## Refactoring
@@ -120,7 +118,10 @@ tree rewrite language, into Antlrvsix.
 ## Planned for v7.4:
 
 * Expression rule compression.
-* Add analysis show cycles.
+* Add analysis:
+  * Show cycles
+  * Show useless rules
+  * Show rules that should be fragments
 * Fix [Add to about box the version of Antlr used. #63](https://github.com/kaby76/AntlrVSIX/issues/63).
 * Fix [Add CI building of Antlrvsix. #61](https://github.com/kaby76/AntlrVSIX/issues/61).
 * Fix ["Add lexer rules for string literals" adds rules but with the same lexer symbol name #60](https://github.com/kaby76/AntlrVSIX/issues/60).
