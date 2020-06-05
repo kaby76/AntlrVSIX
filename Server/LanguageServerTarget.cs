@@ -1804,7 +1804,7 @@
                     System.Console.Error.WriteLine(a1);
                 }
                 List<DiagnosticInfo> results = LanguageServer.Analysis.PerformAnalysis(document);
-                server.SendDiagnostics(a1, results);
+                server.SendDiagnostics(results);
             }
             catch (LanguageServerException e)
             {
