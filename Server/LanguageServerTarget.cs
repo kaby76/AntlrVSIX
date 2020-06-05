@@ -350,7 +350,6 @@
             }
             DidOpenTextDocumentParams request = arg.ToObject<DidOpenTextDocumentParams>();
             _ = CheckDoc(request.TextDocument.Uri);
-            server.SendDiagnostics(request.TextDocument.Uri.AbsoluteUri, "");
         }
 
         [JsonRpcMethod(Methods.TextDocumentDidChangeName)]
@@ -1809,6 +1808,7 @@
                     System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
                 }
                 LanguageServer.Module.ShowCycles(a2, document);
+                server.SendDiagnostics(a1, "hithere");
             }
             catch (LanguageServerException e)
             {

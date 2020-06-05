@@ -10,6 +10,7 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.Windows.Input;
 
     public class LSPServer : INotifyPropertyChanged, IDisposable
     {
@@ -22,12 +23,13 @@
         private bool isDisposed;
         private int counter = 100;
 
-        public LSPServer(Stream sender, Stream reader, Dictionary<string, DiagnosticSeverity> initialDiagnostics = null)
+        public LSPServer(Stream sender, Stream reader)
         {
             target = new LanguageServerTarget(this);
             rpc = JsonRpc.Attach(sender, reader, target);
             rpc.Disconnected += OnRpcDisconnected;
-            diagnostics = initialDiagnostics;
+            diagnostics = new Dictionary<string, DiagnosticSeverity>();
+            diagnostics.Add("hithere", DiagnosticSeverity.Error);
         }
 
         public string CustomText
@@ -51,69 +53,11 @@
 
         public void OnTextDocumentOpened(DidOpenTextDocumentParams messageParams)
         {
-            textDocument = messageParams.TextDocument;
-
-            SendDiagnostics();
         }
 
         public void SetDiagnostics(Dictionary<string, DiagnosticSeverity> diagnostics)
         {
             this.diagnostics = diagnostics;
-        }
-
-        public void SendDiagnostics()
-        {
-            if (textDocument == null || this.diagnostics == null)
-            {
-                return;
-            }
-
-            string[] lines = textDocument.Text.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
-
-            List<Diagnostic> diagnostics = new List<Diagnostic>();
-            for (int i = 0; i < lines.Length; i++)
-            {
-                string line = lines[i];
-
-                int j = 0;
-                while (j < line.Length)
-                {
-                    Diagnostic diagnostic = null;
-                    foreach (KeyValuePair<string, DiagnosticSeverity> tag in this.diagnostics)
-                    {
-                        diagnostic = GetDiagnostic(line, i, ref j, tag.Key, tag.Value);
-
-                        if (diagnostic != null)
-                        {
-                            break;
-                        }
-                    }
-
-                    if (diagnostic == null)
-                    {
-                        ++j;
-                    }
-                    else
-                    {
-                        diagnostics.Add(diagnostic);
-                    }
-                }
-            }
-
-            PublishDiagnosticParams parameter = new PublishDiagnosticParams
-            {
-                Uri = textDocument.Uri,
-                Diagnostics = diagnostics.ToArray()
-            };
-
-            if (maxProblems > -1)
-            {
-                parameter.Diagnostics = parameter.Diagnostics.Take(maxProblems).ToArray();
-            }
-
-#pragma warning disable VSTHRD110
-            rpc.NotifyWithParameterObjectAsync(Methods.TextDocumentPublishDiagnosticsName, parameter);
-#pragma warning restore VSTHRD110
         }
 
         public void SendDiagnostics(string str, string text)
@@ -237,7 +181,6 @@
             if (maxProblems != newMaxProblems)
             {
                 maxProblems = newMaxProblems;
-                SendDiagnostics();
             }
         }
 
@@ -255,28 +198,22 @@
 
         private Diagnostic GetDiagnostic(string line, int lineOffset, ref int characterOffset, string wordToMatch, DiagnosticSeverity severity)
         {
-            if ((characterOffset + wordToMatch.Length) <= line.Length)
+            if (line.Contains(wordToMatch))
             {
-                string subString = line.Substring(characterOffset, wordToMatch.Length);
-                if (subString.Equals(wordToMatch, StringComparison.OrdinalIgnoreCase))
+                Diagnostic diagnostic = new Diagnostic
                 {
-                    Diagnostic diagnostic = new Diagnostic
+                    Message = "This is an " + Enum.GetName(typeof(DiagnosticSeverity), severity),
+                    Severity = severity,
+                    Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range
                     {
-                        Message = "This is an " + Enum.GetName(typeof(DiagnosticSeverity), severity),
-                        Severity = severity,
-                        Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range
-                        {
-                            Start = new Position(lineOffset, characterOffset),
-                            End = new Position(lineOffset, characterOffset + wordToMatch.Length)
-                        },
-                        Code = "Test" + Enum.GetName(typeof(DiagnosticSeverity), severity)
-                    };
-                    characterOffset += wordToMatch.Length;
-
-                    return diagnostic;
-                }
+                        Start = new Position(0, 0),
+                        End = new Position(0, 10)
+                    },
+                    Code = "Test" + Enum.GetName(typeof(DiagnosticSeverity), severity)
+                };
+                characterOffset += 100;
+                return diagnostic;
             }
-
             return null;
         }
 

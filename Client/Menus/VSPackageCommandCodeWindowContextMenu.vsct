@@ -26,6 +26,9 @@
 			<Group guid="guidMenuAndCommandsCmdSet" id="TransformMenuGroup" priority="0x0600">
 				<Parent guid="guidMenuAndCommandsCmdSet" id="TransformMenu"/>
 			</Group>
+			<Group guid="guidMenuAndCommandsCmdSet" id="AnalyzeMenuGroup" priority="0x0600">
+				<Parent guid="guidMenuAndCommandsCmdSet" id="AnalyzeMenu"/>
+			</Group>
 		</Groups>
 
 		<Buttons>
@@ -181,7 +184,7 @@
 			</Button>
 
 			<Button guid="guidMenuAndCommandsCmdSet" id="ShowCyclesCmd" priority="0x700" type="Button">
-				<Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup"/>
+				<Parent guid="guidMenuAndCommandsCmdSet" id="AnalyzeMenuGroup"/>
 				<Strings>
 					<ButtonText>Show grammar cycles</ButtonText>
 				</Strings>
@@ -231,6 +234,13 @@
 					<CommandName>Transform</CommandName>
 				</Strings>
 			</Menu>
+			<Menu guid="guidMenuAndCommandsCmdSet" id="AnalyzeMenu" priority="0x700" type="Menu">
+				<Parent guid="guidMenuAndCommandsCmdSet" id="TopLevelMenuGroup" />
+				<Strings>
+					<ButtonText>Analyze</ButtonText>
+					<CommandName>Analyze</CommandName>
+				</Strings>
+			</Menu>
 		</Menus>
 
 	</Commands>
@@ -265,6 +275,8 @@
 			<IDSymbol name="NavigateMenuGroup" value="0x6014" />
 			<IDSymbol name="TransformMenu" value="0x6015" />
 			<IDSymbol name="TransformMenuGroup" value="0x6016" />
+			<IDSymbol name="AnalyzeMenu" value="0x6017" />
+			<IDSymbol name="AnalyzeMenuGroup" value="0x6018" />
 			<IDSymbol name="NextRuleCmd" value="0x7002" />
 			<IDSymbol name="PrevRuleCmd" value="0x7003" />
 			<IDSymbol name="GoToListenerCmd" value="0x7005" />
