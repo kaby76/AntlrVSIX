@@ -16,10 +16,8 @@ than these basic LSP commands.
 
 ## Analysis
 
-(This is not implemented yet.)
-
-Antlrvsix will make recommendations on what you should change
-for readability and performance.
+When invoked in the UI, Antlrvsix will perform an analysis of the document and
+make recommendations on what you may want to change. Results are place in the Error List grid box of VS 2019.
 For performance, link to a special version of the Antlr library to perform analysis.
 
 ## Refactoring
