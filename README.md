@@ -120,7 +120,10 @@ tree rewrite language, into Antlrvsix.
 ## Planned for v7.4:
 
 * Expression rule compression.
-* Add analysis show cycles.
+* Add analysis:
+  * Show cycles
+  * Show useless rules
+  * Show rules that should be fragments
 * Fix [Add to about box the version of Antlr used. #63](https://github.com/kaby76/AntlrVSIX/issues/63).
 * Fix [Add CI building of Antlrvsix. #61](https://github.com/kaby76/AntlrVSIX/issues/61).
 * Fix ["Add lexer rules for string literals" adds rules but with the same lexer symbol name #60](https://github.com/kaby76/AntlrVSIX/issues/60).
