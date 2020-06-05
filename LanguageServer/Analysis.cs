@@ -294,6 +294,48 @@
                         Message = i
                     });
             }
+
+
+            // Check for useless lexer tokens.
+            List<string> unused = new List<string>();
+            var pt = pd_parser.ParseTree;
+            var l1 = TreeEdits.FindTopDown(pt, (in IParseTree t, out bool c) =>
+            {
+                c = true;
+                if (t is ANTLRv4Parser.LexerRuleSpecContext)
+                {
+                    c = false;
+                    return t;
+                }
+                return null;
+            }).ToList();
+            foreach (var t in l1)
+            {
+                var r1 = t as ANTLRv4Parser.LexerRuleSpecContext;
+                var lhs = r1.TOKEN_REF();
+                var k = lhs.GetText();
+                var source_interval = lhs.SourceInterval;
+                int a = source_interval.a;
+                int b = source_interval.b;
+                IToken ta = pd_parser.TokStream.Get(a);
+                IToken tb = pd_parser.TokStream.Get(b);
+                var st = ta.StartIndex;
+                var ed = tb.StopIndex + 1;
+                var refs = Module.FindRefsAndDefs(st, document);
+                if (refs.Count() <= 1)
+                {
+                    string i = "Lexer rule " + k + " unused in parser grammar rules. Consider removing.";
+                    result.Add(
+                        new DiagnosticInfo()
+                        {
+                            Document = document.FullPath,
+                            Severify = DiagnosticInfo.Severity.Info,
+                            Start = st,
+                            End = ed,
+                            Message = i
+                        });
+                }
+            }
             return result;
         }
     }
