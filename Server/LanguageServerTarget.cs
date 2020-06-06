@@ -1125,57 +1125,67 @@
         [JsonRpcMethod(Methods.TextDocumentRenameName)]
         public WorkspaceEdit TextDocumentRenameName(JToken arg)
         {
-            WorkspaceEdit edit = null;
-            try
+            if (trace)
             {
-                if (trace)
-                {
-                    System.Console.Error.WriteLine("<-- TextDocumentRename");
-                    System.Console.Error.WriteLine(arg.ToString());
-                }
-                RenameParams request = arg.ToObject<RenameParams>();
-                Document document = CheckDoc(request.TextDocument.Uri);
-                Position position = request.Position;
-                int line = position.Line;
-                int character = position.Character;
-                int index = LanguageServer.Module.GetIndex(line, character, document);
-                if (trace)
-                {
-                    System.Console.Error.WriteLine("position index = " + index);
-                    (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
-                    System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
-                }
-                string new_name = request.NewName;
-                Dictionary<string, LanguageServer.TextEdit[]> changes = LanguageServer.Module.Rename(index, new_name, document);
-                edit = new WorkspaceEdit();
-                int count = 0;
-                Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]> edit_changes_array = new Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]>();
-                foreach (KeyValuePair<string, LanguageServer.TextEdit[]> pair in changes)
-                {
-                    string doc = pair.Key;
-                    Uri uri = new Uri(doc);
-                    LanguageServer.TextEdit[] val = pair.Value;
-                    List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit> new_list = new List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit>();
-                    foreach (LanguageServer.TextEdit v in val)
-                    {
-                        Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit new_edit = new Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit
-                        {
-                            Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range()
-                        };
-                        (int, int) lcs = LanguageServer.Module.GetLineColumn(v.range.Start.Value, document);
-                        (int, int) lce = LanguageServer.Module.GetLineColumn(v.range.End.Value, document);
-                        new_edit.Range.Start = new Position(lcs.Item1, lcs.Item2);
-                        new_edit.Range.End = new Position(lce.Item1, lce.Item2);
-                        new_edit.NewText = v.NewText;
-                        new_list.Add(new_edit);
-                        count++;
-                    }
-                    edit_changes_array.Add(uri.ToString(), new_list.ToArray());
-                }
-                edit.Changes = edit_changes_array;
+                System.Console.Error.WriteLine("<-- TextDocumentRename");
+                System.Console.Error.WriteLine(arg.ToString());
             }
-            catch (Exception)
-            { }
+            WorkspaceEdit edit = null;
+            lock (_object)
+            {
+                try
+                {
+                    RenameParams request = arg.ToObject<RenameParams>();
+                    Position position = request.Position;
+                    int line = position.Line;
+                    int character = position.Character;
+                    Document document = CheckDoc(request.TextDocument.Uri);
+                    if (!ignore_next_change.ContainsKey(document.FullPath))
+                    {
+                        int index = LanguageServer.Module.GetIndex(line, character, document);
+                        if (trace)
+                        {
+                            System.Console.Error.WriteLine("position index = " + index);
+                            (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
+                            System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
+                        }
+                        string new_name = request.NewName;
+                        Dictionary<string, LanguageServer.TextEdit[]> changes = LanguageServer.Module.Rename(index, new_name, document);
+                        edit = new WorkspaceEdit();
+                        int count = 0;
+                        Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]> edit_changes_array = new Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]>();
+                        foreach (KeyValuePair<string, LanguageServer.TextEdit[]> pair in changes)
+                        {
+                            string doc = pair.Key;
+                            Uri uri = new Uri(doc);
+                            LanguageServer.TextEdit[] val = pair.Value;
+                            List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit> new_list = new List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit>();
+                            foreach (LanguageServer.TextEdit v in val)
+                            {
+                                Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit new_edit = new Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit
+                                {
+                                    Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range()
+                                };
+                                (int, int) lcs = LanguageServer.Module.GetLineColumn(v.range.Start.Value, document);
+                                (int, int) lce = LanguageServer.Module.GetLineColumn(v.range.End.Value, document);
+                                new_edit.Range.Start = new Position(lcs.Item1, lcs.Item2);
+                                new_edit.Range.End = new Position(lce.Item1, lce.Item2);
+                                new_edit.NewText = v.NewText;
+                                new_list.Add(new_edit);
+                                count++;
+                            }
+                            edit_changes_array.Add(uri.ToString(), new_list.ToArray());
+                        }
+                        edit.Changes = edit_changes_array;
+                    }
+                    else
+                    {
+                        ignore_next_change.Remove(document.FullPath);
+                    }
+                }
+                catch (Exception)
+                { }
+            }
             return edit;
         }
 
