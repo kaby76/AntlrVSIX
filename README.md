@@ -116,7 +116,7 @@ tree rewrite language, into Antlrvsix.
 * Add in empty string alternative hoist transforms.
 * Expression rule compression.
 
-## Release notes for v7.4:
+## Release notes for v7.4 (7 June 2020):
 
 * Add analysis:
   * Show cycles
