@@ -82,7 +82,7 @@ into the repository that does not compile. This is because I alone make changes 
 huge changes.
 Grab the source for a released version to be safe.
 * Each night at 0h 0m UTC, Appveyor builds the latest source. The output of the build can be downloaded
-at https://ci.appveyor.com/api/projects/kaby76/antlrvsix/artifacts/bin/Client/bin/Debug/AntlrVSIX.vsix.
+at https://ci.appveyor.com/api/projects/kaby76/antlrvsix/artifacts/Client/bin/Debug/AntlrVSIX.vsix.
 However, there is no guarantee that this version will work.
 
 # Documentation
