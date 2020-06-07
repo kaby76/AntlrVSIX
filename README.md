@@ -82,7 +82,7 @@ into the repository that does not compile. This is because I alone make changes 
 huge changes.
 Grab the source for a released version to be safe.
 * Each night at 0h 0m UTC, Appveyor builds the latest source. The output of the build can be downloaded
-at https://ci.appveyor.com/api/projects/kaby76/antlrvsix/artifacts/bin/Client\bin\Debug\AntlrVSIX.vsix.
+at https://ci.appveyor.com/api/projects/kaby76/antlrvsix/artifacts/bin/Client/bin/Debug/AntlrVSIX.vsix.
 However, there is no guarantee that this version will work.
 
 # Documentation
@@ -114,14 +114,13 @@ tree rewrite language, into Antlrvsix.
 * Start rewriting existing transforms and analyses into Piggy.
 * Add left factoring and inverse.
 * Add in empty string alternative hoist transforms.
-
-## Planned for v7.4:
-
 * Expression rule compression.
+
+## Release notes for v7.4:
+
 * Add analysis:
   * Show cycles
-  * Show useless rules
-  * Show rules that should be fragments
+  * Show useless lexer rules
 * Fix [Add to about box the version of Antlr used. #63](https://github.com/kaby76/AntlrVSIX/issues/63).
 * Fix [Add CI building of Antlrvsix. #61](https://github.com/kaby76/AntlrVSIX/issues/61).
 * Fix ["Add lexer rules for string literals" adds rules but with the same lexer symbol name #60](https://github.com/kaby76/AntlrVSIX/issues/60).
