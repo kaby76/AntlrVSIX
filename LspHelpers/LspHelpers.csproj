@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol" Version="16.4.30" />
+    <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol" Version="16.5.1063" />
   </ItemGroup>
 
 </Project>
