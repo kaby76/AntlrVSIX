@@ -107,7 +107,7 @@ previous hives stored under the AppData directory. It is often easier to
 just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio\16.0_*. I've included a
 Bash script "clean.sh" in the Antlrvsix source to clean out the build files so one can build from scratch.
 
-## Planned for v8.0 (July 2020):
+## Planned for v8.0 (Aug 2020):
 
 * Add in Piggy, a transformational system for trees using a specialized
 tree rewrite language, into Antlrvsix.
@@ -116,7 +116,7 @@ tree rewrite language, into Antlrvsix.
 * Add in empty string alternative hoist transforms.
 * Expression rule compression.
 
-## Release notes for v7.4 (7 June 2020):
+## Release notes for v7.4 (7 Jun 2020):
 
 * Add analysis:
   * Show cycles
