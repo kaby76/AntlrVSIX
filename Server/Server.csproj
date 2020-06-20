@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="cs-codebuff" Version="2.0.6" />
     <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol" Version="16.5.1063" />
     <PackageReference Include="StreamJsonRpc" Version="2.4.48" />
     <PackageReference Include="System.IO.Pipes" Version="4.3.0" />
