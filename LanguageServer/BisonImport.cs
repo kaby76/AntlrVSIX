@@ -44,7 +44,7 @@ namespace LanguageServer
 
             // Get list of tokens. Convert this to a list of capitalized names.
             Dictionary<string, Tuple<string, string>> terminals = new Dictionary<string, Tuple<string, string>>();
-            Dictionary<string, Tuple<string, string>> nonterminals = new Dictionary<string, Tuple<string, string>>();
+            Dictionary<string, string> nonterminals = new Dictionary<string, string>();
             
             foreach (IParseTree token in listener.terminals)
             {
@@ -139,11 +139,13 @@ namespace LanguageServer
                         || r.Item1 == "rule"
                     ))
                 {
-                    nonterminals.Add(r.Item1, new Tuple<string, string>("", r.Item1 + "_nonterminal"));
+                    if (!nonterminals.ContainsKey(r.Item1))
+                        nonterminals.Add(r.Item1, r.Item1 + "_nonterminal");
                 }
                 else
                 {
-                    nonterminals.Add(r.Item1, new Tuple<string, string>("", r.Item1));
+                    if (! nonterminals.ContainsKey(r.Item1))
+                        nonterminals.Add(r.Item1, r.Item1);
                 }
             }
 
@@ -159,7 +161,7 @@ namespace LanguageServer
             foreach (Tuple<string, List<List<string>>> r in listener.rules)
             {
                 string lhs = r.Item1;
-                lhs = nonterminals[lhs].Item2;
+                lhs = nonterminals[lhs];
                 sb.Append(lhs);
                 List<List<string>> rhs = r.Item2;
                 bool first = true;
@@ -171,7 +173,7 @@ namespace LanguageServer
                     {
                         var re = c;
                         if (terminals.ContainsKey(re)) re = terminals[re].Item2;
-                        else if (nonterminals.ContainsKey(re)) re = nonterminals[re].Item2;
+                        else if (nonterminals.ContainsKey(re)) re = nonterminals[re];
                         sb.Append(" " + re);
                     }
 
