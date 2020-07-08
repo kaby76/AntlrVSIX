@@ -183,6 +183,13 @@
 				</Strings>
 			</Button>
 
+			<Button guid="guidMenuAndCommandsCmdSet" id="UpperLowerCaseLiteralCmd" priority="0x100" type="Button">
+				<Parent guid="guidMenuAndCommandsCmdSet" id="TransformMenuGroup"/>
+				<Strings>
+					<ButtonText>Convert string literals to upper and lower case</ButtonText>
+				</Strings>
+			</Button>
+
 			<Button guid="guidMenuAndCommandsCmdSet" id="PerformAnalysisCmd" priority="0x700" type="Button">
 				<Parent guid="guidMenuAndCommandsCmdSet" id="AnalyzeMenuGroup"/>
 				<Strings>
@@ -303,6 +310,7 @@
 			<IDSymbol name="RemoveUselessParenthesesCmd" value="0x7028" />
 			<IDSymbol name="PerformAnalysisCmd" value="0x7029" />
 			<IDSymbol name="ReplacePrioritizationCmd" value="0x702A"/>
+			<IDSymbol name="UpperLowerCaseLiteralCmd" value="0x702B"/>
 		</GuidSymbol>
 	</Symbols>
 </CommandTable>

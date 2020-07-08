@@ -63,6 +63,7 @@
             Fold.Initialize(this);
             RemoveUselessParentheses.Initialize(this);
             PerformAnalysis.Initialize(this);
+            UpperLowerCaseLiteral.Initialize(this);
         }
 
         public event AsyncEventHandler<EventArgs> StartAsync;
@@ -507,6 +508,18 @@
             {
                 if (_rpc == null) return;
                 _ = _rpc.InvokeAsync("CMReplacePriorization", ffn, start, end);
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        public static void CMUpperLowerCaseLiteral(string ffn, int start, int end)
+        {
+            try
+            {
+                if (_rpc == null) return;
+                _ = _rpc.InvokeAsync("CMUpperLowerCaseLiteral", ffn, start, end);
             }
             catch (Exception)
             {

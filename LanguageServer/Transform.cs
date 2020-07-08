@@ -4592,5 +4592,180 @@
 
             return result;
         }
+
+        public static Dictionary<string, string> UpperLowerCaseLiteral(int start, int end, Document document)
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+
+            // Check if initial file is a grammar.
+            if (!(ParserDetailsFactory.Create(document) is AntlrGrammarDetails pd_parser))
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+
+            ExtractGrammarType egt = new ExtractGrammarType();
+            ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
+            bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
+                              || egt.Type == ExtractGrammarType.GrammarType.Combined
+                              || egt.Type == ExtractGrammarType.GrammarType.Lexer;
+            if (!is_grammar)
+            {
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            }
+
+            // Find all other grammars by walking dependencies (import, vocab, file names).
+            HashSet<string> read_files = new HashSet<string>
+            {
+                document.FullPath
+            };
+            Dictionary<Workspaces.Document, List<TerminalNodeImpl>> every_damn_literal =
+                new Dictionary<Workspaces.Document, List<TerminalNodeImpl>>();
+            for (;;)
+            {
+                int before_count = read_files.Count;
+                foreach (string f in read_files)
+                {
+                    List<string> additional = AntlrGrammarDetails._dependent_grammars.Where(
+                        t => t.Value.Contains(f)).Select(
+                        t => t.Key).ToList();
+                    read_files = read_files.Union(additional).ToHashSet();
+                }
+
+                foreach (string f in read_files)
+                {
+                    IEnumerable<List<string>> additional = AntlrGrammarDetails._dependent_grammars.Where(
+                        t => t.Key == f).Select(
+                        t => t.Value);
+                    foreach (List<string> t in additional)
+                    {
+                        read_files = read_files.Union(t).ToHashSet();
+                    }
+                }
+
+                int after_count = read_files.Count;
+                if (after_count == before_count)
+                {
+                    break;
+                }
+            }
+
+            // Find rewrite rules, i.e., string literal to string symbol name.
+            List<IParseTree> subs = new List<IParseTree>();
+
+            // Find keyword-like literals in grammars.
+            LiteralsGrammar lp_whatever = new LiteralsGrammar();
+            ParseTreeWalker.Default.Walk(lp_whatever, pd_parser.ParseTree);
+            List<TerminalNodeImpl> list_literals = lp_whatever.Literals;
+            foreach (TerminalNodeImpl lexer_literal in list_literals)
+            {
+                string old_name = lexer_literal.GetText();
+                bool ok = false;
+                IRuleNode p1 = lexer_literal.Parent;
+                IRuleNode lexer_elements = null;
+                for (; p1 != null; p1 = p1.Parent)
+                {
+                    if (p1 is ANTLRv4Parser.LexerRuleSpecContext)
+                    {
+                        ok = true;
+                        break;
+                    }
+                    else if (p1 is ANTLRv4Parser.LexerElementsContext)
+                    {
+                        lexer_elements = p1;
+                    }
+                }
+                if (!ok)
+                {
+                    continue;
+                }
+                ok = true;
+                var s = lexer_literal.GetText();
+                s = s.Substring(1).Substring(0, s.Length - 2);
+                foreach (var cc in s)
+                {
+                    if (!char.IsLetterOrDigit(cc))
+                    {
+                        ok = false;
+                        break;
+                    }
+                }
+                if (!ok)
+                {
+                    continue;
+                }
+                subs.Add(lexer_elements);
+            }
+
+            // Get all intertoken text immediately for source reconstruction.
+            var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
+            TreeEdits.Replace(pd_parser.ParseTree,
+                (in IParseTree n, out bool c) =>
+                {
+                    c = true;
+                    if (!subs.Contains(n))
+                        return null;
+
+                    c = false;
+                    List<TerminalNodeImpl> literals = new List<TerminalNodeImpl>();
+                    Stack<IParseTree> stack = new Stack<IParseTree>();
+                    var rule = n as ANTLRv4Parser.LexerElementsContext;
+                    stack.Push(rule);
+                    while (stack.Count > 0)
+                    {
+                        var t = stack.Pop();
+                        if (t is TerminalNodeImpl)
+                        {
+                            var term = t as TerminalNodeImpl;
+                            if (term.Symbol.Type == ANTLRv4Parser.STRING_LITERAL)
+                                literals.Add(t as TerminalNodeImpl);
+                        }
+                        else
+                        {
+                            for (int i = t.ChildCount - 1; i >= 0; --i)
+                            {
+                                var child = t.GetChild(i);
+                                if (child == null) throw new Exception("Child null?");
+                                stack.Push(child);
+                            }
+                        }
+                    }
+
+                    // This node is the lexerElements node. Go through all leaves and convert
+                    // a string literal to a list of lexer char sets.
+                    // Then, construct a lexerElements node with the replacement sets.
+                    var new_lexerelements = new ANTLRv4Parser.LexerElementContext(null, 0);
+                    foreach (var literal in literals)
+                    {
+                        var s = literal.GetText();
+                        s = s.Substring(1).Substring(0, s.Length - 2);
+                        foreach (var cc in s)
+                        {
+                            var le = new ANTLRv4Parser.LexerElementContext(null, 0);
+                            var la = new ANTLRv4Parser.LexerAtomContext(null, 0);
+                            var token = new CommonToken(ANTLRv4Lexer.LEXER_CHAR_SET)
+                            {
+                                Line = -1,
+                                Column = -1,
+                                Text =
+                                    "[" + char.ToLower(cc) + char.ToUpper(cc) + "]"
+                            };
+                            var set = new TerminalNodeImpl(token);
+                            new_lexerelements.AddChild(le);
+                            le.Parent = new_lexerelements;
+                            le.AddChild(la);
+                            la.Parent = le;
+                            la.AddChild(set);
+                            set.Parent = la;
+                        }
+                    }
+                    return new_lexerelements;
+                });
+            StringBuilder sb = new StringBuilder();
+            TreeEdits.Reconstruct(sb, pd_parser.ParseTree, text_before);
+            var new_code = sb.ToString();
+            if (new_code != pd_parser.Code)
+            {
+                result.Add(document.FullPath, new_code);
+            }
+            return result;
+        }
     }
 }
