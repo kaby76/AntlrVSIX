@@ -16,7 +16,7 @@
 	<ItemGroup>
 		<PackageReference Include="Antlr4.Runtime.Standard" Version="4.8" />
 		<PackageReference Include="Antlr4BuildTasks" Version="8.0" />
-		<ProjectReference Include="..\src\xpath.csproj" />
+		<ProjectReference Include="..\XPath\xpath.csproj" />
 	</ItemGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
