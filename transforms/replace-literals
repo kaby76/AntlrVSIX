@@ -1,0 +1,14 @@
+-- Given all documents, find all literals in parser rules.
+-- Given all documents, find all literals in lexer rules that fit form "A : STRING_LITERAL".
+-- Given all literals in parser rules, rewrite with the lhs name.
+
+documents = { *.g4 }
+all-literals = {documents}//parserRuleSpec//STRING_LITERAL
+lexer-literals = {documents}//lexerRuleSpec/lexerRuleBlock/lexerAltList[count(*) = 1]/lexerAlt/lexerElements[count(*) = 1]/lexerElement[count(*) = 1]/lexerAtom/terminal/STRING_LITERAL
+lhs-symbols = {lexer-literals}/../../../../../../../../TOKEN_REF
+all-literals.Replace( t =>
+{
+    for (int i = 0; i < all-literals.Length; ++i)
+        if all-literals[i].Text == t.Text
+	    return new TOKEN_REF(lhs-symbols[i].Text)
+}

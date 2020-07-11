@@ -1,0 +1,9 @@
+-- Remove useless parentheses from a grammar
+-- Rules may contain parentheses that can be removed which do not alter the meaning of the rule. An
+-- example is "a : (b)". This transform removes these useless parentheses.
+
+
+blocks = //(altList | labeledAlt)/alternative[count() = 1]/element/ebnf[blockSuffix = null]/block[COLON = null][altList = 0]
+
+
+
