@@ -53,10 +53,10 @@ namespace org.eclipse.wst.xml.xpath2.processor.@internal
                 parser.ErrorHandler = new BailErrorStrategy();
                 XPath31Parser.XpathContext parse_tree = parser.xpath();
                 var sb = new OutputParseTree().OutputTree(parse_tree, tokens, true);
-                System.Console.WriteLine("==============================");
-                System.Console.WriteLine("Parse tree for expression \"" + xpath + "\"");
-				System.Console.WriteLine(sb.ToString());
-				System.Console.WriteLine();
+                //System.Console.WriteLine("==============================");
+                //System.Console.WriteLine("Parse tree for expression \"" + xpath + "\"");
+				//System.Console.WriteLine(sb.ToString());
+				//System.Console.WriteLine();
                 // Compute AST representation of XPath expression.
                 var visitor = XPathBuilderVisitor.INSTANCE;
                 var xPath2 = (XPath)visitor.VisitXpath(parse_tree);
@@ -64,10 +64,10 @@ namespace org.eclipse.wst.xml.xpath2.processor.@internal
 
                 var o = new org.eclipse.wst.xml.xpath2.processor.@internal.OutputXPathExpression();
                 var sb2 = o.OutputTree(xPath2);
-                System.Console.WriteLine("==============================");
-                System.Console.WriteLine("IR for expression \"" + xpath + "\"");
-                System.Console.WriteLine("Expression \"" + xpath + "\"");
-                System.Console.WriteLine(sb2.ToString());
+                //System.Console.WriteLine("==============================");
+                //System.Console.WriteLine("IR for expression \"" + xpath + "\"");
+                //System.Console.WriteLine("Expression \"" + xpath + "\"");
+                //System.Console.WriteLine(sb2.ToString());
 
 				if (isRootlessAccess)
                 {

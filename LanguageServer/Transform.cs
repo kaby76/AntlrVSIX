@@ -1,4 +1,6 @@
-﻿namespace LanguageServer
+﻿using org.eclipse.wst.xml.xpath2.processor.util;
+
+namespace LanguageServer
 {
     using Algorithms;
     using Antlr4.Runtime;
@@ -4152,8 +4154,6 @@
         public static Dictionary<string, string> RemoveUselessParentheses(int start, int end, Document document)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
-
-            // Check if initial file is a grammar.
             if (!(ParserDetailsFactory.Create(document) is AntlrGrammarDetails pd_parser))
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             ExtractGrammarType egt = new ExtractGrammarType();
@@ -4166,131 +4166,6 @@
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
 
-            // Find all other grammars by walking dependencies (import, vocab, file names).
-            HashSet<string> read_files = new HashSet<string>
-            {
-                document.FullPath
-            };
-            Dictionary<Workspaces.Document, List<TerminalNodeImpl>> every_damn_literal =
-                new Dictionary<Workspaces.Document, List<TerminalNodeImpl>>();
-            for (; ; )
-            {
-                int before_count = read_files.Count;
-                foreach (string f in read_files)
-                {
-                    List<string> additional = AntlrGrammarDetails._dependent_grammars.Where(
-                        t => t.Value.Contains(f)).Select(
-                        t => t.Key).ToList();
-                    read_files = read_files.Union(additional).ToHashSet();
-                }
-                foreach (string f in read_files)
-                {
-                    IEnumerable<List<string>> additional = AntlrGrammarDetails._dependent_grammars.Where(
-                        t => t.Key == f).Select(
-                        t => t.Value);
-                    foreach (List<string> t in additional)
-                    {
-                        read_files = read_files.Union(t).ToHashSet();
-                    }
-                }
-                int after_count = read_files.Count;
-                if (after_count == before_count)
-                {
-                    break;
-                }
-            }
-
-            //// Check cursor position. Many things can happen here, but we have to try
-            //// and make some sense of what the user is pointing out.
-            //// It is either the LHS symbol of a rule,
-            //// which means the user wants to fold all occurrences of the rule
-            //// RHS or it is a selection of symbols in the RHS of the rule, which means the
-            //// user wants to fold this specific sequence and then create a new rule.
-            //IEnumerable<Location> refs_and_defs = null;
-            //IList<Location> defs = null;
-            //TerminalNodeImpl sym_start = null;
-            //TerminalNodeImpl sym_end = null;
-            //if (start == end)
-            //{
-            //    // Selection is a single point.
-            //    sym_end = sym_start = LanguageServer.Util.Find(start, document);
-            //}
-            //else
-            //{
-            //    // Selection is of a list of characters. Go up the tree to find an
-            //    // exact match.
-            //    if (start >= end)
-            //    {
-            //        var temp = end;
-            //        end = start;
-            //        start = temp;
-            //    }
-            //    sym_start = LanguageServer.Util.Find(start, document);
-            //    sym_end = LanguageServer.Util.Find(end - 1, document);
-            //}
-            //if (sym_end == null || sym_start == null)
-            //{
-            //    throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
-            //}
-            //// Go up tree to find a common parent.
-            //List<IParseTree> lhs_path = new List<IParseTree>();
-            //List<IParseTree> rhs_path = new List<IParseTree>();
-            //for (var p = (IParseTree)sym_start; p != null; p = p.Parent) lhs_path.Insert(0, p);
-            //for (var p = (IParseTree)sym_end; p != null; p = p.Parent) rhs_path.Insert(0, p);
-            ////List<Type> lhs_types = new List<Type>();
-            ////List<Type> rhs_types = new List<Type>();
-            ////for (var p = (IParseTree)sym_start; p != null; p = p.Parent) lhs_types.Insert(0, p.GetType());
-            ////for (var p = (IParseTree)sym_end; p != null; p = p.Parent) rhs_types.Insert(0, p.GetType());
-            ////List<string> lhs_string = new List<string>();
-            ////List<string> rhs_string = new List<string>();
-            ////for (var p = (IParseTree)sym_start; p != null; p = p.Parent) lhs_string.Insert(0, p.GetText());
-            ////for (var p = (IParseTree)sym_end; p != null; p = p.Parent) rhs_string.Insert(0, p.GetText());
-
-            //int i = 0;
-            //for (; ; )
-            //{
-            //    if (lhs_path[i] != rhs_path[i])
-            //    {
-            //        --i;
-            //        break;
-            //    }
-            //    ++i;
-            //    if (i >= lhs_path.Count || i > rhs_path.Count)
-            //    {
-            //        --i;
-            //        break;
-            //    }
-            //}
-            //if (i < 0)
-            //{
-            //    throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
-            //}
-            //if (lhs_path[i] is ANTLRv4Parser.ParserRuleSpecContext)
-            //{
-            //    throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
-            //}
-            //if (lhs_path[i] is ANTLRv4Parser.RuleAltListContext)
-            //{
-            //    throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
-            //}
-            //int j = i;
-            //for (; j >= 0; --j)
-            //{
-            //    if (lhs_path[j] is ANTLRv4Parser.ParserRuleSpecContext)
-            //        break;
-            //}
-            //if (j < 0)
-            //{
-            //    throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
-            //}
-            //if (lhs_path[j] is ANTLRv4Parser.ParserRuleSpecContext
-            //    && j + 2 == lhs_path.Count
-            //    && sym_start != sym_end)
-            //{
-            //    throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
-            //}
-
-            //bool replace_all = sym_start == sym_end && sym_start.Parent is ANTLRv4Parser.ParserRuleSpecContext;
 
             bool replace_all = true;
 
@@ -4301,53 +4176,24 @@
             {
                 AntlrGrammarDetails pd = pd_parser;
                 var pt = pd.ParseTree;
-                foreach (var replace_this in TreeEdits.FindTopDown(pt,
-                    (in IParseTree t, out bool c) =>
-                    {
-                        c = true;
-                        if (t is ANTLRv4Parser.BlockContext)
-                        {
-                            var block = t as ANTLRv4Parser.BlockContext;
-                            var p = block.Parent;
-                            if (p is ANTLRv4Parser.EbnfContext)
-                            {
-                                var ebnf = p as ANTLRv4Parser.EbnfContext;
-                                if (ebnf.blockSuffix() != null)
-                                {
-                                    return null;
-                                }
-                            }
-                            var pp = p.Parent; // element
-                            var ppp = pp.Parent; // alternative
-                            var pppp = ppp.Parent; // altList or labeledAlt
-                            if (pppp is ANTLRv4Parser.AltListContext)
-                            {
-                                if (pppp.ChildCount != 1)
-                                    return null;
-                            }
-                            if (pppp is ANTLRv4Parser.LabeledAltContext)
-                            {
-                                if (pppp.ChildCount != 1)
-                                    return null;
-                            }
-                            if (block.COLON() != null)
-                            {
-                                return null;
-                            }
-                            var alt_list = block.altList();
-                            if (alt_list.ChildCount > 1 && ppp.ChildCount > 1)
-                            {
-                                return null;
-                            }
-                            return t;
-                        }
-                        if (t is ANTLRv4Parser.RuleBlockContext)
-                        {
 
-                        }
-                        return null;
-                    }))
+                org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+                var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
+                AntlrDOM.AntlrDynamicContext dynamicContext = AntlrDOM.ConvertToDOM.Try(tree, parser);
+
+                var find_blocks =
+                        "//(altList | labeledAlt)/alternative/element/ebnf[not(child::blockSuffix)]/block[not(descendant::altList[@ChildCount > 1])]";
+                var expression = engine.parseExpression(find_blocks, new StaticContextBuilder());
+                object[] contexts = new object[] {dynamicContext.Document};
+                var rs = expression.evaluate(dynamicContext, contexts);
+
+                var c1 = new CTree.Class1(parser, lexer, new Dictionary<string, IParseTree>());
+                var c2 = c1.CreateTree("( ruleAltList ( labeledAlt ( alternative )))");
+
+                foreach (var rt in rs)
                 {
+                    var r1 = rt.NativeValue as AntlrDOM.AntlrElement;
+                    var replace_this = r1.AntlrIParseTree as ANTLRv4Parser.BlockContext;
                     // Remove block by hoisting all parts of altList of the block into an element.
                     var block = replace_this as ANTLRv4Parser.BlockContext;
                     var ebnf = block?.Parent as ANTLRv4Parser.EbnfContext;
