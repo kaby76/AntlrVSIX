@@ -4185,7 +4185,9 @@ namespace LanguageServer
                     "//(altList | labeledAlt)/alternative/element/ebnf[not(child::blockSuffix)]/block/altList[not(@ChildCount > 1)]",
                     new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
                     .Select(x => x.NativeValue).ToArray();
-                var elements = engine.parseExpression("../../..", new StaticContextBuilder()).evaluate(dynamicContext, altlists)
+                var elements = engine.parseExpression(
+                    "../../..", 
+                    new StaticContextBuilder()).evaluate(dynamicContext, altlists)
                     .Select(x => x.NativeValue).ToArray();
                 for (int j = 0; j < altlists.Length; ++j)
                 {
@@ -4567,15 +4569,13 @@ namespace LanguageServer
                     // This node is the lexerElements node. Go through all leaves and convert
                     // a string literal to a list of lexer char sets.
                     // Then, construct a lexerElements node with the replacement sets.
-                    var new_lexerelements = new ANTLRv4Parser.LexerElementContext(null, 0);
+                    var new_lexerelements = new ANTLRv4Parser.LexerElementsContext(null, 0);
                     foreach (var literal in literals)
                     {
                         var s = literal.GetText();
                         s = s.Substring(1).Substring(0, s.Length - 2);
                         foreach (var cc in s)
                         {
-                            var le = new ANTLRv4Parser.LexerElementContext(null, 0);
-                            var la = new ANTLRv4Parser.LexerAtomContext(null, 0);
                             var token = new CommonToken(ANTLRv4Lexer.LEXER_CHAR_SET)
                             {
                                 Line = -1,
@@ -4584,12 +4584,12 @@ namespace LanguageServer
                                     "[" + char.ToLower(cc) + char.ToUpper(cc) + "]"
                             };
                             var set = new TerminalNodeImpl(token);
-                            new_lexerelements.AddChild(le);
-                            le.Parent = new_lexerelements;
-                            le.AddChild(la);
-                            la.Parent = le;
-                            la.AddChild(set);
-                            set.Parent = la;
+                            var construct = new CTree.Class1(pd_parser.Parser, pd_parser.Lexer,
+                                new Dictionary<string, IParseTree>()
+                                    {{"id", set}});
+                            var la = construct.CreateTree("( lexerElement ( lexerAtom {id} ))") as ANTLRv4Parser.LexerElementContext;
+                            new_lexerelements.AddChild(la);
+                            la.Parent = new_lexerelements;
                         }
                     }
                     return new_lexerelements;
