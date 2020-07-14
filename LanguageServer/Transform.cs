@@ -4186,15 +4186,11 @@ namespace LanguageServer
                 var expression = engine.parseExpression(find_blocks, new StaticContextBuilder());
                 object[] contexts = new object[] {dynamicContext.Document};
                 var rs = expression.evaluate(dynamicContext, contexts);
-
-                var c1 = new CTree.Class1(parser, lexer, new Dictionary<string, IParseTree>());
-                var c2 = c1.CreateTree("( ruleAltList ( labeledAlt ( alternative )))");
-
                 foreach (var rt in rs)
                 {
                     var r1 = rt.NativeValue as AntlrDOM.AntlrElement;
                     var replace_this = r1.AntlrIParseTree as ANTLRv4Parser.BlockContext;
-                    // Remove block by hoisting all parts of altList of the block into an element.
+                    // Remove {block}/../.. (an element), which is the "i'th" child.
                     var block = replace_this as ANTLRv4Parser.BlockContext;
                     var ebnf = block?.Parent as ANTLRv4Parser.EbnfContext;
                     var element = ebnf?.Parent as ANTLRv4Parser.ElementContext;
@@ -4207,6 +4203,7 @@ namespace LanguageServer
                         ++i;
                     }
                     parent_alternative.children.RemoveAt(i);
+                    // Insert in the location of the removed element node "i" hoisted nodes of block.
                     var alt_list = block?.altList();
                     var alternatives = alt_list?.alternative();
                     if (alternatives.Length > 1)
@@ -4248,10 +4245,6 @@ namespace LanguageServer
                     }
                 }
             }
-            else
-            {
-            }
-
             StringBuilder sb = new StringBuilder();
             TreeEdits.Reconstruct(sb, pd_parser.ParseTree, text_before);
             var new_code = sb.ToString();
