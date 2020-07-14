@@ -4181,19 +4181,17 @@ namespace LanguageServer
                 var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
                 AntlrDOM.AntlrDynamicContext dynamicContext = AntlrDOM.ConvertToDOM.Try(tree, parser);
 
-                var find_blocks =
-                        "//(altList | labeledAlt)/alternative/element/ebnf[not(child::blockSuffix)]/block[not(descendant::altList[@ChildCount > 1])]";
-                var expression = engine.parseExpression(find_blocks, new StaticContextBuilder());
-                object[] contexts = new object[] {dynamicContext.Document};
-                var rs = expression.evaluate(dynamicContext, contexts);
-                foreach (var rt in rs)
+                var altlists = engine.parseExpression(
+                    "//(altList | labeledAlt)/alternative/element/ebnf[not(child::blockSuffix)]/block/altList[not(@ChildCount > 1)]",
+                    new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => x.NativeValue).ToArray();
+                var elements = engine.parseExpression("../../..", new StaticContextBuilder()).evaluate(dynamicContext, altlists)
+                    .Select(x => x.NativeValue).ToArray();
+                for (int j = 0; j < altlists.Length; ++j)
                 {
-                    var r1 = rt.NativeValue as AntlrDOM.AntlrElement;
-                    var replace_this = r1.AntlrIParseTree as ANTLRv4Parser.BlockContext;
-                    // Remove {block}/../.. (an element), which is the "i'th" child.
-                    var block = replace_this as ANTLRv4Parser.BlockContext;
-                    var ebnf = block?.Parent as ANTLRv4Parser.EbnfContext;
-                    var element = ebnf?.Parent as ANTLRv4Parser.ElementContext;
+                    // Remove {altlist}/../../.. (an element), which is the "i'th" child.
+                    var altlist = (altlists[j] as AntlrDOM.AntlrElement).AntlrIParseTree as ANTLRv4Parser.AltListContext;
+                    var element = (elements[j] as AntlrDOM.AntlrElement).AntlrIParseTree as ANTLRv4Parser.ElementContext;
                     var parent_alternative = element?.Parent as ANTLRv4Parser.AlternativeContext;
                     int i = 0;
                     for (; i < parent_alternative.ChildCount;)
@@ -4204,11 +4202,10 @@ namespace LanguageServer
                     }
                     parent_alternative.children.RemoveAt(i);
                     // Insert in the location of the removed element node "i" hoisted nodes of block.
-                    var alt_list = block?.altList();
-                    var alternatives = alt_list?.alternative();
+                    var alternatives = altlist?.alternative();
                     if (alternatives.Length > 1)
                     {
-                        IParseTree rule_alt_list_p = block;
+                        IParseTree rule_alt_list_p = altlist.Parent;
                         for (; rule_alt_list_p != null; rule_alt_list_p = rule_alt_list_p.Parent)
                         {
                             if (rule_alt_list_p is ANTLRv4Parser.RuleAltListContext)
@@ -4234,7 +4231,7 @@ namespace LanguageServer
                     }
                     else
                     {
-                        var alternative = alt_list?.GetChild(0) as ANTLRv4Parser.AlternativeContext;
+                        var alternative = altlist.alternative().First();
                         foreach (var e in alternative.element())
                         {
                             var copy = TreeEdits.CopyTreeRecursive(e, null, text_before) as ANTLRv4Parser.ElementContext;
