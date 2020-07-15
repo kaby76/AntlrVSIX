@@ -37,7 +37,7 @@ namespace CTree
             return convert;
         }
 
-        public IParseTree Convert(IParseTree tree)
+        private IParseTree Convert(IParseTree tree)
         {
             var result = this.Visit(tree);
             return result;
