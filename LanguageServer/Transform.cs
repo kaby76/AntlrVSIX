@@ -3448,7 +3448,7 @@ namespace LanguageServer
             // Get all intertoken text immediately for source reconstruction.
             var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
 
-            // Substitute RHS into all applied occurences.
+            // Substitute RHS into all applied occurrences.
             foreach (var location in locations)
             {
                 // For symbol rule.RULE_REF(), replace occurrence in parse tree
@@ -3485,7 +3485,7 @@ namespace LanguageServer
                         var element = element_p as ANTLRv4Parser.ElementContext;
                         var alternative = alternative_p as ANTLRv4Parser.AlternativeContext;
                         var ebnf_suffix = element.ebnfSuffix();
-                        var element1 = new ANTLRv4Parser.ElementContext(null, 0);
+
                         bool modified = false;
                         int i = 0;
                         for (; i < alternative.ChildCount; ++i)
@@ -3497,50 +3497,35 @@ namespace LanguageServer
                             }
                         }
                         if (!modified) return null;
-                        var new_ebnf = new ANTLRv4Parser.EbnfContext(null, 0);
-                        element1.AddChild(new_ebnf);
-                        new_ebnf.Parent = element1;
-                        var new_block = new ANTLRv4Parser.BlockContext(null, 0);
-                        new_ebnf.AddChild(new_block);
-                        new_block.Parent = new_ebnf;
+
+                        var env = new Dictionary<string, object>();
                         if (ebnf_suffix != null)
-                        {
-                            var blocksuffix = new ANTLRv4Parser.BlockSuffixContext(null, 0);
-                            TreeEdits.CopyTreeRecursive(ebnf_suffix, new_ebnf, text_before);
-                        }
-                        var lparen_token = new CommonToken(ANTLRv4Lexer.LPAREN) { Line = -1, Column = -1, Text = "(" };
-                        var new_lparen = new TerminalNodeImpl(lparen_token);
-                        new_block.AddChild(new_lparen);
-                        new_lparen.Parent = new_block;
-                        text_before.Add(new_lparen, " ");
-                        ANTLRv4Parser.AltListContext altlist1 = new ANTLRv4Parser.AltListContext(null, 0);
-                        new_block.AddChild(altlist1);
-                        altlist1.Parent = new_block;
-                        var rparen_token = new CommonToken(ANTLRv4Lexer.RPAREN) { Line = -1, Column = -1, Text = ")" };
-                        var new_rparen = new TerminalNodeImpl(rparen_token);
-                        new_block.AddChild(new_rparen);
-                        new_rparen.Parent = new_block;
-
-                        // RHS of rule is wrapped in <ruleBlock <ruleAltList ...>>
-                        // Peel off each alternative in ruleAltList/labeledAlt, and
-                        // insert in newly constructed altlist.
-
+                            env.Add("suffix", TreeEdits.CopyTreeRecursive(ebnf_suffix, null, text_before));
+                        env.Add("lparen", new TerminalNodeImpl(new CommonToken(ANTLRv4Lexer.LPAREN) { Line = -1, Column = -1, Text = "(" }));
+                        env.Add("rparen", new TerminalNodeImpl(new CommonToken(ANTLRv4Lexer.RPAREN) { Line = -1, Column = -1, Text = ")" }));
                         var ruleAltList = rhs.ruleAltList();
                         bool first = true;
+                        List<IParseTree> rhses = new List<IParseTree>();
                         foreach (var labeledAlt in ruleAltList.labeledAlt())
                         {
                             if (!first)
                             {
                                 var token4 = new CommonToken(ANTLRv4Lexer.OR) { Line = -1, Column = -1, Text = "|" };
                                 var new_or = new TerminalNodeImpl(token4);
-                                altlist1.AddChild(new_or);
-                                new_or.Parent = altlist1;
+                                rhses.Add(new_or);
                             }
                             first = false;
                             var a = labeledAlt.alternative();
-                            var copy = TreeEdits.CopyTreeRecursive(a, altlist1, text_before);
+                            rhses.Add(TreeEdits.CopyTreeRecursive(a, null, text_before));
                         }
-                        return element1;
+                        env.Add("rhses", rhses);
+
+                        var construct = new CTree.Class1(pd_parser.Parser, env);
+                        var res = construct.CreateTree(
+                                "( element ( ebnf ( block {lparen} ( altList {rhses} ) {rparen}) {suffix}))")
+                            as ANTLRv4Parser.ElementContext;
+
+                        return res;
                     }
                     return null;
                 });
@@ -4449,9 +4434,6 @@ namespace LanguageServer
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
 
-            // Find rewrite rules, i.e., string literal to string symbol name.
-            List<IParseTree> subs = new List<IParseTree>();
-
             // Find keyword-like literals in lexer rules.
             org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
             var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
@@ -4460,9 +4442,16 @@ namespace LanguageServer
                     "//lexerRuleSpec/lexerRuleBlock/lexerAltList[not(@ChildCount > 1)]/lexerAlt/lexerElements[not(@ChildCount > 1)]/lexerElement[not(@ChildCount > 1)]/lexerAtom/terminal[not(@ChildCount > 1)]/STRING_LITERAL",
                     new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
                 .Select(x => (x.NativeValue as AntlrDOM.AntlrElement).AntlrIParseTree).ToArray();
-
-            foreach (var lexer_literal in to_check_literals)
+            var elements = engine.parseExpression(
+                    "../../../..",
+                    new StaticContextBuilder()).evaluate(dynamicContext, to_check_literals)
+                .Select(x => (x.NativeValue as AntlrDOM.AntlrElement).AntlrIParseTree).ToArray();
+            List<IParseTree> subs_elems = new List<IParseTree>();
+            List<IParseTree> subs_lit = new List<IParseTree>();
+            for (int i = 0; i < to_check_literals.Length; ++i)
             {
+                var lexer_literal = to_check_literals[i];
+                var elems = elements[i];
                 var ok = true;
                 var ll = lexer_literal;
                 var s = ll.GetText();
@@ -4479,69 +4468,45 @@ namespace LanguageServer
                 {
                     continue;
                 }
-                
-                subs.Add(ll.Parent.Parent.Parent.Parent);
+                subs_lit.Add(ll);
+                subs_elems.Add(elems);
             }
 
-            // Get all intertoken text immediately for source reconstruction.
             var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
+
             TreeEdits.Replace(pd_parser.ParseTree,
                 (in IParseTree n, out bool c) =>
                 {
                     c = true;
-                    if (!subs.Contains(n))
+                    if (!subs_elems.Contains(n))
                         return null;
-
+                    int i = subs_elems.IndexOf(n);
                     c = false;
-                    List<TerminalNodeImpl> literals = new List<TerminalNodeImpl>();
-                    Stack<IParseTree> stack = new Stack<IParseTree>();
-                    var rule = n as ANTLRv4Parser.LexerElementsContext;
-                    stack.Push(rule);
-                    while (stack.Count > 0)
-                    {
-                        var t = stack.Pop();
-                        if (t is TerminalNodeImpl)
-                        {
-                            var term = t as TerminalNodeImpl;
-                            if (term.Symbol.Type == ANTLRv4Parser.STRING_LITERAL)
-                                literals.Add(t as TerminalNodeImpl);
-                        }
-                        else
-                        {
-                            for (int i = t.ChildCount - 1; i >= 0; --i)
-                            {
-                                var child = t.GetChild(i);
-                                if (child == null) throw new Exception("Child null?");
-                                stack.Push(child);
-                            }
-                        }
-                    }
 
                     // This node is the lexerElements node. Go through all leaves and convert
                     // a string literal to a list of lexer char sets.
                     // Then, construct a lexerElements node with the replacement sets.
                     var new_lexerelements = new ANTLRv4Parser.LexerElementsContext(null, 0);
-                    foreach (var literal in literals)
+
+                    var literal = subs_lit[i];
+                    var s = literal.GetText();
+                    s = s.Substring(1).Substring(0, s.Length - 2);
+                    foreach (var cc in s)
                     {
-                        var s = literal.GetText();
-                        s = s.Substring(1).Substring(0, s.Length - 2);
-                        foreach (var cc in s)
+                        var token = new CommonToken(ANTLRv4Lexer.LEXER_CHAR_SET)
                         {
-                            var token = new CommonToken(ANTLRv4Lexer.LEXER_CHAR_SET)
-                            {
-                                Line = -1,
-                                Column = -1,
-                                Text =
-                                    "[" + char.ToLower(cc) + char.ToUpper(cc) + "]"
-                            };
-                            var set = new TerminalNodeImpl(token);
-                            var construct = new CTree.Class1(pd_parser.Parser, pd_parser.Lexer,
-                                new Dictionary<string, IParseTree>()
-                                    {{"id", set}});
-                            var la = construct.CreateTree("( lexerElement ( lexerAtom {id} ))") as ANTLRv4Parser.LexerElementContext;
-                            new_lexerelements.AddChild(la);
-                            la.Parent = new_lexerelements;
-                        }
+                            Line = -1,
+                            Column = -1,
+                            Text =
+                                "[" + char.ToLower(cc) + char.ToUpper(cc) + "]"
+                        };
+                        var set = new TerminalNodeImpl(token);
+                        var construct = new CTree.Class1(pd_parser.Parser,
+                            new Dictionary<string, object>()
+                                {{"id", set}});
+                        var la = construct.CreateTree("( lexerElement ( lexerAtom {id} ))") as ANTLRv4Parser.LexerElementContext;
+                        new_lexerelements.AddChild(la);
+                        la.Parent = new_lexerelements;
                     }
                     return new_lexerelements;
                 });
