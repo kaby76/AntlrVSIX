@@ -4449,73 +4449,23 @@ namespace LanguageServer
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
 
-            // Find all other grammars by walking dependencies (import, vocab, file names).
-            HashSet<string> read_files = new HashSet<string>
-            {
-                document.FullPath
-            };
-            Dictionary<Workspaces.Document, List<TerminalNodeImpl>> every_damn_literal =
-                new Dictionary<Workspaces.Document, List<TerminalNodeImpl>>();
-            for (;;)
-            {
-                int before_count = read_files.Count;
-                foreach (string f in read_files)
-                {
-                    List<string> additional = AntlrGrammarDetails._dependent_grammars.Where(
-                        t => t.Value.Contains(f)).Select(
-                        t => t.Key).ToList();
-                    read_files = read_files.Union(additional).ToHashSet();
-                }
-
-                foreach (string f in read_files)
-                {
-                    IEnumerable<List<string>> additional = AntlrGrammarDetails._dependent_grammars.Where(
-                        t => t.Key == f).Select(
-                        t => t.Value);
-                    foreach (List<string> t in additional)
-                    {
-                        read_files = read_files.Union(t).ToHashSet();
-                    }
-                }
-
-                int after_count = read_files.Count;
-                if (after_count == before_count)
-                {
-                    break;
-                }
-            }
-
             // Find rewrite rules, i.e., string literal to string symbol name.
             List<IParseTree> subs = new List<IParseTree>();
 
-            // Find keyword-like literals in grammars.
-            LiteralsGrammar lp_whatever = new LiteralsGrammar();
-            ParseTreeWalker.Default.Walk(lp_whatever, pd_parser.ParseTree);
-            List<TerminalNodeImpl> list_literals = lp_whatever.Literals;
-            foreach (TerminalNodeImpl lexer_literal in list_literals)
+            // Find keyword-like literals in lexer rules.
+            org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+            var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
+            AntlrDOM.AntlrDynamicContext dynamicContext = AntlrDOM.ConvertToDOM.Try(tree, parser);
+            var to_check_literals = engine.parseExpression(
+                    "//lexerRuleSpec/lexerRuleBlock/lexerAltList[not(@ChildCount > 1)]/lexerAlt/lexerElements[not(@ChildCount > 1)]/lexerElement[not(@ChildCount > 1)]/lexerAtom/terminal[not(@ChildCount > 1)]/STRING_LITERAL",
+                    new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                .Select(x => (x.NativeValue as AntlrDOM.AntlrElement).AntlrIParseTree).ToArray();
+
+            foreach (var lexer_literal in to_check_literals)
             {
-                string old_name = lexer_literal.GetText();
-                bool ok = false;
-                IRuleNode p1 = lexer_literal.Parent;
-                IRuleNode lexer_elements = null;
-                for (; p1 != null; p1 = p1.Parent)
-                {
-                    if (p1 is ANTLRv4Parser.LexerRuleSpecContext)
-                    {
-                        ok = true;
-                        break;
-                    }
-                    else if (p1 is ANTLRv4Parser.LexerElementsContext)
-                    {
-                        lexer_elements = p1;
-                    }
-                }
-                if (!ok)
-                {
-                    continue;
-                }
-                ok = true;
-                var s = lexer_literal.GetText();
+                var ok = true;
+                var ll = lexer_literal;
+                var s = ll.GetText();
                 s = s.Substring(1).Substring(0, s.Length - 2);
                 foreach (var cc in s)
                 {
@@ -4529,7 +4479,8 @@ namespace LanguageServer
                 {
                     continue;
                 }
-                subs.Add(lexer_elements);
+                
+                subs.Add(ll.Parent.Parent.Parent.Parent);
             }
 
             // Get all intertoken text immediately for source reconstruction.
