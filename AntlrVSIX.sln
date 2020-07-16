@@ -96,6 +96,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "xpath", "XPath\xpath.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntlrDOM", "AntlrDOM\AntlrDOM.csproj", "{667F3330-5C70-4DD2-AD08-7D5DDCF76A77}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject1", "UnitTestProject1\UnitTestProject1.csproj", "{A91E6190-995D-41D3-B32E-21DA290876AA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -150,6 +152,10 @@ Global
 		{667F3330-5C70-4DD2-AD08-7D5DDCF76A77}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{667F3330-5C70-4DD2-AD08-7D5DDCF76A77}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{667F3330-5C70-4DD2-AD08-7D5DDCF76A77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A91E6190-995D-41D3-B32E-21DA290876AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A91E6190-995D-41D3-B32E-21DA290876AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A91E6190-995D-41D3-B32E-21DA290876AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A91E6190-995D-41D3-B32E-21DA290876AA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
