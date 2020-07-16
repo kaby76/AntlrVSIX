@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using LanguageServer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Workspaces;
@@ -43,7 +45,7 @@ namespace UnitTestProject1
         }
 
         [TestMethod]
-        public void TestMethod1()
+        public void TestIndexQuickInfo()
         {
             var cwd = Directory.GetCurrentDirectory();
             Document lexer_doc = CheckDoc("../../../../LanguageServer/ANTLRv4Lexer.g4");
@@ -55,6 +57,43 @@ namespace UnitTestProject1
             if (back.Item1 != line || back.Item2 != character) throw new Exception();
             QuickInfo quick_info = LanguageServer.Module.GetQuickInfo(index, document);
             if (quick_info != null) throw new Exception();
+        }
+
+        [TestMethod]
+        public void TestIndexQuickInfo2()
+        {
+            var cwd = Directory.GetCurrentDirectory();
+            Document lexer_doc = CheckDoc("../../../../LanguageServer/ANTLRv4Lexer.g4");
+            Document document = CheckDoc("../../../../LanguageServer/ANTLRv4Parser.g4");
+            // Position at the "grammarSpec" rule, beginning of LHS symbol.
+            // All lines and columns are zero based in LSP.
+            int line = 45;
+            int character = 0;
+            int index = LanguageServer.Module.GetIndex(line, character, document);
+            (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
+            if (back.Item1 != line || back.Item2 != character) throw new Exception();
+            QuickInfo quick_info = LanguageServer.Module.GetQuickInfo(index, document);
+            if (quick_info == null) throw new Exception();
+            if (quick_info.Range.Start.Value != 1994 || quick_info.Range.End.Value != 2005) throw new Exception();
+        }
+
+        [TestMethod]
+        public void TestFindDef()
+        {
+            var cwd = Directory.GetCurrentDirectory();
+            Document lexer_doc = CheckDoc("../../../../LanguageServer/ANTLRv4Lexer.g4");
+            Document document = CheckDoc("../../../../LanguageServer/ANTLRv4Parser.g4");
+            // Position at the "grammarSpec" rule, beginning of RHS symbol "grammarDecl".
+            // All lines and columns are zero based in LSP.
+            int line = 46;
+            int character = 18;
+            int index = LanguageServer.Module.GetIndex(line, character, document);
+            (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
+            if (back.Item1 != line || back.Item2 != character) throw new Exception();
+            IList<Location> found = LanguageServer.Module.FindDefs(index, document);
+            List<object> locations = new List<object>();
+            if (found.Count != 1) throw new Exception();
+            if (found.First().Range.Start.Value != 2084 || found.First().Range.End.Value != 2094) throw new Exception();
         }
     }
 }
