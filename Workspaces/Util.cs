@@ -27,7 +27,7 @@
             }
             else
             {
-                return GetProperDirectoryCapitalization(dirInfo);
+                return null;
             }
         }
     }

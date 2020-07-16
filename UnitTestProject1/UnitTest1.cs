@@ -37,10 +37,10 @@ namespace UnitTestProject1
                     Workspaces.Workspace.Instance.AddChild(project);
                 }
                 project.AddDocument(document);
-                document.Changed = true;
-                _ = ParserDetailsFactory.Create(document);
-                _ = LanguageServer.Module.Compile();
             }
+            document.Changed = true;
+            _ = ParserDetailsFactory.Create(document);
+            _ = LanguageServer.Module.Compile();
             return document;
         }
 
@@ -94,6 +94,24 @@ namespace UnitTestProject1
             List<object> locations = new List<object>();
             if (found.Count != 1) throw new Exception();
             if (found.First().Range.Start.Value != 2084 || found.First().Range.End.Value != 2094) throw new Exception();
+        }
+
+        [TestMethod]
+        public void TestFindAllRefs()
+        {
+            var cwd = Directory.GetCurrentDirectory();
+            Document document = CheckDoc("../../../../corpus-for-codebuff/A.g4");
+            // Position at the "grammarSpec" rule, beginning of RHS symbol "grammarDecl".
+            // All lines and columns are zero based in LSP.
+            int line = 3;
+            int character = 6;
+            int index = LanguageServer.Module.GetIndex(line, character, document);
+            (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
+            if (back.Item1 != line || back.Item2 != character) throw new Exception();
+            var found = LanguageServer.Module.FindRefsAndDefs(index, document).ToList();
+            List<object> locations = new List<object>();
+  //          if (found.Count != 1) throw new Exception();
+  //          if (found.First().Range.Start.Value != 2084 || found.First().Range.End.Value != 2094) throw new Exception();
         }
     }
 }
