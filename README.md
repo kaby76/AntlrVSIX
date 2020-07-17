@@ -6,6 +6,10 @@ It is implemented using Microsoft's [Language Server Protocol (LSP)](https://lan
 [client](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Client/) and
 [server](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/) APIs,
 [Antlr](https://www.antlr.org/), [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks),
+[XPath3.1](https://en.wikipedia.org/wiki/XPath)
+and
+[S-exppressions](https://en.wikipedia.org/wiki/S-expression)
+for Antlr parse trees,
 and a number of other tools.
 Most of the extension is implemented in C#.
 There is a client for VS Code, written in Typescript,
