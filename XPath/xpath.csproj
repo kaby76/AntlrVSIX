@@ -5,7 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Antlr4 Include="org\eclipse\wst\xml\xpath2\processor\internal\XPath31.g4">
+    <None Remove="org\eclipse\wst\xml\xpath2\processor\internal\XPath31Lexer.g4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Antlr4 Include="org\eclipse\wst\xml\xpath2\processor\internal\XPath31Lexer.g4">
+      <Package>xpath.org.eclipse.wst.xml.xpath2.processor.@internal</Package>
+    </Antlr4>
+    <Antlr4 Include="org\eclipse\wst\xml\xpath2\processor\internal\XPath31Parser.g4">
       <Package>xpath.org.eclipse.wst.xml.xpath2.processor.@internal</Package>
     </Antlr4>
   </ItemGroup>

@@ -111,10 +111,37 @@ namespace UnitTestProject1
             var found = LanguageServer.Module.FindRefsAndDefs(index, document).ToList();
             if (found.Count != 4) throw new Exception();
             var set1 = new HashSet<int>();
-            set1.UnionWith(found.Select(t=>t.Range.Start.Value));
+            set1.UnionWith(found.Select(t => t.Range.Start.Value));
             var set2 = new HashSet<int>();
             set2.UnionWith(new List<int>() { 23, 35, 44, 50 });
-            if (! set1.SetEquals(set2)) throw new Exception();
+            if (!set1.SetEquals(set2)) throw new Exception();
+        }
+
+        [TestMethod]
+        public void TestKeywordFun()
+        {
+            var cwd = Directory.GetCurrentDirectory();
+            Document document = CheckDoc("../../../../corpus-for-codebuff/keywordfun.g4"); // purposefully erroneously all lc.
+            // Convert all string literals on RHS of lexer rule into uc/lc equivalent.
+            int line = 5;
+            int character = 0;
+            int index = LanguageServer.Module.GetIndex(line, character, document);
+            (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
+            if (back.Item1 != line || back.Item2 != character) throw new Exception();
+            var found = LanguageServer.Transform.UpperLowerCaseLiteral(index, index, document);
+            if (found.Count != 1) throw new Exception();
+            var should_be = @"grammar KeywordFun;
+
+a : 'abc';
+b : 'def';
+
+A: [aA] [bB] [cC];
+B: [dD] [eE] [fF];
+C: 'uvw' 'xyz'?;
+D: 'uvw' 'xyz'+;
+";
+            var got = found.First().Value;
+            if (got != should_be) throw new Exception();
         }
     }
 }

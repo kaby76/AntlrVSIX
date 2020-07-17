@@ -4439,7 +4439,15 @@ namespace LanguageServer
             var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
             AntlrDOM.AntlrDynamicContext dynamicContext = AntlrDOM.ConvertToDOM.Try(tree, parser);
             var dom_literals = engine.parseExpression(
-                    "//lexerRuleSpec/lexerRuleBlock/lexerAltList[not(@ChildCount > 1)]/lexerAlt/lexerElements[not(@ChildCount > 1)]/lexerElement[not(@ChildCount > 1)]/lexerAtom/terminal[not(@ChildCount > 1)]/STRING_LITERAL",
+                    @"//lexerRuleSpec
+                        /lexerRuleBlock
+                            /lexerAltList[not(@ChildCount > 1)]
+                                /lexerAlt
+                                    /lexerElements[not(@ChildCount > 1)]
+                                        /lexerElement[not(@ChildCount > 1)]
+                                            /lexerAtom
+                                                /terminal[not(@ChildCount > 1)]
+                                                    /STRING_LITERAL",
                     new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
                 .Select(x => (x.NativeValue as AntlrDOM.AntlrElement)).ToArray();
             var elements = engine.parseExpression(

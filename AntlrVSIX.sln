@@ -8,23 +8,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "corpus-for-codebuff", "corp
 		corpus-for-codebuff\A.g4 = corpus-for-codebuff\A.g4
 		corpus-for-codebuff\A2.G4.SAVE = corpus-for-codebuff\A2.G4.SAVE
 		corpus-for-codebuff\A3.g4 = corpus-for-codebuff\A3.g4
-		corpus-for-codebuff\AA.g = corpus-for-codebuff\AA.g
-		corpus-for-codebuff\E.g = corpus-for-codebuff\E.g
 		corpus-for-codebuff\Fuzzy.g4 = corpus-for-codebuff\Fuzzy.g4
-		corpus-for-codebuff\HTMLParser.g = corpus-for-codebuff\HTMLParser.g
-		corpus-for-codebuff\JavaLexer.g = corpus-for-codebuff\JavaLexer.g
 		corpus-for-codebuff\JavaLR.g4 = corpus-for-codebuff\JavaLR.g4
-		corpus-for-codebuff\JavaParser.g = corpus-for-codebuff\JavaParser.g
-		corpus-for-codebuff\JavaParser.orig.g = corpus-for-codebuff\JavaParser.orig.g
-		corpus-for-codebuff\L.g = corpus-for-codebuff\L.g
 		corpus-for-codebuff\ModeLexer.g4 = corpus-for-codebuff\ModeLexer.g4
 		corpus-for-codebuff\R.g4 = corpus-for-codebuff\R.g4
-		corpus-for-codebuff\Scannerless.g = corpus-for-codebuff\Scannerless.g
-		corpus-for-codebuff\T.g = corpus-for-codebuff\T.g
-		corpus-for-codebuff\U.g = corpus-for-codebuff\U.g
-		corpus-for-codebuff\W.g = corpus-for-codebuff\W.g
-		corpus-for-codebuff\YangJavaLexer.g = corpus-for-codebuff\YangJavaLexer.g
-		corpus-for-codebuff\YangJavaParser.g = corpus-for-codebuff\YangJavaParser.g
+		corpus-for-codebuff\KeywordFun.g4 = corpus-for-codebuff\KeywordFun.g4
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntlrVSIX", "Client\AntlrVSIX.csproj", "{99377F57-EC77-4949-A670-F97989990A3C}"
@@ -96,7 +84,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "xpath", "XPath\xpath.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntlrDOM", "AntlrDOM\AntlrDOM.csproj", "{667F3330-5C70-4DD2-AD08-7D5DDCF76A77}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject1", "UnitTestProject1\UnitTestProject1.csproj", "{A91E6190-995D-41D3-B32E-21DA290876AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTestProject1", "UnitTestProject1\UnitTestProject1.csproj", "{A91E6190-995D-41D3-B32E-21DA290876AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

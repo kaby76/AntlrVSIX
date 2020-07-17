@@ -78,7 +78,7 @@ namespace xpath.org.eclipse.wst.xml.xpath2.processor.@internal
      *
      * @author sam
      */
-    public class XPathBuilderVisitor : XPath31BaseVisitor<object>
+    public class XPathBuilderVisitor : XPath31ParserBaseVisitor<object>
     {
         public static XPathBuilderVisitor INSTANCE = new XPathBuilderVisitor();
 
