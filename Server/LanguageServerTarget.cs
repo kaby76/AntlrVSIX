@@ -1389,7 +1389,7 @@
                     (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
                     System.Console.Error.WriteLine("");
                 }
-                var s = LanguageServer.Transform.ReplaceLiterals(pos, document);
+                var s = LanguageServer.Transform.ReplaceLiterals(pos, pos, document);
                 ApplyChanges("Replace String Literals", s);
             }
             catch (LanguageServerException e)

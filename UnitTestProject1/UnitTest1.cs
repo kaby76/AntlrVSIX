@@ -143,5 +143,31 @@ D: 'uvw' 'xyz'+;
             var got = found.First().Value;
             if (got != should_be) throw new Exception();
         }
+
+        [TestMethod]
+        public void TestReplaceParserLiterals()
+        {
+            var cwd = Directory.GetCurrentDirectory();
+            Document document = CheckDoc("../../../../corpus-for-codebuff/keywordfun.g4"); // purposefully erroneously all lc.
+            // Convert all string literals on RHS of lexer rule into uc/lc equivalent.
+            int line = 0;
+            int character = 0;
+            int index = LanguageServer.Module.GetIndex(line, character, document);
+            var found = LanguageServer.Transform.ReplaceLiterals(index, index, document);
+            if (found.Count != 1) throw new Exception();
+            var should_be = @"grammar KeywordFun;
+
+a : A;
+b : B;
+
+A: 'abc';
+B: 'def';
+C: 'uvw' 'xyz'?;
+D: 'uvw' 'xyz'+;
+";
+            var got = found.First().Value;
+            if (got != should_be) throw new Exception();
+        }
+
     }
 }

@@ -592,7 +592,7 @@ namespace LanguageServer
             }
         }
 
-        public static Dictionary<string, string> ReplaceLiterals(int index, Document document)
+        public static Dictionary<string, string> ReplaceLiterals(int start, int end, Document document)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
@@ -610,251 +610,85 @@ namespace LanguageServer
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
 
-            // Find all other grammars by walking dependencies (import, vocab, file names).
-            HashSet<string> read_files = new HashSet<string>
-            {
-                document.FullPath
-            };
-            Dictionary<Workspaces.Document, List<TerminalNodeImpl>> every_damn_literal =
-                new Dictionary<Workspaces.Document, List<TerminalNodeImpl>>();
-            for (; ; )
-            {
-                int before_count = read_files.Count;
-                foreach (string f in read_files)
-                {
-                    List<string> additional = AntlrGrammarDetails._dependent_grammars.Where(
-                        t => t.Value.Contains(f)).Select(
-                        t => t.Key).ToList();
-                    read_files = read_files.Union(additional).ToHashSet();
-                }
-                foreach (string f in read_files)
-                {
-                    IEnumerable<List<string>> additional = AntlrGrammarDetails._dependent_grammars.Where(
-                        t => t.Key == f).Select(
-                        t => t.Value);
-                    foreach (List<string> t in additional)
-                    {
-                        read_files = read_files.Union(t).ToHashSet();
-                    }
-                }
-                int after_count = read_files.Count;
-                if (after_count == before_count)
-                {
-                    break;
-                }
-            }
-
             // Find rewrite rules, i.e., string literal to string symbol name.
             Dictionary<string, string> subs = new Dictionary<string, string>();
-            foreach (string f in read_files)
-            {
-                Workspaces.Document whatever_document = Workspaces.Workspace.Instance.FindDocument(f);
-                if (whatever_document == null)
-                {
-                    continue;
-                }
-                AntlrGrammarDetails pd_whatever = ParserDetailsFactory.Create(whatever_document) as AntlrGrammarDetails;
 
-                // Find literals in grammars.
-                LiteralsGrammar lp_whatever = new LiteralsGrammar();
-                ParseTreeWalker.Default.Walk(lp_whatever, pd_whatever.ParseTree);
-                List<TerminalNodeImpl> list_literals = lp_whatever.Literals;
-                foreach (TerminalNodeImpl lexer_literal in list_literals)
-                {
-                    string old_name = lexer_literal.GetText();
-                    // Given candidate, walk up tree to find lexer_rule.
-                    /*
-                        ( ruleSpec
-                          ( lexerRuleSpec
-                            ( OFF_CHANNEL text=\r\n\r\n
-                            )
-                            ( OFF_CHANNEL text=...
-                            )
-                            (OFF_CHANNEL text =\r\n\r\n
-                            )
-                            (OFF_CHANNEL text =...
-                            )
-                            (OFF_CHANNEL text =\r\n\r\n
-                            )
-                            (DEFAULT_TOKEN_CHANNEL i = 995 txt = NONASSOC tt = 1
-                            )
-                            (OFF_CHANNEL text =\r\n\t
-                            )
-                            (DEFAULT_TOKEN_CHANNEL i = 997 txt =: tt = 29
-                            )
-                            (lexerRuleBlock
-                              (lexerAltList
-                                (lexerAlt
-                                  (lexerElements
-                                    (lexerElement
-                                      (lexerAtom
-                                        (terminal
-                                          (OFF_CHANNEL text =
-                                          )
-                                          (DEFAULT_TOKEN_CHANNEL i = 999 txt = '%binary' tt = 8
-                            ))))))))
-                            (OFF_CHANNEL text =\r\n\t
-                            )
-                            (DEFAULT_TOKEN_CHANNEL i = 1001 txt =; tt = 32
-                        ) ) )
-
-                     * Make sure it fits the structure of the tree shown above.
-                     * 
-                     */
-                    IRuleNode p1 = lexer_literal.Parent;
-                    if (p1.ChildCount != 1)
-                    {
-                        continue;
-                    }
-
-                    if (!(p1 is ANTLRv4Parser.TerminalContext))
-                    {
-                        continue;
-                    }
-
-                    IRuleNode p2 = p1.Parent;
-                    if (p2.ChildCount != 1)
-                    {
-                        continue;
-                    }
-
-                    if (!(p2 is ANTLRv4Parser.LexerAtomContext))
-                    {
-                        continue;
-                    }
-
-                    IRuleNode p3 = p2.Parent;
-                    if (p3.ChildCount != 1)
-                    {
-                        continue;
-                    }
-
-                    if (!(p3 is ANTLRv4Parser.LexerElementContext))
-                    {
-                        continue;
-                    }
-
-                    IRuleNode p4 = p3.Parent;
-                    if (p4.ChildCount != 1)
-                    {
-                        continue;
-                    }
-
-                    if (!(p4 is ANTLRv4Parser.LexerElementsContext))
-                    {
-                        continue;
-                    }
-
-                    IRuleNode p5 = p4.Parent;
-                    if (p5.ChildCount != 1)
-                    {
-                        continue;
-                    }
-
-                    if (!(p5 is ANTLRv4Parser.LexerAltContext))
-                    {
-                        continue;
-                    }
-
-                    IRuleNode p6 = p5.Parent;
-                    if (p6.ChildCount != 1)
-                    {
-                        continue;
-                    }
-
-                    if (!(p6 is ANTLRv4Parser.LexerAltListContext))
-                    {
-                        continue;
-                    }
-
-                    IRuleNode p7 = p6.Parent;
-                    if (p7.ChildCount != 1)
-                    {
-                        continue;
-                    }
-
-                    if (!(p7 is ANTLRv4Parser.LexerRuleBlockContext))
-                    {
-                        continue;
-                    }
-
-                    IRuleNode p8 = p7.Parent;
-                    if (p8.ChildCount != 4)
-                    {
-                        continue;
-                    }
-
-                    if (!(p8 is ANTLRv4Parser.LexerRuleSpecContext))
-                    {
-                        continue;
-                    }
-
-                    IParseTree alt = p8.GetChild(0);
-                    string new_name = alt.GetText();
-                    subs.Add(old_name, new_name);
-                }
-            }
+            // Find literals in lexer rules.
+            org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+            var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
+            AntlrDOM.AntlrDynamicContext dynamicContext = AntlrDOM.ConvertToDOM.Try(tree, parser);
+            var dom_literals = engine.parseExpression(
+                    @"//ruleSpec
+                        /lexerRuleSpec
+                            /lexerRuleBlock
+                                /lexerAltList[not(@ChildCount > 1)]
+                                    /lexerAlt
+                                        /lexerElements[not(@ChildCount > 1)]
+                                            /lexerElement[not(@ChildCount > 1)]
+                                                /lexerAtom
+                                                    /terminal[not(@ChildCount > 1)]
+                                                        /STRING_LITERAL",
+                    new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                .Select(x => (x.NativeValue as AntlrDOM.AntlrElement)).ToArray();
+            var old_names = dom_literals.Select(x => x.AntlrIParseTree.GetText()).ToList();
+            var new_names = engine.parseExpression(
+                    "../../../../../../../../TOKEN_REF",
+                    new StaticContextBuilder()).evaluate(dynamicContext, dom_literals)
+                .Select(x => (x.NativeValue as AntlrDOM.AntlrElement).AntlrIParseTree.GetText()).ToArray();
+            for(int i = 0; i < old_names.Count; ++i) subs.Add(old_names[i], new_names[i]);
 
             // Find string literals in parser and combined grammars and substitute.
-            foreach (string f in read_files)
-            {
-                Workspaces.Document whatever_document = Workspaces.Workspace.Instance.FindDocument(f);
-                if (whatever_document == null)
+
+            // Get all intertoken text immediately for source reconstruction.
+            var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
+
+            TreeEdits.Replace(pd_parser.ParseTree,
+                (in IParseTree n, out bool c) =>
                 {
-                    continue;
-                }
-                AntlrGrammarDetails pd_whatever = ParserDetailsFactory.Create(whatever_document) as AntlrGrammarDetails;
-
-                // Get all intertoken text immediately for source reconstruction.
-                var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_whatever.TokStream, pd_whatever.ParseTree);
-
-                TreeEdits.Replace(pd_whatever.ParseTree,
-                    (in IParseTree n, out bool c) =>
+                    c = true;
+                    if (!(n is TerminalNodeImpl))
                     {
-                        c = true;
-                        if (!(n is TerminalNodeImpl))
+                        return null;
+                    }
+                    var t = n as TerminalNodeImpl;
+                    if (t.Payload.Type != ANTLRv4Lexer.STRING_LITERAL)
+                    {
+                        return null;
+                    }
+                    bool no = false;
+                    // Make sure this literal does not appear in lexer rule.
+                    for (IRuleNode p = t.Parent; p != null; p = p.Parent)
+                    {
+                        if (p is ANTLRv4Parser.LexerRuleSpecContext)
                         {
-                            return null;
+                            no = true;
+                            break;
                         }
-                        var t = n as TerminalNodeImpl;
-                        if (t.Payload.Type != ANTLRv4Lexer.STRING_LITERAL)
-                        {
-                            return null;
-                        }
-                        bool no = false;
-                        // Make sure this literal does not appear in lexer rule.
-                        for (IRuleNode p = t.Parent; p != null; p = p.Parent)
-                        {
-                            if (p is ANTLRv4Parser.LexerRuleSpecContext)
-                            {
-                                no = true;
-                                break;
-                            }
-                        }
-                        if (no)
-                        {
-                            return null;
-                        }
-                        subs.TryGetValue(t.GetText(), out string value);
-                        if (value == null)
-                        {
-                            return null;
-                        }
-                        var token = new CommonToken(ANTLRv4Lexer.TOKEN_REF) { Line = -1, Column = -1, Text = value };
-                        var new_sym = new TerminalNodeImpl(token);
-                        text_before.TryGetValue(t, out string v);
-                        if (v != null)
-                            text_before.Add(new_sym, v);
-                        return new_sym;
-                    });
-                StringBuilder sb = new StringBuilder();
-                TreeEdits.Reconstruct(sb, pd_whatever.ParseTree, text_before);
-                var new_code = sb.ToString();
-                if (new_code != pd_parser.Code)
-                {
-                    result.Add(whatever_document.FullPath, new_code);
-                }
+                    }
+                    if (no)
+                    {
+                        return null;
+                    }
+                    subs.TryGetValue(t.GetText(), out string value);
+                    if (value == null)
+                    {
+                        return null;
+                    }
+                    var token = new CommonToken(ANTLRv4Lexer.TOKEN_REF) { Line = -1, Column = -1, Text = value };
+                    var new_sym = new TerminalNodeImpl(token);
+                    text_before.TryGetValue(t, out string v);
+                    if (v != null)
+                        text_before.Add(new_sym, v);
+                    return new_sym;
+                });
+            StringBuilder sb = new StringBuilder();
+            TreeEdits.Reconstruct(sb, pd_parser.ParseTree, text_before);
+            var new_code = sb.ToString();
+            if (new_code != pd_parser.Code)
+            {
+                result.Add(document.FullPath, new_code);
             }
+        
             return result;
         }
 
