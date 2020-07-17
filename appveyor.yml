@@ -18,7 +18,8 @@ build_script:
   - cmd: MSBuild.exe /p:Configuration=Debug /v:normal AntlrVSIX.sln
 
 test_script:
-  - cmd: dotnet test --logger:Appveyor
+  - cmd: cd UnitTestProject1
+  - cmd: dotnet test
 
 artifacts:
   - path: '**\*.vsix'
