@@ -9,6 +9,7 @@
     {
         public static IEnumerable<IParseTree> DFS(IParseTree root)
         {
+            if (root == null) yield break;
             Stack<IParseTree> toVisit = new Stack<IParseTree>();
             Stack<IParseTree> visitedAncestors = new Stack<IParseTree>();
             toVisit.Push(root);

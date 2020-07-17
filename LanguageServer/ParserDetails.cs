@@ -96,52 +96,60 @@
                 {
                     throw new Exception();
                 }
-                Func<IGrammarDescription, Dictionary<IParseTree, IList<CombinedScopeSymbol>>, IParseTree, int> fun = gd.Classify;
-                IEnumerable<IParseTree> it = AllNodes.Where(n => n is TerminalNodeImpl);
-                foreach (var n in it)
+
+                if (AllNodes != null)
                 {
-                    var t = n as TerminalNodeImpl;
-                    int i = -1;
-                    try
+                    Func<IGrammarDescription, Dictionary<IParseTree, IList<CombinedScopeSymbol>>, IParseTree, int> fun = gd.Classify;
+                    IEnumerable<IParseTree> it = AllNodes.Where(n => n is TerminalNodeImpl);
+                    foreach (var n in it)
                     {
-                        i = gd.Classify(gd, Attributes, t);
-                        if (i >= 0)
+                        var t = n as TerminalNodeImpl;
+                        int i = -1;
+                        try
                         {
-                            ColorizedList.Add(t.Symbol, i);
+                            i = gd.Classify(gd, Attributes, t);
+                            if (i >= 0)
+                            {
+                                ColorizedList.Add(t.Symbol, i);
+                            }
                         }
-                    }
-                    catch (Exception) { }
-                    try
-                    {
-                        if (i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationNonterminalRef
-                            || i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationTerminalRef
-                            || i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationModeRef
-                            || i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationChannelRef
-                            )
+                        catch (Exception) { }
+                        try
                         {
-                            Refs.Add(t, i);
-                            PopupList.Add(t, i);
+                            if (i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationNonterminalRef
+                                || i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationTerminalRef
+                                || i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationModeRef
+                                || i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationChannelRef
+                                )
+                            {
+                                Refs.Add(t, i);
+                                PopupList.Add(t, i);
+                            }
                         }
-                    }
-                    catch (Exception) { }
-                    try
-                    {
-                        if (i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationNonterminalDef
-                            || i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationTerminalDef
-                            || i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationModeDef
-                            || i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationChannelDef
-                            )
+                        catch (Exception) { }
+                        try
                         {
-                            Defs.Add(t, i);
-                            PopupList.Add(t, i);
+                            if (i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationNonterminalDef
+                                || i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationTerminalDef
+                                || i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationModeDef
+                                || i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationChannelDef
+                                )
+                            {
+                                Defs.Add(t, i);
+                                PopupList.Add(t, i);
+                            }
                         }
+                        catch (Exception) { }
                     }
-                    catch (Exception) { }
                 }
-                foreach (KeyValuePair<Antlr4.Runtime.IToken, int> p in Comments)
+
+                if (Comments != null)
                 {
-                    IToken t = p.Key;
-                    ColorizedList.Add(t, (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationComment);
+                    foreach (KeyValuePair<Antlr4.Runtime.IToken, int> p in Comments)
+                    {
+                        IToken t = p.Key;
+                        ColorizedList.Add(t, (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationComment);
+                    }
                 }
             }
 #pragma warning disable 0168

@@ -19,16 +19,11 @@
         public static string GetProperFilePathCapitalization(string filename)
         {
             FileInfo fileInfo = new FileInfo(filename);
+            if (!fileInfo.Exists) return filename;
             DirectoryInfo dirInfo = fileInfo.Directory;
-            if (dirInfo.GetFiles(fileInfo.Name).Length != 0)
-            {
-                return Path.Combine(GetProperDirectoryCapitalization(dirInfo),
-                                dirInfo.GetFiles(fileInfo.Name)[0].Name);
-            }
-            else
-            {
-                return null;
-            }
+            if (dirInfo.GetFiles(fileInfo.Name).Length == 0) return filename;
+            return Path.Combine(GetProperDirectoryCapitalization(dirInfo),
+                            dirInfo.GetFiles(fileInfo.Name)[0].Name);
         }
     }
 }

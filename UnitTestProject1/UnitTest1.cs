@@ -109,9 +109,12 @@ namespace UnitTestProject1
             (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
             if (back.Item1 != line || back.Item2 != character) throw new Exception();
             var found = LanguageServer.Module.FindRefsAndDefs(index, document).ToList();
-            List<object> locations = new List<object>();
             if (found.Count != 4) throw new Exception();
-      //      if (found.First().Range.Start.Value != 2084 || found.First().Range.End.Value != 2094) throw new Exception();
+            var set1 = new HashSet<int>();
+            set1.UnionWith(found.Select(t=>t.Range.Start.Value));
+            var set2 = new HashSet<int>();
+            set2.UnionWith(new List<int>() { 23, 35, 44, 50 });
+            if (! set1.SetEquals(set2)) throw new Exception();
         }
     }
 }

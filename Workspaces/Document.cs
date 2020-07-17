@@ -1,4 +1,6 @@
-﻿namespace Workspaces
+﻿using System.Diagnostics;
+
+namespace Workspaces
 {
     using Antlr4.Runtime.Tree;
     using System.Collections.Generic;
@@ -12,11 +14,11 @@
 
         public Document(string ffn)
         {
-            FullPath = ffn;
+            FullPath = Util.GetProperFilePathCapitalization(ffn);
             Changed = false;
         }
 
-        public string FullPath { get; set; }
+        public string FullPath { get; private set; }
 
         public bool Changed { get; set; }
 
@@ -26,9 +28,13 @@
             {
                 if (_contents == null)
                 {
-                    StreamReader sr = new StreamReader(FullPath);
-                    _contents = sr.ReadToEnd();
-                    Changed = true;
+                    try
+                    {
+                        StreamReader sr = new StreamReader(FullPath);
+                        _contents = sr.ReadToEnd();
+                        Changed = true;
+                    }
+                    catch {}
                 }
                 return _contents;
             }
@@ -83,7 +89,10 @@
 
         public override Document FindDocument(string ffn)
         {
-            if (FullPath.ToLower() == ffn.ToLower())
+            var normalized_ffn = Util.GetProperFilePathCapitalization(ffn);
+            Debug.Assert(this.FullPath == Util.GetProperFilePathCapitalization(this.FullPath));
+
+            if (normalized_ffn == this.FullPath)
             {
                 return this;
             }

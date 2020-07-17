@@ -25,6 +25,8 @@
         {
             string ffn = pd.FullFileName;
             string code = pd.Code;
+            if (ffn == null) return;
+            if (code == null) return;
 
             IParseTree pt = null;
 
@@ -103,6 +105,7 @@
 
         public Dictionary<IToken, int> ExtractComments(string code)
         {
+            if (code == null) return null;
             byte[] byteArray = Encoding.UTF8.GetBytes(code);
             CommonTokenStream cts_off_channel = new CommonTokenStream(
                 new ANTLRv4Lexer(

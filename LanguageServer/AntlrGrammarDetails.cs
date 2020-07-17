@@ -24,6 +24,7 @@
                     before_count++;
                     before_count = before_count + x.Value.Count;
                 }
+                if (ParseTree == null) return false;
                 ParseTreeWalker.Default.Walk(new Pass0Listener(this), ParseTree);
                 int after_count = 0;
                 foreach (KeyValuePair<string, List<string>> dep in AntlrGrammarDetails._dependent_grammars)
@@ -120,11 +121,13 @@
             });
             Passes.Add(() =>
             {
+                if (ParseTree == null) return false;
                 ParseTreeWalker.Default.Walk(new Pass2Listener(this), ParseTree);
                 return false;
             });
             Passes.Add(() =>
             {
+                if (ParseTree == null) return false;
                 ParseTreeWalker.Default.Walk(new Pass3Listener(this), ParseTree);
                 return false;
             });
