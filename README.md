@@ -109,12 +109,17 @@ Bash script "clean.sh" in the Antlrvsix source to clean out the build files so o
 
 ## Planned for v8.0 (Aug 2020):
 
-* Add in Piggy, a transformational system for trees using a specialized
-tree rewrite language, into Antlrvsix.
-* Start rewriting existing transforms and analyses into Piggy.
+* Add in XPath and S-expresion tree tools for less verbose
+tree rewrites.
+* Start rewriting existing transforms and analyses
+using tree tools.
 * Add left factoring and inverse.
 * Add in empty string alternative hoist transforms.
 * Expression rule compression.
+* Fix [Add transform to input string literals and convert to case insensitive literal or vice versa. #71](https://github.com/kaby76/AntlrVSIX/issues/71).
+* Fix [Import of grammar with multiple rules for LHS symbol crashes. #69](https://github.com/kaby76/AntlrVSIX/issues/69).
+* Fix [LanguageServer.Module.GetDefsAndRefs() not working right #74](https://github.com/kaby76/AntlrVSIX/issues/74).
+* Fix [Workspace.FindDocument() and Document.FindDocument() need to use normalized file paths. #75](https://github.com/kaby76/AntlrVSIX/issues/75).
 
 ## Release notes for v7.4 (7 Jun 2020):
 
