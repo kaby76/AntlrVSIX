@@ -4438,17 +4438,18 @@ namespace LanguageServer
             org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
             var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
             AntlrDOM.AntlrDynamicContext dynamicContext = AntlrDOM.ConvertToDOM.Try(tree, parser);
-            var to_check_literals = engine.parseExpression(
+            var dom_literals = engine.parseExpression(
                     "//lexerRuleSpec/lexerRuleBlock/lexerAltList[not(@ChildCount > 1)]/lexerAlt/lexerElements[not(@ChildCount > 1)]/lexerElement[not(@ChildCount > 1)]/lexerAtom/terminal[not(@ChildCount > 1)]/STRING_LITERAL",
                     new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
-                .Select(x => (x.NativeValue as AntlrDOM.AntlrElement).AntlrIParseTree).ToArray();
+                .Select(x => (x.NativeValue as AntlrDOM.AntlrElement)).ToArray();
             var elements = engine.parseExpression(
                     "../../../..",
-                    new StaticContextBuilder()).evaluate(dynamicContext, to_check_literals)
+                    new StaticContextBuilder()).evaluate(dynamicContext, dom_literals)
                 .Select(x => (x.NativeValue as AntlrDOM.AntlrElement).AntlrIParseTree).ToArray();
             List<IParseTree> subs_elems = new List<IParseTree>();
             List<IParseTree> subs_lit = new List<IParseTree>();
-            for (int i = 0; i < to_check_literals.Length; ++i)
+            var to_check_literals = dom_literals.Select(x => x.AntlrIParseTree).ToList();
+            for (int i = 0; i < to_check_literals.Count; ++i)
             {
                 var lexer_literal = to_check_literals[i];
                 var elems = elements[i];

@@ -110,9 +110,9 @@ Bash script "clean.sh" in the Antlrvsix source to clean out the build files so o
 ## Planned for v8.0 (Aug 2020):
 
 * Add in XPath and S-expresion tree tools for less verbose
-tree rewrites.
-* Start rewriting existing transforms and analyses
-using tree tools.
+tree rewrite code.
+* Rewrite some of the existing transforms and analyses
+using XPath and S-expresions.
 * Add left factoring and inverse.
 * Add in empty string alternative hoist transforms.
 * Expression rule compression.
