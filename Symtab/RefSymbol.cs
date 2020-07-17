@@ -1,4 +1,6 @@
-﻿namespace Symtab
+﻿using System;
+
+namespace Symtab
 {
     using Antlr4.Runtime;
     using System.Collections.Generic;
@@ -19,6 +21,25 @@
             : base(def.First().Name, t)
         {
             Def = def;
+            foreach (var d in def)
+            {
+                var dd = d as BaseSymbol;
+                if (dd != null)
+                {
+                    dd.Refs.Add(this);
+                }
+            }
         }
+
+        public override bool Equals(object obj)
+        {
+            return Object.ReferenceEquals(this, obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(this);
+        }
+
     }
 }

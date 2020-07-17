@@ -49,6 +49,7 @@
             get => defNode;
         }
 
+        public HashSet<ISymbol> Refs { get; set; } = new HashSet<ISymbol>();
 
         public override bool Equals(object obj)
         {

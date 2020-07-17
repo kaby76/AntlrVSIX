@@ -571,70 +571,6 @@
                 found_defs = defs;
                 break;
             }
-
-            List<Antlr4.Runtime.Tree.TerminalNodeImpl> where = new List<Antlr4.Runtime.Tree.TerminalNodeImpl>();
-            // Go through all files and look for refs.
-            if (found_ref != null)
-            {
-                foreach (KeyValuePair<string, List<string>> d in AntlrGrammarDetails._dependent_grammars)
-                {
-                    Document d_doc = Workspaces.Workspace.Instance.FindDocument(d.Key);
-                    ParserDetails d_pd = ParserDetailsFactory.Create(d_doc);
-                    if (d_pd.ParseTree == null)
-                    {
-                        continue;
-                    }
-
-                    IEnumerable<TerminalNodeImpl> refs = d_pd.Refs.Where(
-                        (t) =>
-                        {
-                            Antlr4.Runtime.Tree.TerminalNodeImpl x = t.Key;
-                            if (x.Symbol == found_ref.Token)
-                            {
-                                return true;
-                            }
-
-                            d_pd.Attributes.TryGetValue(x, out IList<Symtab.CombinedScopeSymbol> list_v);
-                            if (list_v == null)
-                            {
-                                return false;
-                            }
-
-                            foreach (CombinedScopeSymbol v in list_v)
-                            {
-                                Symtab.ISymbol vv = v as Symtab.ISymbol;
-                                if (vv == null)
-                                {
-                                    return false;
-                                }
-                                var vv_resolved = vv.resolve();
-                                if (vv_resolved == found_defs)
-                                    return true;
-                                if (vv_resolved.Count != found_defs.Count)
-                                    return false;
-                                foreach (var a1 in vv_resolved)
-                                {
-                                    if (!found_defs.Contains(a1)) return false;
-                                }
-                                foreach (var a2 in found_defs)
-                                {
-                                    if (!vv_resolved.Contains(a2)) return false;
-                                }
-                                return true;
-                            }
-                            return false;
-                        }).Select(t => t.Key).ToList();
-                    foreach (TerminalNodeImpl r in refs)
-                    {
-                        result.Add(
-                                new Location()
-                                {
-                                    Range = new Workspaces.Range(r.Symbol.StartIndex, r.Symbol.StopIndex),
-                                    Uri = Workspaces.Workspace.Instance.FindDocument(r.Symbol.InputStream.SourceName)
-                                });
-                    }
-                }
-            }
             if (found_defs != null)
             {
                 foreach (var def in found_defs)
@@ -645,6 +581,16 @@
                             Range = new Workspaces.Range(def.Token.StartIndex, def.Token.StopIndex),
                             Uri = Workspaces.Workspace.Instance.FindDocument(def.file)
                         });
+                    var dd = def as BaseSymbol;
+                    foreach (var r in dd.Refs)
+                    {
+                        result.Add(
+                            new Location()
+                            {
+                                Range = new Workspaces.Range(r.Token.StartIndex, r.Token.StopIndex),
+                                Uri = Workspaces.Workspace.Instance.FindDocument(r.file)
+                            });
+                    }
                 }
             }
             return result;
