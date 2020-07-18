@@ -111,15 +111,18 @@ previous hives stored under the AppData directory. It is often easier to
 just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio\16.0_*. I've included a
 Bash script "clean.sh" in the Antlrvsix source to clean out the build files so one can build from scratch.
 
-## Planned for v8.0 (Aug 2020):
+## Planned for v8.1 (Aug 2020):
+
+* Add expression rule optimization.
+* Add left factoring and inverse.
+
+## Planned for v8.0 (July 2020):
 
 * Add in XPath and S-expresion tree tools for less verbose
 tree rewrite code.
 * Rewrite some of the existing transforms and analyses
 using XPath and S-expresions.
-* Add left factoring and inverse.
 * Add in empty string alternative hoist transforms.
-* Expression rule compression.
 * Add nightly unit tests to build (find def, find refs and defs, etc).
 * Fix [Import of grammar with multiple rules for LHS symbol crashes. #69](https://github.com/kaby76/AntlrVSIX/issues/69).
 * Fix [Add transform to input string literals and convert to case insensitive literal or vice versa. #71](https://github.com/kaby76/AntlrVSIX/issues/71).
