@@ -252,7 +252,6 @@ namespace org.eclipse.wst.xml.xpath2.processor
 				}
 				else throw new Exception("I have no clue what context you are passing here.");
 			}
-			if (rs.size() == 0) throw new Exception("I got no context here!");
 			set_focus(new Focus(rs.Sequence));
 			_param = null;
 		}
@@ -1660,10 +1659,14 @@ namespace org.eclipse.wst.xml.xpath2.processor
 		// XXX unify with top
 		public virtual object visit(ReverseStep e)
 		{
+            ResultBuffer result = new ResultBuffer();
+
 			// get context node
 			AnyType ci = focus().context_item();
 
-			if (!(ci is NodeType))
+            if (ci == null) return result.Sequence;
+
+            if (!(ci is NodeType))
 			{
 				report_error(TypeError.ci_not_node(ci.string_type()));
 			}
@@ -1673,7 +1676,6 @@ namespace org.eclipse.wst.xml.xpath2.processor
 			// get the nodes on the axis
 			ReverseAxis axis = e.iterator();
 
-			ResultBuffer result = new ResultBuffer();
 			// short for "gimme da parent"
 			if (e.axis() == ReverseStep.Type.DOTDOT)
 			{

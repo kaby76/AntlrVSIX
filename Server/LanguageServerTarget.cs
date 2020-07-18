@@ -1212,12 +1212,12 @@
             CMClassifierInformation[] result = null;
             try
             {
-                var a1 = arg1.ToObject<int>();
+                var a1 = arg1.ToObject<string>();
                 var a2 = arg2.ToObject<int>();
-                var a3 = arg3.ToObject<string>();
-                Document document = CheckDoc(new Uri(a3));
-                var start = a1;
-                var end = a2;
+                var a3 = arg3.ToObject<int>();
+                Document document = CheckDoc(new Uri(a1));
+                var start = a2;
+                var end = a3;
                 if (trace)
                 {
                     System.Console.Error.WriteLine("<-- CMGetClassifiers");

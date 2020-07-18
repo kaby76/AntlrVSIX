@@ -613,12 +613,30 @@ namespace LanguageServer
             // Find rewrite rules, i.e., string literal to string symbol name.
             Dictionary<string, string> subs = new Dictionary<string, string>();
 
-            // Find literals in lexer rules.
-            org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
-            var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
-            AntlrDOM.AntlrDynamicContext dynamicContext = AntlrDOM.ConvertToDOM.Try(tree, parser);
-            var dom_literals = engine.parseExpression(
-                    @"//ruleSpec
+            var stack = new Stack<Document>();
+            stack.Push(document);
+            while (stack.Any())
+            {
+                var doc = stack.Pop();
+                if (!(ParserDetailsFactory.Create(doc) is AntlrGrammarDetails pd_doc))
+                    continue;
+
+                foreach (var c in pd_doc.Imports)
+                {
+                    Workspaces.Document d = Workspaces.Workspace.Instance.FindDocument(c);
+                    if (d == null)
+                    {
+                        continue;
+                    }
+                    stack.Push(d);
+                }
+
+                // Find literals in lexer rules.
+                org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+                var (tree, parser, lexer) = (pd_doc.ParseTree, pd_doc.Parser, pd_doc.Lexer);
+                AntlrDOM.AntlrDynamicContext dynamicContext = AntlrDOM.ConvertToDOM.Try(tree, parser);
+                var dom_literals = engine.parseExpression(
+                        @"//ruleSpec
                         /lexerRuleSpec
                             /lexerRuleBlock
                                 /lexerAltList[not(@ChildCount > 1)]
@@ -628,14 +646,16 @@ namespace LanguageServer
                                                 /lexerAtom
                                                     /terminal[not(@ChildCount > 1)]
                                                         /STRING_LITERAL",
-                    new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
-                .Select(x => (x.NativeValue as AntlrDOM.AntlrElement)).ToArray();
-            var old_names = dom_literals.Select(x => x.AntlrIParseTree.GetText()).ToList();
-            var new_names = engine.parseExpression(
-                    "../../../../../../../../TOKEN_REF",
-                    new StaticContextBuilder()).evaluate(dynamicContext, dom_literals)
-                .Select(x => (x.NativeValue as AntlrDOM.AntlrElement).AntlrIParseTree.GetText()).ToArray();
-            for(int i = 0; i < old_names.Count; ++i) subs.Add(old_names[i], new_names[i]);
+                        new StaticContextBuilder()).evaluate(dynamicContext, new object[] {dynamicContext.Document})
+                    .Select(x => (x.NativeValue as AntlrDOM.AntlrElement)).ToArray();
+                if (dom_literals.Length == 0) continue;
+                var old_names = dom_literals.Select(x => x.AntlrIParseTree.GetText()).ToList();
+                var new_names = engine.parseExpression(
+                        "../../../../../../../../TOKEN_REF",
+                        new StaticContextBuilder()).evaluate(dynamicContext, dom_literals)
+                    .Select(x => (x.NativeValue as AntlrDOM.AntlrElement).AntlrIParseTree.GetText()).ToArray();
+                for (int i = 0; i < old_names.Count; ++i) subs.Add(old_names[i], new_names[i]);
+            }
 
             // Find string literals in parser and combined grammars and substitute.
 
@@ -2712,32 +2732,6 @@ namespace LanguageServer
             };
             Dictionary<Workspaces.Document, List<TerminalNodeImpl>> every_damn_literal =
                 new Dictionary<Workspaces.Document, List<TerminalNodeImpl>>();
-            for (; ; )
-            {
-                int before_count = read_files.Count;
-                foreach (string f in read_files)
-                {
-                    List<string> additional = AntlrGrammarDetails._dependent_grammars.Where(
-                        t => t.Value.Contains(f)).Select(
-                        t => t.Key).ToList();
-                    read_files = read_files.Union(additional).ToHashSet();
-                }
-                foreach (string f in read_files)
-                {
-                    IEnumerable<List<string>> additional = AntlrGrammarDetails._dependent_grammars.Where(
-                        t => t.Key == f).Select(
-                        t => t.Value);
-                    foreach (List<string> t in additional)
-                    {
-                        read_files = read_files.Union(t).ToHashSet();
-                    }
-                }
-                int after_count = read_files.Count;
-                if (after_count == before_count)
-                {
-                    break;
-                }
-            }
 
             // Find rewrite rules, i.e., lexer rule "<TOKEN_REF> : <string literal>"
             Dictionary<string, string> subs = new Dictionary<string, string>();
@@ -3170,32 +3164,6 @@ namespace LanguageServer
             };
             Dictionary<Workspaces.Document, List<TerminalNodeImpl>> every_damn_literal =
                 new Dictionary<Workspaces.Document, List<TerminalNodeImpl>>();
-            for (; ; )
-            {
-                int before_count = read_files.Count;
-                foreach (string f in read_files)
-                {
-                    List<string> additional = AntlrGrammarDetails._dependent_grammars.Where(
-                        t => t.Value.Contains(f)).Select(
-                        t => t.Key).ToList();
-                    read_files = read_files.Union(additional).ToHashSet();
-                }
-                foreach (string f in read_files)
-                {
-                    IEnumerable<List<string>> additional = AntlrGrammarDetails._dependent_grammars.Where(
-                        t => t.Key == f).Select(
-                        t => t.Value);
-                    foreach (List<string> t in additional)
-                    {
-                        read_files = read_files.Union(t).ToHashSet();
-                    }
-                }
-                int after_count = read_files.Count;
-                if (after_count == before_count)
-                {
-                    break;
-                }
-            }
 
             // Check cursor position. It is either the LHS symbol of a rule,
             // which means the user wants to unroll all applied occurrences of the rule
@@ -3402,32 +3370,6 @@ namespace LanguageServer
             };
             Dictionary<Workspaces.Document, List<TerminalNodeImpl>> every_damn_literal =
                 new Dictionary<Workspaces.Document, List<TerminalNodeImpl>>();
-            for (; ; )
-            {
-                int before_count = read_files.Count;
-                foreach (string f in read_files)
-                {
-                    List<string> additional = AntlrGrammarDetails._dependent_grammars.Where(
-                        t => t.Value.Contains(f)).Select(
-                        t => t.Key).ToList();
-                    read_files = read_files.Union(additional).ToHashSet();
-                }
-                foreach (string f in read_files)
-                {
-                    IEnumerable<List<string>> additional = AntlrGrammarDetails._dependent_grammars.Where(
-                        t => t.Key == f).Select(
-                        t => t.Value);
-                    foreach (List<string> t in additional)
-                    {
-                        read_files = read_files.Union(t).ToHashSet();
-                    }
-                }
-                int after_count = read_files.Count;
-                if (after_count == before_count)
-                {
-                    break;
-                }
-            }
 
             // Check cursor position. Many things can happen here, but we have to try
             // and make some sense of what the user is pointing out.
