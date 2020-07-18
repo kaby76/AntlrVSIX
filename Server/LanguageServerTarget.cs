@@ -1207,21 +1207,24 @@
 
 
         [JsonRpcMethod("CMGetClassifiers")]
-        public CMClassifierInformation[] CMGetClassifiers(JToken arg)
+        public CMClassifierInformation[] CMGetClassifiers(JToken arg1, JToken arg2, JToken arg3)
         {
             CMClassifierInformation[] result = null;
             try
             {
-                CMGetClassifiersParams request = arg.ToObject<CMGetClassifiersParams>();
-                Document document = CheckDoc(request.TextDocument);
-                int start = request.Start;
-                int end = request.End;
+                var a1 = arg1.ToObject<int>();
+                var a2 = arg2.ToObject<int>();
+                var a3 = arg3.ToObject<string>();
+                Document document = CheckDoc(new Uri(a3));
+                var start = a1;
+                var end = a2;
                 if (trace)
                 {
                     System.Console.Error.WriteLine("<-- CMGetClassifiers");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    System.Console.Error.WriteLine(start.ToString());
                     (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
-                    System.Console.Error.WriteLine("");
+                    System.Console.Error.WriteLine(end.ToString());
+                    (int, int) be = LanguageServer.Module.GetLineColumn(start, document);
                 }
                 IEnumerable<Module.Info> r = LanguageServer.Module.Get(start, end, document);
                 List<CMClassifierInformation> symbols = new List<CMClassifierInformation>();
@@ -1258,19 +1261,19 @@
         }
 
         [JsonRpcMethod("CMNextSymbol")]
-        public int CMNextSymbol(JToken arg)
+        public int CMNextSymbol(JToken arg1, JToken arg2, JToken arg3)
         {
-            CMNextSymbolParams request = arg.ToObject<CMNextSymbolParams>();
-            int pos = request.Pos;
-            bool forward = request.Forward;
+            var ffn = arg1.ToObject<string>();
+            var pos = arg2.ToObject<int>();
+            var forward = arg3.ToObject<bool>();
             int next_sym = forward ? int.MaxValue : -1;
             try
             {
-                Document document = CheckDoc(request.TextDocument);
+                Document document = CheckDoc(new Uri(ffn));
                 if (trace)
                 {
                     System.Console.Error.WriteLine("<-- CMNextSymbol");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    System.Console.Error.WriteLine(pos.ToString());
                     (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
                     System.Console.Error.WriteLine("");
                 }
@@ -1315,23 +1318,23 @@
         }
 
         [JsonRpcMethod("CMGotoVisitor")]
-        public CMGotoResult CMGotoVisitor(JToken arg)
+        public CMGotoResult CMGotoVisitor(JToken arg1, JToken arg2, JToken arg3)
         {
             CMGotoResult s = null;
             try
             {
-                CMGotoParams request = arg.ToObject<CMGotoParams>();
-                Document document = CheckDoc(request.TextDocument);
-                int pos = request.Pos;
+                string a1 = arg1.ToObject<string>();
+                Document document = CheckDoc(new Uri(a1));
+                int a2 = arg2.ToObject<int>();
+                bool a3 = arg3.ToObject<bool>();
                 if (trace)
                 {
                     System.Console.Error.WriteLine("<-- CMGotoVisitor");
-                    System.Console.Error.WriteLine(arg.ToString());
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
+                    System.Console.Error.WriteLine(a1.ToString());
+                    (int, int) bs = LanguageServer.Module.GetLineColumn(a2, document);
                     System.Console.Error.WriteLine("");
                 }
-                bool key_state = request.IsEnter;
-                s = Goto.main(true, key_state, document, pos);
+                s = Goto.main(true, a3, document, a2);
             }
             catch (LanguageServerException e)
             {
@@ -1345,23 +1348,23 @@
         }
 
         [JsonRpcMethod("CMGotoListener")]
-        public CMGotoResult CMGotoListener(JToken arg)
+        public CMGotoResult CMGotoListener(JToken arg1, JToken arg2, JToken arg3)
         {
             CMGotoResult s = null;
             try
             {
-                CMGotoParams request = arg.ToObject<CMGotoParams>();
-                Document document = CheckDoc(request.TextDocument);
-                int pos = request.Pos;
+                string a1 = arg1.ToObject<string>();
+                Document document = CheckDoc(new Uri(a1));
+                int a2 = arg2.ToObject<int>();
+                bool a3 = arg3.ToObject<bool>();
                 if (trace)
                 {
                     System.Console.Error.WriteLine("<-- CMGotoListener");
-                    System.Console.Error.WriteLine(arg.ToString());
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
+                    System.Console.Error.WriteLine(a1.ToString());
+                    (int, int) bs = LanguageServer.Module.GetLineColumn(a2, document);
                     System.Console.Error.WriteLine("");
                 }
-                bool is_enter = request.IsEnter;
-                s = Goto.main(false, is_enter, document, pos);
+                s = Goto.main(false, a3, document, a2);
             }
             catch (LanguageServerException e)
             {
@@ -1408,21 +1411,24 @@
         }
 
         [JsonRpcMethod("CMRemoveUselessParserProductions")]
-        public void CMRemoveUselessParserProductions(JToken arg)
+        public void CMRemoveUselessParserProductions(JToken arg1, JToken arg2, JToken arg3)
         {
             try
             {
-                CMReplaceLiteralsParams request = arg.ToObject<CMReplaceLiteralsParams>();
-                Document document = CheckDoc(request.TextDocument);
-                int pos = request.Pos;
+                string a1 = arg1.ToObject<string>();
+                int a2 = arg2.ToObject<int>();
+                int a3 = arg3.ToObject<int>();
+                Document document = CheckDoc(new Uri(a1));
+                int start = a2;
+                int end = a3;
                 if (trace)
                 {
                     System.Console.Error.WriteLine("<-- CMRemoveUselessParserProductions");
-                    System.Console.Error.WriteLine(arg.ToString());
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
+                    System.Console.Error.WriteLine(start.ToString());
+                    (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
                     System.Console.Error.WriteLine("");
                 }
-                var s = LanguageServer.Transform.RemoveUselessParserProductions(pos, document);
+                var s = LanguageServer.Transform.RemoveUselessParserProductions(start, end, document);
                 ApplyChanges("Remove Useless Rules", s);
             }
             catch (LanguageServerException e)

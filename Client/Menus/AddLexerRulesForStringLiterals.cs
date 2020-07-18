@@ -71,6 +71,7 @@
                 manager.GetActiveView(1, null, out IVsTextView view);
                 if (view == null) return;
                 view.GetCaretPos(out int l, out int c);
+                view.GetSelection(out int ls, out int cs, out int le, out int ce);
                 view.GetBuffer(out IVsTextLines buf);
                 if (buf == null) return;
                 ITextBuffer buffer = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(view)?.TextBuffer;
@@ -78,8 +79,9 @@
                 if (ffn == null) return;
                 Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(ffn);
                 if (document == null) return;
-                int pos = LanguageServer.Module.GetIndex(l, c, document);
-                AntlrLanguageClient.CMAddLexerRulesForStringLiterals(ffn);
+                int start = LanguageServer.Module.GetIndex(ls, cs, document);
+                int end = LanguageServer.Module.GetIndex(le, ce, document);
+                AntlrLanguageClient.CMAddLexerRulesForStringLiterals(ffn, start, end);
             }
             catch (Exception exception)
             {

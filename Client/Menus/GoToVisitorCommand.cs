@@ -1,4 +1,6 @@
-﻿namespace LspAntlr
+﻿using Microsoft.VisualStudio.Debugger.Interop;
+
+namespace LspAntlr
 {
     using LanguageServer;
     using Microsoft.VisualStudio.Shell;
@@ -168,8 +170,8 @@
                 if (document == null) return;
                 int pos = LanguageServer.Module.GetIndex(l, c, document);
                 CMGotoResult symbol = null;
-                symbol = visitor ? AntlrLanguageClient.CMGotoVisitor(orig_ffn, pos)
-                    : AntlrLanguageClient.CMGotoListener(orig_ffn, is_enter, pos);
+                symbol = visitor ? AntlrLanguageClient.CMGotoVisitor(orig_ffn, pos, is_enter)
+                    : AntlrLanguageClient.CMGotoListener(orig_ffn, pos, is_enter);
                 if (symbol == null) return;
 
                 {

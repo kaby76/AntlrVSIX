@@ -692,7 +692,7 @@ namespace LanguageServer
             return result;
         }
 
-        public static Dictionary<string, string> RemoveUselessParserProductions(int pos, Document document)
+        public static Dictionary<string, string> RemoveUselessParserProductions(int start, int end, Document document)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 

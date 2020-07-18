@@ -178,15 +178,9 @@
                 {
                     return null;
                 }
-                CMGetClassifiersParams p = new CMGetClassifiersParams();
-                Uri uri = new Uri(ffn);
-                p.TextDocument = uri;
-                p.Start = start;
-                p.End = end;
-                //CMClassifierInformation[] result;
                 var context = ThreadHelper.JoinableTaskContext;
                 var jtf = new JoinableTaskFactory(context);
-                var result = jtf.Run(() => _rpc.InvokeAsync<CMClassifierInformation[]>("CMGetClassifiers", p));
+                var result = jtf.Run(() => _rpc.InvokeAsync<CMClassifierInformation[]>("CMGetClassifiers", ffn, start, end));
                 return result;
             }
             catch (Exception)
@@ -204,14 +198,9 @@
                     return -1;
                 }
 
-                CMNextSymbolParams p = new CMNextSymbolParams();
-                Uri uri = new Uri(ffn);
-                p.TextDocument = uri;
-                p.Pos = pos;
-                p.Forward = forward;
                 var context = ThreadHelper.JoinableTaskContext;
                 var jtf = new JoinableTaskFactory(context);
-                var result = jtf.Run(() => _rpc.InvokeAsync<int>("CMNextSymbol", p));
+                var result = jtf.Run(() => _rpc.InvokeAsync<int>("CMNextSymbol", ffn, pos, forward));
                 return result;
             }
             catch (Exception)
@@ -220,18 +209,14 @@
             return -1;
         }
 
-        public static CMGotoResult CMGotoVisitor(string ffn, int pos)
+        public static CMGotoResult CMGotoVisitor(string ffn, int pos, bool is_enter)
         {
             try
             {
                 if (_rpc == null) return null;
-                CMGotoParams p = new CMGotoParams();
-                Uri uri = new Uri(ffn);
-                p.TextDocument = uri;
-                p.Pos = pos;
                 var context = ThreadHelper.JoinableTaskContext;
                 var jtf = new JoinableTaskFactory(context);
-                var result = jtf.Run(() => _rpc.InvokeAsync<CMGotoResult>("CMGotoVisitor", p));
+                var result = jtf.Run(() => _rpc.InvokeAsync<CMGotoResult>("CMGotoVisitor", ffn, pos, is_enter));
                 return result;
             }
             catch (Exception)
@@ -240,19 +225,14 @@
             return null;
         }
 
-        public static CMGotoResult CMGotoListener(string ffn, bool is_enter, int pos)
+        public static CMGotoResult CMGotoListener(string ffn, int pos, bool is_enter)
         {
             try
             {
                 if (_rpc == null) return null;
-                CMGotoParams p = new CMGotoParams();
-                Uri uri = new Uri(ffn);
-                p.TextDocument = uri;
-                p.Pos = pos;
-                p.IsEnter = is_enter;
                 var context = ThreadHelper.JoinableTaskContext;
                 var jtf = new JoinableTaskFactory(context);
-                var result = jtf.Run(() => _rpc.InvokeAsync<CMGotoResult>("CMGotoListener", p));
+                var result = jtf.Run(() => _rpc.InvokeAsync<CMGotoResult>("CMGotoListener", ffn, pos, is_enter));
                 return result;
             }
             catch (Exception)
@@ -302,11 +282,7 @@
             try
             {
                 if (_rpc == null) return;
-                CMReorderParserRulesParams p = new CMReorderParserRulesParams();
-                Uri uri = new Uri(ffn);
-                p.TextDocument = uri;
-                p.Type = reorder_type;
-                _ = _rpc.InvokeAsync("CMReorderParserRules", p);
+                _ = _rpc.InvokeAsync("CMReorderParserRules", ffn, reorder_type);
             }
             catch (Exception)
             {
@@ -393,12 +369,12 @@
             }
         }
 
-        public static void CMAddLexerRulesForStringLiterals(string ffn)
+        public static void CMAddLexerRulesForStringLiterals(string ffn, int start, int end)
         {
             try
             {
                 if (_rpc == null) return;
-                _ = _rpc.InvokeAsync("CMAddLexerRulesForStringLiterals", ffn);
+                _ = _rpc.InvokeAsync("CMAddLexerRulesForStringLiterals", ffn, start, end);
             }
             catch (Exception)
             {
