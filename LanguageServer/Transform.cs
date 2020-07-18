@@ -771,7 +771,7 @@ namespace LanguageServer
             return result;
         }
 
-        public static Dictionary<string, string> MoveStartRuleToTop(int pos, Document document)
+        public static Dictionary<string, string> MoveStartRuleToTop(Document document)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
@@ -982,7 +982,7 @@ namespace LanguageServer
             return result;
         }
 
-        public static Dictionary<string, string> SplitCombineGrammars(int pos, Document document, bool split)
+        public static Dictionary<string, string> SplitCombineGrammars(Document document, bool split)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 

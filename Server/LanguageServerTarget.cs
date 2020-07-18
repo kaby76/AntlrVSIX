@@ -1442,21 +1442,19 @@
         }
 
         [JsonRpcMethod("CMMoveStartRuleToTop")]
-        public void CMMoveStartRuleToTop(JToken arg)
+        public void CMMoveStartRuleToTop(JToken arg1)
         {
             try
             {
-                CMReplaceLiteralsParams request = arg.ToObject<CMReplaceLiteralsParams>();
-                Document document = CheckDoc(request.TextDocument);
-                int pos = request.Pos;
+                string a1 = arg1.ToObject<string>();
+                Document document = CheckDoc(new Uri(a1));
                 if (trace)
                 {
                     System.Console.Error.WriteLine("<-- CMMoveStartRuleToTop");
-                    System.Console.Error.WriteLine(arg.ToString());
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
+                    System.Console.Error.WriteLine(a1);
                     System.Console.Error.WriteLine("");
                 }
-                var s = LanguageServer.Transform.MoveStartRuleToTop(pos, document);
+                var s = LanguageServer.Transform.MoveStartRuleToTop(document);
                 ApplyChanges("Move Start Rule To Top", s);
             }
             catch (LanguageServerException e)
@@ -1470,17 +1468,18 @@
         }
 
         [JsonRpcMethod("CMReorderParserRules")]
-        public void CMReorderParserRules(JToken arg)
+        public void CMReorderParserRules(JToken arg1, JToken arg2)
         {
             try
             {
-                CMReorderParserRulesParams request = arg.ToObject<CMReorderParserRulesParams>();
-                Document document = CheckDoc(request.TextDocument);
-                LspAntlr.ReorderType type = request.Type;
+                var a1 = arg1.ToObject<string>();
+                Document document = CheckDoc(new Uri(a1));
+                var type = arg2.ToObject<LspAntlr.ReorderType>();
                 if (trace)
                 {
                     System.Console.Error.WriteLine("<-- CMReorderParserRules");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    System.Console.Error.WriteLine(a1);
+                    System.Console.Error.WriteLine(type.ToString());
                 }
                 var s = LanguageServer.Transform.ReorderParserRules(document, type);
                 string na = "";
@@ -1506,23 +1505,23 @@
         }
 
         [JsonRpcMethod("CMSplitCombineGrammars")]
-        public Dictionary<string, string> CMSplitCombineGrammars(JToken arg)
+        public Dictionary<string, string> CMSplitCombineGrammars(JToken arg1, JToken arg2)
         {
             Dictionary<string, string> changes = null;
             try
             {
-                CMSplitCombineGrammarsParams request = arg.ToObject<CMSplitCombineGrammarsParams>();
-                Document document = CheckDoc(request.TextDocument);
-                int pos = request.Pos;
-                bool split = request.Split;
+                var a1 = arg1.ToObject<string>();
+                Document document = CheckDoc(new Uri(a1));
+                var type = arg2.ToObject<LspAntlr.ReorderType>();
+                var split = arg1.ToObject<bool>();
                 if (trace)
                 {
                     System.Console.Error.WriteLine("<-- CMSplitCombineGrammars");
-                    System.Console.Error.WriteLine(arg.ToString());
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
+                    System.Console.Error.WriteLine(a1);
+                    System.Console.Error.WriteLine(split);
                     System.Console.Error.WriteLine("");
                 }
-                changes = LanguageServer.Transform.SplitCombineGrammars(pos, document, split);
+                changes = LanguageServer.Transform.SplitCombineGrammars(document, split);
             }
             catch (LanguageServerException e)
             {
