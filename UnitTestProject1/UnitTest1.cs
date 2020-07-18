@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Algorithms;
+using Antlr4.Runtime.Misc;
 using LanguageServer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Workspaces;
@@ -74,7 +76,10 @@ namespace UnitTestProject1
             if (back.Item1 != line || back.Item2 != character) throw new Exception();
             QuickInfo quick_info = LanguageServer.Module.GetQuickInfo(index, document);
             if (quick_info == null) throw new Exception();
-            if (quick_info.Range.Start.Value != 1994 || quick_info.Range.End.Value != 2005) throw new Exception();
+            (int, int) back_start = LanguageServer.Module.GetLineColumn(quick_info.Range.Start.Value, document);
+            if (back_start.Item1 != line || back_start.Item2 != character) throw new Exception();
+            (int, int) back_end = LanguageServer.Module.GetLineColumn(quick_info.Range.End.Value, document);
+            if (back_end.Item1 != line || back_end.Item2 != character + 11) throw new Exception();
         }
 
         [TestMethod]
@@ -91,9 +96,11 @@ namespace UnitTestProject1
             (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
             if (back.Item1 != line || back.Item2 != character) throw new Exception();
             IList<Location> found = LanguageServer.Module.FindDefs(index, document);
-            List<object> locations = new List<object>();
             if (found.Count != 1) throw new Exception();
-            if (found.First().Range.Start.Value != 2084 || found.First().Range.End.Value != 2094) throw new Exception();
+            (int, int) back_start = LanguageServer.Module.GetLineColumn(found.First().Range.Start.Value, document);
+            if (back_start.Item1 != 49 || back_start.Item2 != 0) throw new Exception();
+            (int, int) back_end = LanguageServer.Module.GetLineColumn(found.First().Range.End.Value, document);
+            if (back_end.Item1 != 49 || back_end.Item2 != 10) throw new Exception();
         }
 
         [TestMethod]
@@ -110,11 +117,20 @@ namespace UnitTestProject1
             if (back.Item1 != line || back.Item2 != character) throw new Exception();
             var found = LanguageServer.Module.FindRefsAndDefs(index, document).ToList();
             if (found.Count != 4) throw new Exception();
-            var set1 = new HashSet<int>();
-            set1.UnionWith(found.Select(t => t.Range.Start.Value));
-            var set2 = new HashSet<int>();
-            set2.UnionWith(new List<int>() { 23, 35, 44, 50 });
-            if (!set1.SetEquals(set2)) throw new Exception();
+            List<Pair<int, int>> r = new List<Pair<int, int>>()
+            {
+                new Pair<int, int>(3, 6),
+                new Pair<int, int>(6, 0),
+                new Pair<int, int>(7, 6),
+                new Pair<int, int>(7, 12),
+            };
+            var ordered_found = found.Select(t => t.Range.Start.Value).OrderBy(t => t).ToList();
+            for (int i = 0; i < ordered_found.Count; ++i)
+            {
+                var start = ordered_found[i];
+                (int, int) back_start = LanguageServer.Module.GetLineColumn(start, document);
+                if (back_start.Item1 != r[i].a || back_start.Item2 != r[i].b) throw new Exception();
+            }
         }
 
         [TestMethod]
