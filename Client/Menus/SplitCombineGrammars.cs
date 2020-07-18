@@ -103,7 +103,7 @@
                 Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(ffn);
                 if (document == null) return;
                 int pos = LanguageServer.Module.GetIndex(l, c, document);
-                Dictionary<string, string> changes = AntlrLanguageClient.CMSplitCombineGrammars(ffn, pos, split);
+                Dictionary<string, string> changes = AntlrLanguageClient.CMSplitCombineGrammars(ffn, split);
                 EnvDTE.Project project = null;
                 string the_namespace = "";
                 for (; ; )

@@ -92,7 +92,7 @@
                 Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(ffn);
                 if (document == null) return;
                 int pos = LanguageServer.Module.GetIndex(l, c, document);
-                AntlrLanguageClient.CMReplaceLiterals(ffn, pos);
+                AntlrLanguageClient.CMReplaceLiterals(ffn, pos, pos);
             }
             catch (Exception exception)
             {

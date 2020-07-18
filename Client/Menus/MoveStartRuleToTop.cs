@@ -80,7 +80,7 @@
                 Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(ffn);
                 if (document == null) return;
                 int pos = LanguageServer.Module.GetIndex(l, c, document);
-                AntlrLanguageClient.CMMoveStartRuleToTop(ffn, pos);
+                AntlrLanguageClient.CMMoveStartRuleToTop(ffn);
             }
             catch (Exception exception)
             {

@@ -1375,21 +1375,26 @@
         }
 
         [JsonRpcMethod("CMReplaceLiterals")]
-        public void CMReplaceLiterals(JToken arg)
+        public void CMReplaceLiterals(JToken arg1, JToken arg2, JToken arg3)
         {
             try
             {
-                CMReplaceLiteralsParams request = arg.ToObject<CMReplaceLiteralsParams>();
-                Document document = CheckDoc(request.TextDocument);
-                int pos = request.Pos;
+                string a1 = arg1.ToObject<string>();
+                int a2 = arg2.ToObject<int>();
+                int a3 = arg3.ToObject<int>();
+                Document document = CheckDoc(new Uri(a1));
+                int start = a2;
+                int end = a3;
                 if (trace)
                 {
                     System.Console.Error.WriteLine("<-- CMReplaceLiterals");
-                    System.Console.Error.WriteLine(arg.ToString());
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
-                    System.Console.Error.WriteLine("");
+                    System.Console.Error.WriteLine(a1);
+                    (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
+                    System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
+                    (int, int) be = LanguageServer.Module.GetLineColumn(end, document);
+                    System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
-                var s = LanguageServer.Transform.ReplaceLiterals(pos, pos, document);
+                var s = LanguageServer.Transform.ReplaceLiterals(start, end, document);
                 ApplyChanges("Replace String Literals", s);
             }
             catch (LanguageServerException e)
@@ -1550,21 +1555,26 @@
         }
 
         [JsonRpcMethod("CMConvertRecursionToKleeneOperator")]
-        public void CMConvertRecursionToKleeneOperator(JToken arg)
+        public void CMConvertRecursionToKleeneOperator(JToken arg1, JToken arg2, JToken arg3)
         {
             try
             {
-                CMEliminateDirectLeftRecursionParams request = arg.ToObject<CMEliminateDirectLeftRecursionParams>();
-                Document document = CheckDoc(request.TextDocument);
-                int pos = request.Pos;
+                string a1 = arg1.ToObject<string>();
+                int a2 = arg2.ToObject<int>();
+                int a3 = arg3.ToObject<int>();
+                Document document = CheckDoc(new Uri(a1));
+                int start = a2;
+                int end = a3;
                 if (trace)
                 {
                     System.Console.Error.WriteLine("<-- CMConvertRecursionToKleeneOperator");
-                    System.Console.Error.WriteLine(arg.ToString());
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
-                    System.Console.Error.WriteLine("");
+                    System.Console.Error.WriteLine(a1);
+                    (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
+                    System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
+                    (int, int) be = LanguageServer.Module.GetLineColumn(end, document);
+                    System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
-                var s = Transform.ConvertRecursionToKleeneOperator(pos, document);
+                var s = Transform.ConvertRecursionToKleeneOperator(start, end, document);
                 ApplyChanges("Convert to Kleene Syntax", s);
             }
             catch (LanguageServerException e)
@@ -1579,21 +1589,26 @@
 
 
         [JsonRpcMethod("CMEliminateDirectLeftRecursion")]
-        public void CMEliminateDirectLeftRecursion(JToken arg)
+        public void CMEliminateDirectLeftRecursion(JToken arg1, JToken arg2, JToken arg3)
         {
             try
             {
-                CMEliminateDirectLeftRecursionParams request = arg.ToObject<CMEliminateDirectLeftRecursionParams>();
-                Document document = CheckDoc(request.TextDocument);
-                int pos = request.Pos;
+                string a1 = arg1.ToObject<string>();
+                int a2 = arg2.ToObject<int>();
+                int a3 = arg3.ToObject<int>();
+                Document document = CheckDoc(new Uri(a1));
+                int start = a2;
+                int end = a3;
                 if (trace)
                 {
                     System.Console.Error.WriteLine("<-- CMEliminateDirectLeftRecursion");
-                    System.Console.Error.WriteLine(arg.ToString());
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
-                    System.Console.Error.WriteLine("");
+                    System.Console.Error.WriteLine(a1);
+                    (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
+                    System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
+                    (int, int) be = LanguageServer.Module.GetLineColumn(end, document);
+                    System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
-                var s = Transform.EliminateDirectLeftRecursion(pos, document);
+                var s = Transform.EliminateDirectLeftRecursion(start, end, document);
                 ApplyChanges("Elimiate Direct Left Recursion", s);
             }
             catch (LanguageServerException e)
@@ -1607,21 +1622,26 @@
         }
 
         [JsonRpcMethod("CMEliminateIndirectLeftRecursion")]
-        public void CMEliminateIndirectLeftRecursion(JToken arg)
+        public void CMEliminateIndirectLeftRecursion(JToken arg1, JToken arg2, JToken arg3)
         {
             try
             {
-                CMEliminateDirectLeftRecursionParams request = arg.ToObject<CMEliminateDirectLeftRecursionParams>();
-                Document document = CheckDoc(request.TextDocument);
-                int pos = request.Pos;
+                string a1 = arg1.ToObject<string>();
+                int a2 = arg2.ToObject<int>();
+                int a3 = arg3.ToObject<int>();
+                Document document = CheckDoc(new Uri(a1));
+                int start = a2;
+                int end = a3;
                 if (trace)
                 {
                     System.Console.Error.WriteLine("<-- CMEliminateIndirectLeftRecursion");
-                    System.Console.Error.WriteLine(arg.ToString());
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
-                    System.Console.Error.WriteLine("");
+                    System.Console.Error.WriteLine(a1);
+                    (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
+                    System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
+                    (int, int) be = LanguageServer.Module.GetLineColumn(end, document);
+                    System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
-                var s = Transform.EliminateIndirectLeftRecursion(pos, document);
+                var s = Transform.EliminateIndirectLeftRecursion(start, end, document);
                 ApplyChanges("Elimiate Indirect Left Recursion", s);
             }
             catch (LanguageServerException e)
@@ -1661,18 +1681,26 @@
 
 
         [JsonRpcMethod("CMAddLexerRulesForStringLiterals")]
-        public void CMAddLexerRulesForStringLiterals(JToken arg)
+        public void CMAddLexerRulesForStringLiterals(JToken arg1, JToken arg2, JToken arg3)
         {
             try
             {
-                Uri request = arg.ToObject<Uri>();
-                Document document = CheckDoc(request);
+                string a1 = arg1.ToObject<string>();
+                int a2 = arg2.ToObject<int>();
+                int a3 = arg3.ToObject<int>();
+                Document document = CheckDoc(new Uri(a1));
+                int start = a2;
+                int end = a3;
                 if (trace)
                 {
                     System.Console.Error.WriteLine("<-- CMAddLexerRulesForStringLiterals");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    System.Console.Error.WriteLine(a1);
+                    (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
+                    System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
+                    (int, int) be = LanguageServer.Module.GetLineColumn(end, document);
+                    System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
-                var s = Transform.AddLexerRulesForStringLiterals(document);
+                var s = Transform.AddLexerRulesForStringLiterals(start, end, document);
                 ApplyChanges("Replace String Literals", s);
             }
             catch (LanguageServerException e)
@@ -1711,22 +1739,26 @@
         }
 
         [JsonRpcMethod("CMUnfold")]
-        public void CMUnfold(JToken arg1, JToken arg2)
+        public void CMUnfold(JToken arg1, JToken arg2, JToken arg3)
         {
             try
             {
                 string a1 = arg1.ToObject<string>();
                 int a2 = arg2.ToObject<int>();
+                int a3 = arg3.ToObject<int>();
                 Document document = CheckDoc(new Uri(a1));
-                int pos = a2;
+                int start = a2;
+                int end = a3;
                 if (trace)
                 {
                     System.Console.Error.WriteLine("<-- CMUnfold");
                     System.Console.Error.WriteLine(a1);
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
+                    (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
                     System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
+                    (int, int) be = LanguageServer.Module.GetLineColumn(end, document);
+                    System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
-                var s = Transform.Unfold(pos, document);
+                var s = Transform.Unfold(start, end, document);
                 ApplyChanges("Unfold", s);
             }
             catch (LanguageServerException e)
@@ -1756,6 +1788,8 @@
                     System.Console.Error.WriteLine(a1);
                     (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
                     System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
+                    (int, int) be = LanguageServer.Module.GetLineColumn(end, document);
+                    System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
                 var s = Transform.Fold(start, end, document);
                 ApplyChanges("Fold", s);
@@ -1787,6 +1821,8 @@
                     System.Console.Error.WriteLine(a1);
                     (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
                     System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
+                    (int, int) be = LanguageServer.Module.GetLineColumn(end, document);
+                    System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
                 var s = Transform.RemoveUselessParentheses(start, end, document);
                 ApplyChanges("Remove Useless Parentheses", s);
@@ -1843,6 +1879,8 @@
                     System.Console.Error.WriteLine(a1);
                     (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
                     System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
+                    (int, int) be = LanguageServer.Module.GetLineColumn(end, document);
+                    System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
                 var s = Transform.ReplacePriorization(start, end, document);
                 ApplyChanges("Replace priorization rules", s);
@@ -1874,6 +1912,8 @@
                     System.Console.Error.WriteLine(a1);
                     (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
                     System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
+                    (int, int) be = LanguageServer.Module.GetLineColumn(end, document);
+                    System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
                 var s = Transform.UpperLowerCaseLiteral(start, end, document);
                 ApplyChanges("Replace literal with upper and lower case literal", s);

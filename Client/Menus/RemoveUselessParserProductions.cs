@@ -90,7 +90,7 @@
                 Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(ffn);
                 if (document == null) return;
                 int pos = LanguageServer.Module.GetIndex(l, c, document);
-                AntlrLanguageClient.CMRemoveUselessParserProductions(ffn, pos);
+                AntlrLanguageClient.CMRemoveUselessParserProductions(ffn, pos, pos);
             }
             catch (Exception exception)
             {

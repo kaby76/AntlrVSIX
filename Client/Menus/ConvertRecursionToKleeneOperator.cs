@@ -79,7 +79,7 @@
                 Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(ffn);
                 if (document == null) return;
                 int pos = LanguageServer.Module.GetIndex(l, c, document);
-                AntlrLanguageClient.CMConvertRecursionToKleeneOperator(ffn, pos);
+                AntlrLanguageClient.CMConvertRecursionToKleeneOperator(ffn, pos, pos);
             }
             catch (Exception exception)
             {

@@ -1732,7 +1732,7 @@ namespace LanguageServer
             return (IParseTree)new_a_rule;
         }
 
-        public static Dictionary<string, string> ConvertRecursionToKleeneOperator(int index, Document document)
+        public static Dictionary<string, string> ConvertRecursionToKleeneOperator(int start, int end, Document document)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
@@ -1795,9 +1795,9 @@ namespace LanguageServer
                 int b = source_interval.b;
                 IToken ta = pd_parser.TokStream.Get(a);
                 IToken tb = pd_parser.TokStream.Get(b);
-                var start = ta.StartIndex;
-                var stop = tb.StopIndex + 1;
-                return start <= index && index < stop;
+                var st = ta.StartIndex;
+                var sp = tb.StopIndex + 1;
+                return st <= start && start < sp;
             }).FirstOrDefault();
             rule = it ?? throw new LanguageServerException("A parser rule is not selected. Please select one first.");
 
@@ -1879,7 +1879,7 @@ namespace LanguageServer
             return b + gnum.ToString();
         }
 
-        public static Dictionary<string, string> EliminateDirectLeftRecursion(int index, Document document)
+        public static Dictionary<string, string> EliminateDirectLeftRecursion(int start, int end, Document document)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
@@ -1942,9 +1942,9 @@ namespace LanguageServer
                 int b = source_interval.b;
                 IToken ta = pd_parser.TokStream.Get(a);
                 IToken tb = pd_parser.TokStream.Get(b);
-                var start = ta.StartIndex;
-                var stop = tb.StopIndex + 1;
-                return start <= index && index < stop;
+                var st = ta.StartIndex;
+                var sp = tb.StopIndex + 1;
+                return st <= start && start < sp;
             }).FirstOrDefault();
             rule = it ?? throw new LanguageServerException("A parser rule is not selected. Please select one first.");
 
@@ -2230,7 +2230,7 @@ namespace LanguageServer
             return result;
         }
 
-        public static Dictionary<string, string> EliminateIndirectLeftRecursion(int index, Document document)
+        public static Dictionary<string, string> EliminateIndirectLeftRecursion(int start, int end, Document document)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
@@ -2342,9 +2342,9 @@ namespace LanguageServer
                 int b = source_interval.b;
                 IToken ta = pd_parser.TokStream.Get(a);
                 IToken tb = pd_parser.TokStream.Get(b);
-                var start = ta.StartIndex;
-                var stop = tb.StopIndex + 1;
-                return start <= index && index < stop;
+                var st = ta.StartIndex;
+                var sp = tb.StopIndex + 1;
+                return st <= start && start < sp;
             }).FirstOrDefault();
             if (it == null)
             {
@@ -2688,7 +2688,7 @@ namespace LanguageServer
             return result;
         }
 
-        public static Dictionary<string, string> AddLexerRulesForStringLiterals(Document document)
+        public static Dictionary<string, string> AddLexerRulesForStringLiterals(int start, int end, Document document)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
@@ -3146,7 +3146,7 @@ namespace LanguageServer
             return result;
         }
 
-        public static Dictionary<string, string> Unfold(int index, Document document)
+        public static Dictionary<string, string> Unfold(int start, int end, Document document)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
@@ -3201,9 +3201,9 @@ namespace LanguageServer
             // which means the user wants to unroll all applied occurrences of the rule
             // or it is on a symbol in the RHS of the rule, which means the
             // user wants to unroll this specific applied occurrence of the rule.
-            var refs_and_defs = Module.FindRefsAndDefs(index, document);
-            var defs = Module.FindDefs(index, document);
-            var sym = Module.GetDocumentSymbol(index, document);
+            var refs_and_defs = Module.FindRefsAndDefs(start, document);
+            var defs = Module.FindDefs(start, document);
+            var sym = Module.GetDocumentSymbol(start, document);
             bool is_cursor_on_def = false;
             bool is_cursor_on_ref = false;
             IEnumerable<Location> locations = null;
@@ -3293,7 +3293,7 @@ namespace LanguageServer
                 var range = location.Range;
                 var rhs = parser_rule.ruleBlock();
                 var pt = pd.ParseTree;
-                var sym_pt = LanguageServer.Util.Find(index, td);
+                var sym_pt = LanguageServer.Util.Find(start, td);
                 if (sym_pt == null) throw new Exception("Inexplicably can't find document symbol in DoFold.");
 
                 var s = Module.GetDocumentSymbol(range.Start.Value, td);

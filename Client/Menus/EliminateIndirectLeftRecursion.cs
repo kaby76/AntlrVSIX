@@ -80,7 +80,7 @@
                 Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(ffn);
                 if (document == null) return;
                 int pos = LanguageServer.Module.GetIndex(l, c, document);
-                AntlrLanguageClient.CMEliminateIndirectLeftRecursion(ffn, pos);
+                AntlrLanguageClient.CMEliminateIndirectLeftRecursion(ffn, pos, pos);
             }
             catch (Exception exception)
             {

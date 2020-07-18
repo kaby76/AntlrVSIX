@@ -261,48 +261,36 @@
             return null;
         }
 
-        public static void CMReplaceLiterals(string ffn, int pos)
+        public static void CMReplaceLiterals(string ffn, int start, int end)
         {
             try
             {
                 if (_rpc == null) return;
-                CMReplaceLiteralsParams p = new CMReplaceLiteralsParams();
-                Uri uri = new Uri(ffn);
-                p.TextDocument = uri;
-                p.Pos = pos;
-                _ = _rpc.InvokeAsync("CMReplaceLiterals", p);
+                _ = _rpc.InvokeAsync("CMReplaceLiterals", ffn, start, end);
             }
             catch (Exception)
             {
             }
         }
 
-        public static void CMRemoveUselessParserProductions(string ffn, int pos)
+        public static void CMRemoveUselessParserProductions(string ffn, int start, int end)
         {
             try
             {
                 if (_rpc == null) return;
-                CMRemoveUselessParserProductionsParams p = new CMRemoveUselessParserProductionsParams();
-                Uri uri = new Uri(ffn);
-                p.TextDocument = uri;
-                p.Pos = pos;
-                _ = _rpc.InvokeAsync("CMRemoveUselessParserProductions", p);
+                _ = _rpc.InvokeAsync("CMRemoveUselessParserProductions", ffn, start, end);
             }
             catch (Exception)
             {
             }
         }
 
-        public static void CMMoveStartRuleToTop(string ffn, int pos)
+        public static void CMMoveStartRuleToTop(string ffn)
         {
             try
             {
                 if (_rpc == null) return;
-                CMMoveStartRuleToTopParams p = new CMMoveStartRuleToTopParams();
-                Uri uri = new Uri(ffn);
-                p.TextDocument = uri;
-                p.Pos = pos;
-                _ = _rpc.InvokeAsync("CMMoveStartRuleToTop", p);
+                _ = _rpc.InvokeAsync("CMMoveStartRuleToTop", ffn);
             }
             catch (Exception)
             {
@@ -325,20 +313,14 @@
             }
         }
 
-        public static Dictionary<string, string> CMSplitCombineGrammars(string ffn, int pos, bool split)
+        public static Dictionary<string, string> CMSplitCombineGrammars(string ffn, bool split)
         {
             try
             {
                 if (_rpc == null) return null;
-                CMSplitCombineGrammarsParams p = new CMSplitCombineGrammarsParams();
-                Uri uri = new Uri(ffn);
-                p.TextDocument = uri;
-                p.Pos = pos;
-                p.Split = split;
-
                 var context = ThreadHelper.JoinableTaskContext;
                 var jtf = new JoinableTaskFactory(context);
-                var result = jtf.Run(() => _rpc.InvokeAsync<Dictionary<string, string>>("CMSplitCombineGrammars", p));
+                var result = jtf.Run(() => _rpc.InvokeAsync<Dictionary<string, string>>("CMSplitCombineGrammars", ffn, split));
                 return result;
             }
             catch (Exception)
@@ -352,10 +334,9 @@
             try
             {
                 if (_rpc == null) return null;
-                List<string> p = ffn;
                 var context = ThreadHelper.JoinableTaskContext;
                 var jtf = new JoinableTaskFactory(context);
-                var result = jtf.Run(() => _rpc.InvokeAsync<Dictionary<string, string>>("CMImportGrammars", p));
+                var result = jtf.Run(() => _rpc.InvokeAsync<Dictionary<string, string>>("CMImportGrammars", ffn));
                 return result;
             }
             catch (Exception)
@@ -364,48 +345,36 @@
             return null;
         }
 
-        public static void CMEliminateDirectLeftRecursion(string ffn, int pos)
+        public static void CMEliminateDirectLeftRecursion(string ffn, int start, int end)
         {
             try
             {
                 if (_rpc == null) return;
-                CMEliminateDirectLeftRecursionParams p = new CMEliminateDirectLeftRecursionParams();
-                Uri uri = new Uri(ffn);
-                p.TextDocument = uri;
-                p.Pos = pos;
-                _ = _rpc.InvokeAsync("CMEliminateDirectLeftRecursion", p);
+                _ = _rpc.InvokeAsync("CMEliminateDirectLeftRecursion", ffn, start, end);
             }
             catch (Exception)
             {
             }
         }
 
-        public static void CMEliminateIndirectLeftRecursion(string ffn, int pos)
+        public static void CMEliminateIndirectLeftRecursion(string ffn, int start, int end)
         {
             try
             {
                 if (_rpc == null) return;
-                CMEliminateDirectLeftRecursionParams p = new CMEliminateDirectLeftRecursionParams();
-                Uri uri = new Uri(ffn);
-                p.TextDocument = uri;
-                p.Pos = pos;
-                _ = _rpc.InvokeAsync("CMEliminateIndirectLeftRecursion", p);
+                _ = _rpc.InvokeAsync("CMEliminateIndirectLeftRecursion", ffn, start, end);
             }
             catch (Exception)
             {
             }
         }
         
-        public static void CMConvertRecursionToKleeneOperator(string ffn, int pos)
+        public static void CMConvertRecursionToKleeneOperator(string ffn, int start, int end)
         {
             try
             {
                 if (_rpc == null) return;
-                CMEliminateDirectLeftRecursionParams p = new CMEliminateDirectLeftRecursionParams();
-                Uri uri = new Uri(ffn);
-                p.TextDocument = uri;
-                p.Pos = pos;
-                _ = _rpc.InvokeAsync("CMConvertRecursionToKleeneOperator", p);
+                _ = _rpc.InvokeAsync("CMConvertRecursionToKleeneOperator", ffn, start, end);
             }
             catch (Exception)
             {
@@ -417,9 +386,7 @@
             try
             {
                 if (_rpc == null) return;
-                Uri uri = new Uri(ffn);
-                var p = uri;
-                _ = _rpc.InvokeAsync("CMEliminateAntlrKeywordsInRules", p);
+                _ = _rpc.InvokeAsync("CMEliminateAntlrKeywordsInRules", ffn);
             }
             catch (Exception)
             {
@@ -431,9 +398,7 @@
             try
             {
                 if (_rpc == null) return;
-                Uri uri = new Uri(ffn);
-                var p = uri;
-                _ = _rpc.InvokeAsync("CMAddLexerRulesForStringLiterals", p);
+                _ = _rpc.InvokeAsync("CMAddLexerRulesForStringLiterals", ffn);
             }
             catch (Exception)
             {
@@ -445,21 +410,19 @@
             try
             {
                 if (_rpc == null) return;
-                Uri uri = new Uri(ffn);
-                var p = uri;
-                _ = _rpc.InvokeAsync("CMSortModes", p);
+                _ = _rpc.InvokeAsync("CMSortModes", ffn);
             }
             catch (Exception)
             {
             }
         }
 
-        public static void CMUnfold(string ffn, int pos)
+        public static void CMUnfold(string ffn, int start, int end)
         {
             try
             {
                 if (_rpc == null) return;
-                _ = _rpc.InvokeAsync("CMUnfold", ffn, pos);
+                _ = _rpc.InvokeAsync("CMUnfold", ffn, start, end);
             }
             catch (Exception)
             {
