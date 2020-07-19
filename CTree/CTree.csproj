@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.8.0" />
-    <PackageReference Include="Antlr4BuildTasks" Version="8.0.0" />
+    <PackageReference Include="Antlr4BuildTasks" Version="8.1" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,5 @@
 ﻿// Template generated code from Antlr4BuildTasks.Template v 8.1
-namespace AntlrDOM
+namespace XmlDOM
 {
     using Antlr4.Runtime;
     using Antlr4.Runtime.Misc;

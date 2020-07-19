@@ -3882,36 +3882,6 @@ namespace LanguageServer
             return result;
         }
 
-        static bool Match(IParseTree a, IParseTree b)
-        {
-            if ((a is ANTLRv4Parser.RuleAltListContext && b is ANTLRv4Parser.AltListContext)
-                || (a is ANTLRv4Parser.ElementContext && b is ANTLRv4Parser.ElementContext)
-                || (a is ANTLRv4Parser.AlternativeContext && b is ANTLRv4Parser.AlternativeContext)
-                || (a is ANTLRv4Parser.AtomContext && b is ANTLRv4Parser.AtomContext)
-                || (a is ANTLRv4Parser.LabeledElementContext && b is ANTLRv4Parser.LabeledElementContext)
-                || (a is ANTLRv4Parser.EbnfContext && b is ANTLRv4Parser.EbnfContext)
-                || (a is ANTLRv4Parser.EbnfSuffixContext && b is ANTLRv4Parser.EbnfSuffixContext)
-                || (a is ANTLRv4Parser.ElementOptionsContext && b is ANTLRv4Parser.ElementOptionsContext)
-                )
-            {
-                if (a.ChildCount != b.ChildCount)
-                    return false;
-                for (int i = 0; i < a.ChildCount; ++i)
-                {
-                    if (!Match(a.GetChild(i), b.GetChild(i)))
-                        return false;
-                }
-                return true;
-            }
-            else if (a is ANTLRv4Parser.LabeledAltContext)
-                return Match(a.GetChild(0), b);
-            else if (a is TerminalNodeImpl && b is TerminalNodeImpl)
-            {
-                return a.GetText() == b.GetText();
-            }
-            return false;
-        }
-
         public static Dictionary<string, string> RemoveUselessParentheses(int start, int end, Document document)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
