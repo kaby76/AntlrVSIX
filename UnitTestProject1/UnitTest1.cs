@@ -6,7 +6,9 @@ using Algorithms;
 using Antlr4.Runtime.Misc;
 using LanguageServer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using org.eclipse.wst.xml.xpath2.processor.util;
 using Workspaces;
+using XmlDOM;
 
 namespace UnitTestProject1
 {
@@ -183,6 +185,21 @@ D: 'uvw' 'xyz'+;
 ";
             var got = found.First().Value;
             if (got != should_be) throw new Exception();
+        }
+
+        [TestMethod]
+        public void TestXml()
+        {
+            var cwd = Directory.GetCurrentDirectory();
+            string input = System.IO.File.ReadAllText("../../../../XmlDOM/test.xml");
+            var res = XmlDOM.Parse.Try(input);
+            var dynamicContext = ConvertToDOM.Try(res.Item1, res.Item2);
+            org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+            var dom_literals = engine.parseExpression(
+                    @"/root/actors/actor",
+                    new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                .Select(x => (x.NativeValue)).ToArray();
+            if (dom_literals.Length != 3) throw new Exception();
         }
 
     }

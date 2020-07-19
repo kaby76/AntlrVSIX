@@ -18,6 +18,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LanguageServer\LanguageServer.csproj" />
+    <ProjectReference Include="..\XmlDOM\XmlDOM.csproj" />
+    <ProjectReference Include="..\XPath\xpath.csproj" />
   </ItemGroup>
 
 </Project>
