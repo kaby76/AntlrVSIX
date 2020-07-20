@@ -573,6 +573,11 @@ namespace LanguageServer
             }
         }
 
+        public static bool IsOverlapping(int x1, int x2, int y1, int y2)
+        {
+            return Math.Max(x1, y1) <= Math.Min(x2, y2);
+        }
+
         public static void Output(StringBuilder sb, CommonTokenStream stream, IParseTree tree)
         {
             if (tree as TerminalNodeImpl != null)
@@ -4203,12 +4208,19 @@ namespace LanguageServer
             List<IParseTree> subs_elems = new List<IParseTree>();
             List<IParseTree> subs_lit = new List<IParseTree>();
             var to_check_literals = dom_literals.Select(x => x.AntlrIParseTree).ToList();
+            // Make up translation map. Note if the symbol is outside the range [start, end],
+            // then don't add an entry for it.
             for (int i = 0; i < to_check_literals.Count; ++i)
             {
                 var lexer_literal = to_check_literals[i];
                 var elems = elements[i];
                 var ok = true;
                 var ll = lexer_literal;
+                var tok = pd_parser.TokStream.Get(ll.SourceInterval.a);
+                if (!IsOverlapping(tok.StartIndex, tok.StopIndex + 1, start, end))
+                {
+                    continue;
+                }
                 var s = ll.GetText();
                 s = s.Substring(1).Substring(0, s.Length - 2);
                 foreach (var cc in s)

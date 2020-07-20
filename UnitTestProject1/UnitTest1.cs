@@ -146,7 +146,9 @@ namespace UnitTestProject1
             int index = LanguageServer.Module.GetIndex(line, character, document);
             (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
             if (back.Item1 != line || back.Item2 != character) throw new Exception();
-            var found = LanguageServer.Transform.UpperLowerCaseLiteral(index, index, document);
+            int indexs = LanguageServer.Module.GetIndex(5, 0, document);
+            int indexe = LanguageServer.Module.GetIndex(6, 0, document);
+            var found = LanguageServer.Transform.UpperLowerCaseLiteral(indexs, indexe, document);
             if (found.Count != 1) throw new Exception();
             var should_be = @"grammar KeywordFun;
 
@@ -154,7 +156,7 @@ a : 'abc';
 b : 'def';
 
 A: [aA] [bB] [cC];
-B: [dD] [eE] [fF];
+B: 'def';
 C: 'uvw' 'xyz'?;
 D: 'uvw' 'xyz'+;
 ";
