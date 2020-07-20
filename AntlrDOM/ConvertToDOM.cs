@@ -251,7 +251,7 @@
     {
         public object getAttributeNS(string sCHEMA_INSTANCE, string nIL_ATTRIBUTE)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public string Prefix { get; set; }
