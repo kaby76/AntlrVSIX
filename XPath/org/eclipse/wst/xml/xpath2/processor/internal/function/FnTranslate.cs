@@ -138,13 +138,15 @@ namespace org.eclipse.wst.xml.xpath2.processor.@internal.function
 				{
 					int? replaceWith = (int?)replacements[inputCodepoint];
 					if (replaceWith != null)
-					{
-						sb.Append(replaceWith.Value);
+                    {
+                        var c = (char) replaceWith.Value;
+						sb.Append(c);
 					}
 				}
 				else
 				{
-					sb.Append(input);
+                    var c = (char)input;
+                    sb.Append(c);
 				}
 			}
 

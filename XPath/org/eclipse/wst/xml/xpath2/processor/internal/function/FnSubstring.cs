@@ -159,7 +159,7 @@ namespace org.eclipse.wst.xml.xpath2.processor.@internal.function
             {
                 if (istart <= p && p - istart < ilength)
                 {
-                    sb.Append(strIter.current());
+                    sb.Append((char)strIter.current());
                 }
             }
 

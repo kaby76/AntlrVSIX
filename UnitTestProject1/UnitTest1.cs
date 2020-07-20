@@ -202,5 +202,29 @@ D: 'uvw' 'xyz'+;
             if (dom_literals.Length != 3) throw new Exception();
         }
 
+        [TestMethod]
+        public void TestXml2()
+        {
+            // see https://stackoverflow.com/questions/62973860/how-to-xpath-text-greater-than-number-1/62975324#62975324
+            // There should be two results, as per https://codebeautify.org/Xpath-Tester.
+            // For substring-before, see https://developer.mozilla.org/en-US/docs/Web/XPath/Functions/substring-before
+
+            string input = @"
+<div class=""ContentFooter ReadingContentFooter AnswerFooter"" id=""__w2_wFc2PGId125_content_footer"" >
+  <span>1.6k views</span>
+  <span>1 view</span>
+  <span>2 views</span>
+  <span class=""bullet"" > · </span>
+  <a class=""VoterListModalLink"" href =""#"" id =""__w2_wFc2PGId130_modal_link"" > View 5 Upvoters</a>
+</div>";
+            var res = XmlDOM.Parse.Try(input);
+            var dynamicContext = ConvertToDOM.Try(res.Item1, res.Item2);
+            org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+            var dom_literals = engine.parseExpression(
+                    @"//span[translate(substring-before(.,' '),'k','')>1]",
+                    new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                .Select(x => (x.NativeValue)).ToArray();
+            if (dom_literals.Length != 2) throw new Exception();
+        }
     }
 }

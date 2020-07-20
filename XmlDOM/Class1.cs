@@ -151,6 +151,7 @@ namespace XmlDOM
             attr.NodeType = NodeConstants.ATTRIBUTE_NODE;
             attr.Name = context.Name();
             attr.Value = context.STRING().GetText();
+            attr.ChildNodes = new AntlrNodeList();
             return attr;
         }
 
@@ -158,6 +159,7 @@ namespace XmlDOM
         {
             var result = new XmlText();
             result.NodeType = NodeConstants.TEXT_NODE;
+            result.ChildNodes = new AntlrNodeList();
             if (context.TEXT() != null)
             {
                 result.Data = context.TEXT().GetText();
@@ -340,7 +342,7 @@ namespace XmlDOM
     {
         public object getAttributeNS(string sCHEMA_INSTANCE, string nIL_ATTRIBUTE)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public string Prefix { get; set; }
