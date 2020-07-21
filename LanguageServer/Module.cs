@@ -619,6 +619,40 @@
             return result;
         }
 
+        public static IEnumerable<TerminalNodeImpl> GetRefsLeaf(Document doc)
+        {
+            List<TerminalNodeImpl> result = new List<TerminalNodeImpl>();
+            ParserDetails ref_pd = ParserDetailsFactory.Create(doc);
+            if (ref_pd.ParseTree == null)
+            {
+                LanguageServer.Module.Compile();
+            }
+
+            foreach (KeyValuePair<TerminalNodeImpl, int> value in ref_pd.Refs)
+            {
+                TerminalNodeImpl key = value.Key;
+                result.Add(key);
+            }
+            return result;
+        }
+
+        public static IEnumerable<TerminalNodeImpl> GetDefsLeaf(Document doc)
+        {
+            List<TerminalNodeImpl> result = new List<TerminalNodeImpl>();
+            ParserDetails ref_pd = ParserDetailsFactory.Create(doc);
+            if (ref_pd.ParseTree == null)
+            {
+                LanguageServer.Module.Compile();
+            }
+
+            foreach (KeyValuePair<TerminalNodeImpl, int> value in ref_pd.Defs)
+            {
+                TerminalNodeImpl key = value.Key;
+                result.Add(key);
+            }
+            return result;
+        }
+
         private static Digraph<ParserDetails> ConstructGraph(IEnumerable<ParserDetails> to_do)
         {
             Digraph<ParserDetails> g = new Digraph<ParserDetails>();

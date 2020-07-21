@@ -9,6 +9,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ANTLRv3.g4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Antlr4 Include="ANTLRv3.g4" />
     <Antlr4 Include="ANTLRv4Lexer.g4">
       <Package>GrammarGrammar</Package>
     </Antlr4>

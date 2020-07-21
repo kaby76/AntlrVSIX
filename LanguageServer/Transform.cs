@@ -1,4 +1,5 @@
 ﻿using org.eclipse.wst.xml.xpath2.processor.util;
+using Symtab;
 
 namespace LanguageServer
 {
@@ -576,6 +577,11 @@ namespace LanguageServer
         public static bool IsOverlapping(int x1, int x2, int y1, int y2)
         {
             return Math.Max(x1, y1) <= Math.Min(x2, y2);
+        }
+
+        public static bool IsContainedBy(int x1, int x2, int y1, int y2)
+        {
+            return y1 >= x1 && y2 <= x2;
         }
 
         public static void Output(StringBuilder sb, CommonTokenStream stream, IParseTree tree)
@@ -3155,84 +3161,117 @@ namespace LanguageServer
             ExtractGrammarType egt = new ExtractGrammarType();
             ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
             bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
-                || egt.Type == ExtractGrammarType.GrammarType.Combined
-                || egt.Type == ExtractGrammarType.GrammarType.Lexer;
+                              || egt.Type == ExtractGrammarType.GrammarType.Combined
+                              || egt.Type == ExtractGrammarType.GrammarType.Lexer;
             if (!is_grammar)
             {
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
 
-            // Find all other grammars by walking dependencies (import, vocab, file names).
-            HashSet<string> read_files = new HashSet<string>
-            {
-                document.FullPath
-            };
-            Dictionary<Workspaces.Document, List<TerminalNodeImpl>> every_damn_literal =
-                new Dictionary<Workspaces.Document, List<TerminalNodeImpl>>();
-
             // Check cursor position. It is either the LHS symbol of a rule,
             // which means the user wants to unroll all applied occurrences of the rule
             // or it is on a symbol in the RHS of the rule, which means the
             // user wants to unroll this specific applied occurrence of the rule.
-            var refs_and_defs = Module.FindRefsAndDefs(start, document);
-            var defs = Module.FindDefs(start, document);
-            var sym = Module.GetDocumentSymbol(start, document);
+
+            var defs = Module.GetDefsLeaf(document);
             bool is_cursor_on_def = false;
+            TerminalNodeImpl def = null;
             bool is_cursor_on_ref = false;
-            IEnumerable<Location> locations = null;
+            IEnumerable <TerminalNodeImpl> refs = null;
             foreach (var d in defs)
             {
-                if (sym.range.Start.Value == d.Range.Start.Value
-                    && sym.range.End.Value == d.Range.End.Value)
-                {
-                    is_cursor_on_def = true;
-                    // This means that user wants to unfold all occurrences on RHS,
-                    // not a specific instance.
-                    // This means that user wants to unfold a specific
-                    // instance of a RHS symbol.
-                    locations = refs_and_defs.Where(t =>
-                    {
-                        foreach (var x in defs)
-                        {
-                            if (x.Range.Start.Value == t.Range.Start.Value
-                                && x.Range.End.Value == t.Range.End.Value)
-                                return false;
-                        }
-                        return true;
-                    });
-                    break;
-                }
-            }
-            foreach (var d in refs_and_defs)
-            {
-                if (sym.range.Start.Value == d.Range.Start.Value
-                    && sym.range.End.Value == d.Range.End.Value
-                    && !is_cursor_on_def)
-                {
-                    is_cursor_on_ref = true;
-                    // This means that user wants to unfold a specific occurrence on RHS.
-                    locations = new List<Location>() { d };
-                    break;
-                }
-            }
+                bool a = IsContainedBy(d.Symbol.StartIndex, d.Symbol.StopIndex+1, start, end);
+                if (!a)
+                    continue;
 
-            IParseTree rule = null;
-            IParseTree it = pd_parser.AllNodes.Where(n =>
+                is_cursor_on_def = true;
+                // This means that user wants to unfold all occurrences on RHS,
+                // not a specific instance.
+                // This means that user wants to unfold a specific
+                // instance of a RHS symbol.
+                def = d;
+                break;
+            }
             {
-                if (!(n is ANTLRv4Parser.ParserRuleSpecContext))
-                    return false;
-                var r = n as ANTLRv4Parser.ParserRuleSpecContext;
-                var lhs = r.RULE_REF();
-                return lhs.GetText() == sym.name;
-            }).FirstOrDefault();
-            rule = it ?? throw new Exception("Cannot find a rule corresponding to symbol "
-                    + sym.name);
+                refs = Module.GetRefsLeaf(document);
+                refs = refs
+                    .Where(r =>
+                    {
+                        pd_parser.Attributes.TryGetValue(r, out IList<CombinedScopeSymbol> list_value);
+                        if (list_value == null) return false;
+                        if (list_value.Count > 1) return false;
+                        var value = list_value.First();
+                        if (value == null) return false;
+                        Symtab.ISymbol sym = value as Symtab.ISymbol;
+                        if (sym == null) return false;
+                        List<Symtab.ISymbol> list_of_syms = new List<Symtab.ISymbol>() {sym};
+                        if (sym is RefSymbol) list_of_syms = sym.resolve();
+                        if (list_of_syms.Count > 1) return false;
+                        var s = list_of_syms.First();
+                        if (!(s is NonterminalSymbol)) return false;
+                        string def_file = s.file;
+                        if (def_file == null) return false;
+                        Workspaces.Document def_document = Workspaces.Workspace.Instance.FindDocument(def_file);
+                        if (def_document == null) return false;
+                        ParserDetails def_pd = ParserDetailsFactory.Create(def_document);
+                        if (def_pd == null) return false;
+                        return true;
+                    }).ToList();
+                refs = refs
+                    .Where(r =>
+                    {
+                        // Pick refs that are for def or overlap [start, end].
+                        if (is_cursor_on_def)
+                        {
+                            pd_parser.Attributes.TryGetValue(r, out IList<CombinedScopeSymbol> list_value);
+                            if (list_value == null) return false;
+                            if (list_value.Count > 1) return false;
+                            var value = list_value.First();
+                            if (value == null) return false;
+                            Symtab.ISymbol sym = value as Symtab.ISymbol;
+                            if (sym == null) return false;
+                            List<Symtab.ISymbol> list_of_syms = new List<Symtab.ISymbol>() { sym };
+                            if (sym is RefSymbol) list_of_syms = sym.resolve();
+                            if (list_of_syms.Count > 1) return false;
+                            var s = list_of_syms.First();
+                            if (s.Token.InputStream.SourceName != def.Symbol.InputStream.SourceName) return false;
+                            if (s.Token.TokenIndex != def.Symbol.TokenIndex) return false;
+                            return true;
+                        }
+                        else
+                        {
+                            IToken ta = pd_parser.TokStream.Get(r.SourceInterval.a);
+                            var st = ta.StartIndex;
+                            var ed = ta.StopIndex + 1;
+                            bool a = IsOverlapping(st, ed, start, end);
+                            return a;
+                        }
+                    }).ToList();
+                if (!refs.Any())
+                {
+                    return result;
+                }
+                is_cursor_on_ref = true;
+            }
 
             if (!(is_cursor_on_def || is_cursor_on_ref))
             {
                 throw new LanguageServerException("Please position the cursor on either a LHS symbol (which means "
-                    + " to replace all RHS occurrences of the symbol), or on a RHS symbol (which means"
-                    + " to replace the specific RHS occurrence of the symbol, then try again.");
+                                                  + " to replace all RHS occurrences of the symbol), or on a RHS symbol (which means"
+                                                  + " to replace the specific RHS occurrence of the symbol, then try again.");
+            }
+
+            IParseTree rule = null;
+            if (is_cursor_on_def)
+            {
+                for (rule = def; rule != null; rule = rule.Parent)
+                {
+                    if (rule is ANTLRv4Parser.ParserRuleSpecContext)
+                        break;
+                }
+            } else if (is_cursor_on_ref)
+            {
+
             }
 
             // Make sure it's a parser rule.
@@ -3243,33 +3282,34 @@ namespace LanguageServer
                     + " to replace the specific RHS occurrence of the symbol, then try again.");
             }
 
-            if (locations.Count() == 0)
+            if (! refs.Any())
             {
                 // You can't replace a symbol if there's no use.
                 // Note that there's always one use as long as there's a
                 // definition.
                 throw new LanguageServerException("There is no use of the symbol "
-                    + sym.name + ". Position the cursor to another symbol and try again.");
+             //       + sym.name + ". Position the cursor to another symbol and try again."
+                    );
             }
 
             // Get all intertoken text immediately for source reconstruction.
             var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
 
             // Substitute RHS into all applied occurrences.
-            foreach (var location in locations)
+            foreach (var re in refs)
             {
                 // For symbol rule.RULE_REF(), replace occurrence in parse tree
                 // with modified RHS list.
                 var parser_rule = rule as ANTLRv4Parser.ParserRuleSpecContext;
-                var td = location.Uri;
+                if (re.Symbol.InputStream.SourceName != pd_parser.FullFileName) continue;
+                var td = document;
                 AntlrGrammarDetails pd = ParserDetailsFactory.Create(td) as AntlrGrammarDetails;
-                var range = location.Range;
                 var rhs = parser_rule.ruleBlock();
                 var pt = pd.ParseTree;
                 var sym_pt = LanguageServer.Util.Find(start, td);
                 if (sym_pt == null) throw new Exception("Inexplicably can't find document symbol in DoFold.");
 
-                var s = Module.GetDocumentSymbol(range.Start.Value, td);
+                var s = Module.GetDocumentSymbol(re.Symbol.StartIndex, td);
                 if (s == null) throw new Exception("Inexplicably can't find document symbol in DoFold.");
 
                 TreeEdits.Replace(pt,
@@ -3284,8 +3324,8 @@ namespace LanguageServer
                     if (id.GetText() != s.name) return null;
                     if (!(id is TerminalNodeImpl)) return null;
                     var tni = id as TerminalNodeImpl;
-                    if (tni.Payload.StartIndex == range.Start.Value
-                        && tni.Payload.StopIndex == range.End.Value)
+                    if (tni.Payload.StartIndex == re.Symbol.StartIndex
+                        && tni.Payload.StopIndex == re.Symbol.StopIndex)
                     {
                         var element_p = t;
                         var alternative_p = t.Parent;
