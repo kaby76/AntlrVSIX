@@ -3903,12 +3903,9 @@ namespace LanguageServer
             }
 
 
-            bool replace_all = true;
-
             // Get all intertoken text immediately for source reconstruction.
             var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
 
-            if (replace_all)
             {
                 AntlrGrammarDetails pd = pd_parser;
                 var pt = pd.ParseTree;
@@ -3920,12 +3917,32 @@ namespace LanguageServer
                 var altlists = engine.parseExpression(
                     "//(altList | labeledAlt)/alternative/element/ebnf[not(child::blockSuffix)]/block/altList[not(@ChildCount > 1)]",
                     new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
-                    .Select(x => x.NativeValue).ToArray();
+                    .Select(x => x.NativeValue).ToList();
                 var elements = engine.parseExpression(
                     "../../..", 
-                    new StaticContextBuilder()).evaluate(dynamicContext, altlists)
-                    .Select(x => x.NativeValue).ToArray();
-                for (int j = 0; j < altlists.Length; ++j)
+                    new StaticContextBuilder()).evaluate(dynamicContext, altlists.ToArray())
+                    .Select(x => x.NativeValue).ToList();
+
+                List<object> new_altlist = new List<Object>();
+                List<object> new_elements = new List<Object>();
+                for (int j = 0; j < altlists.Count; ++j)
+                {
+                    var altlist = (altlists[j] as AntlrDOM.AntlrElement).AntlrIParseTree as ANTLRv4Parser.AltListContext;
+                    var element = (elements[j] as AntlrDOM.AntlrElement).AntlrIParseTree as ANTLRv4Parser.ElementContext;
+                    var tok = pd_parser.TokStream.Get(altlist.SourceInterval.a);
+                    bool a = IsOverlapping(tok.StartIndex, tok.StopIndex + 1, start, end);
+                    var tok2 = pd_parser.TokStream.Get(altlist.SourceInterval.b);
+                    bool b = IsOverlapping(tok2.StartIndex, tok2.StopIndex + 1, start, end);
+                    if (!(a || b))
+                        continue;
+                    new_altlist.Add(altlists[j]);
+                    new_elements.Add(elements[j]);
+                }
+
+                altlists = new_altlist;
+                elements = new_elements;
+
+                for (int j = 0; j < altlists.Count; ++j)
                 {
                     // Remove {altlist}/../../.. (an element), which is the "i'th" child.
                     var altlist = (altlists[j] as AntlrDOM.AntlrElement).AntlrIParseTree as ANTLRv4Parser.AltListContext;
