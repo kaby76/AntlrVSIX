@@ -228,5 +228,39 @@ D: 'uvw' 'xyz'+;
                 .Select(x => (x.NativeValue)).ToArray();
             if (dom_literals.Length != 2) throw new Exception();
         }
+
+        [TestMethod]
+        public void TestUnfold()
+        {
+            var cwd = Directory.GetCurrentDirectory();
+            Document document = CheckDoc("../../../../corpus-for-codebuff/A.g4"); // purposefully erroneously all lc.
+            int line = 5;
+            int character = 0;
+            int start = LanguageServer.Module.GetIndex(2, 0, document);
+            int end = LanguageServer.Module.GetIndex(5, 0, document);
+            var found = LanguageServer.Transform.Unfold(start, end, document);
+            if (found.Count != 1) throw new Exception();
+            var should_be = @"grammar A;
+
+s
+    : ( e '*' e | INT )
+    ;
+
+e
+    : e '*' e 		# Mult
+    | INT      		# primary
+    ;
+
+INT
+    : [0-9]+
+    ;
+
+WS
+    : [ \t\n]+ -> skip
+    ;
+";
+            var got = found.First().Value;
+            if (got != should_be) throw new Exception();
+        }
     }
 }
