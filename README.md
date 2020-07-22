@@ -116,7 +116,7 @@ Bash script "clean.sh" in the Antlrvsix source to clean out the build files so o
 * Add expression rule optimization.
 * Add left factoring and inverse.
 
-## Planned for v8.0 (July 2020):
+## Planned for v8.0 (expected by 2 Aug 2020):
 
 * Add in XPath and S-expresion tree tools for less verbose
 tree rewrite code.
