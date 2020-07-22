@@ -727,7 +727,7 @@
                     // Get suffix of file_name.
                     string extension = System.IO.Path.GetExtension(file_name);
                     string directory = System.IO.Path.GetDirectoryName(file_name);
-
+                    if (directory == "") directory = ".";
                     foreach (string file in System.IO.Directory.GetFiles(directory))
                     {
                         if (System.IO.Path.GetExtension(file) != extension)

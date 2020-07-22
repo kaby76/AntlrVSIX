@@ -15,6 +15,30 @@ namespace UnitTestProject1
     [TestClass]
     public class UnitTest1
     {
+        private static int random_number = 0;
+
+        public static Document CreateStringDocument(string input)
+        {
+            string file_name = "Dummy" + random_number + ".g4";
+            Document document = Workspaces.Workspace.Instance.FindDocument(file_name);
+            if (document == null)
+            {
+                document = new Workspaces.Document(file_name);
+                document.Code = input;
+                Project project = Workspaces.Workspace.Instance.FindProject("Misc");
+                if (project == null)
+                {
+                    project = new Project("Misc", "Misc", "Misc");
+                    Workspaces.Workspace.Instance.AddChild(project);
+                }
+                project.AddDocument(document);
+            }
+            document.Changed = true;
+            _ = ParserDetailsFactory.Create(document);
+            _ = LanguageServer.Module.Compile();
+            return document;
+        }
+
         public static Document CheckDoc(string path)
         {
             string file_name = path;
@@ -109,7 +133,25 @@ namespace UnitTestProject1
         public void TestFindAllRefs()
         {
             var cwd = Directory.GetCurrentDirectory();
-            Document document = CheckDoc("../../../../corpus-for-codebuff/A.g4");
+            Document document = CreateStringDocument(@"grammar A;
+
+s
+    : e
+    ;
+
+e
+    : e '*' e 		# Mult
+    | INT      		# primary
+    ;
+
+INT
+    : [0-9]+
+    ;
+
+WS
+    : [ \t\n]+ -> skip
+    ;
+");
             // Position at the "grammarSpec" rule, beginning of RHS symbol "grammarDecl".
             // All lines and columns are zero based in LSP.
             int line = 3;
@@ -233,7 +275,25 @@ D: 'uvw' 'xyz'+;
         public void TestUnfold()
         {
             var cwd = Directory.GetCurrentDirectory();
-            Document document = CheckDoc("../../../../corpus-for-codebuff/A.g4"); // purposefully erroneously all lc.
+            Document document = CreateStringDocument(@"grammar A;
+
+s
+    : e
+    ;
+
+e
+    : e '*' e 		# Mult
+    | INT      		# primary
+    ;
+
+INT
+    : [0-9]+
+    ;
+
+WS
+    : [ \t\n]+ -> skip
+    ;
+");
             int line = 5;
             int character = 0;
             int start = LanguageServer.Module.GetIndex(2, 0, document);
