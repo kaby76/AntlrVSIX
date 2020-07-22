@@ -3261,26 +3261,6 @@ namespace LanguageServer
                                                   + " to replace the specific RHS occurrence of the symbol, then try again.");
             }
 
-            IParseTree rule = null;
-            if (is_cursor_on_def)
-            {
-                for (rule = def; rule != null; rule = rule.Parent)
-                {
-                    if (rule is ANTLRv4Parser.ParserRuleSpecContext)
-                        break;
-                }
-            } else if (is_cursor_on_ref)
-            {
-
-            }
-
-            // Make sure it's a parser rule.
-            if (!(rule is ANTLRv4Parser.ParserRuleSpecContext))
-            {
-                throw new LanguageServerException("Please position the cursor on either a LHS symbol (which means "
-                    + " to replace all RHS occurrences of the symbol), or on a RHS symbol (which means"
-                    + " to replace the specific RHS occurrence of the symbol, then try again.");
-            }
 
             if (! refs.Any())
             {
@@ -3298,6 +3278,33 @@ namespace LanguageServer
             // Substitute RHS into all applied occurrences.
             foreach (var re in refs)
             {
+                pd_parser.Attributes.TryGetValue(re, out IList<CombinedScopeSymbol> list_value);
+                if (list_value == null) continue;
+                if (list_value.Count > 1) continue;
+                var value = list_value.First();
+                if (value == null) continue;
+                Symtab.ISymbol sym = value as Symtab.ISymbol;
+                if (sym == null) continue;
+                List<Symtab.ISymbol> list_of_syms = new List<Symtab.ISymbol>() { sym };
+                if (sym is RefSymbol) list_of_syms = sym.resolve();
+                if (list_of_syms.Count > 1) continue;
+                var x = list_of_syms.First();
+                if (!(x is NonterminalSymbol)) continue;
+                // Find rule based on token for defining occurrence.
+                var def_token = x.Token;
+                var def_leaf = pd_parser.AllNodes.Where(
+                    z =>
+                    {
+                        var z2 = z as TerminalNodeImpl;
+                        if (z2 == null) return false;
+                        return z2.Symbol?.TokenIndex == def_token.TokenIndex;
+                    }).FirstOrDefault();
+                IParseTree rule;
+                for (rule = def_leaf; rule != null; rule = rule.Parent)
+                {
+                    if (rule is ANTLRv4Parser.ParserRuleSpecContext)
+                        break;
+                }
                 // For symbol rule.RULE_REF(), replace occurrence in parse tree
                 // with modified RHS list.
                 var parser_rule = rule as ANTLRv4Parser.ParserRuleSpecContext;
