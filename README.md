@@ -125,7 +125,9 @@ using XPath and S-expresions.
 * Add in empty string alternative hoist transforms.
 * Add nightly unit tests to build (find def, find refs and defs, etc).
 * Antlr v1, v2, and v3 conversion to Antlr v4.
-* Add *trash*, the *Tr*ansformation system for *A*ntlr *Sh*ell.
+* Add **trash**, the **Tr**ansformation system for **A**ntlr **Sh**ell,
+a completely command-line interface to apply transforms to a grammar,
+for Windows or Linux.
 * Fix [Import of grammar with multiple rules for LHS symbol crashes. #69](https://github.com/kaby76/AntlrVSIX/issues/69).
 * Fix [Add transform to input string literals and convert to case insensitive literal or vice versa. #71](https://github.com/kaby76/AntlrVSIX/issues/71).
 * Fix [LanguageServer.Module.GetDefsAndRefs() not working right #74](https://github.com/kaby76/AntlrVSIX/issues/74).
