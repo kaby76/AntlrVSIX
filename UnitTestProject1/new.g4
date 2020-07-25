@@ -29,9 +29,6 @@
 /** ANTLR v3 grammar written in ANTLR v3 with AST construction */
 grammar ANTLRv3v4;
 
-options {
-}
-
 tokens {
 	DOC_COMMENT,
 	PARSER,	
@@ -314,7 +311,7 @@ rewrite
 	;
 
 rewrite_alternative
-options {}
+options {backtrack=true;}
 	:	rewrite_template
 	|	rewrite_tree_alternative
    	|

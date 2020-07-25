@@ -74,6 +74,8 @@
             }
 
             // Remove unused options.
+            // This specifically looks at the options at the top of the file,
+            // not rule-based options. That will be handled separately below.
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
@@ -81,7 +83,7 @@
                     AntlrDOM.ConvertToDOM.Try(tree, parser);
                 // Allow language, tokenVocab, TokenLabelType, superClass
                 var nodes = engine.parseExpression(
-                        @"//optionsSpec
+                        @"//grammarDef/optionsSpec
                             /option
                                 [id
                                     /(TOKEN_REF | RULE_REF)
@@ -100,7 +102,7 @@
                     return nodes.Contains(n) ? n : null;
                 });
                 var options = engine.parseExpression(
-                        @"//optionsSpec",
+                        @"//grammarDef/optionsSpec",
                         new StaticContextBuilder()).evaluate(
                         dynamicContext, new object[] { dynamicContext.Document })
                     .Select(x => (x.NativeValue as AntlrDOM.AntlrElement).AntlrIParseTree);
