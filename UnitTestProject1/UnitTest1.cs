@@ -1497,12 +1497,14 @@ IDENTIFIER
 		public void TestImport2()
 		{
 			var cwd = Directory.GetCurrentDirectory();
-            Document document = CheckDoc("../../../../UnitTestProject1/ANTLRv3.g"); // purposefully erroneously all lc.
+            var ffn = cwd + "/" + "../../../../UnitTestProject1/ANTLRv3.g";
+            var code = System.IO.File.ReadAllText(ffn);
 			var results = new Dictionary<string, string>();
-			LanguageServer.Antlr3Import.Try(document.FullPath, document.Code, ref results);
-            Document gold = CheckDoc("../../../../UnitTestProject1/new.g4");
+			LanguageServer.Antlr3Import.Try(ffn, code, ref results);
+            var gold = cwd + "/" + "../../../../UnitTestProject1/new.g4";
+            var gold_code = System.IO.File.ReadAllText(gold);
             if (!results.Any()) throw new Exception();
-            if (results.First().Value != gold.Code) throw new Exception();
+            if (results.First().Value != gold_code) throw new Exception();
         }
 	}
 }
