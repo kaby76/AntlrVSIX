@@ -1546,7 +1546,7 @@
                     System.Console.Error.WriteLine("<-- CMImportGrammars");
                     System.Console.Error.WriteLine(arg.ToString());
                 }
-                changes = LanguageServer.BisonImport.ImportGrammars(request);
+         //       changes = LanguageServer.BisonImport.ImportGrammars(request);
             }
             catch (LanguageServerException e)
             {

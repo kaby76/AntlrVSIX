@@ -10,12 +10,11 @@
 
     public class Antlr3Import
     {
-        internal static void Try(string ffn, ref Dictionary<string, string> results)
+        public static void Try(string ffn, string input, ref Dictionary<string, string> results)
         {
             var convert_undefined_to_terminals = true;
             var now = DateTime.Now.ToString();
             var errors = new StringBuilder();
-            var input = System.IO.File.ReadAllText(ffn);
             var str = new AntlrInputStream(input);
             var lexer = new ANTLRv3Lexer(str);
             var tokens = new CommonTokenStream(lexer);
@@ -112,9 +111,135 @@
                         return options.Contains(n) ? n : null;
                     });
                 }
-
-
             }
+
+
+            {
+                // Use new tokens{} syntax
+                org.eclipse.wst.xml.xpath2.processor.Engine engine =
+                    new org.eclipse.wst.xml.xpath2.processor.Engine();
+                AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrDOM.ConvertToDOM.Try(tree, parser);
+                var nodes = engine.parseExpression(
+                        @"//tokensSpec
+                            /tokenSpec
+                                /SEMI",
+                        new StaticContextBuilder()).evaluate(
+                        dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrDOM.AntlrElement).AntlrIParseTree);
+                if (nodes.Any())
+                {
+                    var last = nodes.Last();
+                    TreeEdits.Delete(last, (in IParseTree n, out bool c) =>
+                    {
+                        c = false;
+                        return n;
+                    });
+                    TreeEdits.Replace(tree, (in IParseTree n, out bool c) =>
+                    {
+                        c = true;
+                        if (!nodes.Contains(n) && n != last) return null;
+                        var t = n as TerminalNodeImpl;
+                        var new_sym = new TerminalNodeImpl(new CommonToken(ANTLRv4Lexer.COMMA)
+                            {Line = -1, Column = -1, Text = ","});
+                        text_before.TryGetValue(t, out string v);
+                        if (v != null)
+                            text_before.Add(new_sym, v);
+                        return new_sym;
+                    });
+                }
+            }
+
+            // Note-- @rulecatch does not exist in Antlr3!
+            // Remove unnecessary rulecatch block (use BailErrorStrategy instead)
+
+            {
+                // Remove unsupported rewrite syntax and AST operators
+                // Note, for this operation, we are just deleting everything,
+                // no conversion to a visitor.
+                org.eclipse.wst.xml.xpath2.processor.Engine engine =
+                    new org.eclipse.wst.xml.xpath2.processor.Engine();
+                AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrDOM.ConvertToDOM.Try(tree, parser);
+                var n1 = engine.parseExpression(
+                        @"//atom
+                            /(ROOT | BANG)",
+                        new StaticContextBuilder()).evaluate(
+                        dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrDOM.AntlrElement).AntlrIParseTree);
+                if (n1.Any())
+                {
+                    TreeEdits.Delete(tree, (in IParseTree n, out bool c) =>
+                    {
+                        c = true;
+                        return n1.Contains(n) ? n : null;
+                    });
+                }
+                var n2 = engine.parseExpression(
+                        @"//terminal_
+                            /(ROOT | BANG)",
+                        new StaticContextBuilder()).evaluate(
+                        dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrDOM.AntlrElement).AntlrIParseTree);
+                if (n2.Any())
+                {
+                    TreeEdits.Delete(tree, (in IParseTree n, out bool c) =>
+                    {
+                        c = true;
+                        return n2.Contains(n) ? n : null;
+                    });
+                }
+                var n3 = engine.parseExpression(
+                        @"//rewrite",
+                        new StaticContextBuilder()).evaluate(
+                        dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrDOM.AntlrElement).AntlrIParseTree);
+                if (n3.Any())
+                {
+                    TreeEdits.Delete(tree, (in IParseTree n, out bool c) =>
+                    {
+                        c = true;
+                        return n3.Contains(n) ? n : null;
+                    });
+                }
+            }
+
+            {
+                // Remove syntactic predicates (unnecessary and unsupported in ANTLR 4)
+                org.eclipse.wst.xml.xpath2.processor.Engine engine =
+                    new org.eclipse.wst.xml.xpath2.processor.Engine();
+                AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrDOM.ConvertToDOM.Try(tree, parser);
+                var n1 = engine.parseExpression(
+                        @"//elementNoOptionSpec
+                            [(actionBlock and SEMPREDOP)]",
+                        new StaticContextBuilder()).evaluate(
+                        dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrDOM.AntlrElement).AntlrIParseTree);
+                if (n1.Any())
+                {
+                    TreeEdits.Delete(tree, (in IParseTree n, out bool c) =>
+                    {
+                        c = true;
+                        return n1.Contains(n) ? n : null;
+                    });
+                }
+                var n2 = engine.parseExpression(
+                        @"//ebnf
+                            [SEMPREDOP]",
+                        new StaticContextBuilder()).evaluate(
+                        dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrDOM.AntlrElement).AntlrIParseTree);
+                if (n2.Any())
+                {
+                    TreeEdits.Delete(tree, (in IParseTree n, out bool c) =>
+                    {
+                        c = true;
+                        return n2.Contains(n) ? n : null;
+                    });
+                }
+            }
+
 
             //// First, collect information about the grammar.
             //ANTLRv3BaseListener listener = new ANTLRv3BaseListener();
@@ -285,16 +410,6 @@
             TreeEdits.Reconstruct(sb, tree, text_before);
             var new_code = sb.ToString();
             results.Add(new_ffn, new_code);
-        }
-
-        public static Dictionary<string, string> ImportGrammars(List<string> args)
-        {
-            Dictionary<string, string> result = new Dictionary<string, string>();
-            foreach (string f in args)
-            {
-                Try(f, ref result);
-            }
-            return result;
         }
     }
 }

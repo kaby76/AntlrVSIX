@@ -13,13 +13,13 @@ namespace LanguageServer
 
     public class BisonImport
     {
-        internal static void Try(string input, ref Dictionary<string, string> results)
+        internal static void Try(string ffn, string input, ref Dictionary<string, string> results)
         {
             bool convert_undefined_to_terminals = true;
             string now = DateTime.Now.ToString();
             StringBuilder errors = new StringBuilder();
             StringBuilder sb = new StringBuilder();
-            AntlrFileStream str = new AntlrFileStream(input);
+            AntlrInputStream str = new AntlrInputStream(input);
             BisonLexer lexer = new BisonLexer(str);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             BisonParser parser = new BisonParser(tokens);
@@ -207,16 +207,6 @@ namespace LanguageServer
             }
             results.Add(input.Replace(".y", ".txt"), errors.ToString());
             results.Add(input.Replace(".y", ".g4"), sb.ToString());
-        }
-
-        public static Dictionary<string, string> ImportGrammars(List<string> args)
-        {
-            Dictionary<string, string> result = new Dictionary<string, string>();
-            foreach (string f in args)
-            {
-                Try(f, ref result);
-            }
-            return result;
         }
     }
 }
