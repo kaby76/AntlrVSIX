@@ -4,7 +4,6 @@
     using Antlr4.Runtime;
     using Antlr4.Runtime.Misc;
     using Antlr4.Runtime.Tree;
-    using GrammarGrammar;
     using Microsoft.CodeAnalysis;
     using System.Collections.Generic;
     using System.Linq;

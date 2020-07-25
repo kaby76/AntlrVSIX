@@ -4,7 +4,6 @@ namespace LanguageServer
     using Antlr4.Runtime.Tree;
     using Symtab;
     using System.Collections.Generic;
-    using GrammarGrammar;
 
     public class Pass2Listener : ANTLRv4ParserBaseListener
     {

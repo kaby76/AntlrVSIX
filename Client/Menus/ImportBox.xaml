@@ -24,7 +24,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <TextBox Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" IsReadOnly="True" BorderThickness="0">
-            Please select grammar files to convert to Antlr syntax.
+            Please select grammar files to convert to Antlr4 syntax.
         </TextBox>
         <DataGrid Name="Files" Grid.Row="1" Height="100"
                   CanUserResizeColumns="True" >

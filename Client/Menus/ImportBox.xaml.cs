@@ -22,7 +22,7 @@ namespace LspAntlr
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.InitialDirectory = "c:\\";
-                openFileDialog.Filter = "Bison/Yacc files (*.y)|*.y|All files (*.*)|*.*";
+                openFileDialog.Filter = "Input Files|*.y;*.g3;*.g|All files (*.*)|*.*";
                 openFileDialog.FilterIndex = 2;
                 openFileDialog.Multiselect = true;
                 openFileDialog.RestoreDirectory = true;
@@ -34,9 +34,12 @@ namespace LspAntlr
                 }
             }
             List.Clear();
-            foreach (string r in files)
+            if (files != null)
             {
-                List.Add(new StringValue(r));
+                foreach (string r in files)
+                {
+                    List.Add(new StringValue(r));
+                }
             }
             //Files.ItemsSource = list;
             Files.Items.Refresh();

@@ -237,7 +237,7 @@ D: 'uvw' 'xyz'+;
             var cwd = Directory.GetCurrentDirectory();
             string input = System.IO.File.ReadAllText("../../../../XmlDOM/test.xml");
             var res = XmlDOM.Parse.Try(input);
-            var dynamicContext = ConvertToDOM.Try(res.Item1, res.Item2);
+            var dynamicContext = XmlDOM.ConvertToDOM.Try(res.Item1, res.Item2);
             org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
             var dom_literals = engine.parseExpression(
                     @"/root/actors/actor",
@@ -262,13 +262,80 @@ D: 'uvw' 'xyz'+;
   <a class=""VoterListModalLink"" href =""#"" id =""__w2_wFc2PGId130_modal_link"" > View 5 Upvoters</a>
 </div>";
             var res = XmlDOM.Parse.Try(input);
-            var dynamicContext = ConvertToDOM.Try(res.Item1, res.Item2);
+            var dynamicContext = XmlDOM.ConvertToDOM.Try(res.Item1, res.Item2);
             org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
             var dom_literals = engine.parseExpression(
                     @"//span[translate(substring-before(.,' '),'k','')>1]",
                     new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
                 .Select(x => (x.NativeValue)).ToArray();
             if (dom_literals.Length != 2) throw new Exception();
+        }
+
+
+        [TestMethod]
+        public void TestXml3()
+        {
+            // see https://stackoverflow.com/questions/62973860/how-to-xpath-text-greater-than-number-1/62975324#62975324
+            // There should be two results, as per https://codebeautify.org/Xpath-Tester.
+            // For substring-before, see https://developer.mozilla.org/en-US/docs/Web/XPath/Functions/substring-before
+
+            string input = @"
+<div class=""ContentFooter ReadingContentFooter AnswerFooter"" id=""__w2_wFc2PGId125_content_footer"" >
+  <span>1.6k views</span>
+  <span>1 view</span>
+  <span>2 views</span>
+  <span class=""bullet"" > · </span>
+  <a class=""VoterListModalLink"" href =""#"" id =""__w2_wFc2PGId130_modal_link"" > View 5 Upvoters</a>
+</div>";
+            var res = XmlDOM.Parse.Try(input);
+            var dynamicContext = XmlDOM.ConvertToDOM.Try(res.Item1, res.Item2);
+            org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+            var dom_literals = engine.parseExpression(
+                    @"//span[text() = '1 view']",
+                    new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                .Select(x => (x.NativeValue)).ToArray();
+            if (dom_literals.Length != 1) throw new Exception();
+        }
+
+        [TestMethod]
+        public void TestXml4()
+        {
+            string input = @"grammar A;
+
+options { aaa = 1; rewrite=true; }
+
+s
+    : e
+    ;
+
+e
+    : e '*' e 		# Mult
+    | INT      		# primary
+    ;
+
+INT
+    : [0-9]+
+    ;
+
+WS
+    : [ \t\n]+ -> skip
+    ;
+";
+            var res = AntlrDOM.Parse.Try(input);
+            var dynamicContext = AntlrDOM.ConvertToDOM.Try(res.Item1, res.Item2);
+            org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+            var dom_literals = engine.parseExpression(
+                    @"//optionsSpec
+                        /option
+                            [identifier
+                                /(TOKEN_REF | RULE_REF)
+                                    [text() = 'output'
+                                    or text() = 'backtrack'
+                                    or text() = 'memoize'
+                                    or text() = 'ASTLabelType'
+                                    or text() = 'rewrite']]",
+                    new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                .Select(x => (x.NativeValue));
         }
 
         [TestMethod]
@@ -304,6 +371,57 @@ WS
 
 s
     : ( e '*' e | INT )
+    ;
+
+e
+    : e '*' e 		# Mult
+    | INT      		# primary
+    ;
+
+INT
+    : [0-9]+
+    ;
+
+WS
+    : [ \t\n]+ -> skip
+    ;
+";
+            var got = found.First().Value;
+            if (got != should_be) throw new Exception();
+        }
+
+        [TestMethod]
+        public void TestFold()
+        {
+            var cwd = Directory.GetCurrentDirectory();
+            var original = @"grammar A;
+
+s
+    : ( e '*' e | INT )
+    ;
+
+e
+    : e '*' e 		# Mult
+    | INT      		# primary
+    ;
+
+INT
+    : [0-9]+
+    ;
+
+WS
+    : [ \t\n]+ -> skip
+    ;
+";
+            Document document = CreateStringDocument(original);
+            int start = LanguageServer.Module.GetIndex(6, 0, document);
+            int end = LanguageServer.Module.GetIndex(6, 0, document);
+            var found = LanguageServer.Transform.Fold(start, end, document);
+            if (found.Count != 1) throw new Exception();
+            var should_be = @"grammar A;
+
+s
+    : e
     ;
 
 e

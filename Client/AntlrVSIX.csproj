@@ -193,6 +193,14 @@
       <Project>{227bb0f6-9df1-4782-b8c2-77c76e6824ae}</Project>
       <Name>Algorithms</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AntlrDOM\AntlrDOM.csproj">
+      <Project>{667f3330-5c70-4dd2-ad08-7d5ddcf76a77}</Project>
+      <Name>AntlrDOM</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CTree\CTree.csproj">
+      <Project>{b985f091-9095-46ab-a724-1bd7bda4d043}</Project>
+      <Name>CTree</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LanguageServer\LanguageServer.csproj">
       <Project>{dac36616-e61d-4512-ae4e-c3706544dab1}</Project>
       <Name>LanguageServer</Name>
@@ -217,6 +225,10 @@
     <ProjectReference Include="..\Workspaces\Workspaces.csproj">
       <Project>{e138159b-e61c-4cb7-abbc-7c57dc9bdd79}</Project>
       <Name>Workspaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\XPath\xpath.csproj">
+      <Project>{8e07dca5-4a19-4a15-852e-d90a7a513155}</Project>
+      <Name>xpath</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

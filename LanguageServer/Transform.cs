@@ -7,7 +7,6 @@ namespace LanguageServer
     using Antlr4.Runtime;
     using Antlr4.Runtime.Misc;
     using Antlr4.Runtime.Tree;
-    using GrammarGrammar;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -822,7 +821,7 @@ namespace LanguageServer
             table.FindStartRules();
 
             string old_code = document.Code;
-	        List<IParseTree> reorder = new List<IParseTree>();
+            List<IParseTree> reorder = new List<IParseTree>();
             foreach (TableOfRules.Row r in table.rules)
             {
                 if (r.is_parser_rule && r.is_start == true)
@@ -830,40 +829,40 @@ namespace LanguageServer
                     reorder.Add(r.rule);
                 }
             }
-	        foreach (TableOfRules.Row r in table.rules)
-	        {
-		        if (!reorder.Contains(r.rule))
-		        {
-			        reorder.Add(r.rule);
-		        }
-	        }
-	        bool has_new_order = false;
-	        for (int i = 0; i < table.rules.Count; ++i)
-	        {
-		        TableOfRules.Row r = table.rules[i];
-		        if (reorder[i] != r.rule)
-		        {
-			        has_new_order = true;
-			        break;
-		        }
-	        }
-	        if (!has_new_order)
-	        {
+            foreach (TableOfRules.Row r in table.rules)
+            {
+                if (!reorder.Contains(r.rule))
+                {
+                    reorder.Add(r.rule);
+                }
+            }
+            bool has_new_order = false;
+            for (int i = 0; i < table.rules.Count; ++i)
+            {
+                TableOfRules.Row r = table.rules[i];
+                if (reorder[i] != r.rule)
+                {
+                    has_new_order = true;
+                    break;
+                }
+            }
+            if (!has_new_order)
+            {
                 // No changes, no error.
-		        return result;
-	        }
+                return result;
+            }
 
             // Get all intertoken text immediately for source reconstruction.
             var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
 
             ANTLRv4Parser.RulesContext rules;
-	        {
-		        var first = reorder.First();
-		        var rule = first as ANTLRv4Parser.ParserRuleSpecContext;
-		        var rs = rule.Parent as ANTLRv4Parser.RuleSpecContext;
-		        rules = rs.Parent as ANTLRv4Parser.RulesContext;
+            {
+                var first = reorder.First();
+                var rule = first as ANTLRv4Parser.ParserRuleSpecContext;
+                var rs = rule.Parent as ANTLRv4Parser.RuleSpecContext;
+                rules = rs.Parent as ANTLRv4Parser.RulesContext;
                 rules.children = reorder.Select(t => t.Parent).ToArray();
-	        }
+            }
 
             StringBuilder sb = new StringBuilder();
             TreeEdits.Reconstruct(sb, pd_parser.ParseTree, text_before);
@@ -3415,23 +3414,36 @@ namespace LanguageServer
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
 
-            // Find all other grammars by walking dependencies (import, vocab, file names).
-            HashSet<string> read_files = new HashSet<string>
-            {
-                document.FullPath
-            };
-            Dictionary<Workspaces.Document, List<TerminalNodeImpl>> every_damn_literal =
-                new Dictionary<Workspaces.Document, List<TerminalNodeImpl>>();
-
             // Check cursor position. Many things can happen here, but we have to try
             // and make some sense of what the user is pointing out.
             // It is either the LHS symbol of a rule,
             // which means the user wants to fold all occurrences of the rule
             // RHS or it is a selection of symbols in the RHS of the rule, which means the
             // user wants to fold this specific sequence and then create a new rule.
+
+            var defs = Module.GetDefsLeaf(document);
+            bool is_cursor_on_def = false;
+            TerminalNodeImpl def = null;
+            bool is_cursor_on_ref = false;
+            IEnumerable <TerminalNodeImpl> refs = null;
+            foreach (var d in defs)
+            {
+                bool a = IsContainedBy(d.Symbol.StartIndex, d.Symbol.StopIndex+1, start, end);
+                if (!a)
+                    continue;
+
+                is_cursor_on_def = true;
+                // This means that user wants to unfold all occurrences on RHS,
+                // not a specific instance.
+                // This means that user wants to unfold a specific
+                // instance of a RHS symbol.
+                def = d;
+                break;
+            }
+
             TerminalNodeImpl sym_start = null;
             TerminalNodeImpl sym_end = null;
-            if (start == end)
+            if (is_cursor_on_def)
             {
                 // Selection is a single point.
                 sym_end = sym_start = LanguageServer.Util.Find(start, document);
@@ -3458,14 +3470,6 @@ namespace LanguageServer
             List<IParseTree> rhs_path = new List<IParseTree>();
             for (var p = (IParseTree)sym_start; p != null; p = p.Parent) lhs_path.Insert(0, p);
             for (var p = (IParseTree)sym_end; p != null; p = p.Parent) rhs_path.Insert(0, p);
-            //List<Type> lhs_types = new List<Type>();
-            //List<Type> rhs_types = new List<Type>();
-            //for (var p = (IParseTree)sym_start; p != null; p = p.Parent) lhs_types.Insert(0, p.GetType());
-            //for (var p = (IParseTree)sym_end; p != null; p = p.Parent) rhs_types.Insert(0, p.GetType());
-            //List<string> lhs_string = new List<string>();
-            //List<string> rhs_string = new List<string>();
-            //for (var p = (IParseTree)sym_start; p != null; p = p.Parent) lhs_string.Insert(0, p.GetText());
-            //for (var p = (IParseTree)sym_end; p != null; p = p.Parent) rhs_string.Insert(0, p.GetText());
 
             int i = 0;
             for (; ; )
@@ -3518,6 +3522,30 @@ namespace LanguageServer
 
             if (replace_all)
             {
+                // grab lhs of rule.
+                var the_rule = lhs_path[j];
+                org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+                var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
+                AntlrDOM.AntlrDynamicContext dynamicContext = AntlrDOM.ConvertToDOM.Try(tree, parser);
+                var RHS = engine.parseExpression(
+                        @"//parserRuleSpec[RULE_REF/text() = '" + def.GetText() + @"']
+                            /ruleBlock
+                                /ruleAltList",
+                        new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrDOM.AntlrElement).AntlrIParseTree).First();
+                var Possible = engine.parseExpression(
+                        @"//parserRuleSpec
+                            /ruleBlock
+                                //altList",
+                        new StaticContextBuilder()).evaluate(dynamicContext, new object[] {dynamicContext.Document})
+                    .Select(x => (x.NativeValue as AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
+
+                foreach (var p in Possible)
+                {
+                    if (p.GetText() == RHS.GetText())
+                    {}
+                }
+
                 // Find complete RHS elsewhere and use LHS symbol if there's a match.
                 var rule = lhs_path[j] as ANTLRv4Parser.ParserRuleSpecContext;
                 AntlrGrammarDetails pd = pd_parser;

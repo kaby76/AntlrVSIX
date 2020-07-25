@@ -448,14 +448,16 @@ LPAREN: '(';
 RPAREN: ')';
 
 BLOCK_COMMENT
-	:	BlockComment	-> channel(OFF_CHANNEL)
+	:	BlockComment -> channel(OFF_CHANNEL)
 	;
 
 LINE_COMMENT
-	:	LineComment		-> channel(OFF_CHANNEL)
+	:	LineComment -> channel(OFF_CHANNEL)
 	;
 
-WS	:	( Hws | Vws )+		-> channel(OFF_CHANNEL)	;
+WS
+    : ( Hws | Vws )+ -> channel(OFF_CHANNEL)
+    ;
 
 
 PROLOGUE

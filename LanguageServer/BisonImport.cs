@@ -13,7 +13,7 @@ namespace LanguageServer
 
     public class BisonImport
     {
-        private static void Try(string input, ref Dictionary<string, string> results)
+        internal static void Try(string input, ref Dictionary<string, string> results)
         {
             bool convert_undefined_to_terminals = true;
             string now = DateTime.Now.ToString();

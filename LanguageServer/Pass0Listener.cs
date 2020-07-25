@@ -1,7 +1,6 @@
 ﻿namespace LanguageServer
 {
     using Antlr4.Runtime.Misc;
-    using GrammarGrammar;
 
     public class Pass0Listener : ANTLRv4ParserBaseListener
     {

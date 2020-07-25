@@ -86,7 +86,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntlrDOM", "AntlrDOM\AntlrD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTestProject1", "UnitTestProject1\UnitTestProject1.csproj", "{A91E6190-995D-41D3-B32E-21DA290876AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XmlDOM", "XmlDOM\XmlDOM.csproj", "{90D31430-9977-4BA1-B50D-2447B91AB43F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XmlDOM", "XmlDOM\XmlDOM.csproj", "{90D31430-9977-4BA1-B50D-2447B91AB43F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trash", "Trash\Trash.csproj", "{F3E5473A-9283-4964-9FE9-726D21AAD349}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -150,6 +152,10 @@ Global
 		{90D31430-9977-4BA1-B50D-2447B91AB43F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90D31430-9977-4BA1-B50D-2447B91AB43F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90D31430-9977-4BA1-B50D-2447B91AB43F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3E5473A-9283-4964-9FE9-726D21AAD349}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3E5473A-9283-4964-9FE9-726D21AAD349}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3E5473A-9283-4964-9FE9-726D21AAD349}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3E5473A-9283-4964-9FE9-726D21AAD349}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

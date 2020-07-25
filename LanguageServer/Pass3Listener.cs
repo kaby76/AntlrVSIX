@@ -5,7 +5,6 @@
     using Symtab;
     using System.Collections.Generic;
     using System.Linq;
-    using GrammarGrammar;
 
     public class Pass3Listener : ANTLRv4ParserBaseListener
     {

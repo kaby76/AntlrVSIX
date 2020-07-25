@@ -9,16 +9,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="ANTLRv3.g4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Antlr4 Include="ANTLRv3.g4" />
+	  <Antlr4 Include="ANTLRv3Parser.g4">
+		  <Package>LanguageServer</Package>
+	  </Antlr4>
+	  <Antlr4 Include="ANTLRv3Lexer.g4">
+		  <Package>LanguageServer</Package>
+	  </Antlr4>
     <Antlr4 Include="ANTLRv4Lexer.g4">
-      <Package>GrammarGrammar</Package>
+      <Package>LanguageServer</Package>
     </Antlr4>
     <Antlr4 Include="ANTLRv4Parser.g4">
-      <Package>GrammarGrammar</Package>
+      <Package>LanguageServer</Package>
     </Antlr4>
     <Antlr4 Include="BisonLexer.g4">
       <Package>LanguageServer</Package>
