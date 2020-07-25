@@ -8,7 +8,7 @@ It is implemented using Microsoft's [Language Server Protocol (LSP)](https://lan
 [Antlr](https://www.antlr.org/), [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks),
 [XPath3.1](https://en.wikipedia.org/wiki/XPath)
 and
-[S-exppressions](https://en.wikipedia.org/wiki/S-expression)
+[S-expressions](https://en.wikipedia.org/wiki/S-expression)
 for Antlr parse trees,
 and a number of other tools.
 Most of the extension is implemented in C#.
