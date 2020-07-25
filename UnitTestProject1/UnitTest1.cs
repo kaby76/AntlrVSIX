@@ -1492,5 +1492,17 @@ IDENTIFIER
             var results = new Dictionary<string, string>();
             LanguageServer.Antlr3Import.Try(document.FullPath, document.Code, ref results);
         }
-    }
+
+		[TestMethod]
+		public void TestImport2()
+		{
+			var cwd = Directory.GetCurrentDirectory();
+            Document document = CheckDoc("../../../../UnitTestProject1/ANTLRv3.g"); // purposefully erroneously all lc.
+			var results = new Dictionary<string, string>();
+			LanguageServer.Antlr3Import.Try(document.FullPath, document.Code, ref results);
+            Document gold = CheckDoc("../../../../UnitTestProject1/new.g4");
+            if (!results.Any()) throw new Exception();
+            if (results.First().Value != gold.Code) throw new Exception();
+        }
+	}
 }
