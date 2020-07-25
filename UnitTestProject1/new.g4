@@ -481,7 +481,7 @@ ARG_ACTION
 fragment
 NESTED_ARG_ACTION :
 	'['
-	(	options {greedy=false; k=1;}
+	(	options {greedy=false;}
 	:	NESTED_ARG_ACTION
 	|	ACTION_STRING_LITERAL
 	|	ACTION_CHAR_LITERAL
@@ -498,7 +498,7 @@ ACTION
 fragment
 NESTED_ACTION :
 	'{'
-	(	options {greedy=false; k=2;}
+	(	options {greedy=false;}
 	:	NESTED_ACTION
 	|	SL_COMMENT
 	|	ML_COMMENT
