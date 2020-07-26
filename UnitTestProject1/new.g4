@@ -311,7 +311,6 @@ rewrite
 	;
 
 rewrite_alternative
-options {backtrack=true;}
 	:	rewrite_template
 	|	rewrite_tree_alternative
    	|
@@ -478,12 +477,12 @@ ARG_ACTION
 fragment
 NESTED_ARG_ACTION :
 	'['
-	(	options {greedy=false;}
+	(
 	:	NESTED_ARG_ACTION
 	|	ACTION_STRING_LITERAL
 	|	ACTION_CHAR_LITERAL
 	|	.
-	)*
+	) * ?
 	']'
 	{setText(getText().substring(1, getText().length()-1));}
 	;
@@ -495,7 +494,7 @@ ACTION
 fragment
 NESTED_ACTION :
 	'{'
-	(	options {greedy=false;}
+	(
 	:	NESTED_ACTION
 	|	SL_COMMENT
 	|	ML_COMMENT

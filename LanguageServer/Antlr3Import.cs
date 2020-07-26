@@ -257,15 +257,17 @@
                 }
             }
 
-            // Remove unsupported option k=3
+            // Remove unsupported option k=3 (1, 2, 4, 5, ...)
+            // Replace "( options { greedy=false; } : a | b | c )*" with
+            // "(a | b | c)*?"
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
                 AntlrDOM.AntlrDynamicContext dynamicContext =
                     AntlrDOM.ConvertToDOM.Try(tree, parser);
-                // Allow language, tokenVocab, TokenLabelType, superClass
-                var nodes = engine.parseExpression(
-                        @"//optionsSpec
+                // k=3 (1, 2, 4, 5, ...)
+                var k = engine.parseExpression(
+                        @"//optionsSpec[not(../@id = 'grammarDef')]
                             /option
                                 [id
                                     /(TOKEN_REF | RULE_REF)
@@ -273,24 +275,56 @@
                                         ]]",
                         new StaticContextBuilder()).evaluate(
                         dynamicContext, new object[] { dynamicContext.Document })
-                    .Select(x => (x.NativeValue as AntlrDOM.AntlrElement).AntlrIParseTree);
+                    .Select(x => (x.NativeValue as AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
+                // greedy=false.
+                var greedy = engine.parseExpression(
+                        @"//optionsSpec[not(../@id = 'grammarDef')]
+                            /option
+                                [id/(TOKEN_REF | RULE_REF)[text() = 'greedy']
+                                and 
+                                optionValue/id/RULE_REF[text() = 'false']]",
+                        new StaticContextBuilder()).evaluate(
+                        dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
+                var greedyOptionSpec = greedy.Select(t => t.Parent).ToList();
+                var optionsSpec = engine.parseExpression(
+                       @"//optionsSpec[not(../@id = 'grammarDef')]",
+                       new StaticContextBuilder()).evaluate(
+                       dynamicContext, new object[] { dynamicContext.Document })
+                   .Select(x => (x.NativeValue as AntlrDOM.AntlrElement).AntlrIParseTree);
+                // Nuke options.
                 TreeEdits.Delete(tree, (in IParseTree n, out bool c) =>
                 {
                     c = true;
-                    return nodes.Contains(n) ? n : null;
+                    return k.Contains(n) || greedy.Contains(n) ? n : null;
                 });
-                var options = engine.parseExpression(
-                        @"//optionsSpec",
-                        new StaticContextBuilder()).evaluate(
-                        dynamicContext, new object[] { dynamicContext.Document })
-                    .Select(x => (x.NativeValue as AntlrDOM.AntlrElement).AntlrIParseTree);
-                if (options.Count() == 1 && options.First().ChildCount == 3)
+                foreach (var os in optionsSpec)
                 {
-                    TreeEdits.Delete(tree, (in IParseTree n, out bool c) =>
+                    if (greedyOptionSpec.Contains(os) && os.Parent is ANTLRv3Parser.BlockContext)
                     {
-                        c = true;
-                        return options.Contains(n) ? n : null;
-                    });
+                        var block = os.Parent;
+                        var block_parent = block.Parent;
+                        if (block_parent is ANTLRv3Parser.EbnfContext ebnf)
+                        {
+                            while (ebnf.ChildCount > 1)
+                            {
+                                ebnf.children.RemoveAt(1);
+                            }
+
+                            ebnf.AddChild(new TerminalNodeImpl(new CommonToken(ANTLRv3Parser.STAR)
+                            { Line = -1, Column = -1, Text = "*" }));
+                            ebnf.AddChild(new TerminalNodeImpl(new CommonToken(ANTLRv3Parser.QM)
+                            { Line = -1, Column = -1, Text = "?" }));
+                        }
+                    }
+                    if (os.ChildCount == 3)
+                    {
+                        TreeEdits.Delete(tree, (in IParseTree n, out bool c) =>
+                        {
+                            c = true;
+                            return optionsSpec.Contains(n) ? n : null;
+                        });
+                    }
                 }
             }
 
