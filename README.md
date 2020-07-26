@@ -6,8 +6,7 @@ It is implemented using Microsoft's [Language Server Protocol (LSP)](https://lan
 [client](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Client/) and
 [server](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/) APIs,
 [Antlr](https://www.antlr.org/), [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks),
-[XPath3.1](https://en.wikipedia.org/wiki/XPath)
-and
+[XPath3.1](https://en.wikipedia.org/wiki/XPath), 
 [S-expressions](https://en.wikipedia.org/wiki/S-expression)
 for Antlr parse trees,
 and a number of other tools.
@@ -16,7 +15,8 @@ There is a client for VS Code, written in Typescript,
 but I am deferring further development of the client until the server is more or less complete.
 Supported are colorized tagging, hover, go to def, find all refs,
 replace, command completion, reformat, and go to visitor/listener. But, there is so much more to Antlrvsix
-than these basic LSP commands.
+than these basic LSP commands. There is a command-line interface being developed to bring this completely
+out from the narrow focus of a Visual Studio extension.
 
 ## Analysis
 
