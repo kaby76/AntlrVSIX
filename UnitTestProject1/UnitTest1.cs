@@ -95,7 +95,7 @@ namespace UnitTestProject1
             Document document = CheckDoc("../../../../LanguageServer/ANTLRv4Parser.g4");
             // Position at the "grammarSpec" rule, beginning of LHS symbol.
             // All lines and columns are zero based in LSP.
-            int line = 45;
+            int line = 49;
             int character = 0;
             int index = LanguageServer.Module.GetIndex(line, character, document);
             (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
@@ -116,7 +116,7 @@ namespace UnitTestProject1
             Document document = CheckDoc("../../../../LanguageServer/ANTLRv4Parser.g4");
             // Position at the "grammarSpec" rule, beginning of RHS symbol "grammarDecl".
             // All lines and columns are zero based in LSP.
-            int line = 46;
+            int line = 50;
             int character = 18;
             int index = LanguageServer.Module.GetIndex(line, character, document);
             (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
@@ -124,9 +124,9 @@ namespace UnitTestProject1
             IList<Location> found = LanguageServer.Module.FindDefs(index, document);
             if (found.Count != 1) throw new Exception();
             (int, int) back_start = LanguageServer.Module.GetLineColumn(found.First().Range.Start.Value, document);
-            if (back_start.Item1 != 49 || back_start.Item2 != 0) throw new Exception();
+            if (back_start.Item1 != 53 || back_start.Item2 != 0) throw new Exception();
             (int, int) back_end = LanguageServer.Module.GetLineColumn(found.First().Range.End.Value, document);
-            if (back_end.Item1 != 49 || back_end.Item2 != 10) throw new Exception();
+            if (back_end.Item1 != 53 || back_end.Item2 != 10) throw new Exception();
         }
 
         [TestMethod]
@@ -235,7 +235,7 @@ D: 'uvw' 'xyz'+;
         public void TestXml()
         {
             var cwd = Directory.GetCurrentDirectory();
-            string input = System.IO.File.ReadAllText("../../../../XmlDOM/test.xml");
+            string input = System.IO.File.ReadAllText("../../../../XPath/XmlDOM/test.xml");
             var res = XmlDOM.Parse.Try(input);
             var dynamicContext = XmlDOM.ConvertToDOM.Try(res.Item1, res.Item2);
             org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
@@ -295,47 +295,6 @@ D: 'uvw' 'xyz'+;
                     new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
                 .Select(x => (x.NativeValue)).ToArray();
             if (dom_literals.Length != 1) throw new Exception();
-        }
-
-        [TestMethod]
-        public void TestXml4()
-        {
-            string input = @"grammar A;
-
-options { aaa = 1; rewrite=true; }
-
-s
-    : e
-    ;
-
-e
-    : e '*' e 		# Mult
-    | INT      		# primary
-    ;
-
-INT
-    : [0-9]+
-    ;
-
-WS
-    : [ \t\n]+ -> skip
-    ;
-";
-            var res = AntlrDOM.Parse.Try(input);
-            var dynamicContext = AntlrDOM.ConvertToDOM.Try(res.Item1, res.Item2);
-            org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
-            var dom_literals = engine.parseExpression(
-                    @"//optionsSpec
-                        /option
-                            [identifier
-                                /(TOKEN_REF | RULE_REF)
-                                    [text() = 'output'
-                                    or text() = 'backtrack'
-                                    or text() = 'memoize'
-                                    or text() = 'ASTLabelType'
-                                    or text() = 'rewrite']]",
-                    new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
-                .Select(x => (x.NativeValue));
         }
 
         [TestMethod]

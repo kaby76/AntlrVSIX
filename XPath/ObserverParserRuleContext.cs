@@ -1,4 +1,4 @@
-﻿namespace LanguageServer
+﻿namespace XPathHelpers
 {
     using Antlr4.Runtime;
     using Antlr4.Runtime.Tree;
@@ -23,7 +23,22 @@
             observers = new List<IObserver<ObserverParserRuleContext>>();
         }
 
-        IDisposable IObservable<ObserverParserRuleContext>.Subscribe(IObserver<ObserverParserRuleContext> observer)
+        public override void AddChild(ITerminalNode t)
+        {
+            base.AddChild(t);
+        }
+
+        public override ITerminalNode AddChild(IToken matchedToken)
+        {
+            return base.AddChild(matchedToken);
+        }
+
+        public override void AddChild(RuleContext ruleInvocation)
+        {
+            base.AddChild(ruleInvocation);
+        }
+
+        public IDisposable Subscribe(IObserver<ObserverParserRuleContext> observer)
         {
             if (!observers.Contains(observer))
                 observers.Add(observer);

@@ -12,6 +12,7 @@
     using System;
     using System.Collections.Generic;
     using System.Text.RegularExpressions;
+    using XPathHelpers;
     using DynamicContext = org.eclipse.wst.xml.xpath2.api.DynamicContext;
 
     public class ConvertToDOM
@@ -80,7 +81,8 @@
             else
             {
                 var result = new AntlrElement();
-                var t = tree as ParserRuleContext;
+                var t = tree as ObserverParserRuleContext;
+                t.Subscribe(result);
                 result.AntlrIParseTree = tree;
                 result.NodeType = NodeConstants.ELEMENT_NODE;
                 var fixed_name = tree.GetType().ToString()
@@ -247,7 +249,7 @@
         }
     }
 
-    public class AntlrElement : AntlrNode, Element
+    public class AntlrElement : AntlrNode, Element, IObserver<ObserverParserRuleContext>
     {
         public object getAttributeNS(string sCHEMA_INSTANCE, string nIL_ATTRIBUTE)
         {
@@ -262,6 +264,21 @@
         }
 
         public bool isDefaultNamespace(object elementNamespaceUri)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnCompleted()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnError(Exception error)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnNext(ObserverParserRuleContext value)
         {
             throw new NotImplementedException();
         }

@@ -15,11 +15,32 @@
     <Antlr4 Include="org\eclipse\wst\xml\xpath2\processor\internal\XPath31Parser.g4">
       <Package>xpath.org.eclipse.wst.xml.xpath2.processor.@internal</Package>
     </Antlr4>
+		<Antlr4 Include="XmlDom/XMLParser.g4">
+			<Package>XmlDOM</Package>
+		</Antlr4>
+		<Antlr4 Include="XmlDom/XMLLexer.g4">
+			<Package>XmlDOM</Package>
+		</Antlr4>
+    <Antlr4 Include="CTree/AstLexer.g4">
+      <Package>CTree</Package>
+    </Antlr4>
+    <Antlr4 Include="CTree/AstParser.g4">
+      <Package>CTree</Package>
+    </Antlr4>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.8" />
     <PackageReference Include="Antlr4BuildTasks" Version="8.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="AntlrDOM\ANTLRv4Lexer.g4">
+      <Package>AntlrDOM</Package>
+    </None>
+    <None Update="AntlrDOM\ANTLRv4Parser.g4">
+      <Package>AntlrDOM</Package>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -30,7 +30,7 @@ parser grammar ANTLRv3Parser;
 options
 {
     tokenVocab = ANTLRv3Lexer;
-    contextSuperClass=ObserverParserRuleContext;
+    contextSuperClass=XPathHelpers.ObserverParserRuleContext;
 }
 
 grammarDef

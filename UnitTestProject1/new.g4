@@ -27,7 +27,7 @@
 */
 
 /** ANTLR v3 grammar written in ANTLR v3 with AST construction */
-grammar ANTLRv3v4;
+grammar ANTLRv3;
 
 tokens {
 	DOC_COMMENT,

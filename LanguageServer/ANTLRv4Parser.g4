@@ -43,7 +43,7 @@ parser grammar ANTLRv4Parser;
 options
 {
 	tokenVocab = ANTLRv4Lexer;
-    contextSuperClass=ObserverParserRuleContext;
+    contextSuperClass=XPathHelpers.ObserverParserRuleContext;
 }
 
 // The main entry point for parsing a v4 grammar.
