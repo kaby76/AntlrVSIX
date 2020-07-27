@@ -27,6 +27,7 @@ parser grammar BisonParser;
 
 options {
     tokenVocab=BisonLexer;
+    contextSuperClass=ObserverParserRuleContext;
 }
 
 input

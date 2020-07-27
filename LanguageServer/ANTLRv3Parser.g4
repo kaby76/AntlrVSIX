@@ -27,7 +27,11 @@
 */
 parser grammar ANTLRv3Parser;
 
-options { tokenVocab = ANTLRv3Lexer; }
+options
+{
+    tokenVocab = ANTLRv3Lexer;
+    contextSuperClass=ObserverParserRuleContext;
+}
 
 grammarDef
    : DOC_COMMENT? (LEXER | PARSER | TREE| ) GRAMMAR id SEMI optionsSpec? tokensSpec? attrScope* action* rule_+

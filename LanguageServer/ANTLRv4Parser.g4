@@ -40,7 +40,11 @@
 parser grammar ANTLRv4Parser;
 
 
-options { tokenVocab = ANTLRv4Lexer; }
+options
+{
+	tokenVocab = ANTLRv4Lexer;
+    contextSuperClass=ObserverParserRuleContext;
+}
 
 // The main entry point for parsing a v4 grammar.
 grammarSpec

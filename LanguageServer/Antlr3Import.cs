@@ -49,30 +49,6 @@
             // https://github.com/senseidb/sensei/pull/23
             var (text_before, other) = TreeEdits.TextToLeftOfLeaves(tokens, tree);
 
-
-            // Replace name.
-            {
-                org.eclipse.wst.xml.xpath2.processor.Engine engine =
-                    new org.eclipse.wst.xml.xpath2.processor.Engine();
-                AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrDOM.ConvertToDOM.Try(tree, parser);
-                var node = engine.parseExpression(
-                        @"//grammarDef/id/(TOKEN_REF | RULE_REF)",
-                        new StaticContextBuilder()).evaluate(
-                        dynamicContext, new object[] { dynamicContext.Document })
-                    .Select(x => (x.NativeValue as AntlrDOM.AntlrElement).AntlrIParseTree).First();
-                var term = node as TerminalNodeImpl;
-                var old = term.Symbol;
-                TreeEdits.Replace(term.Parent, (in IParseTree n, out bool c) =>
-                {
-                    c = true;
-                    if (n == term)
-                        return new TerminalNodeImpl(new CommonToken(old.Type)
-                            { Line = -1, Column = -1, Text = old.Text + "v4" });
-                    return null;
-                });
-            }
-
             // Remove unused options.
             // This specifically looks at the options at the top of the file,
             // not rule-based options. That will be handled separately below.
@@ -131,12 +107,14 @@
                     .Select(x => (x.NativeValue as AntlrDOM.AntlrElement).AntlrIParseTree);
                 if (nodes.Any())
                 {
+                    // Delete tha last ";" in tokens list--change in syntax.
                     var last = nodes.Last();
                     TreeEdits.Delete(last, (in IParseTree n, out bool c) =>
                     {
                         c = false;
                         return n;
                     });
+                    // Replace all remaining ";" with ",". 
                     TreeEdits.Replace(tree, (in IParseTree n, out bool c) =>
                     {
                         c = true;
@@ -149,6 +127,22 @@
                             text_before.Add(new_sym, v);
                         return new_sym;
                     });
+                }
+                var equals = engine.parseExpression(
+                        @"//tokensSpec
+                            /tokenSpec[EQUAL]",
+                        new StaticContextBuilder()).evaluate(
+                            dynamicContext, new object[] { dynamicContext.Document }
+                    ).Select(x => (x.NativeValue as AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
+                // Antlr4 doesn't support assignment of lexer tokens.
+                // Rewrite these as plain lexer rules.
+                if (equals.Any())
+                {
+                    foreach (var e in equals)
+                    {
+                        // Nuke "=value".
+
+                    }
                 }
             }
 
