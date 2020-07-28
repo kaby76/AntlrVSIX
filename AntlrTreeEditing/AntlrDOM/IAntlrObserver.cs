@@ -7,10 +7,9 @@ namespace AntlrTreeEditing.AntlrDOM
 {
     public interface IAntlrObserver : IObserver<ObserverParserRuleContext>
     {
-        void OnParentDisconnect(ObserverParserRuleContext value);
-        void OnParentConnect(ObserverParserRuleContext value);
-        void OnChildDisconnect(ObserverParserRuleContext value);
-        void OnChildConnect(ObserverParserRuleContext value);
-        void OnChildConnect(ITerminalNode value);
+        void OnParentDisconnect(IParseTree value);
+        void OnParentConnect(IParseTree value);
+        void OnChildDisconnect(IParseTree value);
+        void OnChildConnect(IParseTree value);
     }
 }

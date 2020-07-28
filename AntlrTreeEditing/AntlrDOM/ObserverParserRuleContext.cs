@@ -2,6 +2,7 @@
 {
     using Antlr4.Runtime;
     using Antlr4.Runtime.Tree;
+    using org.eclipse.wst.xml.xpath2.processor.@internal.function;
     using System;
     using System.Collections.Generic;
 
@@ -24,10 +25,8 @@
         public override void AddChild(ITerminalNode t)
         {
             base.AddChild(t);
-
             this.NotifyAddChild(t);
-            var o = t as ObserverParserRuleContext;
-            if (o != null)
+            if (t is ObserverParserRuleContext o)
             {
                 o.NotifyAddParent(this);
             }
@@ -41,6 +40,11 @@
         public override void AddChild(RuleContext ruleInvocation)
         {
             base.AddChild(ruleInvocation);
+            this.NotifyAddChild(ruleInvocation);
+            if (ruleInvocation is ObserverParserRuleContext o)
+            {
+                o.NotifyAddParent(this);
+            }
         }
 
 
@@ -69,12 +73,15 @@
             }
             set
             {
-                base.Parent = value;
-                var o = value as ObserverParserRuleContext;
-                if (o != null)
+                var before = base.Parent;
+                if (before != null)
                 {
-                    o.NotifyAddParent(this);
-                    this.NotifyAddChild(o);
+                    this.NotifyRemoveParent(before);
+                }
+                base.Parent = value;
+                if (value != null)
+                {
+                    this.NotifyAddParent(value);
                 }
             }
         }
@@ -112,31 +119,23 @@
             }
         }
 
-        public void NotifyAddParent(ObserverParserRuleContext loc)
+        public void NotifyAddParent(IParseTree loc)
         {
             foreach (var observer in observers)
             {
-                observer.OnNext(loc);
+                observer.OnParentConnect(loc);
             }
         }
 
-        public void NotifyRemoveParent(ObserverParserRuleContext loc)
+        public void NotifyRemoveParent(IParseTree loc)
         {
             foreach (var observer in observers)
             {
-                observer.OnNext(loc);
+                observer.OnParentDisconnect(loc);
             }
         }
 
-        public void NotifyAddChild(ObserverParserRuleContext loc)
-        {
-            foreach (var observer in observers)
-            {
-                observer.OnChildConnect(loc);
-            }
-        }
-
-        public void NotifyAddChild(ITerminalNode loc)
+        public void NotifyAddChild(IParseTree loc)
         {
             foreach (var observer in observers)
             {
@@ -144,7 +143,7 @@
             }
         }
 
-        public void NotifyRemoveChild(ObserverParserRuleContext loc)
+        public void NotifyRemoveChild(IParseTree loc)
         {
             foreach (var observer in observers)
             {

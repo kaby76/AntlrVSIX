@@ -25,42 +25,30 @@
 
         public void OnCompleted()
         {
-            throw new NotImplementedException();
         }
 
         public void OnError(Exception error)
         {
-            throw new NotImplementedException();
         }
 
         public void OnNext(ObserverParserRuleContext value)
         {
-            throw new NotImplementedException();
         }
 
-        public void OnParentDisconnect(ObserverParserRuleContext value)
+        public void OnParentDisconnect(IParseTree value)
         {
-            throw new NotImplementedException();
         }
 
-        public void OnParentConnect(ObserverParserRuleContext value)
+        public void OnParentConnect(IParseTree value)
         {
-            throw new NotImplementedException();
         }
 
-        public void OnChildDisconnect(ObserverParserRuleContext value)
+        public void OnChildDisconnect(IParseTree value)
         {
-            throw new NotImplementedException();
         }
 
-        public void OnChildConnect(ObserverParserRuleContext value)
+        public void OnChildConnect(IParseTree value)
         {
-            throw new NotImplementedException();
-        }
-
-        public void OnChildConnect(ITerminalNode value)
-        {
-            throw new NotImplementedException();
         }
     }
 }
