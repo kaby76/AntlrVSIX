@@ -44,6 +44,23 @@
         }
 
 
+        public virtual void RemoveChild(ITerminalNode t)
+        {
+        }
+
+        public virtual void RemoveChild(IToken matchedToken)
+        {
+        }
+
+        public virtual void RemoveChild(RuleContext ruleInvocation)
+        {
+        }
+
+        public virtual void ReplaceChild(IParseTree t)
+        {
+        }
+
+
         public override RuleContext Parent
         {
             get

@@ -170,4 +170,4 @@ fragment FragChar : '\u0009' | '\u000a' | '\u000d'
 
 NL : ('\u000d' | '\u000a')+;
 
-Whitespace :  (('\u000d' | '\u000a') { AllowReturns }? | ('\u0020' | '\u0009'))+ -> skip ;
+Whitespace :  ('\u000d' | '\u000a' | '\u0020' | '\u0009')+ -> skip ;

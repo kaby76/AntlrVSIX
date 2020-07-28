@@ -45,7 +45,6 @@ namespace org.eclipse.wst.xml.xpath2.processor.@internal
 		public virtual XPath parse(string xpath, bool isRootlessAccess)
 		{
             var lexer = new XPath31Lexer(new AntlrInputStream(xpath));
-            lexer.AllowReturns = true;
 
             try
             {

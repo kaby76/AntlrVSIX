@@ -323,8 +323,6 @@ namespace org.eclipse.wst.xml.xpath2.processor
 		///            is the XPath node to check. </param>
 		/// <exception cref="StaticError">
 		///             static error. </exception>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void check(org.eclipse.wst.xml.xpath2.processor.internal.ast.XPathNode node) throws StaticError
 		public virtual void check(XPathNode node)
 		{
 			try
