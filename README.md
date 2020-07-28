@@ -123,7 +123,6 @@ Bash script "clean.sh" in the Antlrvsix source to clean out the build files so o
   * Add CTree, an S-expression library to specify and link in sub-trees.
   * Move replace and delete to this NuGet library.
   * Add observer pattern for parse tree node edits to keep XPath DOM in sync.
-  * Add in XPath and S-expresion (CTree) tree tools for less verbose
 * Rewrite some of the existing transforms and analyses
 using XPath and S-expresions.
 * Add in empty string alternative hoist transforms.
