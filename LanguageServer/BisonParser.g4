@@ -27,7 +27,7 @@ parser grammar BisonParser;
 
 options {
     tokenVocab=BisonLexer;
-    contextSuperClass=AntlrDOM.ObserverParserRuleContext;
+    contextSuperClass=AntlrTreeEditing.AntlrDOM.ObserverParserRuleContext;
 }
 
 input

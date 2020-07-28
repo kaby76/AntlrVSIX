@@ -1,4 +1,4 @@
-﻿namespace AntlrDOM
+﻿namespace AntlrTreeEditing.AntlrDOM
 {
     using Antlr4.Runtime;
     using Antlr4.Runtime.Tree;
@@ -7,7 +7,7 @@
     using System.Linq;
     using System.Text;
 
-    public class ObserverParserRuleContext : ParserRuleContext, IObservable<ObserverParserRuleContext>
+    public class ObserverParserRuleContext : ParserRuleContext, IAntlrObservable
     {
         private List<IObserver<ObserverParserRuleContext>> observers;
 
@@ -26,6 +26,7 @@
         public override void AddChild(ITerminalNode t)
         {
             base.AddChild(t);
+            SendMessage(this);
         }
 
         public override ITerminalNode AddChild(IToken matchedToken)
@@ -64,6 +65,38 @@
         }
 
         public void SendMessage(ObserverParserRuleContext loc)
+        {
+            foreach (var observer in observers)
+            {
+                observer.OnNext(loc);
+            }
+        }
+
+        public void NotifyAddParent(ObserverParserRuleContext loc)
+        {
+            foreach (var observer in observers)
+            {
+                observer.OnNext(loc);
+            }
+        }
+
+        public void NotifyRemoveParent(ObserverParserRuleContext loc)
+        {
+            foreach (var observer in observers)
+            {
+                observer.OnNext(loc);
+            }
+        }
+
+        public void NotifyAddChild(ObserverParserRuleContext loc)
+        {
+            foreach (var observer in observers)
+            {
+                observer.OnNext(loc);
+            }
+        }
+
+        public void NotifyRemoveChild(ObserverParserRuleContext loc)
         {
             foreach (var observer in observers)
             {
