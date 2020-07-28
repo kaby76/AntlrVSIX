@@ -118,17 +118,20 @@ Bash script "clean.sh" in the Antlrvsix source to clean out the build files so o
 
 ## Planned for v8.0 (expected by 2 Aug 2020):
 
-* Add in XPath and S-expresion (CTree) tree tools for less verbose
-tree rewrite code.
+* Move all Antlr tree editing routines into a NuGet package
+  * Add XPath based on Eclipse XPath2.
+  * Add CTree, an S-expression library to specify and link in sub-trees.
+  * Move replace and delete to this NuGet library.
+  * Add observer pattern for parse tree node edits to keep XPath DOM in sync.
+  * Add in XPath and S-expresion (CTree) tree tools for less verbose
 * Rewrite some of the existing transforms and analyses
 using XPath and S-expresions.
 * Add in empty string alternative hoist transforms.
 * Add nightly unit tests to build (find def, find refs and defs, etc).
-* Antlr v1, v2, and v3 conversion to Antlr v4.
+* Antlr v2 and v3 conversion to Antlr v4.
 * Add **trash**, the **Tr**ansformation system for **A**ntlr **Sh**ell,
 a completely command-line interface to apply transforms to a grammar,
 for Windows or Linux.
-* Move all Antlr tree editing routines into a NuGet package (XPath, CTree, replace, delete, observer/notify parse tree node).
 * Fix [Import of grammar with multiple rules for LHS symbol crashes. #69](https://github.com/kaby76/AntlrVSIX/issues/69).
 * Fix [Add transform to input string literals and convert to case insensitive literal or vice versa. #71](https://github.com/kaby76/AntlrVSIX/issues/71).
 * Fix [LanguageServer.Module.GetDefsAndRefs() not working right #74](https://github.com/kaby76/AntlrVSIX/issues/74).
