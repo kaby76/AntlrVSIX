@@ -4,29 +4,33 @@
     using Antlr4.Runtime.Tree;
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
 
     public class ObserverParserRuleContext : ParserRuleContext, IAntlrObservable
     {
-        private List<IObserver<ObserverParserRuleContext>> observers;
+        private List<IAntlrObserver> observers;
 
         public ObserverParserRuleContext(ParserRuleContext parent, int invokingState)
             : base(parent, invokingState)
         {
-            observers = new List<IObserver<ObserverParserRuleContext>>();
+            observers = new List<IAntlrObserver>();
         }
 
         public ObserverParserRuleContext()
             : base()
         {
-            observers = new List<IObserver<ObserverParserRuleContext>>();
+            observers = new List<IAntlrObserver>();
         }
 
         public override void AddChild(ITerminalNode t)
         {
             base.AddChild(t);
-            SendMessage(this);
+
+            this.NotifyAddChild(t);
+            var o = t as ObserverParserRuleContext;
+            if (o != null)
+            {
+                o.NotifyAddParent(this);
+            }
         }
 
         public override ITerminalNode AddChild(IToken matchedToken)
@@ -39,7 +43,26 @@
             base.AddChild(ruleInvocation);
         }
 
-        public IDisposable Subscribe(IObserver<ObserverParserRuleContext> observer)
+
+        public override RuleContext Parent
+        {
+            get
+            {
+                return base.Parent;
+            }
+            set
+            {
+                base.Parent = value;
+                var o = value as ObserverParserRuleContext;
+                if (o != null)
+                {
+                    o.NotifyAddParent(this);
+                    this.NotifyAddChild(o);
+                }
+            }
+        }
+
+        public IDisposable Subscribe(IAntlrObserver observer)
         {
             if (!observers.Contains(observer))
                 observers.Add(observer);
@@ -48,10 +71,10 @@
 
         private class Unsubscriber : IDisposable
         {
-            private List<IObserver<ObserverParserRuleContext>> _observers;
-            private IObserver<ObserverParserRuleContext> _observer;
+            private List<IAntlrObserver> _observers;
+            private IAntlrObserver _observer;
 
-            public Unsubscriber(List<IObserver<ObserverParserRuleContext>> observers, IObserver<ObserverParserRuleContext> observer)
+            public Unsubscriber(List<IAntlrObserver> observers, IAntlrObserver observer)
             {
                 this._observers = observers;
                 this._observer = observer;
@@ -92,7 +115,15 @@
         {
             foreach (var observer in observers)
             {
-                observer.OnNext(loc);
+                observer.OnChildConnect(loc);
+            }
+        }
+
+        public void NotifyAddChild(ITerminalNode loc)
+        {
+            foreach (var observer in observers)
+            {
+                observer.OnChildConnect(loc);
             }
         }
 
@@ -100,7 +131,7 @@
         {
             foreach (var observer in observers)
             {
-                observer.OnNext(loc);
+                observer.OnChildDisconnect(loc);
             }
         }
 
@@ -111,6 +142,11 @@
                     observer.OnCompleted();
 
             observers.Clear();
+        }
+
+        public IDisposable Subscribe(IObserver<ObserverParserRuleContext> observer)
+        {
+            throw new NotImplementedException();
         }
     }
 }

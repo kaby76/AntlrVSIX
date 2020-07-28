@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AntlrTreeEditing.AntlrDOM
 {
-    interface IAntlrObservable : IObservable<ObserverParserRuleContext>
+    public interface IAntlrObservable : IObservable<ObserverParserRuleContext>
     {
     }
 }

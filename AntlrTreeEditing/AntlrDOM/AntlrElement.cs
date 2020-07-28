@@ -1,9 +1,10 @@
 ﻿namespace AntlrTreeEditing.AntlrDOM
 {
+    using Antlr4.Runtime.Tree;
     using org.w3c.dom;
     using System;
 
-    public class AntlrElement : AntlrNode, Element, IObserver<ObserverParserRuleContext>
+    public class AntlrElement : AntlrNode, Element, IAntlrObserver
     {
         public object getAttributeNS(string sCHEMA_INSTANCE, string nIL_ATTRIBUTE)
         {
@@ -33,6 +34,31 @@
         }
 
         public void OnNext(ObserverParserRuleContext value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnParentDisconnect(ObserverParserRuleContext value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnParentConnect(ObserverParserRuleContext value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnChildDisconnect(ObserverParserRuleContext value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnChildConnect(ObserverParserRuleContext value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnChildConnect(ITerminalNode value)
         {
             throw new NotImplementedException();
         }
