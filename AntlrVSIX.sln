@@ -78,8 +78,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pics", "pics", "{AB776C0F-4
 		doc\pics\2019-08-09-1.png = doc\pics\2019-08-09-1.png
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntlrTreeEditing", "AntlrTreeEditing\AntlrTreeEditing.csproj", "{8E07DCA5-4A19-4A15-852E-D90A7A513155}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTestProject1", "UnitTestProject1\UnitTestProject1.csproj", "{A91E6190-995D-41D3-B32E-21DA290876AA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trash", "Trash\Trash.csproj", "{F3E5473A-9283-4964-9FE9-726D21AAD349}"

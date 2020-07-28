@@ -35,6 +35,7 @@
     <PackageReference Include="cs-codebuff" Version="3.0.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.6.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.6.0" />
+    <PackageReference Include="AntlrTreeEditing" Version="1.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,7 +43,6 @@
     <ProjectReference Include="..\Logger\Logger.csproj" />
     <ProjectReference Include="..\Symtab\Symtab.csproj" />
     <ProjectReference Include="..\Workspaces\Workspaces.csproj" />
-    <ProjectReference Include="..\AntlrTreeEditing\AntlrTreeEditing.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
