@@ -73,7 +73,7 @@ namespace LanguageServer
                                     r.Parent = c;
                                 }
                                 else
-                                    throw new LanguageServerException("Tree contains something other than TerminalNodeImpl or ParserRuleContext");
+                                    throw new Exception("Tree contains something other than TerminalNodeImpl or ParserRuleContext");
                                 break;
                             }
                         }
@@ -165,7 +165,7 @@ namespace LanguageServer
                                     c.children.RemoveAt(i);
                                 }
                                 else
-                                    throw new LanguageServerException("Tree contains something other than TerminalNodeImpl or ParserRuleContext");
+                                    throw new Exception("Tree contains something other than TerminalNodeImpl or ParserRuleContext");
                                 break;
                             }
                         }

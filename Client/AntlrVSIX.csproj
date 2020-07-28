@@ -222,9 +222,9 @@
       <Project>{e138159b-e61c-4cb7-abbc-7c57dc9bdd79}</Project>
       <Name>Workspaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\XPath\xpath.csproj">
+    <ProjectReference Include="..\AntlrTreeEditing\AntlrTreeEditing.csproj">
       <Project>{8e07dca5-4a19-4a15-852e-d90a7a513155}</Project>
-      <Name>xpath</Name>
+      <Name>AntlrTreeEditing</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

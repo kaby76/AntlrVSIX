@@ -12,7 +12,6 @@
     using System;
     using System.Collections.Generic;
     using System.Text.RegularExpressions;
-    using XPathHelpers;
     using DynamicContext = org.eclipse.wst.xml.xpath2.api.DynamicContext;
 
     public class ConvertToDOM

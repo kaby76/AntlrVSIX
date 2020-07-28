@@ -235,7 +235,7 @@ D: 'uvw' 'xyz'+;
         public void TestXml()
         {
             var cwd = Directory.GetCurrentDirectory();
-            string input = System.IO.File.ReadAllText("../../../../XPath/XmlDOM/test.xml");
+            string input = System.IO.File.ReadAllText("../../../../AntlrTreeEditing/XmlDOM/test.xml");
             var res = XmlDOM.Parse.Try(input);
             var dynamicContext = XmlDOM.ConvertToDOM.Try(res.Item1, res.Item2);
             org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
@@ -1455,7 +1455,7 @@ IDENTIFIER
 		[TestMethod]
 		public void TestImport2()
 		{
-			var cwd = Directory.GetCurrentDirectory();
+            var cwd = Directory.GetCurrentDirectory();
             var ffn = cwd + "/" + "../../../../UnitTestProject1/ANTLRv3.g";
             var code = System.IO.File.ReadAllText(ffn);
 			var results = new Dictionary<string, string>();

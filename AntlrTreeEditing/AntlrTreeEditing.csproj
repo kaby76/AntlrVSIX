@@ -34,13 +34,4 @@
     <PackageReference Include="Antlr4BuildTasks" Version="8.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="AntlrDOM\ANTLRv4Lexer.g4">
-      <Package>AntlrDOM</Package>
-    </None>
-    <None Update="AntlrDOM\ANTLRv4Parser.g4">
-      <Package>AntlrDOM</Package>
-    </None>
-  </ItemGroup>
-
 </Project>

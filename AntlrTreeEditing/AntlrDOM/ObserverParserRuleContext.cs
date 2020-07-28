@@ -1,4 +1,4 @@
-﻿namespace XPathHelpers
+﻿namespace AntlrDOM
 {
     using Antlr4.Runtime;
     using Antlr4.Runtime.Tree;
