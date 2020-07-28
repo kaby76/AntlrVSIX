@@ -232,21 +232,6 @@ D: 'uvw' 'xyz'+;
         }
 
         [TestMethod]
-        public void TestXml()
-        {
-            var cwd = Directory.GetCurrentDirectory();
-            string input = System.IO.File.ReadAllText("../../../../AntlrTreeEditing/XmlDOM/test.xml");
-            var res = XmlDOM.Parse.Try(input);
-            var dynamicContext = XmlDOM.ConvertToDOM.Try(res.Item1, res.Item2);
-            org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
-            var dom_literals = engine.parseExpression(
-                    @"/root/actors/actor",
-                    new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
-                .Select(x => (x.NativeValue)).ToArray();
-            if (dom_literals.Length != 3) throw new Exception();
-        }
-
-        [TestMethod]
         public void TestXml2()
         {
             // see https://stackoverflow.com/questions/62973860/how-to-xpath-text-greater-than-number-1/62975324#62975324
