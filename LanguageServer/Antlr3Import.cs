@@ -318,10 +318,50 @@
 
             // labels in lexer rules are not supported in ANTLR 4.
             // Nuke.
+            {
+                org.eclipse.wst.xml.xpath2.processor.Engine engine =
+                    new org.eclipse.wst.xml.xpath2.processor.Engine();
+                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
+                var enos = engine.parseExpression(
+                        @"//elementNoOptionSpec
+                             [EQUAL or PEQ]",
+                        new StaticContextBuilder()).evaluate(
+                     dynamicContext, new object[] { dynamicContext.Document })
+                     .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
+                if (enos.Any())
+                {
+                    foreach (var n in enos)
+                    {
+                        TreeEdits.Delete(n.GetChild(1));
+                        TreeEdits.Delete(n.GetChild(0));
+                    }
+                }
+            }
 
             // fragment rule cannot contain an action or command.
             // Nuke.
-
+            {
+                org.eclipse.wst.xml.xpath2.processor.Engine engine =
+                    new org.eclipse.wst.xml.xpath2.processor.Engine();
+                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
+                var ab = engine.parseExpression(
+                        @"//rule_[FRAGMENT]
+                             /altList
+                                 //elementNoOptionSpec
+                                    /actionBlock[not(QM)]",
+                        new StaticContextBuilder()).evaluate(
+                     dynamicContext, new object[] { dynamicContext.Document })
+                     .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
+                if (ab.Any())
+                {
+                    foreach (var n in ab)
+                    {
+                        TreeEdits.Delete(n);
+                    }
+                }
+            }
 
             // Remove syntactic predicates (unnecessary and unsupported in ANTLR 4)
             {

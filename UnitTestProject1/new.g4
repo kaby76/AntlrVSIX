@@ -80,8 +80,7 @@ grammarDef
     	|   'parser' {gtype=PARSER_GRAMMAR;}   // pure parser
     	|   'tree'   {gtype=TREE_GRAMMAR;}     // a tree parser
     	|		     {gtype=COMBINED_GRAMMAR;} // merged parser/lexer
-    	)
-    	g='grammar' id ';' optionsSpec? tokensSpec? attrScope* action*
+    	)'grammar' id ';' optionsSpec? tokensSpec? attrScope* action*
     	rule+
     	EOF
     ;
@@ -92,7 +91,7 @@ tokensSpec
 
 tokenSpec
 	:	TOKEN_REF
-		(	'=' (lit=STRING_LITERAL|lit=CHAR_LITERAL)
+		(	'=' (STRING_LITERAL|CHAR_LITERAL)
 		|
 		)
 		';'
@@ -112,8 +111,8 @@ action
  */
 actionScopeName
 	:	id
-	|	l='lexer'
-    |   p='parser'
+	|'lexer'
+    |'parser'
 	;
 
 optionsSpec
@@ -129,19 +128,16 @@ optionValue
     |   STRING_LITERAL
     |   CHAR_LITERAL
     |   INT
-    |	s='*'  // used for k=*
+    |'*'  // used for k=*
     ;
 
 rule
-locals [
-	String name;
-]
 	:	DOC_COMMENT?
-		( modifier=('protected'|'public'|'private'|'fragment') )?
+		(('protected'|'public'|'private'|'fragment') )?
 		id {$rule::name = $id.text;}
 		'!'?
-		( arg=ARG_ACTION )?
-		( 'returns' rt=ARG_ACTION  )?
+		(ARG_ACTION )?
+		( 'returns'ARG_ACTION  )?
 		throwsSpec? optionsSpec? ruleScopeSpec? ruleAction*
 		':'	altList	';'
 		exceptionGroup?
@@ -164,10 +160,8 @@ ruleScopeSpec
 	;
 
 block
-    :   lp='('
-		( (opts=optionsSpec)? ':' )?
-		a1=alternative rewrite ( '|' a2=alternative rewrite )*
-        rp=')'
+    :'('
+		( (optionsSpec)? ':' )?alternative rewrite ( '|'alternative rewrite )*')'
     ;
 
 altList
@@ -177,7 +171,7 @@ altList
 	// it's really BLOCK[firstToken,"BLOCK"]; set line/col to previous ( or : token.
     CommonTree blkRoot = (CommonTree)adaptor.create(BLOCK,input.LT(-1),"BLOCK");
 }
-    :   a1=alternative rewrite ( '|' a2=alternative rewrite )*
+    :alternative rewrite ( '|'alternative rewrite )*
     ;
 
 alternative
@@ -207,11 +201,11 @@ element
 	;
 
 elementNoOptionSpec
-	:	id (labelOp='='|labelOp='+=') atom
+	:	id ('='|'+=') atom
 		(	ebnfSuffix
 		|
 		)
-	|	id (labelOp='='|labelOp='+=') block
+	|	id ('='|'+=') block
 		(	ebnfSuffix
 		|
 		)
@@ -228,10 +222,10 @@ elementNoOptionSpec
 		)
 	;
 
-atom:   range ( (op='^'|op='!') | )
+atom:   range ( ('^'|'!') | )
     |   terminal
-    |	notSet ( (op='^'|op='!') | )
-    |   RULE_REF ( arg=ARG_ACTION )? ( (op='^'|op='!') )?
+    |	notSet ( ('^'|'!') | )
+    |   RULE_REF (ARG_ACTION )? ( ('^'|'!') )?
     ;
 
 notSet
@@ -255,16 +249,16 @@ ebnf
 	$ebnf.tree.getToken().setCharPositionInLine(firstToken.getCharPositionInLine());
 }
 	:	block
-		(	op='?'
-		|	op='*'
-		|	op='+'
+		('?'
+		|'*'
+		|'+'
 		|   '=>'
         |
 		)
 	;
 
 range
-	:	c1=CHAR_LITERAL RANGE c2=CHAR_LITERAL
+	:CHAR_LITERAL RANGECHAR_LITERAL
 	;
 
 terminal
@@ -305,20 +299,18 @@ rewrite
 @init {
 	Token firstToken = input.LT(1);
 }
-	:	(rew+='->' preds+=SEMPRED predicated+=rewrite_alternative)*
-		rew2='->' last=rewrite_alternative
+	:	('->'SEMPREDrewrite_alternative)*'->'rewrite_alternative
 	|
 	;
 
 rewrite_alternative
-options {backtrack=true;}
 	:	rewrite_template
 	|	rewrite_tree_alternative
    	|
 	;
 	
 rewrite_tree_block
-    :   lp='(' rewrite_tree_alternative ')'
+    :'(' rewrite_tree_alternative ')'
     ;
 
 rewrite_tree_alternative
@@ -340,7 +332,7 @@ rewrite_tree_atom
 	|   TOKEN_REF ARG_ACTION? // for imaginary nodes
     |   RULE_REF
 	|   STRING_LITERAL
-	|   d='$' id // reference to a label in a rewrite rule
+	|'$' id // reference to a label in a rewrite rule
 	|	ACTION
 	;
 
@@ -372,8 +364,8 @@ rewrite_tree
  */
 rewrite_template
 	:   // -> template(a={...},...) "..."    inline template
-		id lp='(' rewrite_template_args	')'
-		( str=DOUBLE_QUOTE_STRING_LITERAL | str=DOUBLE_ANGLE_STRING_LITERAL )
+		id'(' rewrite_template_args	')'
+		(DOUBLE_QUOTE_STRING_LITERAL |DOUBLE_ANGLE_STRING_LITERAL )
 
 	|	// -> foo(a={...}, ...)
 		rewrite_template_ref
@@ -387,12 +379,12 @@ rewrite_template
 
 /** -> foo(a={...}, ...) */
 rewrite_template_ref
-	:	id lp='(' rewrite_template_args	')'
+	:	id'(' rewrite_template_args	')'
 	;
 
 /** -> ({expr})(a={...}, ...) */
 rewrite_indirect_template_head
-	:	lp='(' ACTION ')' '(' rewrite_template_args ')'
+	:'(' ACTION ')' '(' rewrite_template_args ')'
 	;
 
 rewrite_template_args
@@ -484,7 +476,6 @@ NESTED_ARG_ACTION :
 	|	.
 	) * ?
 	']'
-	{setText(getText().substring(1, getText().length()-1));}
 	;
 
 ACTION
@@ -545,7 +536,7 @@ TOKENS
  *  original file like the old C preprocessor used to do.
  */
 fragment
-SRC	:	'src' ' ' file=ACTION_STRING_LITERAL ' ' line=INT
+SRC	:	'src' ' 'ACTION_STRING_LITERAL ' 'INT
 	;
 
 WS	:	(	' '
