@@ -324,8 +324,10 @@
                 AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
                     AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
                 var enos = engine.parseExpression(
-                        @"//elementNoOptionSpec
-                             [EQUAL or PEQ]",
+                        @"//rule_[id/TOKEN_REF]
+                            /altList
+                                //elementNoOptionSpec
+                                    [EQUAL or PEQ]",
                         new StaticContextBuilder()).evaluate(
                      dynamicContext, new object[] { dynamicContext.Document })
                      .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);

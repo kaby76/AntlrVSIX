@@ -80,7 +80,8 @@ grammarDef
     	|   'parser' {gtype=PARSER_GRAMMAR;}   // pure parser
     	|   'tree'   {gtype=TREE_GRAMMAR;}     // a tree parser
     	|		     {gtype=COMBINED_GRAMMAR;} // merged parser/lexer
-    	)'grammar' id ';' optionsSpec? tokensSpec? attrScope* action*
+    	)
+    	g='grammar' id ';' optionsSpec? tokensSpec? attrScope* action*
     	rule+
     	EOF
     ;
@@ -91,7 +92,7 @@ tokensSpec
 
 tokenSpec
 	:	TOKEN_REF
-		(	'=' (STRING_LITERAL|CHAR_LITERAL)
+		(	'=' (lit=STRING_LITERAL|lit=CHAR_LITERAL)
 		|
 		)
 		';'
@@ -111,8 +112,8 @@ action
  */
 actionScopeName
 	:	id
-	|'lexer'
-    |'parser'
+	|	l='lexer'
+    |   p='parser'
 	;
 
 optionsSpec
@@ -128,16 +129,16 @@ optionValue
     |   STRING_LITERAL
     |   CHAR_LITERAL
     |   INT
-    |'*'  // used for k=*
+    |	s='*'  // used for k=*
     ;
 
 rule
 	:	DOC_COMMENT?
-		(('protected'|'public'|'private'|'fragment') )?
+		( modifier=('protected'|'public'|'private'|'fragment') )?
 		id {$rule::name = $id.text;}
 		'!'?
-		(ARG_ACTION )?
-		( 'returns'ARG_ACTION  )?
+		( arg=ARG_ACTION )?
+		( 'returns' rt=ARG_ACTION  )?
 		throwsSpec? optionsSpec? ruleScopeSpec? ruleAction*
 		':'	altList	';'
 		exceptionGroup?
@@ -160,8 +161,10 @@ ruleScopeSpec
 	;
 
 block
-    :'('
-		( (optionsSpec)? ':' )?alternative rewrite ( '|'alternative rewrite )*')'
+    :   lp='('
+		( (opts=optionsSpec)? ':' )?
+		a1=alternative rewrite ( '|' a2=alternative rewrite )*
+        rp=')'
     ;
 
 altList
@@ -171,7 +174,7 @@ altList
 	// it's really BLOCK[firstToken,"BLOCK"]; set line/col to previous ( or : token.
     CommonTree blkRoot = (CommonTree)adaptor.create(BLOCK,input.LT(-1),"BLOCK");
 }
-    :alternative rewrite ( '|'alternative rewrite )*
+    :   a1=alternative rewrite ( '|' a2=alternative rewrite )*
     ;
 
 alternative
@@ -201,11 +204,11 @@ element
 	;
 
 elementNoOptionSpec
-	:	id ('='|'+=') atom
+	:	id (labelOp='='|labelOp='+=') atom
 		(	ebnfSuffix
 		|
 		)
-	|	id ('='|'+=') block
+	|	id (labelOp='='|labelOp='+=') block
 		(	ebnfSuffix
 		|
 		)
@@ -222,10 +225,10 @@ elementNoOptionSpec
 		)
 	;
 
-atom:   range ( ('^'|'!') | )
+atom:   range ( (op='^'|op='!') | )
     |   terminal
-    |	notSet ( ('^'|'!') | )
-    |   RULE_REF (ARG_ACTION )? ( ('^'|'!') )?
+    |	notSet ( (op='^'|op='!') | )
+    |   RULE_REF ( arg=ARG_ACTION )? ( (op='^'|op='!') )?
     ;
 
 notSet
@@ -249,16 +252,16 @@ ebnf
 	$ebnf.tree.getToken().setCharPositionInLine(firstToken.getCharPositionInLine());
 }
 	:	block
-		('?'
-		|'*'
-		|'+'
+		(	op='?'
+		|	op='*'
+		|	op='+'
 		|   '=>'
         |
 		)
 	;
 
 range
-	:CHAR_LITERAL RANGECHAR_LITERAL
+	:	c1=CHAR_LITERAL RANGE c2=CHAR_LITERAL
 	;
 
 terminal
@@ -299,7 +302,8 @@ rewrite
 @init {
 	Token firstToken = input.LT(1);
 }
-	:	('->'SEMPREDrewrite_alternative)*'->'rewrite_alternative
+	:	(rew+='->' preds+=SEMPRED predicated+=rewrite_alternative)*
+		rew2='->' last=rewrite_alternative
 	|
 	;
 
@@ -310,7 +314,7 @@ rewrite_alternative
 	;
 	
 rewrite_tree_block
-    :'(' rewrite_tree_alternative ')'
+    :   lp='(' rewrite_tree_alternative ')'
     ;
 
 rewrite_tree_alternative
@@ -332,7 +336,7 @@ rewrite_tree_atom
 	|   TOKEN_REF ARG_ACTION? // for imaginary nodes
     |   RULE_REF
 	|   STRING_LITERAL
-	|'$' id // reference to a label in a rewrite rule
+	|   d='$' id // reference to a label in a rewrite rule
 	|	ACTION
 	;
 
@@ -364,8 +368,8 @@ rewrite_tree
  */
 rewrite_template
 	:   // -> template(a={...},...) "..."    inline template
-		id'(' rewrite_template_args	')'
-		(DOUBLE_QUOTE_STRING_LITERAL |DOUBLE_ANGLE_STRING_LITERAL )
+		id lp='(' rewrite_template_args	')'
+		( str=DOUBLE_QUOTE_STRING_LITERAL | str=DOUBLE_ANGLE_STRING_LITERAL )
 
 	|	// -> foo(a={...}, ...)
 		rewrite_template_ref
@@ -379,12 +383,12 @@ rewrite_template
 
 /** -> foo(a={...}, ...) */
 rewrite_template_ref
-	:	id'(' rewrite_template_args	')'
+	:	id lp='(' rewrite_template_args	')'
 	;
 
 /** -> ({expr})(a={...}, ...) */
 rewrite_indirect_template_head
-	:'(' ACTION ')' '(' rewrite_template_args ')'
+	:	lp='(' ACTION ')' '(' rewrite_template_args ')'
 	;
 
 rewrite_template_args

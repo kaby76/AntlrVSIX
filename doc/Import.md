@@ -90,3 +90,56 @@ Antlr4 supports _scope_ with _local_. However, this tool
 currently simply deletes the _scope_ clause.
 
     //rule_/ruleScopeSpec
+
+## Labels in lexer rules are not supported.
+
+In Antlr3, one could write lexer rules that contained a label for an element.
+This is no longer supported in Antlr4, so the label with "=" or "+=" are deleted.
+
+    //rule_[id/TOKEN_REF]
+        /altList
+            //elementNoOptionSpec
+                [EQUAL or PEQ]
+
+## Lexer fragment rules cannot contain actions or commands.
+
+Again, while actions were allowed in _fragment_ rules in the lexer, these
+are no longer supported so actions are deleted.
+
+    //rule_[FRAGMENT]
+        /altList
+            //elementNoOptionSpec
+                /actionBlock[not(QM)]
+
+## Syntactic predicates are no longer supported in Antlr4
+
+Syntactic predicates were supported in Antlr3 to handle parsing problems.
+These are no longer needed, and so they are deleted.
+
+    //ebnf [SEMPREDOP]
+
+## Semantic predicates do not need to be explicitly gated in ANTLR 4
+
+The gating of sematic predicates is unnecessary in Antlr4, so are removed.
+
+    //elementNoOptionSpec
+        [(actionBlock and QM)]
+            /SEMPREDOP
+
+## Fix options "k = ...".
+
+The "k" option is not needed in Antlr4 since it is LL(*). The "greedy"
+option is replaced with the "*?* operator.
+
+    //optionsSpec[not(../@id = 'grammarDef')]
+        /option
+            [id
+                /(TOKEN_REF | RULE_REF)
+                [text() = 'k'
+                ]]
+
+    //optionsSpec[not(../@id = 'grammarDef')]
+        /option
+            [id/(TOKEN_REF | RULE_REF)[text() = 'greedy']
+                and 
+             optionValue/id/RULE_REF[text() = 'false']]
