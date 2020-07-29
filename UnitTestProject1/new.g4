@@ -57,17 +57,17 @@ tokens {
     INITACTION,
     LABEL, // $x used in rewrite rules
     TEMPLATE,
-    SCOPE='scope',
+    SCOPE,
     SEMPRED,
     GATED_SEMPRED, // {p}? =>
     SYN_SEMPRED, // (...) =>   it's a manually-specified synpred converted to sempred
     BACKTRACK_SEMPRED, // auto backtracking mode syn pred converted to sempred
-    FRAGMENT='fragment',
-    TREE_BEGIN='^(',
-    ROOT='^',
-    BANG='!',
-    RANGE='..',
-    REWRITE='->'
+    FRAGMENT,
+    TREE_BEGIN,
+    ROOT,
+    BANG,
+    RANGE,
+    REWRITE
 }
 
 @members {
@@ -133,9 +133,9 @@ optionValue
     ;
 
 rule
-scope {
+locals [
 	String name;
-}
+]
 	:	DOC_COMMENT?
 		( modifier=('protected'|'public'|'private'|'fragment') )?
 		id {$rule::name = $id.text;}
@@ -263,7 +263,7 @@ ebnf
 		)
 	;
 
-range!
+range
 	:	c1=CHAR_LITERAL RANGE c2=CHAR_LITERAL
 	;
 
@@ -311,6 +311,7 @@ rewrite
 	;
 
 rewrite_alternative
+options {backtrack=true;}
 	:	rewrite_template
 	|	rewrite_tree_alternative
    	|
@@ -477,8 +478,7 @@ ARG_ACTION
 fragment
 NESTED_ARG_ACTION :
 	'['
-	(
-	:	NESTED_ARG_ACTION
+	(	NESTED_ARG_ACTION
 	|	ACTION_STRING_LITERAL
 	|	ACTION_CHAR_LITERAL
 	|	.
@@ -494,14 +494,13 @@ ACTION
 fragment
 NESTED_ACTION :
 	'{'
-	(
-	:	NESTED_ACTION
+	(	NESTED_ACTION
 	|	SL_COMMENT
 	|	ML_COMMENT
 	|	ACTION_STRING_LITERAL
 	|	ACTION_CHAR_LITERAL
 	|	.
-	)*
+	) * ?
 	'}'
    ;
 
@@ -564,3 +563,18 @@ WS_LOOP
 		)*
 	;
 
+
+
+SCOPE : 'scope' ;
+
+FRAGMENT : 'fragment' ;
+
+TREE_BEGIN : '^(' ;
+
+ROOT : '^' ;
+
+BANG : '!' ;
+
+RANGE : '..' ;
+
+REWRITE : '->' ;

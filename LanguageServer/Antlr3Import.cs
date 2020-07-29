@@ -49,7 +49,7 @@
             // https://github.com/senseidb/sensei/pull/23
             var (text_before, other) = TreeEdits.TextToLeftOfLeaves(tokens, tree);
 
-            // Remove unused options.
+            // Remove unused options at top of grammar def.
             // This specifically looks at the options at the top of the file,
             // not rule-based options. That will be handled separately below.
             {
@@ -89,6 +89,46 @@
                         c = true;
                         return options.Contains(n) ? n : null;
                     });
+                }
+            }
+
+            // Fix options in the beginning of rules.
+            {
+                org.eclipse.wst.xml.xpath2.processor.Engine engine =
+                    new org.eclipse.wst.xml.xpath2.processor.Engine();
+                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
+                // Allow language, tokenVocab, TokenLabelType, superClass
+                var nodes = engine.parseExpression(
+                        @"//rule_/optionsSpec
+                            /option
+                                [id
+                                    /(TOKEN_REF | RULE_REF)
+                                        [text() = 'output'
+                                        or text() = 'backtrack'
+                                        or text() = 'memoize'
+                                        or text() = 'ASTLabelType'
+                                        or text() = 'rewrite'
+                                        ]]",
+                        new StaticContextBuilder()).evaluate(
+                        dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
+                TreeEdits.Delete(tree, (in IParseTree n, out bool c) =>
+                {
+                    c = true;
+                    return nodes.Contains(n) ? n : null;
+                });
+                var options = engine.parseExpression(
+                        @"//rule_/optionsSpec",
+                        new StaticContextBuilder()).evaluate(
+                        dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
+                foreach (var os in options)
+                {
+                    if (os.ChildCount == 3)
+                    {
+                        TreeEdits.Delete(os);
+                    }
                 }
             }
 
@@ -138,10 +178,52 @@
                 // Rewrite these as plain lexer rules.
                 if (equals.Any())
                 {
+                    var new_lexer_rules = equals.Select(t =>
+                    {
+                        var lhs = (t as ANTLRv3Parser.TokenSpecContext).TOKEN_REF().GetText();
+                        var rhs = t.GetChild(2).GetText();
+                        return new Tuple<string, string>(lhs, rhs);
+                    }).ToList();
                     foreach (var e in equals)
                     {
-                        // Nuke "=value".
-
+                        // Nuke "=".
+                        TreeEdits.Delete(e.GetChild(1));
+                        // Nuke "value".
+                        TreeEdits.Delete(e.GetChild(1));
+                    }
+                    // Look for last lexer rule.
+                    var last_rule = engine.parseExpression(
+                          @"//rule_[id/TOKEN_REF]",
+                          new StaticContextBuilder()).evaluate(
+                          dynamicContext, new object[] { dynamicContext.Document }
+                          ).Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).LastOrDefault();
+                    if (last_rule != null)
+                    {
+                        var par = last_rule.Parent as ParserRuleContext;
+                        foreach (var p in new_lexer_rules)
+                        {
+                            var lhs = p.Item1;
+                            var rhs = p.Item2;
+                            var env = new Dictionary<string, object>();
+                            env.Add("lhs", new TerminalNodeImpl(new CommonToken(ANTLRv4Lexer.STRING_LITERAL) { Line = -1, Column = -1, Text = lhs }));
+                            text_before[env["lhs"] as TerminalNodeImpl] = System.Environment.NewLine + System.Environment.NewLine;
+                            env.Add("colon", new TerminalNodeImpl(new CommonToken(ANTLRv3Lexer.COLON) { Line = -1, Column = -1, Text = ":" }));
+                            env.Add("rhs", new TerminalNodeImpl(new CommonToken(ANTLRv4Lexer.STRING_LITERAL) { Line = -1, Column = -1, Text = rhs }));
+                            env.Add("semi", new TerminalNodeImpl(new CommonToken(ANTLRv4Lexer.SEMI) { Line = -1, Column = -1, Text = ";" }));
+                            var construct = new CTree.Class1(parser, env);
+                            var res = construct.CreateTree(
+                                    "( rule_ {lhs} {colon} " +
+                                    "   ( altList " +
+                                    "      ( alternative " +
+                                    "         ( element " +
+                                    "            ( elementNoOptionSpec" +
+                                    "               ( atom " +
+                                    "                  {rhs} " +
+                                    "   )  )  )  )  )" +
+                                    "   {semi} " +
+                                    ")");
+                            par.AddChild(res as RuleContext);
+                        }
                     }
                 }
             }
@@ -198,7 +280,48 @@
                         return n3.Contains(n) ? n : null;
                     });
                 }
+		        var n4 = engine.parseExpression(
+                        @"//rule_/BANG",
+						new StaticContextBuilder()).evaluate(
+			         dynamicContext, new object[] { dynamicContext.Document })
+			         .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
+		        if (n4.Any())
+		        {
+			        TreeEdits.Delete(tree, (in IParseTree n, out bool c) =>
+			        {
+				        c = true;
+				        return n4.Contains(n) ? n : null;
+			        });
+		        }
             }
+
+            // Scope not in Antlr4 (equivalent are locals).
+            // For now nuke.
+            {
+                org.eclipse.wst.xml.xpath2.processor.Engine engine =
+                    new org.eclipse.wst.xml.xpath2.processor.Engine();
+                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
+                var rule_scope_spec = engine.parseExpression(
+                        @"//rule_/ruleScopeSpec",
+                        new StaticContextBuilder()).evaluate(
+                     dynamicContext, new object[] { dynamicContext.Document })
+                     .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
+                if (rule_scope_spec.Any())
+                {
+                    foreach (var n in rule_scope_spec)
+                    {
+                        TreeEdits.Delete(n);
+                    }
+                }
+            }
+
+            // labels in lexer rules are not supported in ANTLR 4.
+            // Nuke.
+
+            // fragment rule cannot contain an action or command.
+            // Nuke.
+
 
             // Remove syntactic predicates (unnecessary and unsupported in ANTLR 4)
             {
@@ -290,7 +413,11 @@
                 TreeEdits.Delete(tree, (in IParseTree n, out bool c) =>
                 {
                     c = true;
-                    return k.Contains(n) || greedy.Contains(n) ? n : null;
+                    if (k.Contains(n) || greedy.Contains(n))
+                    {
+                        return n;
+                    }
+                    return null;
                 });
                 foreach (var os in optionsSpec)
                 {
@@ -313,11 +440,11 @@
                     }
                     if (os.ChildCount == 3)
                     {
-                        TreeEdits.Delete(tree, (in IParseTree n, out bool c) =>
+                        if (os.Parent is ANTLRv3Parser.BlockContext bc)
                         {
-                            c = true;
-                            return optionsSpec.Contains(n) ? n : null;
-                        });
+                            TreeEdits.Delete(bc.COLON());
+                        }
+                        TreeEdits.Delete(os);
                     }
                 }
             }
