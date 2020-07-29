@@ -489,6 +489,14 @@
                 }
             }
 
+            // Rewrite remaining action blocks that contain input, etc.
+            // input was renamed to _input in ANTLR 4.
+            // Use the channel lexer command.
+            {
+
+            }
+
+
             StringBuilder sb = new StringBuilder();
             TreeEdits.Reconstruct(sb, tree, text_before);
             var new_code = sb.ToString();
