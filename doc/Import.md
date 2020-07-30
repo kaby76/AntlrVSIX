@@ -12,12 +12,12 @@ how to convert an Antlr3 grammar to Antlr4, many of the steps
 were outlined by Harwell in a [pull request he made to a grammar
 file](https://github.com/senseidb/sensei/pull/23).
 
-## Renove unused options at the top of a grammar file.
+## Remove unused options at the top of a grammar file.
 
 There are many options no longer supported in Antlr4: _output_, _backtrack_,
-_memoize_, _ASTLabelType_, _rewrite_. These options are removed from the
-optionsSpec section. If the optionsSpec is empty after removing these options,
-the section is removed.
+_memoize_, _ASTLabelType_, _rewrite_. Import removes these options.
+If the optionsSpec is empty after removing these options,
+the section itself is removed.
 
     //grammarDef/optionsSpec
         /option
@@ -32,13 +32,16 @@ the section is removed.
 
 ## Remove options within optionSpec's at the beginning of rules.
 
-Similar to the previous transform, optionSpec's at the beginning of rules require
-clean up.
+Similar to the previous transform, _output_, _backtrack_,
+_memoize_, _ASTLabelType_, _rewrite_
+are removed from optionSpec at the beginning  of a rule.
+If the optionsSpec is empty after removing these options,
+the section itself is removed.
 
 ## Use new "tokens {}" syntax.
 
-In Antlr4, the _tokens { ... }_ syntax was changed from semi-colon delimited values
-to comma delimited values. The last item in the _tokens_ list does not have a trailing
+In Antlr4, the _tokens { ... }_ syntax was changed from semi-colon delimited identifiers
+to comma delimited identifiers. The last item in the _tokens_ list does not have a trailing
 comma, so it is removed.
 
     //tokensSpec
@@ -46,7 +49,9 @@ comma, so it is removed.
             /SEMI
 
 In addition, the assignment of token strings is no longer supported, so "FOO = 'foo';"
-is changed to "FOO", and a lexer rule added in its place at the end of the new grammar
+is changed to "FOO" in the tokens list,
+ and a lexer rule added in its place at
+ the end of the new grammar
 file, e.g., "FOO: 'foo' ;".
 
     //tokensSpec
