@@ -48,7 +48,8 @@ comma, so it is removed.
         /tokenSpec
             /SEMI
 
-In addition, the assignment of token strings is no longer supported, so "FOO = 'foo';"
+In addition, the assignment of a string literal
+value to a token in the tokens list is no longer supported, so "FOO = 'foo';"
 is changed to "FOO" in the tokens list,
  and a lexer rule added in its place at
  the end of the new grammar
