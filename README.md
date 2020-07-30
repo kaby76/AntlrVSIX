@@ -55,8 +55,9 @@ The refactorings implemented are:
 
 ## Conversion
 
-* Bison import.
 * [Antlr3 import](https://github.com/kaby76/AntlrVSIX/blob/master/doc/Import.md#antlr3).
+* [Antlr2 import](https://github.com/kaby76/AntlrVSIX/blob/master/doc/Import.md#antlr2).
+* [Bison import](https://github.com/kaby76/AntlrVSIX/blob/master/doc/Import.md#bison).
 
 ---------
 
