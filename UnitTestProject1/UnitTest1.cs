@@ -1445,7 +1445,7 @@ IDENTIFIER
             var code = System.IO.File.ReadAllText(ffn);
 			var results = new Dictionary<string, string>();
 			LanguageServer.Antlr3Import.Try(ffn, code, ref results);
-            var gold = cwd + "/" + "../../../../UnitTestProject1/new.g4";
+            var gold = cwd + "/" + "../../../../UnitTestProject1/ANTLRv3.g4";
             var gold_code = System.IO.File.ReadAllText(gold);
             if (!results.Any()) throw new Exception();
             if (results.First().Value != gold_code) throw new Exception();
