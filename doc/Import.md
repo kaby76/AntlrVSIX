@@ -10,9 +10,13 @@ a relatively easy operation, but there are many steps
 in the process. While there is no official document describing
 how to convert an Antlr3 grammar to Antlr4, many of the steps
 were outlined by Harwell in a [pull request he made to a grammar
-file](https://github.com/senseidb/sensei/pull/23).
+file](https://github.com/senseidb/sensei/pull/23). While much of the
+conversion may work, some remaining problmes will need to be manually
+fixed.
 
-## Remove unused options at the top of a grammar file.
+## Transformations in Antlr3 to Antlr4 conversion
+
+### Remove unused options at the top of a grammar file.
 
 There are many options no longer supported in Antlr4: _output_, _backtrack_,
 _memoize_, _ASTLabelType_, _rewrite_. Import removes these options.
@@ -30,7 +34,7 @@ the section itself is removed.
                 or text() = 'rewrite'
                 ]]
 
-## Remove options within optionSpec's at the beginning of rules.
+### Remove options within optionSpec's at the beginning of rules.
 
 Similar to the previous transform, _output_, _backtrack_,
 _memoize_, _ASTLabelType_, _rewrite_
@@ -38,7 +42,7 @@ are removed from optionSpec at the beginning  of a rule.
 If the optionsSpec is empty after removing these options,
 the section itself is removed.
 
-## Use new "tokens {}" syntax.
+### Use new "tokens {}" syntax.
 
 In Antlr4, the _tokens { ... }_ syntax was changed from semi-colon delimited identifiers
 to comma delimited identifiers. The last item in the _tokens_ list cannot have a trailing
@@ -69,7 +73,7 @@ file, e.g., "FOO: 'foo' ;".
         {semi}
     )
 
-## Remove unsupported rewrite syntax and AST operators.
+### Remove unsupported rewrite syntax and AST operators.
 
 Antlr4 makes a strong departure from Antlr3 in purpse: AST construction is
 not a supported feature anymore because Antlr is not for compiler construction.
@@ -90,7 +94,7 @@ including
 
         //rewrite
 
-## Scopes
+### Scopes
 
 Antlr4 supports _scope_ with _local_. However, this tool
 currently simply deletes the _scope_ clause.
@@ -107,7 +111,7 @@ This is no longer supported in Antlr4, so the label with "=" or "+=" are deleted
             //elementNoOptionSpec
                 [EQUAL or PEQ]
 
-## Lexer fragment rules cannot contain actions or commands.
+### Lexer fragment rules cannot contain actions or commands.
 
 Again, while actions were allowed in _fragment_ rules in the lexer, these
 are no longer supported so actions are deleted.
@@ -117,14 +121,14 @@ are no longer supported so actions are deleted.
             //elementNoOptionSpec
                 /actionBlock[not(QM)]
 
-## Syntactic predicates are no longer supported in Antlr4
+### Syntactic predicates are no longer supported in Antlr4
 
 Syntactic predicates were supported in Antlr3 to handle parsing problems.
 These are no longer needed, and so they are deleted.
 
     //ebnf [SEMPREDOP]
 
-## Semantic predicates do not need to be explicitly gated in ANTLR 4
+### Semantic predicates do not need to be explicitly gated in ANTLR 4
 
 The gating of sematic predicates is unnecessary in Antlr4, so are removed.
 
@@ -132,7 +136,7 @@ The gating of sematic predicates is unnecessary in Antlr4, so are removed.
         [(actionBlock and QM)]
             /SEMPREDOP
 
-## Fix options "k = ...".
+### Fix options "k = ...".
 
 The "k" option is not needed in Antlr4 since it is LL(*). The "greedy"
 option is replaced with the "*?* operator.
@@ -149,3 +153,18 @@ option is replaced with the "*?* operator.
             [id/(TOKEN_REF | RULE_REF)[text() = 'greedy']
                 and 
              optionValue/id/RULE_REF[text() = 'false']]
+             
+## Problems remaining that require manual fixes
+
+After conversion, you will need to check and correct any remaining problems.
+
+* The tool does not currently convert embedded code in action blocks (it may
+at some point).
+* Gated semantic predicates in Antlr3 are not exactly equivalent to the semantic
+predicates in Antlr4. If you use `@init { ... }` to declare variables for the rule,
+they won't be visible in the scope of the declared predicate. See 
+[this](https://github.com/kaby76/AntlrVSIX/blob/master/UnitTestProject1/Numbers.g3) example.
+
+
+
+
