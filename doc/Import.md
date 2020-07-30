@@ -1,7 +1,8 @@
-# Importing ANTLR and Bison grammars
+# Converting Antlr2, Antlr3, and Bison grammars into Antlr4
 
 Antlrvsix can convert a few grammar types into
-Antlr4 syntax.
+Antlr4 syntax. Either the Antlrvsix extension or the Trash
+command-line tool can be used to convert grammars.
 
 # Antlr3
 
@@ -16,9 +17,17 @@ fixed.
 
 ## Transformations in Antlr3 to Antlr4 conversion
 
+There are about a dozen or so transofmrations
+that convert a grammar from Antlr3 syntax to
+Antlr4. These are listed below. In each of the transformations,
+an XPath expression is used to implement what nodes of the
+parse tree to rewrite.
+
 ### Remove unused options at the top of a grammar file.
 
-There are many options no longer supported in Antlr4: _output_, _backtrack_,
+There are many grammar-level
+options that were supported in Antlr3,
+but are no longer supported in Antlr4: _output_, _backtrack_,
 _memoize_, _ASTLabelType_, _rewrite_. Import removes these options.
 If the optionsSpec is empty after removing these options,
 the section itself is removed.
@@ -167,6 +176,13 @@ they won't be visible in the scope of the declared predicate. See
 
 
 # Antlr2
+
+Antlr2 grammars are a little more challenging to convert to Antlr4, but there
+is a pretty good guide to
+[converting Antlr2 to Antlr3 by Parr](https://theantlrguy.atlassian.net/wiki/spaces/ANTLR3/pages/2687070/Migrating+from+ANTLR+2+to+ANTLR+3).
+
+### Parser and Lexer in One Definition
+
 
 
 # Bison

@@ -44,12 +44,12 @@ namespace LanguageServer
         {
             if (InLexerRule)
             {
-                PushMode(ANTLRv3Lexer.LexerCharSet);
+                PushMode(ANTLRv2Lexer.LexerCharSet);
                 More();
             }
             else
             {
-                PushMode(ANTLRv3Lexer.Argument);
+                PushMode(ANTLRv2Lexer.Argument);
             }
         }
 
@@ -58,7 +58,7 @@ namespace LanguageServer
             PopMode();
             if (ModeStack.Count > 0)
             {
-                CurrentRuleType = (ANTLRv3Lexer.ARGUMENT_CONTENT);
+                CurrentRuleType = (ANTLRv2Lexer.ARGUMENT_CONTENT);
             }
         }
 
@@ -67,12 +67,12 @@ namespace LanguageServer
             int oldMode = CurrentMode;
             int newMode = PopMode();
             bool isActionWithinAction = ModeStack.Count > 0
-                                        && newMode == ANTLRv3Lexer.Actionx
+                                        && newMode == ANTLRv2Lexer.Actionx
                                         && oldMode == newMode;
 
             if (isActionWithinAction)
             {
-                Type = (ANTLRv3Lexer.ACTION_CONTENT);
+                Type = (ANTLRv2Lexer.ACTION_CONTENT);
             }
         }
 
@@ -81,40 +81,40 @@ namespace LanguageServer
         {
         //if (insideOptionsBlock)
         //{
-        //    Type = (ANTLRv3Lexer.BEGIN_ACTION);
-        //    PushMode(ANTLRv3Lexer.Actionx);
+        //    Type = (ANTLRv2Lexer.BEGIN_ACTION);
+        //    PushMode(ANTLRv2Lexer.Actionx);
         //}
         //else
             {
-                Type = (ANTLRv3Lexer.LBRACE);
+                Type = (ANTLRv2Lexer.LBRACE);
             }
         }
 
         public override IToken Emit()
         {
-            if ((Type == ANTLRv3Lexer.OPTIONS || Type == ANTLRv3Lexer.TOKENS)
+            if ((Type == ANTLRv2Lexer.OPTIONS || Type == ANTLRv2Lexer.TOKENS)
                 && CurrentRuleType == TokenConstants.InvalidType)
             { // enter prequel construct ending with an RBRACE
                 CurrentRuleType = PREQUEL_CONSTRUCT;
             }
-            else if (Type == ANTLRv3Lexer.RBRACE && CurrentRuleType == PREQUEL_CONSTRUCT)
+            else if (Type == ANTLRv2Lexer.RBRACE && CurrentRuleType == PREQUEL_CONSTRUCT)
             { // exit prequel construct
                 CurrentRuleType = TokenConstants.InvalidType;
             }
-            else if (Type == ANTLRv3Lexer.AT && CurrentRuleType == TokenConstants.InvalidType)
+            else if (Type == ANTLRv2Lexer.AT && CurrentRuleType == TokenConstants.InvalidType)
             { // enter action
-                CurrentRuleType = ANTLRv3Lexer.AT;
+                CurrentRuleType = ANTLRv2Lexer.AT;
             }
-            else if (Type == ANTLRv3Lexer.ID)
+            else if (Type == ANTLRv2Lexer.ID)
             {
                 char firstChar = stream.GetText(Interval.Of(TokenStartCharIndex, TokenStartCharIndex))[0];
                 if (char.IsUpper(firstChar))
                 {
-                    Type = ANTLRv3Lexer.TOKEN_REF;
+                    Type = ANTLRv2Lexer.TOKEN_REF;
                 }
                 else
                 {
-                    Type = ANTLRv3Lexer.RULE_REF;
+                    Type = ANTLRv2Lexer.RULE_REF;
                 }
 
                 if (CurrentRuleType == TokenConstants.InvalidType)
@@ -122,17 +122,17 @@ namespace LanguageServer
                     CurrentRuleType = Type; // set to inside lexer or parser rule
                 }
             }
-            else if (Type == ANTLRv3Lexer.SEMI)
+            else if (Type == ANTLRv2Lexer.SEMI)
             { // exit rule def
                 CurrentRuleType = TokenConstants.InvalidType;
             }
             return base.Emit();
         }
 
-        private bool InLexerRule => CurrentRuleType == ANTLRv3Lexer.TOKEN_REF;
+        private bool InLexerRule => CurrentRuleType == ANTLRv2Lexer.TOKEN_REF;
 
 
-        private bool InParserRule => CurrentRuleType == ANTLRv3Lexer.RULE_REF;
+        private bool InParserRule => CurrentRuleType == ANTLRv2Lexer.RULE_REF;
 
     }
 }

@@ -34,7 +34,11 @@ options
 }
 
 grammar_
-   : ( HEADER STRING_LITERAL? action )* fileOptionsSpec? classDef* EOF
+   : header_* fileOptionsSpec? classDef* EOF
+   ;
+
+header_
+   : HEADER STRING_LITERAL? actionBlock
    ;
 
 classDef
@@ -102,7 +106,7 @@ tokenSpec
    ;
 
 tokensSpecOptions
-   : OPEN_ELEMENT_OPITON id ASSIGN optionValue ( SEMI id ASIGN optionValue )* CLOSE_ELEMENT_OPTION
+   : OPEN_ELEMENT_OPTION id EQUAL optionValue ( SEMI id EQUAL optionValue )* CLOSE_ELEMENT_OPTION
    ;
 
 superClass
@@ -171,14 +175,14 @@ element
 
 elementOptionSpec
    : OPEN_ELEMENT_OPTION
-     id ASSIGN optionValue
-     ( SEMI id ASSIGN optionValue )*
+     id EQUAL optionValue
+     ( SEMI id EQUAL optionValue )*
      CLOSE_ELEMENT_OPTION
      ;
 
 elementNoOptionSpec
    : (id EQUAL (id COLON)? (RULE_REF argActionBlock? BANG? | TOKEN_REF argActionBlock?))
-   | ((id COLON)? (RULE_REF argActionBlock? BANG? | range | terminal_ | NOT_OP ( notTerminal | ebnf) | ebnf))
+   | ((id COLON)? (RULE_REF argActionBlock? BANG? | range | terminal_ | NOT ( notTerminal | ebnf) | ebnf))
    | actionBlock
    | SEMPRED
    | tree_
@@ -195,11 +199,11 @@ rootNode
 ebnf
    : LPAREN ( subruleOptionsSpec COLON | actionBlock COLON)?
    block RPAREN
-   ( (QM | STAR | PLUS)? BANG? | IMPLIES)
+   ( (QM | STAR | PLUS)? BANG? | SEMPREDOP)
    ;
 
 ast_type_spec
-   : (CART | BANG)?
+   : (ROOT | BANG)?
    ;
 
 range

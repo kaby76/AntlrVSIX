@@ -1437,18 +1437,32 @@ IDENTIFIER
             LanguageServer.Antlr3Import.Try(document.FullPath, document.Code, ref results);
         }
 
-		[TestMethod]
-		public void TestImport2()
-		{
+        [TestMethod]
+        public void TestImport2()
+        {
             var cwd = Directory.GetCurrentDirectory();
             var ffn = cwd + "/" + "../../../../UnitTestProject1/ANTLRv3.g";
             var code = System.IO.File.ReadAllText(ffn);
-			var results = new Dictionary<string, string>();
-			LanguageServer.Antlr3Import.Try(ffn, code, ref results);
+            var results = new Dictionary<string, string>();
+            LanguageServer.Antlr3Import.Try(ffn, code, ref results);
             var gold = cwd + "/" + "../../../../UnitTestProject1/ANTLRv3.g4";
             var gold_code = System.IO.File.ReadAllText(gold);
             if (!results.Any()) throw new Exception();
             if (results.First().Value != gold_code) throw new Exception();
         }
-	}
+
+        [TestMethod]
+        public void TestImport3()
+        {
+            var cwd = Directory.GetCurrentDirectory();
+            var ffn = cwd + "/" + "../../../../UnitTestProject1/ANTLRv2.g";
+            var code = System.IO.File.ReadAllText(ffn);
+            var results = new Dictionary<string, string>();
+            LanguageServer.Antlr2Import.Try(ffn, code, ref results);
+            //var gold = cwd + "/" + "../../../../UnitTestProject1/ANTLRv3.g4";
+            //var gold_code = System.IO.File.ReadAllText(gold);
+            //if (!results.Any()) throw new Exception();
+            //if (results.First().Value != gold_code) throw new Exception();
+        }
+    }
 }

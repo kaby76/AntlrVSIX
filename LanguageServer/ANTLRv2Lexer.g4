@@ -159,12 +159,19 @@ TOKENS
    : 'tokens' -> pushMode (Tokens)
    ;
 
+HEADER : 'header' ;
+CLASS : 'class' ;
+EXTENDS : 'extends' ;
+LEXCLASS : 'lexclass' ;
+TREEPARSER : 'treeparser' ;
+EXCEPTION : 'exception' ;
+
 CATCH : 'catch' ;
 FINALLY : 'finally' ;
 FRAGMENT : 'fragment' ;
 GRAMMAR : 'grammar' ;
 LEXER : 'lexer' ;
-PARSER : 'parser' ;
+PARSER : 'Parser' ;
 PRIVATE : 'private' ;
 PROTECTED : 'protected' ;
 PUBLIC : 'public' ;
@@ -176,8 +183,10 @@ TREE : 'tree' ;
 
 fragment WS_LOOP : (WS | SL_COMMENT | ML_COMMENT)* ;
 
-//// =================================
- 
+OPEN_ELEMENT_OPTION : Lt ;
+CLOSE_ELEMENT_OPTION : Gt ;
+
+
 AT : At ;
 BANG : '!' ;
 COLON : Colon ;
