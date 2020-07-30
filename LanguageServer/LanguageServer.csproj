@@ -9,13 +9,19 @@
   </ItemGroup>
 
   <ItemGroup>
+	  <Antlr4 Include="ANTLRv2Parser.g4">
+		  <Package>LanguageServer</Package>
+	  </Antlr4>
+	  <Antlr4 Include="ANTLRv2Lexer.g4">
+		  <Package>LanguageServer</Package>
+	  </Antlr4>
 	  <Antlr4 Include="ANTLRv3Parser.g4">
 		  <Package>LanguageServer</Package>
 	  </Antlr4>
 	  <Antlr4 Include="ANTLRv3Lexer.g4">
 		  <Package>LanguageServer</Package>
 	  </Antlr4>
-    <Antlr4 Include="ANTLRv4Lexer.g4">
+	  <Antlr4 Include="ANTLRv4Lexer.g4">
       <Package>LanguageServer</Package>
     </Antlr4>
     <Antlr4 Include="ANTLRv4Parser.g4">
