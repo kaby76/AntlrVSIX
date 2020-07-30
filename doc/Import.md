@@ -41,7 +41,7 @@ the section itself is removed.
 ## Use new "tokens {}" syntax.
 
 In Antlr4, the _tokens { ... }_ syntax was changed from semi-colon delimited identifiers
-to comma delimited identifiers. The last item in the _tokens_ list does not have a trailing
+to comma delimited identifiers. The last item in the _tokens_ list cannot have a trailing
 comma, so it is removed.
 
     //tokensSpec
