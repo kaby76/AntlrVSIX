@@ -1,13 +1,5 @@
 
 
-{
-import java.util.Enumeration;
-import java.io.DataInputStream;
-import java.io.InputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-}
-
 /* ANTLR Translator Generator
  * Project led by Terence Parr at http://www.cs.usfca.edu
  * Software rights: http://www.antlr.org/license.html
@@ -15,7 +7,7 @@ import java.io.IOException;
  * $Id: //depot/code/org.antlr/release/antlr-2.7.7/antlr/antlr.g#2 $
  */
 
-class ANTLRParser extends Parser;
+grammar ANTLRParser;
 options {
 	defaultErrorHandler=false;
 }

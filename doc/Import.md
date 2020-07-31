@@ -15,6 +15,11 @@ file](https://github.com/senseidb/sensei/pull/23). While much of the
 conversion may work, some remaining problmes will need to be manually
 fixed.
 
+In reading the following XPaths that identify the relevant subtree,
+please refer to the [Antlr3 lexer](https://github.com/kaby76/AntlrVSIX/blob/master/LanguageServer/ANTLRv3Lexer.g4)
+and [parser](https://github.com/kaby76/AntlrVSIX/blob/master/LanguageServer/ANTLRv3Parser.g4) grammars.
+
+
 ## Transformations in Antlr3 to Antlr4 conversion
 
 There are about a dozen or so transofmrations
@@ -181,12 +186,46 @@ Antlr2 grammars are a little more challenging to convert to Antlr4, but there
 is a pretty good guide to
 [converting Antlr2 to Antlr3 by Parr](https://theantlrguy.atlassian.net/wiki/spaces/ANTLR3/pages/2687070/Migrating+from+ANTLR+2+to+ANTLR+3).
 
-### Header removed
+In reading the following XPaths that identify the relevant subtree,
+please refer to the [Antlr2 lexer](https://github.com/kaby76/AntlrVSIX/blob/master/LanguageServer/ANTLRv2Lexer.g4)
+and [parser](https://github.com/kaby76/AntlrVSIX/blob/master/LanguageServer/ANTLRv2Parser.g4) grammars.
 
-Antlr2 allows one to define a "header" at the top of a grammar file. Unfortunately,
+### Remove header
+
+Antlr2 allows one to define a `header_` at the top of a grammar file. Unfortunately,
 this isn't supported in Antlr4. The header is deleted.
 
     //header_
+
+### Remove classDef action blocks (for now)
+
+In each `classDef`, an `actionBlock` can occur as the first child node. For now,
+this sub-tree is removed, but may be converted in the future.
+
+    //classDef/actionBlock
+
+### Removed unsupported options
+
+The `option` sub-tree can appear in a number of places in the grammar.
+Many options that were available in Antlr2 are now unnessary or unsupported
+in Antlr4. These options are removed and the entire `optionsSpec` removed
+if there it does not enclose any options.
+
+    //(fileOptionsSpec | parserOptionsSpec | lexerOptionsSpec | treeParserOptionsSpec)
+        /(option | lexerOption)
+            [id/*
+                [text() = 'output'
+                or text() = 'backtrack'
+                or text() = 'memoize'
+                or text() = 'ASTLabelType'
+                or text() = 'rewrite'
+                or text() = 'k'
+                or text() = 'exportVocab'
+                or text() = 'testLiterals'
+                or text() = 'interactive'
+                or text() = 'charVocabulary'
+                or text() = 'defaultErrorHandler'
+                ]]
 
 ### Parser and Lexer in One Definition
 
@@ -197,8 +236,6 @@ rules to be intermingled. So, in convert to version 4, I simply remove
 the declaration except for the first one, and turn it into a combined
 grammar. If there's only one class declaration, I won't remove it, but
 will change it into the current syntax.
-
-
 
 
 # Bison
