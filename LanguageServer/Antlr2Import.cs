@@ -59,19 +59,102 @@
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
                 AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
                     AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
-                // Allow language, tokenVocab, TokenLabelType, superClass
                 var nodes = engine.parseExpression(
                         @"//header_",
                         new StaticContextBuilder()).evaluate(
                         dynamicContext, new object[] { dynamicContext.Document })
                     .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
-                TreeEdits.Delete(tree, (in IParseTree n, out bool c) =>
+                foreach (var n in nodes)
                 {
-                    c = true;
-                    return nodes.Contains(n) ? n : null;
-                });
+                    TreeEdits.Delete(n);
+                }
             }
 
+            // Let's take care of options first. That's because we can't
+            // determine if this is a combined grammar or not.
+            // Remove unused options at top of grammar def.
+            // This specifically looks at the options at the top of the file,
+            // not rule-based options. That will be handled separately below.
+            {
+                org.eclipse.wst.xml.xpath2.processor.Engine engine =
+                    new org.eclipse.wst.xml.xpath2.processor.Engine();
+                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
+                var options = engine.parseExpression(
+                        @"//(fileOptionsSpec | parserOptionsSpec | lexerOptionsSpec | treeOptionsSpec)",
+                        new StaticContextBuilder()).evaluate(
+                        dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
+                var nodes = engine.parseExpression(
+                        @"//(fileOptionsSpec | parserOptionsSpec | lexerOptionsSpec | treeParserOptionsSpec)
+                            /(option | lexerOption)
+                                [id/*
+                                        [text() = 'output'
+                                        or text() = 'backtrack'
+                                        or text() = 'memoize'
+                                        or text() = 'ASTLabelType'
+                                        or text() = 'rewrite'
+                                        or text() = 'k'
+                                        or text() = 'exportVocab'
+                                        or text() = 'testLiterals'
+                                        or text() = 'interactive'
+                                        or text() = 'charVocabulary'           
+                                        ]]",
+                        new StaticContextBuilder()).evaluate(
+                        dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
+                foreach (var n in nodes)
+                {
+                    TreeEdits.Delete(n);
+                }
+                //foreach (var opt in options)
+                //{
+                //    if (opt.ChildCount == 3)
+                //        TreeEdits.Delete(opt);
+                //}
+            }
+
+            // Parser and Lexer in One Definition
+            {
+                org.eclipse.wst.xml.xpath2.processor.Engine engine =
+                    new org.eclipse.wst.xml.xpath2.processor.Engine();
+                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
+                var parser_nodes = engine.parseExpression(
+                        @"//parserSpec",
+                        new StaticContextBuilder()).evaluate(
+                        dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
+                var lexer_nodes = engine.parseExpression(
+                        @"//lexerSpec",
+                        new StaticContextBuilder()).evaluate(
+                        dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
+                var tree_nodes = engine.parseExpression(
+                        @"//treeParserSpec",
+                        new StaticContextBuilder()).evaluate(
+                        dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
+                // Can this be a "combined" grammar? That can happen only if
+                // one parser and one lexer decl and no tree decl. Options for
+                // the lexer must be removed too.
+                if (parser_nodes.Count() == 1 && lexer_nodes.Count() == 1)
+                {
+                    var lexerSpec = lexer_nodes.First() as ANTLRv2Parser.LexerSpecContext;
+                    if (lexerSpec.lexerOptionsSpec() == null)
+                    {
+                        // Nuke lexer class decl because it's a combined grammar.
+                        TreeEdits.Delete(lexerSpec);
+                        lexerSpec = null;
+                    }
+                    // Rewrite the parser spec.
+                    var parserSpec = parser_nodes.First() as ANTLRv2Parser.ParserSpecContext;
+                    var c = parserSpec.CLASS();
+
+
+
+                }
+            }
 
             StringBuilder sb = new StringBuilder();
             TreeEdits.Reconstruct(sb, tree, text_before);

@@ -181,7 +181,23 @@ Antlr2 grammars are a little more challenging to convert to Antlr4, but there
 is a pretty good guide to
 [converting Antlr2 to Antlr3 by Parr](https://theantlrguy.atlassian.net/wiki/spaces/ANTLR3/pages/2687070/Migrating+from+ANTLR+2+to+ANTLR+3).
 
+### Header removed
+
+Antlr2 allows one to define a "header" at the top of a grammar file. Unfortunately,
+this isn't supported in Antlr4. The header is deleted.
+
+    //header_
+
 ### Parser and Lexer in One Definition
+
+Parr supported parser and lexer grammars in a single file using
+"class" declarations. In version 3 of Antlr, Parr took this further
+by just dropping the partioning altogether, allowing lexer and parser
+rules to be intermingled. So, in convert to version 4, I simply remove
+the declaration except for the first one, and turn it into a combined
+grammar. If there's only one class declaration, I won't remove it, but
+will change it into the current syntax.
+
 
 
 
