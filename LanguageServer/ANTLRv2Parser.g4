@@ -42,7 +42,7 @@ header_
    ;
 
 classDef
-   : action? DOC_COMMENT? ( lexerSpec | treeParserSpec | parserSpec ) rules
+   : actionBlock? DOC_COMMENT? ( lexerSpec | treeParserSpec | parserSpec ) rules
    ;
    
 fileOptionsSpec
@@ -94,13 +94,12 @@ setBlockElement
    ;
 
 tokensSpec
-   : TOKENS LBRACE tokenSpec+ RBRACE
+   : TOKENS LBRACE tokenEntry+ RBRACE
    ;
 
-tokenSpec
-   : (
-       TOKEN_REF ( EQUAL (STRING_LITERAL | CHAR_LITERAL) | )
-       | STRING_LITERAL tokensSpecOptions
+tokenEntry
+   : (TOKEN_REF ( EQUAL STRING_LITERAL ) tokensSpecOptions?
+     | STRING_LITERAL tokensSpecOptions?
      )
      SEMI
    ;
@@ -114,16 +113,16 @@ superClass
    ;
 
 parserSpec
-   : CLASS id (EXTENDS PARSER superClass? | ) SEMI parserOptionsSpec? tokensSpec? action?
+   : CLASS id (EXTENDS PARSER superClass? | ) SEMI parserOptionsSpec? tokensSpec? actionBlock?
    ;
 
 lexerSpec
    : (LEXCLASS id | CLASS id EXTENDS LEXER superClass?)
-   SEMI lexerOptionsSpec? tokensSpec? action?
+   SEMI lexerOptionsSpec? tokensSpec? actionBlock?
    ;
 
 treeParserSpec
-   : CLASS id EXTENDS TREEPARSER superClass? SEMI treeParserOptionsSpec? tokensSpec? action?
+   : CLASS id EXTENDS TREEPARSER superClass? SEMI treeParserOptionsSpec? tokensSpec? actionBlock?
    ;
 
 rules
@@ -156,7 +155,7 @@ exceptionGroup
 
 exceptionSpec
    : EXCEPTION 
-   // TODO ARG_ACTION
+   argActionBlock?
    exceptionHandler*
    ;
 
@@ -181,13 +180,18 @@ elementOptionSpec
      ;
 
 elementNoOptionSpec
-   : (id EQUAL (id COLON)? (RULE_REF argActionBlock? BANG? | TOKEN_REF argActionBlock?))
-   | ((id COLON)? (RULE_REF argActionBlock? BANG? | range | terminal_ | NOT ( notTerminal | ebnf) | ebnf))
-   | actionBlock
-   | SEMPRED
+   : (id EQUAL (id COLON)? (rule_ref_or_keyword_as argActionBlock? BANG? | TOKEN_REF argActionBlock?))
+   | ((id COLON)? (rule_ref_or_keyword_as argActionBlock? BANG? | range | terminal_ | NOT ( notTerminal | ebnf) | ebnf))
+   | actionBlock QM?
    | tree_
    ;
-   
+
+rule_ref_or_keyword_as
+   : RULE_REF
+   | GRAMMAR
+   | TREE
+   ;
+
 tree_
    : TREE_BEGIN rootNode element+ RPAREN
    ;
@@ -197,8 +201,7 @@ rootNode
    ;
 
 ebnf
-   : LPAREN ( subruleOptionsSpec COLON | actionBlock COLON)?
-   block RPAREN
+   : LPAREN ( subruleOptionsSpec actionBlock? COLON | actionBlock COLON)? block RPAREN
    ( (QM | STAR | PLUS)? BANG? | SEMPREDOP)
    ;
 
@@ -230,6 +233,8 @@ qualifiedID
 id
    : TOKEN_REF
    | RULE_REF
+   | GRAMMAR
+   | TREE
    ;
 
 
@@ -245,7 +250,7 @@ actionScopeName
 
    
 ruleAction
-   : AT id actionBlock
+   : actionBlock
    ;
 
 altList

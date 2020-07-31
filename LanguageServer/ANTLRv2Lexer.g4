@@ -93,25 +93,18 @@ CHAR_LITERAL
    : '\'' LITERAL_CHAR '\''
    ;
 
-STRING_LITERAL
-   : '\'' LITERAL_CHAR LITERAL_CHAR* '\''
-   ;
-
 fragment LITERAL_CHAR
    : ESC
    | ~ ('\'' | '\\')
    ;
 
-// This seems to be available in Antlr3.
-
-DOUBLE_QUOTE_STRING_LITERAL
-   : '"' (ESC | ~ ('\\' | '"'))* '"'
+STRING_LITERAL
+   : '"' LIT_STR* '"'
    ;
 
-// This seems to be available in Antlr3.
-
-DOUBLE_ANGLE_STRING_LITERAL
-   : '<<' ()*? '>>'
+fragment LIT_STR
+   : ESC
+   | ~ ('\\' | '"')
    ;
 
 fragment ESC
@@ -124,32 +117,14 @@ fragment XDIGIT
    | 'A' .. 'F'
    ;
 
-
-// -------------------------
-// Arguments
-//
-// Certain argument lists, such as those specifying call parameters
-// to a rule invocation, or input parameters to a rule specification
-// are contained within square brackets.
-
 BEGIN_ARGUMENT
    : LBrack
    { handleBeginArgument(); }
    ;
 
-// -------------------------
-// Actions
-
 BEGIN_ACTION
    : LBrace -> pushMode (Actionx)
    ;
-
-// -------------------------
-// Keywords
-//
-// Keywords may not be used as labels for rules or in any other context where
-// they would be ambiguous with the keyword vs some other identifier.  OPTIONS,
-// TOKENS, & CHANNELS blocks are handled idiomatically in dedicated lexical modes.
 
 OPTIONS
    : 'options' -> pushMode (Options)
@@ -165,12 +140,11 @@ EXTENDS : 'extends' ;
 LEXCLASS : 'lexclass' ;
 TREEPARSER : 'treeparser' ;
 EXCEPTION : 'exception' ;
-
 CATCH : 'catch' ;
 FINALLY : 'finally' ;
 FRAGMENT : 'fragment' ;
 GRAMMAR : 'grammar' ;
-LEXER : 'lexer' ;
+LEXER : 'Lexer' ;
 PARSER : 'Parser' ;
 PRIVATE : 'private' ;
 PROTECTED : 'protected' ;
@@ -179,14 +153,9 @@ RETURNS : 'returns' ;
 SCOPE : 'scope' ;
 THROWS : 'throws' ;
 TREE : 'tree' ;
-
-
 fragment WS_LOOP : (WS | SL_COMMENT | ML_COMMENT)* ;
-
 OPEN_ELEMENT_OPTION : Lt ;
 CLOSE_ELEMENT_OPTION : Gt ;
-
-
 AT : At ;
 BANG : '!' ;
 COLON : Colon ;
@@ -200,7 +169,7 @@ LPAREN : LParen ;
 OR : Pipe ;
 PLUS : Plus ;
 QM : Question ;
-RANGE : '..' ;
+RANGE : Range ;
 RBRACE : RBrace ;
 RBRACK : RBrack ;
 REWRITE : RArrow ;
@@ -352,15 +321,8 @@ fragment Int : 'int' ;
 fragment Esc : '\\' ;
 fragment Colon : ':' ;
 fragment DColon : '::' ;
-
-fragment SQuote
-   : '\''
-   ;
-
-fragment DQuote
-   : '"'
-   ;
-
+fragment SQuote : '\'' ;
+fragment DQuote : '"' ;
 fragment LParen : '(' ;
 fragment RParen : ')' ;
 fragment LBrace : '{' ;
@@ -368,15 +330,8 @@ fragment RBrace : '}' ;
 fragment LBrack : '[' ;
 fragment RBrack : ']' ;
 fragment RArrow : '->' ;
-
-fragment Lt
-   : '<'
-   ;
-
-fragment Gt
-   : '>'
-   ;
-
+fragment Lt : '<' ;
+fragment Gt : '>' ;
 fragment Equal : '=' ;
 fragment Question : '?' ;
 fragment Star : '*' ;
@@ -390,14 +345,8 @@ fragment Semi : ';' ;
 fragment Dot : '.' ;
 fragment Range : '..' ;
 fragment At : '@' ;
-
-fragment Pound
-   : '#'
-   ;
-
-fragment Tilde
-   : '~'
-   ;
+fragment Pound : '#' ;
+fragment Tilde : '~' ;
 
 // ======================================================
 // Lexer modes
@@ -525,7 +474,11 @@ OPT_ASSIGN
    ;
 
 OPT_STRING_LITERAL
-   : SQuoteLiteral -> type (STRING_LITERAL)
+   : SQuoteLiteral -> type (CHAR_LITERAL)
+   ;
+
+OPT_RANGE
+   : Range -> type(RANGE)
    ;
 
 OPT_INT
@@ -580,11 +533,15 @@ TOK_CL
    ;
 
 TOK_SL
-   : '\'' LITERAL_CHAR LITERAL_CHAR* '\'' -> type(STRING_LITERAL)
+   : '"' LIT_STR* '"' -> type(STRING_LITERAL)
    ;
 
 TOK_SEMI
    : Semi -> type (SEMI)
+   ;
+
+TOK_RANGE
+   : Range -> type(RANGE)
    ;
 
 TOK_WS
