@@ -1,7 +1,8 @@
-# Converting Antlr2, Antlr3, and Bison grammars into Antlr4
+# Converting Antlr3, Antlr2, and Bison grammars into Antlr4
 
 Antlrvsix can convert a few grammar types into
-Antlr4 syntax. Either the Antlrvsix extension or the Trash
+Antlr4 syntax. You can do this either through VS with
+the Antlrvsix extension or the Trash
 command-line tool can be used to convert grammars.
 
 # Antlr3
