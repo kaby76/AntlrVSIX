@@ -13,30 +13,33 @@ how to convert an Antlr3 grammar to Antlr4, many of the steps
 were outlined by Harwell in a [pull request he made to a grammar
 file](https://github.com/senseidb/sensei/pull/23). There is
 no guarantee that the
-conversion works perfectly. It is likely some remaining problmes will need to be manually
-fixed.
+conversion implemented here works perfectly. It is likely some problems post-convention
+ will need to be 
+fixed manually.
 
 ## Transformations in Antlr3 to Antlr4 conversion
 
-There are about a dozen or so transofmrations
-that convert a grammar from Antlr3 syntax to
-Antlr4. These are listed below. In each of the transformations,
+There are about a dozen or so transformations 
+to convert a grammar from Antlr3 to
+Antlr4 syntax. These are listed below. In each of the transformations,
 an XPath expression is used to implement what nodes of the
 parse tree to rewrite. Depending on the transformation, 
 code is added to delete, construct new trees, and replace.
 
-In reading the following XPaths that identify the relevant subtree,
+In reading the following XPaths,
 please refer to the [Antlr3 lexer](https://github.com/kaby76/AntlrVSIX/blob/master/LanguageServer/ANTLRv3Lexer.g4)
-and [parser](https://github.com/kaby76/AntlrVSIX/blob/master/LanguageServer/ANTLRv3Parser.g4) grammars.
+and [parser](https://github.com/kaby76/AntlrVSIX/blob/master/LanguageServer/ANTLRv3Parser.g4) grammars
+to find the corresponding rules to the XPath node name tests.
 
 ### Remove unused options at the top of a grammar file
 
 There are many grammar-level
-options that were supported in Antlr3,
-but are no longer supported in Antlr4: _output_, _backtrack_,
-_memoize_, _ASTLabelType_, _rewrite_. Import removes these options.
-If the optionsSpec is empty after removing these options,
-the section itself is removed.
+options that are supported in Antlr3,
+but are not in Antlr4: _output_, _backtrack_,
+_memoize_, _ASTLabelType_, _rewrite_. Import removes these options
+individually.
+If the `optionsSpec` is empty after removing these `option`s,
+the `optionsSpec` itself is removed.
 
     //grammarDef/optionsSpec
         /option
@@ -53,8 +56,8 @@ the section itself is removed.
 
 Similar to the previous transform, _output_, _backtrack_,
 _memoize_, _ASTLabelType_, _rewrite_
-are removed from optionSpec at the beginning  of a rule.
-If the optionsSpec is empty after removing these options,
+are removed from `optionsSpec` at the beginning of a rule.
+If the `optionsSpec` is empty after removing these options,
 the section itself is removed.
 
 ### Use new "tokens {}" syntax
@@ -90,9 +93,12 @@ file, e.g., "FOO: 'foo' ;".
 
 ### Remove unsupported rewrite syntax and AST operators
 
-Antlr4 makes a strong departure from Antlr3 in purpse: AST construction is
-not a supported feature anymore because Antlr is not for compiler construction.
-Consequently, a number of anotations are nuked from the Antlr3 parse tree,
+Antlr4 makes a strong departure from Antlr3 in
+not supporting the construction of
+ASTs. _Antlr is not considered suitable 
+for compiler construction._
+Consequently, AST construction anotations are
+deleted from the parse tree,
 including
 
 * "!" and "^" operators.
