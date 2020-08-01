@@ -72,11 +72,7 @@
                         new StaticContextBuilder()).evaluate(
                         dynamicContext, new object[] { dynamicContext.Document })
                     .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
-                TreeEdits.Delete(tree, (in IParseTree n, out bool c) =>
-                {
-                    c = true;
-                    return nodes.Contains(n) ? n : null;
-                });
+                foreach (var n in nodes) TreeEdits.Delete(n);
                 var options = engine.parseExpression(
                         @"//grammarDef/optionsSpec",
                         new StaticContextBuilder()).evaluate(
@@ -84,11 +80,7 @@
                     .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
                 if (options.Count() == 1 && options.First().ChildCount == 3)
                 {
-                    TreeEdits.Delete(tree, (in IParseTree n, out bool c) =>
-                    {
-                        c = true;
-                        return options.Contains(n) ? n : null;
-                    });
+                    foreach (var n in options) TreeEdits.Delete(n);
                 }
             }
 
@@ -126,10 +118,7 @@
                     .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
                 foreach (var os in options)
                 {
-                    if (os.ChildCount == 3)
-                    {
-                        TreeEdits.Delete(os);
-                    }
+                    if (os.ChildCount == 3) TreeEdits.Delete(os);
                 }
             }
 
@@ -150,11 +139,7 @@
                 {
                     // Delete tha last ";" in tokens list--change in syntax.
                     var last = nodes.Last();
-                    TreeEdits.Delete(last, (in IParseTree n, out bool c) =>
-                    {
-                        c = false;
-                        return n;
-                    });
+                    TreeEdits.Delete(last);
                     // Replace all remaining ";" with ",". 
                     TreeEdits.Replace(tree, (in IParseTree n, out bool c) =>
                     {
@@ -248,11 +233,7 @@
                     .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
                 if (n1.Any())
                 {
-                    TreeEdits.Delete(tree, (in IParseTree n, out bool c) =>
-                    {
-                        c = true;
-                        return n1.Contains(n) ? n : null;
-                    });
+                    foreach (var n in n1) TreeEdits.Delete(n);
                 }
                 var n2 = engine.parseExpression(
                         @"//terminal_
@@ -262,11 +243,7 @@
                     .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
                 if (n2.Any())
                 {
-                    TreeEdits.Delete(tree, (in IParseTree n, out bool c) =>
-                    {
-                        c = true;
-                        return n2.Contains(n) ? n : null;
-                    });
+                    foreach (var n in n2) TreeEdits.Delete(n);
                 }
                 var n3 = engine.parseExpression(
                         @"//rewrite",
@@ -275,25 +252,14 @@
                     .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
                 if (n3.Any())
                 {
-                    TreeEdits.Delete(tree, (in IParseTree n, out bool c) =>
-                    {
-                        c = true;
-                        return n3.Contains(n) ? n : null;
-                    });
+                    foreach (var n in n3) TreeEdits.Delete(n);
                 }
 		        var n4 = engine.parseExpression(
                         @"//rule_/BANG",
 						new StaticContextBuilder()).evaluate(
 			         dynamicContext, new object[] { dynamicContext.Document })
 			         .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
-		        if (n4.Any())
-		        {
-			        TreeEdits.Delete(tree, (in IParseTree n, out bool c) =>
-			        {
-				        c = true;
-				        return n4.Contains(n) ? n : null;
-			        });
-		        }
+                foreach (var n in n4) TreeEdits.Delete(n);
             }
 
             // Scope not in Antlr4 (equivalent are locals).
@@ -310,10 +276,7 @@
                      .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
                 if (rule_scope_spec.Any())
                 {
-                    foreach (var n in rule_scope_spec)
-                    {
-                        TreeEdits.Delete(n);
-                    }
+                    foreach (var n in rule_scope_spec) TreeEdits.Delete(n);
                 }
             }
 
@@ -359,10 +322,7 @@
                      .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
                 if (ab.Any())
                 {
-                    foreach (var n in ab)
-                    {
-                        TreeEdits.Delete(n);
-                    }
+                    foreach (var n in ab) TreeEdits.Delete(n);
                 }
             }
 
@@ -380,11 +340,7 @@
                     .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
                 if (n2.Any())
                 {
-                    TreeEdits.Delete(tree, (in IParseTree n, out bool c) =>
-                    {
-                        c = true;
-                        return n2.Contains(n) ? n : null;
-                    });
+                    foreach (var n in n2) TreeEdits.Delete(n);
                 }
             }
 
@@ -409,11 +365,7 @@
                     .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
                 if (n1.Any())
                 {
-                    TreeEdits.Delete(tree, (in IParseTree n, out bool c) =>
-                    {
-                        c = true;
-                        return n1.Contains(n) ? n : null;
-                    });
+                    foreach (var n in n1) TreeEdits.Delete(n);
                 }
             }
 

@@ -64,10 +64,7 @@
                         new StaticContextBuilder()).evaluate(
                         dynamicContext, new object[] { dynamicContext.Document })
                     .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
-                foreach (var n in nodes)
-                {
-                    TreeEdits.Delete(n);
-                }
+                foreach (var n in nodes) TreeEdits.Delete(n);
             }
 
             // Remove classDef action blocks for now.
@@ -81,10 +78,7 @@
                         new StaticContextBuilder()).evaluate(
                         dynamicContext, new object[] { dynamicContext.Document })
                     .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
-                foreach (var n in nodes)
-                {
-                    TreeEdits.Delete(n);
-                }
+                foreach (var n in nodes) TreeEdits.Delete(n);
             }
 
             // Let's take care of options first. That's because we can't
@@ -121,10 +115,7 @@
                         new StaticContextBuilder()).evaluate(
                         dynamicContext, new object[] { dynamicContext.Document })
                     .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
-                foreach (var n in nodes)
-                {
-                    TreeEdits.Delete(n);
-                }
+                foreach (var n in nodes) TreeEdits.Delete(n);
                 //foreach (var opt in options)
                 //{
                 //    if (opt.ChildCount == 3)
@@ -182,9 +173,9 @@
                         cc = false;
                         return new_sym;
                     });
-                    if (e != null) TreeEdits.Delete(e);
-                    if (p != null) TreeEdits.Delete(p);
-                    if (s != null) TreeEdits.Delete(s);
+                    TreeEdits.Delete(e);
+                    TreeEdits.Delete(p);
+                    TreeEdits.Delete(s);
                 }
             }
 
