@@ -1465,5 +1465,20 @@ IDENTIFIER
             //if (!results.Any()) throw new Exception();
             //if (results.First().Value != gold_code) throw new Exception();
         }
+
+        [TestMethod]
+        public void TestImport4()
+        {
+            var cwd = Directory.GetCurrentDirectory();
+            var ffn = cwd + "/" + "../../../../UnitTestProject1/calc.y";
+            var code = System.IO.File.ReadAllText(ffn);
+            var results = new Dictionary<string, string>();
+            LanguageServer.BisonImport.Try(ffn, code, ref results);
+            var new_code = results.ToList()[1].Value;
+            //var gold = cwd + "/" + "../../../../UnitTestProject1/ANTLRv3.g4";
+            //var gold_code = System.IO.File.ReadAllText(gold);
+            //if (!results.Any()) throw new Exception();
+            //if (results.First().Value != gold_code) throw new Exception();
+        }
     }
 }

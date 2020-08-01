@@ -263,9 +263,7 @@ rules
     ;
 
 rhses_1
-    : rhs       # rhs1
-    | rhses_1 PIPE rhs       # rhs2
-    | rhses_1 SEMICOLON       # rhs3
+    : rhs ( PIPE rhs )* SEMICOLON
     ;
 
 rhs

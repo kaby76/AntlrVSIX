@@ -1,19 +1,16 @@
-﻿// Template generated code from Antlr4BuildTasks.Template v 3.0
-
-using Antlr4.Runtime.Tree;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-
-namespace LanguageServer
+﻿namespace LanguageServer
 {
     using Antlr4.Runtime;
+    using Antlr4.Runtime.Tree;
+    using org.eclipse.wst.xml.xpath2.processor.util;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
 
     public class BisonImport
     {
-        internal static void Try(string ffn, string input, ref Dictionary<string, string> results)
+        public static void Try(string ffn, string input, ref Dictionary<string, string> results)
         {
             bool convert_undefined_to_terminals = true;
             string now = DateTime.Now.ToString();
@@ -26,75 +23,129 @@ namespace LanguageServer
             BisonErrorListener<IToken> elistener = new BisonErrorListener<IToken>(parser, lexer, tokens, errors);
             parser.AddErrorListener(elistener);
             BisonParser.InputContext tree = parser.input();
-            string error_file_name = input.Replace(".g4", ".txt");
+            string error_file_name = ffn.Replace(".g4", ".txt");
             if (elistener.had_error)
             {
-                results.Add(input.Replace(".y", ".txt"), errors.ToString());
+                results.Add(ffn.Replace(".y", ".txt"), errors.ToString());
                 return;
             }
             else
             {
-                errors.AppendLine("File " + input + " parsed successfully.");
+                errors.AppendLine("File " + ffn + " parsed successfully.");
                 errors.AppendLine("Date: " + now);
             }
-
-            // First, collect information about the grammar.
-            BisonGrammarListener listener = new BisonGrammarListener();
-            ParseTreeWalker.Default.Walk(listener, tree);
 
             // Get list of tokens. Convert this to a list of capitalized names.
             Dictionary<string, Tuple<string, string>> terminals = new Dictionary<string, Tuple<string, string>>();
             Dictionary<string, string> nonterminals = new Dictionary<string, string>();
-            
-            foreach (IParseTree token in listener.terminals)
+            List<Tuple<string, List<List<string>>>> rules = new List<Tuple<string, List<List<string>>>>();
+
+            // Collect terminals.
             {
+                org.eclipse.wst.xml.xpath2.processor.Engine engine =
+                    new org.eclipse.wst.xml.xpath2.processor.Engine();
+                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
+                var nodes = engine.parseExpression(
+                        @"//token_decls//token_decl/id[position() = 1]",
+                        new StaticContextBuilder()).evaluate(
+                        dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
                 Antlr4.Runtime.Tree.IParseTree parent;
-                for (parent = token; parent != null; parent = parent.Parent)
+                foreach (var token in nodes)
                 {
-                    if (parent is BisonParser.Token_declsContext)
+                    for (parent = token; parent != null; parent = parent.Parent)
                     {
-                        BisonParser.Token_declsContext token_decls = parent as BisonParser.Token_declsContext;
-                        int count = token_decls.ChildCount;
-                        if (count == 1)
+                        if (parent is BisonParser.Token_declsContext)
                         {
-                            string tag = "";
-                            string tok = token.GetText();
-                            string cap_tok = tok.Length == 1 ? char.ToUpper(tok[0]).ToString() :
-                                (char.ToUpper(tok[0]) + tok.Substring(1));
-                            terminals.Add(tok, new Tuple<string, string>(tag, cap_tok));
-                        }
-                        else if (count == 2)
-                        {
-                            string tag = parent.GetChild(0).GetText();
-                            tag = tag.Replace("<", "").Replace(">", "");
-                            string tok = token.GetText();
-                            string cap_tok = tok.Length == 1 ? char.ToUpper(tok[0]).ToString() :
-                                (char.ToUpper(tok[0]) + tok.Substring(1));
-                            terminals.Add(tok, new Tuple<string, string>(tag, cap_tok));
-                        }
-                        else if (count == 3)
-                        {
-                            string tag = parent.GetChild(1).GetText();
-                            tag = tag.Replace("<", "").Replace(">", "");
-                            string tok = token.GetText();
-                            string cap_tok = tok.Length == 1 ? char.ToUpper(tok[0]).ToString() :
-                                (char.ToUpper(tok[0]) + tok.Substring(1));
-                            terminals.Add(tok, new Tuple<string, string>(tag, cap_tok));
+                            BisonParser.Token_declsContext token_decls = parent as BisonParser.Token_declsContext;
+                            int count = token_decls.ChildCount;
+                            if (count == 1)
+                            {
+                                string tag = "";
+                                string tok = token.GetText();
+                                string cap_tok = tok.Length == 1 ? char.ToUpper(tok[0]).ToString() :
+                                    (char.ToUpper(tok[0]) + tok.Substring(1));
+                                terminals.Add(tok, new Tuple<string, string>(tag, cap_tok));
+                            }
+                            else if (count == 2)
+                            {
+                                string tag = parent.GetChild(0).GetText();
+                                tag = tag.Replace("<", "").Replace(">", "");
+                                string tok = token.GetText();
+                                string cap_tok = tok.Length == 1 ? char.ToUpper(tok[0]).ToString() :
+                                    (char.ToUpper(tok[0]) + tok.Substring(1));
+                                terminals.Add(tok, new Tuple<string, string>(tag, cap_tok));
+                            }
+                            else if (count == 3)
+                            {
+                                string tag = parent.GetChild(1).GetText();
+                                tag = tag.Replace("<", "").Replace(">", "");
+                                string tok = token.GetText();
+                                string cap_tok = tok.Length == 1 ? char.ToUpper(tok[0]).ToString() :
+                                    (char.ToUpper(tok[0]) + tok.Substring(1));
+                                terminals.Add(tok, new Tuple<string, string>(tag, cap_tok));
+                            }
                         }
                     }
                 }
             }
 
+            // Collect rules.
+            {
+                org.eclipse.wst.xml.xpath2.processor.Engine engine =
+                    new org.eclipse.wst.xml.xpath2.processor.Engine();
+                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
+                var nodes = engine.parseExpression(
+                        @"//rules",
+                        new StaticContextBuilder()).evaluate(
+                        dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement));
+                foreach (var rule in nodes)
+                {
+                    var r = rule.AntlrIParseTree;
+                    var lhs = r.GetChild(0).GetText();
+                    var rhs = new List<List<string>>();
+                    var rhses = engine.parseExpression(
+                            @".//rhses_1/rhs",
+                            new StaticContextBuilder()).evaluate(
+                            dynamicContext, new object[] { rule })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement));
+                    foreach (var r1 in rhses)
+                    {
+                        rhs.Add(new List<string>());
+                        var sym = engine.parseExpression(
+                                @".//symbol",
+                                new StaticContextBuilder()).evaluate(
+                                dynamicContext, new object[] { r1 })
+                            .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
+                        foreach (var s in sym)
+                        {
+                            List<string> l = rhs.Last();
+                            l.Insert(0, s.GetText());
+                        }
+                    }
+                    rules.Add(new Tuple<string, List<List<string>>>(lhs, rhs));
+                }
+            }
+
+
+            // First, collect information about the grammar.
+  //          BisonGrammarListener listener = new BisonGrammarListener();
+  //          ParseTreeWalker.Default.Walk(listener, tree);
+
+
             if (convert_undefined_to_terminals)
             {
-                foreach (Tuple<string, List<List<string>>> r in listener.rules)
+                foreach (Tuple<string, List<List<string>>> r in rules)
                 {
                     List<List<string>> rhs = r.Item2;
                     foreach (List<string> s in rhs)
                     {
                         foreach (string c in s)
                         {
-                            if (listener.rules.Where(rr => rr.Item1 == c).Any())
+                            if (rules.Where(rr => rr.Item1 == c).Any())
                             {
                                 continue;
                             }
@@ -128,7 +179,7 @@ namespace LanguageServer
             }
 
             // Convert any nonterminals which are keywords in Antlr...
-            foreach (Tuple<string, List<List<string>>> r in listener.rules)
+            foreach (Tuple<string, List<List<string>>> r in rules)
             {
                 if (!terminals.ContainsKey(r.Item1)
                     && (r.Item1 == "options"
@@ -150,15 +201,15 @@ namespace LanguageServer
             }
 
             // Get the name of the grammar.
-            string name = System.IO.Path.GetFileNameWithoutExtension(input);
+            string name = System.IO.Path.GetFileNameWithoutExtension(ffn);
             sb.AppendLine("// Combined Antlr4 grammar generated by Antlrvsix.");
-            sb.AppendLine("// Input grammar: " + input);
+            sb.AppendLine("// Input grammar: " + ffn);
             sb.AppendLine("// Date: " + now);
             sb.AppendLine();
             sb.AppendLine("grammar " + name + ";");
 
             // Output the rules.
-            foreach (Tuple<string, List<List<string>>> r in listener.rules)
+            foreach (Tuple<string, List<List<string>>> r in rules)
             {
                 string lhs = r.Item1;
                 lhs = nonterminals[lhs];
@@ -185,7 +236,7 @@ namespace LanguageServer
             // Check for use of error symbol. The semantics is for the parser to look for
             // the ERROR token.
             bool found = false;
-            foreach (Tuple<string, List<List<string>>> r in listener.rules)
+            foreach (Tuple<string, List<List<string>>> r in rules)
             {
                 List<List<string>> rhs = r.Item2;
                 foreach (List<string> s in rhs)
@@ -205,8 +256,8 @@ namespace LanguageServer
             {
                 sb.AppendLine("error : ERROR ;");
             }
-            results.Add(input.Replace(".y", ".txt"), errors.ToString());
-            results.Add(input.Replace(".y", ".g4"), sb.ToString());
+            results.Add(ffn.Replace(".y", ".txt"), errors.ToString());
+            results.Add(ffn.Replace(".y", ".g4"), sb.ToString());
         }
     }
 }
