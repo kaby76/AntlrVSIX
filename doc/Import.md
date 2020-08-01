@@ -270,3 +270,9 @@ extract all the rules:
         foreach rhs in rhses
             rhs_symbol = .//symbol
 
+Import also performs some additional checks:
+
+* Rename grammar symbols that collide with Antlr keywords ("options",
+"grammar", "tokenVocab", "lexer", "parser",
+"rule").
+* Add lexer rules for any undeclared symbols.
