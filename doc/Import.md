@@ -13,9 +13,8 @@ in the process. While there is no official document describing
 how to convert an Antlr3 grammar to Antlr4, many of the steps
 were outlined by Harwell in a [pull request](https://github.com/senseidb/sensei/pull/23). There is
 no guarantee that the
-conversion implemented here works perfectly. And, it is likely some problems post-conversion
- changes will need to be done
-manually.
+conversion implemented here works perfectly. And, it is likely you
+will need to edit the result.
 
 ## Transformations in Antlr3 to Antlr4 conversion
 
