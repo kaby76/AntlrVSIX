@@ -11,8 +11,7 @@ The conversion of Antlr3 grammars into Antlr4 is
 a relatively easy operation, but there are many steps
 in the process. While there is no official document describing
 how to convert an Antlr3 grammar to Antlr4, many of the steps
-were outlined by Harwell in a [pull request he made to a grammar
-file](https://github.com/senseidb/sensei/pull/23). There is
+were outlined by Harwell in a [pull request](https://github.com/senseidb/sensei/pull/23). There is
 no guarantee that the
 conversion implemented here works perfectly. It is likely some problems post-convention
  will need to be 
