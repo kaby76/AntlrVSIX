@@ -247,3 +247,20 @@ will change it into the current syntax.
 
 # Bison
 
+The Bison import is based on a grammar that was derived from 
+the [Bison grammar in the Git repository](https://git.savannah.gnu.org/cgit/bison.git/tree/src/parse-gram.y).
+While the [lexer](https://github.com/kaby76/AntlrVSIX/blob/master/LanguageServer/BisonLexer.g4)
+and [parser](https://github.com/kaby76/AntlrVSIX/blob/master/LanguageServer/BisonParser.g4) grammars are complete,
+the conversion itself is rudimentary. Only the basic rules are imported.
+[Precedence and associativity rules](http://codinggorilla.com/?p=2703) are not converted.
+
+The import performs a simple tree traversal of the parse tree to
+extract all the rules:
+
+    terminals = //token_decls//token_decl/id[position() = 1]
+    rules = //rules
+    foreach rule in rules
+        rhses = .//rhses_1/rhs
+        foreach rhs in rhses
+            rhs_symbol = .//symbol
+
