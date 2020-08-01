@@ -3,7 +3,7 @@
 Antlrvsix can convert a few grammar types into
 Antlr4 syntax. You can do this either through VS with
 the Antlrvsix extension or the Trash
-command-line tool can be used to convert grammars.
+command-line tool.
 
 # Antlr3
 
