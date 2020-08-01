@@ -251,8 +251,14 @@ The Bison import is based on a grammar that was derived from
 the [Bison grammar in the Git repository](https://git.savannah.gnu.org/cgit/bison.git/tree/src/parse-gram.y).
 While the [lexer](https://github.com/kaby76/AntlrVSIX/blob/master/LanguageServer/BisonLexer.g4)
 and [parser](https://github.com/kaby76/AntlrVSIX/blob/master/LanguageServer/BisonParser.g4) grammars are complete,
-the conversion itself is rudimentary. Only the basic rules are imported.
-[Precedence and associativity rules](http://codinggorilla.com/?p=2703) are not converted.
+and parse almost any Bison grammar,
+the conversion itself is rudimentary. Only the basic rules are constructed.
+Not converted are:
+
+* [Precedence and associativity rules](http://codinggorilla.com/?p=2703);
+* action blocks;
+* token type structures;
+* Flex grammars.
 
 The import performs a simple tree traversal of the parse tree to
 extract all the rules:
