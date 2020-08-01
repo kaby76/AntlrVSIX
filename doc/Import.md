@@ -15,20 +15,20 @@ file](https://github.com/senseidb/sensei/pull/23). While much of the
 conversion may work, some remaining problmes will need to be manually
 fixed.
 
-In reading the following XPaths that identify the relevant subtree,
-please refer to the [Antlr3 lexer](https://github.com/kaby76/AntlrVSIX/blob/master/LanguageServer/ANTLRv3Lexer.g4)
-and [parser](https://github.com/kaby76/AntlrVSIX/blob/master/LanguageServer/ANTLRv3Parser.g4) grammars.
-
-
 ## Transformations in Antlr3 to Antlr4 conversion
 
 There are about a dozen or so transofmrations
 that convert a grammar from Antlr3 syntax to
 Antlr4. These are listed below. In each of the transformations,
 an XPath expression is used to implement what nodes of the
-parse tree to rewrite.
+parse tree to rewrite. Depending on the transformation, 
+code is added to delete, construct new trees, and replace.
 
-### Remove unused options at the top of a grammar file.
+In reading the following XPaths that identify the relevant subtree,
+please refer to the [Antlr3 lexer](https://github.com/kaby76/AntlrVSIX/blob/master/LanguageServer/ANTLRv3Lexer.g4)
+and [parser](https://github.com/kaby76/AntlrVSIX/blob/master/LanguageServer/ANTLRv3Parser.g4) grammars.
+
+### Remove unused options at the top of a grammar file
 
 There are many grammar-level
 options that were supported in Antlr3,
@@ -48,7 +48,7 @@ the section itself is removed.
                 or text() = 'rewrite'
                 ]]
 
-### Remove options within optionSpec's at the beginning of rules.
+### Remove options within optionSpec's at the beginning of rules
 
 Similar to the previous transform, _output_, _backtrack_,
 _memoize_, _ASTLabelType_, _rewrite_
@@ -56,7 +56,7 @@ are removed from optionSpec at the beginning  of a rule.
 If the optionsSpec is empty after removing these options,
 the section itself is removed.
 
-### Use new "tokens {}" syntax.
+### Use new "tokens {}" syntax
 
 In Antlr4, the _tokens { ... }_ syntax was changed from semi-colon delimited identifiers
 to comma delimited identifiers. The last item in the _tokens_ list cannot have a trailing
@@ -87,7 +87,7 @@ file, e.g., "FOO: 'foo' ;".
         {semi}
     )
 
-### Remove unsupported rewrite syntax and AST operators.
+### Remove unsupported rewrite syntax and AST operators
 
 Antlr4 makes a strong departure from Antlr3 in purpse: AST construction is
 not a supported feature anymore because Antlr is not for compiler construction.
@@ -115,7 +115,7 @@ currently simply deletes the _scope_ clause.
 
     //rule_/ruleScopeSpec
 
-## Labels in lexer rules are not supported.
+### Labels in lexer rules are not supported
 
 In Antlr3, one could write lexer rules that contained a label for an element.
 This is no longer supported in Antlr4, so the label with "=" or "+=" are deleted.
@@ -125,7 +125,7 @@ This is no longer supported in Antlr4, so the label with "=" or "+=" are deleted
             //elementNoOptionSpec
                 [EQUAL or PEQ]
 
-### Lexer fragment rules cannot contain actions or commands.
+### Lexer fragment rules cannot contain actions or commands
 
 Again, while actions were allowed in _fragment_ rules in the lexer, these
 are no longer supported so actions are deleted.
@@ -150,7 +150,7 @@ The gating of sematic predicates is unnecessary in Antlr4, so are removed.
         [(actionBlock and QM)]
             /SEMPREDOP
 
-### Fix options "k = ...".
+### Fix options "k = ..."
 
 The "k" option is not needed in Antlr4 since it is LL(*). The "greedy"
 option is replaced with the "*?* operator.
