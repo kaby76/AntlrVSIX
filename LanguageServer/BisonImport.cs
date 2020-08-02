@@ -256,8 +256,8 @@
             {
                 sb.AppendLine("error : ERROR ;");
             }
-            results.Add(ffn.Replace(".y", ".txt"), errors.ToString());
             results.Add(ffn.Replace(".y", ".g4"), sb.ToString());
+            results.Add(ffn.Replace(".y", ".txt"), errors.ToString());
         }
     }
 }

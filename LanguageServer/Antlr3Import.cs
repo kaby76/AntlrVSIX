@@ -456,6 +456,7 @@
             TreeEdits.Reconstruct(sb, tree, text_before);
             var new_code = sb.ToString();
             results.Add(new_ffn, new_code);
+            results.Add(ffn.Replace(".y", ".txt"), errors.ToString());
         }
     }
 }
