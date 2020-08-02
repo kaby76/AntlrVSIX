@@ -1,8 +1,9 @@
-# Converting Antlr2, Antlr3, and Bison grammars into Antlr4
+# Converting Antlr3, Antlr2, and Bison grammars into Antlr4
 
 Antlrvsix can convert a few grammar types into
-Antlr4 syntax. Either the Antlrvsix extension or the Trash
-command-line tool can be used to convert grammars.
+Antlr4 syntax. You can do this either through VS with
+the Antlrvsix extension or the Trash
+command-line tool.
 
 # Antlr3
 
@@ -10,12 +11,10 @@ The conversion of Antlr3 grammars into Antlr4 is
 a relatively easy operation, but there are many steps
 in the process. While there is no official document describing
 how to convert an Antlr3 grammar to Antlr4, many of the steps
-were outlined by Harwell in a [pull request he made to a grammar
-file](https://github.com/senseidb/sensei/pull/23). There is
+were outlined by Harwell in a [pull request](https://github.com/senseidb/sensei/pull/23). There is
 no guarantee that the
-conversion implemented here works perfectly. It is likely some problems post-convention
- will need to be 
-fixed manually.
+conversion implemented here works perfectly. And, it is likely you
+will need to edit the result.
 
 ## Transformations in Antlr3 to Antlr4 conversion
 
