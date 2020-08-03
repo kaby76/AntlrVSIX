@@ -14,14 +14,14 @@
         private static int changed = 0;
         private static bool first_time = true;
 
-        public static StringBuilder OutputTree(IParseTree tree, CommonTokenStream stream)
+        public static StringBuilder OutputTree(IParseTree tree, Lexer lexer, CommonTokenStream stream)
         {
             var sb = new StringBuilder();
-            ParenthesizedAST(tree, sb, stream);
+            ParenthesizedAST(tree, sb, lexer, stream);
             return sb;
         }
 
-        private static void ParenthesizedAST(IParseTree tree, StringBuilder sb, CommonTokenStream stream, int level = 0)
+        private static void ParenthesizedAST(IParseTree tree, StringBuilder sb, Lexer lexer, CommonTokenStream stream, int level = 0)
         {
             // Antlr always names a non-terminal with first letter lowercase,
             // but renames it when creating the type in C#. So, remove the prefix,
@@ -33,15 +33,15 @@
                 Interval interval = tok.SourceInterval;
                 IList<IToken> inter = null;
                 if (tok.Symbol.TokenIndex >= 0)
-                    inter = stream.GetHiddenTokensToLeft(tok.Symbol.TokenIndex);
+                    inter = stream?.GetHiddenTokensToLeft(tok.Symbol.TokenIndex);
                 if (inter != null)
                     foreach (var t in inter)
                     {
-                        StartLine(sb, tree, stream, level);
-                        sb.AppendLine("( " + ((Lexer)stream.TokenSource).ChannelNames[t.Channel] + " text=" + PerformEscapes(t.Text));
+                        StartLine(sb, level);
+                        sb.AppendLine("( " + lexer.ChannelNames[t.Channel] + " text=" + PerformEscapes(t.Text));
                     }
-                StartLine(sb, tree, stream, level);
-                sb.AppendLine("( " + ((Lexer)stream.TokenSource).ChannelNames[tok.Symbol.Channel] + " i=" + tree.SourceInterval.a
+                StartLine(sb, level);
+                sb.AppendLine("( " + lexer.ChannelNames[tok.Symbol.Channel] + " i=" + tree.SourceInterval.a
                     + " txt=" + PerformEscapes(tree.GetText())
                     + " tt=" + tok.Symbol.Type);
             }
@@ -53,14 +53,14 @@
                 fixed_name = fixed_name.Substring(0, fixed_name.Length - "Context".Length);
                 fixed_name = fixed_name[0].ToString().ToLower()
                              + fixed_name.Substring(1);
-                StartLine(sb, tree, stream, level);
+                StartLine(sb, level);
                 sb.Append("( " + fixed_name);
                 sb.AppendLine();
             }
             for (int i = 0; i < tree.ChildCount; ++i)
             {
                 var c = tree.GetChild(i);
-                ParenthesizedAST(c, sb, stream, level + 1);
+                ParenthesizedAST(c, sb, lexer, stream, level + 1);
             }
             if (level == 0)
             {
@@ -70,7 +70,7 @@
             }
         }
 
-        private static void StartLine(StringBuilder sb, IParseTree tree, CommonTokenStream stream, int level = 0)
+        private static void StartLine(StringBuilder sb, int level = 0)
         {
             if (changed - level >= 0)
             {
