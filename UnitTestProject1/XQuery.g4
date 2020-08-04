@@ -1,10 +1,5 @@
 grammar XQueryParser;
 
-options {
-        buildAST= false;
-        classHeaderSuffix=org.xqdoc.conversion.XQDocParser;
-}
-
 xpath
 :
         ( module )? EOF
