@@ -1458,7 +1458,8 @@ IDENTIFIER
             var ffn = cwd + "/" + "../../../../UnitTestProject1/ANTLRv2.g";
             var code = System.IO.File.ReadAllText(ffn);
             var results = new Dictionary<string, string>();
-            LanguageServer.Antlr2Import.Try(ffn, code, ref results);
+            var imp = new LanguageServer.Antlr2Import();
+            imp.Try(ffn, code, ref results);
             var new_code = results.First().Value;
             //var gold = cwd + "/" + "../../../../UnitTestProject1/ANTLRv3.g4";
             //var gold_code = System.IO.File.ReadAllText(gold);

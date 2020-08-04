@@ -14,7 +14,15 @@
 
     public class Antlr2Import
     {
-        public static void Try(string ffn, string input, ref Dictionary<string, string> results)
+        public bool StripLabelOperator { get; set; } = true; // "x:foobar" => "foobar"
+        public bool StripActionBlocks { get; set; } = true; // "{ ... }" => ""
+        public bool StripAssignmentOperator { get; set; } = true; // "x=foobar" => "foobar"
+
+        public Antlr2Import()
+        {
+        }
+
+        public void Try(string ffn, string input, ref Dictionary<string, string> results)
         {
             var convert_undefined_to_terminals = true;
             var now = DateTime.Now.ToString();
@@ -179,11 +187,58 @@
                 }
             }
 
+            if (StripLabelOperator)
+            {
+                org.eclipse.wst.xml.xpath2.processor.Engine engine =
+                    new org.eclipse.wst.xml.xpath2.processor.Engine();
+                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
+                var nodes = engine.parseExpression(
+                        @"//elementNoOptionSpec
+                            /(id[following-sibling::COLON and not(following-sibling::id)]
+                              | COLON[preceding-sibling::id and not(preceding-sibling::COLON)])",
+                        new StaticContextBuilder()).evaluate(
+                        dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
+                foreach (var n in nodes) TreeEdits.Delete(n);
+            }
+
+            if (StripActionBlocks)
+            {
+                org.eclipse.wst.xml.xpath2.processor.Engine engine =
+                    new org.eclipse.wst.xml.xpath2.processor.Engine();
+                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
+                var nodes = engine.parseExpression(
+                        @"//actionBlock
+                            [not(following-sibling::QM)]",
+                        new StaticContextBuilder()).evaluate(
+                        dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
+                foreach (var n in nodes) TreeEdits.Delete(n);
+            }
+
+            // Remove syntactic predicates.
+            {
+                org.eclipse.wst.xml.xpath2.processor.Engine engine =
+                    new org.eclipse.wst.xml.xpath2.processor.Engine();
+                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
+                var n2 = engine.parseExpression(
+                        @"//ebnf
+                            [SEMPREDOP]",
+                        new StaticContextBuilder()).evaluate(
+                        dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
+                foreach (var n in n2) TreeEdits.Delete(n);
+            }
+
+
             StringBuilder sb = new StringBuilder();
             TreeEdits.Reconstruct(sb, tree, text_before);
             var new_code = sb.ToString();
             results.Add(new_ffn, new_code);
-            results.Add(ffn.Replace(".y", ".txt"), errors.ToString());
+            results.Add(ffn.Replace(".g", ".txt"), errors.ToString());
         }
     }
 }

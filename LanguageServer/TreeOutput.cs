@@ -16,6 +16,8 @@
 
         public static StringBuilder OutputTree(IParseTree tree, Lexer lexer, CommonTokenStream stream)
         {
+            changed = 0;
+            first_time = true;
             var sb = new StringBuilder();
             ParenthesizedAST(tree, sb, lexer, stream);
             return sb;

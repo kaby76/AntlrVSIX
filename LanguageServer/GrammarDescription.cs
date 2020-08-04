@@ -69,6 +69,27 @@
             pd.Parser = parser;
             pd.Lexer = lexer;
             pd.ParseTree = pt;
+            Stack<IParseTree> stack = new Stack<IParseTree>();
+            stack.Push(pt);
+            while (stack.Any())
+            {
+                var x = stack.Pop();
+                if (x is TerminalNodeImpl leaf)
+                {
+                }
+                else
+                {
+                    var y = x as AttributedParseTreeNode;
+                    y.ParserDetails = pd;
+                    if (y.children != null)
+                    {
+                        foreach (var c in y.children)
+                        {
+                            stack.Push(c);
+                        }
+                    }
+                }
+            }
         }
 
         public void Parse(string code,

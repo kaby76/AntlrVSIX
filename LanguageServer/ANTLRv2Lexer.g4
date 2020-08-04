@@ -477,6 +477,10 @@ OPT_STRING_LITERAL
    : SQuoteLiteral -> type (CHAR_LITERAL)
    ;
 
+OPT_STRING_LITERAL2
+   : DQuoteLiteral -> type (STRING_LITERAL)
+   ;
+
 OPT_RANGE
    : Range -> type(RANGE)
    ;
