@@ -10,7 +10,9 @@
 
     public class BisonImport
     {
-        public static void Try(string ffn, string input, ref Dictionary<string, string> results)
+        public BisonImport() { }
+
+        public void Try(string ffn, string input, ref Dictionary<string, string> results)
         {
             bool convert_undefined_to_terminals = true;
             string now = DateTime.Now.ToString();

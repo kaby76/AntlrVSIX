@@ -14,11 +14,18 @@
                 var input = System.IO.File.ReadAllText(f);
                 if (f.EndsWith(".y"))
                 {
-                    BisonImport.Try(f, input, ref results);
+                    var imp = new BisonImport();
+                    imp.Try(f, input, ref results);
                 }
-                else if (f.EndsWith(".g3") || f.EndsWith(".g"))
+                else if (f.EndsWith(".g2"))
                 {
-                    LanguageServer.Antlr3Import.Try(f, input, ref results);
+                    var imp = new Antlr2Import();
+                    imp.Try(f, input, ref results);
+                }
+                else if (f.EndsWith(".g3"))
+                {
+                    var imp = new Antlr3Import();
+                    imp.Try(f, input, ref results);
                 }
             }
             return results;

@@ -1434,7 +1434,8 @@ IDENTIFIER
     ;
 ");
             var results = new Dictionary<string, string>();
-            LanguageServer.Antlr3Import.Try(document.FullPath, document.Code, ref results);
+            var imp = new LanguageServer.Antlr3Import();
+            imp.Try(document.FullPath, document.Code, ref results);
         }
 
         [TestMethod]
@@ -1444,7 +1445,8 @@ IDENTIFIER
             var ffn = cwd + "/" + "../../../../UnitTestProject1/ANTLRv3.g";
             var code = System.IO.File.ReadAllText(ffn);
             var results = new Dictionary<string, string>();
-            LanguageServer.Antlr3Import.Try(ffn, code, ref results);
+            var imp = new LanguageServer.Antlr3Import();
+            imp.Try(ffn, code, ref results);
             var gold = cwd + "/" + "../../../../UnitTestProject1/ANTLRv3.g4";
             var gold_code = System.IO.File.ReadAllText(gold);
             if (!results.Any()) throw new Exception();
@@ -1474,7 +1476,8 @@ IDENTIFIER
             var ffn = cwd + "/" + "../../../../UnitTestProject1/calc.y";
             var code = System.IO.File.ReadAllText(ffn);
             var results = new Dictionary<string, string>();
-            LanguageServer.BisonImport.Try(ffn, code, ref results);
+            var imp = new LanguageServer.BisonImport();
+            imp.Try(ffn, code, ref results);
             var new_code = results.ToList()[1].Value;
             //var gold = cwd + "/" + "../../../../UnitTestProject1/ANTLRv3.g4";
             //var gold_code = System.IO.File.ReadAllText(gold);
