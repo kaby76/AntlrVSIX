@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Protocol" Version="16.6.45" />
-    <PackageReference Include="StreamJsonRpc" Version="2.4.48" />
+    <PackageReference Include="StreamJsonRpc" Version="2.5.44" />
     <PackageReference Include="System.IO.Pipes" Version="4.3.0" />
     <PackageReference Include="System.IO.Pipes.AccessControl" Version="4.5.1" />
   </ItemGroup>
