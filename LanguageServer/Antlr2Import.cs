@@ -224,13 +224,13 @@
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
                 AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
                     AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
-                var n2 = engine.parseExpression(
+                var nodes = engine.parseExpression(
                         @"//ebnf
                             [SEMPREDOP]",
                         new StaticContextBuilder()).evaluate(
                         dynamicContext, new object[] { dynamicContext.Document })
                     .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
-                foreach (var n in n2) TreeEdits.Delete(n);
+                TreeEdits.Delete(nodes);
             }
 
             // Convert double-quoted string literals to single quote.
@@ -239,12 +239,12 @@
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
                 AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
                     AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
-                var n2 = engine.parseExpression(
+                var nodes = engine.parseExpression(
                         @"//STRING_LITERAL",
                         new StaticContextBuilder()).evaluate(
                         dynamicContext, new object[] { dynamicContext.Document })
                     .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
-                foreach (var n in n2)
+                foreach (var n in nodes)
                 {
                     var text = n.GetText();
                     if (text.Length == 0) continue;
@@ -267,6 +267,36 @@
                 }
             }
 
+            // Convert "protected" to "fragment" for lexer symbols.
+            //  Remove "protected" for parser symbols.
+            {
+                org.eclipse.wst.xml.xpath2.processor.Engine engine =
+                    new org.eclipse.wst.xml.xpath2.processor.Engine();
+                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
+                var nodes = engine.parseExpression(
+                        @"//rule_[id/RULE_REF]/(PROTECTED | PUBLIC | PRIVATE)",
+                        new StaticContextBuilder()).evaluate(
+                        dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
+                TreeEdits.Delete(nodes);
+            }
+
+            // If the symbol occurs on the RHS of a parser rule, remove "protected".
+            if (false) {
+                org.eclipse.wst.xml.xpath2.processor.Engine engine =
+                    new org.eclipse.wst.xml.xpath2.processor.Engine();
+                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
+                var nodes = engine.parseExpression(
+                        @"//rule_
+                            [not(id/TOKEN_REF/text() = //rule_[id/RULE_REF]/altList//TOKEN_REF/text())]
+                            /(PROTECTED | PUBLIC | PRIVATE)",
+                        new StaticContextBuilder()).evaluate(
+                        dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
+                TreeEdits.Delete(nodes);
+            }
 
             StringBuilder sb = new StringBuilder();
             TreeEdits.Reconstruct(sb, tree, text_before);
