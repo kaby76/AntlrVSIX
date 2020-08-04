@@ -123,12 +123,51 @@
                         new StaticContextBuilder()).evaluate(
                         dynamicContext, new object[] { dynamicContext.Document })
                     .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
-                foreach (var n in nodes) TreeEdits.Delete(n);
+                TreeEdits.Delete(nodes);
                 //foreach (var opt in options)
                 //{
                 //    if (opt.ChildCount == 3)
                 //        TreeEdits.Delete(opt);
                 //}
+            }
+
+            // Delete rule options.
+            {
+                org.eclipse.wst.xml.xpath2.processor.Engine engine =
+                    new org.eclipse.wst.xml.xpath2.processor.Engine();
+                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
+                // Allow language, tokenVocab, TokenLabelType, superClass
+                var nodes = engine.parseExpression(
+                        @"//rule_/ruleOptionsSpec
+                            /option
+                                [id
+                                    /(TOKEN_REF | RULE_REF)
+                                        [text() = 'output'
+                                        or text() = 'backtrack'
+                                        or text() = 'memoize'
+                                        or text() = 'ASTLabelType'
+                                        or text() = 'rewrite'
+                                        or text() = 'k'
+                                        or text() = 'exportVocab'
+                                        or text() = 'testLiterals'
+                                        or text() = 'interactive'
+                                        or text() = 'charVocabulary'
+                                        or text() = 'defaultErrorHandler'
+                                        ]]",
+                        new StaticContextBuilder()).evaluate(
+                        dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
+                TreeEdits.Delete(nodes);
+                var options = engine.parseExpression(
+                        @"//rule_/ruleOptionsSpec",
+                        new StaticContextBuilder()).evaluate(
+                        dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
+                foreach (var os in options)
+                {
+                    if (os.ChildCount == 3) TreeEdits.Delete(os);
+                }
             }
 
             // Parser and Lexer in One Definition

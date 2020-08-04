@@ -108,11 +108,7 @@
                         new StaticContextBuilder()).evaluate(
                         dynamicContext, new object[] { dynamicContext.Document })
                     .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
-                TreeEdits.Delete(tree, (in IParseTree n, out bool c) =>
-                {
-                    c = true;
-                    return nodes.Contains(n) ? n : null;
-                });
+                TreeEdits.Delete(nodes);
                 var options = engine.parseExpression(
                         @"//rule_/optionsSpec",
                         new StaticContextBuilder()).evaluate(

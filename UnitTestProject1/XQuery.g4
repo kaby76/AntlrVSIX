@@ -1319,9 +1319,6 @@ protected NMCHAR
         ;
 
 protected NCNAME
-options {
-        testLiterals=true;
-}
 :
         NMSTART ( NMCHAR )*
         ;
@@ -1340,25 +1337,16 @@ protected WS
         ;
 
 protected EXPR_COMMENT
-options {
-        testLiterals=false;
-}
 :
         '(:' ( CHAR | ':' | EXPR_COMMENT )* ':)'
         ;
 
 protected XQDOC_COMMENT
-options {
-        testLiterals=false;
-}
 :
         '(:~' ( CHAR | ':' )* ':)'
         ;
 
-protected PRAGMA
-options {
-        testLiterals=false;
-}:
+protected PRAGMA:
         '(#' WS PRAGMA_QNAME WS
         ( PRAGMA_CONTENT )? '#' ')'
         ;
@@ -1400,9 +1388,6 @@ protected CHAR_REF
         ;
 
 protected STRING_LITERAL
-options {
-        testLiterals = false;
-}
 :
         '"' ( PREDEFINED_ENTITY_REF | CHAR_REF | ( '"' '"' ) | ~ ( '"' | '&' ) )*
         '"'
@@ -1418,9 +1403,6 @@ options {
  * TODO: Allow escaped quotes in attribute content. Doesn't work.
  */
 protected QUOT_ATTRIBUTE_CONTENT
-options {
-        testLiterals=false;
-}
 :
         ( ~( '"' | '{' | '}' | '<' ) )+
         ;
@@ -1432,9 +1414,6 @@ options {
  * TODO: Allow escaped quotes in attribute content. Doesn't work.
  */
 protected APOS_ATTRIBUTE_CONTENT
-options {
-        testLiterals=false;
-}
 :
         ( ~( '\'' | '{' | '}' | '<' ) )+
         ;
@@ -1445,33 +1424,21 @@ options {
  * This can also impact any productions created from this rule.
  */
 protected ELEMENT_CONTENT
-options {
-        testLiterals=false;
-}
 :
         ( '\t' | '\r' | '\n' | '\u0020'..'\u003b' | '\u003d'..'\u007a' | '\u007c' | '\u007e'..'\uFFFD' )+
         ;
 
 protected XML_COMMENT
-options {
-        testLiterals=false;
-}
 :
         '<!--' ( ~ ( '-' ) | '-' )+
         ;
 
 protected XML_CDATA
-options {
-        testLiterals=false;
-}
 :
         '<![CDATA[' ( ~ ( ']' ) | ']' )+
         ;
 
 protected XML_PI
-options {
-        testLiterals=false;
-}
 :
         XML_PI_START NCNAME ' ' ( ~ ( '?' ) | '?' )+
         ;
@@ -1482,9 +1449,6 @@ options {
  * context.
  */
 NEXT_TOKEN
-options {
-        testLiterals = false;
-}
 :
         XML_COMMENT
         |
