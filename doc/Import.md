@@ -244,6 +244,51 @@ grammar. If there's only one class declaration, I won't remove it, but
 will change it into the current syntax.
 
 
+### Strip labels
+
+Antlr2 allows one to label symbols with a name, e.g., "value:expr".
+Import conditionally removes these for you.
+
+    if (StripLableOperator)
+    {
+        nodes = //elementNoOptionSpec
+                    /(id[following-sibling::COLON and not(following-sibling::id)]
+                    | COLON[preceding-sibling::id and not(preceding-sibling::COLON)])
+        delete nodes
+    }
+
+### Strip action blocks
+
+Antlr2 allows action blocks all over the grammar. These are generally non-portable
+to other targets. Import conditionally removes these for you.
+
+    if (StripActionBlocks)
+    {
+        nodes = //actionBlock
+                    [not(following-sibling::QM)]
+        delete nodes
+    }
+
+### Remove useless syntactic predicates
+
+Antlr2 allows grammars to contain "syntactic predicates". These function as
+"lookahead" to make sure the input will parse. Antlr4 is LL(*), so as far as I
+know, all syntactic predicates can be stripped resulting in a much cleaner grammar.
+
+    nodes = //ebnf
+               [SEMPREDOP]
+    delete nodes
+
+### Convert double-quoted string literals to single-quoted string literals
+
+Antlr2 allows string literals to be either single quoted or double quoted.
+Antlr4, however, does not allow double-quoted string literals, so all these
+must be converted to single-quoted literals.
+
+    nodes = //STING_LITERAL
+    for all n in nodes
+        if n is double quoted, replace it with a single-quoted equivalent_
+
 # Bison
 
 The Bison import is based on a grammar that was derived from 

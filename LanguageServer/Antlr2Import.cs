@@ -233,6 +233,40 @@
                 foreach (var n in n2) TreeEdits.Delete(n);
             }
 
+            // Convert double-quoted string literals to single quote.
+            {
+                org.eclipse.wst.xml.xpath2.processor.Engine engine =
+                    new org.eclipse.wst.xml.xpath2.processor.Engine();
+                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
+                var n2 = engine.parseExpression(
+                        @"//STRING_LITERAL",
+                        new StaticContextBuilder()).evaluate(
+                        dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
+                foreach (var n in n2)
+                {
+                    var text = n.GetText();
+                    if (text.Length == 0) continue;
+                    if (text[0] != '"') continue;
+                    text = text.Substring(1, text.Length - 2);
+                    StringBuilder ss = new StringBuilder();
+                    ss.Append("'");
+                    foreach (var c in text)
+                    {
+                        if (c == '"') ss.Append("\\");
+                        else ss.Append(c);
+                    }
+                    ss.Append("'");
+                    var new_sym = new TerminalNodeImpl(new CommonToken(ANTLRv4Lexer.STRING_LITERAL)
+                        { Line = -1, Column = -1, Text = ss.ToString() });
+                    text_before.TryGetValue(n as TerminalNodeImpl, out string v);
+                    if (v != null)
+                        text_before.Add(new_sym, v);
+                    TreeEdits.Replace(n, new_sym);
+                }
+            }
+
 
             StringBuilder sb = new StringBuilder();
             TreeEdits.Reconstruct(sb, tree, text_before);
