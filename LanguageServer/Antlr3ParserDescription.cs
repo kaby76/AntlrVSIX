@@ -86,13 +86,11 @@
                 else
                 {
                     var y = x as AttributedParseTreeNode;
-                    y.ParserDetails = pd;
-                    if (y.children != null)
+                    if (y != null) y.ParserDetails = pd;
+                    for (int i = 0; i < x.ChildCount; ++i)
                     {
-                        foreach (var c in y.children)
-                        {
-                            stack.Push(c);
-                        }
+                        var c = x.GetChild(i);
+                        if (c != null) stack.Push(c);
                     }
                 }
             }

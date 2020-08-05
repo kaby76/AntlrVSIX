@@ -30,7 +30,7 @@ parser grammar ANTLRv3Parser;
 options
 {
     tokenVocab = ANTLRv3Lexer;
-    contextSuperClass=AntlrTreeEditing.AntlrDOM.ObserverParserRuleContext;
+    contextSuperClass=AttributedParseTreeNode;
 }
 
 grammarDef
