@@ -5,7 +5,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class AntlrGrammarDetails : ParserDetails
+    public class AntlrGrammarDetails : ParsingResults
     {
         private static readonly Dictionary<string, IScope> _scopes = new Dictionary<string, IScope>();
         public static Algorithms.Utils.MultiMap<string, string> _dependent_grammars = new Algorithms.Utils.MultiMap<string, string>();

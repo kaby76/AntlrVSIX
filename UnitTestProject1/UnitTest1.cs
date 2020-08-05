@@ -34,8 +34,8 @@ namespace UnitTestProject1
                 project.AddDocument(document);
             }
             document.Changed = true;
-            _ = ParserDetailsFactory.Create(document);
-            _ = LanguageServer.Module.Compile();
+            _ = ParsingResultsFactory.Create(document);
+            _ = new LanguageServer.Module().Compile();
             return document;
         }
 
@@ -67,8 +67,8 @@ namespace UnitTestProject1
                 project.AddDocument(document);
             }
             document.Changed = true;
-            _ = ParserDetailsFactory.Create(document);
-            _ = LanguageServer.Module.Compile();
+            _ = ParsingResultsFactory.Create(document);
+            _ = new LanguageServer.Module().Compile();
             return document;
         }
 
@@ -80,10 +80,10 @@ namespace UnitTestProject1
             Document document = CheckDoc("../../../../LanguageServer/ANTLRv4Parser.g4");
             int line = 1;
             int character = 1;
-            int index = LanguageServer.Module.GetIndex(line, character, document);
-            (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
+            int index = new LanguageServer.Module().GetIndex(line, character, document);
+            (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
             if (back.Item1 != line || back.Item2 != character) throw new Exception();
-            QuickInfo quick_info = LanguageServer.Module.GetQuickInfo(index, document);
+            QuickInfo quick_info = new LanguageServer.Module().GetQuickInfo(index, document);
             if (quick_info != null) throw new Exception();
         }
 
@@ -97,14 +97,14 @@ namespace UnitTestProject1
             // All lines and columns are zero based in LSP.
             int line = 49;
             int character = 0;
-            int index = LanguageServer.Module.GetIndex(line, character, document);
-            (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
+            int index = new LanguageServer.Module().GetIndex(line, character, document);
+            (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
             if (back.Item1 != line || back.Item2 != character) throw new Exception();
-            QuickInfo quick_info = LanguageServer.Module.GetQuickInfo(index, document);
+            QuickInfo quick_info = new LanguageServer.Module().GetQuickInfo(index, document);
             if (quick_info == null) throw new Exception();
-            (int, int) back_start = LanguageServer.Module.GetLineColumn(quick_info.Range.Start.Value, document);
+            (int, int) back_start = new LanguageServer.Module().GetLineColumn(quick_info.Range.Start.Value, document);
             if (back_start.Item1 != line || back_start.Item2 != character) throw new Exception();
-            (int, int) back_end = LanguageServer.Module.GetLineColumn(quick_info.Range.End.Value, document);
+            (int, int) back_end = new LanguageServer.Module().GetLineColumn(quick_info.Range.End.Value, document);
             if (back_end.Item1 != line || back_end.Item2 != character + 11) throw new Exception();
         }
 
@@ -118,14 +118,14 @@ namespace UnitTestProject1
             // All lines and columns are zero based in LSP.
             int line = 50;
             int character = 18;
-            int index = LanguageServer.Module.GetIndex(line, character, document);
-            (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
+            int index = new LanguageServer.Module().GetIndex(line, character, document);
+            (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
             if (back.Item1 != line || back.Item2 != character) throw new Exception();
-            IList<Location> found = LanguageServer.Module.FindDefs(index, document);
+            IList<Location> found = new LanguageServer.Module().FindDefs(index, document);
             if (found.Count != 1) throw new Exception();
-            (int, int) back_start = LanguageServer.Module.GetLineColumn(found.First().Range.Start.Value, document);
+            (int, int) back_start = new LanguageServer.Module().GetLineColumn(found.First().Range.Start.Value, document);
             if (back_start.Item1 != 53 || back_start.Item2 != 0) throw new Exception();
-            (int, int) back_end = LanguageServer.Module.GetLineColumn(found.First().Range.End.Value, document);
+            (int, int) back_end = new LanguageServer.Module().GetLineColumn(found.First().Range.End.Value, document);
             if (back_end.Item1 != 53 || back_end.Item2 != 10) throw new Exception();
         }
 
@@ -156,10 +156,10 @@ WS
             // All lines and columns are zero based in LSP.
             int line = 3;
             int character = 6;
-            int index = LanguageServer.Module.GetIndex(line, character, document);
-            (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
+            int index = new LanguageServer.Module().GetIndex(line, character, document);
+            (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
             if (back.Item1 != line || back.Item2 != character) throw new Exception();
-            var found = LanguageServer.Module.FindRefsAndDefs(index, document).ToList();
+            var found = new LanguageServer.Module().FindRefsAndDefs(index, document).ToList();
             if (found.Count != 4) throw new Exception();
             List<Pair<int, int>> r = new List<Pair<int, int>>()
             {
@@ -172,7 +172,7 @@ WS
             for (int i = 0; i < ordered_found.Count; ++i)
             {
                 var start = ordered_found[i];
-                (int, int) back_start = LanguageServer.Module.GetLineColumn(start, document);
+                (int, int) back_start = new LanguageServer.Module().GetLineColumn(start, document);
                 if (back_start.Item1 != r[i].a || back_start.Item2 != r[i].b) throw new Exception();
             }
         }
@@ -185,11 +185,11 @@ WS
             // Convert all string literals on RHS of lexer rule into uc/lc equivalent.
             int line = 5;
             int character = 0;
-            int index = LanguageServer.Module.GetIndex(line, character, document);
-            (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
+            int index = new LanguageServer.Module().GetIndex(line, character, document);
+            (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
             if (back.Item1 != line || back.Item2 != character) throw new Exception();
-            int indexs = LanguageServer.Module.GetIndex(5, 0, document);
-            int indexe = LanguageServer.Module.GetIndex(6, 0, document);
+            int indexs = new LanguageServer.Module().GetIndex(5, 0, document);
+            int indexe = new LanguageServer.Module().GetIndex(6, 0, document);
             var found = LanguageServer.Transform.UpperLowerCaseLiteral(indexs, indexe, document);
             if (found.Count != 1) throw new Exception();
             var should_be = @"grammar KeywordFun;
@@ -214,7 +214,7 @@ D: 'uvw' 'xyz'+;
             // Convert all string literals on RHS of lexer rule into uc/lc equivalent.
             int line = 0;
             int character = 0;
-            int index = LanguageServer.Module.GetIndex(line, character, document);
+            int index = new LanguageServer.Module().GetIndex(line, character, document);
             var found = LanguageServer.Transform.ReplaceLiterals(index, index, document);
             if (found.Count != 1) throw new Exception();
             var should_be = @"grammar KeywordFun;
@@ -307,8 +307,8 @@ WS
 ");
             int line = 5;
             int character = 0;
-            int start = LanguageServer.Module.GetIndex(2, 0, document);
-            int end = LanguageServer.Module.GetIndex(5, 0, document);
+            int start = new LanguageServer.Module().GetIndex(2, 0, document);
+            int end = new LanguageServer.Module().GetIndex(5, 0, document);
             var found = LanguageServer.Transform.Unfold(start, end, document);
             if (found.Count != 1) throw new Exception();
             var should_be = @"grammar A;
@@ -358,8 +358,8 @@ WS
     ;
 ";
             Document document = CreateStringDocument(original);
-            int start = LanguageServer.Module.GetIndex(6, 0, document);
-            int end = LanguageServer.Module.GetIndex(6, 0, document);
+            int start = new LanguageServer.Module().GetIndex(6, 0, document);
+            int end = new LanguageServer.Module().GetIndex(6, 0, document);
             var found = LanguageServer.Transform.Fold(start, end, document);
  //           if (found.Count != 1) throw new Exception();
             var should_be = @"grammar A;

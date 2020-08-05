@@ -9,23 +9,25 @@
     using System.Linq;
     using System.Text;
 
-    public class AntlrGrammarDescription : IGrammarDescription
+    public class Antlr2ParserDescription : IParserDescription
     {
-        public string Name { get; } = "Antlr";
-        public System.Type Parser { get; } = typeof(ANTLRv4Parser);
-        public System.Type Lexer { get; } = typeof(ANTLRv4Lexer);
+        public string Name { get; } = "Antlr2";
+        public System.Type Parser { get; } = typeof(ANTLRv2Parser);
+        public System.Type Lexer { get; } = typeof(ANTLRv2Lexer);
+        public int QuietAfter { get; set; } = 0;
 
-        public ParserDetails CreateParserDetails(Workspaces.Document item)
+        public ParsingResults CreateParserDetails(Workspaces.Document item)
         {
             return new AntlrGrammarDetails(item);
         }
 
-        public void Parse(ParserDetails pd)
+        public void Parse(ParsingResults pd)
         {
             string ffn = pd.FullFileName;
             string code = pd.Code;
             if (ffn == null) return;
             if (code == null) return;
+            this.QuietAfter = pd.QuietAfter;
 
             IParseTree pt = null;
 
@@ -37,14 +39,18 @@
             {
                 name = ffn
             };
-            ANTLRv4Lexer lexer = new ANTLRv4Lexer(ais);
+            ANTLRv2Lexer lexer = new ANTLRv2Lexer(ais);
             CommonTokenStream cts = new CommonTokenStream(lexer);
-            ANTLRv4Parser parser = new ANTLRv4Parser(cts);
-            var listener = new ErrorListener<IToken>(parser, lexer, cts);
-            parser.AddErrorListener(listener);
+            ANTLRv2Parser parser = new ANTLRv2Parser(cts);
+            lexer.RemoveErrorListeners();
+            var lexer_error_listener = new ErrorListener<int>(parser, lexer, cts, pd.QuietAfter);
+            lexer.AddErrorListener(lexer_error_listener);
+            parser.RemoveErrorListeners();
+            var parser_error_listener = new ErrorListener<IToken>(parser, lexer, cts, pd.QuietAfter);
+            parser.AddErrorListener(parser_error_listener);
             try
             {
-                pt = parser.grammarSpec();
+                pt = parser.grammar_();
             }
             catch (Exception)
             {
@@ -56,7 +62,7 @@
             //string fn = System.IO.Path.GetFileName(ffn);
             //fn = "c:\\temp\\" + fn;
             //System.IO.File.WriteAllText(fn, sb.ToString());
-            if (listener.had_error)
+            if (parser_error_listener.had_error)
             {
                 System.Console.Error.WriteLine("Error in parse of " + ffn);
             }
@@ -105,12 +111,18 @@
             AntlrInputStream ais = new AntlrInputStream(
             new StreamReader(
                 new MemoryStream(byteArray)).ReadToEnd());
-            ANTLRv4Lexer lexer = new ANTLRv4Lexer(ais);
+            ANTLRv2Lexer lexer = new ANTLRv2Lexer(ais);
             CommonTokenStream cts = new CommonTokenStream(lexer);
-            ANTLRv4Parser parser = new ANTLRv4Parser(cts);
+            ANTLRv2Parser parser = new ANTLRv2Parser(cts);
+            lexer.RemoveErrorListeners();
+            var lexer_error_listener = new ErrorListener<int>(parser, lexer, cts, this.QuietAfter);
+            lexer.AddErrorListener(lexer_error_listener);
+            parser.RemoveErrorListeners();
+            var parser_error_listener = new ErrorListener<IToken>(parser, lexer, cts, this.QuietAfter);
+            parser.AddErrorListener(parser_error_listener);
             try
             {
-                pt = parser.grammarSpec();
+                pt = parser.grammar_();
             }
             catch (Exception)
             {
@@ -127,20 +139,22 @@
         {
             if (code == null) return null;
             byte[] byteArray = Encoding.UTF8.GetBytes(code);
-            CommonTokenStream cts_off_channel = new CommonTokenStream(
-                new ANTLRv4Lexer(
-                    new AntlrInputStream(
+            var ais = new AntlrInputStream(
                         new StreamReader(
-                            new MemoryStream(byteArray)).ReadToEnd())),
-                ANTLRv4Lexer.COMMENT);
+                            new MemoryStream(byteArray)).ReadToEnd());
+            ANTLRv2Lexer lexer = new ANTLRv2Lexer(ais);
+            CommonTokenStream cts_off_channel = new CommonTokenStream(lexer, ANTLRv2Lexer.OFF_CHANNEL);
+            lexer.RemoveErrorListeners();
+            var lexer_error_listener = new ErrorListener<int>(null, lexer, cts_off_channel, this.QuietAfter);
+            lexer.AddErrorListener(lexer_error_listener);
             Dictionary<IToken, int> new_list = new Dictionary<IToken, int>();
             int type = (int)AntlrClassifications.ClassificationComment;
             while (cts_off_channel.LA(1) != ANTLRv4Parser.Eof)
             {
                 IToken token = cts_off_channel.LT(1);
-                if (token.Type == ANTLRv4Lexer.BLOCK_COMMENT
-                    || token.Type == ANTLRv4Lexer.LINE_COMMENT
-                    || token.Type == ANTLRv4Lexer.DOC_COMMENT)
+                if (token.Type == ANTLRv2Lexer.ML_COMMENT
+                    || token.Type == ANTLRv2Lexer.SL_COMMENT
+                    || token.Type == ANTLRv2Lexer.DOC_COMMENT)
                 {
                     new_list[token] = type;
                 }
@@ -149,7 +163,7 @@
             return new_list;
         }
 
-        public string FileExtension { get; } = ".g4;.g";
+        public string FileExtension { get; } = ".g2;.g";
         public string StartRule { get; } = "grammarSpec";
 
         public bool IsFileType(string ffn)
@@ -310,9 +324,10 @@
         };
 
 
-        public Func<IGrammarDescription, Dictionary<IParseTree, IList<CombinedScopeSymbol>>, IParseTree, int>
-            Classify { get; } = 
-            (IGrammarDescription gd, Dictionary<IParseTree, IList<CombinedScopeSymbol>> st, IParseTree t) =>
+        public Func<IParserDescription, Dictionary<IParseTree, IList<CombinedScopeSymbol>>, IParseTree, int>
+            Classify
+        { get; } =
+            (IParserDescription gd, Dictionary<IParseTree, IList<CombinedScopeSymbol>> st, IParseTree t) =>
             {
                 TerminalNodeImpl term = t as TerminalNodeImpl;
                 Antlr4.Runtime.Tree.IParseTree p = term;
@@ -329,7 +344,7 @@
                     {
                         if (value is RefSymbol)
                         {
-                            List<ISymbol> defs = ((RefSymbol) value).Def;
+                            List<ISymbol> defs = ((RefSymbol)value).Def;
                             foreach (var d in defs)
                             {
                                 if (d is NonterminalSymbol)
@@ -408,10 +423,10 @@
 
         public bool CanReformat => true;
 
-        public List<Func<ParserDetails, IParseTree, string>> PopUpDefinition { get; } =
-        new List<Func<ParserDetails, IParseTree, string>>()
+        public List<Func<ParsingResults, IParseTree, string>> PopUpDefinition { get; } =
+        new List<Func<ParsingResults, IParseTree, string>>()
         {
-            (ParserDetails pd, IParseTree t) => // nonterminal
+            (ParsingResults pd, IParseTree t) => // nonterminal
             {
                 TerminalNodeImpl term = t as TerminalNodeImpl;
                 if (term == null)
@@ -472,7 +487,7 @@
                         {
                             continue;
                         }
-                        ParserDetails def_pd = ParserDetailsFactory.Create(def_document);
+                        ParsingResults def_pd = ParsingResultsFactory.Create(def_document);
                         if (def_pd == null)
                         {
                             continue;
@@ -516,7 +531,7 @@
                 }
                 return sb.ToString();
             },
-            (ParserDetails pd, IParseTree t) => // nonterminal
+            (ParsingResults pd, IParseTree t) => // nonterminal
             {
                 TerminalNodeImpl term = t as TerminalNodeImpl;
                 if (term == null)
@@ -577,7 +592,7 @@
                         {
                             continue;
                         }
-                        ParserDetails def_pd = ParserDetailsFactory.Create(def_document);
+                        ParsingResults def_pd = ParsingResultsFactory.Create(def_document);
                         if (def_pd == null)
                         {
                             continue;
@@ -621,7 +636,7 @@
                 }
                 return sb.ToString();
             },
-            (ParserDetails pd, IParseTree t) => // terminal
+            (ParsingResults pd, IParseTree t) => // terminal
             {
                 TerminalNodeImpl term = t as TerminalNodeImpl;
                 if (term == null)
@@ -682,7 +697,7 @@
                         {
                             continue;
                         }
-                        ParserDetails def_pd = ParserDetailsFactory.Create(def_document);
+                        ParsingResults def_pd = ParsingResultsFactory.Create(def_document);
                         if (def_pd == null)
                         {
                             continue;
@@ -727,7 +742,7 @@
 
                 return sb.ToString();
             },
-            (ParserDetails pd, IParseTree t) => // terminal
+            (ParsingResults pd, IParseTree t) => // terminal
             {
                 TerminalNodeImpl term = t as TerminalNodeImpl;
                 if (term == null)
@@ -788,7 +803,7 @@
                         {
                             continue;
                         }
-                        ParserDetails def_pd = ParserDetailsFactory.Create(def_document);
+                        ParsingResults def_pd = ParsingResultsFactory.Create(def_document);
                         if (def_pd == null)
                         {
                             continue;

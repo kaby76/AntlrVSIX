@@ -14,6 +14,6 @@
         {
         }
 
-        public ParserDetails ParserDetails { get; set; }
+        public ParsingResults ParserDetails { get; set; }
     }
 }

@@ -9,10 +9,10 @@
 
         public static TerminalNodeImpl Find(int index, Document document)
         {
-            ParserDetails pd = ParserDetailsFactory.Create(document);
+            ParsingResults pd = ParsingResultsFactory.Create(document);
             if (pd.ParseTree == null)
             {
-                LanguageServer.Module.Compile();
+                new Module().Compile();
             }
 
             foreach (IParseTree node in DFSVisitor.DFS(pd.ParseTree as ParserRuleContext))

@@ -79,8 +79,8 @@
                 if (ffn == null) return;
                 Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(ffn);
                 if (document == null) return;
-                int start = LanguageServer.Module.GetIndex(ls, cs, document);
-                int end = LanguageServer.Module.GetIndex(le, ce, document);
+                int start = new LanguageServer.Module().GetIndex(ls, cs, document);
+                int end = new LanguageServer.Module().GetIndex(le, ce, document);
                 AntlrLanguageClient.CMEliminateDirectLeftRecursion(ffn, start, end);
             }
             catch (Exception exception)

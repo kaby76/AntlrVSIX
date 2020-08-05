@@ -112,8 +112,8 @@
                     {
                         Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range()
                     };
-                    (int, int) lcs = LanguageServer.Module.GetLineColumn(delta.range.Start.Value, document);
-                    (int, int) lce = LanguageServer.Module.GetLineColumn(delta.range.End.Value, document);
+                    (int, int) lcs = new LanguageServer.Module().GetLineColumn(delta.range.Start.Value, document);
+                    (int, int) lce = new LanguageServer.Module().GetLineColumn(delta.range.End.Value, document);
                     new_edit.Range.Start = new Position(lcs.Item1, lcs.Item2);
                     new_edit.Range.End = new Position(lce.Item1, lce.Item2);
                     new_edit.NewText = delta.NewText;
@@ -131,7 +131,7 @@
                 document.Code = new_code;
             }
             // Recompile only after every single change everywhere is in.
-            _ = LanguageServer.Module.Compile();
+            _ = new LanguageServer.Module().Compile();
             server.ApplyEdit(transaction_name, a);
         }
 
@@ -366,7 +366,7 @@
             {
                 if (!ignore_next_change.ContainsKey(document.FullPath))
                 {
-                    ParserDetails pd = ParserDetailsFactory.Create(document);
+                    ParsingResults pd = ParsingResultsFactory.Create(document);
                     string code = pd.Code;
                     int start_index = 0;
                     int end_index = 0;
@@ -378,15 +378,15 @@
                         {
                             int line = range.Start.Line;
                             int character = range.Start.Character;
-                            start_index = LanguageServer.Module.GetIndex(line, character, document);
+                            start_index = new LanguageServer.Module().GetIndex(line, character, document);
                         }
                         {
                             int line = range.End.Line;
                             int character = range.End.Character;
-                            end_index = LanguageServer.Module.GetIndex(line, character, document);
+                            end_index = new LanguageServer.Module().GetIndex(line, character, document);
                         }
-                        (int, int) bs = LanguageServer.Module.GetLineColumn(start_index, document);
-                        (int, int) be = LanguageServer.Module.GetLineColumn(end_index, document);
+                        (int, int) bs = new LanguageServer.Module().GetLineColumn(start_index, document);
+                        (int, int) be = new LanguageServer.Module().GetLineColumn(end_index, document);
                         string original = code.Substring(start_index, end_index - start_index);
                         string n = code.Substring(0, start_index)
                                 + text
@@ -394,7 +394,7 @@
                         code = n;
                     }
                     document.Code = code;
-                    List<ParserDetails> to_do = LanguageServer.Module.Compile();
+                    List<ParsingResults> to_do = new LanguageServer.Module().Compile();
                 }
                 else
                 {
@@ -479,14 +479,14 @@
                 Position position = request.Position;
                 int line = position.Line;
                 int character = position.Character;
-                int char_index = LanguageServer.Module.GetIndex(line, character, document);
+                int char_index = new LanguageServer.Module().GetIndex(line, character, document);
                 if (trace)
                 {
                     System.Console.Error.WriteLine("position index = " + char_index);
-                    (int, int) back = LanguageServer.Module.GetLineColumn(char_index, document);
+                    (int, int) back = new LanguageServer.Module().GetLineColumn(char_index, document);
                     System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
                 }
-                List<string> res = LanguageServer.Module.Completion(char_index, document);
+                List<string> res = new LanguageServer.Module().Completion(char_index, document);
                 List<CompletionItem> items = new List<CompletionItem>();
                 foreach (string r in res)
                 {
@@ -545,8 +545,8 @@
                 }
                 project.AddDocument(document);
                 document.Changed = true;
-                _ = ParserDetailsFactory.Create(document);
-                _ = LanguageServer.Module.Compile();
+                _ = ParsingResultsFactory.Create(document);
+                _ = new LanguageServer.Module().Compile();
             }
             return document;
         }
@@ -567,14 +567,14 @@
                 Position position = request.Position;
                 int line = position.Line;
                 int character = position.Character;
-                int index = LanguageServer.Module.GetIndex(line, character, document);
+                int index = new LanguageServer.Module().GetIndex(line, character, document);
                 if (trace)
                 {
                     System.Console.Error.WriteLine("position index = " + index);
-                    (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
+                    (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
                     System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
                 }
-                QuickInfo quick_info = LanguageServer.Module.GetQuickInfo(index, document);
+                QuickInfo quick_info = new LanguageServer.Module().GetQuickInfo(index, document);
                 if (quick_info == null)
                 {
                     return null;
@@ -590,8 +590,8 @@
                 };
                 int index_start = quick_info.Range.Start.Value;
                 int index_end = quick_info.Range.End.Value;
-                (int, int) lcs = LanguageServer.Module.GetLineColumn(index_start, document);
-                (int, int) lce = LanguageServer.Module.GetLineColumn(index_end, document);
+                (int, int) lcs = new LanguageServer.Module().GetLineColumn(index_start, document);
+                (int, int) lce = new LanguageServer.Module().GetLineColumn(index_end, document);
                 hover.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range
                 {
                     Start = new Position(lcs.Item1, lcs.Item2),
@@ -639,14 +639,14 @@
                 Position position = request.Position;
                 int line = position.Line;
                 int character = position.Character;
-                int index = LanguageServer.Module.GetIndex(line, character, document);
+                int index = new LanguageServer.Module().GetIndex(line, character, document);
                 if (trace)
                 {
                     System.Console.Error.WriteLine("position index = " + index);
-                    (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
+                    (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
                     System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
                 }
-                IList<Location> found = LanguageServer.Module.FindDefs(index, document);
+                IList<Location> found = new LanguageServer.Module().FindDefs(index, document);
                 List<object> locations = new List<object>();
                 foreach (Location f in found)
                 {
@@ -656,8 +656,8 @@
                     };
                     Document def_document = _workspace.FindDocument(f.Uri.FullPath);
                     location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
-                    (int, int) lcs = LanguageServer.Module.GetLineColumn(f.Range.Start.Value, def_document);
-                    (int, int) lce = LanguageServer.Module.GetLineColumn(f.Range.End.Value, def_document);
+                    (int, int) lcs = new LanguageServer.Module().GetLineColumn(f.Range.Start.Value, def_document);
+                    (int, int) lce = new LanguageServer.Module().GetLineColumn(f.Range.End.Value, def_document);
                     location.Range.Start = new Position(lcs.Item1, lcs.Item2);
                     location.Range.End = new Position(lce.Item1, lce.Item2);
                     locations.Add(location);
@@ -685,14 +685,14 @@
                 Position position = request.Position;
                 int line = position.Line;
                 int character = position.Character;
-                int index = LanguageServer.Module.GetIndex(line, character, document);
+                int index = new LanguageServer.Module().GetIndex(line, character, document);
                 if (trace)
                 {
                     System.Console.Error.WriteLine("position index = " + index);
-                    (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
+                    (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
                     System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
                 }
-                IList<Location> found = LanguageServer.Module.FindDefs(index, document);
+                IList<Location> found = new LanguageServer.Module().FindDefs(index, document);
                 List<object> locations = new List<object>();
                 foreach (Location f in found)
                 {
@@ -702,8 +702,8 @@
                     };
                     Document def_document = _workspace.FindDocument(f.Uri.FullPath);
                     location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
-                    (int, int) lcs = LanguageServer.Module.GetLineColumn(f.Range.Start.Value, def_document);
-                    (int, int) lce = LanguageServer.Module.GetLineColumn(f.Range.End.Value, def_document);
+                    (int, int) lcs = new LanguageServer.Module().GetLineColumn(f.Range.Start.Value, def_document);
+                    (int, int) lce = new LanguageServer.Module().GetLineColumn(f.Range.End.Value, def_document);
                     location.Range.Start = new Position(lcs.Item1, lcs.Item2);
                     location.Range.End = new Position(lce.Item1, lce.Item2);
                     locations.Add(location);
@@ -731,14 +731,14 @@
                 Position position = request.Position;
                 int line = position.Line;
                 int character = position.Character;
-                int index = LanguageServer.Module.GetIndex(line, character, document);
+                int index = new LanguageServer.Module().GetIndex(line, character, document);
                 if (trace)
                 {
                     System.Console.Error.WriteLine("position index = " + index);
-                    (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
+                    (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
                     System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
                 }
-                IList<Location> found = LanguageServer.Module.FindDefs(index, document);
+                IList<Location> found = new LanguageServer.Module().FindDefs(index, document);
                 List<object> locations = new List<object>();
                 foreach (Location f in found)
                 {
@@ -748,8 +748,8 @@
                     };
                     Document def_document = _workspace.FindDocument(f.Uri.FullPath);
                     location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
-                    (int, int) lcs = LanguageServer.Module.GetLineColumn(f.Range.Start.Value, def_document);
-                    (int, int) lce = LanguageServer.Module.GetLineColumn(f.Range.End.Value, def_document);
+                    (int, int) lcs = new LanguageServer.Module().GetLineColumn(f.Range.Start.Value, def_document);
+                    (int, int) lce = new LanguageServer.Module().GetLineColumn(f.Range.End.Value, def_document);
                     location.Range.Start = new Position(lcs.Item1, lcs.Item2);
                     location.Range.End = new Position(lce.Item1, lce.Item2);
                     locations.Add(location);
@@ -777,14 +777,14 @@
                 Position position = request.Position;
                 int line = position.Line;
                 int character = position.Character;
-                int index = LanguageServer.Module.GetIndex(line, character, document);
+                int index = new LanguageServer.Module().GetIndex(line, character, document);
                 if (trace)
                 {
                     System.Console.Error.WriteLine("position index = " + index);
-                    (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
+                    (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
                     System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
                 }
-                IEnumerable<Location> found = LanguageServer.Module.FindRefsAndDefs(index, document);
+                IEnumerable<Location> found = new LanguageServer.Module().FindRefsAndDefs(index, document);
                 List<object> locations = new List<object>();
                 foreach (Location f in found)
                 {
@@ -794,8 +794,8 @@
                     };
                     Document def_document = _workspace.FindDocument(f.Uri.FullPath);
                     location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
-                    (int, int) lcs = LanguageServer.Module.GetLineColumn(f.Range.Start.Value, def_document);
-                    (int, int) lce = LanguageServer.Module.GetLineColumn(f.Range.End.Value + 1, def_document);
+                    (int, int) lcs = new LanguageServer.Module().GetLineColumn(f.Range.Start.Value, def_document);
+                    (int, int) lce = new LanguageServer.Module().GetLineColumn(f.Range.End.Value + 1, def_document);
                     location.Range.Start = new Position(lcs.Item1, lcs.Item2);
                     location.Range.End = new Position(lce.Item1, lce.Item2);
                     locations.Add(location);
@@ -810,12 +810,12 @@
                         var v = (Microsoft.VisualStudio.LanguageServer.Protocol.Location)s;
                         var dd = CheckDoc(v.Uri);
                         return "<" + v.Uri +
-                            ",[" + LanguageServer.Module.GetIndex(
+                            ",[" + new LanguageServer.Module().GetIndex(
                                 v.Range.Start.Line,
                                 v.Range.Start.Character,
                                 dd)
                             + ".."
-                            + LanguageServer.Module.GetIndex(
+                            + new LanguageServer.Module().GetIndex(
                                 v.Range.End.Line,
                                 v.Range.End.Character,
                                 dd)
@@ -847,14 +847,14 @@
                 Position position = request.Position;
                 int line = position.Line;
                 int character = position.Character;
-                int index = LanguageServer.Module.GetIndex(line, character, document);
+                int index = new LanguageServer.Module().GetIndex(line, character, document);
                 if (trace)
                 {
                     System.Console.Error.WriteLine("position index = " + index);
-                    (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
+                    (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
                     System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
                 }
-                IEnumerable<Location> found = LanguageServer.Module.FindRefsAndDefs(index, document);
+                IEnumerable<Location> found = new LanguageServer.Module().FindRefsAndDefs(index, document);
                 List<object> locations = new List<object>();
                 foreach (Location f in found)
                 {
@@ -865,8 +865,8 @@
                     Microsoft.VisualStudio.LanguageServer.Protocol.DocumentHighlight location = new DocumentHighlight();
                     Document def_document = _workspace.FindDocument(f.Uri.FullPath);
                     location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
-                    (int, int) lcs = LanguageServer.Module.GetLineColumn(f.Range.Start.Value, def_document);
-                    (int, int) lce = LanguageServer.Module.GetLineColumn(f.Range.End.Value + 1, def_document);
+                    (int, int) lcs = new LanguageServer.Module().GetLineColumn(f.Range.Start.Value, def_document);
+                    (int, int) lce = new LanguageServer.Module().GetLineColumn(f.Range.End.Value + 1, def_document);
                     location.Range.Start = new Position(lcs.Item1, lcs.Item2);
                     location.Range.End = new Position(lce.Item1, lce.Item2);
                     locations.Add(location);
@@ -891,7 +891,7 @@
                 }
                 DocumentSymbolParams request = arg.ToObject<DocumentSymbolParams>();
                 Document document = CheckDoc(request.TextDocument.Uri);
-                IEnumerable<DocumentSymbol> r = LanguageServer.Module.Get(document);
+                IEnumerable<DocumentSymbol> r = new LanguageServer.Module().Get(document);
                 List<object> symbols = new List<object>();
                 foreach (DocumentSymbol s in r)
                 {
@@ -938,8 +938,8 @@
                     {
                         Uri = request.TextDocument.Uri
                     };
-                    (int, int) lcs = LanguageServer.Module.GetLineColumn(s.range.Start.Value, document);
-                    (int, int) lce = LanguageServer.Module.GetLineColumn(s.range.End.Value, document);
+                    (int, int) lcs = new LanguageServer.Module().GetLineColumn(s.range.Start.Value, document);
+                    (int, int) lce = new LanguageServer.Module().GetLineColumn(s.range.End.Value, document);
                     si.Location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range
                     {
                         Start = new Position(lcs.Item1, lcs.Item2),
@@ -954,12 +954,12 @@
                     {
                         SymbolInformation v = (SymbolInformation)s;
                         return "<" + v.Name + "," + v.Kind
-                            + ",[" + LanguageServer.Module.GetIndex(
+                            + ",[" + new LanguageServer.Module().GetIndex(
                                 v.Location.Range.Start.Line,
                                 v.Location.Range.Start.Character,
                                 document)
                             + ".."
-                            + LanguageServer.Module.GetIndex(
+                            + new LanguageServer.Module().GetIndex(
                                 v.Location.Range.End.Line,
                                 v.Location.Range.End.Character,
                                 document)
@@ -1067,7 +1067,7 @@
                 DocumentFormattingParams request = arg.ToObject<DocumentFormattingParams>();
                 Document document = CheckDoc(request.TextDocument.Uri);
                 List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit> new_list = new List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit>();
-                LanguageServer.TextEdit[] changes = LanguageServer.Module.Reformat(document);
+                LanguageServer.TextEdit[] changes = new LanguageServer.Module().Reformat(document);
                 int count = 0;
                 foreach (LanguageServer.TextEdit delta in changes)
                 {
@@ -1075,8 +1075,8 @@
                     {
                         Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range()
                     };
-                    (int, int) lcs = LanguageServer.Module.GetLineColumn(delta.range.Start.Value, document);
-                    (int, int) lce = LanguageServer.Module.GetLineColumn(delta.range.End.Value, document);
+                    (int, int) lcs = new LanguageServer.Module().GetLineColumn(delta.range.Start.Value, document);
+                    (int, int) lce = new LanguageServer.Module().GetLineColumn(delta.range.End.Value, document);
                     new_edit.Range.Start = new Position(lcs.Item1, lcs.Item2);
                     new_edit.Range.End = new Position(lce.Item1, lce.Item2);
                     new_edit.NewText = delta.NewText;
@@ -1142,15 +1142,15 @@
                     Document document = CheckDoc(request.TextDocument.Uri);
                     if (!ignore_next_change.ContainsKey(document.FullPath))
                     {
-                        int index = LanguageServer.Module.GetIndex(line, character, document);
+                        int index = new LanguageServer.Module().GetIndex(line, character, document);
                         if (trace)
                         {
                             System.Console.Error.WriteLine("position index = " + index);
-                            (int, int) back = LanguageServer.Module.GetLineColumn(index, document);
+                            (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
                             System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
                         }
                         string new_name = request.NewName;
-                        Dictionary<string, LanguageServer.TextEdit[]> changes = LanguageServer.Module.Rename(index, new_name, document);
+                        Dictionary<string, LanguageServer.TextEdit[]> changes = new LanguageServer.Module().Rename(index, new_name, document);
                         edit = new WorkspaceEdit();
                         int count = 0;
                         Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]> edit_changes_array = new Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]>();
@@ -1166,8 +1166,8 @@
                                 {
                                     Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range()
                                 };
-                                (int, int) lcs = LanguageServer.Module.GetLineColumn(v.range.Start.Value, document);
-                                (int, int) lce = LanguageServer.Module.GetLineColumn(v.range.End.Value, document);
+                                (int, int) lcs = new LanguageServer.Module().GetLineColumn(v.range.Start.Value, document);
+                                (int, int) lce = new LanguageServer.Module().GetLineColumn(v.range.End.Value, document);
                                 new_edit.Range.Start = new Position(lcs.Item1, lcs.Item2);
                                 new_edit.Range.End = new Position(lce.Item1, lce.Item2);
                                 new_edit.NewText = v.NewText;
@@ -1222,11 +1222,11 @@
                 {
                     System.Console.Error.WriteLine("<-- CMGetClassifiers");
                     System.Console.Error.WriteLine(start.ToString());
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
+                    (int, int) bs = new LanguageServer.Module().GetLineColumn(start, document);
                     System.Console.Error.WriteLine(end.ToString());
-                    (int, int) be = LanguageServer.Module.GetLineColumn(start, document);
+                    (int, int) be = new LanguageServer.Module().GetLineColumn(start, document);
                 }
-                IEnumerable<Module.Info> r = LanguageServer.Module.Get(start, end, document);
+                IEnumerable<Module.Info> r = new LanguageServer.Module().Get(start, end, document);
                 List<CMClassifierInformation> symbols = new List<CMClassifierInformation>();
                 foreach (var p in r)
                 {
@@ -1274,10 +1274,10 @@
                 {
                     System.Console.Error.WriteLine("<-- CMNextSymbol");
                     System.Console.Error.WriteLine(pos.ToString());
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(pos, document);
+                    (int, int) bs = new LanguageServer.Module().GetLineColumn(pos, document);
                     System.Console.Error.WriteLine("");
                 }
-                IEnumerable<Location> r = LanguageServer.Module.GetDefs(document);
+                IEnumerable<Location> r = new LanguageServer.Module().GetDefs(document);
                 List<object> symbols = new List<object>();
                 foreach (Location s in r)
                 {
@@ -1331,7 +1331,7 @@
                 {
                     System.Console.Error.WriteLine("<-- CMGotoVisitor");
                     System.Console.Error.WriteLine(a1.ToString());
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(a2, document);
+                    (int, int) bs = new LanguageServer.Module().GetLineColumn(a2, document);
                     System.Console.Error.WriteLine("");
                 }
                 s = Goto.main(true, a3, document, a2);
@@ -1361,7 +1361,7 @@
                 {
                     System.Console.Error.WriteLine("<-- CMGotoListener");
                     System.Console.Error.WriteLine(a1.ToString());
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(a2, document);
+                    (int, int) bs = new LanguageServer.Module().GetLineColumn(a2, document);
                     System.Console.Error.WriteLine("");
                 }
                 s = Goto.main(false, a3, document, a2);
@@ -1392,9 +1392,9 @@
                 {
                     System.Console.Error.WriteLine("<-- CMReplaceLiterals");
                     System.Console.Error.WriteLine(a1);
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
+                    (int, int) bs = new LanguageServer.Module().GetLineColumn(start, document);
                     System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
-                    (int, int) be = LanguageServer.Module.GetLineColumn(end, document);
+                    (int, int) be = new LanguageServer.Module().GetLineColumn(end, document);
                     System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
                 var s = LanguageServer.Transform.ReplaceLiterals(start, end, document);
@@ -1425,7 +1425,7 @@
                 {
                     System.Console.Error.WriteLine("<-- CMRemoveUselessParserProductions");
                     System.Console.Error.WriteLine(start.ToString());
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
+                    (int, int) bs = new LanguageServer.Module().GetLineColumn(start, document);
                     System.Console.Error.WriteLine("");
                 }
                 var s = LanguageServer.Transform.RemoveUselessParserProductions(start, end, document);
@@ -1574,9 +1574,9 @@
                 {
                     System.Console.Error.WriteLine("<-- CMConvertRecursionToKleeneOperator");
                     System.Console.Error.WriteLine(a1);
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
+                    (int, int) bs = new LanguageServer.Module().GetLineColumn(start, document);
                     System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
-                    (int, int) be = LanguageServer.Module.GetLineColumn(end, document);
+                    (int, int) be = new LanguageServer.Module().GetLineColumn(end, document);
                     System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
                 var s = Transform.ConvertRecursionToKleeneOperator(start, end, document);
@@ -1608,9 +1608,9 @@
                 {
                     System.Console.Error.WriteLine("<-- CMEliminateDirectLeftRecursion");
                     System.Console.Error.WriteLine(a1);
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
+                    (int, int) bs = new LanguageServer.Module().GetLineColumn(start, document);
                     System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
-                    (int, int) be = LanguageServer.Module.GetLineColumn(end, document);
+                    (int, int) be = new LanguageServer.Module().GetLineColumn(end, document);
                     System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
                 var s = Transform.EliminateDirectLeftRecursion(start, end, document);
@@ -1641,9 +1641,9 @@
                 {
                     System.Console.Error.WriteLine("<-- CMEliminateIndirectLeftRecursion");
                     System.Console.Error.WriteLine(a1);
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
+                    (int, int) bs = new LanguageServer.Module().GetLineColumn(start, document);
                     System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
-                    (int, int) be = LanguageServer.Module.GetLineColumn(end, document);
+                    (int, int) be = new LanguageServer.Module().GetLineColumn(end, document);
                     System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
                 var s = Transform.EliminateIndirectLeftRecursion(start, end, document);
@@ -1700,9 +1700,9 @@
                 {
                     System.Console.Error.WriteLine("<-- CMAddLexerRulesForStringLiterals");
                     System.Console.Error.WriteLine(a1);
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
+                    (int, int) bs = new LanguageServer.Module().GetLineColumn(start, document);
                     System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
-                    (int, int) be = LanguageServer.Module.GetLineColumn(end, document);
+                    (int, int) be = new LanguageServer.Module().GetLineColumn(end, document);
                     System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
                 var s = Transform.AddLexerRulesForStringLiterals(start, end, document);
@@ -1758,9 +1758,9 @@
                 {
                     System.Console.Error.WriteLine("<-- CMUnfold");
                     System.Console.Error.WriteLine(a1);
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
+                    (int, int) bs = new LanguageServer.Module().GetLineColumn(start, document);
                     System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
-                    (int, int) be = LanguageServer.Module.GetLineColumn(end, document);
+                    (int, int) be = new LanguageServer.Module().GetLineColumn(end, document);
                     System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
                 var s = Transform.Unfold(start, end, document);
@@ -1791,9 +1791,9 @@
                 {
                     System.Console.Error.WriteLine("<-- CMFold");
                     System.Console.Error.WriteLine(a1);
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
+                    (int, int) bs = new LanguageServer.Module().GetLineColumn(start, document);
                     System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
-                    (int, int) be = LanguageServer.Module.GetLineColumn(end, document);
+                    (int, int) be = new LanguageServer.Module().GetLineColumn(end, document);
                     System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
                 var s = Transform.Fold(start, end, document);
@@ -1824,9 +1824,9 @@
                 {
                     System.Console.Error.WriteLine("<-- CMRemoveUselessParentheses");
                     System.Console.Error.WriteLine(a1);
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
+                    (int, int) bs = new LanguageServer.Module().GetLineColumn(start, document);
                     System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
-                    (int, int) be = LanguageServer.Module.GetLineColumn(end, document);
+                    (int, int) be = new LanguageServer.Module().GetLineColumn(end, document);
                     System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
                 var s = Transform.RemoveUselessParentheses(start, end, document);
@@ -1882,9 +1882,9 @@
                 {
                     System.Console.Error.WriteLine("<-- CMReplacePriorization");
                     System.Console.Error.WriteLine(a1);
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
+                    (int, int) bs = new LanguageServer.Module().GetLineColumn(start, document);
                     System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
-                    (int, int) be = LanguageServer.Module.GetLineColumn(end, document);
+                    (int, int) be = new LanguageServer.Module().GetLineColumn(end, document);
                     System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
                 var s = Transform.ReplacePriorization(start, end, document);
@@ -1915,9 +1915,9 @@
                 {
                     System.Console.Error.WriteLine("<-- CMUpperLowerCaseLiteral");
                     System.Console.Error.WriteLine(a1);
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(start, document);
+                    (int, int) bs = new LanguageServer.Module().GetLineColumn(start, document);
                     System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
-                    (int, int) be = LanguageServer.Module.GetLineColumn(end, document);
+                    (int, int) be = new LanguageServer.Module().GetLineColumn(end, document);
                     System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
                 var s = Transform.UpperLowerCaseLiteral(start, end, document);
@@ -1942,7 +1942,7 @@
                 {
                     System.Console.Error.WriteLine("<-- CMVersion");
                 }
-                var s = Module.AntlrVersion();
+                var s = new LanguageServer.Module().AntlrVersion();
                 return s;
             }
             catch (LanguageServerException e)

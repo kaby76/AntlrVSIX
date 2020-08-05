@@ -168,7 +168,7 @@ namespace LspAntlr
                 if (orig_ffn == null) return;
                 Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(orig_ffn);
                 if (document == null) return;
-                int pos = LanguageServer.Module.GetIndex(l, c, document);
+                int pos = new LanguageServer.Module().GetIndex(l, c, document);
                 CMGotoResult symbol = null;
                 symbol = visitor ? AntlrLanguageClient.CMGotoVisitor(orig_ffn, pos, is_enter)
                     : AntlrLanguageClient.CMGotoListener(orig_ffn, pos, is_enter);

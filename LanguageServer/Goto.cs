@@ -26,7 +26,7 @@
                     return null;
                 }
 
-                DocumentSymbol sym = LanguageServer.Module.GetDocumentSymbol(pos, document);
+                DocumentSymbol sym = new Module().GetDocumentSymbol(pos, document);
                 if (sym == null)
                 {
                     return null;

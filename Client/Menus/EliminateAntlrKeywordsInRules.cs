@@ -78,7 +78,7 @@
                 if (ffn == null) return;
                 Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(ffn);
                 if (document == null) return;
-                int pos = LanguageServer.Module.GetIndex(l, c, document);
+                int pos = new LanguageServer.Module().GetIndex(l, c, document);
                 AntlrLanguageClient.CMEliminateAntlrKeywordsInRules(ffn);
             }
             catch (Exception exception)

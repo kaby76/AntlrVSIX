@@ -88,8 +88,8 @@
                             break;
                     }
                     var document = LanguageServerTarget.CheckDoc(new Uri(info.Document));
-                    (int, int) bs = LanguageServer.Module.GetLineColumn(info.Start, document);
-                    (int, int) be = LanguageServer.Module.GetLineColumn(info.End, document);
+                    (int, int) bs = new LanguageServer.Module().GetLineColumn(info.Start, document);
+                    (int, int) be = new LanguageServer.Module().GetLineColumn(info.End, document);
                     Diagnostic diagnostic = new Diagnostic
                     {
                         Message = info.Message,

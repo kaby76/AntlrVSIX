@@ -5,13 +5,14 @@
     using System;
     using System.Collections.Generic;
 
-    public interface IGrammarDescription
+    public interface IParserDescription
     {
         string Name { get; }
-        ParserDetails CreateParserDetails(Workspaces.Document item);
+        ParsingResults CreateParserDetails(Workspaces.Document item);
         System.Type Parser { get; }
         System.Type Lexer { get; }
-        void Parse(ParserDetails pd);
+        int QuietAfter { get; set; }
+        void Parse(ParsingResults pd);
         void Parse(string code,
             out CommonTokenStream TokStream,
             out Parser Parser,
@@ -25,12 +26,12 @@
         List<bool> CanGotodef { get; }
         List<bool> CanGotovisitor { get; }
         bool CanReformat { get; }
-        Func<IGrammarDescription, Dictionary<IParseTree, IList<Symtab.CombinedScopeSymbol>>, IParseTree, int> Classify { get; }
+        Func<IParserDescription, Dictionary<IParseTree, IList<Symtab.CombinedScopeSymbol>>, IParseTree, int> Classify { get; }
         bool IsFileType(string ffn);
         string FileExtension { get; }
         string StartRule { get; }
         bool DoErrorSquiggles { get; }
-        List<Func<ParserDetails, IParseTree, string>> PopUpDefinition { get; }
+        List<Func<ParsingResults, IParseTree, string>> PopUpDefinition { get; }
 
     }
 }

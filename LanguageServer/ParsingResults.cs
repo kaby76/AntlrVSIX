@@ -8,14 +8,15 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class ParserDetails : ICloneable
+    public class ParsingResults : ICloneable
     {
         public virtual Workspaces.Document Item { get; set; }
         public virtual string FullFileName => Item?.FullPath;
         public virtual string Code => Item?.Code;
         public virtual bool Changed => Item == null ? true : Item.Changed;
         public virtual void Cleanup() { }
-        public virtual IGrammarDescription Gd { get; set; }
+        public virtual IParserDescription Gd { get; set; }
+        public virtual int QuietAfter { get; set; }
 
         public virtual Dictionary<TerminalNodeImpl, int> Refs { get; set; } = new Dictionary<TerminalNodeImpl, int>();
         public virtual HashSet<string> PropagateChangesTo { get; set; } = new HashSet<string>();
@@ -39,7 +40,7 @@
         public virtual Antlr4.Runtime.Lexer Lexer { get; set; } = null;
         public virtual CommonTokenStream TokStream { get; set; } = null;
 
-        public ParserDetails(Workspaces.Document item)
+        public ParsingResults(Workspaces.Document item)
         {
             Item = item;
             Item.Changed = true;
@@ -48,17 +49,17 @@
 
         public virtual void Parse()
         {
-            Workspaces.Document item = Item;
-            string code = item.Code;
-            string ffn = item.FullPath;
-            bool has_changed = item.Changed;
-            item.Changed = false;
+            Workspaces.Document document = Item;
+            string code = document.Code;
+            string ffn = document.FullPath;
+            bool has_changed = document.Changed;
+            document.Changed = false;
             if (!has_changed)
             {
                 return;
             }
 
-            IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);
+            IParserDescription gd = ParserDescriptionFactory.Create(document);
             if (gd == null)
             {
                 throw new Exception();
@@ -89,9 +90,9 @@
         {
             try
             {
-                Workspaces.Document item = Item;
-                string ffn = item.FullPath;
-                IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);
+                Workspaces.Document document = Item;
+                string ffn = document.FullPath;
+                IParserDescription gd = ParserDescriptionFactory.Create(document);
                 if (gd == null)
                 {
                     throw new Exception();
@@ -99,7 +100,7 @@
 
                 if (AllNodes != null)
                 {
-                    Func<IGrammarDescription, Dictionary<IParseTree, IList<CombinedScopeSymbol>>, IParseTree, int> fun = gd.Classify;
+                    Func<IParserDescription, Dictionary<IParseTree, IList<CombinedScopeSymbol>>, IParseTree, int> fun = gd.Classify;
                     IEnumerable<IParseTree> it = AllNodes.Where(n => n is TerminalNodeImpl);
                     foreach (var n in it)
                     {
@@ -116,10 +117,10 @@
                         catch (Exception) { }
                         try
                         {
-                            if (i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationNonterminalRef
-                                || i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationTerminalRef
-                                || i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationModeRef
-                                || i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationChannelRef
+                            if (i == (int)LanguageServer.Antlr4ParserDescription.AntlrClassifications.ClassificationNonterminalRef
+                                || i == (int)LanguageServer.Antlr4ParserDescription.AntlrClassifications.ClassificationTerminalRef
+                                || i == (int)LanguageServer.Antlr4ParserDescription.AntlrClassifications.ClassificationModeRef
+                                || i == (int)LanguageServer.Antlr4ParserDescription.AntlrClassifications.ClassificationChannelRef
                                 )
                             {
                                 Refs.Add(t, i);
@@ -129,10 +130,10 @@
                         catch (Exception) { }
                         try
                         {
-                            if (i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationNonterminalDef
-                                || i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationTerminalDef
-                                || i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationModeDef
-                                || i == (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationChannelDef
+                            if (i == (int)LanguageServer.Antlr4ParserDescription.AntlrClassifications.ClassificationNonterminalDef
+                                || i == (int)LanguageServer.Antlr4ParserDescription.AntlrClassifications.ClassificationTerminalDef
+                                || i == (int)LanguageServer.Antlr4ParserDescription.AntlrClassifications.ClassificationModeDef
+                                || i == (int)LanguageServer.Antlr4ParserDescription.AntlrClassifications.ClassificationChannelDef
                                 )
                             {
                                 Defs.Add(t, i);
@@ -148,7 +149,7 @@
                     foreach (KeyValuePair<Antlr4.Runtime.IToken, int> p in Comments)
                     {
                         IToken t = p.Key;
-                        ColorizedList.Add(t, (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationComment);
+                        ColorizedList.Add(t, (int)LanguageServer.Antlr4ParserDescription.AntlrClassifications.ClassificationComment);
                     }
                 }
             }
@@ -159,9 +160,9 @@
 
         public virtual void GatherErrors()
         {
-            Workspaces.Document item = Item;
-            string ffn = item.FullPath;
-            IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);
+            Workspaces.Document document = Item;
+            string ffn = document.FullPath;
+            IParserDescription gd = ParserDescriptionFactory.Create(document);
             if (gd == null)
             {
                 throw new Exception();
@@ -183,9 +184,9 @@
 
         public virtual List<string> Candidates(int char_index)
         {
-            Workspaces.Document item = Item;
-            string ffn = item.FullPath;
-            IGrammarDescription gd = GrammarDescriptionFactory.Create(ffn);
+            Workspaces.Document document = Item;
+            string ffn = document.FullPath;
+            IParserDescription gd = ParserDescriptionFactory.Create(document);
             if (gd == null)
             {
                 throw new Exception();

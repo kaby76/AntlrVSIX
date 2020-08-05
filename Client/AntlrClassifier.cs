@@ -40,12 +40,12 @@
             {
                 yield break;
             }
-            LanguageServer.IGrammarDescription _grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
+            var doc = Workspaces.Workspace.Instance.FindDocument(ffn);
+            LanguageServer.IParserDescription _grammar_description = LanguageServer.ParserDescriptionFactory.Create(doc);
             if (_grammar_description == null)
             {
                 yield break;
             }
-            Workspaces.Workspace.Instance.FindDocument(ffn);
             _ = IVsTextViewExtensions.FindTextViewFor(ffn);
             foreach (SnapshotSpan curSpan in spans)
             {
@@ -137,13 +137,13 @@
                     return;
                 }
 
-                LanguageServer.IGrammarDescription _grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
+                Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(ffn);
+                LanguageServer.IParserDescription _grammar_description = LanguageServer.ParserDescriptionFactory.Create(document);
                 if (_grammar_description == null)
                 {
                     return;
                 }
 
-                Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(ffn);
                 _to_classifiertype = new Dictionary<int, IClassificationType>();
 
                 IClassificationFormatMap classificationFormatMap = ClassificationFormatMapService.GetClassificationFormatMap(category: "text");
@@ -151,7 +151,7 @@
                 System.Collections.ObjectModel.ReadOnlyCollection<IClassificationType> list_of_formats = classificationFormatMap.CurrentPriorityOrder;
 
                 {
-                    int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationNonterminalDef;
+                    int i = (int)LanguageServer.Antlr4ParserDescription.AntlrClassifications.ClassificationNonterminalDef;
                     string val = _grammar_description.Map[i];
                     IClassificationType identiferClassificationType = service.GetClassificationType(val);
                     IClassificationType classificationType = identiferClassificationType ?? service.CreateClassificationType(val, Array.Empty<IClassificationType>());
@@ -171,7 +171,7 @@
                     _to_classifiertype[i] = classificationType;
                 }
                 {
-                    int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationNonterminalRef;
+                    int i = (int)LanguageServer.Antlr4ParserDescription.AntlrClassifications.ClassificationNonterminalRef;
                     string val = _grammar_description.Map[i];
                     IClassificationType identiferClassificationType = service.GetClassificationType(val);
                     IClassificationType classificationType = identiferClassificationType ?? service.CreateClassificationType(val, Array.Empty<IClassificationType>());
@@ -191,7 +191,7 @@
                     _to_classifiertype[i] = classificationType;
                 }
                 {
-                    int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationTerminalDef;
+                    int i = (int)LanguageServer.Antlr4ParserDescription.AntlrClassifications.ClassificationTerminalDef;
                     string val = _grammar_description.Map[i];
                     IClassificationType identiferClassificationType = service.GetClassificationType(val);
                     IClassificationType classificationType = identiferClassificationType ?? service.CreateClassificationType(val, Array.Empty<IClassificationType>());
@@ -211,7 +211,7 @@
                     _to_classifiertype[i] = classificationType;
                 }
                 {
-                    int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationTerminalRef;
+                    int i = (int)LanguageServer.Antlr4ParserDescription.AntlrClassifications.ClassificationTerminalRef;
                     string val = _grammar_description.Map[i];
                     IClassificationType identiferClassificationType = service.GetClassificationType(val);
                     IClassificationType classificationType = identiferClassificationType ?? service.CreateClassificationType(val, Array.Empty<IClassificationType>());
@@ -231,7 +231,7 @@
                     _to_classifiertype[i] = classificationType;
                 }
                 {
-                    int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationComment;
+                    int i = (int)LanguageServer.Antlr4ParserDescription.AntlrClassifications.ClassificationComment;
                     string val = _grammar_description.Map[i];
                     IClassificationType identiferClassificationType = service.GetClassificationType(val);
                     IClassificationType classificationType = identiferClassificationType ?? service.CreateClassificationType(val, Array.Empty<IClassificationType>());
@@ -251,7 +251,7 @@
                     _to_classifiertype[i] = classificationType;
                 }
                 {
-                    int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationKeyword;
+                    int i = (int)LanguageServer.Antlr4ParserDescription.AntlrClassifications.ClassificationKeyword;
                     string val = _grammar_description.Map[i];
                     IClassificationType identiferClassificationType = service.GetClassificationType(val);
                     IClassificationType classificationType = identiferClassificationType ?? service.CreateClassificationType(val, Array.Empty<IClassificationType>());
@@ -271,7 +271,7 @@
                     _to_classifiertype[i] = classificationType;
                 }
                 {
-                    int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationLiteral;
+                    int i = (int)LanguageServer.Antlr4ParserDescription.AntlrClassifications.ClassificationLiteral;
                     string val = _grammar_description.Map[i];
                     IClassificationType identiferClassificationType = service.GetClassificationType(val);
                     IClassificationType classificationType = identiferClassificationType ?? service.CreateClassificationType(val, Array.Empty<IClassificationType>());
@@ -291,7 +291,7 @@
                     _to_classifiertype[i] = classificationType;
                 }
                 {
-                    int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationModeDef;
+                    int i = (int)LanguageServer.Antlr4ParserDescription.AntlrClassifications.ClassificationModeDef;
                     string val = _grammar_description.Map[i];
                     IClassificationType identiferClassificationType = service.GetClassificationType(val);
                     IClassificationType classificationType = identiferClassificationType ?? service.CreateClassificationType(val, Array.Empty<IClassificationType>());
@@ -311,7 +311,7 @@
                     _to_classifiertype[i] = classificationType;
                 }
                 {
-                    int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationModeRef;
+                    int i = (int)LanguageServer.Antlr4ParserDescription.AntlrClassifications.ClassificationModeRef;
                     string val = _grammar_description.Map[i];
                     IClassificationType identiferClassificationType = service.GetClassificationType(val);
                     IClassificationType classificationType = identiferClassificationType ?? service.CreateClassificationType(val, Array.Empty<IClassificationType>());
@@ -331,7 +331,7 @@
                     _to_classifiertype[i] = classificationType;
                 }
                 {
-                    int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationChannelDef;
+                    int i = (int)LanguageServer.Antlr4ParserDescription.AntlrClassifications.ClassificationChannelDef;
                     string val = _grammar_description.Map[i];
                     IClassificationType identiferClassificationType = service.GetClassificationType(val);
                     IClassificationType classificationType = identiferClassificationType ?? service.CreateClassificationType(val, Array.Empty<IClassificationType>());
@@ -351,7 +351,7 @@
                     _to_classifiertype[i] = classificationType;
                 }
                 {
-                    int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationChannelRef;
+                    int i = (int)LanguageServer.Antlr4ParserDescription.AntlrClassifications.ClassificationChannelRef;
                     string val = _grammar_description.Map[i];
                     IClassificationType identiferClassificationType = service.GetClassificationType(val);
                     IClassificationType classificationType = identiferClassificationType ?? service.CreateClassificationType(val, Array.Empty<IClassificationType>());
@@ -371,7 +371,7 @@
                     _to_classifiertype[i] = classificationType;
                 }
                 {
-                    int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationPunctuation;
+                    int i = (int)LanguageServer.Antlr4ParserDescription.AntlrClassifications.ClassificationPunctuation;
                     string val = _grammar_description.Map[i];
                     IClassificationType identiferClassificationType = service.GetClassificationType(val);
                     IClassificationType classificationType = identiferClassificationType ?? service.CreateClassificationType(val, Array.Empty<IClassificationType>());
@@ -391,7 +391,7 @@
                     _to_classifiertype[i] = classificationType;
                 }
                 {
-                    int i = (int)LanguageServer.AntlrGrammarDescription.AntlrClassifications.ClassificationOperator;
+                    int i = (int)LanguageServer.Antlr4ParserDescription.AntlrClassifications.ClassificationOperator;
                     string val = _grammar_description.Map[i];
                     IClassificationType identiferClassificationType = service.GetClassificationType(val);
                     IClassificationType classificationType = identiferClassificationType ?? service.CreateClassificationType(val, Array.Empty<IClassificationType>());
@@ -431,14 +431,14 @@
                 return;
             }
 
-            LanguageServer.IGrammarDescription _grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
-            if (_grammar_description == null)
+            Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(ffn);
+            if (document == null)
             {
                 return;
             }
 
-            Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(ffn);
-            if (document == null)
+            LanguageServer.IParserDescription _grammar_description = LanguageServer.ParserDescriptionFactory.Create(document);
+            if (_grammar_description == null)
             {
                 return;
             }

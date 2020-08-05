@@ -11,12 +11,15 @@ namespace Workspaces
         private string _contents;
         private readonly Dictionary<string, string> _properties = new Dictionary<string, string>();
         private readonly Dictionary<string, bool> _lazy_evaluated = new Dictionary<string, bool>();
+        private string _parse_as;
 
         public Document(string ffn)
         {
             FullPath = Util.GetProperFilePathCapitalization(ffn);
             Changed = false;
         }
+
+        public string ParseAs { get; set; }
 
         public string FullPath { get; private set; }
 

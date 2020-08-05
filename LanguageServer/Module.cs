@@ -13,7 +13,10 @@
     public class Module
     {
 
-        public static int GetIndex(int line, int column, Document doc)
+        public enum RecoveryStrategy { Bail, Standard };
+
+
+        public int GetIndex(int line, int column, Document doc)
         {
             int index = 0;
             string buffer = doc.Code;
@@ -76,7 +79,7 @@
             return index;
         }
 
-        public static (int, int) GetLineColumn(int index, Document doc)
+        public (int, int) GetLineColumn(int index, Document doc)
         {
             int cur_index = 0;
             string buffer = doc.Code;
@@ -139,16 +142,16 @@
             return (cur_line, cur_col);
         }
 
-        public static QuickInfo GetQuickInfo(int index, Document doc)
+        public QuickInfo GetQuickInfo(int index, Document doc)
         {
-            ParserDetails pd = ParserDetailsFactory.Create(doc);
+            ParsingResults pd = ParsingResultsFactory.Create(doc);
             if (pd.ParseTree == null)
             {
-                LanguageServer.Module.Compile();
+                Compile();
             }
 
             Antlr4.Runtime.Tree.IParseTree pt = LanguageServer.Util.Find(index, doc);
-            IGrammarDescription gd = GrammarDescriptionFactory.Create(doc.FullPath);
+            IParserDescription gd = ParserDescriptionFactory.Create(doc);
             if (pt == null)
             {
                 return null;
@@ -184,7 +187,7 @@
                 }
                 if (gd.PopUpDefinition[tag_type] != null)
                 {
-                    Func<ParserDetails, IParseTree, string> fun = gd.PopUpDefinition[tag_type];
+                    Func<ParsingResults, IParseTree, string> fun = gd.PopUpDefinition[tag_type];
                     string mess = fun(pd, p);
                     if (mess != null)
                     {
@@ -208,7 +211,7 @@
                     }
                     if (gd.PopUpDefinition[tag_type] != null)
                     {
-                        Func<ParserDetails, IParseTree, string> fun = gd.PopUpDefinition[tag_type];
+                        Func<ParsingResults, IParseTree, string> fun = gd.PopUpDefinition[tag_type];
                         string mess = fun(pd, p);
                         if (mess != null)
                         {
@@ -226,16 +229,16 @@
             }
         }
 
-        public static int GetTag(int index, Document doc)
+        public int GetTag(int index, Document doc)
         {
-            ParserDetails pd = ParserDetailsFactory.Create(doc);
+            ParsingResults pd = ParsingResultsFactory.Create(doc);
             if (pd.ParseTree == null)
             {
-                LanguageServer.Module.Compile();
+                Compile();
             }
 
             Antlr4.Runtime.Tree.IParseTree pt = LanguageServer.Util.Find(index, doc);
-            IGrammarDescription gd = GrammarDescriptionFactory.Create(doc.FullPath);
+            IParserDescription gd = ParserDescriptionFactory.Create(doc);
             if (pt == null)
             {
                 return -1;
@@ -263,16 +266,16 @@
             return -1;
         }
 
-        public static DocumentSymbol GetDocumentSymbol(int index, Document doc)
+        public DocumentSymbol GetDocumentSymbol(int index, Document doc)
         {
-            ParserDetails pd = ParserDetailsFactory.Create(doc);
+            ParsingResults pd = ParsingResultsFactory.Create(doc);
             if (pd.ParseTree == null)
             {
-                LanguageServer.Module.Compile();
+                Compile();
             }
 
             Antlr4.Runtime.Tree.IParseTree pt = LanguageServer.Util.Find(index, doc);
-            IGrammarDescription gd = GrammarDescriptionFactory.Create(doc.FullPath);
+            IParserDescription gd = ParserDescriptionFactory.Create(doc);
             if (pt == null)
             {
                 return default(DocumentSymbol);
@@ -299,12 +302,12 @@
             };
         }
 
-        public static IEnumerable<DocumentSymbol> Get(Document doc)
+        public IEnumerable<DocumentSymbol> Get(Document doc)
         {
-            ParserDetails pd = ParserDetailsFactory.Create(doc);
+            ParsingResults pd = ParsingResultsFactory.Create(doc);
             if (pd.ParseTree == null)
             {
-                LanguageServer.Module.Compile();
+                Compile();
             }
 
             List<DocumentSymbol> combined = new List<DocumentSymbol>();
@@ -351,14 +354,14 @@
             public int kind; 
         }
 
-        public static IEnumerable<Info> Get(int start, int end, Document doc)
+        public IEnumerable<Info> Get(int start, int end, Document doc)
         {
             try
             {
-                ParserDetails pd = ParserDetailsFactory.Create(doc);
+                ParsingResults pd = ParsingResultsFactory.Create(doc);
                 if (pd.ParseTree == null)
                 {
-                    LanguageServer.Module.Compile();
+                    Compile();
                 }
 
                 List<Info> combined = new List<Info>();
@@ -394,12 +397,12 @@
             return new List<Info>();
         }
 
-        public static IEnumerable<Workspaces.Range> GetErrors(Workspaces.Range range, Document doc)
+        public IEnumerable<Workspaces.Range> GetErrors(Workspaces.Range range, Document doc)
         {
-            ParserDetails pd = ParserDetailsFactory.Create(doc);
+            ParsingResults pd = ParsingResultsFactory.Create(doc);
             if (pd.ParseTree == null)
             {
-                LanguageServer.Module.Compile();
+                Compile();
             }
 
             List<Range> result = new List<Workspaces.Range>();
@@ -448,7 +451,7 @@
             return result;
         }
 
-        public static IList<Location> FindDefs(int index, Document doc)
+        public IList<Location> FindDefs(int index, Document doc)
         {
             List<Location> result = new List<Location>();
             if (doc == null)
@@ -462,10 +465,10 @@
                 return result;
             }
 
-            ParserDetails ref_pd = ParserDetailsFactory.Create(doc);
+            ParsingResults ref_pd = ParsingResultsFactory.Create(doc);
             if (ref_pd.ParseTree == null)
             {
-                LanguageServer.Module.Compile();
+                Compile();
             }
 
             ref_pd.Attributes.TryGetValue(ref_pt, out IList<Symtab.CombinedScopeSymbol> list_values);
@@ -518,7 +521,7 @@
             return result;
         }
 
-        public static IEnumerable<Location> FindRefsAndDefs(int index, Document doc)
+        public IEnumerable<Location> FindRefsAndDefs(int index, Document doc)
         {
             List<Location> result = new List<Location>();
             IParseTree ref_pt = Util.Find(index, doc);
@@ -527,10 +530,10 @@
                 return result;
             }
 
-            ParserDetails ref_pd = ParserDetailsFactory.Create(doc);
+            ParsingResults ref_pd = ParsingResultsFactory.Create(doc);
             if (ref_pd.ParseTree == null)
             {
-                LanguageServer.Module.Compile();
+                Compile();
             }
 
             ref_pd.Attributes.TryGetValue(ref_pt, out IList<Symtab.CombinedScopeSymbol> list_value);
@@ -593,13 +596,13 @@
             return result;
         }
 
-        public static IEnumerable<Location> GetDefs(Document doc)
+        public IEnumerable<Location> GetDefs(Document doc)
         {
             List<Location> result = new List<Location>();
-            ParserDetails ref_pd = ParserDetailsFactory.Create(doc);
+            ParsingResults ref_pd = ParsingResultsFactory.Create(doc);
             if (ref_pd.ParseTree == null)
             {
-                LanguageServer.Module.Compile();
+                Compile();
             }
 
             foreach (KeyValuePair<TerminalNodeImpl, int> value in ref_pd.Defs)
@@ -616,13 +619,13 @@
             return result;
         }
 
-        public static IEnumerable<TerminalNodeImpl> GetRefsLeaf(Document doc)
+        public IEnumerable<TerminalNodeImpl> GetRefsLeaf(Document doc)
         {
             List<TerminalNodeImpl> result = new List<TerminalNodeImpl>();
-            ParserDetails ref_pd = ParserDetailsFactory.Create(doc);
+            ParsingResults ref_pd = ParsingResultsFactory.Create(doc);
             if (ref_pd.ParseTree == null)
             {
-                LanguageServer.Module.Compile();
+                Compile();
             }
 
             foreach (KeyValuePair<TerminalNodeImpl, int> value in ref_pd.Refs)
@@ -633,13 +636,13 @@
             return result;
         }
 
-        public static IEnumerable<TerminalNodeImpl> GetDefsLeaf(Document doc)
+        public IEnumerable<TerminalNodeImpl> GetDefsLeaf(Document doc)
         {
             List<TerminalNodeImpl> result = new List<TerminalNodeImpl>();
-            ParserDetails ref_pd = ParserDetailsFactory.Create(doc);
+            ParsingResults ref_pd = ParsingResultsFactory.Create(doc);
             if (ref_pd.ParseTree == null)
             {
-                LanguageServer.Module.Compile();
+                Compile();
             }
 
             foreach (KeyValuePair<TerminalNodeImpl, int> value in ref_pd.Defs)
@@ -650,25 +653,25 @@
             return result;
         }
 
-        private static Digraph<ParserDetails> ConstructGraph(IEnumerable<ParserDetails> to_do)
+        private Digraph<ParsingResults> ConstructGraph(IEnumerable<ParsingResults> to_do)
         {
-            Digraph<ParserDetails> g = new Digraph<ParserDetails>();
-            HashSet<ParserDetails> done = new HashSet<ParserDetails>();
-            Stack<ParserDetails> stack = new Stack<ParserDetails>();
-            foreach (ParserDetails f in to_do)
+            Digraph<ParsingResults> g = new Digraph<ParsingResults>();
+            HashSet<ParsingResults> done = new HashSet<ParsingResults>();
+            Stack<ParsingResults> stack = new Stack<ParsingResults>();
+            foreach (ParsingResults f in to_do)
             {
                 stack.Push(f);
             }
 
             while (stack.Count > 0)
             {
-                ParserDetails f = stack.Pop();
+                ParsingResults f = stack.Pop();
                 g.AddVertex(f);
                 done.Add(f);
                 foreach (string d in f.PropagateChangesTo)
                 {
                     Document d_doc = Workspace.Instance.FindDocument(d);
-                    ParserDetails d_pd = ParserDetailsFactory.Create(d_doc);
+                    ParsingResults d_pd = ParsingResultsFactory.Create(d_doc);
                     if (done.Contains(d_pd))
                     {
                         continue;
@@ -678,30 +681,30 @@
                 }
             }
 
-            foreach (ParserDetails v in g.Vertices)
+            foreach (ParsingResults v in g.Vertices)
             {
                 HashSet<string> deps = v.PropagateChangesTo;
                 Document doc = Workspace.Instance.FindDocument(v.FullFileName);
-                ParserDetails pd = ParserDetailsFactory.Create(doc);
+                ParsingResults pd = ParsingResultsFactory.Create(doc);
                 foreach (string d in deps)
                 {
                     Document d_doc = Workspace.Instance.FindDocument(d);
-                    ParserDetails d_pd = ParserDetailsFactory.Create(d_doc);
-                    g.AddEdge(new DirectedEdge<ParserDetails>(pd, d_pd));
+                    ParsingResults d_pd = ParsingResultsFactory.Create(d_doc);
+                    g.AddEdge(new DirectedEdge<ParsingResults>(pd, d_pd));
                 }
             }
 
             return g;
         }
 
-        public static List<ParserDetails> Compile()
+        public List<ParsingResults> Compile(int quiet_after = 0)
         {
             try
             {
                 Workspace ws = Workspaces.Workspace.Instance;
 
                 // Get all changed files.
-                HashSet<ParserDetails> to_do = new HashSet<ParserDetails>();
+                HashSet<ParsingResults> to_do = new HashSet<ParsingResults>();
 
             DoAgain:
 
@@ -715,9 +718,11 @@
                     }
 
                     Container parent = document.Parent;
-                    IGrammarDescription gd = LanguageServer.GrammarDescriptionFactory.Create(file_name);
+                    IParserDescription gd = LanguageServer.ParserDescriptionFactory.Create(document);
                     if (gd == null)
                     {
+                        if (document.ParseAs != null)
+                            System.Console.Error.WriteLine("Unknown parse type.");
                         continue;
                     }
 
@@ -732,12 +737,6 @@
                             continue;
                         }
 
-                        IGrammarDescription g2 = LanguageServer.GrammarDescriptionFactory.Create(file);
-                        if (g2 == null)
-                        {
-                            continue;
-                        }
-
                         Document x = Workspaces.Workspace.Instance.FindDocument(file);
                         if (x == null)
                         {
@@ -746,7 +745,14 @@
                             Document new_doc = new Workspaces.Document(file);
                             proj.AddChild(new_doc);
                         }
-                        ParserDetails p2 = ParserDetailsFactory.Create(document);
+
+                        IParserDescription g2 = LanguageServer.ParserDescriptionFactory.Create(document);
+                        if (g2 == null)
+                        {
+                            continue;
+                        }
+
+                        ParsingResults p2 = ParsingResultsFactory.Create(document);
                         if (!p2.Changed)
                         {
                             continue;
@@ -764,14 +770,14 @@
                         continue;
                     }
 
-                    IGrammarDescription gd = LanguageServer.GrammarDescriptionFactory.Create(file_name);
+                    IParserDescription gd = LanguageServer.ParserDescriptionFactory.Create(document);
                     if (gd == null)
                     {
                         continue;
                     }
                     // file_name can be a URI, so this doesn't make sense.
                     //if (!System.IO.File.Exists(file_name)) continue;
-                    ParserDetails pd = ParserDetailsFactory.Create(document);
+                    ParsingResults pd = ParsingResultsFactory.Create(document);
                     if (!pd.Changed)
                     {
                         continue;
@@ -779,8 +785,8 @@
 
                     to_do.Add(pd);
                 }
-                Digraph<ParserDetails> g = ConstructGraph(to_do);
-                foreach (ParserDetails v in g.Vertices)
+                Digraph<ParsingResults> g = ConstructGraph(to_do);
+                foreach (ParsingResults v in g.Vertices)
                 {
                     v.Item.Changed = true; // Force.
                     v.Parse();
@@ -789,7 +795,7 @@
                 for (int pass = 0; changed; pass++)
                 {
                     changed = false;
-                    foreach (ParserDetails v in g.Vertices)
+                    foreach (ParsingResults v in g.Vertices)
                     {
                         int number_of_passes = v.Passes.Count;
                         if (pass < number_of_passes)
@@ -809,11 +815,11 @@
                         }
                     }
                 }
-                foreach (ParserDetails v in g.Vertices)
+                foreach (ParsingResults v in g.Vertices)
                 {
                     v.GatherRefsDefsAndOthers();
                 }
-                foreach (ParserDetails v in g.Vertices)
+                foreach (ParsingResults v in g.Vertices)
                 {
                     v.GatherErrors();
                 }
@@ -823,12 +829,12 @@
             {
                 Logger.Log.Notify(e.ToString());
             }
-            return new List<ParserDetails>();
+            return new List<ParsingResults>();
         }
 
-        public static TextEdit[] Reformat(Document doc)
+        public TextEdit[] Reformat(Document doc)
         {
-            ParserDetails ref_pd = ParserDetailsFactory.Create(doc);
+            ParsingResults ref_pd = ParsingResultsFactory.Create(doc);
             string code = doc.Code;
             string corpus_location = Options.Option.GetString("CorpusLocation");
             if (corpus_location == null)
@@ -843,7 +849,7 @@
                 TextEdit[] result = new TextEdit[] { };
                 return result;
             }
-            IGrammarDescription grammar_description = LanguageServer.GrammarDescriptionFactory.Create(ffn);
+            IParserDescription grammar_description = LanguageServer.ParserDescriptionFactory.Create(doc);
             if (grammar_description == null)
             {
                 TextEdit[] result = new TextEdit[] { };
@@ -934,9 +940,9 @@
             }
         }
 
-        public static Dictionary<string, TextEdit[]> Rename(int index, string new_text, Document doc)
+        public Dictionary<string, TextEdit[]> Rename(int index, string new_text, Document doc)
         {
-            IEnumerable<Location> locations = LanguageServer.Module.FindRefsAndDefs(index, doc);
+            IEnumerable<Location> locations = FindRefsAndDefs(index, doc);
             Dictionary<string, TextEdit[]> result = new Dictionary<string, TextEdit[]>();
             IEnumerable<Document> documents = locations.Select(r => r.Uri).OrderBy(q => q).Distinct();
             foreach (Document f in documents)
@@ -1022,19 +1028,19 @@
             return result;
         }
 
-        public static List<string> Completion(int char_index, Document document)
+        public List<string> Completion(int char_index, Document document)
         {
-            ParserDetails ref_pd = ParserDetailsFactory.Create(document);
+            ParsingResults ref_pd = ParsingResultsFactory.Create(document);
             if (ref_pd.ParseTree == null)
             {
-                LanguageServer.Module.Compile();
+                Compile();
             }
 
             List<string> result = ref_pd.Candidates(char_index);
             return result;
         }
 
-        public static string AntlrVersion()
+        public string AntlrVersion()
         {
             Type parser_type = typeof(ANTLRv4Parser);
             System.CodeDom.Compiler.GeneratedCodeAttribute MyAttribute =

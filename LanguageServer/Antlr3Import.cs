@@ -21,7 +21,7 @@
             var lexer = new ANTLRv3Lexer(str);
             var tokens = new CommonTokenStream(lexer);
             var parser = new ANTLRv3Parser(tokens);
-            var elistener = new ErrorListener<IToken>(parser, lexer, tokens);
+            var elistener = new ErrorListener<IToken>(parser, lexer, tokens, 0);
             parser.AddErrorListener(elistener);
             var tree = parser.grammarDef();
             var error_file_name = ffn;

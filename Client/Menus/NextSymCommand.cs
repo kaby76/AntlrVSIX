@@ -139,11 +139,11 @@
                 if (ffn == null) return;
                 Workspaces.Document document = Workspaces.Workspace.Instance.FindDocument(ffn);
                 if (document == null) return;
-                int pos = LanguageServer.Module.GetIndex(l, c, document);
+                int pos = new LanguageServer.Module().GetIndex(l, c, document);
                 int new_pos = AntlrLanguageClient.CMNextSymbol(ffn, pos, forward);
                 if (new_pos < 0) return;
                 List<IToken> where = new List<IToken>();
-                List<ParserDetails> where_details = new List<ParserDetails>();
+                List<ParsingResults> where_details = new List<ParsingResults>();
                 IVsTextView vstv = IVsTextViewExtensions.FindTextViewFor(ffn);
                 if (vstv == null) return;
                 IWpfTextView wpftv = AntlrLanguageClient.AdaptersFactory.GetWpfTextView(vstv);

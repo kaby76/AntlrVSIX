@@ -17,7 +17,7 @@
             Dictionary<string, string> result = new Dictionary<string, string>();
 
             // Check if initial file is a grammar.
-            AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
+            AntlrGrammarDetails pd_parser = ParsingResultsFactory.Create(document) as AntlrGrammarDetails;
             if (pd_parser == null)
             {
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
@@ -164,7 +164,7 @@
             List<DiagnosticInfo> result = new List<DiagnosticInfo>();
 
             // Check if initial file is a grammar.
-            AntlrGrammarDetails pd_parser = ParserDetailsFactory.Create(document) as AntlrGrammarDetails;
+            AntlrGrammarDetails pd_parser = ParsingResultsFactory.Create(document) as AntlrGrammarDetails;
             if (pd_parser == null)
             {
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
@@ -320,7 +320,7 @@
                 IToken tb = pd_parser.TokStream.Get(b);
                 var st = ta.StartIndex;
                 var ed = tb.StopIndex + 1;
-                var refs = Module.FindRefsAndDefs(st, document);
+                var refs = new Module().FindRefsAndDefs(st, document);
                 if (refs.Count() <= 1)
                 {
                     string i = "Lexer rule " + k + " unused in parser grammar rules. Consider removing.";
