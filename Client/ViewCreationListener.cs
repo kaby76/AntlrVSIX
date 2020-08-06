@@ -31,7 +31,10 @@
                 if (buffer == null) return;
                 string ffn = buffer.GetFFN();
                 if (ffn == null) return;
-                if (!(Path.GetExtension(ffn) == ".g4" || Path.GetExtension(ffn) == ".g")) return;
+                if (!(Path.GetExtension(ffn) == ".g4"
+                    || Path.GetExtension(ffn) == ".g3"
+                    || Path.GetExtension(ffn) == ".g2"
+                    || Path.GetExtension(ffn) == ".g")) return;
                 if (!Options.Option.GetBoolean("OverrideAntlrPluggins")) return;
                 IContentType content_type = buffer.ContentType;
                 System.Collections.Generic.List<IContentType> content_types = ContentTypeRegistryService.ContentTypes.ToList();

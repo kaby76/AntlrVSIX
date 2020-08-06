@@ -162,7 +162,7 @@
         }
 
         public string FileExtension { get; } = ".g3;.g";
-        public string StartRule { get; } = "grammarSpec";
+        public string StartRule { get; } = "grammarDef";
 
         public bool IsFileType(string ffn)
         {

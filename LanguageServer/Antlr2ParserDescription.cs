@@ -162,7 +162,7 @@
         }
 
         public string FileExtension { get; } = ".g2;.g";
-        public string StartRule { get; } = "grammarSpec";
+        public string StartRule { get; } = "grammar_";
 
         public bool IsFileType(string ffn)
         {
@@ -207,8 +207,6 @@
             ClassificationPunctuation,
             ClassificationOperator,
         }
-
-
 
         public string[] Map { get; } = new string[]
         {

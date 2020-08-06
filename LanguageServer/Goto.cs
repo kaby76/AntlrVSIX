@@ -14,7 +14,11 @@
         public static CMGotoResult main(bool is_visitor, bool is_enter, Workspaces.Document document, int pos)
         {
             string main_suffix = Path.GetExtension(document.FullPath);
-            bool in_grammar = main_suffix == ".g4" || main_suffix == ".g";
+            bool in_grammar = main_suffix == ".g4"
+                || main_suffix == ".g3"
+                || main_suffix == ".g2"
+                || main_suffix == ".g"
+                ;
             bool in_cs = main_suffix == ".cs";
 
             if (in_grammar)

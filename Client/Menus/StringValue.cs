@@ -10,6 +10,8 @@
                 _antlr = System.IO.Path.GetFileNameWithoutExtension(Ffn) + ".g4";
             if (System.IO.Path.GetFileName(Ffn).EndsWith(".g3"))
                 _antlr = System.IO.Path.GetFileNameWithoutExtension(Ffn) + ".g4";
+            if (System.IO.Path.GetFileName(Ffn).EndsWith(".g2"))
+                _antlr = System.IO.Path.GetFileNameWithoutExtension(Ffn) + ".g4";
             if (System.IO.Path.GetFileName(Ffn).EndsWith(".g"))
                 _antlr = System.IO.Path.GetFileNameWithoutExtension(Ffn) + ".g4";
         }
