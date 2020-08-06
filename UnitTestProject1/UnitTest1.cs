@@ -130,6 +130,26 @@ namespace UnitTestProject1
         }
 
         [TestMethod]
+        public void TestFindDef2()
+        {
+            var cwd = Directory.GetCurrentDirectory();
+            Document document = CheckDoc("../../../../UnitTestProject1/ANTLRv3.g3");
+            // Position at the "grammarSpec" rule, beginning of RHS symbol "grammarDecl".
+            // All lines and columns are zero based in LSP.
+            int line = 88;
+            int character = 40;
+            int index = new LanguageServer.Module().GetIndex(line, character, document);
+            (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
+            if (back.Item1 != line || back.Item2 != character) throw new Exception();
+            IList<Location> found = new LanguageServer.Module().FindDefs(index, document);
+            if (found.Count != 1) throw new Exception();
+            (int, int) back_start = new LanguageServer.Module().GetLineColumn(found.First().Range.Start.Value, document);
+            if (back_start.Item1 != 96 || back_start.Item2 != 0) throw new Exception();
+            (int, int) back_end = new LanguageServer.Module().GetLineColumn(found.First().Range.End.Value, document);
+            if (back_end.Item1 != 96 || back_end.Item2 != 9) throw new Exception();
+        }
+
+        [TestMethod]
         public void TestFindAllRefs()
         {
             var cwd = Directory.GetCurrentDirectory();
@@ -1442,7 +1462,7 @@ IDENTIFIER
         public void TestImport2()
         {
             var cwd = Directory.GetCurrentDirectory();
-            var ffn = cwd + "/" + "../../../../UnitTestProject1/ANTLRv3.g";
+            var ffn = cwd + "/" + "../../../../UnitTestProject1/ANTLRv3.g3";
             var code = System.IO.File.ReadAllText(ffn);
             var results = new Dictionary<string, string>();
             var imp = new LanguageServer.Antlr3Import();
@@ -1457,7 +1477,7 @@ IDENTIFIER
         public void TestImport3()
         {
             var cwd = Directory.GetCurrentDirectory();
-            var ffn = cwd + "/" + "../../../../UnitTestProject1/ANTLRv2.g";
+            var ffn = cwd + "/" + "../../../../UnitTestProject1/ANTLRv2.g2";
             var code = System.IO.File.ReadAllText(ffn);
             var results = new Dictionary<string, string>();
             var imp = new LanguageServer.Antlr2Import();

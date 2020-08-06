@@ -8,9 +8,8 @@
     public interface IParserDescription
     {
         string Name { get; }
-        ParsingResults CreateParserDetails(Workspaces.Document item);
-        System.Type Parser { get; }
-        System.Type Lexer { get; }
+        Antlr4.Runtime.Parser Parser { get; }
+        Antlr4.Runtime.Lexer Lexer { get; }
         int QuietAfter { get; set; }
         void Parse(ParsingResults pd);
         void Parse(string code,

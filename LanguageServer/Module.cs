@@ -151,7 +151,7 @@
             }
 
             Antlr4.Runtime.Tree.IParseTree pt = LanguageServer.Util.Find(index, doc);
-            IParserDescription gd = ParserDescriptionFactory.Create(doc);
+            var gd = ParserDescriptionFactory.Create(doc);
             if (pt == null)
             {
                 return null;
@@ -238,7 +238,7 @@
             }
 
             Antlr4.Runtime.Tree.IParseTree pt = LanguageServer.Util.Find(index, doc);
-            IParserDescription gd = ParserDescriptionFactory.Create(doc);
+            var gd = ParserDescriptionFactory.Create(doc);
             if (pt == null)
             {
                 return -1;
@@ -275,7 +275,7 @@
             }
 
             Antlr4.Runtime.Tree.IParseTree pt = LanguageServer.Util.Find(index, doc);
-            IParserDescription gd = ParserDescriptionFactory.Create(doc);
+            var gd = ParserDescriptionFactory.Create(doc);
             if (pt == null)
             {
                 return default(DocumentSymbol);
@@ -718,7 +718,7 @@
                     }
 
                     Container parent = document.Parent;
-                    IParserDescription gd = LanguageServer.ParserDescriptionFactory.Create(document);
+                    var gd = LanguageServer.ParserDescriptionFactory.Create(document);
                     if (gd == null)
                     {
                         if (document.ParseAs != null)
@@ -746,7 +746,7 @@
                             proj.AddChild(new_doc);
                         }
 
-                        IParserDescription g2 = LanguageServer.ParserDescriptionFactory.Create(document);
+                        var g2 = LanguageServer.ParserDescriptionFactory.Create(document);
                         if (g2 == null)
                         {
                             continue;
@@ -770,7 +770,7 @@
                         continue;
                     }
 
-                    IParserDescription gd = LanguageServer.ParserDescriptionFactory.Create(document);
+                    var gd = LanguageServer.ParserDescriptionFactory.Create(document);
                     if (gd == null)
                     {
                         continue;
@@ -849,7 +849,7 @@
                 TextEdit[] result = new TextEdit[] { };
                 return result;
             }
-            IParserDescription grammar_description = LanguageServer.ParserDescriptionFactory.Create(doc);
+            var grammar_description = LanguageServer.ParserDescriptionFactory.Create(doc);
             if (grammar_description == null)
             {
                 TextEdit[] result = new TextEdit[] { };

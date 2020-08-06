@@ -34,8 +34,7 @@ options
 }
 
 grammarDef
-   : DOC_COMMENT? (LEXER | PARSER | TREE| ) GRAMMAR id SEMI optionsSpec? tokensSpec? attrScope* action* rule_+
-   EOF
+   : DOC_COMMENT? (LEXER | PARSER | TREE| ) GRAMMAR id SEMI optionsSpec? tokensSpec? attrScope* action* rules EOF
    ;
 
 tokensSpec
@@ -74,6 +73,10 @@ optionValue
    | CHAR_LITERAL
    | INT
    | STAR
+   ;
+
+rules
+   : rule_+
    ;
 
 rule_

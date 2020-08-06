@@ -20,12 +20,12 @@
             }
         }
 
-        public static IParserDescription Create(Workspaces.Document document)
+        public static ParsingResults Create(Workspaces.Document document)
         {
             if (_parsing_results.ContainsKey(document))
-                return _parsing_results[document] as IParserDescription;
+                return _parsing_results[document];
 
-            IParserDescription result = null;
+            ParsingResults result = null;
 
             if (document.ParseAs != null)
             {
@@ -51,7 +51,7 @@
                 result = new Antlr4ParsingResults(document);
             }
             else result = null;
-            _parsing_results[document] = result as ParsingResults;
+            _parsing_results[document] = result;
             return result;
         }
     }

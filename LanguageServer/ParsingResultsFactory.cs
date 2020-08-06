@@ -23,14 +23,7 @@
                     return pd.Value;
                 }
             }
-            IParserDescription gd = ParserDescriptionFactory.Create(document);
-            if (gd == null)
-            {
-                return null;
-            }
-
-            ParsingResults result = gd.CreateParserDetails(document);
-            result.Gd = gd;
+            ParsingResults result = ParserDescriptionFactory.Create(document);
             _per_file_parser_details[ffn] = result;
             return result;
         }
