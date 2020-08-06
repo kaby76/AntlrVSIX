@@ -8,9 +8,9 @@
 
     public class Pass3Listener : ANTLRv4ParserBaseListener
     {
-        private readonly AntlrGrammarDetails _pd;
+        private readonly ParsingResults _pd;
 
-        public Pass3Listener(AntlrGrammarDetails pd)
+        public Pass3Listener(ParsingResults pd)
         {
             _pd = pd;
         }

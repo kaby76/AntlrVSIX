@@ -4,7 +4,7 @@
 
     public class Pass0Listener : ANTLRv4ParserBaseListener
     {
-        private readonly AntlrGrammarDetails _pd;
+        private readonly ParsingResults _pd;
         private bool saw_tokenVocab_option = false;
         private enum GrammarType
         {
@@ -15,12 +15,12 @@
 
         private GrammarType Type;
 
-        public Pass0Listener(AntlrGrammarDetails pd)
+        public Pass0Listener(ParsingResults pd)
         {
             _pd = pd;
-            if (!AntlrGrammarDetails._dependent_grammars.ContainsKey(_pd.FullFileName))
+            if (!ParsingResults._dependent_grammars.ContainsKey(_pd.FullFileName))
             {
-                AntlrGrammarDetails._dependent_grammars.Add(_pd.FullFileName);
+                ParsingResults._dependent_grammars.Add(_pd.FullFileName);
             }
         }
 
@@ -68,13 +68,13 @@
             }
 
             _pd.Imports.Add(dep);
-            if (!AntlrGrammarDetails._dependent_grammars.ContainsKey(dep))
+            if (!ParsingResults._dependent_grammars.ContainsKey(dep))
             {
-                AntlrGrammarDetails._dependent_grammars.Add(dep);
+                ParsingResults._dependent_grammars.Add(dep);
             }
 
             bool found = false;
-            foreach (string f in AntlrGrammarDetails._dependent_grammars[dep])
+            foreach (string f in ParsingResults._dependent_grammars[dep])
             {
                 if (f == file)
                 {
@@ -84,7 +84,7 @@
             }
             if (!found)
             {
-                AntlrGrammarDetails._dependent_grammars.Add(dep, file);
+                ParsingResults._dependent_grammars.Add(dep, file);
             }
             saw_tokenVocab_option = true;
         }
@@ -112,13 +112,13 @@
             }
 
             _pd.Imports.Add(dep);
-            if (!AntlrGrammarDetails._dependent_grammars.ContainsKey(dep))
+            if (!ParsingResults._dependent_grammars.ContainsKey(dep))
             {
-                AntlrGrammarDetails._dependent_grammars.Add(dep);
+                ParsingResults._dependent_grammars.Add(dep);
             }
 
             bool found = false;
-            foreach (string f in AntlrGrammarDetails._dependent_grammars[dep])
+            foreach (string f in ParsingResults._dependent_grammars[dep])
             {
                 if (f == file)
                 {
@@ -128,7 +128,7 @@
             }
             if (!found)
             {
-                AntlrGrammarDetails._dependent_grammars.Add(dep, file);
+                ParsingResults._dependent_grammars.Add(dep, file);
             }
         }
 
@@ -162,13 +162,13 @@
 
             string dir = System.IO.Path.GetDirectoryName(file);
             _pd.Imports.Add(dep);
-            if (!AntlrGrammarDetails._dependent_grammars.ContainsKey(dep))
+            if (!ParsingResults._dependent_grammars.ContainsKey(dep))
             {
-                AntlrGrammarDetails._dependent_grammars.Add(dep);
+                ParsingResults._dependent_grammars.Add(dep);
             }
 
             bool found = false;
-            foreach (string f in AntlrGrammarDetails._dependent_grammars[dep])
+            foreach (string f in ParsingResults._dependent_grammars[dep])
             {
                 if (f == file)
                 {
@@ -178,7 +178,7 @@
             }
             if (!found)
             {
-                AntlrGrammarDetails._dependent_grammars.Add(dep, file);
+                ParsingResults._dependent_grammars.Add(dep, file);
             }
         }
     }

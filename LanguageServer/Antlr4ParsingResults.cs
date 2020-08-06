@@ -9,16 +9,18 @@
     using System.Linq;
     using System.Text;
 
-    public class Antlr2ParserDescription : IParserDescription
+    public class Antlr4ParsingResults : ParsingResults, IParserDescription
     {
-        public string Name { get; } = "Antlr2";
-        public System.Type Parser { get; } = typeof(ANTLRv2Parser);
-        public System.Type Lexer { get; } = typeof(ANTLRv2Lexer);
+        public Antlr4ParsingResults(Workspaces.Document doc) : base(doc) { }
+
+        public string Name { get; } = "Antlr4";
+        public System.Type Parser { get; } = typeof(ANTLRv4Parser);
+        public System.Type Lexer { get; } = typeof(ANTLRv4Lexer);
         public int QuietAfter { get; set; } = 0;
 
         public ParsingResults CreateParserDetails(Workspaces.Document item)
         {
-            return new AntlrGrammarDetails(item);
+            return new Antlr4ParsingResults(item);
         }
 
         public void Parse(ParsingResults pd)
@@ -39,9 +41,9 @@
             {
                 name = ffn
             };
-            ANTLRv2Lexer lexer = new ANTLRv2Lexer(ais);
+            ANTLRv4Lexer lexer = new ANTLRv4Lexer(ais);
             CommonTokenStream cts = new CommonTokenStream(lexer);
-            ANTLRv2Parser parser = new ANTLRv2Parser(cts);
+            ANTLRv4Parser parser = new ANTLRv4Parser(cts);
             lexer.RemoveErrorListeners();
             var lexer_error_listener = new ErrorListener<int>(parser, lexer, cts, pd.QuietAfter);
             lexer.AddErrorListener(lexer_error_listener);
@@ -50,7 +52,7 @@
             parser.AddErrorListener(parser_error_listener);
             try
             {
-                pt = parser.grammar_();
+                pt = parser.grammarSpec();
             }
             catch (Exception)
             {
@@ -109,9 +111,9 @@
             AntlrInputStream ais = new AntlrInputStream(
             new StreamReader(
                 new MemoryStream(byteArray)).ReadToEnd());
-            ANTLRv2Lexer lexer = new ANTLRv2Lexer(ais);
+            ANTLRv4Lexer lexer = new ANTLRv4Lexer(ais);
             CommonTokenStream cts = new CommonTokenStream(lexer);
-            ANTLRv2Parser parser = new ANTLRv2Parser(cts);
+            ANTLRv4Parser parser = new ANTLRv4Parser(cts);
             lexer.RemoveErrorListeners();
             var lexer_error_listener = new ErrorListener<int>(parser, lexer, cts, this.QuietAfter);
             lexer.AddErrorListener(lexer_error_listener);
@@ -120,7 +122,7 @@
             parser.AddErrorListener(parser_error_listener);
             try
             {
-                pt = parser.grammar_();
+                pt = parser.grammarSpec();
             }
             catch (Exception)
             {
@@ -140,8 +142,8 @@
             var ais = new AntlrInputStream(
                         new StreamReader(
                             new MemoryStream(byteArray)).ReadToEnd());
-            ANTLRv2Lexer lexer = new ANTLRv2Lexer(ais);
-            CommonTokenStream cts_off_channel = new CommonTokenStream(lexer, ANTLRv2Lexer.OFF_CHANNEL);
+            ANTLRv4Lexer lexer = new ANTLRv4Lexer(ais);
+            CommonTokenStream cts_off_channel = new CommonTokenStream(lexer, ANTLRv4Lexer.OFF_CHANNEL);
             lexer.RemoveErrorListeners();
             var lexer_error_listener = new ErrorListener<int>(null, lexer, cts_off_channel, this.QuietAfter);
             lexer.AddErrorListener(lexer_error_listener);
@@ -150,9 +152,9 @@
             while (cts_off_channel.LA(1) != ANTLRv4Parser.Eof)
             {
                 IToken token = cts_off_channel.LT(1);
-                if (token.Type == ANTLRv2Lexer.ML_COMMENT
-                    || token.Type == ANTLRv2Lexer.SL_COMMENT
-                    || token.Type == ANTLRv2Lexer.DOC_COMMENT)
+                if (token.Type == ANTLRv4Lexer.BLOCK_COMMENT
+                    || token.Type == ANTLRv4Lexer.LINE_COMMENT
+                    || token.Type == ANTLRv4Lexer.DOC_COMMENT)
                 {
                     new_list[token] = type;
                 }
@@ -161,8 +163,8 @@
             return new_list;
         }
 
-        public string FileExtension { get; } = ".g2;.g";
-        public string StartRule { get; } = "grammar_";
+        public string FileExtension { get; } = ".g4;.g";
+        public string StartRule { get; } = "grammarSpec";
 
         public bool IsFileType(string ffn)
         {
@@ -207,6 +209,8 @@
             ClassificationPunctuation,
             ClassificationOperator,
         }
+
+
 
         public string[] Map { get; } = new string[]
         {
@@ -321,8 +325,7 @@
 
 
         public Func<IParserDescription, Dictionary<IParseTree, IList<CombinedScopeSymbol>>, IParseTree, int>
-            Classify
-        { get; } =
+            Classify { get; } = 
             (IParserDescription gd, Dictionary<IParseTree, IList<CombinedScopeSymbol>> st, IParseTree t) =>
             {
                 TerminalNodeImpl term = t as TerminalNodeImpl;
@@ -340,7 +343,7 @@
                     {
                         if (value is RefSymbol)
                         {
-                            List<ISymbol> defs = ((RefSymbol)value).Def;
+                            List<ISymbol> defs = ((RefSymbol) value).Def;
                             foreach (var d in defs)
                             {
                                 if (d is NonterminalSymbol)

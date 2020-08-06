@@ -4,18 +4,17 @@
 
     public class ParserDescriptionFactory
     {
-        private static readonly IParserDescription _antlr4 = new Antlr4ParserDescription();
-        private static readonly IParserDescription _antlr3 = new Antlr3ParserDescription();
-        private static readonly IParserDescription _antlr2 = new Antlr2ParserDescription();
+        private static Dictionary<Workspaces.Document, ParsingResults> _parsing_results = new Dictionary<Workspaces.Document, ParsingResults>();
+
         public static List<string> AllLanguages
         {
             get
             {
                 List<string> result = new List<string>
                 {
-                    _antlr2.Name,
-                    _antlr3.Name,
-                    _antlr4.Name
+                    "antlr2",
+                    "antlr3",
+                    "antlr4",
                 };
                 return result;
             }
@@ -23,30 +22,37 @@
 
         public static IParserDescription Create(Workspaces.Document document)
         {
+            if (_parsing_results.ContainsKey(document))
+                return _parsing_results[document] as IParserDescription;
+
+            IParserDescription result = null;
+
             if (document.ParseAs != null)
             {
                 var parse_as = document.ParseAs;
-                if (parse_as == "antlr2") return _antlr2;
-                else if (parse_as == "antlr3") return _antlr3;
-                else if (parse_as == "antlr4") return _antlr4;
-                return null;
+                if (parse_as == "antlr2") result = new Antlr2ParsingResults(document);
+                else if (parse_as == "antlr3") result = new Antlr3ParsingResults(document);
+                else if (parse_as == "antlr4") result = new Antlr4ParsingResults(document);
+                result = null;
             }
-            if (document.FullPath.EndsWith(".g2"))
+            else if (document.FullPath.EndsWith(".g2"))
             {
                 document.ParseAs = "antlr2";
-                return _antlr2;
+                result = new Antlr2ParsingResults(document);
             }
             else if (document.FullPath.EndsWith(".g3"))
             {
                 document.ParseAs = "antlr3";
-                return _antlr3;
+                result = new Antlr3ParsingResults(document);
             }
             else if (document.FullPath.EndsWith(".g4"))
             {
                 document.ParseAs = "antlr4";
-                return _antlr4;
+                result = new Antlr4ParsingResults(document);
             }
-            else return null;
+            else result = null;
+            _parsing_results[document] = result as ParsingResults;
+            return result;
         }
     }
 }

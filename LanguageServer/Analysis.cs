@@ -17,7 +17,7 @@
             Dictionary<string, string> result = new Dictionary<string, string>();
 
             // Check if initial file is a grammar.
-            AntlrGrammarDetails pd_parser = ParsingResultsFactory.Create(document) as AntlrGrammarDetails;
+            ParsingResults pd_parser = ParsingResultsFactory.Create(document) as ParsingResults;
             if (pd_parser == null)
             {
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
@@ -44,14 +44,14 @@
                 int before_count = read_files.Count;
                 foreach (string f in read_files)
                 {
-                    List<string> additional = AntlrGrammarDetails._dependent_grammars.Where(
+                    List<string> additional = ParsingResults._dependent_grammars.Where(
                         t => t.Value.Contains(f)).Select(
                         t => t.Key).ToList();
                     read_files = read_files.Union(additional).ToHashSet();
                 }
                 foreach (string f in read_files)
                 {
-                    IEnumerable<List<string>> additional = AntlrGrammarDetails._dependent_grammars.Where(
+                    IEnumerable<List<string>> additional = ParsingResults._dependent_grammars.Where(
                         t => t.Key == f).Select(
                         t => t.Value);
                     foreach (List<string> t in additional)
@@ -164,7 +164,7 @@
             List<DiagnosticInfo> result = new List<DiagnosticInfo>();
 
             // Check if initial file is a grammar.
-            AntlrGrammarDetails pd_parser = ParsingResultsFactory.Create(document) as AntlrGrammarDetails;
+            ParsingResults pd_parser = ParsingResultsFactory.Create(document) as ParsingResults;
             if (pd_parser == null)
             {
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
@@ -191,14 +191,14 @@
                 int before_count = read_files.Count;
                 foreach (string f in read_files)
                 {
-                    List<string> additional = AntlrGrammarDetails._dependent_grammars.Where(
+                    List<string> additional = ParsingResults._dependent_grammars.Where(
                         t => t.Value.Contains(f)).Select(
                         t => t.Key).ToList();
                     read_files = read_files.Union(additional).ToHashSet();
                 }
                 foreach (string f in read_files)
                 {
-                    IEnumerable<List<string>> additional = AntlrGrammarDetails._dependent_grammars.Where(
+                    IEnumerable<List<string>> additional = ParsingResults._dependent_grammars.Where(
                         t => t.Key == f).Select(
                         t => t.Value);
                     foreach (List<string> t in additional)

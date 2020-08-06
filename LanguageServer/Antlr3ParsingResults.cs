@@ -9,8 +9,10 @@
     using System.Linq;
     using System.Text;
 
-    public class Antlr3ParserDescription : IParserDescription
+    public class Antlr3ParsingResults : ParsingResults, IParserDescription
     {
+        public Antlr3ParsingResults(Workspaces.Document doc) : base(doc) { }
+
         public string Name { get; } = "Antlr3";
         public System.Type Parser { get; } = typeof(ANTLRv3Parser);
         public System.Type Lexer { get; } = typeof(ANTLRv3Lexer);
@@ -18,7 +20,7 @@
 
         public ParsingResults CreateParserDetails(Workspaces.Document item)
         {
-            return new AntlrGrammarDetails(item);
+            return new Antlr3ParsingResults(item);
         }
 
         public void Parse(ParsingResults pd)
