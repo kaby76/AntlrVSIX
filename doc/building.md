@@ -6,21 +6,13 @@ Antlrvsix focuses on the editing of Antlr grammars.
 
 Antlr4BuildTasks is a standard package which you can [reference using NuGet](https://www.nuget.org/packages/Antlr4BuildTasks/).
 Also including in the Antlr4BuildTasks git tree is Antlr4BuildTasks.Templates. This Nuget
-package includes Net Core templates for generating a C# and C++ Antlr program.
+package includes Net Core templates for generating a C# Antlr program.
 
 ## Prerequisites
 
-* You must install the Java tool chain.
-  [The Runtime Environment is sufficient](https://www.java.com/en/download/), but you may
-  use instead the [Java Platform Standard Edition](https://www.oracle.com/technetwork/java/javase/downloads/index.html).
-* You must [download the Java-based Antlr tool chain](https://www.antlr.org/download.html).
-  You can probably use almost any version of Antlr, but this extension has only been tested with
-  version 4.8.
-* You should set the environment variable _JAVA__HOME_ to the directory of the java installation.
-  AntlrVSIX uses this variable to find _java.exe_. 
-* You should set the environment variable _Antlr4ToolPath_ to the path of the downloaded Antlr jar file.
-  When I download files via a web browser, the downloads go into the directory _c:\users\userid\Downloads\_.
-
+* You must install the Net Core toolkit.
+* You will need an internet connection in order for 
+dependencies to be downloaded. 
 
 ## Adding Build Rules to an Existing Project
 
@@ -31,18 +23,6 @@ _NB: Do not include the generated .cs Antlr parser files
 in the CSPROJ file for your program._ Instead, the generated
 parser code is placed in the build temp output directory along with
 the .obj files from the C# compiler.
-
-If you prefer, you can add the paths of _JAVA__HOME_ and
-_Antlr4ToolPath_ within the .CSPROJ file.
-
-```
-  <PropertyGroup Condition="'$(JAVA_HOME)'==''">
-    <JAVA_HOME>C:\Program Files\Java\jdk-11.0.1</JAVA_HOME>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Antlr4ToolPath)'==''">
-    <Antlr4ToolPath>C:\Program Files\Java\javalib\antlr-4.8-complete.jar</Antlr4ToolPath>
-  </PropertyGroup>
-```
 
 To build and run a program,
 restore packages for the solution, then "F5".
@@ -61,13 +41,8 @@ on the top-level grammar file.
 
 ## Creating an Antlr Application from the Project Templates
 
-AntlrVSIX provides templates, available for NET Core or NET Framework,
-which you can use to create a self-contained "Hello World!" Antlr application.
-
-To create an Antlr application, open Visual Studio, then at the prompt, "Create a new project".
-In the "Create a new project" dialog box, search for "Antlr" and select one of the two
-templates AntlrVSIX provides. Configure the project, if you would like, then click on Create.
-You should then be able to run and go: "F5".
+To create an Antlr application, in a command-line prompt,
+type "dotnet new antlr". You can use Visual Studio to build, run, and debug the code.
 
 The template program is a complete example of Antlr:
 * grammar is for complex expressions;
