@@ -1,7 +1,7 @@
 # AntlrVSIX
 
-AntlrVSIX is an extension for Visual Studio 2019 to support editing, analysis, refactoring, and conversion
-of Antlr v4 grammars.
+AntlrVSIX is an extension for Visual Studio 2019 to support editing, analysis, refactoring,
+and conversion of Antlr2, Antlr3, Antlr4, and Bison grammars.
 It is implemented using Microsoft's [Language Server Protocol (LSP)](https://langserver.org/) 
 [client](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Client/) and
 [server](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/) APIs,
@@ -120,6 +120,7 @@ Bash script "clean.sh" in the Antlrvsix source to clean out the build files so o
 
 ## Planned for v8.0 (expected by 7 Aug 2020):
 
+* Add full support for Antlr2, Antlr3, and Bison grammars.
 * Move all Antlr tree editing routines into a NuGet package
   * Add XPath based on Eclipse XPath2.
   * Add CTree, an S-expression library to specify and link in sub-trees.
