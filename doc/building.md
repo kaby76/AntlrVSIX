@@ -54,10 +54,6 @@ and runs the visitor on the parse tree.
 From this template, you should be able to tackle more complex grammars, including
 C++ (with preprocessor), C#, Java, Python, etc.
 
-<br/><img src="pics/2019-08-08-31.png" width="75%" />
-
-<br/><img src="pics/2019-08-08-32.png" width="75%" />
-
 <br/><img src="pics/2019-08-08-34.png" width="75%" />
 
 <br/><img src="pics/2019-08-08-33.png" width="75%" />
