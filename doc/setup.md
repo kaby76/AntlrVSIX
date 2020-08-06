@@ -47,9 +47,10 @@ etc).
 
 ## Building Antlrvsix
 
-To build Antlrvsix, you will need to have the prerequisites
-for building Antlr programs. See [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks).
-Building the extension is, unfortunately, a two step process. To build,
+To build Antlrvsix, you will need to install Visual Studio 2019 with Net Core 3.1 and Framework 4.7.2.
+I recommend that you build at a Developer Command Prompt for VS 2019. Simply type "msbuild /t:restore"
+then "msbuild" from the top-level directory containing the sources. If you build within VS2019, it's
+likely that you will need to build it twice. To build,
 open Antlrvsix.sln and perform a build on a clean git fetch.
 Then, close VS2019, and reopen it on Antlrvsix.sln again. You can now
 "Build" to get the LSP server in the Antlrvsix.vsix file (it should be 31MB after building).
