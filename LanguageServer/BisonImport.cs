@@ -1,7 +1,6 @@
 ﻿namespace LanguageServer
 {
     using Antlr4.Runtime;
-    using Antlr4.Runtime.Tree;
     using org.eclipse.wst.xml.xpath2.processor.util;
     using System;
     using System.Collections.Generic;

@@ -33,7 +33,8 @@
                 if (parse_as == "antlr2") result = new Antlr2ParsingResults(document);
                 else if (parse_as == "antlr3") result = new Antlr3ParsingResults(document);
                 else if (parse_as == "antlr4") result = new Antlr4ParsingResults(document);
-                result = null;
+                else if (parse_as == "bison") result = new BisonParsingResults(document);
+                else result = null;
             }
             else if (document.FullPath.EndsWith(".g2"))
             {
@@ -49,6 +50,11 @@
             {
                 document.ParseAs = "antlr4";
                 result = new Antlr4ParsingResults(document);
+            }
+            else if (document.FullPath.EndsWith(".y"))
+            {
+                document.ParseAs = "bison";
+                result = new BisonParsingResults(document);
             }
             else result = null;
             _parsing_results[document] = result;

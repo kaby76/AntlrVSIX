@@ -18,9 +18,9 @@
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 
-                     /*==========\
-                     | Grammar.  |
-                     \==========*/
+/*==========\
+| Grammar.  |
+\==========*/
 
 
 parser grammar BisonParser;
@@ -34,9 +34,9 @@ input
     : prologue_declarations '%%' bison_grammar epilogue_opt
     ;
 
-    /*------------------------------------.
-    | Declarations: before the first %%.  |
-    `------------------------------------*/
+/*------------------------------------.
+| Declarations: before the first %%.  |
+`------------------------------------*/
 
 prologue_declarations
     :
@@ -105,7 +105,8 @@ code_props_type
 `---------*/
 
 union_name
-    : | ID
+    :
+    | ID
     ;
 
 symbol_declaration
@@ -123,7 +124,8 @@ precedence_declarator
     ;
 
 tag_opt
-    : | TAG
+    :
+    | TAG
     ;
 
 generic_symlist
@@ -183,11 +185,13 @@ token_decl
     ;
 
 int_opt
-    : | INT
+    :
+    | INT
     ;
 
 alias
-    : | string_as_id
+    :
+    | string_as_id
 //| TSTRING
     ;
 
@@ -241,9 +245,9 @@ symbol_decl_1
     | symbol_decl_1 symbol
     ;
 
-        /*------------------------------------------.
-        | The grammar section: between the two %%.  |
-        `------------------------------------------*/
+/*------------------------------------------.
+| The grammar section: between the two %%.  |
+`------------------------------------------*/
 
 bison_grammar
     : rules_or_grammar_declaration
@@ -267,19 +271,21 @@ rhses_1
     ;
 
 rhs
-    : | rhs symbol named_ref_opt
-      | rhs tag_opt actionBlock named_ref_opt
-      | rhs BRACED_PREDICATE
-      | rhs EMPTY_RULE
-      | rhs PERCENT_PREC symbol
-      | rhs DPREC INT
-      | rhs MERGE TAG
-      | rhs EXPECT INT
-      | rhs EXPECT_RR INT
+    :
+    | rhs symbol named_ref_opt
+    | rhs tag_opt actionBlock named_ref_opt
+    | rhs BRACED_PREDICATE
+    | rhs EMPTY_RULE
+    | rhs PERCENT_PREC symbol
+    | rhs DPREC INT
+    | rhs MERGE TAG
+    | rhs EXPECT INT
+    | rhs EXPECT_RR INT
     ;
 
 named_ref_opt
-    : | BRACKETED_ID
+    :
+    | BRACKETED_ID
     ;
 
 
@@ -292,9 +298,10 @@ variable
     ;
 
 value
-    : | ID
-      | STRING
-      | actionBlock
+    :
+    | ID
+    | STRING
+    | actionBlock
     ;
 
 
@@ -322,7 +329,8 @@ string_as_id
     ;
 
 epilogue_opt
-    : | '%%' EPILOGUE?
+    :
+    | '%%' EPILOGUE?
     ;
 
 actionBlock

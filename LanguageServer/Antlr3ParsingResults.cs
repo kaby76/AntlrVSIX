@@ -20,6 +20,10 @@
                 // Gather Imports from grammars.
                 // Gather _dependent_grammars map.
                 int before_count = 0;
+                if (!ParsingResults._dependent_grammars.ContainsKey(this.FullFileName))
+                {
+                    ParsingResults._dependent_grammars.Add(this.FullFileName);
+                }
                 foreach (KeyValuePair<string, List<string>> x in ParsingResults._dependent_grammars)
                 {
                     before_count++;
@@ -802,12 +806,6 @@
             ClassificationChannelRef,
             ClassificationPunctuation,
             ClassificationOperator,
-        }
-
-
-        public ParsingResults CreateParserDetails(Workspaces.Document item)
-        {
-            return new Antlr3ParsingResults(item);
         }
 
         public override Dictionary<IToken, int> ExtractComments(string code)

@@ -48,7 +48,8 @@
                     // Find new item.
                     (EnvDTE.Project, EnvDTE.ProjectItem) new_item = FindProjectAndItem(fn);
 #pragma warning disable CA1307 // Specify StringComparison
-                    if (fn.EndsWith(".g4") || fn.EndsWith(".g3") || fn.EndsWith(".g2"))
+                    if (fn.EndsWith(".g4") || fn.EndsWith(".g3") || fn.EndsWith(".g2")
+                        || fn.EndsWith(".y"))
 #pragma warning restore CA1307 // Specify StringComparison
                     {
                         // Set attributes, but only for grammar file.
