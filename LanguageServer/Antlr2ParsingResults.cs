@@ -1,6 +1,7 @@
 ﻿namespace LanguageServer
 {
     using Antlr4.Runtime;
+    using Antlr4.Runtime.Misc;
     using Antlr4.Runtime.Tree;
     using Symtab;
     using System;
@@ -11,7 +12,127 @@
 
     public class Antlr2ParsingResults : ParsingResults, IParserDescription
     {
-        public Antlr2ParsingResults(Workspaces.Document doc) : base(doc) { }
+        public Antlr2ParsingResults(Workspaces.Document doc) : base(doc)
+        {
+            // Passes executed in order for all files.
+            Passes.Add(() =>
+            {
+                // Gather Imports from grammars.
+                // Gather _dependent_grammars map.
+                int before_count = 0;
+                foreach (KeyValuePair<string, List<string>> x in ParsingResults._dependent_grammars)
+                {
+                    before_count++;
+                    before_count = before_count + x.Value.Count;
+                }
+                if (ParseTree == null) return false;
+                ParseTreeWalker.Default.Walk(new Pass0Listener(this), ParseTree);
+                int after_count = 0;
+                foreach (KeyValuePair<string, List<string>> dep in ParsingResults._dependent_grammars)
+                {
+                    string name = dep.Key;
+                    Workspaces.Document x = Workspaces.Workspace.Instance.FindDocument(name);
+                    if (x == null)
+                    {
+                        // Add document.
+                        Workspaces.Container proj = Item.Parent;
+                        Workspaces.Document new_doc = new Workspaces.Document(name);
+                        proj.AddChild(new_doc);
+                        after_count++;
+                    }
+                    after_count++;
+                    after_count = after_count + dep.Value.Count;
+                }
+                return before_count != after_count;
+            });
+            Passes.Add(() =>
+            {
+                // For all imported grammars across the entire universe,
+                // make sure all are loaded in the workspace,
+                // then restart.
+                foreach (KeyValuePair<string, List<string>> dep in ParsingResults._dependent_grammars)
+                {
+                    string name = dep.Key;
+                    Workspaces.Document x = Workspaces.Workspace.Instance.FindDocument(name);
+                    if (x == null)
+                    {
+                        // Add document.
+                        Workspaces.Container proj = Item.Parent;
+                        Workspaces.Document new_doc = new Workspaces.Document(name);
+                        proj.AddChild(new_doc);
+                        return true;
+                    }
+                    foreach (string y in dep.Value)
+                    {
+                        Workspaces.Document z = Workspaces.Workspace.Instance.FindDocument(y);
+                        if (z == null)
+                        {
+                            // Add document.
+                            Workspaces.Container proj = Item.Parent;
+                            Workspaces.Document new_doc = new Workspaces.Document(y);
+                            proj.AddChild(new_doc);
+                            return true;
+                        }
+                    }
+                }
+
+                // The workspace is completely loaded. Create scopes for all files in workspace
+                // if they don't already exist.
+                foreach (KeyValuePair<string, List<string>> dep in _dependent_grammars)
+                {
+                    string name = dep.Key;
+                    _scopes.TryGetValue(name, out IScope file_scope);
+                    if (file_scope != null)
+                    {
+                        continue;
+                    }
+
+                    _scopes[name] = new FileScope(name, null);
+                }
+
+                // Set up search path scopes for Imports relationship.
+                IScope root = _scopes[FullFileName];
+                foreach (string dep in Imports)
+                {
+                    // Don't add if already have this search path.
+                    IScope dep_scope = _scopes[dep];
+                    bool found = false;
+                    foreach (IScope scope in root.NestedScopes)
+                    {
+                        if (scope is SearchPathScope)
+                        {
+                            SearchPathScope spc = scope as SearchPathScope;
+                            if (spc.NestedScopes.First() == dep_scope)
+                            {
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!found)
+                    {
+                        SearchPathScope import = new SearchPathScope(root);
+                        import.nest(dep_scope);
+                        root.nest(import);
+                    }
+                }
+                root.empty();
+                RootScope = root;
+                return false;
+            });
+            Passes.Add(() =>
+            {
+                if (ParseTree == null) return false;
+                ParseTreeWalker.Default.Walk(new Pass2Listener(this), ParseTree);
+                return false;
+            });
+            Passes.Add(() =>
+            {
+                if (ParseTree == null) return false;
+                ParseTreeWalker.Default.Walk(new Pass3Listener(this), ParseTree);
+                return false;
+            });
+        }
 
         public override List<bool> CanFindAllRefs { get; } = new List<bool>()
         {
@@ -156,25 +277,16 @@
                    {
                        return (int)AntlrClassifications.ClassificationKeyword;
                    }
-                   if ((term.Symbol.Type == ANTLRv4Parser.STRING_LITERAL
-                         || term.Symbol.Type == ANTLRv4Parser.INT
-                         || term.Symbol.Type == ANTLRv4Parser.LEXER_CHAR_SET))
+                   if ((term.Symbol.Type == ANTLRv2Parser.STRING_LITERAL
+                         || term.Symbol.Type == ANTLRv2Parser.INT
+                         || term.Symbol.Type == ANTLRv2Parser.LEXER_CHAR_SET))
                    {
                        return (int)AntlrClassifications.ClassificationLiteral;
                    }
-                        // The token could be part of parserRuleSpec context.
-                        //for (IRuleNode r = term.Parent; r != null; r = r.Parent)
-                        //{
-                        //    if (r is ANTLRv4Parser.ParserRuleSpecContext ||
-                        //          r is ANTLRv4Parser.LexerRuleSpecContext)
-                        //    {
-                        //        return 4;
-                        //    }
-                        //}
-                        if (term.Payload.Channel == ANTLRv4Lexer.OFF_CHANNEL
-                       || term.Symbol.Type == ANTLRv4Lexer.DOC_COMMENT
-                       || term.Symbol.Type == ANTLRv4Lexer.BLOCK_COMMENT
-                       || term.Symbol.Type == ANTLRv4Lexer.LINE_COMMENT)
+                    if (
+                       term.Symbol.Type == ANTLRv2Parser.DOC_COMMENT
+                       || term.Symbol.Type == ANTLRv2Parser.ML_COMMENT
+                       || term.Symbol.Type == ANTLRv2Parser.SL_COMMENT)
                    {
                        return (int)AntlrClassifications.ClassificationComment;
                    }
@@ -298,9 +410,8 @@
                                     IParseTree node = fod;
                                     for (; node != null; node = node.Parent)
                                     {
-                                        if (node is ANTLRv4Parser.LexerRuleSpecContext ||
-                                            node is ANTLRv4Parser.ParserRuleSpecContext ||
-                                            node is ANTLRv4Parser.TokensSpecContext)
+                                        if (node is ANTLRv2Parser.Rule_Context ||
+                                            node is ANTLRv2Parser.TokensSpecContext)
                                         {
                                             break;
                                         }
@@ -403,9 +514,8 @@
                                     IParseTree node = fod;
                                     for (; node != null; node = node.Parent)
                                     {
-                                        if (node is ANTLRv4Parser.LexerRuleSpecContext ||
-                                            node is ANTLRv4Parser.ParserRuleSpecContext ||
-                                            node is ANTLRv4Parser.TokensSpecContext)
+                                        if (node is ANTLRv2Parser.Rule_Context ||
+                                            node is ANTLRv2Parser.TokensSpecContext)
                                         {
                                             break;
                                         }
@@ -508,9 +618,8 @@
                                     IParseTree node = fod;
                                     for (; node != null; node = node.Parent)
                                     {
-                                        if (node is ANTLRv4Parser.LexerRuleSpecContext ||
-                                            node is ANTLRv4Parser.ParserRuleSpecContext ||
-                                            node is ANTLRv4Parser.TokensSpecContext)
+                                        if (node is ANTLRv2Parser.Rule_Context ||
+                                            node is ANTLRv2Parser.TokensSpecContext)
                                         {
                                             break;
                                         }
@@ -614,9 +723,8 @@
                                     IParseTree node = fod;
                                     for (; node != null; node = node.Parent)
                                     {
-                                        if (node is ANTLRv4Parser.LexerRuleSpecContext ||
-                                            node is ANTLRv4Parser.ParserRuleSpecContext ||
-                                            node is ANTLRv4Parser.TokensSpecContext)
+                                        if (node is ANTLRv2Parser.Rule_Context ||
+                                            node is ANTLRv2Parser.TokensSpecContext)
                                         {
                                             break;
                                         }
@@ -708,7 +816,7 @@
             lexer.AddErrorListener(lexer_error_listener);
             Dictionary<IToken, int> new_list = new Dictionary<IToken, int>();
             int type = (int)AntlrClassifications.ClassificationComment;
-            while (cts_off_channel.LA(1) != ANTLRv4Parser.Eof)
+            while (cts_off_channel.LA(1) != ANTLRv2Parser.Eof)
             {
                 IToken token = cts_off_channel.LT(1);
                 if (token.Type == ANTLRv2Lexer.ML_COMMENT
@@ -859,5 +967,375 @@
             ParseTree = pt;
         }
 
+        public class Pass0Listener : ANTLRv2ParserBaseListener
+        {
+            private readonly ParsingResults _pd;
+            private bool saw_tokenVocab_option = false;
+            private enum GrammarType
+            {
+                Combined,
+                Parser,
+                Lexer
+            }
+
+            private GrammarType Type;
+
+            public Pass0Listener(ParsingResults pd)
+            {
+                _pd = pd;
+                if (!ParsingResults._dependent_grammars.ContainsKey(_pd.FullFileName))
+                {
+                    ParsingResults._dependent_grammars.Add(_pd.FullFileName);
+                }
+            }
+
+            public override void EnterLexerSpec([NotNull] ANTLRv2Parser.LexerSpecContext context)
+            {
+                if (Type == GrammarType.Parser)
+                    Type = GrammarType.Combined;
+                else
+                    Type = GrammarType.Lexer;
+            }
+            public override void EnterTreeParserSpec([NotNull] ANTLRv2Parser.TreeParserSpecContext context)
+            {
+            }
+
+            public override void EnterParserSpec([NotNull] ANTLRv2Parser.ParserSpecContext context)
+            {
+                if (Type == GrammarType.Lexer)
+                    Type = GrammarType.Combined;
+                else
+                    Type = GrammarType.Parser;
+            }
+
+            public override void EnterRules(ANTLRv2Parser.RulesContext context)
+            {
+                if (saw_tokenVocab_option)
+                {
+                    return;
+                }
+
+                // We didn't see an option to include lexer grammar.
+
+                if (Type != GrammarType.Parser)
+                {
+                    return;
+                }
+
+                // It's a parser grammar, but we didn't see the tokenVocab option for the lexer.
+                // We must assume a lexer grammar in this directory.
+                // BUT!!!! There could be many things wrong here, so just don't do this willy nilly.
+
+                string file = _pd.Item.FullPath;
+                string dep = file.Replace("Parser.g2", "Lexer.g2");
+                if (dep == file)
+                {
+                    // If the file is not named correctly so that it ends in Parser.g4,
+                    // then it's probably a mistake. I don't know where to get the lexer
+                    // grammar.
+                    return;
+                }
+
+                string dir = System.IO.Path.GetDirectoryName(file);
+                _pd.Imports.Add(dep);
+                if (!ParsingResults._dependent_grammars.ContainsKey(dep))
+                {
+                    ParsingResults._dependent_grammars.Add(dep);
+                }
+
+                bool found = false;
+                foreach (string f in ParsingResults._dependent_grammars[dep])
+                {
+                    if (f == file)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    ParsingResults._dependent_grammars.Add(dep, file);
+                }
+            }
+        }
+
+        public class Pass2Listener : ANTLRv2ParserBaseListener
+        {
+            private readonly ParsingResults _pd;
+
+            public Pass2Listener(ParsingResults pd)
+            {
+                _pd = pd;
+            }
+
+            public IParseTree NearestScope(IParseTree node)
+            {
+                for (; node != null; node = node.Parent)
+                {
+                    _pd.Attributes.TryGetValue(node, out IList<CombinedScopeSymbol> list);
+                    if (list != null)
+                    {
+                        if (list.Count == 1 && list[0] is IScope)
+                        {
+                            return node;
+                        }
+                    }
+                }
+                return null;
+            }
+
+            public IScope GetScope(IParseTree node)
+            {
+                if (node == null)
+                {
+                    return null;
+                }
+
+                _pd.Attributes.TryGetValue(node, out IList<CombinedScopeSymbol> list);
+                if (list != null)
+                {
+                    if (list.Count == 1 && list[0] is IScope)
+                    {
+                        return list[0] as IScope;
+                    }
+                }
+                return null;
+            }
+
+            public override void EnterGrammar_(ANTLRv2Parser.Grammar_Context context)
+            {
+                _pd.Attributes[context] = new List<CombinedScopeSymbol>() { (CombinedScopeSymbol)_pd.RootScope };
+            }
+
+            public override void EnterRule_(ANTLRv2Parser.Rule_Context context)
+            {
+                var id = context.id();
+                var token_ref = id?.TOKEN_REF();
+                var rule_ref = id?.RULE_REF();
+                var grammar = id?.GRAMMAR();
+                var tree = id?.TREE();
+                string name = id.GetText();
+                ISymbol sym = null;
+                if (token_ref != null)
+                {
+                    sym = new TerminalSymbol(name, token_ref.Symbol) as ISymbol;
+                }
+                else if (rule_ref != null)
+                {
+                    sym = new NonterminalSymbol(name, rule_ref.Symbol) as ISymbol;
+                }
+                else if (grammar != null)
+                {
+                    sym = new NonterminalSymbol(name, grammar.Symbol) as ISymbol;
+                }
+                else if (tree != null)
+                {
+                    sym = new NonterminalSymbol(name, tree.Symbol) as ISymbol;
+                }
+                _pd.RootScope.define(ref sym);
+                CombinedScopeSymbol s = (CombinedScopeSymbol)sym;
+                _pd.Attributes[context] = new List<CombinedScopeSymbol>() { s };
+                _pd.Attributes[id] = new List<CombinedScopeSymbol>() { s };
+                _pd.Attributes[id.GetChild(0)] = new List<CombinedScopeSymbol>() { s };
+            }
+
+            public override void EnterId(ANTLRv2Parser.IdContext context)
+            {
+                var p = context.Parent;
+                var add_def = false;
+                for (; p != null; p = p.Parent)
+                {
+                    if (p is ANTLRv2Parser.TokensSpecContext)
+                    {
+                        add_def = true;
+                        break;
+                    }
+                    if (p is ANTLRv2Parser.Rule_Context)
+                        break;
+                    if (p is ANTLRv2Parser.ElementNoOptionSpecContext)
+                        break;
+                    if (p is ANTLRv2Parser.OptionContext)
+                        break;
+                }
+
+                if (!add_def)
+                    return;
+                TerminalNodeImpl term = context.GetChild(0) as TerminalNodeImpl;
+                string id = term.GetText();
+                ISymbol sym = new TerminalSymbol(id, term.Symbol);
+                _pd.RootScope.define(ref sym);
+                CombinedScopeSymbol s = (CombinedScopeSymbol)sym;
+                _pd.Attributes[context] = new List<CombinedScopeSymbol>() { s };
+                _pd.Attributes[term] = new List<CombinedScopeSymbol>() { s };
+            }
+        }
+
+        public class Pass3Listener : ANTLRv2ParserBaseListener
+        {
+            private readonly ParsingResults _pd;
+
+            public Pass3Listener(ParsingResults pd)
+            {
+                _pd = pd;
+            }
+
+            public override void EnterRule_ref_or_keyword_as([NotNull] ANTLRv2Parser.Rule_ref_or_keyword_asContext context)
+            {
+                TerminalNodeImpl first = context.GetChild(0) as TerminalNodeImpl;
+                if (first?.Symbol.Type == ANTLRv2Parser.RULE_REF)
+                {
+                    string id = context.GetChild(0).GetText();
+                    List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
+                    if (!list.Any())
+                    {
+                        ISymbol sym = new NonterminalSymbol(id, first.Symbol);
+                        _pd.RootScope.define(ref sym);
+                        list = _pd.RootScope.LookupType(id).ToList();
+                    }
+                    List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
+                    CombinedScopeSymbol s = new RefSymbol(first.Symbol, list);
+                    new_attrs.Add(s);
+                    _pd.Attributes[context] = new_attrs;
+                    _pd.Attributes[context.GetChild(0)] = new_attrs;
+                }
+            }
+
+            public override void EnterId([NotNull] ANTLRv2Parser.IdContext context)
+            {
+                var p = context.Parent;
+                var add_ref = false;
+                for (; p != null; p = p.Parent)
+                {
+                    if (p is ANTLRv2Parser.Rule_Context)
+                        break;
+                    if (p is ANTLRv2Parser.OptionContext)
+                        break;
+                }
+
+                if (!add_ref)
+                    return;
+
+                TerminalNodeImpl first = context.GetChild(0) as TerminalNodeImpl;
+                if (first?.Symbol.Type == ANTLRv2Parser.TOKEN_REF)
+                {
+                    string id = first.GetText();
+                    List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
+                    if (!list.Any())
+                    {
+                        ISymbol sym = new TerminalSymbol(id, first.Symbol);
+                        _pd.RootScope.define(ref sym);
+                        list = _pd.RootScope.LookupType(id).ToList();
+                    }
+                    List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
+                    CombinedScopeSymbol s = new RefSymbol(first.Symbol, list);
+                    new_attrs.Add(s);
+                    _pd.Attributes[context] = new_attrs;
+                    _pd.Attributes[context.GetChild(0)] = new_attrs;
+                }
+                if (first?.Symbol.Type == ANTLRv2Parser.RULE_REF
+                    || first?.Symbol.Type == ANTLRv2Parser.GRAMMAR
+                    || first?.Symbol.Type == ANTLRv2Parser.TREE
+                    )
+                {
+                    string id = context.GetChild(0).GetText();
+                    List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
+                    if (!list.Any())
+                    {
+                        ISymbol sym = new NonterminalSymbol(id, first.Symbol);
+                        _pd.RootScope.define(ref sym);
+                        list = _pd.RootScope.LookupType(id).ToList();
+                    }
+                    List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
+                    CombinedScopeSymbol s = new RefSymbol(first.Symbol, list);
+                    new_attrs.Add(s);
+                    _pd.Attributes[context] = new_attrs;
+                    _pd.Attributes[context.GetChild(0)] = new_attrs;
+                }
+            }
+
+            public override void EnterElementNoOptionSpec([NotNull] ANTLRv2Parser.ElementNoOptionSpecContext context)
+            {
+                var token_ref = context.TOKEN_REF();
+                if (token_ref != null)
+                {
+                    string id = token_ref.GetText();
+                    List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
+                    if (!list.Any())
+                    {
+                        ISymbol sym = new TerminalSymbol(id, token_ref.Symbol);
+                        _pd.RootScope.define(ref sym);
+                        list = _pd.RootScope.LookupType(id).ToList();
+                    }
+                    List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
+                    CombinedScopeSymbol s = new RefSymbol(token_ref.Symbol, list);
+                    new_attrs.Add(s);
+                    _pd.Attributes[context] = new_attrs;
+                    _pd.Attributes[context.GetChild(0)] = new_attrs;
+                }
+            }
+
+            public override void EnterRange([NotNull] ANTLRv2Parser.RangeContext context)
+            {
+                var token_ref = context.TOKEN_REF();
+                if (token_ref != null)
+                {
+                    string id = token_ref.GetText();
+                    List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
+                    if (!list.Any())
+                    {
+                        ISymbol sym = new TerminalSymbol(id, token_ref.Symbol);
+                        _pd.RootScope.define(ref sym);
+                        list = _pd.RootScope.LookupType(id).ToList();
+                    }
+                    List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
+                    CombinedScopeSymbol s = new RefSymbol(token_ref.Symbol, list);
+                    new_attrs.Add(s);
+                    _pd.Attributes[context] = new_attrs;
+                    _pd.Attributes[context.GetChild(0)] = new_attrs;
+                }
+            }
+
+            public override void EnterNotTerminal([NotNull] ANTLRv2Parser.NotTerminalContext context)
+            {
+                var token_ref = context.TOKEN_REF();
+                if (token_ref != null)
+                {
+                    string id = token_ref.GetText();
+                    List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
+                    if (!list.Any())
+                    {
+                        ISymbol sym = new TerminalSymbol(id, token_ref.Symbol);
+                        _pd.RootScope.define(ref sym);
+                        list = _pd.RootScope.LookupType(id).ToList();
+                    }
+                    List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
+                    CombinedScopeSymbol s = new RefSymbol(token_ref.Symbol, list);
+                    new_attrs.Add(s);
+                    _pd.Attributes[context] = new_attrs;
+                    _pd.Attributes[context.GetChild(0)] = new_attrs;
+                }
+            }
+
+            public override void EnterTerminal_([NotNull] ANTLRv2Parser.Terminal_Context context)
+            {
+                var token_ref = context.TOKEN_REF();
+                if (token_ref != null)
+                {
+                    string id = token_ref.GetText();
+                    List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
+                    if (!list.Any())
+                    {
+                        ISymbol sym = new TerminalSymbol(id, token_ref.Symbol);
+                        _pd.RootScope.define(ref sym);
+                        list = _pd.RootScope.LookupType(id).ToList();
+                    }
+                    List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
+                    CombinedScopeSymbol s = new RefSymbol(token_ref.Symbol, list);
+                    new_attrs.Add(s);
+                    _pd.Attributes[context] = new_attrs;
+                    _pd.Attributes[context.GetChild(0)] = new_attrs;
+                }
+            }
+        }
     }
 }

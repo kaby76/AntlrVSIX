@@ -73,7 +73,7 @@ namespace UnitTestProject1
         }
 
         [TestMethod]
-        public void TestIndexQuickInfo()
+        public void TestIndexQuickInfo4a()
         {
             var cwd = Directory.GetCurrentDirectory();
             Document lexer_doc = CheckDoc("../../../../LanguageServer/ANTLRv4Lexer.g4");
@@ -88,7 +88,7 @@ namespace UnitTestProject1
         }
 
         [TestMethod]
-        public void TestIndexQuickInfo2()
+        public void TestIndexQuickInfo4b()
         {
             var cwd = Directory.GetCurrentDirectory();
             Document lexer_doc = CheckDoc("../../../../LanguageServer/ANTLRv4Lexer.g4");
@@ -109,13 +109,31 @@ namespace UnitTestProject1
         }
 
         [TestMethod]
-        public void TestFindDef()
+        public void TestIndexQuickInfo2()
+        {
+            var cwd = Directory.GetCurrentDirectory();
+            Document document = CheckDoc("../../../../UnitTestProject1/ANTLRv2.g2");
+            // Position at the "grammarSpec" rule, beginning of LHS symbol.
+            // All lines and columns are zero based in LSP.
+            int line = 94;
+            int character = 10;
+            int index = new LanguageServer.Module().GetIndex(line, character, document);
+            (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
+            if (back.Item1 != line || back.Item2 != character) throw new Exception();
+            QuickInfo quick_info = new LanguageServer.Module().GetQuickInfo(index, document);
+            if (quick_info == null) throw new Exception();
+            (int, int) back_start = new LanguageServer.Module().GetLineColumn(quick_info.Range.Start.Value, document);
+            if (back_start.Item1 != line || back_start.Item2 != character) throw new Exception();
+            (int, int) back_end = new LanguageServer.Module().GetLineColumn(quick_info.Range.End.Value, document);
+            if (back_end.Item1 != line || back_end.Item2 != character + 8) throw new Exception();
+        }
+
+        [TestMethod]
+        public void TestFindDef4()
         {
             var cwd = Directory.GetCurrentDirectory();
             Document lexer_doc = CheckDoc("../../../../LanguageServer/ANTLRv4Lexer.g4");
             Document document = CheckDoc("../../../../LanguageServer/ANTLRv4Parser.g4");
-            // Position at the "grammarSpec" rule, beginning of RHS symbol "grammarDecl".
-            // All lines and columns are zero based in LSP.
             int line = 50;
             int character = 18;
             int index = new LanguageServer.Module().GetIndex(line, character, document);
@@ -130,7 +148,43 @@ namespace UnitTestProject1
         }
 
         [TestMethod]
-        public void TestFindDef2()
+        public void TestFindDef2a()
+        {
+            var cwd = Directory.GetCurrentDirectory();
+            Document document = CheckDoc("../../../../UnitTestProject1/ANTLRv2.g2");
+            int line = 94;
+            int character = 10;
+            int index = new LanguageServer.Module().GetIndex(line, character, document);
+            (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
+            if (back.Item1 != line || back.Item2 != character) throw new Exception();
+            IList<Location> found = new LanguageServer.Module().FindDefs(index, document);
+            if (found.Count != 1) throw new Exception();
+            (int, int) back_start = new LanguageServer.Module().GetLineColumn(found.First().Range.Start.Value, document);
+            if (back_start.Item1 != 102 || back_start.Item2 != 0) throw new Exception();
+            (int, int) back_end = new LanguageServer.Module().GetLineColumn(found.First().Range.End.Value, document);
+            if (back_end.Item1 != 102 || back_end.Item2 != 7) throw new Exception();
+        }
+
+        [TestMethod]
+        public void TestFindDef2b()
+        {
+            var cwd = Directory.GetCurrentDirectory();
+            Document document = CheckDoc("../../../../UnitTestProject1/ANTLRv2.g2");
+            int line = 86;
+            int character = 18;
+            int index = new LanguageServer.Module().GetIndex(line, character, document);
+            (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
+            if (back.Item1 != line || back.Item2 != character) throw new Exception();
+            IList<Location> found = new LanguageServer.Module().FindDefs(index, document);
+            if (found.Count != 1) throw new Exception();
+            (int, int) back_start = new LanguageServer.Module().GetLineColumn(found.First().Range.Start.Value, document);
+            if (back_start.Item1 != 980 || back_start.Item2 != 0) throw new Exception();
+            (int, int) back_end = new LanguageServer.Module().GetLineColumn(found.First().Range.End.Value, document);
+            if (back_end.Item1 != 980 || back_end.Item2 != 5) throw new Exception();
+        }
+
+        [TestMethod]
+        public void TestFindDef3()
         {
             var cwd = Directory.GetCurrentDirectory();
             Document document = CheckDoc("../../../../UnitTestProject1/ANTLRv3.g3");
