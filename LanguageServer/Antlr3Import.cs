@@ -74,15 +74,15 @@
                         new StaticContextBuilder()).evaluate(
                         dynamicContext, new object[] { dynamicContext.Document })
                     .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
-                foreach (var n in nodes) TreeEdits.Delete(n);
+                TreeEdits.Delete(nodes);
                 var options = engine.parseExpression(
                         @"//grammarDef/optionsSpec",
                         new StaticContextBuilder()).evaluate(
                         dynamicContext, new object[] { dynamicContext.Document })
                     .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
-                if (options.Count() == 1 && options.First().ChildCount == 3)
+                foreach (var os in options)
                 {
-                    foreach (var n in options) TreeEdits.Delete(n);
+                    if (os.ChildCount == 3) TreeEdits.Delete(os);
                 }
             }
 

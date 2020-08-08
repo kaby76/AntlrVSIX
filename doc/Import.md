@@ -40,7 +40,7 @@ individually.
 If the `optionsSpec` is empty after removing these `option`s,
 the `optionsSpec` itself is removed.
 
-    //grammarDef/optionsSpec
+    nodes = //grammarDef/optionsSpec
         /option
             [id
                 /(TOKEN_REF | RULE_REF)
@@ -50,6 +50,10 @@ the `optionsSpec` itself is removed.
                 or text() = 'ASTLabelType'
                 or text() = 'rewrite'
                 ]]
+    Delete(nodes)
+    options = //grammarDef/optionsSpec
+    foreach (var os in options)
+        if (options.option().Count() = 3) Delete(os)
 
 ### Remove options within optionSpec's at the beginning of rules
 
@@ -58,6 +62,21 @@ _memoize_, _ASTLabelType_, _rewrite_
 are removed from `optionsSpec` at the beginning of a rule.
 If the `optionsSpec` is empty after removing these options,
 the section itself is removed.
+
+    nodes = //rule_/optionsSpec
+        /option
+            [id
+                /(TOKEN_REF | RULE_REF)
+                [text() = 'output'
+                or text() = 'backtrack'
+                or text() = 'memoize'
+                or text() = 'ASTLabelType'
+                or text() = 'rewrite'
+                ]]
+    Delete(nodes)
+    options = //rule_/optionsSpec
+    foreach (var os in options)
+        if (options.option().Count() = 3) Delete(os)
 
 ### Use new "tokens {}" syntax
 
@@ -102,34 +121,40 @@ including
 
 * "!" and "^" operators.
 
-        //atom
-             /(ROOT | BANG)
+        var nodes = //atom/(ROOT | BANG)
+        Delete(nodes)
 
-        //terminal_
-             /(ROOT | BANG)
+        var nodes = //terminal_/(ROOT | BANG)
+        Delete(nodes)
 
-        //rule_/BANG
+        var nodes = //rule_/BANG
+        Delete(nodes)
 
 * Rewrite nodes, which include the -> operator
 
-        //rewrite
+        var nodes = //rewrite
+        Delete(nodes)
 
 ### Scopes
 
 Antlr4 supports _scope_ with _local_. However, this tool
 currently simply deletes the _scope_ clause.
 
-    //rule_/ruleScopeSpec
+    var nodes = //rule_/ruleScopeSpec
+        Delete(nodes)
 
 ### Labels in lexer rules are not supported
 
 In Antlr3, one could write lexer rules that contained a label for an element.
 This is no longer supported in Antlr4, so the label with "=" or "+=" are deleted.
 
-    //rule_[id/TOKEN_REF]
+    var nodes = //rule_[id/TOKEN_REF]
         /altList
             //elementNoOptionSpec
                 [EQUAL or PEQ]
+    foreach (var n in nodes)
+        Delete(n.GetChild(1))
+        Delete(n.GetChild(0))
 
 ### Lexer fragment rules cannot contain actions or commands
 
