@@ -247,11 +247,11 @@
                                }
                                else if (d is ModeSymbol)
                                {
-                                   return (int)AntlrClassifications.ClassificationModeRef; ;
+                                   return (int)AntlrClassifications.ClassificationModeRef;
                                }
                                else if (d is ChannelSymbol)
                                {
-                                   return (int)AntlrClassifications.ClassificationChannelRef; ;
+                                   return (int)AntlrClassifications.ClassificationChannelRef;
                                }
                            }
                        }

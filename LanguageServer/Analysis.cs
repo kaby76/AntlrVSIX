@@ -5,6 +5,7 @@
     using Antlr4.Runtime.Misc;
     using Antlr4.Runtime.Tree;
     using Microsoft.CodeAnalysis;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
@@ -213,86 +214,76 @@
                 }
             }
 
-            // Construct graph of symbol usage.
-            Transform.TableOfRules table = new Transform.TableOfRules(pd_parser, document);
-            table.ReadRules();
-            table.FindPartitions();
-            table.FindStartRules();
-            Digraph<string> graph = new Digraph<string>();
-            foreach (Transform.TableOfRules.Row r in table.rules)
             {
-                if (!r.is_parser_rule)
+                if (pd_parser.AllNodes != null)
                 {
-                    continue;
-                }
-                graph.AddVertex(r.LHS);
-            }
-            foreach (Transform.TableOfRules.Row r in table.rules)
-            {
-                if (!r.is_parser_rule)
-                {
-                    continue;
-                }
-                List<string> j = r.RHS;
-                //j.Reverse();
-                foreach (string rhs in j)
-                {
-                    Transform.TableOfRules.Row sym = table.rules.Where(t => t.LHS == rhs).FirstOrDefault();
-                    if (!sym.is_parser_rule)
+                    int[] histogram = new int[pd_parser.Map.Length];
+                    var fun = pd_parser.Classify;
+                    IEnumerable<IParseTree> it = pd_parser.AllNodes.Where(n => n is TerminalNodeImpl);
+                    foreach (var n in it)
                     {
-                        continue;
+                        var t = n as TerminalNodeImpl;
+                        int i = -1;
+                        try
+                        {
+                            i = pd_parser.Classify(pd_parser, pd_parser.Attributes, t);
+                            if (i >= 0)
+                            {
+                                histogram[i]++;
+                            }
+                        }
+                        catch (Exception) { }
                     }
-                    DirectedEdge<string> e = new DirectedEdge<string>(r.LHS, rhs);
-                    graph.AddEdge(e);
-                }
-            }
-            List<string> starts = new List<string>();
-            List<string> parser_lhs_rules = new List<string>();
-            foreach (Transform.TableOfRules.Row r in table.rules)
-            {
-                if (r.is_parser_rule)
-                {
-                    parser_lhs_rules.Add(r.LHS);
-                    if (r.is_start)
+                    for (int j = 0; j < histogram.Length; ++j)
                     {
-                        starts.Add(r.LHS);
+                        string i = "Parser type " + j + " " + histogram[j];
+                        result.Add(
+                            new DiagnosticInfo()
+                            {
+                                Document = document.FullPath,
+                                Severify = DiagnosticInfo.Severity.Info,
+                                Start = 0,
+                                End = 0,
+                                Message = i
+                            });
                     }
                 }
             }
 
-            IParseTree rule = null;
-            var tarjan = new TarjanSCC<string, DirectedEdge<string>>(graph);
-            List<string> ordered = new List<string>();
-            var sccs = tarjan.Compute();
-            foreach (var scc in sccs)
-            {
-                if (scc.Value.Count() <= 1) continue;
-                var k = scc.Key;
-                var v = scc.Value;
-                string i = "Participates in cycle " +
-                    string.Join(" => ", scc.Value);
-                var (start, end) = table.rules.Where(r => r.LHS == k).Select(r =>
-                {
-                    var lmt = TreeEdits.LeftMostToken(r.rule);
-                    var source_interval = lmt.SourceInterval;
-                    int a = source_interval.a;
-                    int b = source_interval.b;
-                    IToken ta = pd_parser.TokStream.Get(a);
-                    IToken tb = pd_parser.TokStream.Get(b);
-                    var st = ta.StartIndex;
-                    var ed = tb.StopIndex + 1;
-                    return (st, ed);
-                }).FirstOrDefault();
-                result.Add(
-                    new DiagnosticInfo()
-                    {
-                        Document = document.FullPath,
-                        Severify = DiagnosticInfo.Severity.Info,
-                        Start = start,
-                        End = end,
-                        Message = i
-                    });
-            }
+
+            //IParseTree rule = null;
+            //var tarjan = new TarjanSCC<string, DirectedEdge<string>>(graph);
+            //List<string> ordered = new List<string>();
+            //var sccs = tarjan.Compute();
+            //foreach (var scc in sccs)
+            //{
+            //    if (scc.Value.Count() <= 1) continue;
+            //    var k = scc.Key;
+            //    var v = scc.Value;
+            //    string i = "Participates in cycle " +
+            //        string.Join(" => ", scc.Value);
+            //    var (start, end) = table.rules.Where(r => r.LHS == k).Select(r =>
+            //    {
+            //        var lmt = TreeEdits.LeftMostToken(r.rule);
+            //        var source_interval = lmt.SourceInterval;
+            //        int a = source_interval.a;
+            //        int b = source_interval.b;
+            //        IToken ta = pd_parser.TokStream.Get(a);
+            //        IToken tb = pd_parser.TokStream.Get(b);
+            //        var st = ta.StartIndex;
+            //        var ed = tb.StopIndex + 1;
+            //        return (st, ed);
+            //    }).FirstOrDefault();
+            //    result.Add(
+            //        new DiagnosticInfo()
+            //        {
+            //            Document = document.FullPath,
+            //            Severify = DiagnosticInfo.Severity.Info,
+            //            Start = start,
+            //            End = end,
+            //            Message = i
+            //        });
+            //}
 
 
             // Check for useless lexer tokens.

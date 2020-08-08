@@ -22,7 +22,7 @@
 
         public static ParsingResults Create(Workspaces.Document document)
         {
-            if (_parsing_results.ContainsKey(document))
+            if (_parsing_results.ContainsKey(document) && _parsing_results[document] != null)
                 return _parsing_results[document];
 
             ParsingResults result = null;
