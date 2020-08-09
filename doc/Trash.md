@@ -1,11 +1,10 @@
 # Trash -- a shell for performing transformations of Antlr grammars
 
-"Trash" is a simple command-line shell for reading, converting, transforming,
-and writing Antlr grammars. You can use this to convert Bison, Antlr2, and Antlr3
-grammars to Antlr4, analyze or make changes to the grammar. You don't need to run
-Visual Studio to use the tool, and you can use it to determine whether performance
-problems you see while using the extension in VS is due to VS or with the
-language server for Antlr.
+"Trash" is a simple command-line shell for parsing, converting, analyzing, and transforming
+Antlr grammars. You can use the tool to automate changes to a grammar,
+or use it to determine whether performance
+problems that you may experience in VS are due to
+VS or the Antlr language server.
 
 ## Commands
 
@@ -44,9 +43,10 @@ type, cycles, and unused symbols.
 
 ### History expansion
 
-_Trash_ keeps a persistent history of prior commands for repeated execution.
+_Trash_ keeps a persistent history of prior commands in ~/.trash.rc that is read
+when the program starts. 
 History expansions introduce words from the history list into the input stream,
-making it easy to repeat commands, but only repeat previous commands. There is no editing
+making it easy to repeat commands. Currently there is no editing
 capability.
 
 `!!`
@@ -65,7 +65,8 @@ capability.
 
 `convert`
 
-* Convert the parsed grammar file at the top of stack into Antlr4 syntax, and leave it at the top of stack.
+* Convert the parsed grammar file at the top of stack into Antlr4 syntax. The
+resulting Antlr4 grammar replaces the top of stack.
 
 ### "."
 
@@ -114,6 +115,10 @@ capability.
 ### Rename
 
 ### Rotate
+
+`rotate`
+
+* Rotate the stack once.
 
 ### Stack
 
