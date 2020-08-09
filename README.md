@@ -6,7 +6,7 @@ It is implemented using Microsoft's [Language Server Protocol (LSP)](https://lan
 [client](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Client/) and
 [server](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/) APIs,
 [Antlr](https://www.antlr.org/), [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks),
-[XPath3.1](https://en.wikipedia.org/wiki/XPath), 
+[XPath2](https://en.wikipedia.org/wiki/XPath), 
 [S-expressions](https://en.wikipedia.org/wiki/S-expression)
 for Antlr parse trees,
 and a number of other tools.
