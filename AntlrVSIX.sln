@@ -51,6 +51,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{65955E78-371
 		doc\readme.md = doc\readme.md
 		doc\refactoring.md = doc\refactoring.md
 		doc\setup.md = doc\setup.md
+		doc\Trash.md = doc\Trash.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pics", "pics", "{AB776C0F-4B61-4EDF-A654-40A9259855CD}"
