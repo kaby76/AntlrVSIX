@@ -1,4 +1,4 @@
-# Trash -- a shell for performing transformations of Antlr grammars. 
+# Trash -- a shell for performing transformations of Antlr grammars
 
 "Trash" is a simple command-line shell for reading, converting, transforming,
 and writing Antlr grammars. You can use this to convert Bison, Antlr2, and Antlr3
@@ -29,38 +29,87 @@ any valid shell input, including shell metacharacters. The first word of
 Aliases are created and listed with the alias command, and removed with the
  unalias command.
 
+`alias id=string`
+
+* Set up an alias that assigns _string_ to _id_. The command _string_ 
+is executed with _id_.
+
 ### Analyze
 
-### "!"
+_Trash_ can perform an analysis of a grammar. The analysis includes a count of symbol
+type, cycles, and unused symbols.
 
-_Trash_ performs history expansion.
+`analyze`
+
+
+### History expansion
+
+_Trash_ keeps a persistent history of prior commands for repeated execution.
 History expansions introduce words from the history list into the input stream,
 making it easy to repeat commands, but only repeat previous commands. There is no editing
 capability.
 
-!! Execute the previous command.
+`!!`
 
-!_n_ Execute the command line _n_.
+* Execute the previous command.
 
-!_string_ Execute the command that begins with _string_.
+`!n`
+
+* Execute the command line _n_.
+
+`!string`
+
+* Execute the command that begins with _string_.
 
 ### Convert
 
+`convert`
+
+* Convert the parsed grammar file at the top of stack into Antlr4 syntax, and leave it at the top of stack.
+
 ### "."
 
+`.`
+
+* Print out the parse tree for the file at the top of stack.
+
 ### Find
+
+`find xpath-string`
+
+* Find all sub-trees in the parsed file at the top of stack using the given XPath expression.
 
 ### Fold
 
 ### History
 
+`history`
+
+* Print out the shell command history.
+
 ### Parse
+
+`parse grammar-type`
+
+* Parse the flie at the top of stack with the given parser type (_antlr2_, _antlr3, _antlr4_, or _bison_).
 
 ### Print
 
+`print`
+
+* Print out text file at the top of stack.
+
 ### Quit
 
+`quit` or `exit`
+
+* Exit the shell program.
+
 ### Read
+
+`read file-name`
+
+* Read the text file _file-name_ and place it on the top of the stack.
 
 ### Rename
 
@@ -68,11 +117,20 @@ capability.
 
 ### Stack
 
+`stack`
+
+* Print the stack of files.
+
 ### Unalias
 
 ### Unfold
 
 ### Write
+
+`write`
+
+* Pop the stack, and write out the file specified.
+
 
 
 
