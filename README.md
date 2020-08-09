@@ -18,6 +18,15 @@ replace, command completion, reformat, and go to visitor/listener. But, there is
 than these basic LSP commands. There is a command-line interface being developed to bring this completely
 out from the narrow focus of a Visual Studio extension.
 
+## Supported grammars and features
+
+| Grammars | Features supported |
+| ---- | ---- |
+| Antlr4 | Basic LSP services (tagging, go to def, find all refs, rename, etc.); transformations; analysis |
+| Antlr3 | Basic LSP services (tagging, go to def, find all refs, rename, etc.); conversion to Antlr4 |
+| Antlr2 | Basic LSP services (tagging, go to def, find all refs, rename, etc.); conversion to Antlr4 |
+| Bison | Basic LSP services (tagging, go to def, find all refs, rename, etc.); conversion to Antlr4 |
+
 ## Analysis
 
 When invoked in the UI, Antlrvsix will perform an analysis of the document and
