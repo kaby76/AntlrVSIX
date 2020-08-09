@@ -15,7 +15,7 @@ There is a client for VS Code, written in Typescript,
 but I am deferring further development of the client until the server is more or less complete.
 Supported are colorized tagging, hover, go to def, find all refs,
 replace, and reformat. But, there is so much more to Antlrvsix
-than these basic LSP commands. Along with the extesion for VS,
+than these basic LSP commands. Along with the extension for VS,
 [Trash](https://github.com/kaby76/AntlrVSIX/blob/master/doc/Trash.md) is a command-line shell for
 parsing, analyzing, and transforming grammars outside of the
 Visual Studio extension.
