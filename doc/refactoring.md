@@ -387,8 +387,8 @@ _Before_
 
 _Trash command_
 
-`ulliteral "//lexerRuleSpec[TOKEN_REF/text() = 'A']//STRING_LITERAL"`
-`ulliteral "//lexerRuleSpec[TOKEN_REF/text() = 'B']//STRING_LITERAL"`
+    ulliteral "//lexerRuleSpec[TOKEN_REF/text() = 'A']//STRING_LITERAL"
+    ulliteral "//lexerRuleSpec[TOKEN_REF/text() = 'B']//STRING_LITERAL"
 
 _After_
 
