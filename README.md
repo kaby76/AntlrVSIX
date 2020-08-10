@@ -96,7 +96,7 @@ The refactorings implemented are:
 * Replace direct left/right recursion with Kleene operator.
 * [Unfold](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#Unfold)
 * Fold
-* Remove useless parentheses.
+* [Remove useless parentheses](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#remove-useless-productions).
 
 ## Conversion
 
