@@ -64,7 +64,10 @@ _After_
 
 This transformation takes a parser or combined grammar,
 and C# source, and removes all parse rules that are not used.
-The C# source is parsed via Microsoft's Rosyln analysis tool
+Because Antlr does not have a start symbol, which one
+would find in a formal grammar, nor syntax to
+declare a start symbol, 
+the C# source is parsed via Microsoft's Rosyln analysis tool
 in order to find all calls to a parser rule of the form
 "parser.rule()" where "rule" is the name of the parser rule.
 If there is no source, the refactoring simply looks only at the
