@@ -4475,7 +4475,7 @@
                     new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
                     .Select(x => x.NativeValue).ToList();
                 var elements = engine.parseExpression(
-                    "../../..", 
+                    "../../..",
                     new StaticContextBuilder()).evaluate(dynamicContext, altlists.ToArray())
                     .Select(x => x.NativeValue).ToList();
 
@@ -4497,6 +4497,126 @@
 
                 altlists = new_altlist;
                 elements = new_elements;
+
+                for (int j = 0; j < altlists.Count; ++j)
+                {
+                    // Remove {altlist}/../../.. (an element), which is the "i'th" child.
+                    var altlist = (altlists[j] as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as ANTLRv4Parser.AltListContext;
+                    var element = (elements[j] as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as ANTLRv4Parser.ElementContext;
+                    var parent_alternative = element?.Parent as ANTLRv4Parser.AlternativeContext;
+                    int i = 0;
+                    for (; i < parent_alternative.ChildCount;)
+                    {
+                        if (parent_alternative.children[i] == element)
+                            break;
+                        ++i;
+                    }
+                    parent_alternative.children.RemoveAt(i);
+                    // Insert in the location of the removed element node "i" hoisted nodes of block.
+                    var alternatives = altlist?.alternative();
+                    if (alternatives.Length > 1)
+                    {
+                        IParseTree rule_alt_list_p = altlist.Parent;
+                        for (; rule_alt_list_p != null; rule_alt_list_p = rule_alt_list_p.Parent)
+                        {
+                            if (rule_alt_list_p is ANTLRv4Parser.RuleAltListContext)
+                                break;
+                        }
+                        var rule_alt_list = rule_alt_list_p as ANTLRv4Parser.RuleAltListContext;
+                        bool first = true;
+                        foreach (var alternative in alternatives)
+                        {
+                            if (!first)
+                            {
+                                var token4 = new CommonToken(ANTLRv4Lexer.OR) { Line = -1, Column = -1, Text = "|" };
+                                var new_or = new TerminalNodeImpl(token4);
+                                rule_alt_list.AddChild(new_or);
+                                new_or.Parent = rule_alt_list;
+                            }
+                            first = false;
+                            var labeled_alt = new ANTLRv4Parser.LabeledAltContext(null, 0);
+                            TreeEdits.CopyTreeRecursive(alternative, labeled_alt, text_before);
+                            rule_alt_list.AddChild(labeled_alt);
+                            labeled_alt.Parent = rule_alt_list;
+                        }
+                    }
+                    else
+                    {
+                        var alternative = altlist.alternative().First();
+                        foreach (var e in alternative.element())
+                        {
+                            var copy = TreeEdits.CopyTreeRecursive(e, null, text_before) as ANTLRv4Parser.ElementContext;
+                            parent_alternative.children.Insert(i, copy);
+                            copy.Parent = parent_alternative;
+                            i++;
+                        }
+                    }
+                }
+            }
+            StringBuilder sb = new StringBuilder();
+            TreeEdits.Reconstruct(sb, pd_parser.ParseTree, text_before);
+            var new_code = sb.ToString();
+            if (new_code != pd_parser.Code)
+            {
+                result.Add(document.FullPath, new_code);
+            }
+
+            return result;
+        }
+
+        public static Dictionary<string, string> RemoveUselessParentheses(List<IParseTree> nodes, Document document)
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+            if (nodes == null || !nodes.Any()) return result;
+            if (!(ParsingResultsFactory.Create(document) is ParsingResults pd_parser))
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            ExtractGrammarType egt = new ExtractGrammarType();
+            ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
+            bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
+                || egt.Type == ExtractGrammarType.GrammarType.Combined
+                || egt.Type == ExtractGrammarType.GrammarType.Lexer;
+            if (!is_grammar)
+            {
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            }
+
+            // Get all intertoken text immediately for source reconstruction.
+            var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
+
+            {
+                ParsingResults pd = pd_parser;
+                var pt = pd.ParseTree;
+                org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+                var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
+                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
+
+                // Convert list of Antlr tree nodes to list of equivalent DOM nodes.
+                var list1 = nodes.Select(n => (n as AttributedParseTreeNode).Observers.First() as AntlrTreeEditing.AntlrDOM.AntlrNode);
+                if (list1 == null || !list1.Any()) return result;
+
+                // Validate constraint on block node.
+                var list2 = engine.parseExpression(
+                    ".[altList[not(@ChildCount > 1)]]",
+                    new StaticContextBuilder()).evaluate(dynamicContext, list1.ToArray())
+                    .Select(x => x.NativeValue).ToList();
+                if (list2 == null || !list2.Any()) return result;
+
+                // Validate additional constraint on block node.
+                var list3 = engine.parseExpression(
+                    @".[..[not(child::blockSuffix)]]",
+                     new StaticContextBuilder()).evaluate(dynamicContext, list2.ToArray())
+                    .Select(x => x.NativeValue).ToList();
+                if (list3 == null || !list3.Any()) return result;
+
+                var altlists = engine.parseExpression(
+                    "./altList[not(@ChildCount > 1)]",
+                    new StaticContextBuilder()).evaluate(dynamicContext, list3.ToArray())
+                    .Select(x => x.NativeValue).ToList();
+
+                var elements = engine.parseExpression(
+                    "../../..",
+                    new StaticContextBuilder()).evaluate(dynamicContext, altlists.ToArray())
+                    .Select(x => x.NativeValue).ToList();
 
                 for (int j = 0; j < altlists.Count; ++j)
                 {
