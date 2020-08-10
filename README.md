@@ -94,8 +94,8 @@ The refactorings implemented are:
 * Add lexer rules for string literals in parser.
 * Sort lexer modes alphabetically.
 * Replace direct left/right recursion with Kleene operator.
-* Unfold.
-* Fold.
+* [Unfold](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#Unfold)
+* Fold
 * Remove useless parentheses.
 
 ## Conversion

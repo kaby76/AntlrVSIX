@@ -295,3 +295,39 @@ Parser grammar:
     number : INT ;
     variable : VARIABLE ;
 
+## Unfold
+
+Unfold replaces the applied occurrence of a lexer or parser rule
+symbol with the right-hand side of the rule. This transformation
+is useful for situations where you want to reduce the parse tree
+height, which helps to reduce the size of the parse tree. The unfold
+operation takes a parse tree and a collection of leaf nodes in the parse
+tree corresponding to either an applied occurrence of a symbol to replace,
+or a defining occurrence of a symbol that sets all applied occurrences
+to be replaced.
+
+Example:
+
+Suppose we want to unfold the rule `e` that occurs in rule `s`. After executing
+`unfold "//parserRuleSpec[RULE_REF/text() = 's']//labeledAlt//RULE_REF[text() = 'e']"`
+the stack now contains this file, which is not parsed:
+
+_Before_
+
+    grammar A;
+    s : e ;
+    e : e '*' e       # Mult
+        | INT           # primary
+        ;
+    INT : [0-9]+ ;
+    WS : [ \t\n]+ -> skip ;
+
+_After_
+
+    grammar A;
+    s : ( e '*' e | INT ) ;
+    e : e '*' e           # Mult
+        | INT               # primary
+        ;
+    INT : [0-9]+ ;
+    WS : [ \t\n]+ -> skip ;
