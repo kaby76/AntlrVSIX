@@ -70,7 +70,7 @@ in order to find all calls to a parser rule of the form
 If there is no source, the refactoring simply looks only at the
 grammar. Lexer rules are currently not removed.
 
-### Example 1
+### Example
 
 _Before_
 
@@ -110,30 +110,6 @@ _After_
     RP : ')' ;
     ID : ( ('a' .. 'z') | ('A' .. 'Z') | '_' )+ ;
     WS : [ \r\n\t] + -> skip ;
-
-### Example 2
-
-_Before_
-
-    grammar A2;
-    s : e ;
-    e : e '*' ( e ) | int ;
-    int : INT ;
-    INT : [0-9]+ ;
-    WS : [ \t\n]+ -> skip ;
-
-_Trash command_
-
-`rup "//parserRuleSpec[RULE_REF/text() = 'e']//labeledAlt//block"`
-
-_After_
-
-    grammar A2;
-    s : e ;
-    e : e '*' e | int ;
-    int : INT ;
-    INT : [0-9]+ ;
-    WS : [ \t\n]+ -> skip ;
 
 ## Reorder parser rules
 
@@ -355,3 +331,34 @@ _After_
         ;
     INT : [0-9]+ ;
     WS : [ \t\n]+ -> skip ;
+
+## Remove useless parentheses
+
+There are times when a rule contains parentheses that surround a single symbol
+or list of symbols. In some situations, these parentheses can be removed without
+changing the meaning of the rule. This transformation perform this refactoring.
+
+### Example
+
+_Before_
+
+    grammar A2;
+    s : e ;
+    e : e '*' ( e ) | int ;
+    int : INT ;
+    INT : [0-9]+ ;
+    WS : [ \t\n]+ -> skip ;
+
+_Trash command_
+
+`rup "//parserRuleSpec[RULE_REF/text() = 'e']//labeledAlt//block"`
+
+_After_
+
+    grammar A2;
+    s : e ;
+    e : e '*' e | int ;
+    int : INT ;
+    INT : [0-9]+ ;
+    WS : [ \t\n]+ -> skip ;
+

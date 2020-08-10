@@ -94,6 +94,14 @@ resulting Antlr4 grammar replaces the top of stack.
 
 * Parse the flie at the top of stack with the given parser type (_antlr2_, _antlr3, _antlr4_, or _bison_).
 
+### Pop
+
+`pop`
+
+* Pop the top document from the stack. If the stack is empty, nothing is further popped.
+There is no check as to whether the document has been written to disk. If you want to write
+the file, use `write`.
+
 ### Print
 
 `print`
@@ -119,6 +127,16 @@ resulting Antlr4 grammar replaces the top of stack.
 `rotate`
 
 * Rotate the stack once.
+
+### Remove Useless Parentheses
+
+`rup xpath-expression`
+
+* Find all blocks as specified by the xpath expression in the parsed file at the top of stack.
+Rewrite the node with the parentheses removed, if the block satifies three constraints:
+(1) the expression must be a `block` type in the Antlr4 grammar;
+(2) the `block` node must have an `altList` that does not contain more than one child;
+(3) the `ebnf` parent of `block` must not contain a `blockSuffix`.
 
 ### Stack
 
