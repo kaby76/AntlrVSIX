@@ -130,6 +130,61 @@ resulting Antlr4 grammar replaces the top of stack.
 
 ### Unfold
 
+`unfold xpath-expr`
+
+* Apply the unfold transform a collection of terminal nodes in the parse tree.
+An unfold operation substitutes the right-hand side of a parser or lexer rule
+into a reference of the rule name that occurs at the specified node. The operation
+modifies the source on the top of stack.
+
+Example:
+
+The stack contains the parsed file:
+
+    grammar A;
+
+    s
+        : e
+        ;
+
+    e
+        : e '*' e       # Mult
+        | INT           # primary
+        ;
+
+    INT
+        : [0-9]+
+        ;
+
+    WS
+        : [ \t\n]+ -> skip
+        ;
+
+Suppose we want to unfold the rule `e` that occurs in rule `s`. After executing
+`unfold "//parserRuleSpec[RULE_REF/text() = 's']//labeledAlt//RULE_REF[text() = 'e']"`
+the stack now contains this file, which is not parsed:
+
+    grammar A;
+
+    s
+        : ( e '*' e | INT )
+        ;
+
+    e
+        : e '*' e           # Mult
+        | INT               # primary
+        ;
+
+    INT
+        : [0-9]+
+        ;
+
+    WS
+        : [ \t\n]+ -> skip
+        ;
+
+To validate, you must execute `parse`.
+
 ### Write
 
 `write`
