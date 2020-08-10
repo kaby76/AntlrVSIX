@@ -4979,5 +4979,125 @@
             }
             return result;
         }
+
+        public static Dictionary<string, string> UpperLowerCaseLiteral(List<TerminalNodeImpl> nodes, Document document)
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+
+            // Check if initial file is a grammar.
+            if (!(ParsingResultsFactory.Create(document) is ParsingResults pd_parser))
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+
+            ExtractGrammarType egt = new ExtractGrammarType();
+            ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
+            bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
+                              || egt.Type == ExtractGrammarType.GrammarType.Combined
+                              || egt.Type == ExtractGrammarType.GrammarType.Lexer;
+            if (!is_grammar)
+            {
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            }
+
+            // Find keyword-like literals in lexer rules.
+            org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+            var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
+            AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
+            var dom_literals = engine.parseExpression(
+                    @"//lexerRuleSpec
+                        /lexerRuleBlock
+                            /lexerAltList[not(@ChildCount > 1)]
+                                /lexerAlt
+                                    /lexerElements[not(@ChildCount > 1)]
+                                        /lexerElement[not(@ChildCount > 1)]
+                                            /lexerAtom
+                                                /terminal[not(@ChildCount > 1)]
+                                                    /STRING_LITERAL",
+                    new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement)).ToArray();
+            var elements = engine.parseExpression(
+                    "../../../..",
+                    new StaticContextBuilder()).evaluate(dynamicContext, dom_literals)
+                .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).ToArray();
+            List<IParseTree> subs_elems = new List<IParseTree>();
+            List<IParseTree> subs_lit = new List<IParseTree>();
+            var to_check_literals = dom_literals.Select(x => x.AntlrIParseTree).ToList();
+            // Make up translation map. Note if the symbol is outside the range [start, end],
+            // then don't add an entry for it.
+            for (int i = 0; i < to_check_literals.Count; ++i)
+            {
+                var lexer_literal = to_check_literals[i];
+                var elems = elements[i];
+                var ok = true;
+                var ll = lexer_literal;
+                var tok = pd_parser.TokStream.Get(ll.SourceInterval.a);
+                if (!nodes.Where(n => n.Symbol == tok).Any())
+                {
+                    continue;
+                }
+                var s = ll.GetText();
+                s = s.Substring(1).Substring(0, s.Length - 2);
+                foreach (var cc in s)
+                {
+                    if (!char.IsLetterOrDigit(cc))
+                    {
+                        ok = false;
+                        break;
+                    }
+                }
+                if (!ok)
+                {
+                    continue;
+                }
+                subs_lit.Add(ll);
+                subs_elems.Add(elems);
+            }
+
+            var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
+
+            TreeEdits.Replace(pd_parser.ParseTree,
+                (in IParseTree n, out bool c) =>
+                {
+                    c = true;
+                    if (!subs_elems.Contains(n))
+                        return null;
+                    int i = subs_elems.IndexOf(n);
+                    c = false;
+
+                    // This node is the lexerElements node. Go through all leaves and convert
+                    // a string literal to a list of lexer char sets.
+                    // Then, construct a lexerElements node with the replacement sets.
+                    var new_lexerelements = new ANTLRv4Parser.LexerElementsContext(null, 0);
+
+                    var literal = subs_lit[i];
+                    var s = literal.GetText();
+                    s = s.Substring(1).Substring(0, s.Length - 2);
+                    foreach (var cc in s)
+                    {
+                        var token = new CommonToken(ANTLRv4Lexer.LEXER_CHAR_SET)
+                        {
+                            Line = -1,
+                            Column = -1,
+                            Text =
+                                "[" + char.ToLower(cc) + char.ToUpper(cc) + "]"
+                        };
+                        var set = new TerminalNodeImpl(token);
+                        var construct = new CTree.Class1(pd_parser.Parser,
+                            new Dictionary<string, object>()
+                                {{"id", set}});
+                        var la = construct.CreateTree("( lexerElement ( lexerAtom {id} ))") as ANTLRv4Parser.LexerElementContext;
+                        new_lexerelements.AddChild(la);
+                        la.Parent = new_lexerelements;
+                    }
+                    return new_lexerelements;
+                });
+            StringBuilder sb = new StringBuilder();
+            TreeEdits.Reconstruct(sb, pd_parser.ParseTree, text_before);
+            var new_code = sb.ToString();
+            if (new_code != pd_parser.Code)
+            {
+                result.Add(document.FullPath, new_code);
+            }
+            return result;
+        }
     }
 }

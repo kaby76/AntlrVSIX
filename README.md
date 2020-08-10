@@ -97,6 +97,7 @@ The refactorings implemented are:
 * [Unfold](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#Unfold)
 * Fold
 * [Remove useless parentheses](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#remove-useless-productions).
+* [Upper and lower case string literals]https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#remove-useless-productions().
 
 ## Conversion
 

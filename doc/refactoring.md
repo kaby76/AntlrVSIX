@@ -365,3 +365,38 @@ _After_
     INT : [0-9]+ ;
     WS : [ \t\n]+ -> skip ;
 
+## Upper and lower case string literals
+
+In Antlr2, there was an option (`caseSensitive`) to match upper and lower case
+string literals for keywords. In order to migrate to Antlr4, the `ulliteral`
+transform was created. In order for the lexer to recognize keywords in any
+case, the string literal for the keyword must be replaced with a sequence
+of upper and lower case sets. See this [explanation](https://theantlrguy.atlassian.net/wiki/spaces/ANTLR3/pages/2687342/How+do+I+get+case+insensitivity).
+
+### Example
+
+_Before_
+
+    grammar KeywordFun;
+    a : 'abc';
+    b : 'def';
+    A: 'abc';
+    B: 'def';
+    C: 'uvw' 'xyz'?;
+    D: 'uvw' 'xyz'+;
+
+_Trash command_
+
+`ulliteral "//lexerRuleSpec[TOKEN_REF/text() = 'A']//STRING_LITERAL"`
+`ulliteral "//lexerRuleSpec[TOKEN_REF/text() = 'B']//STRING_LITERAL"`
+
+_After_
+
+    grammar KeywordFun;
+    a : 'abc';
+    b : 'def';
+    A: [aA] [bB] [cC];
+    B: [dD] [eE] [fF];
+    C: 'uvw' 'xyz'?;
+    D: 'uvw' 'xyz'+;
+

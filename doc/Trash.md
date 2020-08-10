@@ -144,6 +144,22 @@ Rewrite the node with the parentheses removed, if the block satifies three const
 
 * Print the stack of files.
 
+### ULLiteral
+
+`ulliteral xpath-expr`
+
+* The ulliteral command applies the "upper- and lower-case string literal"
+transform to a collection of terminal nodes in the parse tree,
+which is identified with the supplied xpath expression. Prior to using this command,
+the document must have been parsed.
+The ulliteral operation substitutes a sequence of 
+sets containing an upper and lower case characters
+for a `STRING_LITERAL`.
+The expression must point to the right-hand side `STRING_LITERAL` of
+a parser or lexer rule.
+The resulting code is parsed and placed
+on the top of stack.
+
 ### Unalias
 
 ### Unfold
@@ -153,7 +169,8 @@ Rewrite the node with the parentheses removed, if the block satifies three const
 * The unfold command applies the unfold transform to a collection of terminal nodes in the parse tree,
 which is identified with the supplied xpath expression. Prior to using this command, you must have the file parsed.
 An unfold operation substitutes the right-hand side of a parser or lexer rule
-into a reference of the rule name that occurs at the specified node. The resulting code is placed
+into a reference of the rule name that occurs at the specified node.
+The resulting code is parsed and placed
 on the top of stack.
 
 ### Write
