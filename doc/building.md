@@ -17,8 +17,9 @@ dependencies to be downloaded.
 ## Adding Build Rules to an Existing Project
 
 To add building capability to your Antlr program,
-add a reference to Antlr4BuildTasks to the
-library or application which contains the .g4 grammar files.
+add a package reference to Antlr4BuildTasks and Antlr.Runtime.Standard
+to the
+project which contains the .g4 grammar files.
 _NB: Do not include the generated .cs Antlr parser files
 in the CSPROJ file for your program._ Instead, the generated
 parser code is placed in the build temp output directory along with
