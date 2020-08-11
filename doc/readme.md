@@ -17,6 +17,8 @@ To get the most out of AntlrVSIX, start reviewing here:
 [Building and Running Antlr Applications](building.md)<br/>
 [Customizing the keyboard](customizing.md)<br/>
 [Refactorings for Antlr Grammars](refactoring.md)<br>
+[Options](options.md)<br>
+[Import](Import.md)<br>
 
 
 
