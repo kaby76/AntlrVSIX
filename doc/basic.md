@@ -1,7 +1,14 @@
 # Basic Editing of a Grammar
 
-AntlrVSIX supports editing of Antlr version 4 grammars. Grammar files
-must end with a .g4 suffix (the "standard" is to use .g4).
+AntlrVSIX supports editing of Antlr and Bison grammars. Grammar files
+must end with the suffix version for the parse.
+
+| Grammar | Required Suffix |
+| Antlr2 | .g2 |
+| Antlr3 | .g3 |
+| Antlr4 | .g4 |
+| Bison | .y |
+
 A grammar that only partially parses will show tagging up to the error.
 Grammars can be split into multiple files, but they should be in the same directory.
 The tool will try to only perform cross symbol matching between lexer and parser grammars
