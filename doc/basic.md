@@ -4,6 +4,7 @@ AntlrVSIX supports editing of Antlr and Bison grammars. Grammar files
 must end with the suffix version for the parse.
 
 | Grammar | Required Suffix |
+| ------- | --------------- |
 | Antlr2 | .g2 |
 | Antlr3 | .g3 |
 | Antlr4 | .g4 |
