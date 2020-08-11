@@ -22,12 +22,12 @@ Visual Studio extension.
 
 ## Supported grammars and features
 
-| Grammars | Features supported |
-| ---- | ---- |
-| Antlr4 | Basic LSP services (tagging, go to def, find all refs, rename, etc.); transformations; analysis |
-| Antlr3 | Basic LSP services (tagging, go to def, find all refs, rename, etc.); conversion to Antlr4 |
-| Antlr2 | Basic LSP services (tagging, go to def, find all refs, rename, etc.); conversion to Antlr4 |
-| Bison | Basic LSP services (tagging, go to def, find all refs, rename, etc.); conversion to Antlr4 |
+| Grammars | File suffix | Features supported |
+| ---- | ---- | ---- |
+| Antlr4 | .g4 | Basic LSP services (tagging, go to def, find all refs, rename, etc.); transformations; analysis |
+| Antlr3 | .g3 | Basic LSP services (tagging, go to def, find all refs, rename, etc.); conversion to Antlr4 |
+| Antlr2 | .g2 | Basic LSP services (tagging, go to def, find all refs, rename, etc.); conversion to Antlr4 |
+| Bison | .y | Basic LSP services (tagging, go to def, find all refs, rename, etc.); conversion to Antlr4 |
 
 # Installation
 
