@@ -5099,5 +5099,89 @@
             }
             return result;
         }
+
+        public static Dictionary<string, string> Rename(List<TerminalNodeImpl> nodes, string new_text, Document document)
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+
+            // Check if initial file is a grammar.
+            if (!(ParsingResultsFactory.Create(document) is ParsingResults pd_parser))
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+
+            ExtractGrammarType egt = new ExtractGrammarType();
+            ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
+            bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
+                              || egt.Type == ExtractGrammarType.GrammarType.Combined
+                              || egt.Type == ExtractGrammarType.GrammarType.Lexer;
+            if (!is_grammar)
+            {
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            }
+
+            var node = nodes.First();
+            var index = new Module().GetIndex(node.Symbol.Line, node.Symbol.Column, document);
+            IEnumerable<Location> locations = new Module().FindRefsAndDefs(index, document);
+
+            IEnumerable<Document> documents = locations.Select(r => r.Uri).OrderBy(q => q).Distinct();
+            foreach (Document f in documents)
+            {
+                string fn = f.FullPath;
+                IOrderedEnumerable<Location> per_file_changes = locations.Where(z => z.Uri == f).OrderBy(q => q.Range.Start.Value);
+                StringBuilder sb = new StringBuilder();
+                int previous = 0;
+                string code = f.Code;
+                foreach (Location l in per_file_changes)
+                {
+                    Document d = l.Uri;
+                    string xx = d.FullPath;
+                    var r = l.Range;
+                    string pre = code.Substring(previous, r.Start.Value - previous);
+                    sb.Append(pre);
+                    sb.Append(new_text);
+                    previous = r.End.Value + 1;
+                }
+                string rest = code.Substring(previous);
+                sb.Append(rest);
+                string new_code = sb.ToString();
+                if (new_code != f.Code)
+                {
+                    result.Add(document.FullPath, new_code);
+                }
+            }
+            return result;
+        }
+
+
+        public static Dictionary<string, string> Delete(List<IParseTree> nodes, Document document)
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+
+            // Check if initial file is a grammar.
+            if (!(ParsingResultsFactory.Create(document) is ParsingResults pd_parser))
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+
+            ExtractGrammarType egt = new ExtractGrammarType();
+            ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
+            bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
+                              || egt.Type == ExtractGrammarType.GrammarType.Combined
+                              || egt.Type == ExtractGrammarType.GrammarType.Lexer;
+            if (!is_grammar)
+            {
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            }
+
+            TreeEdits.Delete(nodes);
+
+            var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
+            StringBuilder sb = new StringBuilder();
+
+            TreeEdits.Reconstruct(sb, pd_parser.ParseTree, text_before);
+            var new_code = sb.ToString();
+            if (new_code != pd_parser.Code)
+            {
+                result.Add(document.FullPath, new_code);
+            }
+            return result;
+        }
     }
 }
