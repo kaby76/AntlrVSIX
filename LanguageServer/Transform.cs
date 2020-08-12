@@ -3670,7 +3670,7 @@
 
             if (defs.Count == 0 && refs.Count == 0)
             {
-                throw new LanguageServerException("Please position the cursor on either a LHS symbol (which means "
+                throw new LanguageServerException("Please position the cursor on either a LHS symbol (which means"
                                                   + " to replace all RHS occurrences of the symbol), or on a RHS symbol (which means"
                                                   + " to replace the specific RHS occurrence of the symbol, then try again.");
             }
