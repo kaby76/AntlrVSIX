@@ -74,6 +74,12 @@ resulting Antlr4 grammar replaces the top of stack.
 
 * Print out the parse tree for the file at the top of stack.
 
+### Delete
+
+`delete xpath-expression`
+
+* Delete nodes specified with the XPath expression.
+
 ### Find
 
 `find xpath-string`
@@ -172,6 +178,15 @@ An unfold operation substitutes the right-hand side of a parser or lexer rule
 into a reference of the rule name that occurs at the specified node.
 The resulting code is parsed and placed
 on the top of stack.
+
+### Unify
+
+`unify xpath-expression`
+
+* Perform a recursive left- and right- factorization of alternatives for rules.
+The nodes specified must be for `ruleAltList`, `lexerAltList`, or `altList`.
+A common prefix and suffix is performed on the alternatives, and
+a new expression derived. The process repeats for alternatives nested. 
 
 ### Write
 

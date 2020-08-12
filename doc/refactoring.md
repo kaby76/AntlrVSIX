@@ -400,3 +400,31 @@ _After_
     C: 'uvw' 'xyz'?;
     D: 'uvw' 'xyz'+;
 
+### Delete parse tree node
+
+For whatever reason, sometimes you just want to delete a collection of nodes.
+This transformation
+takes a parse tree node, and deletes it from the parse tree.
+
+_Before_
+
+    grammar KeywordFun;
+    a : 'abc';
+    b : 'def';
+    A: 'abc';
+    B: 'def';
+    C: 'uvw' 'xyz'?;
+    D: 'uvw' 'xyz'+;
+
+_Trash command_
+
+    delete "//lexerRuleSpec[TOKEN_REF/text() = 'A']"
+
+_After_
+
+    grammar KeywordFun;
+    a : 'abc';
+    b : 'def';
+    B: 'def';
+    C: 'uvw' 'xyz'?;
+    D: 'uvw' 'xyz'+;
