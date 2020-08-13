@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "NWayDiff": {
+      "commandName": "Project",
+      "commandLineArgs": "w x y z",
+      "workingDirectory": "$(ProjectDir)"
+    }
+  }
+}
