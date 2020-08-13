@@ -4,9 +4,9 @@ using System.Text;
 
 namespace NWayDiff
 {
-    class Line
+    public class Line<T> where T : class
     {
-        public string text;
+        public T text;
         public int mask;  // a bitmask
 
         public bool in_file(int fileid)
@@ -20,7 +20,7 @@ namespace NWayDiff
             mask = 0;
         }
 
-        public Line(string s, int m)
+        public Line(T s, int m)
         {
             text = s;
             this.mask = m;

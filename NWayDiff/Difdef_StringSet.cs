@@ -4,17 +4,17 @@ using System.Text;
 
 namespace NWayDiff
 {
-    class Difdef_StringSet
+    public class Difdef_StringSet<T> where T : class
     {
         public int NUM_FILES;
-        public Dictionary<string, List<int>> unique_lines;
+        public Dictionary<T, List<int>> unique_lines;
         public Difdef_StringSet(int num_files)
         {
             NUM_FILES = num_files;
-            unique_lines = new Dictionary<string, List<int>>();
+            unique_lines = new Dictionary<T, List<int>>();
         }
 
-        public string add(int fileid, string text)
+        public T add(int fileid, T text)
         {
             unique_lines.TryGetValue(text, out List<int> p);
             if (p == null)
@@ -32,7 +32,7 @@ namespace NWayDiff
             return text;
         }
 
-        public List<int> lookup(string text)
+        public List<int> lookup(T text)
         {
             return unique_lines[text];
         }

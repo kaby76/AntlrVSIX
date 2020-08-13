@@ -5,17 +5,17 @@ using System.Text;
 
 namespace NWayDiff
 {
-    class Classical
+    class Classical<T> where T : class
     {
-        public static List<string> classical_lcs(List<string> a, List<string> b, int i, int j, Dictionary<Tuple<int, int>, List<string>> memo)
+        public static List<T> classical_lcs(List<T> a, List<T> b, int i, int j, Dictionary<Tuple<int, int>, List<T>> memo)
         {
             Tuple<int, int> key = new Tuple<int, int>(i, j);
-            memo.TryGetValue(key, out List<string> val);
+            memo.TryGetValue(key, out List<T> val);
             if (val != null)
                 return val;
             else if (i == 0 || j == 0)
             {
-                List<string> result = new List<string>();
+                List<T> result = new List<T>();
                 memo[key] = result;
                 return result;
             }
@@ -27,15 +27,15 @@ namespace NWayDiff
                     --i;
                     --j;
                 }
-                List<string> result = classical_lcs(a, b, i, j, memo);
+                List<T> result = classical_lcs(a, b, i, j, memo);
                 throw new Exception();
                 // result.insert(result.end(), a.begin() + i, a.begin() + oldi);
                 return result;
             }
             else
             {
-                List<string> result1 = classical_lcs(a, b, i - 1, j, memo);
-                List<string> result2 = classical_lcs(a, b, i, j - 1, memo);
+                List<T> result1 = classical_lcs(a, b, i - 1, j, memo);
+                List<T> result2 = classical_lcs(a, b, i, j - 1, memo);
                 if (result1.Count > result2.Count)
                 {
                     memo[key] = result1;

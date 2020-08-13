@@ -4,13 +4,13 @@ using System.Text;
 
 namespace NWayDiff
 {
-    class Diff
+    public class Diff<T> where T : class
     {
         public int dimension;
-        public List<Line> lines;
+        public List<Line<T>> lines;
         public int mask;
 
-        public Diff assign(Diff rhs)
+        public Diff<T> assign(Diff<T> rhs)
         {
             this.mask = rhs.mask;
             this.lines = rhs.lines;
@@ -29,10 +29,10 @@ namespace NWayDiff
         public Diff(int num_files, int mask)
         {
             dimension = num_files;
-            this.lines = new List<Line>();
+            this.lines = new List<Line<T>>();
             this.mask = mask;
         }
-        public void append(Diff rhs)
+        public void append(Diff<T> rhs)
         {
             this.lines.AddRange(rhs.lines);
         }

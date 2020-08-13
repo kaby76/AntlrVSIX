@@ -5,13 +5,13 @@ using System.Text;
 
 namespace NWayDiff
 {
-    class Patience
+    public class Patience<T> where T : class
     {
         public int value;
-        public Patience left;
-        public Patience down;
+        public Patience<T> left;
+        public Patience<T> down;
 
-        public Patience(int v, Patience l, Patience d)
+        public Patience(int v, Patience<T> l, Patience<T> d)
         {
             value = v;
             left = l;
@@ -24,7 +24,7 @@ namespace NWayDiff
             if (!v.Any())
                 return result;
 
-            List<Patience> top_cards = new List<Patience>();
+            List<Patience<T>> top_cards = new List<Patience<T>>();
             for (int i = 0; i < v.Count; ++i)
             {
                 int val = v[i];
@@ -34,7 +34,7 @@ namespace NWayDiff
                     if (top_cards[j].value > val)
                     {
                         var left = j > 0 ? top_cards[j - 1] : null;
-                        top_cards[j] = new Patience(val, left, top_cards[j]);
+                        top_cards[j] = new Patience<T>(val, left, top_cards[j]);
                         handled = true;
                         break;
                     }
@@ -42,7 +42,7 @@ namespace NWayDiff
                 if (!handled)
                 {
                     var left = (!top_cards.Any()) ? null : top_cards[top_cards.Count - 1];
-                    top_cards.Add(new Patience(val, left, null));
+                    top_cards.Add(new Patience<T>(val, left, null));
                 }
             }
 
@@ -52,7 +52,7 @@ namespace NWayDiff
             int[] interm = result.ToArray();
             Array.Resize(ref interm, n);
             result = interm.ToList();
-            Patience p = top_cards[n - 1];
+            Patience<T> p = top_cards[n - 1];
             for (int i = 0; i < n; ++i)
             {
                 if (p == null) throw new Exception();
@@ -63,7 +63,7 @@ namespace NWayDiff
             return result;
         }
 
-        public static List<string> patience_unique_lcs(List<string> a, List<string> b)
+        public static List<T> patience_unique_lcs(List<T> a, List<T> b)
         {
             int n = a.Count;
             if (b.Count != n) throw new Exception();
@@ -76,7 +76,7 @@ namespace NWayDiff
                 indices[i] = index_of_ai_in_b;
             }
             List<int> ps = patience_longest_increasing_sequence(indices);
-            List<string> result = new List<string>();
+            List<T> result = new List<T>();
             for (int i = 0; i < ps.Count; ++i)
             {
                 result.Add(b[ps[i]]);

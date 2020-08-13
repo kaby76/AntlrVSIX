@@ -85,6 +85,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTestProject1", "UnitTes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trash", "Trash\Trash.csproj", "{F3E5473A-9283-4964-9FE9-726D21AAD349}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NWayDiff", "NWayDiff\NWayDiff.csproj", "{7761D467-8CA0-44CC-BC4B-31D5F65C9689}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -135,6 +137,10 @@ Global
 		{F3E5473A-9283-4964-9FE9-726D21AAD349}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3E5473A-9283-4964-9FE9-726D21AAD349}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3E5473A-9283-4964-9FE9-726D21AAD349}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7761D467-8CA0-44CC-BC4B-31D5F65C9689}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7761D467-8CA0-44CC-BC4B-31D5F65C9689}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7761D467-8CA0-44CC-BC4B-31D5F65C9689}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7761D467-8CA0-44CC-BC4B-31D5F65C9689}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

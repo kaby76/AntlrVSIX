@@ -6,7 +6,7 @@ namespace NWayDiff
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             List<List<string>> exprs = new List<List<string>>()
             {
@@ -15,8 +15,8 @@ namespace NWayDiff
                 new List<string>() { "'import'", "'static'", "typeName", "'.'", "'*'", "';'" },
                 new List<string>() { "'import'", "packageOrTypeName", "'.'", "'*'", "';'" },
             };
-            var difdef = new Difdef(args.Length);
-            for (int x = 0; x < args.Length; ++x)
+            var difdef = new Difdef<string>(exprs.Count);
+            for (int x = 0; x < exprs.Count; ++x)
             {
                 difdef.set_up_sequece(x, exprs[x]);
             }

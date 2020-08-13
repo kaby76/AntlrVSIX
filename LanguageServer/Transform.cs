@@ -4,6 +4,7 @@
     using Antlr4.Runtime;
     using Antlr4.Runtime.Misc;
     using Antlr4.Runtime.Tree;
+    using AntlrTreeEditing.AntlrDOM;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -15,7 +16,7 @@
     using System.Linq;
     using System.Text;
     using Document = Workspaces.Document;
-
+    using NWayDiff;
 
     public class Transform
     {
@@ -5201,9 +5202,45 @@
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
 
-            // Merge each sub-tree on it's own, recursively.
+            // For all nodes that are an altList of some type,
+            // apply the n-way merge for the whole collection.
             foreach (var node in nodes)
-                RecursiveUnify(node);
+            {
+                if (node is ANTLRv4Parser.RuleAltListContext altList1)
+                {
+                    var las = altList1.labeledAlt();
+
+                    // Place in array of "strings" for n-way merge.
+                    List<List<IParseTree>> exprs = new List<List<IParseTree>>();
+                    for (int i = 0; i < las.Length; ++i)
+                    {
+                        // Make sure every labeledAlt is "simple".
+                        org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+                        var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
+                        AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
+                        var elements = engine.parseExpression(
+                                @"./labeledAlt
+                                    /alternative
+                                        /element",
+                                new StaticContextBuilder()).evaluate(dynamicContext, new object[] { (las[i] as ObserverParserRuleContext).Observers.First() as AntlrNode })
+                            .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
+                        exprs.Add(elements);
+                    }
+                    Difdef<IParseTree> difdef = new Difdef<IParseTree>(exprs.Count);
+                    for (int x = 0; x < exprs.Count; ++x)
+                    {
+                        difdef.set_up_sequece(x, exprs[x]);
+                    }
+                    var diff = difdef.merge();
+
+                }
+                else if (node is ANTLRv4Parser.LexerAltListContext altList2)
+                {
+                }
+                else if (node is ANTLRv4Parser.AltListContext altList3)
+                {
+                }
+            }
 
             var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
             StringBuilder sb = new StringBuilder();
@@ -5220,15 +5257,6 @@
         static void RecursiveUnify(IParseTree node)
         {
             // Compute diff between two strings and merge, then recurse.
-            if (node is ANTLRv4Parser.RuleAltListContext altList1)
-            {
-            }
-            else if (node is ANTLRv4Parser.LexerAltListContext altList2)
-            {
-            }
-            else if (node is ANTLRv4Parser.AltListContext altList3)
-            {
-            }
         }
     }
 }

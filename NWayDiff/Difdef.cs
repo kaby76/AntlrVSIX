@@ -5,45 +5,45 @@ using System.Text;
 
 namespace NWayDiff
 {
-    class Difdef
+    public class Difdef<T> where T : class
     {
         public const int MAX_FILES = 32;
         public int NUM_FILES;
-        public Difdef_impl impl;
+        public Difdef_impl<T> impl;
 
         public Difdef(int num_files)
         {
             NUM_FILES = num_files;
-            impl = new Difdef_impl(num_files);
+            impl = new Difdef_impl<T>(num_files);
         }
 
-        public void set_filter(Func<string, string> filter)
+        public void set_filter(Func<T, T> filter)
         {
             this.impl.filter = filter;
         }
 
-        public void replace_file(int fileid, string fin)
-        {
-            this.impl.replace_file(fileid, fin);
-        }
+        //public void replace_file(int fileid, string fin)
+        //{
+        //    this.impl.replace_file(fileid, fin);
+        //}
 
-        public void set_up_sequece(int fileid, List<string> seq)
+        public void set_up_sequece(int fileid, List<T> seq)
         {
             this.impl.set_up_sequence(fileid, seq);
         }
 
-        public Diff merge()
+        public Diff<T> merge()
         {
             int m = (1 << NUM_FILES) - 1;
             return impl.merge(m);
         }
 
-        public Diff merge(int fileid1, int fileid2)
+        public Diff<T> merge(int fileid1, int fileid2)
         {
             int m = (1 << fileid1) | (1 << fileid2);
             return impl.merge(m);
         }
-        public Diff merge(HashSet<int> fileids)
+        public Diff<T> merge(HashSet<int> fileids)
         {
             int m = 0;
             foreach (var it in fileids)
@@ -53,7 +53,7 @@ namespace NWayDiff
             return impl.merge(m);
         }
 
-        public Diff simply_concatenate(List<List<string>> lists) { throw new NotImplementedException(); }
+        public Diff<T> simply_concatenate(List<List<T>> lists) { throw new NotImplementedException(); }
 
     }
 }
