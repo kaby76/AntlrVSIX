@@ -5300,6 +5300,8 @@
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
 
+            var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
+
             // For all nodes that are an altList of some type,
             // apply the n-way merge for the whole collection.
             foreach (var node in nodes)
@@ -5330,6 +5332,82 @@
                     }
                     var diff = difdef.merge();
 
+                    // Create new node to replace this ANTLRv4Parser.RuleAltListContext node.
+                    {
+                        var construct = new CTree.Class1(pd_parser.Parser, new Dictionary<string, object>());
+                        var res = construct.CreateTree(
+                            "( ruleAltList ( labeledAlt ( alternative ) ) )")
+                                    as ANTLRv4Parser.RuleAltListContext;
+                        var alternative = res.labeledAlt()[0].alternative();
+
+                        int i = 0;
+                        while (i < diff.lines.Count)
+                        {
+                            // Find anchor.
+                            int j = i;
+                            for (; j < diff.lines.Count; ++j)
+                            {
+                                if (diff.lines[j].mask != diff.mask)
+                                    break;
+                            }
+                            j = j - 1;
+
+                            // Bracket all between i and j inclusive. These all have a common mask.
+                            for (int k = i; k <= j; ++k)
+                                TreeEdits.AddChildren(alternative, new List<IParseTree>() { diff.lines[k].text as ANTLRv4Parser.ElementContext });
+
+                            // Look for next common mask.
+                            int l = j + 1;
+                            for (; l < diff.lines.Count; ++l)
+                            {
+                                if (diff.lines[l].mask == diff.mask)
+                                    break;
+                            }
+
+                            if (l == diff.lines.Count)
+                                break;
+
+                            // Now add parentheses and "|" for everything in between j+1 and l-1
+                            // Create block.
+                            var element_block = construct.CreateTree(
+                                "( element ( ebnf ( block ) ) )")
+                                as ANTLRv4Parser.ElementContext;
+                            TreeEdits.AddChildren(alternative, new List<IParseTree>() { element_block });
+                            var block = element_block.ebnf().block();
+                            TreeEdits.AddChildren(block, new List<IParseTree>() { new TerminalNodeImpl(new CommonToken(ANTLRv4Lexer.LPAREN) { Line = -1, Column = -1, Text = "(" }) });
+                            var altList = construct.CreateTree(
+                                "( altList ( alternative ) )")
+                                as ANTLRv4Parser.AltListContext;
+                            var sub_alternative = altList.alternative()[0];
+                            TreeEdits.AddChildren(block, new List<IParseTree>() { altList });
+                            bool firstfirst = true;
+                            for (int f = 0; f < diff.dimension; ++f)
+                            {
+                                if (!firstfirst)
+                                {
+                                    TreeEdits.AddChildren(altList, new List<IParseTree>() { new TerminalNodeImpl(new CommonToken(ANTLRv4Lexer.OR) { Line = -1, Column = -1, Text = "|" }) });
+                                    sub_alternative = construct.CreateTree(
+                                        "( alternative )")
+                                        as ANTLRv4Parser.AlternativeContext;
+                                    TreeEdits.AddChildren(altList, new List<IParseTree>() { sub_alternative });
+                                }
+                                for (int k = j + 1; k < l; ++k)
+                                {
+                                    if ((diff.lines[k].mask & (1 << f)) != 0)
+                                    {
+                                        firstfirst = false;
+                                        TreeEdits.AddChildren(sub_alternative,
+                                            new List<IParseTree>() { diff.lines[k].text
+                                            as ANTLRv4Parser.ElementContext });
+                                    }
+                                }
+                            }
+                            TreeEdits.AddChildren(block, new List<IParseTree>() { new TerminalNodeImpl(new CommonToken(ANTLRv4Lexer.RPAREN) { Line = -1, Column = -1, Text = ")" }) });
+                            i = l;
+                        }
+
+                        TreeEdits.Replace(node, res);
+                    }
                 }
                 else if (node is ANTLRv4Parser.LexerAltListContext altList2)
                 {
@@ -5339,7 +5417,6 @@
                 }
             }
 
-            var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
             StringBuilder sb = new StringBuilder();
 
             TreeEdits.Reconstruct(sb, pd_parser.ParseTree, text_before);
