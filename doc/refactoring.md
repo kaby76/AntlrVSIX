@@ -428,3 +428,26 @@ _After_
     B: 'def';
     C: 'uvw' 'xyz'?;
     D: 'uvw' 'xyz'+;
+
+
+### Unify alts to EBNF
+
+After unfolding rules, you will probably notice some `ruleAltList` or other
+alt lists that have a common left factor. The Unify transform is a
+generalization of the left factoring rule. This powerful transform performs
+a N-way merge of all the alts into one sequence with ebnf blocks
+created for non-common elements.
+
+_Before_
+
+    grammar CommonFactors;
+    a : 'X' 'B' 'Z' | 'X' 'C' 'Z' | 'X' 'D' 'Z' ;
+
+_Trash command_
+
+    unify "//parserRuleSpec[RULE_REF/text() = 'a']//ruleAltList"
+
+_After_
+
+    grammar CommonFactors;
+    a : 'X' ( 'B' | 'C' | 'D' ) 'Z' ;

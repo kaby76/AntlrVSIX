@@ -100,6 +100,7 @@ The refactorings implemented are:
 * Fold
 * [Remove useless parentheses](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#remove-useless-productions).
 * [Upper and lower case string literals](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#upper-and-lower-case-string-literals).
+* [Unify alts to EBNF](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#unify-alts-to-ebnf)
 
 ## Conversion
 
