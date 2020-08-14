@@ -112,7 +112,7 @@ The refactorings implemented are:
 The source code for the extension is open source, free of charge, and free of ads. For the latest developments on the extension,
 check out my [blog](http://codinggorilla.com).
 
-# Building Antlrvsix:
+# Building Antlrvsix
 
 [![Build status](https://ci.appveyor.com/api/projects/status/ekyhff3c28p5qgox?svg=true)](https://ci.appveyor.com/project/kaby76/antlrvsix)
 
