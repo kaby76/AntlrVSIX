@@ -63,7 +63,7 @@ namespace NWayDiff
             return result;
         }
 
-        public static List<T> patience_unique_lcs(List<T> a, List<T> b)
+        public static List<T> patience_unique_lcs(List<T> a, List<T> b, IEqualityComparer<T> comparer)
         {
             int n = a.Count;
             if (b.Count != n) throw new Exception();
@@ -71,7 +71,7 @@ namespace NWayDiff
             for (int i = 0; i < n; ++i) indices.Add(0);
             for (int i = 0; i < n; ++i)
             {
-                int index_of_ai_in_b = b.IndexOf(a[i]);
+                int index_of_ai_in_b = Class1<T>.MyIndexOf(b, a[i], comparer);
                 if (!(0 <= index_of_ai_in_b && index_of_ai_in_b < n)) throw new Exception();
                 indices[i] = index_of_ai_in_b;
             }

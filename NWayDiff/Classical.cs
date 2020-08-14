@@ -7,7 +7,14 @@ namespace NWayDiff
 {
     class Classical<T> where T : class
     {
-        public static List<T> classical_lcs(List<T> a, List<T> b, int i, int j, Dictionary<Tuple<int, int>, List<T>> memo)
+        IEqualityComparer<T> comparer;
+
+        public Classical(IEqualityComparer<T> c)
+        {
+            comparer = c;
+        }
+
+        public List<T> classical_lcs(List<T> a, List<T> b, int i, int j, Dictionary<Tuple<int, int>, List<T>> memo)
         {
             Tuple<int, int> key = new Tuple<int, int>(i, j);
             memo.TryGetValue(key, out List<T> val);
@@ -19,10 +26,11 @@ namespace NWayDiff
                 memo[key] = result;
                 return result;
             }
-            else if (a[i-1] == b[j-1])
+            else if (comparer.Equals(a[i-1], b[j-1]))
             {
+                T xxx = a[i - 1];
                 int oldi = i;
-                while (i > 0 && j > 0 && a[i-1] == b[j-1])
+                while (i > 0 && j > 0 && comparer.Equals(a[i-1], b[j-1]))
                 {
                     --i;
                     --j;

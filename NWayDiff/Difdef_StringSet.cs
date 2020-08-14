@@ -8,10 +8,13 @@ namespace NWayDiff
     {
         public int NUM_FILES;
         public Dictionary<T, List<int>> unique_lines;
-        public Difdef_StringSet(int num_files)
+        IEqualityComparer<T> comparer;
+
+        public Difdef_StringSet(int num_files, IEqualityComparer<T> c)
         {
             NUM_FILES = num_files;
-            unique_lines = new Dictionary<T, List<int>>();
+            comparer = c;
+            unique_lines = new Dictionary<T, List<int>>(comparer);
         }
 
         public T add(int fileid, T text)

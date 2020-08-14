@@ -12,12 +12,14 @@ namespace NWayDiff
         public Difdef_StringSet<T> unique_lines;
         public List<List<T>> lines;
         public Func<T, T> filter;
+        IEqualityComparer<T> comparer;
 
-        public Difdef_impl(int num_files)
+        public Difdef_impl(int num_files, IEqualityComparer<T> c)
         {
             NUM_FILES = num_files;
             lines = new List<List<T>>();
-            unique_lines = new Difdef_StringSet<T>(num_files);
+            comparer = c;
+            unique_lines = new Difdef_StringSet<T>(num_files, comparer);
             for (int i = 0; i < num_files; ++i) lines.Add(new List<T>());
             filter = null;
         }
@@ -82,11 +84,11 @@ namespace NWayDiff
                     int window_up = 0;
                     while (window_down < Math.Min(last_edge, i - last_edge)
                         && d.lines[last_edge - window_down - 1].mask == outer_mask
-                        && d.lines[last_edge - window_down - 1].text == d.lines[i - window_down - 1].text)
+                        && comparer.Equals(d.lines[last_edge - window_down - 1].text, d.lines[i - window_down - 1].text))
                         ++window_down;
                     while (window_up < Math.Min(N - i, i - last_edge)
                         && d.lines[i + window_up].mask == outer_mask
-                        && d.lines[i + window_up].text == d.lines[last_edge + window_up].text)
+                        && comparer.Equals(d.lines[i + window_up].text, d.lines[last_edge + window_up].text))
                         ++window_up;
                     int max_priority = 0;
                     int max_priority_edge = 0;
@@ -131,13 +133,24 @@ namespace NWayDiff
             return slide_diff_windows(d);
         }
 
+        static Random rrr = new Random();
+        
+        public T MyFun(T f)
+        {
+            int v = rrr.Next();
+            if (v % 2 == 0)
+                return f;
+            else
+                return null;
+        }
+
         public void add_vec_to_diff(ref Diff<T> a, int fileid, List<T> b)
         {
             int bmask = 1 << fileid;
             Diff<T> result = new Diff<T>(a.dimension, a.mask | bmask);
             Diff<T> suffix = new Diff<T>(a.dimension, a.mask | bmask);
             int i = 0;
-            while (i < a.lines.Count && i < b.Count && a.lines[i].text == b[i])
+            while (i < a.lines.Count && i < b.Count && comparer.Equals(a.lines[i].text, b[i]))
             {
                 T line = b[i];
                 result.lines.Add(new Line<T>(line, a.lines[i].mask | bmask));
@@ -156,13 +169,13 @@ namespace NWayDiff
                 for (int k2 = i; !failed && k2 < ja; ++k2)
                 {
                     if (k2 == k) continue;
-                    if (a.lines[k2].text == line) failed = true;
+                    if (comparer.Equals(a.lines[k2].text, line)) failed = true;
                 }
                 if (failed) continue;
                 bool found = false;
                 for (int k2 = i; !failed && k2 < jb; ++k2)
                 {
-                    if (b[k2] == line)
+                    if (comparer.Equals(b[k2], line))
                     {
                         if (found) failed = true;
                         found = true;
@@ -174,10 +187,10 @@ namespace NWayDiff
             for (int k = i; k < jb; ++k)
             {
                 T line = b[k];
-                if (ua.IndexOf(line) >= 0)
+                if (Class1<T>.MyIndexOf(ua, line, comparer) >= 0)
                     ub.Add(line);
             }
-            List<T> lcs = Patience<T>.patience_unique_lcs(ua, ub);
+            List<T> lcs = Patience<T>.patience_unique_lcs(ua, ub, comparer);
             if (lcs.Count == 0)
             {
                 Diff<T> ta = new Diff<T>(a.dimension, a.mask | bmask);
@@ -198,12 +211,12 @@ namespace NWayDiff
                 List<T> tb = new List<T>();
                 for (int lcx = 0; lcx < lcs.Count; ++lcx)
                 {
-                    while (a.lines[ak].text != lcs[lcx])
+                    while (! comparer.Equals(a.lines[ak].text, lcs[lcx]))
                     {
                         ta.lines.Add(a.lines[ak]);
                         ++ak;
                     }
-                    while (b[bk] != lcs[lcx])
+                    while (! comparer.Equals(b[bk], lcs[lcx]))
                     {
                         tb.Add(b[bk]);
                         ++bk;
@@ -234,13 +247,13 @@ namespace NWayDiff
             a = result; // COPY!
         }
 
-        static bool are_equal(List<T> a, List<T> b)
+        bool are_equal(List<T> a, List<T> b)
         {
             int n = a.Count;
             if (b.Count != n) return false;
             for (int i = 0; i < n; ++i)
             {
-                if (a[i] != b[i])
+                if (! comparer.Equals(a[i], b[i]))
                     return false;
             }
             return true;
@@ -286,19 +299,19 @@ namespace NWayDiff
             }
 
             Dictionary<Tuple<int, int>, List<T>> memo = new Dictionary<Tuple<int, int>, List<T>>();
-            List<T> lcs = Classical<T>.classical_lcs(ta, b, ta.Count, b.Count, memo);
+            List<T> lcs = new Classical<T>(comparer).classical_lcs(ta, b, ta.Count, b.Count, memo);
 
             Diff<T> result = new Diff<T>(a.dimension, a.mask | bmask);
             int ak = 0;
             int bk = 0;
             for (int lcx = 0; lcx < lcs.Count; ++lcx)
             {
-                while (a.lines[ak].text != lcs[lcx])
+                while (! comparer.Equals(a.lines[ak].text, lcs[lcx]))
                 {
                     result.lines.Add(new Line<T>(a.lines[ak].text, a.lines[ak].mask));
                     ++ak;
                 }
-                while (b[bk] != lcs[lcx])
+                while (! comparer.Equals(b[bk], lcs[lcx]))
                 {
                     result.lines.Add(new Line<T>(b[bk], bmask));
                     ++bk;

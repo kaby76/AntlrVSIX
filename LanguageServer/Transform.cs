@@ -5183,7 +5183,105 @@
             }
             return result;
         }
+        
+        class MyEqualityComparer : IEqualityComparer<IParseTree>
+        {
+            public bool Equals(IParseTree b1, IParseTree b2)
+            {
+                // Compare two parse trees. The node types should be the same
+                // and if a leaf, the text the same.
+                if (Object.ReferenceEquals(b1, null) && Object.ReferenceEquals(b2, null))
+                {
+                    return true;
+                }
+                if (Object.ReferenceEquals(b1, null))
+                {
+                    return false;
+                }
+                if (Object.ReferenceEquals(b2, null))
+                {
+                    return false;
+                }
+                if (!(b2 is IParseTree))
+                {
+                    return false;
+                }
 
+                {
+                    var t1 = b1.GetType();
+                    var t2 = b2.GetType();
+                    if (!t1.Equals(t2))
+                    {
+                        return false;
+                    }
+                }
+                var stack1 = new Stack<IParseTree>();
+                var stack2 = new Stack<IParseTree>();
+                stack1.Push(b1);
+                stack2.Push(b2 as AttributedParseTreeNode);
+                while (stack1.Any())
+                {
+                    var n1 = stack1.Pop();
+                    var n2 = stack2.Pop();
+                    var t1 = n1?.GetType();
+                    var t2 = n2?.GetType();
+                    if (!t1.Equals(t2))
+                    {
+                        return false;
+                    }
+                    if (n1 is TerminalNodeImpl)
+                    {
+                        var l1 = n1 as TerminalNodeImpl;
+                        var l2 = n2 as TerminalNodeImpl;
+                        if (l1.GetText() != l2.GetText())
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        if (n1.ChildCount != n2.ChildCount)
+                        {
+                            return false;
+                        }
+                        for (int i = 0; i < n1.ChildCount; ++i)
+                            stack1.Push(n1.GetChild(i));
+                        for (int i = 0; i < n2.ChildCount; ++i)
+                            stack2.Push(n2.GetChild(i));
+                    }
+                }
+                {
+                    return true;
+                }
+            }
+
+            public int GetHashCode(IParseTree bx)
+            {
+                return 1;
+            }
+
+            //public static bool operator ==(AttributedParseTreeNode lhs, AttributedParseTreeNode rhs)
+            //{
+            //    // Check for null.
+            //    if (Object.ReferenceEquals(lhs, null))
+            //    {
+            //        if (Object.ReferenceEquals(rhs, null))
+            //        {
+            //            // null == null = true.
+            //            return true;
+            //        }
+
+            //        // Only the left side is null.
+            //        return false;
+            //    }
+            //    // Equals handles the case of null on right side.
+            //    return lhs.Equals(rhs);
+            //}
+            //public static bool operator !=(AttributedParseTreeNode lhs, AttributedParseTreeNode rhs)
+            //{
+            //    return !(lhs == rhs);
+            //}
+        }
         public static Dictionary<string, string> Unify(List<IParseTree> nodes, Document document)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
@@ -5219,14 +5317,13 @@
                         var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
                         AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
                         var elements = engine.parseExpression(
-                                @"./labeledAlt
-                                    /alternative
+                                @"./alternative
                                         /element",
                                 new StaticContextBuilder()).evaluate(dynamicContext, new object[] { (las[i] as ObserverParserRuleContext).Observers.First() as AntlrNode })
                             .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
                         exprs.Add(elements);
                     }
-                    Difdef<IParseTree> difdef = new Difdef<IParseTree>(exprs.Count);
+                    Difdef<IParseTree> difdef = new Difdef<IParseTree>(exprs.Count, new MyEqualityComparer());
                     for (int x = 0; x < exprs.Count; ++x)
                     {
                         difdef.set_up_sequece(x, exprs[x]);

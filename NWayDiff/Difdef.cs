@@ -10,11 +10,13 @@ namespace NWayDiff
         public const int MAX_FILES = 32;
         public int NUM_FILES;
         public Difdef_impl<T> impl;
+        IEqualityComparer<T> comparer;
 
-        public Difdef(int num_files)
+        public Difdef(int num_files, IEqualityComparer<T> c)
         {
             NUM_FILES = num_files;
-            impl = new Difdef_impl<T>(num_files);
+            comparer = c;
+            impl = new Difdef_impl<T>(num_files, comparer);
         }
 
         public void set_filter(Func<T, T> filter)

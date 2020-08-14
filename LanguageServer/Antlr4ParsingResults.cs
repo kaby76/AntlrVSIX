@@ -944,7 +944,7 @@
                 else
                 {
                     var y = x as AttributedParseTreeNode;
-                    if (y != null) y.ParserDetails = pd;
+                    if (Object.ReferenceEquals(y, null)) y.ParserDetails = pd;
                     for (int i = 0; i < x.ChildCount; ++i)
                     {
                         var c = x.GetChild(i);
