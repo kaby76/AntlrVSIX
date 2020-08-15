@@ -1012,6 +1012,100 @@
             return result;
         }
 
+        public static Dictionary<string, string> SplitGrammar(Document document)
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+
+            if (!(ParsingResultsFactory.Create(document) is ParsingResults pd_parser))
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+
+            ExtractGrammarType lp = new ExtractGrammarType();
+            ParseTreeWalker.Default.Walk(lp, pd_parser.ParseTree);
+            if (lp.Type != ExtractGrammarType.GrammarType.Combined)
+            {
+                throw new LanguageServerException("A combined grammar file is not selected. Please select one first.");
+            }
+
+            TableOfRules table = new TableOfRules(pd_parser, document);
+            table.ReadRules();
+            table.FindPartitions();
+            table.FindStartRules();
+
+            string old_code = document.Code;
+            {
+                // Create a parser and lexer grammar.
+                StringBuilder sb_parser = new StringBuilder();
+                StringBuilder sb_lexer = new StringBuilder();
+                if (!(pd_parser.ParseTree is ANTLRv4Parser.GrammarSpecContext root))
+                {
+                    return null;
+                }
+
+                int grammar_type_index = 0;
+                if (root.DOC_COMMENT() != null)
+                {
+                    grammar_type_index++;
+                }
+
+                ANTLRv4Parser.GrammarDeclContext grammar_type_tree = root.grammarDecl();
+                ANTLRv4Parser.IdentifierContext id = grammar_type_tree.identifier();
+                ITerminalNode semi_tree = grammar_type_tree.SEMI();
+                ANTLRv4Parser.RulesContext rules_tree = root.rules();
+                string pre = old_code.Substring(0, pd_parser.TokStream.Get(grammar_type_tree.SourceInterval.a).StartIndex - 0);
+                sb_parser.Append(pre);
+                sb_lexer.Append(pre);
+                sb_parser.Append("parser grammar " + id.GetText() + "Parser;" + Environment.NewLine);
+                sb_lexer.Append("lexer grammar " + id.GetText() + "Lexer;" + Environment.NewLine);
+                int x1 = pd_parser.TokStream.Get(semi_tree.SourceInterval.b).StopIndex + 1;
+                int x2 = pd_parser.TokStream.Get(rules_tree.SourceInterval.a).StartIndex;
+                string n1 = old_code.Substring(x1, x2 - x1);
+                sb_parser.Append(n1);
+                sb_lexer.Append(n1);
+                sb_parser.AppendLine("options { tokenVocab=" + id.GetText() + "Lexer; }");
+                int end = 0;
+                for (int i = 0; i < table.rules.Count; ++i)
+                {
+                    TableOfRules.Row r = table.rules[i];
+                    // Partition rule symbols.
+                    if (r.is_parser_rule)
+                    {
+                        string n2 = old_code.Substring(r.start_index, r.end_index - r.start_index);
+                        sb_parser.Append(n2);
+                    }
+                    else
+                    {
+                        string n2 = old_code.Substring(r.start_index, r.end_index - r.start_index);
+                        sb_lexer.Append(n2);
+                    }
+                    end = r.end_index + 1;
+                }
+                if (end < old_code.Length)
+                {
+                    string rest = old_code.Substring(end);
+                    sb_parser.Append(rest);
+                    sb_lexer.Append(rest);
+                }
+                string g4_file_path = document.FullPath;
+                string current_dir = Path.GetDirectoryName(g4_file_path);
+                if (current_dir == null)
+                {
+                    return null;
+                }
+                string orig_name = Path.GetFileNameWithoutExtension(g4_file_path);
+                string new_code_parser = sb_parser.ToString();
+                string new_parser_ffn = current_dir + Path.DirectorySeparatorChar
+                    + orig_name + "Parser.g4";
+                string new_lexer_ffn = current_dir + Path.DirectorySeparatorChar
+                    + orig_name + "Lexer.g4";
+                string new_code_lexer = sb_lexer.ToString();
+                result.Add(new_parser_ffn, new_code_parser);
+                result.Add(new_lexer_ffn, new_code_lexer);
+                result.Add(g4_file_path, null);
+            }
+
+            return result;
+        }
+
         public static Dictionary<string, string> SplitCombineGrammars(Document document, bool split)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
