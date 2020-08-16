@@ -474,3 +474,28 @@ _After_
     xxx : xxx '*' xxx | INT ;
     INT : [0-9]+ ;
     WS : [ \t\n]+ -> skip ;
+
+### Move start rule
+
+The "Move start rule to top" transform simply moves the rule,
+identified by a symbol name, to the top of the grammar.
+
+_Before_
+
+    grammar A;
+    s : e ;
+    e : e '*' e | INT ;
+    INT : [0-9]+ ;
+    WS : [ \t\n]+ -> skip ;
+
+_[Trash command](Trash.md#mvsr)_
+
+    mvsr "//parserRuleSpec/RULE_REF[text() = 'e']"
+
+_After_
+
+    grammar A;
+    e : e '*' e | INT ;
+    s : e ;
+    INT : [0-9]+ ;
+    WS : [ \t\n]+ -> skip ;

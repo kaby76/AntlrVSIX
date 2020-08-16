@@ -96,6 +96,13 @@ For for further details, see the [Delete parse tree node](refactoring.md#delete-
 
 * Print out the shell command history.
 
+### Mvsr
+
+`mvsr xpath-string`
+
+* Move the rule, whose symbol is identified by the xpath string,
+to the top of the grammar.
+
 ### Parse
 
 `parse grammar-type`

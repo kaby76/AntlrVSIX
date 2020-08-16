@@ -414,7 +414,7 @@
                 }
             }
 
-            public void FindStartRules()
+            public void FindStartRules(List<IParseTree> identified_start_rules = null)
             {
                 for (int i = 0; i < rules.Count; ++i)
                 {
@@ -427,27 +427,44 @@
                 }
                 try
                 {
-                    foreach (KeyValuePair<string, SyntaxTree> kvp in trees)
+                    if (identified_start_rules == null)
                     {
-                        string file_name = kvp.Key;
-                        SyntaxTree tree = kvp.Value;
-                        CompilationUnitSyntax root = (CompilationUnitSyntax)tree.GetRoot();
-                        if (root == null)
+                        foreach (KeyValuePair<string, SyntaxTree> kvp in trees)
                         {
-                            continue;
-                        }
-                        FindCalls syntax_walker = new FindCalls();
-                        syntax_walker.Visit(root);
-                        for (int i = 0; i < rules.Count; ++i)
-                        {
-                            string nt_name = rules[i].LHS;
-                            string call = "." + nt_name + "()";
-                            foreach (string j in syntax_walker.Invocations)
+                            string file_name = kvp.Key;
+                            SyntaxTree tree = kvp.Value;
+                            CompilationUnitSyntax root = (CompilationUnitSyntax)tree.GetRoot();
+                            if (root == null)
                             {
-                                if (j.Contains(call))
+                                continue;
+                            }
+                            FindCalls syntax_walker = new FindCalls();
+                            syntax_walker.Visit(root);
+                            for (int i = 0; i < rules.Count; ++i)
+                            {
+                                string nt_name = rules[i].LHS;
+                                string call = "." + nt_name + "()";
+                                foreach (string j in syntax_walker.Invocations)
                                 {
-                                    rules[i].is_used = true;
-                                    rules[i].is_start = true;
+                                    if (j.Contains(call))
+                                    {
+                                        rules[i].is_used = true;
+                                        rules[i].is_start = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (var p in identified_start_rules)
+                        {
+                            if (p is TerminalNodeImpl)
+                            {
+                                var id = p.GetText();
+                                if (nt_to_index.ContainsKey(id))
+                                {
+                                    rules[nt_to_index[id]].is_start = true;
                                 }
                             }
                         }
@@ -801,7 +818,7 @@
             return result;
         }
 
-        public static Dictionary<string, string> MoveStartRuleToTop(Document document)
+        public static Dictionary<string, string> MoveStartRuleToTop(Document document, List<IParseTree> identified_start_rules = null)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
@@ -818,7 +835,7 @@
             TableOfRules table = new TableOfRules(pd_parser, document);
             table.ReadRules();
             table.FindPartitions();
-            table.FindStartRules();
+            table.FindStartRules(identified_start_rules);
 
             string old_code = document.Code;
             List<IParseTree> reorder = new List<IParseTree>();

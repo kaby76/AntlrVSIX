@@ -82,7 +82,7 @@ The refactorings implemented are:
 
 ### Reordering
 
-* Move start rule to top
+* [Move start rule to top](doc/refactoring.md#move-start-rule)
 * Reorder parser rules alphabetically
 * Reorder parser rules BFS from start rule
 * Reorder parser rules DFS from start rule
