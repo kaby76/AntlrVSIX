@@ -144,7 +144,7 @@ For for further details, see the [Rename](refactoring.md#rename) refactoring det
 
 * Rotate the stack once.
 
-### Remove Useless Parentheses
+### Rup
 
 `rup xpath-expression`
 

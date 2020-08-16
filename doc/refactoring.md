@@ -24,8 +24,6 @@ Note: This refactoring is a "fold" transformation
 as described in Halupka, Ivan, and Ján Kollár. "Catalog of grammar refactoring patterns." Open Computer Science 4.4 (2014): 231-241.
 However, this refactoring only applies to lexer symbols.
 
-### Example
-
 _Before_
 
     grammar Expression;
@@ -72,8 +70,6 @@ in order to find all calls to a parser rule of the form
 "parser.rule()" where "rule" is the name of the parser rule.
 If there is no source, the refactoring simply looks only at the
 grammar. Lexer rules are currently not removed.
-
-### Example
 
 _Before_
 
@@ -269,6 +265,10 @@ Combined grammar:
     RP : ')' ;
     WS : [ \r\n\t] + -> skip ;
 
+_[Trash command](Trash.md#split)_
+
+`split`
+
 _After_
 
 Lexer grammar:
@@ -341,8 +341,6 @@ There are times when a rule contains parentheses that surround a single symbol
 or list of symbols. In some situations, these parentheses can be removed without
 changing the meaning of the rule. This transformation perform this refactoring.
 
-### Example
-
 _Before_
 
     grammar A2;
@@ -352,7 +350,7 @@ _Before_
     INT : [0-9]+ ;
     WS : [ \t\n]+ -> skip ;
 
-_Trash command_
+_[Trash command](Trash.md#rup)_
 
 `rup "//parserRuleSpec[RULE_REF/text() = 'e']//labeledAlt//block"`
 
@@ -373,8 +371,6 @@ transform was created. In order for the lexer to recognize keywords in any
 case, the string literal for the keyword must be replaced with a sequence
 of upper and lower case sets. See this [explanation](https://theantlrguy.atlassian.net/wiki/spaces/ANTLR3/pages/2687342/How+do+I+get+case+insensitivity).
 
-### Example
-
 _Before_
 
     grammar KeywordFun;
@@ -385,7 +381,7 @@ _Before_
     C: 'uvw' 'xyz'?;
     D: 'uvw' 'xyz'+;
 
-_Trash command_
+_[Trash command](Trash.md#ulliteral)_
 
     ulliteral "//lexerRuleSpec[TOKEN_REF/text() = 'A']//STRING_LITERAL"
     ulliteral "//lexerRuleSpec[TOKEN_REF/text() = 'B']//STRING_LITERAL"
@@ -416,7 +412,7 @@ _Before_
     C: 'uvw' 'xyz'?;
     D: 'uvw' 'xyz'+;
 
-_Trash command_
+_[Trash command](Trash.md#delete)_
 
     delete "//lexerRuleSpec[TOKEN_REF/text() = 'A']"
 
@@ -443,7 +439,7 @@ _Before_
     grammar CommonFactors;
     a : 'X' 'B' 'Z' | 'X' 'C' 'Z' | 'X' 'D' 'Z' ;
 
-_Trash command_
+_[Trash command](Trash.md#unify)_
 
     unify "//parserRuleSpec[RULE_REF/text() = 'a']//ruleAltList"
 
@@ -467,7 +463,7 @@ _Before_
     INT : [0-9]+ ;
     WS : [ \t\n]+ -> skip ;
 
-_Trash command_
+_[Trash command](Trash.md#rename)_
 
     rename "//parserRuleSpec//labeledAlt//RULE_REF[text() = 'e']" "xxx"
 

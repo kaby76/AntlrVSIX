@@ -91,7 +91,7 @@ The refactorings implemented are:
 ### Changing rules
 
 * [Delete parse tree node](doc/refactoring.md#delete-parse-tree-node)
-* [Remove useless parentheses](doc/refactoring.md#remove-useless-productions)
+* [Remove useless parentheses](doc/refactoring.md#remove-useless-parentheses)
 * [Remove useless parser rules](doc/refactoring.md#remove-useless-productions)
 * [Rename lexer or parser symbol](doc/refactoring.md#rename)
 * [Unfold](doc/refactoring.md#Unfold)
