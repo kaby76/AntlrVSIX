@@ -73,9 +73,8 @@ and refactor the grammar.
 
 To run the tool, you will need to find the **Trash.exe** executable.
 It should be under
-"C:\Users\<userid>\AppData\Local\Microsoft\VisualStudio\...\AntlrVSIX\8.0\Trash\netcoreapp3.1\Trash.exe".
-Once you find the executable, execute it and a command line prompt
-will appear.
+"C:/Users/<userid>/AppData/Local/Microsoft/VisualStudio/.../AntlrVSIX/8.0/Trash/netcoreapp3.1/Trash.exe".
+Once you find the executable, execute it.
 
 If you want to run Trash without installing, then download
 the .vsix file, unpack it, and look for the executable. The tool
