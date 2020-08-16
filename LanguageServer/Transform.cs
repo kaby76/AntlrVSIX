@@ -4174,6 +4174,213 @@
 
         static int fold_number = 0;
 
+        public static Dictionary<string, string> Fold(List<IParseTree> nodes, Document document)
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+
+            // Check if initial file is a grammar.
+            if (!(ParsingResultsFactory.Create(document) is ParsingResults pd_parser))
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            ExtractGrammarType egt = new ExtractGrammarType();
+            ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
+            bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
+                || egt.Type == ExtractGrammarType.GrammarType.Combined
+                || egt.Type == ExtractGrammarType.GrammarType.Lexer;
+            if (!is_grammar)
+            {
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            }
+
+            if (!nodes.Any())
+            {
+                throw new LanguageServerException("XPath spec for LHS symbol empty.");
+            }
+            if (nodes.Count() > 1)
+            {
+                throw new LanguageServerException("XPath spec for LHS symbol specifies more than one node.");
+            }
+
+            var node = nodes.First();
+
+            // Check cursor position. Many things can happen here, but we have to try
+            // and make some sense of what the user is pointing out.
+            // Check if node is the LHS symbol of a rule,
+            // which means the user wants to fold all occurrences of the rule
+
+            if (!(node is TerminalNodeImpl && node.Parent is ANTLRv4Parser.ParserRuleSpecContext))
+                throw new LanguageServerException("Node for fold transform must be the LHS symbol.");
+
+            TerminalNodeImpl def = null;
+            TerminalNodeImpl sym_start = null;
+            TerminalNodeImpl sym_end = null;
+            def = sym_end = sym_start = node as TerminalNodeImpl;
+
+            // Go up tree to find a common parent.
+            List<IParseTree> lhs_path = new List<IParseTree>();
+            List<IParseTree> rhs_path = new List<IParseTree>();
+            for (var p = (IParseTree)sym_start; p != null; p = p.Parent) lhs_path.Insert(0, p);
+            for (var p = (IParseTree)sym_end; p != null; p = p.Parent) rhs_path.Insert(0, p);
+
+            int i = 0;
+            for (; ; )
+            {
+                if (lhs_path[i] != rhs_path[i])
+                {
+                    --i;
+                    break;
+                }
+                ++i;
+                if (i >= lhs_path.Count || i > rhs_path.Count)
+                {
+                    --i;
+                    break;
+                }
+            }
+            if (i < 0)
+            {
+                throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
+            }
+            if (lhs_path[i] is ANTLRv4Parser.ParserRuleSpecContext)
+            {
+                throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
+            }
+            if (lhs_path[i] is ANTLRv4Parser.RuleAltListContext)
+            {
+                throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
+            }
+            int j = i;
+            for (; j >= 0; --j)
+            {
+                if (lhs_path[j] is ANTLRv4Parser.ParserRuleSpecContext)
+                    break;
+            }
+            if (j < 0)
+            {
+                throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
+            }
+            if (lhs_path[j] is ANTLRv4Parser.ParserRuleSpecContext
+                && j + 2 == lhs_path.Count
+                && sym_start != sym_end)
+            {
+                throw new LanguageServerException("Please define a span within the RHS of a rule, or just the LHS symbol, then try again.");
+            }
+
+            bool replace_all = sym_start == sym_end && sym_start.Parent is ANTLRv4Parser.ParserRuleSpecContext;
+
+            // Get all intertoken text immediately for source reconstruction.
+            var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
+
+            if (replace_all)
+            {
+                // grab lhs of rule.
+                var the_rule = lhs_path[j];
+                org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+                var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
+                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
+                var RHS = engine.parseExpression(
+                        @"//parserRuleSpec[RULE_REF/text() = '" + def.GetText() + @"']
+                            /ruleBlock
+                                /ruleAltList",
+                        new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).First();
+                var Possible = engine.parseExpression(
+                        @"//parserRuleSpec
+                            /ruleBlock
+                                //altList",
+                        new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
+
+                foreach (var p in Possible)
+                {
+                    if (p.GetText() == RHS.GetText())
+                    { }
+                }
+
+                // Find complete RHS elsewhere and use LHS symbol if there's a match.
+                var rule = lhs_path[j] as ANTLRv4Parser.ParserRuleSpecContext;
+                ParsingResults pd = pd_parser;
+                var pt = pd.ParseTree;
+                var replace_name = rule.RULE_REF().GetText();
+                var rule_block = rule.ruleBlock();
+                var rule_alt_list = rule_block.ruleAltList();
+                var str = rule_alt_list.GetText();
+                foreach (var replace_this in TreeEdits.FindTopDown(pt,
+                    (in IParseTree t, out bool c) =>
+                    {
+                        if (str == t.GetText())
+                        {
+                            for (var p = t; p != null; p = p.Parent)
+                            {
+                                if (p == rule)
+                                {
+                                    c = false;
+                                    return null;
+                                }
+                            }
+                            c = false;
+                            return t;
+                        }
+                        c = true;
+                        return null;
+                    }))
+                {
+                    // Replace entire block.
+                    // Create a new block with one symbol.
+                    var new_block = new ANTLRv4Parser.BlockContext(null, 0);
+                    {
+                        var lparen_token = new CommonToken(ANTLRv4Lexer.LPAREN) { Line = -1, Column = -1, Text = "(" };
+                        var new_lparen = new TerminalNodeImpl(lparen_token);
+                        new_block.AddChild(new_lparen);
+                        new_lparen.Parent = new_block;
+                        text_before.Add(new_lparen, " ");
+                        ANTLRv4Parser.AltListContext l_alt = new ANTLRv4Parser.AltListContext(null, 0);
+                        new_block.AddChild(l_alt);
+                        l_alt.Parent = new_block;
+                        var rparen_token = new CommonToken(ANTLRv4Lexer.RPAREN) { Line = -1, Column = -1, Text = ")" };
+                        var new_rparen = new TerminalNodeImpl(rparen_token);
+                        new_block.AddChild(new_rparen);
+                        new_rparen.Parent = new_block;
+                        ANTLRv4Parser.AlternativeContext new_alt = new ANTLRv4Parser.AlternativeContext(null, 0);
+                        l_alt.AddChild(new_alt);
+                        new_alt.Parent = l_alt;
+                        var new_element = new ANTLRv4Parser.ElementContext(null, 0);
+                        new_alt.AddChild(new_element);
+                        new_element.Parent = new_alt;
+                        var new_atom = new ANTLRv4Parser.AtomContext(null, 0);
+                        new_element.AddChild(new_atom);
+                        new_atom.Parent = new_element;
+                        var new_ruleref = new ANTLRv4Parser.RulerefContext(null, 0);
+                        new_atom.AddChild(new_ruleref);
+                        new_ruleref.Parent = new_atom;
+                        var token = new CommonToken(ANTLRv4Lexer.RULE_REF) { Line = -1, Column = -1, Text = replace_name };
+                        var new_rule_ref = new TerminalNodeImpl(token);
+                        new_ruleref.AddChild(new_rule_ref);
+                        new_rule_ref.Parent = new_ruleref;
+
+                        TreeEdits.Replace(pt,
+                            (in IParseTree t, out bool c) =>
+                            {
+                                c = true;
+                                if (t != replace_this)
+                                    return null;
+                                c = false;
+                                return new_block;
+                            });
+                    }
+                }
+            }
+
+            StringBuilder sb = new StringBuilder();
+            TreeEdits.Reconstruct(sb, pd_parser.ParseTree, text_before);
+            var new_code = sb.ToString();
+            if (new_code != pd_parser.Code)
+            {
+                result.Add(document.FullPath, new_code);
+            }
+
+            return result;
+        }
+
         public static Dictionary<string, string> Fold(int start, int end, Document document)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();

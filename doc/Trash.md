@@ -61,6 +61,14 @@ capability.
 
 * Execute the command that begins with _string_.
 
+### Combine
+
+`combine`
+
+* Combine two grammars on top of stack into one grammar.
+One grammar must be a lexer grammar, the other a parser grammar,
+order is irrelevant.
+
 ### Convert
 
 `convert`
@@ -89,6 +97,13 @@ For for further details, see the [Delete parse tree node](refactoring.md#delete-
 * Find all sub-trees in the parsed file at the top of stack using the given XPath expression.
 
 ### Fold
+
+`fold xpath-string`
+
+* Replace a sequence of symbols on the RHS of a rule
+with the rule LHS symbol.
+
+For for further details, see the [fold](refactoring.md#Fold) refactoring details.
 
 ### History
 

@@ -116,18 +116,18 @@ The refactorings implemented are:
 * [Unfold](doc/refactoring.md#Unfold)
 * [Unify alts to EBNF](doc/refactoring.md#unify-alts-to-ebnf)
 * [Upper and lower case string literals](doc/refactoring.md#upper-and-lower-case-string-literals)
-* Add lexer rules for string literals in parser
-* Fold
+* [Fold](doc/refactoring.md#Fold)
 * Replace direct left recursion with right recursion
 * Replace direct left/right recursion with Kleene operator
 * Replace indirect left recursion with right recursion
 * Replace parser rule symbols that conflict with Antlr keywords
 * Replace string literals in parser with lexer symbols
+* Replace string literals in parser with lexer symbols, with lexer rule create
 
 ### Splitting and combining
 
 * [Split combined grammars](doc/refactoring.md#splitting-and-combining-grammars)
-* Combine splitted grammars
+* [Combine splitted grammars](doc/refactoring.md#splitting-and-combining-grammars)
 
 ## Conversion
 

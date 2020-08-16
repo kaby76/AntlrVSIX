@@ -552,3 +552,45 @@ _After_
     mode Two;
     Two_AA : 'AA' -> popMode;
 
+### Fold
+
+Sometimes you may notice that the right-hand side
+of a rule contains the same sequence of symbols
+as the right-hand side of a rule. You can replace
+the sequence with the rule symbol using the fold operation.
+
+_Original grammar_
+
+    C:\Users\kenne\Documents\AntlrVSIX2\Trash\Fold.g4
+    grammar A;
+    s : a ;
+    a : e ( ';' e )+ ;
+    e : e '*' e | INT ;
+    INT : [0-9]+ ;
+    WS : [ \t\n]+ -> skip ;
+
+_[Trash command](Trash.md#unfold)_
+
+    unfold "//parserRuleSpec/ruleBlock//RULE_REF[text() = 'a']"
+
+_Modified grammar_
+
+    grammar A;
+    s : ( e ( ';' e )+ ) ;
+    a : e ( ';' e )+ ;
+    e : e '*' e | INT ;
+    INT : [0-9]+ ;
+    WS : [ \t\n]+ -> skip ;
+
+_[Trash command](Trash.md#fold)_
+
+    fold "//parserRuleSpec/RULE_REF[text() = 'a']"
+
+_Final modified grammar_
+
+    grammar A;
+    s : ( ( a ) ) ;
+    a : e ( ';' e )+ ;
+    e : e '*' e | INT ;
+    INT : [0-9]+ ;
+    WS : [ \t\n]+ -> skip ;
