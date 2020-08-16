@@ -211,6 +211,10 @@ on the top of stack.
 
 ### Unalias
 
+`unalias id`
+
+* Remove an aliased command.
+
 ### Unfold
 
 `unfold xpath-expr`
