@@ -55,7 +55,7 @@ namespace Algorithms
      *  @author Kevin Wayne
      */
 
-    public class Digraph<T> : GraphAdjList<T, DirectedEdge<T>> where T : ICloneable
+    public class Digraph<T> : GraphAdjList<T, DirectedEdge<T>>
     {
         public Digraph()
         {
@@ -210,10 +210,10 @@ namespace Algorithms
         public Digraph<T> Reverse()
         {
             Digraph<T> reverse = new Digraph<T>();
-            foreach (T v in Vertices)
-            {
-                _ = v.Clone();
-            }
+            //foreach (T v in Vertices)
+            //{
+            //    _ = v.Clone();
+            //}
             foreach (T v in Vertices)
             {
                 foreach (T s in Successors(v))

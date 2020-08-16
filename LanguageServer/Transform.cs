@@ -17,6 +17,7 @@
     using System.Text;
     using Document = Workspaces.Document;
     using NWayDiff;
+    using org.w3c.dom;
 
     public class Transform
     {
@@ -1662,6 +1663,60 @@
             return false;
         }
 
+        private static bool HasIndirectLeftRecursion(IParseTree rule, Document document)
+        {
+            bool result = false;
+            if (!(ParsingResultsFactory.Create(document) is ParsingResults pd_parser))
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+
+            //// Construct graph of symbol usage.
+            //TableOfRules table = new TableOfRules(pd_parser, document);
+            //table.ReadRules();
+            //table.FindPartitions();
+            //table.FindStartRules();
+            //Digraph<IParseTree> graph = new Digraph<IParseTree>();
+            //foreach (TableOfRules.Row r in table.rules)
+            //{
+            //    IParseTree lhs = null;
+            //    if (r.rule is ANTLRv4Parser.ParserRuleSpecContext v1) lhs = v1.RULE_REF();
+            //    else if (r.rule is ANTLRv4Parser.LexerRuleSpecContext v2) lhs = v2.TOKEN_REF();
+            //    graph.AddVertex(lhs);
+            //}
+            //foreach (TableOfRules.Row r in table.rules)
+            //{
+
+            //    List<string> j = r.RHS;
+            //    foreach (string rhs in j)
+            //    {
+            //        TableOfRules.Row sym = table.rules.Where(t => t.LHS == rhs).FirstOrDefault();
+            //        if (!sym.is_parser_rule)
+            //        {
+            //            continue;
+            //        }
+            //        DirectedEdge<string> e = new DirectedEdge<string>(r.LHS, rhs);
+            //        graph.AddEdge(e);
+            //    }
+            //}
+            //List<string> starts = new List<string>();
+            //List<string> parser_lhs_rules = new List<string>();
+            //foreach (TableOfRules.Row r in table.rules)
+            //{
+            //    if (r.is_parser_rule)
+            //    {
+            //        parser_lhs_rules.Add(r.LHS);
+            //        if (r.is_start)
+            //        {
+            //            starts.Add(r.LHS);
+            //        }
+            //    }
+            //}
+
+            //// Check rule and graph.
+            //var tarjan = new TarjanSCC<string, DirectedEdge<string>>(graph);
+            //List<string> ordered = new List<string>();
+            //IDictionary<string, IEnumerable<string>> sccs = tarjan.Compute();
+            return result;
+        }
         private static (IParseTree, IParseTree) GenerateReplacementRules(string new_symbol_name, IParseTree rule, Dictionary<TerminalNodeImpl, string> text_before)
         {
             ANTLRv4Parser.ParserRuleSpecContext new_a_rule = new ANTLRv4Parser.ParserRuleSpecContext(null, 0);
@@ -2294,6 +2349,39 @@
 
 
         public static List<Tuple<string, bool>> HasDirectRec(IEnumerable<IParseTree> nodes, string l_or_r, Document document)
+        {
+            List<Tuple<string, bool>> result = new List<Tuple<string, bool>>();
+            // Check if initial file is a grammar.
+            if (!(ParsingResultsFactory.Create(document) is ParsingResults pd_parser))
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            ExtractGrammarType egt = new ExtractGrammarType();
+            ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
+            bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
+                || egt.Type == ExtractGrammarType.GrammarType.Combined
+                || egt.Type == ExtractGrammarType.GrammarType.Lexer;
+            if (!is_grammar)
+            {
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            }
+
+            foreach (var node in nodes)
+            {
+                if (!(node is TerminalNodeImpl && node.Parent is ANTLRv4Parser.ParserRuleSpecContext
+                    || node is TerminalNodeImpl && node.Parent is ANTLRv4Parser.LexerRuleSpecContext))
+                    throw new LanguageServerException("Node for query must be the LHS symbol.");
+            }
+
+            foreach (var node in nodes)
+            {
+                bool answer = l_or_r == "left" ? HasDirectLeftRecursion(node.Parent) : HasDirectRightRecursion(node.Parent);
+                Tuple<string, bool> t = new Tuple<string, bool>(node.GetText(), answer);
+                result.Add(t);
+            }
+
+            return result;
+        }
+
+        public static List<Tuple<string, bool>> HasIndirectRec(IEnumerable<IParseTree> nodes, string l_or_r, Document document)
         {
             List<Tuple<string, bool>> result = new List<Tuple<string, bool>>();
             // Check if initial file is a grammar.
