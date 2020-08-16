@@ -3237,6 +3237,7 @@
 
             StringBuilder sb = new StringBuilder();
             int previous = 0;
+            if (table.modes.Count == 0) return result;
             {
                 int index_start = table.modes[0].start_index;
                 int len = 0;
