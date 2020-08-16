@@ -176,8 +176,10 @@ of the Java grammar from specification. [ScrapeJavaSpec](https://github.com/kaby
 is a tool that has been written to
 import the Java grammar directly from the online specification,
 and output an Antlr4 grammar for it. Several refactorings have
-already been tested on the Java grammar, but the next step is
-to optimize the Java grammar for speed.
+already been tested on the Java grammar with this release.
+The next step afterward is
+to add the rest of the refactorings and
+optimize the Java grammar for speed.
 
 * Add editor support for Antlr2, Antlr3, and Bison grammars.
 * Add convert Antlr2 and Antlr3 grammars to Antlr4.
