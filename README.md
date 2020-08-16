@@ -77,7 +77,7 @@ It should be under
 Once you find the executable, execute it and a command line prompt
 will appear.
 
-For a list of commands in Trash, see this [documentation](doc/trash.md).
+For a list of commands in Trash, see this [documentation](doc/Trash.md).
 
 ## Analysis
 
