@@ -112,7 +112,6 @@ For for further details, see the [fold](refactoring.md#Fold) refactoring details
 * Print out whether the rule specified by the xpath expression pointing to the LHS symbol
 of a parser or lexer rule has left or right recursion.
 
-
 ### History
 
 `history`
