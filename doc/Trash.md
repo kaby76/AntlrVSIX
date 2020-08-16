@@ -105,11 +105,26 @@ with the rule LHS symbol.
 
 For for further details, see the [fold](refactoring.md#Fold) refactoring details.
 
+### Has
+
+`has (dr | ir) (left | right) xpath-expression`
+
+* Print out whether the rule specified by the xpath expression pointing to the LHS symbol
+of a parser or lexer rule has left or right recursion.
+
+
 ### History
 
 `history`
 
 * Print out the shell command history.
+
+### RR
+
+`rr`
+
+* Replace left indirect or direct recursion with right recursion.
+
 
 ### Kleene
 

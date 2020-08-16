@@ -45,6 +45,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Options", "Options\Options.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{65955E78-3712-4604-B151-4A2F7474BA58}"
 	ProjectSection(SolutionItems) = preProject
+		doc\analysis.md = doc\analysis.md
 		doc\basic.md = doc\basic.md
 		doc\building.md = doc\building.md
 		doc\customizing.md = doc\customizing.md

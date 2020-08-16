@@ -85,7 +85,9 @@ For a list of commands in Trash, see this [documentation](doc/Trash.md).
 
 ## Analysis
 
-_Not implemented yet_
+### Recursion
+
+* [Has direct/indirect recursion](doc/analysis.md#has)
 
 ## Refactoring
 
@@ -117,7 +119,7 @@ The refactorings implemented are:
 * [Unify alts to EBNF](doc/refactoring.md#unify-alts-to-ebnf)
 * [Upper and lower case string literals](doc/refactoring.md#upper-and-lower-case-string-literals)
 * [Fold](doc/refactoring.md#Fold)
-* Replace direct left recursion with right recursion
+* [Replace direct left recursion with right recursion]()
 * [Replace direct left/right recursion with Kleene operator](doc/refactoring.md#Kleene)
 * Replace indirect left recursion with right recursion
 * Replace parser rule symbols that conflict with Antlr keywords

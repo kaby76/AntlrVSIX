@@ -2145,7 +2145,6 @@
             return result;
         }
 
-
         public static Dictionary<string, string> ConvertRecursionToKleeneOperator(int start, int end, Document document)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
@@ -2293,7 +2292,41 @@
             return b + gnum.ToString();
         }
 
-        public static Dictionary<string, string> EliminateDirectLeftRecursion(int start, int end, Document document)
+
+        public static List<Tuple<string, bool>> HasDirectRec(IEnumerable<IParseTree> nodes, string l_or_r, Document document)
+        {
+            List<Tuple<string, bool>> result = new List<Tuple<string, bool>>();
+            // Check if initial file is a grammar.
+            if (!(ParsingResultsFactory.Create(document) is ParsingResults pd_parser))
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            ExtractGrammarType egt = new ExtractGrammarType();
+            ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
+            bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
+                || egt.Type == ExtractGrammarType.GrammarType.Combined
+                || egt.Type == ExtractGrammarType.GrammarType.Lexer;
+            if (!is_grammar)
+            {
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            }
+
+            foreach (var node in nodes)
+            {
+                if (!(node is TerminalNodeImpl && node.Parent is ANTLRv4Parser.ParserRuleSpecContext
+                    || node is TerminalNodeImpl && node.Parent is ANTLRv4Parser.LexerRuleSpecContext))
+                    throw new LanguageServerException("Node for query must be the LHS symbol.");
+            }
+
+            foreach (var node in nodes)
+            {
+                bool answer = l_or_r == "left" ? HasDirectLeftRecursion(node.Parent) : HasDirectRightRecursion(node.Parent);
+                Tuple<string, bool> t = new Tuple<string, bool>(node.GetText(), answer);
+                result.Add(t);
+            }
+
+            return result;
+        }
+
+        public static Dictionary<string, string> ToRightRecursion(IEnumerable<IParseTree> nodes, Document document)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
@@ -2310,38 +2343,49 @@
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
 
-            // Find all other grammars by walking dependencies (import, vocab, file names).
-            HashSet<string> read_files = new HashSet<string>
+            if (!nodes.Any())
             {
-                document.FullPath
-            };
-            Dictionary<Workspaces.Document, List<TerminalNodeImpl>> every_damn_literal =
-                new Dictionary<Workspaces.Document, List<TerminalNodeImpl>>();
-            for (; ; )
+                throw new LanguageServerException("XPath spec for LHS symbol empty.");
+            }
+            if (nodes.Count() > 1)
             {
-                int before_count = read_files.Count;
-                foreach (string f in read_files)
-                {
-                    List<string> additional = ParsingResults._dependent_grammars.Where(
-                        t => t.Value.Contains(f)).Select(
-                        t => t.Key).ToList();
-                    read_files = read_files.Union(additional).ToHashSet();
-                }
-                foreach (string f in read_files)
-                {
-                    IEnumerable<List<string>> additional = ParsingResults._dependent_grammars.Where(
-                        t => t.Key == f).Select(
-                        t => t.Value);
-                    foreach (List<string> t in additional)
-                    {
-                        read_files = read_files.Union(t).ToHashSet();
-                    }
-                }
-                int after_count = read_files.Count;
-                if (after_count == before_count)
-                {
+                throw new LanguageServerException("XPath spec for LHS symbol specifies more than one node.");
+            }
+
+            var node = nodes.First();
+
+            if (!(node is TerminalNodeImpl && node.Parent is ANTLRv4Parser.ParserRuleSpecContext))
+                throw new LanguageServerException("Node for transform must be the LHS symbol.");
+
+            var rule = node;
+            for (; rule != null; rule = rule.Parent)
+            {
+                if ((rule is ANTLRv4Parser.ParserRuleSpecContext || rule is ANTLRv4Parser.LexerRuleSpecContext))
                     break;
-                }
+            }
+            if (rule == null)
+                throw new LanguageServerException("A parser rule is not selected. Please select one first.");
+
+            //bool has_direct_left_recursion = HasDirectLeftRecursion(rule);
+            //bool has_indirect_left_recursion = HasIndirectLeftRecursion(rule);
+            return result;
+        }
+
+        public static Dictionary<string, string> EliminateDirectLeftRecursion(int start, int end, Document document)
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+
+            // Check if initial file is a grammar.
+            if (!(ParsingResultsFactory.Create(document) is ParsingResults pd_parser))
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            ExtractGrammarType egt = new ExtractGrammarType();
+            ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
+            bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
+                || egt.Type == ExtractGrammarType.GrammarType.Combined
+                || egt.Type == ExtractGrammarType.GrammarType.Lexer;
+            if (!is_grammar)
+            {
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
 
             // Assume cursor positioned at the rule that contains left recursion.
