@@ -1214,59 +1214,69 @@
 
             public override void EnterRewrite_tree_atom([NotNull] ANTLRv3Parser.Rewrite_tree_atomContext context)
             {
-                TerminalNodeImpl first = context.GetChild(0) as TerminalNodeImpl;
-                if (first?.Symbol.Type == ANTLRv3Parser.TOKEN_REF)
+                if (context.TOKEN_REF() != null)
                 {
-                    string id = first.GetText();
+                    string id = context.TOKEN_REF().GetText();
                     List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
                     if (!list.Any())
                     {
-                        ISymbol sym = new TerminalSymbol(id, first.Symbol);
+                        ISymbol sym = new TerminalSymbol(id, context.TOKEN_REF().Symbol);
                         _pd.RootScope.define(ref sym);
                         list = _pd.RootScope.LookupType(id).ToList();
                     }
                     List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
-                    CombinedScopeSymbol s = new RefSymbol(first.Symbol, list);
+                    CombinedScopeSymbol s = new RefSymbol(context.TOKEN_REF().Symbol, list);
                     new_attrs.Add(s);
-                    _pd.Attributes[context] = new_attrs;
-                    _pd.Attributes[context.GetChild(0)] = new_attrs;
+                    _pd.Attributes[context.TOKEN_REF()] = new_attrs;
                 }
-                if (first?.Symbol.Type == ANTLRv3Parser.RULE_REF)
+                if (context.RULE_REF() != null)
                 {
-                    string id = context.GetChild(0).GetText();
+                    string id = context.RULE_REF().GetText();
                     List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
                     if (!list.Any())
                     {
-                        ISymbol sym = new NonterminalSymbol(id, first.Symbol);
+                        ISymbol sym = new NonterminalSymbol(id, context.RULE_REF().Symbol);
                         _pd.RootScope.define(ref sym);
                         list = _pd.RootScope.LookupType(id).ToList();
                     }
                     List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
-                    CombinedScopeSymbol s = new RefSymbol(first.Symbol, list);
+                    CombinedScopeSymbol s = new RefSymbol(context.RULE_REF().Symbol, list);
                     new_attrs.Add(s);
-                    _pd.Attributes[context] = new_attrs;
-                    _pd.Attributes[context.GetChild(0)] = new_attrs;
+                    _pd.Attributes[context.RULE_REF()] = new_attrs;
                 }
             }
 
             public override void EnterAtom(ANTLRv3Parser.AtomContext context)
             {
-                TerminalNodeImpl first = context.GetChild(0) as TerminalNodeImpl;
-                if (first?.Symbol.Type == ANTLRv3Parser.RULE_REF)
+                if (context.terminal_()?.TOKEN_REF() != null)
                 {
-                    string id = first.GetText();
+                    string id = context.terminal_().TOKEN_REF().GetText();
                     List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
                     if (!list.Any())
                     {
-                        ISymbol sym = new NonterminalSymbol(id, first.Symbol);
+                        ISymbol sym = new TerminalSymbol(id, context.terminal_().TOKEN_REF().Symbol);
                         _pd.RootScope.define(ref sym);
                         list = _pd.RootScope.LookupType(id).ToList();
                     }
                     List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
-                    CombinedScopeSymbol s = new RefSymbol(first.Symbol, list);
+                    CombinedScopeSymbol s = new RefSymbol(context.terminal_().TOKEN_REF().Symbol, list);
                     new_attrs.Add(s);
-                    _pd.Attributes[context] = new_attrs;
-                    _pd.Attributes[context.GetChild(0)] = new_attrs;
+                    _pd.Attributes[context.terminal_().TOKEN_REF()] = new_attrs;
+                }
+                if (context.RULE_REF() != null)
+                {
+                    string id = context.RULE_REF().GetText();
+                    List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
+                    if (!list.Any())
+                    {
+                        ISymbol sym = new NonterminalSymbol(id, context.RULE_REF().Symbol);
+                        _pd.RootScope.define(ref sym);
+                        list = _pd.RootScope.LookupType(id).ToList();
+                    }
+                    List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
+                    CombinedScopeSymbol s = new RefSymbol(context.RULE_REF().Symbol, list);
+                    new_attrs.Add(s);
+                    _pd.Attributes[context.RULE_REF()] = new_attrs;
                 }
             }
         }

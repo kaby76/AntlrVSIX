@@ -1340,29 +1340,27 @@
 
             public override void EnterTerminal([NotNull] ANTLRv4Parser.TerminalContext context)
             {
-                TerminalNodeImpl first = context.GetChild(0) as TerminalNodeImpl;
-                if (first.Symbol.Type == ANTLRv4Parser.TOKEN_REF)
+                if (context.TOKEN_REF() != null)
                 {
-                    string id = first.GetText();
+                    string id = context.TOKEN_REF().GetText();
                     List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
                     if (!list.Any())
                     {
-                        ISymbol sym = new TerminalSymbol(id, first.Symbol);
+                        ISymbol sym = new TerminalSymbol(id, context.TOKEN_REF().Symbol);
                         _pd.RootScope.define(ref sym);
                         list = _pd.RootScope.LookupType(id).ToList();
                     }
                     List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
-                    CombinedScopeSymbol s = new RefSymbol(first.Symbol, list);
+                    CombinedScopeSymbol s = new RefSymbol(context.TOKEN_REF().Symbol, list);
                     new_attrs.Add(s);
-                    _pd.Attributes[context] = new_attrs;
-                    _pd.Attributes[context.GetChild(0)] = new_attrs;
+                    _pd.Attributes[context.TOKEN_REF()] = new_attrs;
                 }
             }
 
             public override void EnterRuleref([NotNull] ANTLRv4Parser.RulerefContext context)
             {
-                TerminalNodeImpl first = context.GetChild(0) as TerminalNodeImpl;
-                string id = context.GetChild(0).GetText();
+                TerminalNodeImpl first = context.RULE_REF() as TerminalNodeImpl;
+                string id = first.GetText();
                 List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
                 if (!list.Any())
                 {
@@ -1373,8 +1371,7 @@
                 List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
                 CombinedScopeSymbol s = new RefSymbol(first.Symbol, list);
                 new_attrs.Add(s);
-                _pd.Attributes[context] = new_attrs;
-                _pd.Attributes[context.GetChild(0)] = new_attrs;
+                _pd.Attributes[first] = new_attrs;
             }
 
             public override void EnterIdentifier([NotNull] ANTLRv4Parser.IdentifierContext context)

@@ -137,6 +137,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="$(SolutionDir)Trash\bin\Debug\**\*.*">
+      <Link>Trash\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
