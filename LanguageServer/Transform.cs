@@ -1123,6 +1123,189 @@
             return result;
         }
 
+        public static Dictionary<string, string> CombineGrammars(Document document1, Document document2)
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+
+            if (!(ParsingResultsFactory.Create(document1) is ParsingResults pd_parser1))
+                throw new LanguageServerException("Please select two grammar files.");
+            if (!(ParsingResultsFactory.Create(document2) is ParsingResults pd_parser2))
+                throw new LanguageServerException("Please select two grammar files.");
+
+            // Make sure the two files are lexer and parser, no particular order.
+            ExtractGrammarType lp1 = new ExtractGrammarType();
+            ParseTreeWalker.Default.Walk(lp1, pd_parser1.ParseTree);
+            if (!(lp1.Type == ExtractGrammarType.GrammarType.Parser || lp1.Type == ExtractGrammarType.GrammarType.Lexer))
+            {
+                throw new LanguageServerException("Grammar "
+                    + document1.FullPath + " is not a parser grammar, nor lexer grammar.");
+            }
+            ExtractGrammarType lp2 = new ExtractGrammarType();
+            ParseTreeWalker.Default.Walk(lp2, pd_parser2.ParseTree);
+            if (!(lp2.Type == ExtractGrammarType.GrammarType.Parser || lp2.Type == ExtractGrammarType.GrammarType.Lexer))
+            {
+                throw new LanguageServerException("Grammar "
+                    + document2.FullPath + " is not a parser grammar, nor lexer grammar.");
+            }
+
+            // Make sure parser is doc1, lexer is doc2.
+            if (lp1.Type == ExtractGrammarType.GrammarType.Lexer)
+            {
+                // Swap.
+                var s = document1; document1 = document2; document1 = s;
+            }
+
+            TableOfRules table1 = new TableOfRules(pd_parser1, document1);
+            table1.ReadRules();
+            table1.FindPartitions();
+            table1.FindStartRules();
+
+            string old_code1 = document1.Code;
+
+            TableOfRules table2 = new TableOfRules(pd_parser2, document2);
+            table2.ReadRules();
+            table2.FindPartitions();
+            table2.FindStartRules();
+
+            string old_code2 = document2.Code;
+
+            // Look for tokenVocab.
+            FindOptions find_options = new FindOptions();
+            ParseTreeWalker.Default.Walk(find_options, pd_parser1.ParseTree);
+            ANTLRv4Parser.OptionContext tokenVocab = null;
+            foreach (var o in find_options.Options)
+            {
+                var oo = o as ANTLRv4Parser.OptionContext;
+                if (oo.identifier() != null && oo.identifier().GetText() == "tokenVocab")
+                {
+                    tokenVocab = oo;
+                }
+            }
+            bool remove_options_spec = tokenVocab != null && find_options.Options.Count == 1;
+            bool rewrite_options_spec = tokenVocab != null;
+
+            // Create a combined parser grammar.
+            StringBuilder sb_parser = new StringBuilder();
+            if (!(pd_parser1.ParseTree is ANTLRv4Parser.GrammarSpecContext root))
+            {
+                return null;
+            }
+
+            int grammar_type_index = 0;
+            if (root.DOC_COMMENT() != null)
+            {
+                grammar_type_index++;
+            }
+
+            ANTLRv4Parser.GrammarDeclContext grammar_type_tree = root.grammarDecl();
+            ANTLRv4Parser.IdentifierContext id = grammar_type_tree.identifier();
+            ITerminalNode semi_tree = grammar_type_tree.SEMI();
+            ANTLRv4Parser.RulesContext rules_tree = root.rules();
+            string pre = old_code1.Substring(0, pd_parser1.TokStream.Get(grammar_type_tree.SourceInterval.a).StartIndex - 0);
+            sb_parser.Append(pre);
+            sb_parser.Append("grammar " + id.GetText().Replace("Parser", "") + ";" + Environment.NewLine);
+
+            if (!(remove_options_spec || rewrite_options_spec))
+            {
+                int x1 = pd_parser1.TokStream.Get(semi_tree.SourceInterval.b).StopIndex + 1;
+                int x2 = pd_parser1.TokStream.Get(rules_tree.SourceInterval.a).StartIndex;
+                string n1 = old_code1.Substring(x1, x2 - x1);
+                sb_parser.Append(n1);
+            }
+            else if (remove_options_spec)
+            {
+                int x1 = pd_parser1.TokStream.Get(semi_tree.SourceInterval.b).StopIndex + 1;
+                int x2 = pd_parser1.TokStream.Get(find_options.OptionsSpec.SourceInterval.a).StartIndex;
+                int x3 = pd_parser1.TokStream.Get(find_options.OptionsSpec.SourceInterval.b).StopIndex + 1;
+                int x4 = pd_parser1.TokStream.Get(rules_tree.SourceInterval.a).StartIndex;
+                string n1 = old_code1.Substring(x1, x2 - x1);
+                sb_parser.Append(n1);
+                string n3 = old_code1.Substring(x3, x4 - x3);
+                sb_parser.Append(n3);
+            }
+            else if (rewrite_options_spec)
+            {
+                int x1 = pd_parser1.TokStream.Get(semi_tree.SourceInterval.b).StopIndex + 1;
+                int x2 = 0;
+                int x3 = 0;
+                foreach (var o in find_options.Options)
+                {
+                    var oo = o as ANTLRv4Parser.OptionContext;
+                    if (oo.identifier() != null && oo.identifier().GetText() == "tokenVocab")
+                    {
+                        x2 = pd_parser1.TokStream.Get(oo.SourceInterval.a).StartIndex;
+                        int j;
+                        for (j = oo.SourceInterval.b + 1; ; j++)
+                        {
+                            if (pd_parser1.TokStream.Get(j).Text == ";")
+                            {
+                                j++;
+                                break;
+                            }
+                        }
+                        x3 = pd_parser1.TokStream.Get(j).StopIndex + 1;
+                        break;
+                    }
+                }
+                int x4 = pd_parser1.TokStream.Get(rules_tree.SourceInterval.a).StartIndex;
+                string n1 = old_code1.Substring(x1, x2 - x1);
+                sb_parser.Append(n1);
+                string n2 = old_code1.Substring(x2, x3 - x2);
+                sb_parser.Append(n2);
+                string n4 = old_code1.Substring(x3, x4 - x3);
+                sb_parser.Append(n4);
+            }
+            int end = 0;
+            for (int i = 0; i < table1.rules.Count; ++i)
+            {
+                TableOfRules.Row r = table1.rules[i];
+                if (r.is_parser_rule)
+                {
+                    string n2 = old_code1.Substring(r.start_index, r.end_index - r.start_index);
+                    sb_parser.Append(n2);
+                }
+                end = r.end_index + 1;
+            }
+            if (end < old_code1.Length)
+            {
+                string rest = old_code1.Substring(end);
+                sb_parser.Append(rest);
+            }
+            end = 0;
+            string lexer_old_code = document2.Code;
+            for (int i = 0; i < table2.rules.Count; ++i)
+            {
+                TableOfRules.Row r = table2.rules[i];
+                if (!r.is_parser_rule)
+                {
+                    string n2 = lexer_old_code.Substring(r.start_index, r.end_index - r.start_index);
+                    sb_parser.Append(n2);
+                }
+                end = r.end_index + 1;
+            }
+            if (end < lexer_old_code.Length)
+            {
+                string rest = lexer_old_code.Substring(end);
+                sb_parser.Append(rest);
+            }
+            string g4_file_path = document1.FullPath;
+            string current_dir = Path.GetDirectoryName(g4_file_path);
+            if (current_dir == null)
+            {
+                return null;
+            }
+
+            string orig_name = Path.GetFileName(g4_file_path);
+            string new_name = orig_name.Replace("Parser.g4", "");
+            string new_code_parser = sb_parser.ToString();
+            string new_parser_ffn = current_dir + Path.DirectorySeparatorChar
+                + new_name + ".g4";
+            result.Add(new_parser_ffn, new_code_parser);
+            result.Add(pd_parser1.FullFileName, null);
+            result.Add(pd_parser2.FullFileName, null);
+            return result;
+        }
+
         public static Dictionary<string, string> SplitCombineGrammars(Document document, bool split)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
