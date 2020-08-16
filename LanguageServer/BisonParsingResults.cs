@@ -416,9 +416,9 @@
                  {
                      return (int)AntlrClassifications.ClassificationKeyword;
                  }
-                 if ((term.Symbol.Type == ANTLRv4Parser.STRING_LITERAL
-                       || term.Symbol.Type == ANTLRv4Parser.INT
-                       || term.Symbol.Type == ANTLRv4Parser.LEXER_CHAR_SET))
+                 if ((term.Symbol.Type == BisonParser.STRING
+                       || term.Symbol.Type == BisonParser.INT
+                       ))
                  {
                      return (int)AntlrClassifications.ClassificationLiteral;
                  }
@@ -431,10 +431,9 @@
                  //        return 4;
                  //    }
                  //}
-                 if (term.Payload.Channel == ANTLRv4Lexer.OFF_CHANNEL
-                  || term.Symbol.Type == ANTLRv4Lexer.DOC_COMMENT
-                  || term.Symbol.Type == ANTLRv4Lexer.BLOCK_COMMENT
-                  || term.Symbol.Type == ANTLRv4Lexer.LINE_COMMENT)
+                 if (term.Payload.Channel == BisonLexer.OFF_CHANNEL
+                  || term.Symbol.Type == BisonLexer.BLOCK_COMMENT
+                  || term.Symbol.Type == BisonLexer.LINE_COMMENT)
                  {
                      return (int)AntlrClassifications.ClassificationComment;
                  }
@@ -552,9 +551,7 @@
                         IParseTree node = fod;
                         for (; node != null; node = node.Parent)
                         {
-                            if (node is ANTLRv4Parser.LexerRuleSpecContext ||
-                                node is ANTLRv4Parser.ParserRuleSpecContext ||
-                                node is ANTLRv4Parser.TokensSpecContext)
+                            if (node is BisonParser.RulesContext)
                             {
                                 break;
                             }
@@ -657,9 +654,7 @@
                         IParseTree node = fod;
                         for (; node != null; node = node.Parent)
                         {
-                            if (node is ANTLRv4Parser.LexerRuleSpecContext ||
-                                node is ANTLRv4Parser.ParserRuleSpecContext ||
-                                node is ANTLRv4Parser.TokensSpecContext)
+                            if (node is BisonParser.RulesContext)
                             {
                                 break;
                             }
@@ -762,9 +757,7 @@
                         IParseTree node = fod;
                         for (; node != null; node = node.Parent)
                         {
-                            if (node is ANTLRv4Parser.LexerRuleSpecContext ||
-                                node is ANTLRv4Parser.ParserRuleSpecContext ||
-                                node is ANTLRv4Parser.TokensSpecContext)
+                            if (node is BisonParser.RulesContext)
                             {
                                 break;
                             }
@@ -868,9 +861,7 @@
                         IParseTree node = fod;
                         for (; node != null; node = node.Parent)
                         {
-                            if (node is ANTLRv4Parser.LexerRuleSpecContext ||
-                                node is ANTLRv4Parser.ParserRuleSpecContext ||
-                                node is ANTLRv4Parser.TokensSpecContext)
+                            if (node is BisonParser.RulesContext)
                             {
                                 break;
                             }
@@ -949,13 +940,13 @@
                         new StreamReader(
                             new MemoryStream(byteArray)).ReadToEnd());
             var lexer = new BisonLexer(ais);
-            CommonTokenStream cts_off_channel = new CommonTokenStream(lexer, ANTLRv4Lexer.OFF_CHANNEL);
+            CommonTokenStream cts_off_channel = new CommonTokenStream(lexer, BisonLexer.OFF_CHANNEL);
             lexer.RemoveErrorListeners();
             var lexer_error_listener = new ErrorListener<int>(null, lexer, cts_off_channel, this.QuietAfter);
             lexer.AddErrorListener(lexer_error_listener);
             Dictionary<IToken, int> new_list = new Dictionary<IToken, int>();
             int type = (int)AntlrClassifications.ClassificationComment;
-            while (cts_off_channel.LA(1) != ANTLRv4Parser.Eof)
+            while (cts_off_channel.LA(1) != BisonParser.Eof)
             {
                 IToken token = cts_off_channel.LT(1);
                 if (token.Type == BisonLexer.BLOCK_COMMENT
