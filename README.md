@@ -168,7 +168,7 @@ Bash script "clean.sh" in the Antlrvsix source to clean out the build files so o
 * Add left factoring and inverse.
 * Add in empty string alternative hoist transforms.
 
-## Planned for v8.0 (expected mid-Aug 2020):
+## Planned for v8.0 (expected 17 Aug 2020):
 
 This release is a major organizational and feature change. The
 goal is to position the tool to be used for refactorings
