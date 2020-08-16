@@ -111,6 +111,14 @@ For for further details, see the [fold](refactoring.md#Fold) refactoring details
 
 * Print out the shell command history.
 
+### Kleene
+
+`kleene xpath-string`
+
+* Replace a rule, whose symbol is identified by the xpath string,
+of the grammar at the top of the grammar with an EBNF
+form if it contains direct left or direct right recursion.
+
 ### Mvsr
 
 `mvsr xpath-string`

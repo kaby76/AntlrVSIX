@@ -118,7 +118,7 @@ The refactorings implemented are:
 * [Upper and lower case string literals](doc/refactoring.md#upper-and-lower-case-string-literals)
 * [Fold](doc/refactoring.md#Fold)
 * Replace direct left recursion with right recursion
-* Replace direct left/right recursion with Kleene operator
+* [Replace direct left/right recursion with Kleene operator](doc/refactoring.md#Kleene)
 * Replace indirect left recursion with right recursion
 * Replace parser rule symbols that conflict with Antlr keywords
 * Replace string literals in parser with lexer symbols

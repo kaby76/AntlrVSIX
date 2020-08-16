@@ -594,3 +594,38 @@ _Final modified grammar_
     e : e '*' e | INT ;
     INT : [0-9]+ ;
     WS : [ \t\n]+ -> skip ;
+
+
+### Kleene
+
+* Left and right recursion are verbose and not efficient in
+parse tree size. The Kleene replacement transform takes a LHS
+symbol and checks whether the rule contains direct left or direct right
+recursion. If so, it replaces the alternatives with a Kleene
+operator.
+
+_Original grammar_
+
+    grammar Kleene;
+    s : a ;
+    a : a ';' e | e ;
+    b : e ';' b | e ;
+    e : e '*' e | INT ;
+    INT : [0-9]+ ;
+    WS : [ \t\n]+ -> skip ;
+
+_[Trash command](Trash.md#kleene)_
+
+    kleene "//parserRuleSpec/ruleBlock//RULE_REF[text() = 'a']"
+    kleene "//parserRuleSpec/ruleBlock//RULE_REF[text() = 'b']"
+
+_Modified grammar_
+
+    grammar Kleene;
+    s : a ;
+    a : ( e ) ( ';' e ) * ;
+    b : ( e ';' ) * ( e ) ;
+    e : e '*' e | INT ;
+    INT : [0-9]+ ;
+    WS : [ \t\n]+ -> skip ;
+
