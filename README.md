@@ -63,6 +63,22 @@ However, there is no guarantee that this version will work.
 
 For information on how basic use, see the [User Guide](doc/readme.md).
 
+## Running the **Trash** command-line engine
+
+The **Trash** tool is a command-line interpreter for executing
+operations on grammar files. With it, you can read Antlr2, Antlr3,
+Antrl4, and Bison grammars, convert to Antlr4, find sub-trees
+in the parse tree for the grammar using XPath expressions, analyze,
+and refactor the grammar.
+
+To run the tool, you will need to find the **Trash.exe** executable.
+It should be under
+"C:\Users\<userid>\AppData\Local\Microsoft\VisualStudio\...\AntlrVSIX\8.0\Trash\netcoreapp3.1\Trash.exe".
+Once you find the executable, execute it and a command line prompt
+will appear.
+
+For a list of commands in Trash, see this [documentation](doc/trash.md).
+
 ## Analysis
 
 _Not implemented yet_

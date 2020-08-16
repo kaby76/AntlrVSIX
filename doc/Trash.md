@@ -1,4 +1,4 @@
-# Trash -- a shell for performing transformations of Antlr grammars
+# Trash, a shell for editing grammars
 
 "Trash" is a simple command-line shell for parsing, converting, analyzing, and transforming
 Antlr grammars. You can use the tool to automate changes to a grammar,
