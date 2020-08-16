@@ -80,27 +80,35 @@ the parser works, e.g., converting a prioritized chain of productions recognizin
 an arithmetic expression to a recursive alternate form.
 The refactorings implemented are:
 
-* [Delete parse tree node](doc/refactoring.md#delete-parse-tree-node)
-* [Rename lexer or parser symbol](doc/refactoring.md#rename)
-* Replace string literals in parser with lexer symbols
-* [Remove useless parser rules](doc/refactoring.md#remove-useless-productions)
+### Reordering
+
 * Move start rule to top
 * Reorder parser rules alphabetically
-* Reorder parser rules DFS from start rule
 * Reorder parser rules BFS from start rule
-* [Split combined grammars](doc/refactoring.md#splitting-and-combining-grammars)
-* Combine splitted grammars
+* Reorder parser rules DFS from start rule
+* Sort lexer modes alphabetically
+
+### Changing rules
+
+* [Delete parse tree node](doc/refactoring.md#delete-parse-tree-node)
+* [Remove useless parentheses](doc/refactoring.md#remove-useless-productions)
+* [Remove useless parser rules](doc/refactoring.md#remove-useless-productions)
+* [Rename lexer or parser symbol](doc/refactoring.md#rename)
+* [Unfold](doc/refactoring.md#Unfold)
+* [Unify alts to EBNF](doc/refactoring.md#unify-alts-to-ebnf)
+* [Upper and lower case string literals](doc/refactoring.md#upper-and-lower-case-string-literals)
+* Add lexer rules for string literals in parser
+* Fold
 * Replace direct left recursion with right recursion
+* Replace direct left/right recursion with Kleene operator
 * Replace indirect left recursion with right recursion
 * Replace parser rule symbols that conflict with Antlr keywords
-* Add lexer rules for string literals in parser
-* Sort lexer modes alphabetically
-* Replace direct left/right recursion with Kleene operator
-* [Unfold](doc/refactoring.md#Unfold)
-* Fold
-* [Remove useless parentheses](doc/refactoring.md#remove-useless-productions)
-* [Upper and lower case string literals](doc/refactoring.md#upper-and-lower-case-string-literals)
-* [Unify alts to EBNF](doc/refactoring.md#unify-alts-to-ebnf)
+* Replace string literals in parser with lexer symbols
+
+### Splitting and combining
+
+* [Split combined grammars](doc/refactoring.md#splitting-and-combining-grammars)
+* Combine splitted grammars
 
 ## Conversion
 
