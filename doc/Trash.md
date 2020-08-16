@@ -130,6 +130,14 @@ the file, use `write`.
 
 ### Rename
 
+`rename xpath-expression new-name`
+
+* Rename a symbol in the current grammar. The result may pop
+the stack and place all related grammars that use or define the symbol
+on the stack.
+
+For for further details, see the [Rename](refactoring.md#rename) refactoring details.
+
 ### Rotate
 
 `rotate`

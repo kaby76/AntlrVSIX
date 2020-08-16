@@ -451,3 +451,30 @@ _After_
 
     grammar CommonFactors;
     a : 'X' ( 'B' | 'C' | 'D' ) 'Z' ;
+
+### Rename
+
+Sometimes you may want to rename a lexer or parser symbol.
+The Rename transform looks at the first leaf node you specify
+with an XPath string, and renames it globally throughout all
+applied and defining occurrences of the symbol.
+
+_Before_
+
+    grammar A;
+    s : e ;
+    e : e '*' e | INT ;
+    INT : [0-9]+ ;
+    WS : [ \t\n]+ -> skip ;
+
+_Trash command_
+
+    rename "//parserRuleSpec//labeledAlt//RULE_REF[text() = 'e']" "xxx"
+
+_After_
+
+    grammar A;
+    s : xxx ;
+    xxx : xxx '*' xxx | INT ;
+    INT : [0-9]+ ;
+    WS : [ \t\n]+ -> skip ;

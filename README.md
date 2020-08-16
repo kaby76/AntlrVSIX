@@ -81,7 +81,7 @@ an arithmetic expression to a recursive alternate form.
 The refactorings implemented are:
 
 * [Delete parse tree node](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#delete-parse-tree-node)
-* Rename lexer or parser symbol
+* [Rename lexer or parser symbol](doc/refactoring.md#rename)
 * Replace string literals in parser with lexer symbols
 * [Remove useless parser rules](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#remove-useless-productions)
 * Move start rule to top
