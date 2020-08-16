@@ -150,7 +150,8 @@ Bash script "clean.sh" in the Antlrvsix source to clean out the build files so o
 
 This release is a major organizational and feature change. The
 goal is to position the tool to be used for refactorings
-of the Java grammar from specification. A tool has been written to
+of the Java grammar from specification. [ScrapeJavaSpec](https://github.com/kaby76/ScrapeJavaSpec)
+is a tool that has been written to
 import the Java grammar directly from the online specification,
 and output an Antlr4 grammar for it. Several refactorings have
 already been tested on the Java grammar, but the next step is
