@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace Utils
 {
@@ -6,7 +7,7 @@ namespace Utils
     /// StackQueue - a data structure that has both Stack and Queue interfaces.
     /// </summary>
     /// <typeparam name="NAME"></typeparam>
-    public class StackQueue<T>
+    public class StackQueue<T> : IEnumerable<T>
     {
         private int _size;
         private int _top;
@@ -89,6 +90,16 @@ namespace Utils
         {
             get => PeekBottom(n);
             set => _items[n] = value;
+        }
+
+        public virtual T Peek()
+        {
+            return PeekTop(0);
+        }
+
+        public bool Any()
+        {
+            return _top > 0;
         }
 
         public virtual T PeekTop(int n = 0)
@@ -255,6 +266,14 @@ namespace Utils
         {
             ListSection<T> result = new ListSection<T>(_items, _top, length);
             return result;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            for (int i = _top - 1; i >= 0; i--)
+            {
+                yield return _items[i];
+            }
         }
     }
 }
