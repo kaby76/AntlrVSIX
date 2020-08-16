@@ -145,6 +145,19 @@ on the stack.
 
 For for further details, see the [Rename](refactoring.md#rename) refactoring details.
 
+### Reorder
+
+`reorder alpha`
+`reorder bfs xpath-expression`
+`reorder dfs xpath-expression`
+
+* Reorder the parser rules according to the specified type. For
+BFS and DFS, an XPath expression must be supplied to specify
+all the start rule symbols. For alphabetic reordering, all parser
+rules are retained, and simply reordered alphabetically. 
+For BFS and DFS, if the rule is unreachable from a start node,
+then the rule is dropped from the grammar.
+
 ### Rotate
 
 `rotate`

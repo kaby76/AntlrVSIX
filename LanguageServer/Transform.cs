@@ -891,7 +891,7 @@
             return result;
         }
 
-        public static Dictionary<string, string> ReorderParserRules(Document document, LspAntlr.ReorderType type)
+        public static Dictionary<string, string> ReorderParserRules(Document document, LspAntlr.ReorderType type, List<IParseTree> identified_start_rules = null)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
@@ -909,7 +909,7 @@
             TableOfRules table = new TableOfRules(pd_parser, document);
             table.ReadRules();
             table.FindPartitions();
-            table.FindStartRules();
+            table.FindStartRules(identified_start_rules);
 
             // Find new order of rules.
             string old_code = document.Code;

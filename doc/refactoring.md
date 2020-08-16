@@ -123,6 +123,9 @@ at the end of the grammar file. Formatting of the rules is
 perserved but formatting between rules may not. Use "reformat"
 to reformat the grammars to your style.
 
+Trash provides for reordering parser rules through the
+[reorder](trash.md#reorder) command.
+
 _Before_
 
     grammar Expression;

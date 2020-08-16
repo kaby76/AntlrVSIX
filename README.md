@@ -80,17 +80,18 @@ the parser works, e.g., converting a prioritized chain of productions recognizin
 an arithmetic expression to a recursive alternate form.
 The refactorings implemented are:
 
+### Raw tree editing
+
+* [Delete parse tree node](doc/refactoring.md#delete-parse-tree-node)
+
 ### Reordering
 
 * [Move start rule to top](doc/refactoring.md#move-start-rule)
-* Reorder parser rules alphabetically
-* Reorder parser rules BFS from start rule
-* Reorder parser rules DFS from start rule
+* [Reorder parser rules](doc/refactoring.md#reorder-parser-rules)
 * Sort lexer modes alphabetically
 
 ### Changing rules
 
-* [Delete parse tree node](doc/refactoring.md#delete-parse-tree-node)
 * [Remove useless parentheses](doc/refactoring.md#remove-useless-parentheses)
 * [Remove useless parser rules](doc/refactoring.md#remove-useless-productions)
 * [Rename lexer or parser symbol](doc/refactoring.md#rename)
