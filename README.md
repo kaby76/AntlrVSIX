@@ -86,7 +86,7 @@ The refactorings implemented are:
 
 * [Move start rule to top](doc/refactoring.md#move-start-rule)
 * [Reorder parser rules](doc/refactoring.md#reorder-parser-rules)
-* Sort lexer modes alphabetically
+* [Sort modes](doc/refactoring.md#sort-modes)
 
 ### Changing rules
 

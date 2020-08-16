@@ -502,3 +502,53 @@ _After_
     s : e ;
     INT : [0-9]+ ;
     WS : [ \t\n]+ -> skip ;
+
+### Sort modes
+
+The "reorder modes" transform reorders the modes in a lexer
+grammar alphabetically, and placed at the end of the file. The
+grammar must be a lexer grammar because modes cannot be in any
+other Antlr grammar type.
+
+_Before_
+
+    lexer grammar FooLexer;
+    INT : ('0' .. '9')+ ;
+    MUL : '*' ;
+    DIV : '/' ;
+    ADD : '+' ;
+    SUB : '-' ;
+    LP : '(' ;
+    RP : ')' ;
+    ID : ( ('a' .. 'z') | ('A' .. 'Z') | '_' )+ ;
+    WS : [ \r\n\t] + -> skip ;
+    mode One;
+    One_AA : 'AA' -> popMode;
+    mode Two;
+    Two_AA : 'AA' -> popMode;
+    mode Three;
+    Three_AA : 'AA' -> popMode;
+
+_[Trash command](Trash.md#reorder)_
+
+    reorder modes
+
+_After_
+
+    lexer grammar FooLexer;
+    INT : ('0' .. '9')+ ;
+    MUL : '*' ;
+    DIV : '/' ;
+    ADD : '+' ;
+    SUB : '-' ;
+    LP : '(' ;
+    RP : ')' ;
+    ID : ( ('a' .. 'z') | ('A' .. 'Z') | '_' )+ ;
+    WS : [ \r\n\t] + -> skip ;
+    mode One;
+    One_AA : 'AA' -> popMode;
+    mode Three;
+    Three_AA : 'AA' -> popMode;
+    mode Two;
+    Two_AA : 'AA' -> popMode;
+
