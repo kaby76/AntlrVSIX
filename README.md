@@ -65,9 +65,7 @@ For information on how basic use, see the [User Guide](doc/readme.md).
 
 ## Analysis
 
-When invoked in the UI, Antlrvsix will perform an analysis of the document and
-make recommendations on what you may want to change. Results are place in the Error List grid box of VS 2019.
-For performance, link to a special version of the Antlr library to perform analysis.
+_Not implemented yet_
 
 ## Refactoring
 
@@ -150,7 +148,13 @@ Bash script "clean.sh" in the Antlrvsix source to clean out the build files so o
 
 ## Planned for v8.0 (expected mid-Aug 2020):
 
-This release is a major organizational and feature change.
+This release is a major organizational and feature change. The
+goal is to position the tool to be used for refactorings
+of the Java grammar from specification. A tool has been written to
+import the Java grammar directly from the online specification,
+and output an Antlr4 grammar for it. Several refactorings have
+already been tested on the Java grammar, but the next step is
+to optimize the Java grammar for speed.
 
 * Add editor support for Antlr2, Antlr3, and Bison grammars.
 * Add convert Antlr2 and Antlr3 grammars to Antlr4.
@@ -168,6 +172,7 @@ for Windows or Linux.
 * Rewrite the existing transforms and analyses using XPath and S-expresions.
 * Remove templates from extension and place in Antlr4BuildTasks.Templates.
 * Add nightly unit tests to build (find def, find refs and defs, etc).
+* Make signficant updates to the documentation.
 * Fix [Import of grammar with multiple rules for LHS symbol crashes. #69](https://github.com/kaby76/AntlrVSIX/issues/69).
 * Fix [Add transform to input string literals and convert to case insensitive literal or vice versa. #71](https://github.com/kaby76/AntlrVSIX/issues/71).
 * Fix [LanguageServer.Module.GetDefsAndRefs() not working right #74](https://github.com/kaby76/AntlrVSIX/issues/74).
