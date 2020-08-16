@@ -16,7 +16,7 @@ but I am deferring further development of the client until the server is more or
 Supported are colorized tagging, hover, go to def, find all refs,
 replace, and reformat. But, there is so much more to Antlrvsix
 than these basic LSP commands. Along with the extension for VS,
-[Trash](https://github.com/kaby76/AntlrVSIX/blob/master/doc/Trash.md) is a command-line shell for
+[Trash](doc/Trash.md) is a command-line shell for
 parsing, analyzing, and transforming grammars outside of the
 Visual Studio extension.
 
@@ -80,15 +80,15 @@ the parser works, e.g., converting a prioritized chain of productions recognizin
 an arithmetic expression to a recursive alternate form.
 The refactorings implemented are:
 
-* [Delete parse tree node](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#delete-parse-tree-node)
+* [Delete parse tree node](doc/refactoring.md#delete-parse-tree-node)
 * [Rename lexer or parser symbol](doc/refactoring.md#rename)
 * Replace string literals in parser with lexer symbols
-* [Remove useless parser rules](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#remove-useless-productions)
+* [Remove useless parser rules](doc/refactoring.md#remove-useless-productions)
 * Move start rule to top
 * Reorder parser rules alphabetically
 * Reorder parser rules DFS from start rule
 * Reorder parser rules BFS from start rule
-* [Split combined grammars](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#splitting-and-combining-grammars)
+* [Split combined grammars](doc/refactoring.md#splitting-and-combining-grammars)
 * Combine splitted grammars
 * Replace direct left recursion with right recursion
 * Replace indirect left recursion with right recursion
@@ -96,17 +96,17 @@ The refactorings implemented are:
 * Add lexer rules for string literals in parser
 * Sort lexer modes alphabetically
 * Replace direct left/right recursion with Kleene operator
-* [Unfold](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#Unfold)
+* [Unfold](doc/refactoring.md#Unfold)
 * Fold
-* [Remove useless parentheses](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#remove-useless-productions)
-* [Upper and lower case string literals](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#upper-and-lower-case-string-literals)
-* [Unify alts to EBNF](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#unify-alts-to-ebnf)
+* [Remove useless parentheses](doc/refactoring.md#remove-useless-productions)
+* [Upper and lower case string literals](doc/refactoring.md#upper-and-lower-case-string-literals)
+* [Unify alts to EBNF](doc/refactoring.md#unify-alts-to-ebnf)
 
 ## Conversion
 
-* [Antlr3 import](https://github.com/kaby76/AntlrVSIX/blob/master/doc/Import.md#antlr3)
-* [Antlr2 import](https://github.com/kaby76/AntlrVSIX/blob/master/doc/Import.md#antlr2)
-* [Bison import](https://github.com/kaby76/AntlrVSIX/blob/master/doc/Import.md#bison)
+* [Antlr3 import](doc/Import.md#antlr3)
+* [Antlr2 import](doc/Import.md#antlr2)
+* [Bison import](doc/Import.md#bison)
 
 ---------
 
@@ -176,6 +176,6 @@ for Windows or Linux.
  
 # Prior Releases
 
-See [this guide](https://github.com/kaby76/AntlrVSIX/blob/master/PriorReleases.md).
+See [this guide](PriorReleases.md).
 
 Any questions, email me at ken.domino <at> gmail.com

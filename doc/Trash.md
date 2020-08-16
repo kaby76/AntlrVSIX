@@ -80,7 +80,7 @@ resulting Antlr4 grammar replaces the top of stack.
 
 * Delete nodes specified with the XPath expression.
 
-For for further details, see the [Delete parse tree node](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#delete-parse-tree-node) refactoring details.
+For for further details, see the [Delete parse tree node](refactoring.md#delete-parse-tree-node) refactoring details.
 
 ### Find
 
@@ -154,7 +154,7 @@ Rewrite the node with the parentheses removed, if the block satifies three const
 (2) the `block` node must have an `altList` that does not contain more than one child;
 (3) the `ebnf` parent of `block` must not contain a `blockSuffix`.
 
-For for further details, see the [remove useless parentheses](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#remove-useless-parentheses) refactoring details.
+For for further details, see the [remove useless parentheses](refactoring.md#remove-useless-parentheses) refactoring details.
 
 ### Split
 
@@ -165,7 +165,7 @@ The grammar must be a combined lexer/parser grammar for the transformation to
 proceed. The transformation creates a lexer grammar and a parser grammar and places them
 on the stack. The original grammar is popped off the stack.
 
-For for further details, see the [split grammar](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#splitting-and-combining-grammars) refactoring details.
+For for further details, see the [split grammar](refactoring.md#splitting-and-combining-grammars) refactoring details.
 
 ### Stack
 
@@ -211,7 +211,7 @@ The nodes specified must be for `ruleAltList`, `lexerAltList`, or `altList`.
 A common prefix and suffix is performed on the alternatives, and
 a new expression derived. The process repeats for alternatives nested. 
 
-For for further details, see the [Unify alts to EBNF](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#unify-alts-to-ebnf) refactoring details.
+For for further details, see the [Unify alts to EBNF](refactoring.md#unify-alts-to-ebnf) refactoring details.
 
 ### Write
 
