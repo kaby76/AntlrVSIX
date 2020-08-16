@@ -77,6 +77,9 @@ It should be under
 Once you find the executable, execute it and a command line prompt
 will appear.
 
+If you want to run Trash without installing, e.g., on Linux, then download
+the .vsix file, unpack it, and look for the executable. 
+
 For a list of commands in Trash, see this [documentation](doc/Trash.md).
 
 ## Analysis
