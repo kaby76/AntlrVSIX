@@ -1,8 +1,8 @@
 # Trash, a shell for editing grammars
 
 "Trash" is a command-line shell for parsing, converting, analyzing, and transforming
-Antlr grammars. You can use the tool to automate changes to a grammar,
-or use it to determine whether performance
+Antlr4 grammars. You can use the tool to automate refactorings
+or to determine whether performance
 problems that you may experience in VS are due to
 VS or the Antlr language server.
 
