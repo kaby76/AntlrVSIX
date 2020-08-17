@@ -1663,60 +1663,161 @@
             return false;
         }
 
-        private static bool HasIndirectLeftRecursion(IParseTree rule, Document document)
+
+        private static List<Symtab.ISymbol> GetDef(IParseTree lhs, ParsingResults pd_parser)
+        {
+            List<Symtab.ISymbol> result = new List<Symtab.ISymbol>();
+            var term = lhs as TerminalNodeImpl;
+            pd_parser.Attributes.TryGetValue(term, out IList<CombinedScopeSymbol> list_value);
+            if (list_value == null) return result;
+            if (list_value.Count > 1) return result;
+            var value = list_value.First();
+            if (value == null) return result;
+            Symtab.ISymbol sym = value as Symtab.ISymbol;
+            if (sym == null) return result;
+            result = new List<Symtab.ISymbol>() { sym };
+            if (sym is RefSymbol) result = sym.resolve();
+            return result;
+        }
+
+        private static IEnumerable<TerminalNodeImpl> RHS(TerminalNodeImpl def, ParsingResults pd)
+        {
+            if (def.Parent is ANTLRv4Parser.ParserRuleSpecContext p1)
+            {
+                org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+                var (tree, parser, lexer) = (pd.ParseTree, pd.Parser, pd.Lexer);
+                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
+                var RHS = engine.parseExpression(
+                        @"//parserRuleSpec[RULE_REF/text() = '" + def.GetText() + @"']
+                            /ruleBlock
+                                //RULE_REF",
+                        new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as TerminalNodeImpl);
+                return RHS;
+            }
+            else if (def.Parent is ANTLRv4Parser.LexerRuleSpecContext p2)
+            {
+                org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+                var (tree, parser, lexer) = (pd.ParseTree, pd.Parser, pd.Lexer);
+                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
+                var RHS = engine.parseExpression(
+                        @"//lexerRuleSpec[TOKEN_REF/text() = '" + def.GetText() + @"']
+                            /lexerRuleBlock
+                                //TOKEN_REF",
+                        new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as TerminalNodeImpl);
+                return RHS;
+            }
+            return new List<TerminalNodeImpl>();
+        }
+
+        private static bool HasIndirectLeftRecursion(TerminalNodeImpl rule, Document document)
         {
             bool result = false;
             if (!(ParsingResultsFactory.Create(document) is ParsingResults pd_parser))
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
 
-            //// Construct graph of symbol usage.
-            //TableOfRules table = new TableOfRules(pd_parser, document);
-            //table.ReadRules();
-            //table.FindPartitions();
-            //table.FindStartRules();
-            //Digraph<IParseTree> graph = new Digraph<IParseTree>();
-            //foreach (TableOfRules.Row r in table.rules)
-            //{
-            //    IParseTree lhs = null;
-            //    if (r.rule is ANTLRv4Parser.ParserRuleSpecContext v1) lhs = v1.RULE_REF();
-            //    else if (r.rule is ANTLRv4Parser.LexerRuleSpecContext v2) lhs = v2.TOKEN_REF();
-            //    graph.AddVertex(lhs);
-            //}
-            //foreach (TableOfRules.Row r in table.rules)
-            //{
+            var defs = GetDef(rule, pd_parser);
 
-            //    List<string> j = r.RHS;
-            //    foreach (string rhs in j)
-            //    {
-            //        TableOfRules.Row sym = table.rules.Where(t => t.LHS == rhs).FirstOrDefault();
-            //        if (!sym.is_parser_rule)
-            //        {
-            //            continue;
-            //        }
-            //        DirectedEdge<string> e = new DirectedEdge<string>(r.LHS, rhs);
-            //        graph.AddEdge(e);
-            //    }
-            //}
-            //List<string> starts = new List<string>();
-            //List<string> parser_lhs_rules = new List<string>();
-            //foreach (TableOfRules.Row r in table.rules)
-            //{
-            //    if (r.is_parser_rule)
-            //    {
-            //        parser_lhs_rules.Add(r.LHS);
-            //        if (r.is_start)
-            //        {
-            //            starts.Add(r.LHS);
-            //        }
-            //    }
-            //}
+            Digraph<Symtab.ISymbol> graph = new Digraph<Symtab.ISymbol>();
 
-            //// Check rule and graph.
-            //var tarjan = new TarjanSCC<string, DirectedEdge<string>>(graph);
-            //List<string> ordered = new List<string>();
-            //IDictionary<string, IEnumerable<string>> sccs = tarjan.Compute();
+            // Get LHS defs and refs, then perform transitive closure of all uses, all rules and their symbols.
+            HashSet<Symtab.ISymbol> visited = new HashSet<Symtab.ISymbol>();
+            Stack<Symtab.ISymbol> stack = new Stack<Symtab.ISymbol>();
+            foreach (var def in defs) { stack.Push(def); }
+            while (stack.Any())
+            {
+                var def = stack.Pop();
+                if (visited.Contains(def))
+                    continue;
+                visited.Add(def);
+
+                // Navigate to RHS symbols and get defs. Draw edges between those defs and this def.
+
+                string def_file = def.file;
+                if (def_file == null)
+                    continue;
+
+                Document doc = Workspaces.Workspace.Instance.FindDocument(def_file);
+                if (doc == null)
+                    continue;
+
+                if (!(ParsingResultsFactory.Create(doc) is ParsingResults pd))
+                    continue;
+
+                var tree = pd.ParseTree;
+                if (tree == null)
+                    continue;
+
+                var lhs = def.Token;
+                if (lhs == null)
+                    continue;
+
+                TerminalNodeImpl lhs_term = TreeEdits.Find(lhs, tree);
+                if (lhs_term == null)
+                    continue;
+
+                if (!(lhs_term.Parent is ANTLRv4Parser.ParserRuleSpecContext || lhs_term.Parent is ANTLRv4Parser.LexerRuleSpecContext))
+                    continue;
+
+                graph.AddVertex(def);
+
+                var rhs_symbols = RHS(lhs_term, pd);
+                foreach (var rhs_sym in rhs_symbols)
+                {
+                    var more_defs = GetDef(rhs_sym, pd);
+                    foreach (Symtab.ISymbol def2 in more_defs)
+                    {
+                        string def_file2 = def2.file;
+                        if (def_file2 == null)
+                            continue;
+
+                        Document doc2 = Workspaces.Workspace.Instance.FindDocument(def_file2);
+                        if (doc2 == null)
+                            continue;
+
+                        if (!(ParsingResultsFactory.Create(doc2) is ParsingResults pd2))
+                            continue;
+
+                        var tree2 = pd2.ParseTree;
+                        if (tree2 == null)
+                            continue;
+
+                        var lhs2 = def2.Token;
+                        if (lhs2 == null)
+                            continue;
+
+                        TerminalNodeImpl lhs_term2 = TreeEdits.Find(lhs2, tree2);
+                        if (lhs_term2 == null)
+                            continue;
+
+                        if (!(lhs_term2.Parent is ANTLRv4Parser.ParserRuleSpecContext || lhs_term.Parent is ANTLRv4Parser.LexerRuleSpecContext))
+                            continue;
+
+                        graph.AddVertex(def2);
+                        DirectedEdge<Symtab.ISymbol> e = new DirectedEdge<Symtab.ISymbol>(def, def2);
+                        graph.AddEdge(e);
+
+                        stack.Push(def2);
+                    }
+                }
+            }
+
+            // Check rule and graph.
+            var tarjan = new TarjanSCC<Symtab.ISymbol, DirectedEdge<Symtab.ISymbol>>(graph);
+            List<Symtab.ISymbol> ordered = new List<Symtab.ISymbol>();
+            IDictionary<Symtab.ISymbol, IEnumerable<Symtab.ISymbol>> sccs = tarjan.Compute();
+
+            foreach (var def in defs)
+            {
+                var scc = sccs[def];
+                if (scc.Count() > 1)
+                    return true;
+            }
+
             return result;
         }
+
         private static (IParseTree, IParseTree) GenerateReplacementRules(string new_symbol_name, IParseTree rule, Dictionary<TerminalNodeImpl, string> text_before)
         {
             ANTLRv4Parser.ParserRuleSpecContext new_a_rule = new ANTLRv4Parser.ParserRuleSpecContext(null, 0);
@@ -2406,7 +2507,7 @@
 
             foreach (var node in nodes)
             {
-                bool answer = l_or_r == "left" ? HasDirectLeftRecursion(node.Parent) : HasDirectRightRecursion(node.Parent);
+                bool answer = l_or_r == "left" ? HasIndirectLeftRecursion(node as TerminalNodeImpl, document) : HasIndirectLeftRecursion(node as TerminalNodeImpl, document);
                 Tuple<string, bool> t = new Tuple<string, bool>(node.GetText(), answer);
                 result.Add(t);
             }
