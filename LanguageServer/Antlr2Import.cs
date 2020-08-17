@@ -62,11 +62,11 @@
             var (text_before, other) = TreeEdits.TextToLeftOfLeaves(tokens, tree);
 
             // Remove "header".
+            using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
-                    new org.eclipse.wst.xml.xpath2.processor.Engine();
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
+                    new org.eclipse.wst.xml.xpath2.processor.Engine();               
                 var nodes = engine.parseExpression(
                         @"//header_",
                         new StaticContextBuilder()).evaluate(
@@ -76,11 +76,11 @@
             }
 
             // Remove classDef action blocks for now.
+            using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
                 var nodes = engine.parseExpression(
                         @"//classDef/actionBlock",
                         new StaticContextBuilder()).evaluate(
@@ -94,11 +94,11 @@
             // Remove unused options at top of grammar def.
             // This specifically looks at the options at the top of the file,
             // not rule-based options. That will be handled separately below.
+            using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
                 var options = engine.parseExpression(
                         @"//(fileOptionsSpec | parserOptionsSpec | lexerOptionsSpec | treeOptionsSpec)",
                         new StaticContextBuilder()).evaluate(
@@ -135,11 +135,11 @@
             }
 
             // Delete rule options.
+            using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
                 var nodes = engine.parseExpression(
                         @"//rule_/ruleOptionsSpec
                             /option
@@ -173,11 +173,11 @@
             }
 
             // Parser and Lexer in One Definition
+            using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
                 var parser_nodes = engine.parseExpression(
                         @"//parserSpec",
                         new StaticContextBuilder()).evaluate(
@@ -213,7 +213,7 @@
                     var p = parserSpec.PARSER();
                     var s = parserSpec.superClass();
                     var new_sym = new TerminalNodeImpl(new CommonToken(ANTLRv4Lexer.GRAMMAR)
-                        { Line = -1, Column = -1, Text = "grammar" });
+                    { Line = -1, Column = -1, Text = "grammar" });
                     text_before.TryGetValue(c as TerminalNodeImpl, out string v);
                     if (v != null)
                         text_before.Add(new_sym, v);
@@ -230,97 +230,107 @@
 
             if (StripLabelOperator)
             {
-                org.eclipse.wst.xml.xpath2.processor.Engine engine =
-                    new org.eclipse.wst.xml.xpath2.processor.Engine();
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
-                var nodes = engine.parseExpression(
-                        @"//elementNoOptionSpec
+                using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                {
+                    org.eclipse.wst.xml.xpath2.processor.Engine engine =
+                     new org.eclipse.wst.xml.xpath2.processor.Engine();
+                    var nodes = engine.parseExpression(
+                            @"//elementNoOptionSpec
                             /(id[following-sibling::COLON and not(following-sibling::id)]
                               | COLON[preceding-sibling::id and not(preceding-sibling::COLON)])",
-                        new StaticContextBuilder()).evaluate(
-                        dynamicContext, new object[] { dynamicContext.Document })
-                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
-                foreach (var n in nodes) TreeEdits.Delete(n);
+                            new StaticContextBuilder()).evaluate(
+                            dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
+                    foreach (var n in nodes) TreeEdits.Delete(n);
+                }
             }
 
             if (StripActionBlocks)
             {
-                org.eclipse.wst.xml.xpath2.processor.Engine engine =
-                    new org.eclipse.wst.xml.xpath2.processor.Engine();
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
-                var nodes = engine.parseExpression(
-                        @"//actionBlock
+                using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                {
+                    org.eclipse.wst.xml.xpath2.processor.Engine engine =
+                     new org.eclipse.wst.xml.xpath2.processor.Engine();
+                    var nodes = engine.parseExpression(
+                            @"//actionBlock
                             [not(following-sibling::QM)]",
-                        new StaticContextBuilder()).evaluate(
-                        dynamicContext, new object[] { dynamicContext.Document })
-                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
-                foreach (var n in nodes) TreeEdits.Delete(n);
+                            new StaticContextBuilder()).evaluate(
+                            dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
+                    foreach (var n in nodes) TreeEdits.Delete(n);
+                }
             }
 
             // Remove syntactic predicates.
             {
-                org.eclipse.wst.xml.xpath2.processor.Engine engine =
-                    new org.eclipse.wst.xml.xpath2.processor.Engine();
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
-                var nodes = engine.parseExpression(
-                        @"//ebnf
+                using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                {
+                    org.eclipse.wst.xml.xpath2.processor.Engine engine =
+                     new org.eclipse.wst.xml.xpath2.processor.Engine();
+                    var nodes = engine.parseExpression(
+                            @"//ebnf
                             [SEMPREDOP]",
-                        new StaticContextBuilder()).evaluate(
-                        dynamicContext, new object[] { dynamicContext.Document })
-                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
-                TreeEdits.Delete(nodes);
+                            new StaticContextBuilder()).evaluate(
+                            dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
+                    TreeEdits.Delete(nodes);
+                }
             }
 
             // Convert double-quoted string literals to single quote.
             {
-                org.eclipse.wst.xml.xpath2.processor.Engine engine =
-                    new org.eclipse.wst.xml.xpath2.processor.Engine();
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
-                var nodes = engine.parseExpression(
-                        @"//STRING_LITERAL",
-                        new StaticContextBuilder()).evaluate(
-                        dynamicContext, new object[] { dynamicContext.Document })
-                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
-                foreach (var n in nodes)
+                using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
                 {
-                    var text = n.GetText();
-                    if (text.Length == 0) continue;
-                    if (text[0] != '"') continue;
-                    text = text.Substring(1, text.Length - 2);
-                    StringBuilder ss = new StringBuilder();
-                    ss.Append("'");
-                    foreach (var c in text)
+                    org.eclipse.wst.xml.xpath2.processor.Engine engine =
+                     new org.eclipse.wst.xml.xpath2.processor.Engine();
+                    var nodes = engine.parseExpression(
+                            @"//STRING_LITERAL",
+                            new StaticContextBuilder()).evaluate(
+                            dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
+                    foreach (var n in nodes)
                     {
-                        if (c == '"') ss.Append("\\");
-                        else ss.Append(c);
-                    }
-                    ss.Append("'");
-                    var new_sym = new TerminalNodeImpl(new CommonToken(ANTLRv4Lexer.STRING_LITERAL)
+                        var text = n.GetText();
+                        if (text.Length == 0) continue;
+                        if (text[0] != '"') continue;
+                        text = text.Substring(1, text.Length - 2);
+                        StringBuilder ss = new StringBuilder();
+                        ss.Append("'");
+                        foreach (var c in text)
+                        {
+                            if (c == '"') ss.Append("\\");
+                            else ss.Append(c);
+                        }
+                        ss.Append("'");
+                        var new_sym = new TerminalNodeImpl(new CommonToken(ANTLRv4Lexer.STRING_LITERAL)
                         { Line = -1, Column = -1, Text = ss.ToString() });
-                    text_before.TryGetValue(n as TerminalNodeImpl, out string v);
-                    if (v != null)
-                        text_before.Add(new_sym, v);
-                    TreeEdits.Replace(n, new_sym);
+                        text_before.TryGetValue(n as TerminalNodeImpl, out string v);
+                        if (v != null)
+                            text_before.Add(new_sym, v);
+                        TreeEdits.Replace(n, new_sym);
+                    }
                 }
             }
 
             // Convert "protected" to "fragment" for lexer symbols.
             //  Remove "protected" for parser symbols.
             {
-                org.eclipse.wst.xml.xpath2.processor.Engine engine =
-                    new org.eclipse.wst.xml.xpath2.processor.Engine();
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
-                var nodes = engine.parseExpression(
-                        @"//rule_[id/RULE_REF]/(PROTECTED | PUBLIC | PRIVATE)",
-                        new StaticContextBuilder()).evaluate(
-                        dynamicContext, new object[] { dynamicContext.Document })
-                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
-                TreeEdits.Delete(nodes);
+                using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                {
+                    org.eclipse.wst.xml.xpath2.processor.Engine engine =
+                     new org.eclipse.wst.xml.xpath2.processor.Engine();
+                    var nodes = engine.parseExpression(
+                            @"//rule_[id/RULE_REF]/(PROTECTED | PUBLIC | PRIVATE)",
+                            new StaticContextBuilder()).evaluate(
+                            dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
+                    TreeEdits.Delete(nodes);
+                }
             }
 
             // If the symbol occurs on the RHS of a parser rule, remove "protected".
