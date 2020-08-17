@@ -105,6 +105,15 @@ with the rule LHS symbol.
 
 For for further details, see the [fold](refactoring.md#Fold) refactoring details.
 
+### Foldlit
+
+`fold xpath-string`
+
+* Replace a literal on the RHS of a rule
+with the lexer rule LHS symbol.
+
+For for further details, see the [fold literal](refactoring.md#replace-literals-in-parser-with-lexer-token-symbols) refactoring details.
+
 ### Has
 
 `has (dr | ir) (left | right) xpath-expression`
