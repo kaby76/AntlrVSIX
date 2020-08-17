@@ -159,26 +159,37 @@ previous hives stored under the AppData directory. It is often easier to
 just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio\16.0_*. I've included a
 Bash script "clean.sh" in the Antlrvsix source to clean out the build files so one can build from scratch.
 
-# Roadmap
+# Current Release v8.0 (18 Aug 2020)
 
-## Planned for v8.1 (Aug 2020):
-
-* Add expression rule optimization.
-* Add left factoring and inverse.
-* Add in empty string alternative hoist transforms.
-
-## Planned for v8.0 (expected 17 Aug 2020):
-
-This release is a major organizational and feature change. The
-goal is to position the tool to be used for refactorings
-of the Java grammar from specification. [ScrapeJavaSpec](https://github.com/kaby76/ScrapeJavaSpec)
-is a tool that has been written to
-import the Java grammar directly from the online specification,
-and output an Antlr4 grammar for it. Several refactorings have
-already been tested on the Java grammar with this release.
-The next step afterward is
+This release is a major organizational and feature change.
+For the extension itself, there are several new transforms 
+and some bug fixes.
+But, the main goal has been to reposition the tool to be used
+for refactorings of the Java grammar from specification in
+an automated way. To that end, I also wrote
+[ScrapeJavaSpec](https://github.com/kaby76/ScrapeJavaSpec),
+a tool that
+scrapes the Java grammar directly from the online specification,
+and outputs an Antlr4 grammar. This works wonderfully not only
+for the existing grammars [Java8](https://github.com/antlr/grammars-v4/tree/master/java/java8),
+[Java9](https://github.com/antlr/grammars-v4/tree/master/java/java9),
+but also for versions 10, 11, 12, 13, and 14, in minutes!
+Added with this release of Antlrvsix are several new refactorings,
+like "unify", which I
+have tested on the Java grammar.
+The next step with the next release will be
 to add the rest of the refactorings and
-optimize the Java grammar for speed.
+optimize the Java grammar for speed so that it is as fast as
+[Parr's Java grammar](https://github.com/antlr/grammars-v4/tree/master/java/java).
+Also added to this release were
+conversions for Antlr2 and Antlr3 grammars. But, in order to write
+the conversion methods, I had to write Antlr4 grammars for these older syntaxes.
+Since it was not much trouble, I
+decided it was not too much effort to also provide LSP services for
+Antlr2, Antlr3, and Bison grammars!
+The other major software that is new with this release is an XPath2
+engine. This was a port of the Java code for the Eclipse XPath engine
+to C#, and an added layer to wrap Antlr parse trees.
 
 * Add editor support for Antlr2, Antlr3, and Bison grammars.
 * Add convert Antlr2 and Antlr3 grammars to Antlr4.
@@ -202,21 +213,16 @@ for Windows or Linux.
 * Fix [LanguageServer.Module.GetDefsAndRefs() not working right #74](https://github.com/kaby76/AntlrVSIX/issues/74).
 * Fix [Workspace.FindDocument() and Document.FindDocument() need to use normalized file paths. #75](https://github.com/kaby76/AntlrVSIX/issues/75).
 
-# Current Release
-
-## Release notes for v7.4 (7 Jun 2020):
-
-* Add analysis:
-  * Show cycles
-  * Show useless lexer rules
-* Fix [Add to about box the version of Antlr used. #63](https://github.com/kaby76/AntlrVSIX/issues/63).
-* Fix [Add CI building of Antlrvsix. #61](https://github.com/kaby76/AntlrVSIX/issues/61).
-* Fix ["Add lexer rules for string literals" adds rules but with the same lexer symbol name #60](https://github.com/kaby76/AntlrVSIX/issues/60).
-* Fix [System.InvalidOperationException: 'Collection was modified; enumeration operation may not execute.' #58](https://github.com/kaby76/AntlrVSIX/issues/58).
-* Fix [Eliminate direct left recursion should space new rules below last rule, retain old intertoken characters #56](https://github.com/kaby76/AntlrVSIX/issues/56).
- 
 # Prior Releases
 
 See [this guide](PriorReleases.md).
+
+# Roadmap
+
+## Planned for v8.1 (Aug 2020):
+
+* Add expression rule optimization.
+* Add left factoring and inverse.
+* Add in empty string alternative hoist transforms.
 
 Any questions, email me at ken.domino <at> gmail.com

@@ -1,5 +1,16 @@
 # Prior Releases
 
+## Release notes for v7.4 (7 Jun 2020):
+
+* Add analysis:
+  * Show cycles
+  * Show useless lexer rules
+* Fix [Add to about box the version of Antlr used. #63](https://github.com/kaby76/AntlrVSIX/issues/63).
+* Fix [Add CI building of Antlrvsix. #61](https://github.com/kaby76/AntlrVSIX/issues/61).
+* Fix ["Add lexer rules for string literals" adds rules but with the same lexer symbol name #60](https://github.com/kaby76/AntlrVSIX/issues/60).
+* Fix [System.InvalidOperationException: 'Collection was modified; enumeration operation may not execute.' #58](https://github.com/kaby76/AntlrVSIX/issues/58).
+* Fix [Eliminate direct left recursion should space new rules below last rule, retain old intertoken characters #56](https://github.com/kaby76/AntlrVSIX/issues/56).
+ 
 ## Release notes for v7.3 (31 May 2020):
 
 * New refactorings:
