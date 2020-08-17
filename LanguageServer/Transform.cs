@@ -855,13 +855,13 @@
                                 text_before.Add(new_sym, v);
                             return new_sym;
                         });
-                    StringBuilder sb = new StringBuilder();
-                    TreeEdits.Reconstruct(sb, pd_doc.ParseTree, text_before);
-                    var new_code = sb.ToString();
-                    if (new_code != pd_doc.Code)
-                    {
-                        result.Add(document.FullPath, new_code);
-                    }
+                }
+                StringBuilder sb = new StringBuilder();
+                TreeEdits.Reconstruct(sb, pd_doc.ParseTree, text_before);
+                var new_code = sb.ToString();
+                if (new_code != pd_doc.Code)
+                {
+                    result[document.FullPath] = new_code;
                 }
             }
             return result;
