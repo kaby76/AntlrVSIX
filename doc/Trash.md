@@ -61,6 +61,12 @@ Execute the command line _n_.
 
 Execute the command that begins with _string_.
 
+### Cd
+
+`cd string?`
+
+Change current directory. If string is not given, change to the user's home directory.
+
 ### Combine
 
 `combine`
@@ -129,13 +135,6 @@ For for further details, see the [analysis](analysis.md#has-directindirect-recur
 
 Print out the shell command history.
 
-### RR
-
-`rr`
-
-Replace left indirect or direct recursion with right recursion.
-
-
 ### Kleene
 
 `kleene xpath-string`
@@ -143,6 +142,12 @@ Replace left indirect or direct recursion with right recursion.
 Replace a rule, whose symbol is identified by the xpath string,
 of the grammar at the top of the grammar with an EBNF
 form if it contains direct left or direct right recursion.
+
+### Ls
+
+`ls string`
+
+List directory contents. If string is not given, list the current directory contents.
 
 ### Mvsr
 
@@ -211,6 +216,12 @@ then the rule is dropped from the grammar.
 `rotate`
 
 Rotate the stack once.
+
+### RR
+
+`rr`
+
+Replace left indirect or direct recursion with right recursion.
 
 ### Rup
 
