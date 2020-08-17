@@ -159,6 +159,9 @@ previous hives stored under the AppData directory. It is often easier to
 just recursively delete all directories ...\AppData\Local\Microsoft\VisualStudio\16.0_*. I've included a
 Bash script "clean.sh" in the Antlrvsix source to clean out the build files so one can build from scratch.
 
+
+---------
+
 # Current Release v8.0 (18 Aug 2020)
 
 This release is a major organizational and feature change.
