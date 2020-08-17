@@ -243,11 +243,14 @@ For for further details, see the [split grammar](refactoring.md#splitting-and-co
 
 ### ULLiteral
 
-`ulliteral xpath-expr`
+`ulliteral xpath-expression?`
 
 * The ulliteral command applies the "upper- and lower-case string literal"
 transform to a collection of terminal nodes in the parse tree,
-which is identified with the supplied xpath expression. Prior to using this command,
+which is identified with the supplied xpath expression.
+If the xpath expression is not given, the transform is applied to the whole
+file.
+Prior to using this command,
 the document must have been parsed.
 The ulliteral operation substitutes a sequence of 
 sets containing an upper and lower case characters

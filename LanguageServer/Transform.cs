@@ -5815,11 +5815,14 @@
             }
 
             // Find keyword-like literals in lexer rules.
-            org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+            List<TerminalNodeImpl> to_check_literals;
+            List<ANTLRv4Parser.LexerElementsContext> elements;
             var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
-            AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
-            var dom_literals = engine.parseExpression(
-                    @"//lexerRuleSpec
+            using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+            {
+                org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+                var dom_literals = engine.parseExpression(
+                        @"//lexerRuleSpec
                         /lexerRuleBlock
                             /lexerAltList[not(@ChildCount > 1)]
                                 /lexerAlt
@@ -5828,15 +5831,16 @@
                                             /lexerAtom
                                                 /terminal[not(@ChildCount > 1)]
                                                     /STRING_LITERAL",
-                    new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
-                .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement)).ToArray();
-            var elements = engine.parseExpression(
-                    "../../../..",
-                    new StaticContextBuilder()).evaluate(dynamicContext, dom_literals)
-                .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).ToArray();
+                        new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement)).ToArray();
+                elements = engine.parseExpression(
+                        "../../../..",
+                        new StaticContextBuilder()).evaluate(dynamicContext, dom_literals)
+                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as ANTLRv4Parser.LexerElementsContext).ToList();
+                to_check_literals = dom_literals.Select(x => x.AntlrIParseTree as TerminalNodeImpl).ToList();
+            }
             List<IParseTree> subs_elems = new List<IParseTree>();
             List<IParseTree> subs_lit = new List<IParseTree>();
-            var to_check_literals = dom_literals.Select(x => x.AntlrIParseTree).ToList();
             // Make up translation map. Note if the symbol is outside the range [start, end],
             // then don't add an entry for it.
             for (int i = 0; i < to_check_literals.Count; ++i)
@@ -5934,12 +5938,30 @@
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
 
+            if (nodes != null)
+            {
+                foreach (var n in nodes)
+                {
+                    if (! (n is TerminalNodeImpl foo))
+                    {
+                        throw new LanguageServerException("Unexpected type of node--should be for a STRING_LITERAL terminal node");
+                    }
+                    if (foo.Symbol.Type != ANTLRv4Lexer.STRING_LITERAL)
+                    {
+                        throw new LanguageServerException("Unexpected type of node--should be for a STRING_LITERAL terminal node");
+                    }
+                }
+            }
+
             // Find keyword-like literals in lexer rules.
-            org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+            List<TerminalNodeImpl> to_check_literals;
+            List<ANTLRv4Parser.LexerElementsContext> elements;
             var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
-            AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
-            var dom_literals = engine.parseExpression(
-                    @"//lexerRuleSpec
+            using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+            {
+                org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+                var dom_literals = engine.parseExpression(
+                        @"//lexerRuleSpec
                         /lexerRuleBlock
                             /lexerAltList[not(@ChildCount > 1)]
                                 /lexerAlt
@@ -5948,15 +5970,16 @@
                                             /lexerAtom
                                                 /terminal[not(@ChildCount > 1)]
                                                     /STRING_LITERAL",
-                    new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
-                .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement)).ToArray();
-            var elements = engine.parseExpression(
-                    "../../../..",
-                    new StaticContextBuilder()).evaluate(dynamicContext, dom_literals)
-                .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).ToArray();
+                        new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement)).ToArray();
+                elements = engine.parseExpression(
+                        "../../../..",
+                        new StaticContextBuilder()).evaluate(dynamicContext, dom_literals)
+                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as ANTLRv4Parser.LexerElementsContext).ToList();
+                to_check_literals = dom_literals.Select(x => x.AntlrIParseTree as TerminalNodeImpl).ToList();
+            }
             List<IParseTree> subs_elems = new List<IParseTree>();
             List<IParseTree> subs_lit = new List<IParseTree>();
-            var to_check_literals = dom_literals.Select(x => x.AntlrIParseTree).ToList();
             // Make up translation map. Note if the symbol is outside the range [start, end],
             // then don't add an entry for it.
             for (int i = 0; i < to_check_literals.Count; ++i)
@@ -5966,7 +5989,7 @@
                 var ok = true;
                 var ll = lexer_literal;
                 var tok = pd_parser.TokStream.Get(ll.SourceInterval.a);
-                if (!nodes.Where(n => n.Symbol == tok).Any())
+                if (nodes != null && !nodes.Where(n => n.Symbol == tok).Any())
                 {
                     continue;
                 }
