@@ -674,7 +674,7 @@
                                                 /lexerAtom
                                                     /terminal[not(@ChildCount > 1)]
                                                         /STRING_LITERAL",
-                        new StaticContextBuilder()).evaluate(dynamicContext, new object[] {dynamicContext.Document})
+                        new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
                     .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement)).ToArray();
                 if (dom_literals.Length == 0) continue;
                 var old_names = dom_literals.Select(x => x.AntlrIParseTree.GetText()).ToList();
@@ -736,7 +736,134 @@
             {
                 result.Add(document.FullPath, new_code);
             }
-        
+
+            return result;
+        }
+
+        public static Dictionary<string, string> Foldlit(List<TerminalNodeImpl> nodes, Document document)
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+
+            // Check if initial file is a grammar.
+            if (!(ParsingResultsFactory.Create(document) is ParsingResults pd_parser))
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+
+            ExtractGrammarType egt = new ExtractGrammarType();
+            ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
+            bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
+                || egt.Type == ExtractGrammarType.GrammarType.Combined
+                || egt.Type == ExtractGrammarType.GrammarType.Lexer;
+            if (!is_grammar)
+            {
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            }
+
+            var stack = new Stack<Document>();
+            stack.Push(document);
+            while (stack.Any())
+            {
+                var doc = stack.Pop();
+                if (!(ParsingResultsFactory.Create(doc) is ParsingResults pd_doc))
+                    continue;
+
+                foreach (var c in pd_doc.Imports)
+                {
+                    Workspaces.Document d = Workspaces.Workspace.Instance.FindDocument(c);
+                    if (d == null)
+                    {
+                        continue;
+                    }
+                    stack.Push(d);
+                }
+
+                // Find rewrite rules, i.e., string literal to string symbol name.
+                Dictionary<string, string> subs = new Dictionary<string, string>();
+
+                foreach (var node in nodes)
+                {
+                    // Find literals in lexer rules.
+                    List<string> old_names = null;
+                    List<string> new_names = null;
+                    var(tree, parser, lexer) = (pd_doc.ParseTree, pd_doc.Parser, pd_doc.Lexer);
+                    using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                    {
+                        org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+                        AntlrElement[] dom_literals = engine.parseExpression(
+                                @"//lexerRuleSpec[TOKEN_REF/text() = '" + node.GetText() + @"']
+                                /lexerRuleBlock
+                                    /lexerAltList[not(@ChildCount > 1)]
+                                        /lexerAlt
+                                            /lexerElements[not(@ChildCount > 1)]
+                                                /lexerElement[not(@ChildCount > 1)]
+                                                    /lexerAtom
+                                                        /terminal[not(@ChildCount > 1)]
+                                                            /STRING_LITERAL",
+                                new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                            .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement)).ToArray();
+                        if (dom_literals.Length == 0) continue;
+                        old_names = dom_literals.Select(x => x.AntlrIParseTree.GetText()).ToList();
+                        new_names = engine.parseExpression(
+                                "../../../../../../../../TOKEN_REF",
+                                new StaticContextBuilder()).evaluate(dynamicContext, dom_literals)
+                            .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree.GetText()).ToList();
+                    }
+                    for (int i = 0; i < old_names.Count; ++i) subs.Add(old_names[i], new_names[i]);
+                }
+
+                // Get all intertoken text immediately for source reconstruction.
+                var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_doc.TokStream, pd_doc.ParseTree);
+
+                // Find string literals in parser and combined grammars and substitute.
+                foreach (var node in nodes)
+                {
+                    TreeEdits.Replace(pd_doc.ParseTree,
+                        (in IParseTree n, out bool c) =>
+                        {
+                            c = true;
+                            if (!(n is TerminalNodeImpl))
+                            {
+                                return null;
+                            }
+                            var t = n as TerminalNodeImpl;
+                            if (t.Payload.Type != ANTLRv4Lexer.STRING_LITERAL)
+                            {
+                                return null;
+                            }
+                            bool no = false;
+                            // Make sure this literal does not appear in lexer rule.
+                            for (IRuleNode p = t.Parent; p != null; p = p.Parent)
+                            {
+                                if (p is ANTLRv4Parser.LexerRuleSpecContext)
+                                {
+                                    no = true;
+                                    break;
+                                }
+                            }
+                            if (no)
+                            {
+                                return null;
+                            }
+                            subs.TryGetValue(t.GetText(), out string value);
+                            if (value == null)
+                            {
+                                return null;
+                            }
+                            var token = new CommonToken(ANTLRv4Lexer.TOKEN_REF) { Line = -1, Column = -1, Text = value };
+                            var new_sym = new TerminalNodeImpl(token);
+                            text_before.TryGetValue(t, out string v);
+                            if (v != null)
+                                text_before.Add(new_sym, v);
+                            return new_sym;
+                        });
+                    StringBuilder sb = new StringBuilder();
+                    TreeEdits.Reconstruct(sb, pd_doc.ParseTree, text_before);
+                    var new_code = sb.ToString();
+                    if (new_code != pd_doc.Code)
+                    {
+                        result.Add(document.FullPath, new_code);
+                    }
+                }
+            }
             return result;
         }
 

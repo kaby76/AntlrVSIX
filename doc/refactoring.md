@@ -42,6 +42,8 @@ _Before_
     RP : ')' ;
     WS : [ \r\n\t] + -> skip ;
 
+
+
 _After_
 
     grammar Expression;
@@ -90,6 +92,10 @@ _Before_
     RP : ')' ;
     ID : ( ('a' .. 'z') | ('A' .. 'Z') | '_' )+ ;
     WS : [ \r\n\t] + -> skip ;
+
+_[Trash command](Trash.md#kleene)_
+
+    foldlit "//lexerRuleSpec/RULE_REF"
 
 _After_
 

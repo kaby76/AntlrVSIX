@@ -122,7 +122,7 @@ The refactorings implemented are:
 * [Replace direct left/right recursion with Kleene operator](doc/refactoring.md#Kleene)
 * Replace indirect left recursion with right recursion
 * Replace parser rule symbols that conflict with Antlr keywords
-* Replace string literals in parser with lexer symbols
+* [Replace string literals in parser with lexer symbols](doc/refactoring.md#replace-literals-in-parser-with-lexer-token-symbols)
 * Replace string literals in parser with lexer symbols, with lexer rule create
 
 ### Splitting and combining
