@@ -905,8 +905,9 @@
             {
                 return result;
             }
-
+            
             ANTLRv4Parser.RulesContext rules;
+
             {
                 var first = deletions.First();
                 var rule = first as ANTLRv4Parser.ParserRuleSpecContext;
@@ -914,7 +915,7 @@
                 rules = rs.Parent as ANTLRv4Parser.RulesContext;
             }
 
-            for (int i = 0; i < rules.ChildCount; --i)
+            for (int i = rules.ChildCount - 1; i >= 0; --i)
             {
                 if (!deletions.Select(r => r.Parent as ANTLRv4Parser.RuleSpecContext).Contains(rules.children[i]))
                     continue;
@@ -5396,7 +5397,7 @@
             return result;
         }
 
-        public static Dictionary<string, string> RemoveUselessParentheses(int start, int end, Document document)
+        public static Dictionary<string, string> RemoveUselessParentheses(Document document)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
             if (!(ParsingResultsFactory.Create(document) is ParsingResults pd_parser))
@@ -5411,7 +5412,6 @@
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
 
-
             // Get all intertoken text immediately for source reconstruction.
             var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
 
@@ -5419,43 +5419,30 @@
                 ParsingResults pd = pd_parser;
                 var pt = pd.ParseTree;
 
-                org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
-                var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
-
-                var altlists = engine.parseExpression(
-                    "//(altList | labeledAlt)/alternative/element/ebnf[not(child::blockSuffix)]/block/altList[not(@ChildCount > 1)]",
-                    new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
-                    .Select(x => x.NativeValue).ToList();
-                var elements = engine.parseExpression(
-                    "../../..",
-                    new StaticContextBuilder()).evaluate(dynamicContext, altlists.ToArray())
-                    .Select(x => x.NativeValue).ToList();
-
-                List<object> new_altlist = new List<Object>();
-                List<object> new_elements = new List<Object>();
-                for (int j = 0; j < altlists.Count; ++j)
+                List<ANTLRv4Parser.AltListContext> altlists;
+                List<ANTLRv4Parser.ElementContext> elements;
+                var(tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
+                using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
                 {
-                    var altlist = (altlists[j] as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as ANTLRv4Parser.AltListContext;
-                    var element = (elements[j] as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as ANTLRv4Parser.ElementContext;
-                    var tok = pd_parser.TokStream.Get(altlist.SourceInterval.a);
-                    bool a = IsOverlapping(tok.StartIndex, tok.StopIndex + 1, start, end);
-                    var tok2 = pd_parser.TokStream.Get(altlist.SourceInterval.b);
-                    bool b = IsOverlapping(tok2.StartIndex, tok2.StopIndex + 1, start, end);
-                    if (!(a || b))
-                        continue;
-                    new_altlist.Add(altlists[j]);
-                    new_elements.Add(elements[j]);
-                }
+                    org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
 
-                altlists = new_altlist;
-                elements = new_elements;
+                    altlists = engine.parseExpression(
+                        "//(altList | labeledAlt)/alternative/element/ebnf[not(child::blockSuffix)]/block/altList[not(@ChildCount > 1)]",
+                        new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as ANTLRv4Parser.AltListContext).ToList();
+                    List<ANTLRv4Parser.AltListContext> altlists2 = engine.parseExpression(
+                        "//(altList | labeledAlt)[not(@ChildCount > 1)]/alternative[not(@ChildCount > 1)]/element/ebnf[not(child::blockSuffix)]/block/altList[@ChildCount > 1]",
+                        new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as ANTLRv4Parser.AltListContext).ToList();
+                    altlists.AddRange(altlists2);
+                    elements = altlists.Select(t => t.Parent.Parent.Parent as ANTLRv4Parser.ElementContext).ToList();
+                }
 
                 for (int j = 0; j < altlists.Count; ++j)
                 {
                     // Remove {altlist}/../../.. (an element), which is the "i'th" child.
-                    var altlist = (altlists[j] as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as ANTLRv4Parser.AltListContext;
-                    var element = (elements[j] as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as ANTLRv4Parser.ElementContext;
+                    var altlist = altlists[j];
+                    var element = elements[j];
                     var parent_alternative = element?.Parent as ANTLRv4Parser.AlternativeContext;
                     int i = 0;
                     for (; i < parent_alternative.ChildCount;)
@@ -5533,49 +5520,45 @@
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
 
+            foreach (var n in nodes)
+            {
+                if (!(n is ANTLRv4Parser.AltListContext))
+                    throw new Exception("Node isn't an Antlr4 altList type");
+            }
+
             // Get all intertoken text immediately for source reconstruction.
             var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
 
             {
                 ParsingResults pd = pd_parser;
                 var pt = pd.ParseTree;
-                org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+
+                List<ANTLRv4Parser.AltListContext> altlists;
+                List<ANTLRv4Parser.ElementContext> elements;
                 var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
+                using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                {
+                    org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
 
-                // Convert list of Antlr tree nodes to list of equivalent DOM nodes.
-                var list1 = nodes.Select(n => (n as AttributedParseTreeNode).Observers.First() as AntlrTreeEditing.AntlrDOM.AntlrNode);
-                if (list1 == null || !list1.Any()) return result;
-
-                // Validate constraint on block node.
-                var list2 = engine.parseExpression(
-                    ".[altList[not(@ChildCount > 1)]]",
-                    new StaticContextBuilder()).evaluate(dynamicContext, list1.ToArray())
-                    .Select(x => x.NativeValue).ToList();
-                if (list2 == null || !list2.Any()) return result;
-
-                // Validate additional constraint on block node.
-                var list3 = engine.parseExpression(
-                    @".[..[not(child::blockSuffix)]]",
-                     new StaticContextBuilder()).evaluate(dynamicContext, list2.ToArray())
-                    .Select(x => x.NativeValue).ToList();
-                if (list3 == null || !list3.Any()) return result;
-
-                var altlists = engine.parseExpression(
-                    "./altList[not(@ChildCount > 1)]",
-                    new StaticContextBuilder()).evaluate(dynamicContext, list3.ToArray())
-                    .Select(x => x.NativeValue).ToList();
-
-                var elements = engine.parseExpression(
-                    "../../..",
-                    new StaticContextBuilder()).evaluate(dynamicContext, altlists.ToArray())
-                    .Select(x => x.NativeValue).ToList();
+                    altlists = engine.parseExpression(
+                        "//(altList | labeledAlt)/alternative/element/ebnf[not(child::blockSuffix)]/block/altList[not(@ChildCount > 1)]",
+                        new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as ANTLRv4Parser.AltListContext).ToList();
+                    List<ANTLRv4Parser.AltListContext> altlists2 = engine.parseExpression(
+                        "//(altList | labeledAlt)[not(@ChildCount > 1)]/alternative[not(@ChildCount > 1)]/element/ebnf[not(child::blockSuffix)]/block/altList[@ChildCount > 1]",
+                        new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as ANTLRv4Parser.AltListContext).ToList();
+                    altlists.AddRange(altlists2);
+                    elements = altlists.Select(t => t.Parent.Parent.Parent as ANTLRv4Parser.ElementContext).ToList();
+                    altlists = altlists.Where(t => nodes.Contains(t)).ToList();
+                    elements = elements.Where(t => nodes.Select(u => u.Parent.Parent.Parent).Contains(t)).ToList();
+                }
 
                 for (int j = 0; j < altlists.Count; ++j)
                 {
                     // Remove {altlist}/../../.. (an element), which is the "i'th" child.
-                    var altlist = (altlists[j] as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as ANTLRv4Parser.AltListContext;
-                    var element = (elements[j] as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as ANTLRv4Parser.ElementContext;
+                    var altlist = altlists[j];
+                    var element = elements[j];
                     var parent_alternative = element?.Parent as ANTLRv4Parser.AlternativeContext;
                     int i = 0;
                     for (; i < parent_alternative.ChildCount;)

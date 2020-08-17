@@ -1829,7 +1829,7 @@
                     (int, int) be = new LanguageServer.Module().GetLineColumn(end, document);
                     System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
-                var s = Transform.RemoveUselessParentheses(start, end, document);
+                var s = Transform.RemoveUselessParentheses(document);
                 ApplyChanges("Remove Useless Parentheses", s);
             }
             catch (LanguageServerException e)

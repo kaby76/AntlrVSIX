@@ -214,12 +214,12 @@ then the rule is dropped from the grammar.
 
 ### Rup
 
-`rup xpath-expression`
+`rup xpath-expression?`
 
-* Find all blocks as specified by the xpath expression in the parsed file at the top of stack.
-Rewrite the node with the parentheses removed, if the block satifies three constraints:
-(1) the expression must be a `block` type in the Antlr4 grammar;
-(2) the `block` node must have an `altList` that does not contain more than one child;
+* Find all altLists as specified by the xpath expression in the parsed file at the top of stack.
+Rewrite the node with the parentheses removed, if the altList satifies three constraints:
+(1) the expression must be a `altList` type in the Antlr4 grammar;
+(2) the `altList` node doesn't contain more than one child, or if it does, then the containing altList/labeledAlt/alterative each does not contain more than one child;
 (3) the `ebnf` parent of `block` must not contain a `blockSuffix`.
 
 For for further details, see the [remove useless parentheses](refactoring.md#remove-useless-parentheses) refactoring details.
