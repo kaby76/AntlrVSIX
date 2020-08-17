@@ -78,7 +78,7 @@ Once you find the executable, execute it.
 
 If you want to run Trash without installing, then download
 the .vsix file, unpack it, and look for the executable. The tool
-currently does not run on Linux.
+runs on Ubuntu. You may need to build it from scratch though.
 
 For a list of commands in Trash, see this [documentation](doc/Trash.md).
 
