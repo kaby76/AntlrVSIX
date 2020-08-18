@@ -220,10 +220,15 @@ See [this guide](PriorReleases.md).
 
 # Roadmap
 
-## Planned for v8.1 (Aug 2020):
+## Planned for v8.1 (end of Aug 2020):
 
-* Add expression rule optimization.
+* Add existing transforms not in Trash to Trash. Make sure they work.
+* Add expression rule optimization. Verify that this works with Java.
 * Add left factoring and inverse.
 * Add in empty string alternative hoist transforms.
+* Add multi-line commands to Trash.
+* Add WC3 EBNF.
+* Add ISO 14977 EBNF.
+* Add grammar diff.
 
 Any questions, email me at ken.domino <at> gmail.com
