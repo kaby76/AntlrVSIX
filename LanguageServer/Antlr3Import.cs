@@ -54,11 +54,11 @@
             // Remove unused options at top of grammar def.
             // This specifically looks at the options at the top of the file,
             // not rule-based options. That will be handled separately below.
+            using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
                 // Allow language, tokenVocab, TokenLabelType, superClass
                 var nodes = engine.parseExpression(
                         @"//grammarDef/optionsSpec
@@ -88,11 +88,11 @@
 
             // Fix options in the beginning of rules.
             // See https://theantlrguy.atlassian.net/wiki/spaces/ANTLR3/pages/2687029/Rule+and+subrule+options
+            using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
                 // Allow language, tokenVocab, TokenLabelType, superClass
                 var nodes = engine.parseExpression(
                         @"//rule_/optionsSpec
@@ -121,11 +121,11 @@
             }
 
             // Use new tokens{} syntax
+            using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
                 var nodes = engine.parseExpression(
                         @"//tokensSpec
                             /tokenSpec
@@ -145,7 +145,7 @@
                         if (!nodes.Contains(n) && n != last) return null;
                         var t = n as TerminalNodeImpl;
                         var new_sym = new TerminalNodeImpl(new CommonToken(ANTLRv4Lexer.COMMA)
-                            {Line = -1, Column = -1, Text = ","});
+                        { Line = -1, Column = -1, Text = "," });
                         text_before.TryGetValue(t, out string v);
                         if (v != null)
                             text_before.Add(new_sym, v);
@@ -216,13 +216,13 @@
             // Remove unnecessary rulecatch block (use BailErrorStrategy instead)
 
             // Remove unsupported rewrite syntax and AST operators
+            using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
             {
                 // Note, for this operation, we are just deleting everything,
                 // no conversion to a visitor.
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
                 var n1 = engine.parseExpression(
                         @"//atom
                             /(ROOT | BANG)",
@@ -252,21 +252,21 @@
                 {
                     foreach (var n in n3) TreeEdits.Delete(n);
                 }
-		        var n4 = engine.parseExpression(
+                var n4 = engine.parseExpression(
                         @"//rule_/BANG",
-						new StaticContextBuilder()).evaluate(
-			         dynamicContext, new object[] { dynamicContext.Document })
-			         .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
+                        new StaticContextBuilder()).evaluate(
+                     dynamicContext, new object[] { dynamicContext.Document })
+                     .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
                 foreach (var n in n4) TreeEdits.Delete(n);
             }
 
             // Scope not in Antlr4 (equivalent are locals).
             // For now nuke.
+            using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
                 var rule_scope_spec = engine.parseExpression(
                         @"//rule_/ruleScopeSpec",
                         new StaticContextBuilder()).evaluate(
@@ -280,11 +280,11 @@
 
             // labels in lexer rules are not supported in ANTLR 4.
             // Nuke.
+            using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
                 var enos = engine.parseExpression(
                         @"//rule_[id/TOKEN_REF]
                             /altList
@@ -305,11 +305,11 @@
 
             // fragment rule cannot contain an action or command.
             // Nuke.
+            using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
                 var ab = engine.parseExpression(
                         @"//rule_[FRAGMENT]
                              /altList
@@ -325,11 +325,11 @@
             }
 
             // Remove syntactic predicates (unnecessary and unsupported in ANTLR 4)
+            using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
                 var n2 = engine.parseExpression(
                         @"//ebnf
                             [SEMPREDOP]",
@@ -349,11 +349,11 @@
             // Use non-greedy matching in lexer rule
 
             // Semantic predicates do not need to be explicitly gated in ANTLR 4
+            using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
                 var n1 = engine.parseExpression(
                         @"//elementNoOptionSpec
                             [(actionBlock and QM)]
@@ -370,11 +370,11 @@
             // Remove unsupported option k=3 (1, 2, 4, 5, ...)
             // Replace "( options { greedy=false; } : a | b | c )*" with
             // "(a | b | c)*?"
+            using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
                 // k=3 (1, 2, 4, 5, ...)
                 var k = engine.parseExpression(
                         @"//optionsSpec[not(../@id = 'grammarDef')]

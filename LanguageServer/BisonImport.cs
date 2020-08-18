@@ -42,11 +42,11 @@
             List<Tuple<string, List<List<string>>>> rules = new List<Tuple<string, List<List<string>>>>();
 
             // Collect terminals.
+            using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
                 var nodes = engine.parseExpression(
                         @"//token_decls//token_decl/id[position() = 1]",
                         new StaticContextBuilder()).evaluate(
@@ -93,11 +93,11 @@
             }
 
             // Collect rules.
+            using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
                 var nodes = engine.parseExpression(
                         @"//rules",
                         new StaticContextBuilder()).evaluate(

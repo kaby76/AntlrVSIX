@@ -660,11 +660,12 @@
                 }
 
                 // Find literals in lexer rules.
-                org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
                 var (tree, parser, lexer) = (pd_doc.ParseTree, pd_doc.Parser, pd_doc.Lexer);
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
-                var dom_literals = engine.parseExpression(
-                        @"//ruleSpec
+                using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                {
+                    org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+                    var dom_literals = engine.parseExpression(
+                            @"//ruleSpec
                         /lexerRuleSpec
                             /lexerRuleBlock
                                 /lexerAltList[not(@ChildCount > 1)]
@@ -674,15 +675,16 @@
                                                 /lexerAtom
                                                     /terminal[not(@ChildCount > 1)]
                                                         /STRING_LITERAL",
-                        new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
-                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement)).ToArray();
-                if (dom_literals.Length == 0) continue;
-                var old_names = dom_literals.Select(x => x.AntlrIParseTree.GetText()).ToList();
-                var new_names = engine.parseExpression(
-                        "../../../../../../../../TOKEN_REF",
-                        new StaticContextBuilder()).evaluate(dynamicContext, dom_literals)
-                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree.GetText()).ToArray();
-                for (int i = 0; i < old_names.Count; ++i) subs.Add(old_names[i], new_names[i]);
+                            new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement)).ToArray();
+                    if (dom_literals.Length == 0) continue;
+                    var old_names = dom_literals.Select(x => x.AntlrIParseTree.GetText()).ToList();
+                    var new_names = engine.parseExpression(
+                            "../../../../../../../../TOKEN_REF",
+                            new StaticContextBuilder()).evaluate(dynamicContext, dom_literals)
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree.GetText()).ToArray();
+                    for (int i = 0; i < old_names.Count; ++i) subs.Add(old_names[i], new_names[i]);
+                }
             }
 
             // Find string literals in parser and combined grammars and substitute.
@@ -1812,29 +1814,33 @@
         {
             if (def.Parent is ANTLRv4Parser.ParserRuleSpecContext p1)
             {
-                org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
                 var (tree, parser, lexer) = (pd.ParseTree, pd.Parser, pd.Lexer);
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
-                var RHS = engine.parseExpression(
-                        @"//parserRuleSpec[RULE_REF/text() = '" + def.GetText() + @"']
+                using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                {
+                    org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+                    var RHS = engine.parseExpression(
+                            @"//parserRuleSpec[RULE_REF/text() = '" + def.GetText() + @"']
                             /ruleBlock
                                 //RULE_REF",
-                        new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
-                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as TerminalNodeImpl);
-                return RHS;
+                            new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as TerminalNodeImpl);
+                    return RHS;
+                }
             }
             else if (def.Parent is ANTLRv4Parser.LexerRuleSpecContext p2)
             {
-                org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
                 var (tree, parser, lexer) = (pd.ParseTree, pd.Parser, pd.Lexer);
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
-                var RHS = engine.parseExpression(
-                        @"//lexerRuleSpec[TOKEN_REF/text() = '" + def.GetText() + @"']
+                using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                {
+                    org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+                    var RHS = engine.parseExpression(
+                            @"//lexerRuleSpec[TOKEN_REF/text() = '" + def.GetText() + @"']
                             /lexerRuleBlock
                                 //TOKEN_REF",
-                        new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
-                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as TerminalNodeImpl);
-                return RHS;
+                            new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as TerminalNodeImpl);
+                    return RHS;
+                }
             }
             return new List<TerminalNodeImpl>();
         }
@@ -4725,26 +4731,28 @@
             {
                 // grab lhs of rule.
                 var the_rule = lhs_path[j];
-                org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
                 var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
-                var RHS = engine.parseExpression(
-                        @"//parserRuleSpec[RULE_REF/text() = '" + def.GetText() + @"']
+                using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                {
+                    org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+                    var RHS = engine.parseExpression(
+                            @"//parserRuleSpec[RULE_REF/text() = '" + def.GetText() + @"']
                             /ruleBlock
                                 /ruleAltList",
-                        new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
-                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).First();
-                var Possible = engine.parseExpression(
-                        @"//parserRuleSpec
+                            new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).First();
+                    var Possible = engine.parseExpression(
+                            @"//parserRuleSpec
                             /ruleBlock
                                 //altList",
-                        new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
-                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
+                            new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
 
-                foreach (var p in Possible)
-                {
-                    if (p.GetText() == RHS.GetText())
-                    { }
+                    foreach (var p in Possible)
+                    {
+                        if (p.GetText() == RHS.GetText())
+                        { }
+                    }
                 }
 
                 // Find complete RHS elsewhere and use LHS symbol if there's a match.
@@ -4959,28 +4967,29 @@
             {
                 // grab lhs of rule.
                 var the_rule = lhs_path[j];
-                org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
                 var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
-                var RHS = engine.parseExpression(
-                        @"//parserRuleSpec[RULE_REF/text() = '" + def.GetText() + @"']
+                using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                {
+                    org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+                    var RHS = engine.parseExpression(
+                            @"//parserRuleSpec[RULE_REF/text() = '" + def.GetText() + @"']
                             /ruleBlock
                                 /ruleAltList",
-                        new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
-                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).First();
-                var Possible = engine.parseExpression(
-                        @"//parserRuleSpec
+                            new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).First();
+                    var Possible = engine.parseExpression(
+                            @"//parserRuleSpec
                             /ruleBlock
                                 //altList",
-                        new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
-                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
+                            new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
 
-                foreach (var p in Possible)
-                {
-                    if (p.GetText() == RHS.GetText())
-                    { }
+                    foreach (var p in Possible)
+                    {
+                        if (p.GetText() == RHS.GetText())
+                        { }
+                    }
                 }
-
                 // Find complete RHS elsewhere and use LHS symbol if there's a match.
                 var rule = lhs_path[j] as ANTLRv4Parser.ParserRuleSpecContext;
                 ParsingResults pd = pd_parser;
@@ -6273,15 +6282,17 @@
                     for (int i = 0; i < las.Length; ++i)
                     {
                         // Make sure every labeledAlt is "simple".
-                        org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
                         var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
-                        AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
-                        var elements = engine.parseExpression(
-                                @"./alternative
+                        using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                        {
+                            org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+                            var elements = engine.parseExpression(
+                                    @"./alternative
                                         /element",
-                                new StaticContextBuilder()).evaluate(dynamicContext, new object[] { (las[i] as ObserverParserRuleContext).Observers.First() as AntlrNode })
-                            .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
-                        exprs.Add(elements);
+                                    new StaticContextBuilder()).evaluate(dynamicContext, new object[] { (las[i] as ObserverParserRuleContext).Observers.First() as AntlrNode })
+                                .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
+                            exprs.Add(elements);
+                        }
                     }
                     Difdef<IParseTree> difdef = new Difdef<IParseTree>(exprs.Count, new MyEqualityComparer());
                     for (int x = 0; x < exprs.Count; ++x)
@@ -6374,14 +6385,16 @@
                     List<List<IParseTree>> exprs = new List<List<IParseTree>>();
                     for (int i = 0; i < @as.Length; ++i)
                     {
-                        org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
                         var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
-                        AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
-                        var elements = engine.parseExpression(
-                                @"./lexerElements/lexerElement",
-                                new StaticContextBuilder()).evaluate(dynamicContext, new object[] { (@as[i] as ObserverParserRuleContext).Observers.First() as AntlrNode })
-                            .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
-                        exprs.Add(elements);
+                        using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                        {
+                            org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+                            var elements = engine.parseExpression(
+                                    @"./lexerElements/lexerElement",
+                                    new StaticContextBuilder()).evaluate(dynamicContext, new object[] { (@as[i] as ObserverParserRuleContext).Observers.First() as AntlrNode })
+                                .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
+                            exprs.Add(elements);
+                        }
                     }
                     Difdef<IParseTree> difdef = new Difdef<IParseTree>(exprs.Count, new MyEqualityComparer());
                     for (int x = 0; x < exprs.Count; ++x)
@@ -6476,14 +6489,16 @@
                     List<List<IParseTree>> exprs = new List<List<IParseTree>>();
                     for (int i = 0; i < @as.Length; ++i)
                     {
-                        org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
                         var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
-                        AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
-                        var elements = engine.parseExpression(
-                                @"./element",
-                                new StaticContextBuilder()).evaluate(dynamicContext, new object[] { (@as[i] as ObserverParserRuleContext).Observers.First() as AntlrNode })
-                            .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
-                        exprs.Add(elements);
+                        using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                        {
+                            org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+                            var elements = engine.parseExpression(
+                                    @"./element",
+                                    new StaticContextBuilder()).evaluate(dynamicContext, new object[] { (@as[i] as ObserverParserRuleContext).Observers.First() as AntlrNode })
+                                .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
+                            exprs.Add(elements);
+                        }
                     }
                     Difdef<IParseTree> difdef = new Difdef<IParseTree>(exprs.Count, new MyEqualityComparer());
                     for (int x = 0; x < exprs.Count; ++x)
