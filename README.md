@@ -224,11 +224,12 @@ See [this guide](PriorReleases.md).
 
 * Add existing transforms not in Trash to Trash. Make sure they work.
 * Add expression rule optimization. Verify that this works with Java.
-* Add left factoring and inverse.
+* Add left factoring and inverse? Not sure, as Unify is a superset of left factoring.
 * Add in empty string alternative hoist transforms.
 * Add multi-line commands to Trash.
+* Add comment lines and blocks to Trash.
 * Add WC3 EBNF.
 * Add ISO 14977 EBNF.
-* Add grammar diff.
+* Add grammar diff, think about 3-way grammar merge.
 
 Any questions, email me at ken.domino <at> gmail.com
