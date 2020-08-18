@@ -29,11 +29,11 @@ Aliases are created and listed with the alias command, and removed with the
  unalias command.
 
 <pre>
-alias <em>id</em> = <u>string</u>
+alias <em>id</em> = <em>string</em>
 </pre>
 
-Set up an alias that assigns <u>string</u> to <u>id</u>. The command <u>string</u> 
-is executed with <u>id</u>.
+Set up an alias that assigns <em>string</em> to <em>id</em>. The command <em>string</em> 
+is executed with <em>id</em>.
 
 ### Analyze
 
@@ -59,21 +59,21 @@ capability.
 Execute the previous command.
 
 <pre>
-!<u>int</u>
+!<em>int</em>
 </pre>
 
-Execute the command line <u>int</u>.
+Execute the command line <em>int</em>.
 
 <pre>
-!<u>id</u>
+!<em>id</em>
 </pre>
 
-Execute the command that begins with <u>string</u>.
+Execute the command that begins with <em>string</em>.
 
 ### Cd
 
 <pre>
-cd <u>string</u>?
+cd <em>string</em>?
 </pre>
 
 Change current directory. If string is not given, change to the user's home directory.
@@ -108,7 +108,7 @@ Print out the parse tree for the file at the top of stack.
 ### Delete
 
 <pre>
-delete <u>string</u>
+delete <em>string</em>
 </pre>
 
 Delete nodes specified with the XPath expression string.
@@ -118,7 +118,7 @@ For for further details, see the [Delete parse tree node](refactoring.md#delete-
 ### Find
 
 <pre>
-find <u>string</u>
+find <em>string</em>
 </pre>
 
 Find all sub-trees in the parsed file at the top of stack using the given XPath expression string.
@@ -126,7 +126,7 @@ Find all sub-trees in the parsed file at the top of stack using the given XPath 
 ### Fold
 
 <pre>
-fold <u>string</u>
+fold <em>string</em>
 </pre>
 
 Replace a sequence of symbols on the RHS of a rule
@@ -137,7 +137,7 @@ For for further details, see the [fold](refactoring.md#Fold) refactoring details
 ### Foldlit
 
 <pre>
-fold <u>string</u>
+fold <em>string</em>
 </pre>
 
 Replace a literal on the RHS of a rule
@@ -148,7 +148,7 @@ For for further details, see the [fold literal](refactoring.md#replace-literals-
 ### Has
 
 <pre>
-has (dr | ir) (left | right) <u>string</u>
+has (dr | ir) (left | right) <em>string</em>
 </pre>
 
 Print out whether the rule specified by the xpath expression pointing to the LHS symbol
@@ -167,7 +167,7 @@ Print out the shell command history.
 ### Kleene
 
 <pre>
-kleene <u>string</u>
+kleene <em>string</em>
 </pre>
 
 Replace a rule, whose symbol is identified by the xpath string,
@@ -177,7 +177,7 @@ form if it contains direct left or direct right recursion.
 ### Ls
 
 <pre>
-ls <u>string</u>
+ls <em>string</em>
 </pre>
 
 List directory contents. If string is not given, list the current directory contents.
@@ -185,7 +185,7 @@ List directory contents. If string is not given, list the current directory cont
 ### Mvsr
 
 <pre>
-mvsr <u>string</u>
+mvsr <em>string</em>
 </pre>
 
 Move the rule, whose symbol is identified by the xpath string,
@@ -228,7 +228,7 @@ Exit the shell program.
 ### Read
 
 <pre>
-read <u>string</u>
+read <em>string</em>
 </pre>
 
 Read the text file _file-name_ and place it on the top of the stack.
@@ -236,7 +236,7 @@ Read the text file _file-name_ and place it on the top of the stack.
 ### Rename
 
 <pre>
-rename <u>string</u> <u>string</u>
+rename <em>string</em> <em>string</em>
 </pre>
 
 Rename a symbol, the first parameter as specified by the xpath expression string,
@@ -249,8 +249,8 @@ For for further details, see the [Rename](refactoring.md#rename) refactoring det
 
 <pre>
 reorder alpha
-reorder bfs <u>string</u>
-reorder dfs <u>string</u>
+reorder bfs <em>string</em>
+reorder dfs <em>string</em>
 </pre>
 
 Reorder the parser rules according to the specified type. For
@@ -279,7 +279,7 @@ Replace left indirect or direct recursion with right recursion.
 ### Rup
 
 <pre>
-rup <u>string</u>?
+rup <em>string</em>?
 </pre>
 
 Find all altLists as specified by the xpath expression in the parsed file at the top of stack.
@@ -315,7 +315,7 @@ Print the stack of files.
 ### ULLiteral
 
 <pre>
-ulliteral <u>string</u>?
+ulliteral <em>string</em>?
 </pre>
 
 The ulliteral command applies the "upper- and lower-case string literal"
@@ -336,7 +336,7 @@ on the top of stack.
 ### Unalias
 
 <pre>
-unalias <u>id</u>
+unalias <em>id</em>
 </pre>
 
 Remove an aliased command.
@@ -344,7 +344,7 @@ Remove an aliased command.
 ### Unfold
 
 <pre>
-unfold <u>string</u>
+unfold <em>string</em>
 </pre>
 
 The unfold command applies the unfold transform to a collection of terminal nodes in the parse tree,
@@ -357,7 +357,7 @@ on the top of stack.
 ### Unify
 
 <pre>
-unify <u>string</u>
+unify <em>string</em>
 </pre>
 
 Perform a recursive left- and right- factorization of alternatives for rules.
