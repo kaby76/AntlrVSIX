@@ -28,18 +28,21 @@ any valid shell input, including shell metacharacters. The first word of
 Aliases are created and listed with the alias command, and removed with the
  unalias command.
 
-`alias id=string`
+<pre>
+alias <u>id</u> = <u>string</u>
+</pre>
 
-Set up an alias that assigns _string_ to _id_. The command _string_ 
-is executed with _id_.
+Set up an alias that assigns <u>string</u> to <u>id</u>. The command <u>string</u> 
+is executed with <u>id</u>.
 
 ### Analyze
 
 _Trash_ can perform an analysis of a grammar. The analysis includes a count of symbol
 type, cycles, and unused symbols.
 
-`analyze`
-
+<pre>
+analyze
+</pre>
 
 ### History expansion
 
@@ -49,27 +52,37 @@ History expansions introduce words from the history list into the input stream,
 making it easy to repeat commands. Currently there is no editing
 capability.
 
-`!!`
+<pre>
+!!
+</pre>
 
 Execute the previous command.
 
-`!n`
+<pre>
+!<u>int</u>
+</pre>
 
-Execute the command line _n_.
+Execute the command line <u>int</u>.
 
-`!string`
+<pre>
+!<u>id</u>
+</pre>
 
-Execute the command that begins with _string_.
+Execute the command that begins with <u>string</u>.
 
 ### Cd
 
-`cd string?`
+<pre>
+cd <u>string</u>?
+</pre>
 
 Change current directory. If string is not given, change to the user's home directory.
 
 ### Combine
 
-`combine`
+<pre>
+combine
+</pre>
 
 Combine two grammars on top of stack into one grammar.
 One grammar must be a lexer grammar, the other a parser grammar,
@@ -77,34 +90,44 @@ order is irrelevant.
 
 ### Convert
 
-`convert`
+<pre>
+convert
+</pre>
 
 Convert the parsed grammar file at the top of stack into Antlr4 syntax. The
 resulting Antlr4 grammar replaces the top of stack.
 
 ### "."
 
-`.`
+<pre>
+.
+</pre>
 
 Print out the parse tree for the file at the top of stack.
 
 ### Delete
 
-`delete xpath-expression`
+<pre>
+delete <u>string</u>
+</pre>
 
-Delete nodes specified with the XPath expression.
+Delete nodes specified with the XPath expression string.
 
 For for further details, see the [Delete parse tree node](refactoring.md#delete-parse-tree-node) refactoring details.
 
 ### Find
 
-`find xpath-string`
+<pre>
+find <u>string</u>
+</pre>
 
-Find all sub-trees in the parsed file at the top of stack using the given XPath expression.
+Find all sub-trees in the parsed file at the top of stack using the given XPath expression string.
 
 ### Fold
 
-`fold xpath-string`
+<pre>
+fold <u>string</u>
+</pre>
 
 Replace a sequence of symbols on the RHS of a rule
 with the rule LHS symbol.
@@ -113,7 +136,9 @@ For for further details, see the [fold](refactoring.md#Fold) refactoring details
 
 ### Foldlit
 
-`fold xpath-string`
+<pre>
+fold <u>string</u>
+</pre>
 
 Replace a literal on the RHS of a rule
 with the lexer rule LHS symbol.
@@ -122,7 +147,9 @@ For for further details, see the [fold literal](refactoring.md#replace-literals-
 
 ### Has
 
-`has (dr | ir) (left | right) xpath-expression`
+<pre>
+has (dr | ir) (left | right) <u>string</u>
+</pre>
 
 Print out whether the rule specified by the xpath expression pointing to the LHS symbol
 of a parser or lexer rule has left or right recursion.
@@ -131,13 +158,17 @@ For for further details, see the [analysis](analysis.md#has-directindirect-recur
 
 ### History
 
-`history`
+<pre>
+history
+</pre>
 
 Print out the shell command history.
 
 ### Kleene
 
-`kleene xpath-string`
+<pre>
+kleene <u>string</u>
+</pre>
 
 Replace a rule, whose symbol is identified by the xpath string,
 of the grammar at the top of the grammar with an EBNF
@@ -145,26 +176,34 @@ form if it contains direct left or direct right recursion.
 
 ### Ls
 
-`ls string`
+<pre>
+ls <u>string</u>
+</pre>
 
 List directory contents. If string is not given, list the current directory contents.
 
 ### Mvsr
 
-`mvsr xpath-string`
+<pre>
+mvsr <u>string</u>
+</pre>
 
 Move the rule, whose symbol is identified by the xpath string,
 to the top of the grammar.
 
 ### Parse
 
-`parse grammar-type`
+<pre>
+parse (antlr2 | antlr3 | antlr4)?
+</pre>
 
 Parse the flie at the top of stack with the given parser type (_antlr2_, _antlr3, _antlr4_, or _bison_).
 
 ### Pop
 
-`pop`
+<pre>
+pop
+</pre>
 
 Pop the top document from the stack. If the stack is empty, nothing is further popped.
 There is no check as to whether the document has been written to disk. If you want to write
@@ -172,37 +211,47 @@ the file, use `write`.
 
 ### Print
 
-`print`
+<pre>
+print
+</pre>
 
 Print out text file at the top of stack.
 
 ### Quit
 
-`quit` or `exit`
+<pre>
+(quit | exit)
+</pre>
 
 Exit the shell program.
 
 ### Read
 
-`read file-name`
+<pre>
+read <u>string</u>
+</pre>
 
 Read the text file _file-name_ and place it on the top of the stack.
 
 ### Rename
 
-`rename xpath-expression new-name`
+<pre>
+rename <u>string</u> <u>string</u>
+</pre>
 
-Rename a symbol in the current grammar. The result may pop
-the stack and place all related grammars that use or define the symbol
-on the stack.
+Rename a symbol, the first parameter as specified by the xpath expression string,
+to a new name, the second parameter as a string. The result may
+place all changed grammars that use the symbol on the stack.
 
 For for further details, see the [Rename](refactoring.md#rename) refactoring details.
 
 ### Reorder
 
-`reorder alpha`
-`reorder bfs xpath-expression`
-`reorder dfs xpath-expression`
+<pre>
+reorder alpha
+reorder bfs <u>string</u>
+reorder dfs <u>string</u>
+</pre>
 
 Reorder the parser rules according to the specified type. For
 BFS and DFS, an XPath expression must be supplied to specify
@@ -213,19 +262,25 @@ then the rule is dropped from the grammar.
 
 ### Rotate
 
-`rotate`
+<pre>
+rotate
+</pre>
 
 Rotate the stack once.
 
 ### RR
 
-`rr`
+<pre>
+rr
+</pre>
 
 Replace left indirect or direct recursion with right recursion.
 
 ### Rup
 
-`rup xpath-expression?`
+<pre>
+rup <u>string</u>?
+</pre>
 
 Find all altLists as specified by the xpath expression in the parsed file at the top of stack.
 If the xpath expression is not given, the transform is applied to the whole file.
@@ -238,7 +293,9 @@ For for further details, see the [remove useless parentheses](refactoring.md#rem
 
 ### Split
 
-`split`
+<pre>
+split
+</pre>
 
 The `split` command attempts to split a grammar at the top of the stack.
 The grammar must be a combined lexer/parser grammar for the transformation to
@@ -249,13 +306,17 @@ For for further details, see the [split grammar](refactoring.md#splitting-and-co
 
 ### Stack
 
-`stack`
+<pre>
+stack
+</pre>
 
 Print the stack of files.
 
 ### ULLiteral
 
-`ulliteral xpath-expression?`
+<pre>
+ulliteral <u>string</u>?
+</pre>
 
 The ulliteral command applies the "upper- and lower-case string literal"
 transform to a collection of terminal nodes in the parse tree,
@@ -274,13 +335,17 @@ on the top of stack.
 
 ### Unalias
 
-`unalias id`
+<pre>
+unalias <u>id</u>
+</pre>
 
 Remove an aliased command.
 
 ### Unfold
 
-`unfold xpath-expr`
+<pre>
+unfold <u>string</u>
+</pre>
 
 The unfold command applies the unfold transform to a collection of terminal nodes in the parse tree,
 which is identified with the supplied xpath expression. Prior to using this command, you must have the file parsed.
@@ -291,7 +356,9 @@ on the top of stack.
 
 ### Unify
 
-`unify xpath-expression`
+<pre>
+unify <u>string</u>
+</pre>
 
 Perform a recursive left- and right- factorization of alternatives for rules.
 The nodes specified must be for `ruleAltList`, `lexerAltList`, or `altList`.
@@ -302,10 +369,8 @@ For for further details, see the [Unify alts to EBNF](refactoring.md#unify-alts-
 
 ### Write
 
-`write`
+<pre>
+write
+</pre>
 
 Pop the stack, and write out the file specified.
-
-
-
-
