@@ -29,7 +29,7 @@ Aliases are created and listed with the alias command, and removed with the
  unalias command.
 
 <pre>
-alias _id_ = <u>string</u>
+alias <em>id</em> = <u>string</u>
 </pre>
 
 Set up an alias that assigns <u>string</u> to <u>id</u>. The command <u>string</u> 
