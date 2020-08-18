@@ -1,7 +1,10 @@
 # AntlrVSIX
 
-AntlrVSIX is an extension for Visual Studio 2019 to support editing, analysis, refactoring,
-and conversion of Antlr2, Antlr3, Antlr4, and Bison grammars.
+AntlrVSIX is a tool to support editing, analysis, refactoring,
+and conversion of Antlr2, Antlr3, Antlr4, and Bison grammars. It contains
+an extension for Visual Studio 2019 and a stand-alone command-line tool
+known as [Trash](doc/Trash.md) for editing grammar files directly without
+Visual Studio, runnable on Windows or Linux.
 It is implemented using Microsoft's [Language Server Protocol (LSP)](https://langserver.org/) 
 [client](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Client/) and
 [server](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/) APIs,
@@ -14,11 +17,8 @@ Most of the extension is implemented in C#.
 There is a client for VS Code, written in Typescript,
 but I am deferring further development of the client until the server is more or less complete.
 Supported are colorized tagging, hover, go to def, find all refs,
-replace, and reformat. But, there is so much more to Antlrvsix
-than these basic LSP commands. Along with the extension for VS,
-[Trash](doc/Trash.md) is a command-line shell for
-parsing, analyzing, and transforming grammars outside of the
-Visual Studio extension.
+replace, and reformat. Beyond the basic LSP commands, the tool supports
+analysis, refactoring, and conversion.
 
 ## Supported grammars and features
 
@@ -71,14 +71,12 @@ Antrl4, and Bison grammars, convert to Antlr4, find sub-trees
 in the parse tree for the grammar using XPath expressions, analyze,
 and refactor the grammar.
 
-To run the tool, you will need to find the **Trash.exe** executable.
+To run the tool, you will need to find the **Trash.exe** executable
+after installing the extension in Visual Studio 2019, or unpacking
+it directly from the downloaded .vsix--a ZIP file.
 It should be under
 "C:/Users/userid/AppData/Local/Microsoft/VisualStudio/.../AntlrVSIX/8.0/Trash/netcoreapp3.1/Trash.exe".
 Once you find the executable, execute it.
-
-If you want to run Trash without installing, then download
-the .vsix file, unpack it, and look for the executable. The tool
-runs on Ubuntu. You may need to build it from scratch though.
 
 For a list of commands in Trash, see this [documentation](doc/Trash.md).
 
