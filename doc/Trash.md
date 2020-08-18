@@ -6,6 +6,38 @@ or to determine whether performance
 problems that you may experience in VS are due to
 VS or the Antlr language server.
 
+## Usage
+
+<pre>
+trash [-script <em>string</em>]
+</pre>
+
+Trash reads stdin or a specified script file commands, one line at a time.
+
+## Examples
+
+(1) `trash`
+
+Read stdin one line at a time until `quit` command executed.
+
+(2) `cat ex1.tr | trash`
+
+Execute commands from script file `ex1.tr`. This file contains this:
+
+    read HERE
+    grammar A;
+    s : e ;
+    e : e '*' e | INT ;
+    INT : [0-9]+ ;
+    WS : [ \t\n]+ -> skip ;
+    HERE
+
+    parse
+    rename "//parserRuleSpec//labeledAlt//RULE_REF[text() = 'e']" "xxx"
+    print
+    quit
+
+
 ## Commands
 
 ### Alias
