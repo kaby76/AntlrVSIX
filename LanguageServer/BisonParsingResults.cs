@@ -153,7 +153,6 @@
                                 int count = token_decls.ChildCount;
                                 if (count == 1)
                                 {
-                                    string tag = "";
                                     string tok = id.GetText();
                                     ISymbol sym = new NonterminalSymbol(tok, token.Symbol);
                                     this.RootScope.define(ref sym);

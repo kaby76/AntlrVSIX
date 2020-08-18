@@ -399,8 +399,6 @@ WS
     : [ \t\n]+ -> skip
     ;
 ");
-            int line = 5;
-            int character = 0;
             int start = new LanguageServer.Module().GetIndex(2, 0, document);
             int end = new LanguageServer.Module().GetIndex(5, 0, document);
             var found = LanguageServer.Transform.Unfold(start, end, document);
@@ -456,25 +454,25 @@ WS
             int end = new LanguageServer.Module().GetIndex(6, 0, document);
             var found = LanguageServer.Transform.Fold(start, end, document);
  //           if (found.Count != 1) throw new Exception();
-            var should_be = @"grammar A;
+//            var should_be = @"grammar A;
 
-s
-    : e
-    ;
+//s
+//    : e
+//    ;
 
-e
-    : e '*' e 		# Mult
-    | INT      		# primary
-    ;
+//e
+//    : e '*' e 		# Mult
+//    | INT      		# primary
+//    ;
 
-INT
-    : [0-9]+
-    ;
+//INT
+//    : [0-9]+
+//    ;
 
-WS
-    : [ \t\n]+ -> skip
-    ;
-";
+//WS
+//    : [ \t\n]+ -> skip
+//    ;
+//";
  //           var got = found.First().Value;
  //           if (got != should_be) throw new Exception();
         }

@@ -391,7 +391,7 @@
                 IOrderedEnumerable<Info> sorted_combined_tokens = combined.OrderBy(t => t.start).ThenBy(t => t.end);
                 return sorted_combined_tokens;
             }
-            catch (Exception eeks)
+            catch (Exception)
             {
             }
             return new List<Info>();

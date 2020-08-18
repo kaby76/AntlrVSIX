@@ -20,7 +20,6 @@
         private readonly LanguageServerTarget target;
         private readonly ManualResetEvent disconnectEvent = new ManualResetEvent(false);
         private Dictionary<string, DiagnosticSeverity> diagnostics;
-        private TextDocumentItem textDocument = null;
         private bool isDisposed;
         private int counter = 100;
 
@@ -67,7 +66,7 @@
                     Uri = new Uri(file),
                     Diagnostics = Array.Empty<Diagnostic>()
                 };
-                rpc.NotifyWithParameterObjectAsync(Methods.TextDocumentPublishDiagnosticsName, parameter);
+                _ = rpc.NotifyWithParameterObjectAsync(Methods.TextDocumentPublishDiagnosticsName, parameter);
             }
             foreach (var file in files)
             {
@@ -113,7 +112,7 @@
                 {
                     parameter.Diagnostics = parameter.Diagnostics.Take(maxProblems).ToArray();
                 }
-                rpc.NotifyWithParameterObjectAsync(Methods.TextDocumentPublishDiagnosticsName, parameter);
+                _ = rpc.NotifyWithParameterObjectAsync(Methods.TextDocumentPublishDiagnosticsName, parameter);
             }
         }
 

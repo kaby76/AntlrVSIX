@@ -4867,8 +4867,6 @@
             var defs = new Module().GetDefsLeaf(document);
             bool is_cursor_on_def = false;
             TerminalNodeImpl def = null;
-            bool is_cursor_on_ref = false;
-            IEnumerable<TerminalNodeImpl> refs = null;
             foreach (var d in defs)
             {
                 bool a = IsContainedBy(d.Symbol.StartIndex, d.Symbol.StopIndex + 1, start, end);

@@ -24,7 +24,6 @@
 
         public void Try(string ffn, string input, ref Dictionary<string, string> results)
         {
-            var convert_undefined_to_terminals = true;
             var now = DateTime.Now.ToString();
             var errors = new StringBuilder();
             var str = new AntlrInputStream(input);
