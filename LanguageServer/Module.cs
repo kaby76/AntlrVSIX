@@ -697,7 +697,7 @@
             return g;
         }
 
-        public List<ParsingResults> Compile(int quiet_after = 0)
+        public List<ParsingResults> Compile()
         {
             try
             {
