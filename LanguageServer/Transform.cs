@@ -2669,11 +2669,28 @@
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
 
-            foreach (var node in nodes)
+            if (nodes != null)
             {
-                if (!(node is TerminalNodeImpl && node.Parent is ANTLRv4Parser.ParserRuleSpecContext
-                    || node is TerminalNodeImpl && node.Parent is ANTLRv4Parser.LexerRuleSpecContext))
-                    throw new LanguageServerException("Node for query must be the LHS symbol.");
+                foreach (var node in nodes)
+                {
+                    if (!(node is TerminalNodeImpl && node.Parent is ANTLRv4Parser.ParserRuleSpecContext
+                        || node is TerminalNodeImpl && node.Parent is ANTLRv4Parser.LexerRuleSpecContext))
+                        throw new LanguageServerException("Node for query must be the LHS symbol.");
+                }
+            }
+            else
+            {
+                var pr = ParsingResultsFactory.Create(document);
+                var aparser = pr.Parser;
+                var atree = pr.ParseTree;
+                using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(atree, aparser))
+                {
+                    org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+                    nodes = engine.parseExpression(
+                        @"//parserRuleSpec/RULE_REF",
+                            new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
+                }
             }
 
             foreach (var node in nodes)
