@@ -5441,7 +5441,7 @@
             return result;
         }
 
-        public static Dictionary<string, string> RemoveUselessParentheses(Document document)
+        public static Dictionary<string, string> RemoveUselessParentheses(Document document, List<IParseTree> nodes = null)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
             if (!(ParsingResultsFactory.Create(document) is ParsingResults pd_parser))
@@ -5456,118 +5456,13 @@
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
 
-            // Get all intertoken text immediately for source reconstruction.
-            var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
-
+            if (nodes != null)
             {
-                ParsingResults pd = pd_parser;
-                var pt = pd.ParseTree;
-
-                List<ANTLRv4Parser.AltListContext> altlists;
-                List<ANTLRv4Parser.ElementContext> elements;
-                var(tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
-                using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                foreach (var n in nodes)
                 {
-                    org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
-
-                    altlists = engine.parseExpression(
-                        "//(altList | labeledAlt)/alternative/element/ebnf[not(child::blockSuffix)]/block/altList[not(@ChildCount > 1)]",
-                        new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
-                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as ANTLRv4Parser.AltListContext).ToList();
-                    List<ANTLRv4Parser.AltListContext> altlists2 = engine.parseExpression(
-                        "//(altList | labeledAlt)[not(@ChildCount > 1)]/alternative[not(@ChildCount > 1)]/element/ebnf[not(child::blockSuffix)]/block/altList[@ChildCount > 1]",
-                        new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
-                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as ANTLRv4Parser.AltListContext).ToList();
-                    altlists.AddRange(altlists2);
-                    elements = altlists.Select(t => t.Parent.Parent.Parent as ANTLRv4Parser.ElementContext).ToList();
+                    if (!(n is ANTLRv4Parser.AltListContext))
+                        throw new Exception("Node isn't an Antlr4 altList type");
                 }
-
-                for (int j = 0; j < altlists.Count; ++j)
-                {
-                    // Remove {altlist}/../../.. (an element), which is the "i'th" child.
-                    var altlist = altlists[j];
-                    var element = elements[j];
-                    var parent_alternative = element?.Parent as ANTLRv4Parser.AlternativeContext;
-                    int i = 0;
-                    for (; i < parent_alternative.ChildCount;)
-                    {
-                        if (parent_alternative.children[i] == element)
-                            break;
-                        ++i;
-                    }
-                    parent_alternative.children.RemoveAt(i);
-                    // Insert in the location of the removed element node "i" hoisted nodes of block.
-                    var alternatives = altlist?.alternative();
-                    if (alternatives.Length > 1)
-                    {
-                        IParseTree rule_alt_list_p = altlist.Parent;
-                        for (; rule_alt_list_p != null; rule_alt_list_p = rule_alt_list_p.Parent)
-                        {
-                            if (rule_alt_list_p is ANTLRv4Parser.RuleAltListContext)
-                                break;
-                        }
-                        var rule_alt_list = rule_alt_list_p as ANTLRv4Parser.RuleAltListContext;
-                        bool first = true;
-                        foreach (var alternative in alternatives)
-                        {
-                            if (!first)
-                            {
-                                var token4 = new CommonToken(ANTLRv4Lexer.OR) { Line = -1, Column = -1, Text = "|" };
-                                var new_or = new TerminalNodeImpl(token4);
-                                rule_alt_list.AddChild(new_or);
-                                new_or.Parent = rule_alt_list;
-                            }
-                            first = false;
-                            var labeled_alt = new ANTLRv4Parser.LabeledAltContext(null, 0);
-                            TreeEdits.CopyTreeRecursive(alternative, labeled_alt, text_before);
-                            rule_alt_list.AddChild(labeled_alt);
-                            labeled_alt.Parent = rule_alt_list;
-                        }
-                    }
-                    else
-                    {
-                        var alternative = altlist.alternative().First();
-                        foreach (var e in alternative.element())
-                        {
-                            var copy = TreeEdits.CopyTreeRecursive(e, null, text_before) as ANTLRv4Parser.ElementContext;
-                            parent_alternative.children.Insert(i, copy);
-                            copy.Parent = parent_alternative;
-                            i++;
-                        }
-                    }
-                }
-            }
-            StringBuilder sb = new StringBuilder();
-            TreeEdits.Reconstruct(sb, pd_parser.ParseTree, text_before);
-            var new_code = sb.ToString();
-            if (new_code != pd_parser.Code)
-            {
-                result.Add(document.FullPath, new_code);
-            }
-
-            return result;
-        }
-
-        public static Dictionary<string, string> RemoveUselessParentheses(List<IParseTree> nodes, Document document)
-        {
-            Dictionary<string, string> result = new Dictionary<string, string>();
-            if (nodes == null || !nodes.Any()) return result;
-            if (!(ParsingResultsFactory.Create(document) is ParsingResults pd_parser))
-                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
-            ExtractGrammarType egt = new ExtractGrammarType();
-            ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
-            bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
-                || egt.Type == ExtractGrammarType.GrammarType.Combined
-                || egt.Type == ExtractGrammarType.GrammarType.Lexer;
-            if (!is_grammar)
-            {
-                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
-            }
-
-            foreach (var n in nodes)
-            {
-                if (!(n is ANTLRv4Parser.AltListContext))
-                    throw new Exception("Node isn't an Antlr4 altList type");
             }
 
             // Get all intertoken text immediately for source reconstruction.
@@ -5579,6 +5474,8 @@
 
                 List<ANTLRv4Parser.AltListContext> altlists;
                 List<ANTLRv4Parser.ElementContext> elements;
+                List<ANTLRv4Parser.AltListContext> altlists2;
+                List<ANTLRv4Parser.ElementContext> elements2;
                 var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
                 using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
                 {
@@ -5588,14 +5485,19 @@
                         "//(altList | labeledAlt)/alternative/element/ebnf[not(child::blockSuffix)]/block/altList[not(@ChildCount > 1)]",
                         new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
                         .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as ANTLRv4Parser.AltListContext).ToList();
-                    List<ANTLRv4Parser.AltListContext> altlists2 = engine.parseExpression(
+                    altlists2 = engine.parseExpression(
                         "//(altList | labeledAlt)[not(@ChildCount > 1)]/alternative[not(@ChildCount > 1)]/element/ebnf[not(child::blockSuffix)]/block/altList[@ChildCount > 1]",
                         new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
                         .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as ANTLRv4Parser.AltListContext).ToList();
-                    altlists.AddRange(altlists2);
                     elements = altlists.Select(t => t.Parent.Parent.Parent as ANTLRv4Parser.ElementContext).ToList();
-                    altlists = altlists.Where(t => nodes.Contains(t)).ToList();
-                    elements = elements.Where(t => nodes.Select(u => u.Parent.Parent.Parent).Contains(t)).ToList();
+                    elements2 = altlists2.Select(t => t.Parent.Parent.Parent as ANTLRv4Parser.ElementContext).ToList();
+                    if (nodes != null)
+                    {
+                        altlists = altlists.Where(t => nodes.Contains(t)).ToList();
+                        elements = elements.Where(t => nodes.Select(u => u.Parent.Parent.Parent).Contains(t)).ToList();
+                        altlists2 = altlists2.Where(t => nodes.Contains(t)).ToList();
+                        elements2 = elements2.Where(t => nodes.Select(u => u.Parent.Parent.Parent).Contains(t)).ToList();
+                    }
                 }
 
                 for (int j = 0; j < altlists.Count; ++j)
@@ -5612,45 +5514,23 @@
                         ++i;
                     }
                     parent_alternative.children.RemoveAt(i);
-                    // Insert in the location of the removed element node "i" hoisted nodes of block.
-                    var alternatives = altlist?.alternative();
-                    if (alternatives.Length > 1)
+                    parent_alternative.children.Insert(i, altlist);
+                }
+                for (int j = 0; j < altlists2.Count; ++j)
+                {
+                    // Remove {altlist}/../../.. (an element), which is the "i'th" child.
+                    var altlist = altlists2[j];
+                    var element = elements2[j];
+                    var parent_alternative = element?.Parent as ANTLRv4Parser.AlternativeContext;
+                    int i = 0;
+                    for (; i < parent_alternative.ChildCount;)
                     {
-                        IParseTree rule_alt_list_p = altlist.Parent;
-                        for (; rule_alt_list_p != null; rule_alt_list_p = rule_alt_list_p.Parent)
-                        {
-                            if (rule_alt_list_p is ANTLRv4Parser.RuleAltListContext)
-                                break;
-                        }
-                        var rule_alt_list = rule_alt_list_p as ANTLRv4Parser.RuleAltListContext;
-                        bool first = true;
-                        foreach (var alternative in alternatives)
-                        {
-                            if (!first)
-                            {
-                                var token4 = new CommonToken(ANTLRv4Lexer.OR) { Line = -1, Column = -1, Text = "|" };
-                                var new_or = new TerminalNodeImpl(token4);
-                                rule_alt_list.AddChild(new_or);
-                                new_or.Parent = rule_alt_list;
-                            }
-                            first = false;
-                            var labeled_alt = new ANTLRv4Parser.LabeledAltContext(null, 0);
-                            TreeEdits.CopyTreeRecursive(alternative, labeled_alt, text_before);
-                            rule_alt_list.AddChild(labeled_alt);
-                            labeled_alt.Parent = rule_alt_list;
-                        }
+                        if (parent_alternative.children[i] == element)
+                            break;
+                        ++i;
                     }
-                    else
-                    {
-                        var alternative = altlist.alternative().First();
-                        foreach (var e in alternative.element())
-                        {
-                            var copy = TreeEdits.CopyTreeRecursive(e, null, text_before) as ANTLRv4Parser.ElementContext;
-                            parent_alternative.children.Insert(i, copy);
-                            copy.Parent = parent_alternative;
-                            i++;
-                        }
-                    }
+                    parent_alternative.children.RemoveAt(i);
+                    parent_alternative.children.Insert(i, altlist);
                 }
             }
             StringBuilder sb = new StringBuilder();
