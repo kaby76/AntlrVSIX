@@ -18,6 +18,7 @@
     using Document = Workspaces.Document;
     using NWayDiff;
     using org.w3c.dom;
+    using Microsoft.CodeAnalysis.Operations;
 
     public class Transform
     {
@@ -2345,7 +2346,7 @@
             return (IParseTree)new_a_rule;
         }
 
-        public static Dictionary<string, string> ConvertRecursionToKleeneOperator(IEnumerable<IParseTree> nodes, Document document)
+        public static Dictionary<string, string> ConvertRecursionToKleeneOperator(Document document, List<IParseTree> nodes = null)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
@@ -2362,50 +2363,66 @@
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
 
-            if (!nodes.Any())
+            if (nodes != null)
             {
-                throw new LanguageServerException("XPath spec for LHS symbol empty.");
+                if (!nodes.Any())
+                {
+                    throw new LanguageServerException("XPath spec for LHS symbol empty.");
+                }
+                if (nodes.Count() > 1)
+                {
+                    throw new LanguageServerException("XPath spec for LHS symbol specifies more than one node.");
+                }
             }
-            if (nodes.Count() > 1)
+            else
             {
-                throw new LanguageServerException("XPath spec for LHS symbol specifies more than one node.");
-            }
-
-            var node = nodes.First();
-
-            if (!(node is TerminalNodeImpl && node.Parent is ANTLRv4Parser.ParserRuleSpecContext))
-                throw new LanguageServerException("Node for Kleene EBNF transform must be the LHS symbol.");
-
-            var rule = node;
-            for (; rule != null; rule = rule.Parent)
-            {
-                if ((rule is ANTLRv4Parser.ParserRuleSpecContext || rule is ANTLRv4Parser.LexerRuleSpecContext))
-                    break;
-            }
-            if (rule == null)
-                throw new LanguageServerException("A parser rule is not selected. Please select one first.");
-
-            // We are now at the rule that the user identified to eliminate direct
-            // left recursion.
-            // Check if the rule has direct left recursion.
-
-            bool has_direct_left_recursion = HasDirectLeftRecursion(rule);
-            bool has_direct_right_recursion = HasDirectRightRecursion(rule);
-            if (!(has_direct_left_recursion || has_direct_right_recursion))
-            {
-                throw new LanguageServerException("The rule selected does not have direct left or right recursion. Please select one first.");
-            }
-            else if (has_direct_left_recursion && has_direct_right_recursion)
-            {
-                throw new LanguageServerException("The rule selected has both direct left or right recursion. Please select one first.");
+                var pr = ParsingResultsFactory.Create(document);
+                var aparser = pr.Parser;
+                var atree = pr.ParseTree;
+                using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(atree, aparser))
+                {
+                    org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+                    nodes = engine.parseExpression(
+                        @"//parserRuleSpec/RULE_REF",
+                            new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
+                }
             }
 
             // Get all intertoken text immediately for source reconstruction.
             var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
 
-            // Has direct recursion.
-            rule = ReplaceWithKleeneRules(has_direct_left_recursion, has_direct_right_recursion, rule, text_before);
+            for (int i = 0; i < nodes.Count(); ++i)
             {
+                var node = nodes[i];
+                if (!(node is TerminalNodeImpl && node.Parent is ANTLRv4Parser.ParserRuleSpecContext))
+                    throw new LanguageServerException("Node for Kleene EBNF transform must be the LHS symbol.");
+
+                for (; node != null; node = node.Parent)
+                {
+                    if ((node is ANTLRv4Parser.ParserRuleSpecContext || node is ANTLRv4Parser.LexerRuleSpecContext))
+                        break;
+                }
+                if (node == null)
+                    throw new LanguageServerException("A parser rule is not selected. Please select one first.");
+
+                // We are now at the rule that the user identified to eliminate direct
+                // left recursion.
+                // Check if the rule has direct left recursion.
+
+                bool has_direct_left_recursion = HasDirectLeftRecursion(node);
+                bool has_direct_right_recursion = HasDirectRightRecursion(node);
+                if (!(has_direct_left_recursion || has_direct_right_recursion))
+                {
+                    continue;
+                }
+                else if (has_direct_left_recursion && has_direct_right_recursion)
+                {
+                    continue;
+                }
+
+                // Has direct recursion.
+                node = ReplaceWithKleeneRules(has_direct_left_recursion, has_direct_right_recursion, node, text_before);
                 TreeEdits.Replace(pd_parser.ParseTree,
                     (in IParseTree x, out bool c) =>
                     {
@@ -2413,22 +2430,23 @@
                         {
                             var y = x as ANTLRv4Parser.ParserRuleSpecContext;
                             var name = y.RULE_REF()?.GetText();
-                            if (name == Lhs((ANTLRv4Parser.ParserRuleSpecContext)rule).GetText())
+                            if (name == Lhs((ANTLRv4Parser.ParserRuleSpecContext)node).GetText())
                             {
                                 c = false;
-                                return rule;
+                                return node;
                             }
                         }
                         c = true;
                         return null;
                     });
-                StringBuilder sb = new StringBuilder();
-                TreeEdits.Reconstruct(sb, pd_parser.ParseTree, text_before);
-                var new_code = sb.ToString();
-                if (new_code != pd_parser.Code)
-                {
-                    result.Add(document.FullPath, new_code);
-                }
+            }
+
+            StringBuilder sb = new StringBuilder();
+            TreeEdits.Reconstruct(sb, pd_parser.ParseTree, text_before);
+            var new_code = sb.ToString();
+            if (new_code != pd_parser.Code)
+            {
+                result.Add(document.FullPath, new_code);
             }
 
             return result;
