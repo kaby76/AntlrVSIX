@@ -1793,7 +1793,6 @@
             return false;
         }
 
-
         private static List<Symtab.ISymbol> GetDef(IParseTree lhs, ParsingResults pd_parser)
         {
             List<Symtab.ISymbol> result = new List<Symtab.ISymbol>();
@@ -2582,10 +2581,9 @@
             return b + gnum.ToString();
         }
 
-
-        public static List<Tuple<string, bool>> HasDirectRec(IEnumerable<IParseTree> nodes, string l_or_r, Document document)
+        public static List<Tuple<string, string>> HasDirectRec(Document document, IEnumerable<IParseTree> nodes = null)
         {
-            List<Tuple<string, bool>> result = new List<Tuple<string, bool>>();
+            List<Tuple<string, string>> result = new List<Tuple<string, string>>();
             // Check if initial file is a grammar.
             if (!(ParsingResultsFactory.Create(document) is ParsingResults pd_parser))
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
@@ -2599,26 +2597,47 @@
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
 
+            if (nodes != null)
+            {
+                foreach (var node in nodes)
+                {
+                    if (!(node is TerminalNodeImpl && node.Parent is ANTLRv4Parser.ParserRuleSpecContext
+                        || node is TerminalNodeImpl && node.Parent is ANTLRv4Parser.LexerRuleSpecContext))
+                        throw new LanguageServerException("Node for query must be the LHS symbol.");
+                }
+            }
+            else
+            {
+                var pr = ParsingResultsFactory.Create(document);
+                var aparser = pr.Parser;
+                var atree = pr.ParseTree;
+                using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(atree, aparser))
+                {
+                    org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+                    nodes = engine.parseExpression(
+                        @"//parserRuleSpec/RULE_REF",
+                            new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
+                }
+            }
             foreach (var node in nodes)
             {
-                if (!(node is TerminalNodeImpl && node.Parent is ANTLRv4Parser.ParserRuleSpecContext
-                    || node is TerminalNodeImpl && node.Parent is ANTLRv4Parser.LexerRuleSpecContext))
-                    throw new LanguageServerException("Node for query must be the LHS symbol.");
+                bool left = HasDirectLeftRecursion(node.Parent);
+                bool right = HasDirectRightRecursion(node.Parent);
+                if (left || right)
+                {
+                    Tuple<string, string> t = new Tuple<string, string>(
+                        node.GetText(),
+                        ((left ? "left" : "") + " " + (right ? "right" : "")).Trim());
+                    result.Add(t);
+                }
             }
-
-            foreach (var node in nodes)
-            {
-                bool answer = l_or_r == "left" ? HasDirectLeftRecursion(node.Parent) : HasDirectRightRecursion(node.Parent);
-                Tuple<string, bool> t = new Tuple<string, bool>(node.GetText(), answer);
-                result.Add(t);
-            }
-
             return result;
         }
 
-        public static List<Tuple<string, bool>> HasIndirectRec(IEnumerable<IParseTree> nodes, string l_or_r, Document document)
+        public static List<Tuple<string, string>> HasIndirectRec(IEnumerable<IParseTree> nodes, string l_or_r, Document document)
         {
-            List<Tuple<string, bool>> result = new List<Tuple<string, bool>>();
+            List<Tuple<string, string>> result = new List<Tuple<string, string>>();
             // Check if initial file is a grammar.
             if (!(ParsingResultsFactory.Create(document) is ParsingResults pd_parser))
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
@@ -2642,7 +2661,7 @@
             foreach (var node in nodes)
             {
                 bool answer = l_or_r == "left" ? HasIndirectLeftRecursion(node as TerminalNodeImpl, document) : HasIndirectLeftRecursion(node as TerminalNodeImpl, document);
-                Tuple<string, bool> t = new Tuple<string, bool>(node.GetText(), answer);
+                Tuple<string, string> t = new Tuple<string, string>(node.GetText(), answer.ToString());
                 result.Add(t);
             }
 
