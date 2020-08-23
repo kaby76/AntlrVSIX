@@ -2010,7 +2010,7 @@
             return result;
         }
 
-        private static List<string> HasIndirectLeftRecursion(Document document, IEnumerable<IParseTree> nodes = null)
+        private static List<string> HasIndirectLeftRecursion(Document document, bool gen_dot, IEnumerable<IParseTree> nodes = null)
         {
             if (!(ParsingResultsFactory.Create(document) is ParsingResults pd_parser))
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
@@ -2126,38 +2126,71 @@
             var tarjan = new TarjanSCC<Symtab.ISymbol, DirectedEdge<Symtab.ISymbol>>(graph);
             List<Symtab.ISymbol> ordered = new List<Symtab.ISymbol>();
             IDictionary<Symtab.ISymbol, IEnumerable<Symtab.ISymbol>> sccs = tarjan.Compute();
-
+            var cycles = sccs.Select(t => t.Value).Distinct().Where(t => t.Count() > 1);
             List<string> result = new List<string>();
-            if (nodes == null)
+            if (!cycles.Any())
             {
-                foreach (KeyValuePair<Symtab.ISymbol, IEnumerable<Symtab.ISymbol>> scc in sccs)
+                return result;
+            }
+
+            if (gen_dot)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("digraph IndirectCycles {");
+
+                foreach (var cycle in cycles)
                 {
-                    if (scc.Value.Count() > 1)
+                    foreach (var c in cycle)
                     {
-                        var s = string.Join(" ", scc.Value.Select(t => t.Name).OrderBy(t => t));
-                        if (!result.Contains(s)) result.Add(s);
+                        var edges = graph.SuccessorEdges(c);
+                        foreach (var edge in edges)
+                        {
+                            if (cycle.Contains(edge.To))
+                            {
+                                sb.AppendLine(edge.From.Name + " -> " + edge.To.Name + ";");
+                            }
+                        }
                     }
                 }
+
+                // Output all other lines.
+
+                sb.AppendLine("}");
+                result = new List<string>() { sb.ToString() };
             }
             else
             {
-                foreach (var node in nodes)
-                {
-                    var defs = GetDef(node, pd_parser);
 
-                    foreach (var def in defs)
+                if (nodes == null)
+                {
+                    foreach (KeyValuePair<Symtab.ISymbol, IEnumerable<Symtab.ISymbol>> scc in sccs)
                     {
-                        var scc = sccs[def];
-                        if (scc.Count() > 1)
+                        if (scc.Value.Count() > 1)
                         {
-                            StringBuilder sb = new StringBuilder();
-                            var s = string.Join(" ", scc.Select(t => t.Name).OrderBy(t => t));
-                            result.Add(def.Name + " => " + sb.ToString());
+                            var s = string.Join(" ", scc.Value.Select(t => t.Name).OrderBy(t => t));
+                            if (!result.Contains(s)) result.Add(s);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var node in nodes)
+                    {
+                        var defs = GetDef(node, pd_parser);
+
+                        foreach (var def in defs)
+                        {
+                            var scc = sccs[def];
+                            if (scc.Count() > 1)
+                            {
+                                StringBuilder sb = new StringBuilder();
+                                var s = string.Join(" ", scc.Select(t => t.Name).OrderBy(t => t));
+                                result.Add(def.Name + " => " + sb.ToString());
+                            }
                         }
                     }
                 }
             }
-
             return result;
         }
 
@@ -2861,7 +2894,7 @@
             return result;
         }
 
-        public static List<string> HasIndirectRec(IEnumerable<IParseTree> nodes, string l_or_r, Document document)
+        public static List<string> HasIndirectRec(IEnumerable<IParseTree> nodes, bool gen_dot, Document document)
         {
             List<string> result = new List<string>();
             // Check if initial file is a grammar.
@@ -2877,7 +2910,7 @@
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
 
-            result = HasIndirectLeftRecursion(document, nodes);
+            result = HasIndirectLeftRecursion(document, gen_dot, nodes);
             return result;
         }
 
