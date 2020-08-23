@@ -1810,55 +1810,236 @@
             return result;
         }
 
-        private static IEnumerable<TerminalNodeImpl> RHS(TerminalNodeImpl def, ParsingResults pd)
+        private static List<TerminalNodeImpl> ChaseAlts(IParseTree node)
         {
-            if (def.Parent is ANTLRv4Parser.ParserRuleSpecContext p1)
+            List<TerminalNodeImpl> result = new List<TerminalNodeImpl>();
+            if (node is ANTLRv4Parser.GrammarSpecContext) { }
+            else if (node is ANTLRv4Parser.GrammarDeclContext) { }
+            else if (node is ANTLRv4Parser.GrammarTypeContext) { }
+            else if (node is ANTLRv4Parser.PrequelConstructContext) { }
+            else if (node is ANTLRv4Parser.OptionsSpecContext) { }
+            else if (node is ANTLRv4Parser.OptionContext) { }
+            else if (node is ANTLRv4Parser.OptionValueContext) { }
+            else if (node is ANTLRv4Parser.DelegateGrammarsContext) { }
+            else if (node is ANTLRv4Parser.DelegateGrammarContext) { }
+            else if (node is ANTLRv4Parser.TokensSpecContext) { }
+            else if (node is ANTLRv4Parser.ChannelsSpecContext) { }
+            else if (node is ANTLRv4Parser.IdListContext) { }
+            else if (node is ANTLRv4Parser.Action_Context) { }
+            else if (node is ANTLRv4Parser.ActionScopeNameContext) { }
+            else if (node is ANTLRv4Parser.ActionBlockContext) { }
+            else if (node is ANTLRv4Parser.ArgActionBlockContext) { }
+            else if (node is ANTLRv4Parser.ModeSpecContext) { }
+            else if (node is ANTLRv4Parser.RulesContext) { }
+            else if (node is ANTLRv4Parser.RuleSpecContext) { }
+            else if (node is ANTLRv4Parser.ParserRuleSpecContext) { }
+            else if (node is ANTLRv4Parser.ExceptionGroupContext) { }
+            else if (node is ANTLRv4Parser.ExceptionHandlerContext) { }
+            else if (node is ANTLRv4Parser.FinallyClauseContext) { }
+            else if (node is ANTLRv4Parser.RulePrequelContext) { }
+            else if (node is ANTLRv4Parser.RuleReturnsContext) { }
+            else if (node is ANTLRv4Parser.ThrowsSpecContext) { }
+            else if (node is ANTLRv4Parser.LocalsSpecContext) { }
+            else if (node is ANTLRv4Parser.RuleActionContext) { }
+            else if (node is ANTLRv4Parser.RuleModifiersContext) { }
+            else if (node is ANTLRv4Parser.RuleModifierContext) { }
+            else if (node is ANTLRv4Parser.RuleBlockContext n_rbc)
             {
-                var (tree, parser, lexer) = (pd.ParseTree, pd.Parser, pd.Lexer);
-                using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                var c = n_rbc.ruleAltList();
+                result.AddRange(ChaseAlts(c));
+            }
+            else if (node is ANTLRv4Parser.RuleAltListContext n_ralc)
+            {
+                var c = n_ralc.labeledAlt();
+                foreach (var a in c)
                 {
-                    org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
-                    var RHS = engine.parseExpression(
-                            @"//parserRuleSpec[RULE_REF/text() = '" + def.GetText() + @"']
-                            /ruleBlock
-                                //RULE_REF",
-                            new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
-                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as TerminalNodeImpl);
-                    return RHS;
+                    result.AddRange(ChaseAlts(a));
                 }
             }
-            else if (def.Parent is ANTLRv4Parser.LexerRuleSpecContext p2)
+            else if (node is ANTLRv4Parser.LabeledAltContext n_lac)
             {
-                var (tree, parser, lexer) = (pd.ParseTree, pd.Parser, pd.Lexer);
-                using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                var c = n_lac.alternative();
+                result.AddRange(ChaseAlts(c));
+            }
+            else if (node is ANTLRv4Parser.LexerRuleSpecContext) { }
+            else if (node is ANTLRv4Parser.LexerRuleBlockContext) { }
+            else if (node is ANTLRv4Parser.LexerAltListContext) { }
+            else if (node is ANTLRv4Parser.LexerAltContext) { }
+            else if (node is ANTLRv4Parser.LexerElementsContext) { }
+            else if (node is ANTLRv4Parser.LexerElementContext) { }
+            else if (node is ANTLRv4Parser.LabeledLexerElementContext) { }
+            else if (node is ANTLRv4Parser.LexerBlockContext) { }
+            else if (node is ANTLRv4Parser.LexerCommandsContext) { }
+            else if (node is ANTLRv4Parser.LexerCommandContext) { }
+            else if (node is ANTLRv4Parser.LexerCommandNameContext) { }
+            else if (node is ANTLRv4Parser.LexerCommandExprContext) { }
+            else if (node is ANTLRv4Parser.AltListContext n_alc)
+            {
+                var c = n_alc.alternative();
+                foreach (var a in c)
                 {
-                    org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
-                    var RHS = engine.parseExpression(
-                            @"//lexerRuleSpec[TOKEN_REF/text() = '" + def.GetText() + @"']
-                            /lexerRuleBlock
-                                //TOKEN_REF",
-                            new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
-                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as TerminalNodeImpl);
-                    return RHS;
+                    result.AddRange(ChaseAlts(a));
                 }
             }
-            return new List<TerminalNodeImpl>();
+            else if (node is ANTLRv4Parser.AlternativeContext n_ac)
+            {
+                var c = n_ac.element();
+                if (c != null)
+                {
+                    result.AddRange(ChaseAlts(c[0]));
+                }
+            }
+            else if (node is ANTLRv4Parser.ElementContext n_ec)
+            {
+                var le = n_ec.labeledElement();
+                if (le != null)
+                {
+                    result.AddRange(ChaseAlts(le));
+                    return result;
+                }
+                var a = n_ec.atom();
+                if (a != null)
+                {
+                    result.AddRange(ChaseAlts(a));
+                    return result;
+                }
+                var e = n_ec.ebnf();
+                if (e != null)
+                {
+                    result.AddRange(ChaseAlts(e));
+                    return result;
+                }
+            }
+            else if (node is ANTLRv4Parser.LabeledElementContext n_lec)
+            {
+                var a = n_lec.atom();
+                if (a != null)
+                {
+                    result.AddRange(ChaseAlts(a));
+                    return result;
+                }
+                var b = n_lec.block();
+                if (b != null)
+                {
+                    result.AddRange(ChaseAlts(b));
+                    return result;
+                }
+            }
+            else if (node is ANTLRv4Parser.EbnfContext n_ebnf_c)
+            {
+                var b = n_ebnf_c.block();
+                if (b != null)
+                {
+                    result.AddRange(ChaseAlts(b));
+                    return result;
+                }
+            }
+            else if (node is ANTLRv4Parser.BlockSuffixContext) { }
+            else if (node is ANTLRv4Parser.EbnfSuffixContext) { }
+            else if (node is ANTLRv4Parser.LexerAtomContext) { }
+            else if (node is ANTLRv4Parser.AtomContext n_atom_c)
+            {
+                var t = n_atom_c.terminal();
+                if (t != null)
+                {
+                    result.AddRange(ChaseAlts(t));
+                    return result;
+                }
+                var r = n_atom_c.ruleref();
+                if (r != null)
+                {
+                    result.AddRange(ChaseAlts(r));
+                    return result;
+                }
+            }
+            else if (node is ANTLRv4Parser.NotSetContext) { }
+            else if (node is ANTLRv4Parser.BlockSetContext) { }
+            else if (node is ANTLRv4Parser.SetElementContext) { }
+            else if (node is ANTLRv4Parser.BlockContext n_bc)
+            {
+                var altList = n_bc.altList();
+                result.AddRange(ChaseAlts(altList));
+            }
+            else if (node is ANTLRv4Parser.RulerefContext n_rrc)
+            {
+                var rr = n_rrc.RULE_REF();
+                result.Add(rr as TerminalNodeImpl);
+            }
+            else if (node is ANTLRv4Parser.CharacterRangeContext) { }
+            else if (node is ANTLRv4Parser.TerminalContext) { }
+            else if (node is ANTLRv4Parser.ElementOptionsContext) { }
+            else if (node is ANTLRv4Parser.ElementOptionContext) { }
+            else if (node is ANTLRv4Parser.IdentifierContext n_ic)
+            {
+                var rr = n_ic.RULE_REF();
+                result.Add(rr as TerminalNodeImpl);
+            }
+            else throw new Exception("Invalid case.");
+
+            return result;
         }
 
-        private static bool HasIndirectLeftRecursion(TerminalNodeImpl rule, Document document)
+        private static IEnumerable<TerminalNodeImpl> RHS(TerminalNodeImpl def, Dictionary<TerminalNodeImpl, List<TerminalNodeImpl>> cache)
         {
-            bool result = false;
+            cache.TryGetValue(def, out List<TerminalNodeImpl> value);
+            if (value != null) return value;
+            var result = new List<TerminalNodeImpl>();
+            if (def.Parent is ANTLRv4Parser.ParserRuleSpecContext p1)
+            {
+                // Gather all RULE_REF's in ruleBlock alts.
+                //var stack = new Stack<IParseTree>();
+                //stack.Push(p1.ruleBlock());
+                //while (stack.Any())
+                //{
+                //    var n = stack.Pop();
+                //    if (n is TerminalNodeImpl t)
+                //    {
+                //        result.Add(t);
+                //    }
+                //    else
+                //    {
+                //        for (int i = n.ChildCount -1; i >= 0; i--)
+                //        {
+                //            stack.Push(n.GetChild(i));
+                //        }
+                //    }
+                //}
+                result = ChaseAlts(p1.ruleBlock());
+            }
+            cache[def] = result;
+            return result;
+        }
+
+        private static List<string> HasIndirectLeftRecursion(Document document, IEnumerable<IParseTree> nodes = null)
+        {
             if (!(ParsingResultsFactory.Create(document) is ParsingResults pd_parser))
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
 
-            var defs = GetDef(rule, pd_parser);
+            var pr = ParsingResultsFactory.Create(document);
+            var aparser = pr.Parser;
+            var atree = pr.ParseTree;
+            List<TerminalNodeImpl> all_nodes;
+            using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(atree, aparser))
+            {
+                org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+                all_nodes = engine.parseExpression(
+                    @"//parserRuleSpec/RULE_REF",
+                        new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as TerminalNodeImpl).ToList();
+            }
 
             Digraph<Symtab.ISymbol> graph = new Digraph<Symtab.ISymbol>();
 
             // Get LHS defs and refs, then perform transitive closure of all uses, all rules and their symbols.
             HashSet<Symtab.ISymbol> visited = new HashSet<Symtab.ISymbol>();
             Stack<Symtab.ISymbol> stack = new Stack<Symtab.ISymbol>();
-            foreach (var def in defs) { stack.Push(def); }
+
+            foreach (var node in all_nodes)
+            {
+                var defs = GetDef(node, pd_parser);
+                foreach (var def in defs) { stack.Push(def); }
+            }
+            Dictionary<TerminalNodeImpl, List<TerminalNodeImpl>> cache = new Dictionary<TerminalNodeImpl, List<TerminalNodeImpl>>();
             while (stack.Any())
             {
                 var def = stack.Pop();
@@ -1896,43 +2077,47 @@
 
                 graph.AddVertex(def);
 
-                var rhs_symbols = RHS(lhs_term, pd);
-                foreach (var rhs_sym in rhs_symbols)
+                var rhs_symbols = RHS(lhs_term, cache);
+                // Only consider first rhs symbol for now.
+                if (rhs_symbols.Any())
                 {
-                    var more_defs = GetDef(rhs_sym, pd);
-                    foreach (Symtab.ISymbol def2 in more_defs)
+                    foreach (var rhs_sym in rhs_symbols)
                     {
-                        string def_file2 = def2.file;
-                        if (def_file2 == null)
-                            continue;
+                        var more_defs = GetDef(rhs_sym, pd);
+                        foreach (Symtab.ISymbol def2 in more_defs)
+                        {
+                            string def_file2 = def2.file;
+                            if (def_file2 == null)
+                                continue;
 
-                        Document doc2 = Workspaces.Workspace.Instance.FindDocument(def_file2);
-                        if (doc2 == null)
-                            continue;
+                            Document doc2 = Workspaces.Workspace.Instance.FindDocument(def_file2);
+                            if (doc2 == null)
+                                continue;
 
-                        if (!(ParsingResultsFactory.Create(doc2) is ParsingResults pd2))
-                            continue;
+                            if (!(ParsingResultsFactory.Create(doc2) is ParsingResults pd2))
+                                continue;
 
-                        var tree2 = pd2.ParseTree;
-                        if (tree2 == null)
-                            continue;
+                            var tree2 = pd2.ParseTree;
+                            if (tree2 == null)
+                                continue;
 
-                        var lhs2 = def2.Token;
-                        if (lhs2 == null)
-                            continue;
+                            var lhs2 = def2.Token;
+                            if (lhs2 == null)
+                                continue;
 
-                        TerminalNodeImpl lhs_term2 = TreeEdits.Find(lhs2, tree2);
-                        if (lhs_term2 == null)
-                            continue;
+                            TerminalNodeImpl lhs_term2 = TreeEdits.Find(lhs2, tree2);
+                            if (lhs_term2 == null)
+                                continue;
 
-                        if (!(lhs_term2.Parent is ANTLRv4Parser.ParserRuleSpecContext || lhs_term.Parent is ANTLRv4Parser.LexerRuleSpecContext))
-                            continue;
+                            if (!(lhs_term2.Parent is ANTLRv4Parser.ParserRuleSpecContext || lhs_term.Parent is ANTLRv4Parser.LexerRuleSpecContext))
+                                continue;
 
-                        graph.AddVertex(def2);
-                        DirectedEdge<Symtab.ISymbol> e = new DirectedEdge<Symtab.ISymbol>(def, def2);
-                        graph.AddEdge(e);
+                            graph.AddVertex(def2);
+                            DirectedEdge<Symtab.ISymbol> e = new DirectedEdge<Symtab.ISymbol>(def, def2);
+                            graph.AddEdge(e);
 
-                        stack.Push(def2);
+                            stack.Push(def2);
+                        }
                     }
                 }
             }
@@ -1942,11 +2127,35 @@
             List<Symtab.ISymbol> ordered = new List<Symtab.ISymbol>();
             IDictionary<Symtab.ISymbol, IEnumerable<Symtab.ISymbol>> sccs = tarjan.Compute();
 
-            foreach (var def in defs)
+            List<string> result = new List<string>();
+            if (nodes == null)
             {
-                var scc = sccs[def];
-                if (scc.Count() > 1)
-                    return true;
+                foreach (KeyValuePair<Symtab.ISymbol, IEnumerable<Symtab.ISymbol>> scc in sccs)
+                {
+                    if (scc.Value.Count() > 1)
+                    {
+                        var s = string.Join(" ", scc.Value.Select(t => t.Name).OrderBy(t => t));
+                        if (!result.Contains(s)) result.Add(s);
+                    }
+                }
+            }
+            else
+            {
+                foreach (var node in nodes)
+                {
+                    var defs = GetDef(node, pd_parser);
+
+                    foreach (var def in defs)
+                    {
+                        var scc = sccs[def];
+                        if (scc.Count() > 1)
+                        {
+                            StringBuilder sb = new StringBuilder();
+                            var s = string.Join(" ", scc.Select(t => t.Name).OrderBy(t => t));
+                            result.Add(def.Name + " => " + sb.ToString());
+                        }
+                    }
+                }
             }
 
             return result;
@@ -2599,9 +2808,9 @@
             return b + gnum.ToString();
         }
 
-        public static List<Tuple<string, string>> HasDirectRec(Document document, IEnumerable<IParseTree> nodes = null)
+        public static List<string> HasDirectRec(Document document, IEnumerable<IParseTree> nodes = null)
         {
-            List<Tuple<string, string>> result = new List<Tuple<string, string>>();
+            List<string> result = new List<string>();
             // Check if initial file is a grammar.
             if (!(ParsingResultsFactory.Create(document) is ParsingResults pd_parser))
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
@@ -2644,18 +2853,17 @@
                 bool right = HasDirectRightRecursion(node.Parent);
                 if (left || right)
                 {
-                    Tuple<string, string> t = new Tuple<string, string>(
-                        node.GetText(),
-                        ((left ? "left" : "") + " " + (right ? "right" : "")).Trim());
+                    string t = node.GetText() + " => " +
+                        ((left ? "left" : "") + " " + (right ? "right" : "")).Trim();
                     result.Add(t);
                 }
             }
             return result;
         }
 
-        public static List<Tuple<string, string>> HasIndirectRec(IEnumerable<IParseTree> nodes, string l_or_r, Document document)
+        public static List<string> HasIndirectRec(IEnumerable<IParseTree> nodes, string l_or_r, Document document)
         {
-            List<Tuple<string, string>> result = new List<Tuple<string, string>>();
+            List<string> result = new List<string>();
             // Check if initial file is a grammar.
             if (!(ParsingResultsFactory.Create(document) is ParsingResults pd_parser))
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
@@ -2669,37 +2877,7 @@
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
 
-            if (nodes != null)
-            {
-                foreach (var node in nodes)
-                {
-                    if (!(node is TerminalNodeImpl && node.Parent is ANTLRv4Parser.ParserRuleSpecContext
-                        || node is TerminalNodeImpl && node.Parent is ANTLRv4Parser.LexerRuleSpecContext))
-                        throw new LanguageServerException("Node for query must be the LHS symbol.");
-                }
-            }
-            else
-            {
-                var pr = ParsingResultsFactory.Create(document);
-                var aparser = pr.Parser;
-                var atree = pr.ParseTree;
-                using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(atree, aparser))
-                {
-                    org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
-                    nodes = engine.parseExpression(
-                        @"//parserRuleSpec/RULE_REF",
-                            new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
-                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree).ToList();
-                }
-            }
-
-            foreach (var node in nodes)
-            {
-                bool answer = l_or_r == "left" ? HasIndirectLeftRecursion(node as TerminalNodeImpl, document) : HasIndirectLeftRecursion(node as TerminalNodeImpl, document);
-                Tuple<string, string> t = new Tuple<string, string>(node.GetText(), answer.ToString());
-                result.Add(t);
-            }
-
+            result = HasIndirectLeftRecursion(document, nodes);
             return result;
         }
 
