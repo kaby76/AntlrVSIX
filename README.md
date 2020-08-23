@@ -231,5 +231,8 @@ See [this guide](PriorReleases.md).
 * Add WC3 EBNF.
 * Add ISO 14977 EBNF.
 * Add grammar diff, think about 3-way grammar merge.
+* Fix ["rup" doesn't work in some cases #81](https://github.com/kaby76/AntlrVSIX/issues/81)
+* Fix ["has dr" not working, slow as hell #82](https://github.com/kaby76/AntlrVSIX/issues/82)
+
 
 Any questions, email me at ken.domino <at> gmail.com
