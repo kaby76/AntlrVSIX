@@ -33,6 +33,8 @@
     <Antlr4 Include="BisonParser.g4">
       <Package>LanguageServer</Package>
     </Antlr4>
+    <Antlr4 Include="W3CebnfParser.g4" />
+    <Antlr4 Include="W3CebnfLexer.g4" />
   </ItemGroup>
 
   <ItemGroup>
