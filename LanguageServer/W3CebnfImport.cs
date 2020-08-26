@@ -119,7 +119,6 @@
                 }
             }
 
-
             StringBuilder sb = new StringBuilder();
             TreeEdits.Reconstruct(sb, tree, text_before);
             var new_code = sb.ToString();
