@@ -14,6 +14,8 @@
                 _antlr = System.IO.Path.GetFileNameWithoutExtension(Ffn) + ".g4";
             if (System.IO.Path.GetFileName(Ffn).EndsWith(".g"))
                 _antlr = System.IO.Path.GetFileNameWithoutExtension(Ffn) + ".g4";
+            if (System.IO.Path.GetFileName(Ffn).EndsWith(".ebnf"))
+                _antlr = System.IO.Path.GetFileNameWithoutExtension(Ffn) + ".g4";
         }
         //public string FFN { get { return _ffn; } set { _ffn = value; } }
         public string Original { get => _bison; set => _bison = value; }

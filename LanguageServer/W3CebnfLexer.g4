@@ -19,7 +19,7 @@ HEX : Hex ;
 STRING : '"' .*? '"' | '\'' .*? '\'' ;
 SET : '[' '^'? ( Hex | . )+? ']' ; 
 SYMBOL : Symbol ;
-WS : Ws -> skip ;
+WS : Ws -> channel(OFF_CHANNEL) ;
 fragment Symbol : [a-zA-Z0-9_.\-] [a-zA-Z0-9_.\-]* ;
 fragment Hex : '#x' [0-9a-fA-F]+ ;
 fragment Ws : [ \t\r\n]+ ;

@@ -17,6 +17,11 @@
                     var imp = new BisonImport();
                     imp.Try(f, input, ref results);
                 }
+                else if (f.EndsWith(".ebnf"))
+                {
+                    var imp = new W3CebnfImport();
+                    imp.Try(f, input, ref results);
+                }
                 else if (f.EndsWith(".g2"))
                 {
                     var imp = new Antlr2Import();

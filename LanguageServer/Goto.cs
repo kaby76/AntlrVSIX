@@ -18,6 +18,7 @@
                 || main_suffix == ".g3"
                 || main_suffix == ".g2"
                 || main_suffix == ".g"
+                || main_suffix == ".ebnf"
                 ;
             bool in_cs = main_suffix == ".cs";
 

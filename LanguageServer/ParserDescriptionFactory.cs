@@ -34,7 +34,13 @@
                 else if (parse_as == "antlr3") result = new Antlr3ParsingResults(document);
                 else if (parse_as == "antlr4") result = new Antlr4ParsingResults(document);
                 else if (parse_as == "bison") result = new BisonParsingResults(document);
+                else if (parse_as == "ebnf") result = new W3CebnfParsingResults(document);
                 else result = null;
+            }
+            else if (document.FullPath.EndsWith(".ebnf"))
+            {
+                document.ParseAs = "ebnf";
+                result = new W3CebnfParsingResults(document);
             }
             else if (document.FullPath.EndsWith(".g2"))
             {

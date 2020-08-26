@@ -3,16 +3,16 @@
 
 parser grammar W3CebnfParser;
 
-options { tokenVocab = W3CebnfLexer; }
+options { tokenVocab = W3CebnfLexer; contextSuperClass=AttributedParseTreeNode; }
 
 prods : prod+ EOF ;
 prod : lhs PPEQ rhs ;
-lhs : SYMBOL ;
+lhs : symbol ;
 rhs : alts ;
 symbol : SYMBOL ;
 alts : alt ( VP alt )* ;
 alt : element* ;
 element : block ( M block )*  ;
 block : atom suffix? ;
-atom : SYMBOL | SET | STRING | OP alts CP ;
+atom : symbol | SET | STRING | OP alts CP ;
 suffix : Q Q? | S Q? | P Q? ;

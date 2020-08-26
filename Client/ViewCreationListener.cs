@@ -35,6 +35,7 @@
                     || Path.GetExtension(ffn) == ".g3"
                     || Path.GetExtension(ffn) == ".g2"
                     || Path.GetExtension(ffn) == ".g"
+                    || Path.GetExtension(ffn) == ".ebnf"
                     || Path.GetExtension(ffn) == ".y")) return;
                 if (!Options.Option.GetBoolean("OverrideAntlrPluggins")) return;
                 IContentType content_type = buffer.ContentType;
