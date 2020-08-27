@@ -37,7 +37,7 @@
             }
 
             // Get list of tokens. Convert this to a list of capitalized names.
-            Dictionary<string, Tuple<string, string>> terminals = new Dictionary<string, Tuple<string, string>>();
+            Dictionary<string, string> terminals = new Dictionary<string, string>();
             Dictionary<string, string> nonterminals = new Dictionary<string, string>();
             List<Tuple<string, List<List<string>>>> rules = new List<Tuple<string, List<List<string>>>>();
 
@@ -55,40 +55,10 @@
                 Antlr4.Runtime.Tree.IParseTree parent;
                 foreach (var token in nodes)
                 {
-                    for (parent = token; parent != null; parent = parent.Parent)
-                    {
-                        if (parent is BisonParser.Token_declsContext)
-                        {
-                            BisonParser.Token_declsContext token_decls = parent as BisonParser.Token_declsContext;
-                            int count = token_decls.ChildCount;
-                            if (count == 1)
-                            {
-                                string tag = "";
-                                string tok = token.GetText();
-                                string cap_tok = tok.Length == 1 ? char.ToUpper(tok[0]).ToString() :
-                                    (char.ToUpper(tok[0]) + tok.Substring(1));
-                                terminals.Add(tok, new Tuple<string, string>(tag, cap_tok));
-                            }
-                            else if (count == 2)
-                            {
-                                string tag = parent.GetChild(0).GetText();
-                                tag = tag.Replace("<", "").Replace(">", "");
-                                string tok = token.GetText();
-                                string cap_tok = tok.Length == 1 ? char.ToUpper(tok[0]).ToString() :
-                                    (char.ToUpper(tok[0]) + tok.Substring(1));
-                                terminals.Add(tok, new Tuple<string, string>(tag, cap_tok));
-                            }
-                            else if (count == 3)
-                            {
-                                string tag = parent.GetChild(1).GetText();
-                                tag = tag.Replace("<", "").Replace(">", "");
-                                string tok = token.GetText();
-                                string cap_tok = tok.Length == 1 ? char.ToUpper(tok[0]).ToString() :
-                                    (char.ToUpper(tok[0]) + tok.Substring(1));
-                                terminals.Add(tok, new Tuple<string, string>(tag, cap_tok));
-                            }
-                        }
-                    }
+                    string tok = token.GetText();
+                    string cap_tok = tok.Length == 1 ? char.ToUpper(tok[0]).ToString() :
+                        (char.ToUpper(tok[0]) + tok.Substring(1));
+                    terminals.Add(tok, cap_tok);
                 }
             }
 
@@ -107,6 +77,9 @@
                 {
                     var r = rule.AntlrIParseTree;
                     var lhs = r.GetChild(0).GetText();
+                    string cap_tok = lhs.Length == 1 ? char.ToLower(lhs[0]).ToString() :
+                        (char.ToLower(lhs[0]) + lhs.Substring(1));
+                    nonterminals[lhs] = cap_tok;
                     var rhs = new List<List<string>>();
                     var rhses = engine.parseExpression(
                             @".//rhses_1/rhs",
@@ -130,7 +103,6 @@
                     rules.Add(new Tuple<string, List<List<string>>>(lhs, rhs));
                 }
             }
-
 
             // First, collect information about the grammar.
   //          BisonGrammarListener listener = new BisonGrammarListener();
@@ -167,11 +139,10 @@
                             }
                             // RHS symbol is not a non-terminal and not a %token terminal.
                             // Enter it as a terminal.
-                            string tag = "";
                             string tok = c;
                             string cap_tok = tok.Length == 1 ? char.ToUpper(tok[0]).ToString() :
                                 (char.ToUpper(tok[0]) + tok.Substring(1));
-                            terminals.Add(tok, new Tuple<string, string>(tag, cap_tok));
+                            terminals.Add(tok, cap_tok);
                             // Note that in the error list.
                             errors.AppendLine("Symbol " + c + " not declared, assuming it is a terminal.");
                         }
@@ -214,6 +185,8 @@
             {
                 string lhs = r.Item1;
                 lhs = nonterminals[lhs];
+                nonterminals.TryGetValue(lhs, out string nlhs);
+                if (nlhs != null && nlhs != "") lhs = nlhs;
                 sb.Append(lhs);
                 List<List<string>> rhs = r.Item2;
                 bool first = true;
@@ -224,7 +197,7 @@
                     foreach (string c in s)
                     {
                         var re = c;
-                        if (terminals.ContainsKey(re)) re = terminals[re].Item2;
+                        if (terminals.ContainsKey(re)) re = terminals[re];
                         else if (nonterminals.ContainsKey(re)) re = nonterminals[re];
                         sb.Append(" " + re);
                     }

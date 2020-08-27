@@ -164,18 +164,11 @@ nterm_decls
 
 // A non empty list of possibly tagged symbols for %token or %nterm.
 
-token_decls
-    : token_decl_1
-    | TAG token_decl_1
-    | token_decls TAG token_decl_1
-    ;
+token_decls : ( | TAG ) token_decl_1 ( TAG token_decl_1 )* ;
 
 // One or more symbol declarations for %token or %nterm.
 
-token_decl_1
-    : token_decl
-    | token_decl_1 token_decl
-    ;
+token_decl_1 : token_decl token_decl* ;
   
 // One symbol declaration for %token or %nterm.
 

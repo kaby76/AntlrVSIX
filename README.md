@@ -1,7 +1,7 @@
 # AntlrVSIX
 
 AntlrVSIX is a tool to support editing, analysis, refactoring,
-and conversion of Antlr2, Antlr3, Antlr4, and Bison grammars. It contains
+and conversion of Antlr2, Antlr3, Antlr4, Bison and W3C EBNF grammars. It contains
 an extension for Visual Studio 2019 and a stand-alone command-line tool
 known as [Trash](doc/Trash.md) for editing grammar files directly without
 Visual Studio, runnable on Windows or Linux.
@@ -28,6 +28,7 @@ analysis, refactoring, and conversion.
 | Antlr3 | .g3 | Basic LSP services (tagging, go to def, find all refs, rename, etc.); conversion to Antlr4 |
 | Antlr2 | .g2 | Basic LSP services (tagging, go to def, find all refs, rename, etc.); conversion to Antlr4 |
 | Bison | .y | Basic LSP services (tagging, go to def, find all refs, rename, etc.); conversion to Antlr4 |
+| W3C EBNF | .ebnf | Basic LSP services (tagging, go to def, find all refs, rename, etc.); conversion to Antlr4 |
 
 # Installation
 
@@ -234,5 +235,17 @@ See [this guide](PriorReleases.md).
 * Fix ["rup" doesn't work in some cases #81](https://github.com/kaby76/AntlrVSIX/issues/81)
 * Fix ["has dr" not working, slow as hell #82](https://github.com/kaby76/AntlrVSIX/issues/82)
 
+## Planned for v9
+
+* Add VS Code client.
+
+## Planned for v10
+
+* Add AST for grammars. Rewrite all with ASTs for syntax-independent code.
+
+## Planned for v11
+
+* Add flexible parser to read any grammar.
+* Rebrand.
 
 Any questions, email me at ken.domino <at> gmail.com
