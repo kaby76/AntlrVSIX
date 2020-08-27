@@ -6392,7 +6392,7 @@
             //    return !(lhs == rhs);
             //}
         }
-        public static Dictionary<string, string> Unify(List<IParseTree> nodes, Document document)
+        public static Dictionary<string, string> Group(List<IParseTree> nodes, Document document)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
@@ -6779,5 +6779,12 @@
             }
             return result;
         }
+
+        public static Dictionary<string, string> Ungroup(List<IParseTree> nodes, Document doc)
+        {
+            throw new NotImplementedException();
+        }
+
+
     }
 }
