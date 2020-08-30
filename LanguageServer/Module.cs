@@ -1,5 +1,6 @@
 ﻿namespace LanguageServer
 {
+    using LoggerNs;
     using Algorithms;
     using Antlr4.Runtime.Tree;
     using Microsoft.CodeAnalysis;

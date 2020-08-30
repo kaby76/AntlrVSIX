@@ -4,6 +4,7 @@
     using System;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
+    using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -22,11 +23,49 @@
             //TimeSpan delay = new TimeSpan(0, 0, 0, 20);
             //Console.Error.WriteLine("Waiting " + delay + " seconds...");
             //Thread.Sleep((int)delay.TotalMilliseconds);
-            Console.Error.WriteLine("Starting");
+            LoggerNs.Logger.Log.WriteLine("Starting");
             Program program = new Program();
 #pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
             program.MainAsync(args).GetAwaiter().GetResult();
 #pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
+        }
+
+        class Dup : Stream
+        {
+            public override bool CanRead => throw new NotImplementedException();
+
+            public override bool CanSeek => throw new NotImplementedException();
+
+            public override bool CanWrite => throw new NotImplementedException();
+
+            public override long Length => throw new NotImplementedException();
+
+            public override long Position { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+            public override void Flush()
+            {
+                throw new NotImplementedException();
+            }
+
+            public override int Read(byte[] buffer, int offset, int count)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override long Seek(long offset, SeekOrigin origin)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void SetLength(long value)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void Write(byte[] buffer, int offset, int count)
+            {
+                throw new NotImplementedException();
+            }
         }
 
 #pragma warning disable IDE0060 // Remove unused parameter
@@ -37,6 +76,8 @@
         {
             System.IO.Stream stdin = Console.OpenStandardInput();
             System.IO.Stream stdout = Console.OpenStandardOutput();
+            stdin = new LspTools.LspHelpers.EchoStream(stdin, Console.OpenStandardError(),
+                    LspTools.LspHelpers.EchoStream.StreamOwnership.OwnNone);
             languageServer = new LSPServer(stdout, stdin);
             languageServer.Disconnected += OnDisconnected;
             languageServer.PropertyChanged += OnLanguageServerPropertyChanged;

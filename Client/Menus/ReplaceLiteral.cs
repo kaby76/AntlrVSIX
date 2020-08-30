@@ -1,11 +1,10 @@
 ﻿namespace LspAntlr
 {
+    using LoggerNs;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text;
-    using Microsoft.VisualStudio.Text.Editor;
     using Microsoft.VisualStudio.TextManager.Interop;
     using System;
-    using System.Collections.Generic;
     using System.ComponentModel.Design;
 
     internal class ReplaceLiteral

@@ -10,16 +10,29 @@
 		"url": "https://github.com/Microsoft/vscode-extension-samples"
 	},
 	"engines": {
-		"vscode": "^1.33.0"
+		"vscode": "^1.41.0"
 	},
 	"scripts": {
-		"update-vscode": "vscode-install",
-		"postinstall": "vscode-install"
+		"vscode:prepublish": "tsc -p ./",
+		"compile": "tsc -watch -p ./"
 	},
 	"dependencies": {
-		"vscode-languageclient": "^5.2.1"
+		"abort-controller": "^3.0.0",
+		"jsonc-parser": "^2.1.0",
+		"vscode-languageclient": "6.1.0",
+		"vscode-languageserver-types": "^3.15.1",
+		"@clangd/install": "0.1.3"
 	},
 	"devDependencies": {
-		"vscode": "^1.1.35"
+		"@types/glob": "^7.1.1",
+		"@types/mocha": "^7.0.2",
+		"@types/node": "^6.0.40",
+		"@types/vscode": "1.41.*",
+		"clang-format": "1.4.0",
+		"glob": "^7.1.4",
+		"mocha": "^7.1.0",
+		"typescript": "^3.8.3",
+		"vsce": "^1.75.0",
+		"vscode-test": "^1.3.0"
 	}
 }

@@ -1,5 +1,6 @@
 ﻿namespace LspAntlr
 {
+    using LoggerNs;
     using LanguageServer;
     using Microsoft.VisualStudio.ComponentModelHost;
     using Microsoft.VisualStudio.Editor;

@@ -1,19 +1,22 @@
-﻿namespace Logger
+﻿namespace LoggerNs
 {
     using System;
     using System.IO;
     using System.Net.Http;
+    using System.Text;
     using System.Threading;
 
-    public class Log
+
+    public class LogTextWriter : TextWriter
     {
+        public override Encoding Encoding => throw new NotImplementedException();
         private static readonly string home = System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile);
         private static readonly ReaderWriterLockSlim cacheLock = new ReaderWriterLockSlim();
         private static bool done = false;
 
         // This method must only be called from the client so multiple instances of the
         // server doesn't blow away the file after the client already had.
-        public static void CleanUpLogFile()
+        public void CleanUpLogFile()
         {
             if (done) return;
             done = true;
@@ -36,7 +39,26 @@
             }
         }
 
-        public static void WriteData(string message)
+        public override void Write(string message)
+        {
+            var log = home
+               + System.IO.Path.DirectorySeparatorChar
+               + ".antlrlog";
+            cacheLock.EnterWriteLock();
+            try
+            {
+                using (StreamWriter w = File.AppendText(log))
+                {
+                    w.Write(message);
+                }
+            }
+            finally
+            {
+                cacheLock.ExitWriteLock();
+            }
+        }
+
+        public override void WriteLine(string message)
         {
             var log = home
                + System.IO.Path.DirectorySeparatorChar
@@ -55,9 +77,9 @@
             }
         }
 
-        public static void Notify(string message)
+        public void Notify(string message)
         {
-            WriteData(message);
+            WriteLine(message);
             bool options = Options.Option.GetBoolean("OptInLogging");
             if (options)
             {
@@ -71,5 +93,11 @@
                 }
             }
         }
+
+    }
+
+    public class Logger
+    {
+        public static LogTextWriter Log { get; set; } = new LogTextWriter();
     }
 }

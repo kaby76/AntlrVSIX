@@ -2,6 +2,7 @@
 
 namespace LspAntlr
 {
+    using LoggerNs;
     using LanguageServer;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text;

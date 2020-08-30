@@ -1,5 +1,6 @@
 ﻿namespace LspAntlr
 {
+    using LoggerNs;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.TextManager.Interop;

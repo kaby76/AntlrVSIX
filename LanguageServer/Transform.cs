@@ -6392,6 +6392,7 @@
             //    return !(lhs == rhs);
             //}
         }
+
         public static Dictionary<string, string> Group(List<IParseTree> nodes, Document document)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
@@ -6780,8 +6781,48 @@
             return result;
         }
 
-        public static Dictionary<string, string> Ungroup(List<IParseTree> nodes, Document doc)
+        public static Dictionary<string, string> Ungroup(List<IParseTree> nodes, Document document)
         {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+
+            // Check if initial file is a grammar.
+            if (!(ParsingResultsFactory.Create(document) is ParsingResults pd_parser))
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            ExtractGrammarType egt = new ExtractGrammarType();
+            ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
+            bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
+                              || egt.Type == ExtractGrammarType.GrammarType.Combined
+                              || egt.Type == ExtractGrammarType.GrammarType.Lexer;
+            if (!is_grammar)
+            {
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            }
+
+            if (nodes != null)
+            {
+                foreach (var n in nodes)
+                {
+                    if (!(n is ANTLRv4Parser.BlockContext))
+                        throw new Exception("Node isn't an Antlr4 BlockContext type");
+                }
+            }
+
+            // Get all intertoken text immediately for source reconstruction.
+            var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
+
+            // Get this alt.
+            foreach (var n in nodes)
+            {
+                IParseTree alt = n;
+                for (; alt != null; alt = alt.Parent)
+                {
+                    if (alt as ANTLRv4Parser.LabeledAltContext != null) break;
+                }
+                if (alt == null) continue;
+                // We are going to nuke alt and replace it with two new alts.
+                var ruleAltList = alt.Parent;
+            }
+
             throw new NotImplementedException();
         }
 

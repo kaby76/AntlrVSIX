@@ -56,74 +56,27 @@ class FileStatus {
  *  your extension is activated the very first time the command is executed
  */
 export function activate(context: vscode.ExtensionContext) {
-    const syncFileEvents = getConfig<boolean>('syncFileEvents', true);
-    const extPath = vscode.extensions.getExtension("KenDomino.LspAntlr").extensionPath;
-    const antlr: vscodelc.Executable = {
-        command: `${extPath}/server/net472/Server.exe`,
-        args: []
+  
+    const server: vscodelc.Executable = {
+        command: `C:/Users/kenne/Documents/AntlrVSIX2/Server/bin/Debug/netcoreapp3.1/Server.exe`,
+        args: [],
+        options: {shell: false, detached: true, windowsHide: false }
     };
-    const traceFile = getConfig<string>('trace');
-    if (!!traceFile) {
-        const trace = { CLANGD_TRACE: traceFile };
-        antlr.options = { env: { ...process.env, ...trace } };
-    }
-    const serverOptions: vscodelc.ServerOptions = antlr;
 
-    // When opening files of all other
-    // extensions, VSCode would load antlr automatically. This is achieved by
-    // having a corresponding 'onLanguage:...' activation event in package.json.
-    const clientOptions: vscodelc.LanguageClientOptions = {
-        // Register the server for antlr
+    const serverOptions: vscodelc.ServerOptions = server;
+
+    let clientOptions: vscodelc.LanguageClientOptions = {
+        // Register the server for plain text documents
         documentSelector: [
-            { scheme: 'file', language: 'g4' }
-        ],
-        synchronize: !syncFileEvents ? undefined : {
-        // FIXME: send sync file events when antlr provides implemenatations.
-        },
-        initializationOptions: { antlrFileStatus: true },
-        // Do not switch to output window when antlr returns output
-        revealOutputChannelOn: vscodelc.RevealOutputChannelOn.Never
-    };
+            {scheme: 'file', language: 'antlr2'},
+            {scheme: 'file', language: 'antlr3'},
+            {scheme: 'file', language: 'antlr4'},
+            {scheme: 'file', language: 'bison'},
+            {scheme: 'file', language: 'ebnf'}, 
+        ]
+      };
 
-    const antlrClient = new vscodelc.LanguageClient('Antlr Language Server',serverOptions, clientOptions);
+    const client = new vscodelc.LanguageClient('Antlr Language Server', serverOptions, clientOptions);
     console.log('Antlr Language Server is now active!');
-    context.subscriptions.push(antlrClient.start());
-    context.subscriptions.push(vscode.commands.registerCommand(
-        'LspAntlr.switchheadersource', async () => {
-            const uri =
-                vscode.Uri.file(vscode.window.activeTextEditor.document.fileName);
-            if (!uri) {
-                return;
-            }
-            const docIdentifier =
-                vscodelc.TextDocumentIdentifier.create(uri.toString());
-            const sourceUri = await antlrClient.sendRequest(
-                SwitchSourceHeaderRequest.type, docIdentifier);
-            if (!sourceUri) {
-                return;
-            }
-            const doc = await vscode.workspace.openTextDocument(
-                vscode.Uri.parse(sourceUri));
-            vscode.window.showTextDocument(doc);
-        }));
-    const status = new FileStatus();
-    context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(() => {
-        status.updateStatus();
-    }));
-    antlrClient.onDidChangeState(
-        ({ newState }) => {
-            if (newState == vscodelc.State.Running) {
-                // antlr starts or restarts after crash.
-                antlrClient.onNotification(
-                    'textDocument/antlr.fileStatus',
-                    (fileStatus) => { status.onFileUpdated(fileStatus); });
-            } else if (newState == vscodelc.State.Stopped) {
-                // Clear all cached statuses when antlr crashes.
-                status.clear();
-            }
-        })
-    // An empty place holder for the activate command, otherwise we'll get an
-    // "command is not registered" error.
-    context.subscriptions.push(vscode.commands.registerCommand(
-            'LspAntlr.activate', async () => {}));
+    client.start();
 }

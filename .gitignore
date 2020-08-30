@@ -69,3 +69,6 @@ LanguageServer/BisonParserBaseListener.cs
 LanguageServer/BisonParserBaseVisitor.cs
 LanguageServer/BisonParserListener.cs
 LanguageServer/BisonParserVisitor.cs
+VSCode.LspAntlr/server/netcoreapp3.1/
+VSCode.LspAntlr/package-lock.json
+VSCode.LspAntlr/client/package-lock.json

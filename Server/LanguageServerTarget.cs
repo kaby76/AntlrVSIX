@@ -1,5 +1,6 @@
 ﻿namespace Server
 {
+    using LoggerNs;
     using LanguageServer;
     using Microsoft.VisualStudio.LanguageServer.Protocol;
     using Newtonsoft.Json;
@@ -140,8 +141,8 @@
         {
             if (trace)
             {
-                System.Console.Error.WriteLine("<-- Initialize");
-                System.Console.Error.WriteLine(arg.ToString());
+                Logger.Log.WriteLine("<-- Initialize");
+                Logger.Log.WriteLine(arg.ToString());
             }
             ServerCapabilities capabilities = new ServerCapabilities
             {
@@ -211,7 +212,7 @@
             string json = JsonConvert.SerializeObject(result);
             if (trace)
             {
-                System.Console.Error.WriteLine("--> " + json);
+                Logger.Log.WriteLine("--> " + json);
             }
             return result;
         }
@@ -223,8 +224,8 @@
             {
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- Initialized");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    Logger.Log.WriteLine("<-- Initialized");
+                    Logger.Log.WriteLine(arg.ToString());
                 }
             }
             catch (Exception)
@@ -238,7 +239,7 @@
             {
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- Shutdown");
+                    Logger.Log.WriteLine("<-- Shutdown");
                 }
             }
             catch (Exception)
@@ -253,7 +254,7 @@
             {
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- Exit");
+                    Logger.Log.WriteLine("<-- Exit");
                 }
                 server.Exit();
             }
@@ -270,8 +271,8 @@
             {
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- WorkspaceDidChangeConfiguration");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    Logger.Log.WriteLine("<-- WorkspaceDidChangeConfiguration");
+                    Logger.Log.WriteLine(arg.ToString());
                 }
                 //var parameter = arg.ToObject<DidChangeConfigurationParams>();
                 //this.server.SendSettings(parameter);
@@ -287,8 +288,8 @@
             {
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- WorkspaceDidChangeWatchedFiles");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    Logger.Log.WriteLine("<-- WorkspaceDidChangeWatchedFiles");
+                    Logger.Log.WriteLine(arg.ToString());
                 }
             }
             catch (Exception)
@@ -302,8 +303,8 @@
             {
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- WorkspaceSymbol");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    Logger.Log.WriteLine("<-- WorkspaceSymbol");
+                    Logger.Log.WriteLine(arg.ToString());
                 }
             }
             catch (Exception)
@@ -318,8 +319,8 @@
             {
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- WorkspaceExecuteCommand");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    Logger.Log.WriteLine("<-- WorkspaceExecuteCommand");
+                    Logger.Log.WriteLine(arg.ToString());
                 }
             }
             catch (Exception)
@@ -332,8 +333,8 @@
         {
             if (trace)
             {
-                System.Console.Error.WriteLine("<-- WorkspaceApplyEdit");
-                System.Console.Error.WriteLine(arg.ToString());
+                Logger.Log.WriteLine("<-- WorkspaceApplyEdit");
+                Logger.Log.WriteLine(arg.ToString());
             }
             return null;
         }
@@ -345,8 +346,8 @@
         {
             if (trace)
             {
-                System.Console.Error.WriteLine("<-- TextDocumentDidOpen");
-                System.Console.Error.WriteLine(arg.ToString());
+                Logger.Log.WriteLine("<-- TextDocumentDidOpen");
+                Logger.Log.WriteLine(arg.ToString());
             }
             DidOpenTextDocumentParams request = arg.ToObject<DidOpenTextDocumentParams>();
             _ = CheckDoc(request.TextDocument.Uri);
@@ -357,8 +358,8 @@
         {
             if (trace)
             {
-                System.Console.Error.WriteLine("<-- TextDocumentDidChange");
-                System.Console.Error.WriteLine(arg.ToString());
+                Logger.Log.WriteLine("<-- TextDocumentDidChange");
+                Logger.Log.WriteLine(arg.ToString());
             }
             DidChangeTextDocumentParams request = arg.ToObject<DidChangeTextDocumentParams>();
             Document document = CheckDoc(request.TextDocument.Uri);
@@ -408,8 +409,8 @@
         {
             if (trace)
             {
-                System.Console.Error.WriteLine("<-- TextDocumentWillSave");
-                System.Console.Error.WriteLine(arg.ToString());
+                Logger.Log.WriteLine("<-- TextDocumentWillSave");
+                Logger.Log.WriteLine(arg.ToString());
             }
             // Nothing to do--who cares because the server does not perform a save.
         }
@@ -419,8 +420,8 @@
         {
             if (trace)
             {
-                System.Console.Error.WriteLine("<-- TextDocumentWillSaveWaitUntil");
-                System.Console.Error.WriteLine(arg.ToString());
+                Logger.Log.WriteLine("<-- TextDocumentWillSaveWaitUntil");
+                Logger.Log.WriteLine(arg.ToString());
             }
             // Nothing to do--who cares because the server does not perform a save, and
             // the server doesn't manufacture edit requests out of thin air.
@@ -432,8 +433,8 @@
         {
             if (trace)
             {
-                System.Console.Error.WriteLine("<-- TextDocumentDidSave");
-                System.Console.Error.WriteLine(arg.ToString());
+                Logger.Log.WriteLine("<-- TextDocumentDidSave");
+                Logger.Log.WriteLine(arg.ToString());
             }
             // Nothing to do--who cares because the server does not perform a save.
         }
@@ -443,8 +444,8 @@
         {
             if (trace)
             {
-                System.Console.Error.WriteLine("<-- TextDocumentDidClose");
-                System.Console.Error.WriteLine(arg.ToString());
+                Logger.Log.WriteLine("<-- TextDocumentDidClose");
+                Logger.Log.WriteLine(arg.ToString());
             }
             // Nothing to do--who cares.
         }
@@ -456,8 +457,8 @@
         {
             if (trace)
             {
-                System.Console.Error.WriteLine("<-- TextDocumentPublishDiagnostics");
-                System.Console.Error.WriteLine(arg.ToString());
+                Logger.Log.WriteLine("<-- TextDocumentPublishDiagnostics");
+                Logger.Log.WriteLine(arg.ToString());
             }
         }
 
@@ -470,8 +471,8 @@
             {
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- TextDocumentCompletion");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    Logger.Log.WriteLine("<-- TextDocumentCompletion");
+                    Logger.Log.WriteLine(arg.ToString());
                 }
                 CompletionParams request = arg.ToObject<CompletionParams>();
                 Document document = CheckDoc(request.TextDocument.Uri);
@@ -482,9 +483,9 @@
                 int char_index = new LanguageServer.Module().GetIndex(line, character, document);
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("position index = " + char_index);
+                    Logger.Log.WriteLine("position index = " + char_index);
                     (int, int) back = new LanguageServer.Module().GetLineColumn(char_index, document);
-                    System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
+                    Logger.Log.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
                 }
                 List<string> res = new LanguageServer.Module().Completion(char_index, document);
                 List<CompletionItem> items = new List<CompletionItem>();
@@ -511,8 +512,8 @@
         {
             if (trace)
             {
-                System.Console.Error.WriteLine("<-- TextDocumentCompletionResolve");
-                System.Console.Error.WriteLine(arg.ToString());
+                Logger.Log.WriteLine("<-- TextDocumentCompletionResolve");
+                Logger.Log.WriteLine(arg.ToString());
             }
             return null;
         }
@@ -559,8 +560,8 @@
             {
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- TextDocumentHover");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    Logger.Log.WriteLine("<-- TextDocumentHover");
+                    Logger.Log.WriteLine(arg.ToString());
                 }
                 TextDocumentPositionParams request = arg.ToObject<TextDocumentPositionParams>();
                 Document document = CheckDoc(request.TextDocument.Uri);
@@ -570,9 +571,9 @@
                 int index = new LanguageServer.Module().GetIndex(line, character, document);
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("position index = " + index);
+                    Logger.Log.WriteLine("position index = " + index);
                     (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
-                    System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
+                    Logger.Log.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
                 }
                 QuickInfo quick_info = new LanguageServer.Module().GetQuickInfo(index, document);
                 if (quick_info == null)
@@ -597,7 +598,7 @@
                     Start = new Position(lcs.Item1, lcs.Item2),
                     End = new Position(lce.Item1, lce.Item2)
                 };
-                System.Console.Error.WriteLine("returning " + quick_info.Display);
+                Logger.Log.WriteLine("returning " + quick_info.Display);
             }
             catch (Exception)
             { }
@@ -611,8 +612,8 @@
             {
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- TextDocumentSignatureHelp");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    Logger.Log.WriteLine("<-- TextDocumentSignatureHelp");
+                    Logger.Log.WriteLine(arg.ToString());
                 }
             }
             catch (Exception)
@@ -631,8 +632,8 @@
             {
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- TextDocumentDefinition");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    Logger.Log.WriteLine("<-- TextDocumentDefinition");
+                    Logger.Log.WriteLine(arg.ToString());
                 }
                 TextDocumentPositionParams request = arg.ToObject<TextDocumentPositionParams>();
                 Document document = CheckDoc(request.TextDocument.Uri);
@@ -642,9 +643,9 @@
                 int index = new LanguageServer.Module().GetIndex(line, character, document);
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("position index = " + index);
+                    Logger.Log.WriteLine("position index = " + index);
                     (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
-                    System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
+                    Logger.Log.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
                 }
                 IList<Location> found = new LanguageServer.Module().FindDefs(index, document);
                 List<object> locations = new List<object>();
@@ -677,8 +678,8 @@
             {
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- TextDocumentTypeDefinitionName");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    Logger.Log.WriteLine("<-- TextDocumentTypeDefinitionName");
+                    Logger.Log.WriteLine(arg.ToString());
                 }
                 TextDocumentPositionParams request = arg.ToObject<TextDocumentPositionParams>();
                 Document document = CheckDoc(request.TextDocument.Uri);
@@ -688,9 +689,9 @@
                 int index = new LanguageServer.Module().GetIndex(line, character, document);
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("position index = " + index);
+                    Logger.Log.WriteLine("position index = " + index);
                     (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
-                    System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
+                    Logger.Log.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
                 }
                 IList<Location> found = new LanguageServer.Module().FindDefs(index, document);
                 List<object> locations = new List<object>();
@@ -723,8 +724,8 @@
             {
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- TextDocumentImplementation");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    Logger.Log.WriteLine("<-- TextDocumentImplementation");
+                    Logger.Log.WriteLine(arg.ToString());
                 }
                 TextDocumentPositionParams request = arg.ToObject<TextDocumentPositionParams>();
                 Document document = CheckDoc(request.TextDocument.Uri);
@@ -734,9 +735,9 @@
                 int index = new LanguageServer.Module().GetIndex(line, character, document);
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("position index = " + index);
+                    Logger.Log.WriteLine("position index = " + index);
                     (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
-                    System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
+                    Logger.Log.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
                 }
                 IList<Location> found = new LanguageServer.Module().FindDefs(index, document);
                 List<object> locations = new List<object>();
@@ -769,8 +770,8 @@
             {
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- TextDocumentReferences");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    Logger.Log.WriteLine("<-- TextDocumentReferences");
+                    Logger.Log.WriteLine(arg.ToString());
                 }
                 TextDocumentPositionParams request = arg.ToObject<TextDocumentPositionParams>();
                 Document document = CheckDoc(request.TextDocument.Uri);
@@ -780,9 +781,9 @@
                 int index = new LanguageServer.Module().GetIndex(line, character, document);
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("position index = " + index);
+                    Logger.Log.WriteLine("position index = " + index);
                     (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
-                    System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
+                    Logger.Log.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
                 }
                 IEnumerable<Location> found = new LanguageServer.Module().FindRefsAndDefs(index, document);
                 List<object> locations = new List<object>();
@@ -803,8 +804,8 @@
                 result = locations.ToArray();
                 if (trace)
                 {
-                    System.Console.Error.Write("returning ");
-                    System.Console.Error.WriteLine(string.Join(
+                    Logger.Log.Write("returning ");
+                    Logger.Log.WriteLine(string.Join(
                         System.Environment.NewLine, result.Select(s =>
                     {
                         var v = (Microsoft.VisualStudio.LanguageServer.Protocol.Location)s;
@@ -826,7 +827,7 @@
             }
             catch (Exception eeks)
             {
-                System.Console.Error.WriteLine("Exception: " + eeks.ToString());
+                Logger.Log.WriteLine("Exception: " + eeks.ToString());
             }
             return result;
         }
@@ -839,8 +840,8 @@
             {
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- TextDocumentDocumentHighlight");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    Logger.Log.WriteLine("<-- TextDocumentDocumentHighlight");
+                    Logger.Log.WriteLine(arg.ToString());
                 }
                 TextDocumentPositionParams request = arg.ToObject<TextDocumentPositionParams>();
                 Document document = CheckDoc(request.TextDocument.Uri);
@@ -850,9 +851,9 @@
                 int index = new LanguageServer.Module().GetIndex(line, character, document);
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("position index = " + index);
+                    Logger.Log.WriteLine("position index = " + index);
                     (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
-                    System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
+                    Logger.Log.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
                 }
                 IEnumerable<Location> found = new LanguageServer.Module().FindRefsAndDefs(index, document);
                 List<object> locations = new List<object>();
@@ -886,8 +887,8 @@
             {
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- TextDocumentDocumentSymbol");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    Logger.Log.WriteLine("<-- TextDocumentDocumentSymbol");
+                    Logger.Log.WriteLine(arg.ToString());
                 }
                 DocumentSymbolParams request = arg.ToObject<DocumentSymbolParams>();
                 Document document = CheckDoc(request.TextDocument.Uri);
@@ -949,8 +950,8 @@
                 }
                 if (trace)
                 {
-                    System.Console.Error.Write("returning ");
-                    System.Console.Error.WriteLine(string.Join(" ", symbols.Select(s =>
+                    Logger.Log.Write("returning ");
+                    Logger.Log.WriteLine(string.Join(" ", symbols.Select(s =>
                     {
                         SymbolInformation v = (SymbolInformation)s;
                         return "<" + v.Name + "," + v.Kind
@@ -980,8 +981,8 @@
             {
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- TextDocumentCodeAction");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    Logger.Log.WriteLine("<-- TextDocumentCodeAction");
+                    Logger.Log.WriteLine(arg.ToString());
                 }
             }
             catch (Exception)
@@ -996,8 +997,8 @@
             {
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- TextDocumentCodeLens");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    Logger.Log.WriteLine("<-- TextDocumentCodeLens");
+                    Logger.Log.WriteLine(arg.ToString());
                 }
             }
             catch (Exception)
@@ -1012,8 +1013,8 @@
             {
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- CodeLensResolve");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    Logger.Log.WriteLine("<-- CodeLensResolve");
+                    Logger.Log.WriteLine(arg.ToString());
                 }
             }
             catch (Exception)
@@ -1028,8 +1029,8 @@
             {
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- TextDocumentDocumentLink");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    Logger.Log.WriteLine("<-- TextDocumentDocumentLink");
+                    Logger.Log.WriteLine(arg.ToString());
                 }
             }
             catch (Exception)
@@ -1044,8 +1045,8 @@
             {
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- DocumentLinkResolve");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    Logger.Log.WriteLine("<-- DocumentLinkResolve");
+                    Logger.Log.WriteLine(arg.ToString());
                 }
             }
             catch (Exception)
@@ -1061,8 +1062,8 @@
             {
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- TextDocumentFormatting");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    Logger.Log.WriteLine("<-- TextDocumentFormatting");
+                    Logger.Log.WriteLine(arg.ToString());
                 }
                 DocumentFormattingParams request = arg.ToObject<DocumentFormattingParams>();
                 Document document = CheckDoc(request.TextDocument.Uri);
@@ -1097,8 +1098,8 @@
             {
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- TextDocumentRangeFormatting");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    Logger.Log.WriteLine("<-- TextDocumentRangeFormatting");
+                    Logger.Log.WriteLine(arg.ToString());
                 }
             }
             catch (Exception)
@@ -1113,8 +1114,8 @@
             {
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- TextDocumentOnTypeFormatting");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    Logger.Log.WriteLine("<-- TextDocumentOnTypeFormatting");
+                    Logger.Log.WriteLine(arg.ToString());
                 }
             }
             catch (Exception)
@@ -1127,8 +1128,8 @@
         {
             if (trace)
             {
-                System.Console.Error.WriteLine("<-- TextDocumentRename");
-                System.Console.Error.WriteLine(arg.ToString());
+                Logger.Log.WriteLine("<-- TextDocumentRename");
+                Logger.Log.WriteLine(arg.ToString());
             }
             WorkspaceEdit edit = null;
             lock (_object)
@@ -1145,9 +1146,9 @@
                         int index = new LanguageServer.Module().GetIndex(line, character, document);
                         if (trace)
                         {
-                            System.Console.Error.WriteLine("position index = " + index);
+                            Logger.Log.WriteLine("position index = " + index);
                             (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
-                            System.Console.Error.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
+                            Logger.Log.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
                         }
                         string new_name = request.NewName;
                         Dictionary<string, LanguageServer.TextEdit[]> changes = new LanguageServer.Module().Rename(index, new_name, document);
@@ -1196,8 +1197,8 @@
             {
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- TextDocumentFoldingRange");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    Logger.Log.WriteLine("<-- TextDocumentFoldingRange");
+                    Logger.Log.WriteLine(arg.ToString());
                 }
             }
             catch (Exception)
@@ -1220,10 +1221,10 @@
                 var end = a3;
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- CMGetClassifiers");
-                    System.Console.Error.WriteLine(start.ToString());
+                    Logger.Log.WriteLine("<-- CMGetClassifiers");
+                    Logger.Log.WriteLine(start.ToString());
                     (int, int) bs = new LanguageServer.Module().GetLineColumn(start, document);
-                    System.Console.Error.WriteLine(end.ToString());
+                    Logger.Log.WriteLine(end.ToString());
                     (int, int) be = new LanguageServer.Module().GetLineColumn(start, document);
                 }
                 IEnumerable<Module.Info> r = new LanguageServer.Module().Get(start, end, document);
@@ -1240,8 +1241,8 @@
                 }
                 if (trace)
                 {
-                    System.Console.Error.Write("returning ");
-                    System.Console.Error.WriteLine(string.Join(" ", symbols.Select(s =>
+                    Logger.Log.Write("returning ");
+                    Logger.Log.WriteLine(string.Join(" ", symbols.Select(s =>
                     {
                         var v = s;
                         return "<" + v.start + "," + v.end + "," + v.Kind + ">";
@@ -1272,10 +1273,10 @@
                 Document document = CheckDoc(new Uri(ffn));
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- CMNextSymbol");
-                    System.Console.Error.WriteLine(pos.ToString());
+                    Logger.Log.WriteLine("<-- CMNextSymbol");
+                    Logger.Log.WriteLine(pos.ToString());
                     (int, int) bs = new LanguageServer.Module().GetLineColumn(pos, document);
-                    System.Console.Error.WriteLine("");
+                    Logger.Log.WriteLine("");
                 }
                 IEnumerable<Location> r = new LanguageServer.Module().GetDefs(document);
                 List<object> symbols = new List<object>();
@@ -1302,8 +1303,8 @@
                 }
                 if (trace)
                 {
-                    System.Console.Error.Write("returning ");
-                    System.Console.Error.WriteLine(next_sym);
+                    Logger.Log.Write("returning ");
+                    Logger.Log.WriteLine(next_sym.ToString());
                 }
             }
             catch (LanguageServerException e)
@@ -1329,10 +1330,10 @@
                 bool a3 = arg3.ToObject<bool>();
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- CMGotoVisitor");
-                    System.Console.Error.WriteLine(a1.ToString());
+                    Logger.Log.WriteLine("<-- CMGotoVisitor");
+                    Logger.Log.WriteLine(a1.ToString());
                     (int, int) bs = new LanguageServer.Module().GetLineColumn(a2, document);
-                    System.Console.Error.WriteLine("");
+                    Logger.Log.WriteLine("");
                 }
                 s = Goto.main(true, a3, document, a2);
             }
@@ -1359,10 +1360,10 @@
                 bool a3 = arg3.ToObject<bool>();
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- CMGotoListener");
-                    System.Console.Error.WriteLine(a1.ToString());
+                    Logger.Log.WriteLine("<-- CMGotoListener");
+                    Logger.Log.WriteLine(a1.ToString());
                     (int, int) bs = new LanguageServer.Module().GetLineColumn(a2, document);
-                    System.Console.Error.WriteLine("");
+                    Logger.Log.WriteLine("");
                 }
                 s = Goto.main(false, a3, document, a2);
             }
@@ -1390,12 +1391,12 @@
                 int end = a3;
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- CMReplaceLiterals");
-                    System.Console.Error.WriteLine(a1);
+                    Logger.Log.WriteLine("<-- CMReplaceLiterals");
+                    Logger.Log.WriteLine(a1);
                     (int, int) bs = new LanguageServer.Module().GetLineColumn(start, document);
-                    System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
+                    Logger.Log.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
                     (int, int) be = new LanguageServer.Module().GetLineColumn(end, document);
-                    System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
+                    Logger.Log.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
                 var s = LanguageServer.Transform.ReplaceLiterals(start, end, document);
                 ApplyChanges("Replace String Literals", s);
@@ -1423,10 +1424,10 @@
                 int end = a3;
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- CMRemoveUselessParserProductions");
-                    System.Console.Error.WriteLine(start.ToString());
+                    Logger.Log.WriteLine("<-- CMRemoveUselessParserProductions");
+                    Logger.Log.WriteLine(start.ToString());
                     (int, int) bs = new LanguageServer.Module().GetLineColumn(start, document);
-                    System.Console.Error.WriteLine("");
+                    Logger.Log.WriteLine("");
                 }
                 var s = LanguageServer.Transform.RemoveUselessParserProductions(start, end, document);
                 ApplyChanges("Remove Useless Rules", s);
@@ -1450,9 +1451,9 @@
                 Document document = CheckDoc(new Uri(a1));
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- CMMoveStartRuleToTop");
-                    System.Console.Error.WriteLine(a1);
-                    System.Console.Error.WriteLine("");
+                    Logger.Log.WriteLine("<-- CMMoveStartRuleToTop");
+                    Logger.Log.WriteLine(a1);
+                    Logger.Log.WriteLine("");
                 }
                 var s = LanguageServer.Transform.MoveStartRuleToTop(document);
                 ApplyChanges("Move Start Rule To Top", s);
@@ -1477,9 +1478,9 @@
                 var type = arg2.ToObject<LspAntlr.ReorderType>();
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- CMReorderParserRules");
-                    System.Console.Error.WriteLine(a1);
-                    System.Console.Error.WriteLine(type.ToString());
+                    Logger.Log.WriteLine("<-- CMReorderParserRules");
+                    Logger.Log.WriteLine(a1);
+                    Logger.Log.WriteLine(type.ToString());
                 }
                 var s = LanguageServer.Transform.ReorderParserRules(document, type);
                 string na = "";
@@ -1516,10 +1517,10 @@
                 var split = arg1.ToObject<bool>();
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- CMSplitCombineGrammars");
-                    System.Console.Error.WriteLine(a1);
-                    System.Console.Error.WriteLine(split);
-                    System.Console.Error.WriteLine("");
+                    Logger.Log.WriteLine("<-- CMSplitCombineGrammars");
+                    Logger.Log.WriteLine(a1);
+                    Logger.Log.WriteLine(split.ToString());
+                    Logger.Log.WriteLine("");
                 }
                 changes = LanguageServer.Transform.SplitCombineGrammars(document, split);
             }
@@ -1543,8 +1544,8 @@
                 List<string> request = arg.ToObject<List<string>>();
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- CMImportGrammars");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    Logger.Log.WriteLine("<-- CMImportGrammars");
+                    Logger.Log.WriteLine(arg.ToString());
                 }
          //       changes = LanguageServer.BisonImport.ImportGrammars(request);
             }
@@ -1572,12 +1573,12 @@
                 int end = a3;
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- CMConvertRecursionToKleeneOperator");
-                    System.Console.Error.WriteLine(a1);
+                    Logger.Log.WriteLine("<-- CMConvertRecursionToKleeneOperator");
+                    Logger.Log.WriteLine(a1);
                     (int, int) bs = new LanguageServer.Module().GetLineColumn(start, document);
-                    System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
+                    Logger.Log.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
                     (int, int) be = new LanguageServer.Module().GetLineColumn(end, document);
-                    System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
+                    Logger.Log.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
                 var s = Transform.ConvertRecursionToKleeneOperator(start, end, document);
                 ApplyChanges("Convert to Kleene Syntax", s);
@@ -1606,12 +1607,12 @@
                 int end = a3;
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- CMEliminateDirectLeftRecursion");
-                    System.Console.Error.WriteLine(a1);
+                    Logger.Log.WriteLine("<-- CMEliminateDirectLeftRecursion");
+                    Logger.Log.WriteLine(a1);
                     (int, int) bs = new LanguageServer.Module().GetLineColumn(start, document);
-                    System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
+                    Logger.Log.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
                     (int, int) be = new LanguageServer.Module().GetLineColumn(end, document);
-                    System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
+                    Logger.Log.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
                 var s = Transform.EliminateDirectLeftRecursion(start, end, document);
                 ApplyChanges("Elimiate Direct Left Recursion", s);
@@ -1639,12 +1640,12 @@
                 int end = a3;
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- CMEliminateIndirectLeftRecursion");
-                    System.Console.Error.WriteLine(a1);
+                    Logger.Log.WriteLine("<-- CMEliminateIndirectLeftRecursion");
+                    Logger.Log.WriteLine(a1);
                     (int, int) bs = new LanguageServer.Module().GetLineColumn(start, document);
-                    System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
+                    Logger.Log.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
                     (int, int) be = new LanguageServer.Module().GetLineColumn(end, document);
-                    System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
+                    Logger.Log.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
                 var s = Transform.EliminateIndirectLeftRecursion(start, end, document);
                 ApplyChanges("Elimiate Indirect Left Recursion", s);
@@ -1668,8 +1669,8 @@
                 Document document = CheckDoc(request);
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- CMEliminateAntlrKeywordsInRules");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    Logger.Log.WriteLine("<-- CMEliminateAntlrKeywordsInRules");
+                    Logger.Log.WriteLine(arg.ToString());
                 }
                 var s = Transform.EliminateAntlrKeywordsInRules(document);
                 ApplyChanges("Eliminate Keywords", s);
@@ -1698,12 +1699,12 @@
                 int end = a3;
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- CMAddLexerRulesForStringLiterals");
-                    System.Console.Error.WriteLine(a1);
+                    Logger.Log.WriteLine("<-- CMAddLexerRulesForStringLiterals");
+                    Logger.Log.WriteLine(a1);
                     (int, int) bs = new LanguageServer.Module().GetLineColumn(start, document);
-                    System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
+                    Logger.Log.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
                     (int, int) be = new LanguageServer.Module().GetLineColumn(end, document);
-                    System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
+                    Logger.Log.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
                 var s = Transform.AddLexerRulesForStringLiterals(start, end, document);
                 ApplyChanges("Replace String Literals", s);
@@ -1727,8 +1728,8 @@
                 Document document = CheckDoc(request);
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- CMSortModes");
-                    System.Console.Error.WriteLine(arg.ToString());
+                    Logger.Log.WriteLine("<-- CMSortModes");
+                    Logger.Log.WriteLine(arg.ToString());
                 }
                 var s = Transform.SortModes(document);
                 ApplyChanges("Sort Modes", s);
@@ -1756,12 +1757,12 @@
                 int end = a3;
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- CMUnfold");
-                    System.Console.Error.WriteLine(a1);
+                    Logger.Log.WriteLine("<-- CMUnfold");
+                    Logger.Log.WriteLine(a1);
                     (int, int) bs = new LanguageServer.Module().GetLineColumn(start, document);
-                    System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
+                    Logger.Log.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
                     (int, int) be = new LanguageServer.Module().GetLineColumn(end, document);
-                    System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
+                    Logger.Log.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
                 var s = Transform.Unfold(start, end, document);
                 ApplyChanges("Unfold", s);
@@ -1789,12 +1790,12 @@
                 int end = a3;
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- CMFold");
-                    System.Console.Error.WriteLine(a1);
+                    Logger.Log.WriteLine("<-- CMFold");
+                    Logger.Log.WriteLine(a1);
                     (int, int) bs = new LanguageServer.Module().GetLineColumn(start, document);
-                    System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
+                    Logger.Log.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
                     (int, int) be = new LanguageServer.Module().GetLineColumn(end, document);
-                    System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
+                    Logger.Log.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
                 var s = Transform.Fold(start, end, document);
                 ApplyChanges("Fold", s);
@@ -1822,12 +1823,12 @@
                 int end = a3;
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- CMRemoveUselessParentheses");
-                    System.Console.Error.WriteLine(a1);
+                    Logger.Log.WriteLine("<-- CMRemoveUselessParentheses");
+                    Logger.Log.WriteLine(a1);
                     (int, int) bs = new LanguageServer.Module().GetLineColumn(start, document);
-                    System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
+                    Logger.Log.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
                     (int, int) be = new LanguageServer.Module().GetLineColumn(end, document);
-                    System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
+                    Logger.Log.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
                 var s = Transform.RemoveUselessParentheses(document);
                 ApplyChanges("Remove Useless Parentheses", s);
@@ -1851,8 +1852,8 @@
                 Document document = CheckDoc(new Uri(a1));
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- CMPerformAnalysis");
-                    System.Console.Error.WriteLine(a1);
+                    Logger.Log.WriteLine("<-- CMPerformAnalysis");
+                    Logger.Log.WriteLine(a1);
                 }
                 List<DiagnosticInfo> results = LanguageServer.Analysis.PerformAnalysis(document);
                 server.SendDiagnostics(results);
@@ -1880,12 +1881,12 @@
                 int end = a3;
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- CMReplacePriorization");
-                    System.Console.Error.WriteLine(a1);
+                    Logger.Log.WriteLine("<-- CMReplacePriorization");
+                    Logger.Log.WriteLine(a1);
                     (int, int) bs = new LanguageServer.Module().GetLineColumn(start, document);
-                    System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
+                    Logger.Log.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
                     (int, int) be = new LanguageServer.Module().GetLineColumn(end, document);
-                    System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
+                    Logger.Log.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
                 var s = Transform.ReplacePriorization(start, end, document);
                 ApplyChanges("Replace priorization rules", s);
@@ -1913,12 +1914,12 @@
                 int end = a3;
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- CMUpperLowerCaseLiteral");
-                    System.Console.Error.WriteLine(a1);
+                    Logger.Log.WriteLine("<-- CMUpperLowerCaseLiteral");
+                    Logger.Log.WriteLine(a1);
                     (int, int) bs = new LanguageServer.Module().GetLineColumn(start, document);
-                    System.Console.Error.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
+                    Logger.Log.WriteLine("line " + bs.Item1 + " col " + bs.Item2);
                     (int, int) be = new LanguageServer.Module().GetLineColumn(end, document);
-                    System.Console.Error.WriteLine("line " + be.Item1 + " col " + be.Item2);
+                    Logger.Log.WriteLine("line " + be.Item1 + " col " + be.Item2);
                 }
                 var s = Transform.UpperLowerCaseLiteral(start, end, document);
                 ApplyChanges("Replace literal with upper and lower case literal", s);
@@ -1940,7 +1941,7 @@
             {
                 if (trace)
                 {
-                    System.Console.Error.WriteLine("<-- CMVersion");
+                    Logger.Log.WriteLine("<-- CMVersion");
                 }
                 var s = new LanguageServer.Module().AntlrVersion();
                 return s;

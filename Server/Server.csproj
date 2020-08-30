@@ -15,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\LanguageServer\LanguageServer.csproj" />
     <ProjectReference Include="..\Logger\Logger.csproj" />
+    <ProjectReference Include="..\LspHelpers\LspHelpers.csproj" />
     <ProjectReference Include="..\Workspaces\Workspaces.csproj" />
   </ItemGroup>
 

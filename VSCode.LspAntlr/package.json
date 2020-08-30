@@ -1,6 +1,6 @@
 {
-	"name": "LspAntlr",
-	"description": "VSCode for Antlr using LSP server",
+	"name": "antlr",
+	"description": "VSCode for Antlrvsix using LSP server",
 	"author": "Ken Domino",
 	"license": "MIT",
 	"version": "1.0.0",
@@ -11,22 +11,53 @@
 	"bugs": {
 		"url": "https://github.com/kaby76/AntlrVSIX/issues"
 	},
-	"publisher": "KenDomino",
+	"publisher": "Ken Domino",
 	"categories": [],
 	"keywords": [
 		"multi-root ready"
 	],
 	"engines": {
-		"vscode": "^1.33.0"
+		"vscode": "^1.48.0"
 	},
 	"activationEvents": [
-		"onLanguage:g4"
+		"onLanguage:antlr2",
+		"onLanguage:antlr3",
+		"onLanguage:antlr4",
+		"onLanguage:bison",
+		"onLanguage:ebnf"
 	],
 	"main": "./client/out/extension",
 	"contributes": {
 		"languages": [
 			{
-				"id": "g4"
+				"id": "antlr2",
+				"extensions": [
+					".g2"
+				]
+			},
+			{
+				"id": "antlr3",
+				"extensions": [
+					".g3"
+				]
+			},
+			{
+				"id": "antlr4",
+				"extensions": [
+					".g4"
+				]
+			},
+			{
+				"id": "bison",
+				"extensions": [
+					".y"
+				]
+			},
+			{
+				"id": "ebnf",
+				"extensions": [
+					".ebnf"
+				]
 			}
 		],
 		"configuration": {
@@ -61,10 +92,10 @@
 		"test": "sh ./scripts/e2e.sh"
 	},
 	"devDependencies": {
-		"@types/mocha": "^5.2.7",
-		"@types/node": "^12.11.7",
+		"@types/mocha": "^8.0.0",
+		"@types/node": "^14.6.2",
 		"tslint": "^5.16.0",
-		"typescript": "^3.6.4"
+		"typescript": "^3.8.3"
 	},
 	"configuration": {
 		"type": "object",
