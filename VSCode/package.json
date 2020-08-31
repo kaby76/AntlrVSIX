@@ -86,7 +86,7 @@
     },
     "scripts": {
         "vscode:prepublish": "npm install",
-        "compile": "tsc -watch -p ./"
+        "compile": "tsc -p ./"
     },
     "dependencies": {
         "abort-controller": "^3.0.0",

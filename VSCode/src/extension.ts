@@ -62,10 +62,11 @@ let client: vscodelc.LanguageClient;
 
 export function activate(context: vscode.ExtensionContext)
 {
-  
+    var fn = __dirname + '/../Server/netcoreapp3.1/Server.exe';
+
     const server: vscodelc.Executable =
     {
-        command: `C:/Users/kenne/Documents/AntlrVSIX2/Server/bin/Debug/netcoreapp3.1/Server.exe`,
+        command: fn,
         args: [],
         options: { shell: false, detached: false }
     };
