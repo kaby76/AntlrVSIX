@@ -85,7 +85,7 @@
         }
     },
     "scripts": {
-        "vscode:prepublish": "tsc -p ./",
+        "vscode:prepublish": "npm install",
         "compile": "tsc -watch -p ./"
     },
     "dependencies": {
