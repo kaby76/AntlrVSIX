@@ -58,10 +58,8 @@ class FileStatus
     }
 }
 
-/**
- *  this method is called when your extension is activate
- *  your extension is activated the very first time the command is executed
- */
+let client: vscodelc.LanguageClient;
+
 export function activate(context: vscode.ExtensionContext)
 {
   
@@ -69,7 +67,7 @@ export function activate(context: vscode.ExtensionContext)
     {
         command: `C:/Users/kenne/Documents/AntlrVSIX2/Server/bin/Debug/netcoreapp3.1/Server.exe`,
         args: [],
-        options: {shell: false, detached: false, windowsHide: false }
+        options: { shell: false, detached: false }
     };
 
     const serverOptions: vscodelc.ServerOptions = server;
@@ -86,7 +84,7 @@ export function activate(context: vscode.ExtensionContext)
         ]
     };
 
-    const client = new vscodelc.LanguageClient('Antlr Language Server', serverOptions, clientOptions);
+    client = new vscodelc.LanguageClient('Antlr Language Server', serverOptions, clientOptions);
     console.log('Antlr Language Server is now active!');
     client.start();
 }
