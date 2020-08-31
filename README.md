@@ -223,6 +223,7 @@ See [this guide](PriorReleases.md).
 
 ## Planned for v8.1 (end of Aug 2020):
 
+* Add VS Code client.
 * Add existing transforms not in Trash to Trash. Make sure they work.
 * Add expression rule optimization. Verify that this works with Java.
 * Add left factoring and inverse? Not sure, as Unify is a superset of left factoring.
@@ -230,22 +231,18 @@ See [this guide](PriorReleases.md).
 * Add multi-line commands to Trash.
 * Add comment lines and blocks to Trash.
 * Add WC3 EBNF.
-* Add ISO 14977 EBNF.
-* Add grammar diff, think about 3-way grammar merge.
 * Fix ["rup" doesn't work in some cases #81](https://github.com/kaby76/AntlrVSIX/issues/81)
 * Fix ["has dr" not working, slow as hell #82](https://github.com/kaby76/AntlrVSIX/issues/82)
 
 ## Planned for v9
 
-* Add VS Code client.
+* Add flexible parser to read any grammar.
+* Add AST for grammars. Rewrite all with ASTs for syntax-independent code.
+* Add ISO 14977 EBNF.
 
 ## Planned for v10
 
-* Add AST for grammars. Rewrite all with ASTs for syntax-independent code.
-
-## Planned for v11
-
-* Add flexible parser to read any grammar.
+* Add grammar diff, think about 3-way grammar merge.
 * Rebrand.
 
 Any questions, email me at ken.domino <at> gmail.com
