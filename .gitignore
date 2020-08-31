@@ -76,3 +76,5 @@ VSCode/client/node_modules/
 VSCode/client/out/
 VSCode/node_modules/
 VSCode/server/netcoreapp3.1/
+VSCode/package-lock.json
+VSCode/client/package-lock.json
