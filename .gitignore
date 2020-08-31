@@ -72,3 +72,7 @@ LanguageServer/BisonParserVisitor.cs
 VSCode.LspAntlr/server/netcoreapp3.1/
 VSCode.LspAntlr/package-lock.json
 VSCode.LspAntlr/client/package-lock.json
+VSCode/client/node_modules/
+VSCode/client/out/
+VSCode/node_modules/
+VSCode/server/netcoreapp3.1/
