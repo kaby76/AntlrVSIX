@@ -1,5 +1,6 @@
 ﻿namespace Server
 {
+    using Algorithms;
     using LoggerNs;
     using LanguageServer;
     using Microsoft.VisualStudio.LanguageServer.Protocol;
@@ -7,9 +8,11 @@
     using Newtonsoft.Json.Linq;
     using StreamJsonRpc;
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Threading;
     using Workspaces;
     using DocumentSymbol = LanguageServer.DocumentSymbol;
     using Location = LanguageServer.Location;
@@ -21,6 +24,7 @@
         private readonly Workspaces.Workspace _workspace;
         private static readonly object _object = new object();
         private readonly Dictionary<string, bool> ignore_next_change = new Dictionary<string, bool>();
+        private int current_version;
 
         public LanguageServerTarget(LSPServer server)
         {
@@ -368,8 +372,13 @@
                 Logger.Log.WriteLine("<-- TextDocumentDidOpen");
                 Logger.Log.WriteLine(arg.ToString());
             }
-            DidOpenTextDocumentParams request = arg.ToObject<DidOpenTextDocumentParams>();
-            _ = CheckDoc(request.TextDocument.Uri);
+            lock (_object)
+            {
+                DidOpenTextDocumentParams request = arg.ToObject<DidOpenTextDocumentParams>();
+                var document = CheckDoc(request.TextDocument.Uri);
+                document.Code = request.TextDocument.Text;
+                List<ParsingResults> to_do = new LanguageServer.Module().Compile();
+            }
         }
 
         [JsonRpcMethod(Methods.TextDocumentDidChangeName)]
@@ -382,57 +391,142 @@
             }
             DidChangeTextDocumentParams request = arg.ToObject<DidChangeTextDocumentParams>();
             Document document = CheckDoc(request.TextDocument.Uri);
-            lock (_object)
+
+            // Create a thread to handle this update in the correct order.
+            Thread thread = new Thread(() =>
             {
-                if (!ignore_next_change.ContainsKey(document.FullPath))
+                try
                 {
-                    ParsingResults pd = ParsingResultsFactory.Create(document);
-                    string code = pd.Code;
-                    if (trace)
+                    if (request.TextDocument?.Version != null)
                     {
-                        Logger.Log.WriteLine("making change, code before");
-                        Logger.Log.WriteLine(code);
-                        Logger.Log.WriteLine("----------------------");
-                    }
-                    int start_index = 0;
-                    int end_index = 0;
-                    foreach (TextDocumentContentChangeEvent change in request.ContentChanges)
-                    {
-                        Microsoft.VisualStudio.LanguageServer.Protocol.Range range = change.Range;
-                        int length = change.RangeLength; // Why? range encodes start and end => length!
-                        string text = change.Text;
+                        int version = (int)request.TextDocument.Version;
+                        // spin until this version is current_version.
+                        for (; ; )
                         {
-                            int line = range.Start.Line;
-                            int character = range.Start.Character;
-                            start_index = new LanguageServer.Module().GetIndex(line, character, document);
+                            if (version == current_version)
+                            {
+                                lock (_object)
+                                {
+                                    if (!ignore_next_change.ContainsKey(document.FullPath))
+                                    {
+                                        ParsingResults pd = ParsingResultsFactory.Create(document);
+                                        string code = pd.Code;
+                                        if (trace)
+                                        {
+                                            Logger.Log.WriteLine("making change, code before");
+                                            Logger.Log.WriteLine(code);
+                                            Logger.Log.WriteLine("----------------------");
+                                        }
+                                        int start_index = 0;
+                                        int end_index = 0;
+                                        foreach (TextDocumentContentChangeEvent change in request.ContentChanges)
+                                        {
+                                            Microsoft.VisualStudio.LanguageServer.Protocol.Range range = change.Range;
+                                            int length = change.RangeLength; // Why? range encodes start and end => length!
+                                            string text = change.Text;
+                                            {
+                                                int line = range.Start.Line;
+                                                int character = range.Start.Character;
+                                                start_index = new LanguageServer.Module().GetIndex(line, character, document);
+                                            }
+                                            {
+                                                int line = range.End.Line;
+                                                int character = range.End.Character;
+                                                end_index = new LanguageServer.Module().GetIndex(line, character, document);
+                                            }
+                                            (int, int) bs = new LanguageServer.Module().GetLineColumn(start_index, document);
+                                            (int, int) be = new LanguageServer.Module().GetLineColumn(end_index, document);
+                                            string original = code.Substring(start_index, end_index - start_index);
+                                            string n = code.Substring(0, start_index)
+                                                    + text
+                                                    + code.Substring(0 + start_index + end_index - start_index);
+                                            code = n;
+                                        }
+                                        if (trace)
+                                        {
+                                            Logger.Log.WriteLine("making change, code after");
+                                            Logger.Log.WriteLine(code);
+                                            Logger.Log.WriteLine("----------------------");
+                                        }
+                                        document.Code = code;
+                                        List<ParsingResults> to_do = new LanguageServer.Module().Compile();
+                                    }
+                                    else
+                                    {
+                                        ignore_next_change.Remove(document.FullPath);
+                                    }
+                                    current_version++;
+                                }
+                                break;
+                            }
+                            Thread.Sleep(100);
                         }
-                        {
-                            int line = range.End.Line;
-                            int character = range.End.Character;
-                            end_index = new LanguageServer.Module().GetIndex(line, character, document);
-                        }
-                        (int, int) bs = new LanguageServer.Module().GetLineColumn(start_index, document);
-                        (int, int) be = new LanguageServer.Module().GetLineColumn(end_index, document);
-                        string original = code.Substring(start_index, end_index - start_index);
-                        string n = code.Substring(0, start_index)
-                                + text
-                                + code.Substring(0 + start_index + end_index - start_index);
-                        code = n;
                     }
-                    if (trace)
+                    else
                     {
-                        Logger.Log.WriteLine("making change, code after");
-                        Logger.Log.WriteLine(code);
-                        Logger.Log.WriteLine("----------------------");
+                        lock (_object)
+                        {
+                            if (!ignore_next_change.ContainsKey(document.FullPath))
+                            {
+                                ParsingResults pd = ParsingResultsFactory.Create(document);
+                                string code = pd.Code;
+                                if (trace)
+                                {
+                                    Logger.Log.WriteLine("making change, code before");
+                                    Logger.Log.WriteLine(code);
+                                    Logger.Log.WriteLine("----------------------");
+                                }
+                                int start_index = 0;
+                                int end_index = 0;
+                                foreach (TextDocumentContentChangeEvent change in request.ContentChanges)
+                                {
+                                    Microsoft.VisualStudio.LanguageServer.Protocol.Range range = change.Range;
+                                    int length = change.RangeLength; // Why? range encodes start and end => length!
+                                    string text = change.Text;
+                                    {
+                                        int line = range.Start.Line;
+                                        int character = range.Start.Character;
+                                        start_index = new LanguageServer.Module().GetIndex(line, character, document);
+                                    }
+                                    {
+                                        int line = range.End.Line;
+                                        int character = range.End.Character;
+                                        end_index = new LanguageServer.Module().GetIndex(line, character, document);
+                                    }
+                                    (int, int) bs = new LanguageServer.Module().GetLineColumn(start_index, document);
+                                    (int, int) be = new LanguageServer.Module().GetLineColumn(end_index, document);
+                                    string original = code.Substring(start_index, end_index - start_index);
+                                    string n = code.Substring(0, start_index)
+                                            + text
+                                            + code.Substring(0 + start_index + end_index - start_index);
+                                    code = n;
+                                }
+                                if (trace)
+                                {
+                                    Logger.Log.WriteLine("making change, code after");
+                                    Logger.Log.WriteLine(code);
+                                    Logger.Log.WriteLine("----------------------");
+                                }
+                                document.Code = code;
+                                List<ParsingResults> to_do = new LanguageServer.Module().Compile();
+                            }
+                            else
+                            {
+                                ignore_next_change.Remove(document.FullPath);
+                            }
+                        }
                     }
-                    document.Code = code;
-                    List<ParsingResults> to_do = new LanguageServer.Module().Compile();
                 }
-                else
+                catch (ThreadAbortException)
                 {
-                    ignore_next_change.Remove(document.FullPath);
+                    Thread.ResetAbort();
                 }
-            }
+            })
+            {
+                IsBackground = true
+            };
+
+            thread.Start();
         }
 
         [JsonRpcMethod(Methods.TextDocumentWillSaveName)]
