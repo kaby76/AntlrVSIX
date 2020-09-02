@@ -170,7 +170,7 @@
       <Version>16.6.255</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.LanguageServer.Client">
-      <Version>16.6.45</Version>
+      <Version>16.7.97</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Shell.15.0">
       <Version>16.6.30107.105</Version>

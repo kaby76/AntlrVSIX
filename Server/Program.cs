@@ -32,11 +32,11 @@
 
         class Dup : Stream
         {
-            public override bool CanRead => throw new NotImplementedException();
+            public override bool CanRead { get { return false; } }
 
-            public override bool CanSeek => throw new NotImplementedException();
+            public override bool CanSeek { get { return false; } }
 
-            public override bool CanWrite => throw new NotImplementedException();
+            public override bool CanWrite { get { return true; } }
 
             public override long Length => throw new NotImplementedException();
 
@@ -44,7 +44,6 @@
 
             public override void Flush()
             {
-                throw new NotImplementedException();
             }
 
             public override int Read(byte[] buffer, int offset, int count)
@@ -64,7 +63,12 @@
 
             public override void Write(byte[] buffer, int offset, int count)
             {
-                throw new NotImplementedException();
+                LoggerNs.Logger.Log.WriteLine("Receiving raw message from client");
+                var truncated_array = new byte[count];
+                for (int i = offset; i < offset + count; ++i)
+                    truncated_array[i - offset] = buffer[i];
+                string str = System.Text.Encoding.Default.GetString(truncated_array);
+                LoggerNs.Logger.Log.WriteLine("data = '" + str);
             }
         }
 
@@ -76,7 +80,7 @@
         {
             System.IO.Stream stdin = Console.OpenStandardInput();
             System.IO.Stream stdout = Console.OpenStandardOutput();
-            stdin = new LspTools.LspHelpers.EchoStream(stdin, Console.OpenStandardError(),
+            stdin = new LspTools.LspHelpers.EchoStream(stdin, new Dup(),
                     LspTools.LspHelpers.EchoStream.StreamOwnership.OwnNone);
             languageServer = new LSPServer(stdout, stdin);
             languageServer.Disconnected += OnDisconnected;

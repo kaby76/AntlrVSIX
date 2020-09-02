@@ -1,6 +1,6 @@
 
 import * as vscode from 'vscode';
-import * as vscodelc from 'vscode-languageclient';
+import * as vscodelc from 'vscode-languageclient/node';
 
 
 /**
@@ -86,6 +86,9 @@ export function activate(context: vscode.ExtensionContext)
     };
 
     client = new vscodelc.LanguageClient('Antlr Language Server', serverOptions, clientOptions);
+    
+    client.registerProposedFeatures();
+    
     console.log('Antlr Language Server is now active!');
     client.start();
 }

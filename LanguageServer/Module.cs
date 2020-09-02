@@ -303,7 +303,7 @@
             };
         }
 
-        public IEnumerable<DocumentSymbol> Get(Document doc)
+        public IEnumerable<DocumentSymbol> GetSymbols(Document doc)
         {
             ParsingResults pd = ParsingResultsFactory.Create(doc);
             if (pd.ParseTree == null)
@@ -379,6 +379,47 @@
                     if (en < start) continue;
                     int s1 = st > start ? st : start;
                     int s2 = en < end ? en : end;
+                    combined.Add(
+                         new Info()
+                         {
+                             start = s1,
+                             end = s2,
+                             kind = p.Value
+                         });
+                    ;
+                }
+                // Sort the list.
+                IOrderedEnumerable<Info> sorted_combined_tokens = combined.OrderBy(t => t.start).ThenBy(t => t.end);
+                return sorted_combined_tokens;
+            }
+            catch (Exception)
+            {
+            }
+            return new List<Info>();
+        }
+
+        public IEnumerable<Info> Get(Document doc)
+        {
+            try
+            {
+                ParsingResults pd = ParsingResultsFactory.Create(doc);
+                if (pd.ParseTree == null)
+                {
+                    Compile();
+                }
+
+                List<Info> combined = new List<Info>();
+                foreach (KeyValuePair<Antlr4.Runtime.IToken, int> p in pd.ColorizedList)
+                {
+                    if (p.Key == null)
+                    {
+                        continue;
+                    }
+                    var sym = p.Key;
+                    var st = sym.StartIndex;
+                    var en = sym.StopIndex + 1;
+                    int s1 = st;
+                    int s2 = en;
                     combined.Add(
                          new Info()
                          {

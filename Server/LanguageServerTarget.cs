@@ -144,7 +144,7 @@
                 Logger.Log.WriteLine("<-- Initialize");
                 Logger.Log.WriteLine(arg.ToString());
             }
-            ServerCapabilities capabilities = new ServerCapabilities
+            MyServerCapabilities capabilities = new MyServerCapabilities
             {
                 TextDocumentSync = new TextDocumentSyncOptions
                 {
@@ -174,7 +174,7 @@
                 DefinitionProvider = true,
 
                 TypeDefinitionProvider = false, // Does not make sense for Antlr.
-                
+
                 ImplementationProvider = false, // Does not make sense for Antlr.
 
                 ReferencesProvider = true,
@@ -203,9 +203,28 @@
 
                 WorkspaceSymbolProvider = false,
 
+                SemanticTokensProvider = new SemanticTokensOptions()
+                    {
+                        full = true,
+                        range = false,
+                        legend = new SemanticTokensLegend() {
+                            tokenTypes = new string[] {
+                                "class",
+                                "variable",
+                                "enum", 
+                                "comment",
+                                "string",
+                                "keyword",
+                            },
+                            tokenModifiers = new string[] {
+                                "declaration",
+                                "documentation",
+                            }
+                        }
+                    },
             };
 
-            InitializeResult result = new InitializeResult
+            MyInitializeResult result = new MyInitializeResult
             {
                 Capabilities = capabilities
             };
@@ -892,7 +911,7 @@
                 }
                 DocumentSymbolParams request = arg.ToObject<DocumentSymbolParams>();
                 Document document = CheckDoc(request.TextDocument.Uri);
-                IEnumerable<DocumentSymbol> r = new LanguageServer.Module().Get(document);
+                IEnumerable<DocumentSymbol> r = new LanguageServer.Module().GetSymbols(document);
                 List<object> symbols = new List<object>();
                 foreach (DocumentSymbol s in r)
                 {
@@ -1957,5 +1976,94 @@
             return null;
         }
 
+        [JsonRpcMethod("textDocument/semanticTokens/full")]
+        public SemanticTokens SemanticTokens(JToken arg)
+        {
+            SemanticTokens result = null;
+            try
+            {
+                if (trace)
+                {
+                    Logger.Log.WriteLine("<-- SemanticTokens");
+                    Logger.Log.WriteLine(arg.ToString());
+                }
+                DocumentSymbolParams request = arg.ToObject<DocumentSymbolParams>();
+                Document document = CheckDoc(request.TextDocument.Uri);
+                var r = new LanguageServer.Module().Get(document);
+                List<object> symbols = new List<object>();
+                List<int> data = new List<int>();
+                // Let us fill up temp values to figure out.
+                int start = 0;
+                var new_r = r.ToList();
+                foreach (var s in new_r)
+                {
+                    int kind;
+                    if (s.kind == 0)
+                    {
+                        // Parser symbol
+                        kind = 0;
+                    }
+                    else if (s.kind == 1)
+                    {
+                        // Lexer symbol
+                        kind = 1;
+                    }
+                    else if (s.kind == 2)
+                    {
+                        // Comment
+                        kind = 3;
+                    }
+                    else if (s.kind == 3)
+                    {
+                        // Keyword
+                        kind = 5;
+                    }
+                    else if (s.kind == 4)
+                    {
+                        // Literal
+                        kind = 4;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+
+                    (int, int) lc_start = new LanguageServer.Module().GetLineColumn(start, document);
+                    (int, int) lcs = new LanguageServer.Module().GetLineColumn(s.start, document);
+                    (int, int) lce = new LanguageServer.Module().GetLineColumn(s.end, document);
+
+                    var diff_l = lcs.Item1 - lc_start.Item1;
+                    var diff_c = diff_l != 0 ? lcs.Item2 : lcs.Item2 - lc_start.Item2;
+                    // line
+                    data.Add(diff_l);
+                    // startChar
+                    data.Add(diff_c);
+                    // length
+                    data.Add(s.end - s.start + 1);
+                    // tokenType
+                    data.Add(kind);
+                    // tokenModifiers
+                    data.Add(0);
+
+                    start = s.start;
+                }
+                result = new SemanticTokens();
+                result.data = data.ToArray();
+                if (trace)
+                {
+                    Logger.Log.Write("returning semantictokens");
+                    Logger.Log.WriteLine(string.Join(" ", data));
+                }
+            }
+            catch (LanguageServerException e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
+            catch (Exception e)
+            {
+                server.ShowMessage(e.Message, MessageType.Info);
+            }
+            return result;
+        }
     }
 }
