@@ -223,7 +223,10 @@ See [this guide](PriorReleases.md).
 
 ## Planned for v8.1 (end of Aug 2020):
 
-* Add VS Code client.
+* Fix critical bugs:
+   - [When typing fast, the LSP packets can be delivered to the server out of order. #87](https://github.com/kaby76/AntlrVSIX/issues/87)
+   - [Killing the server does not go back to a good state of the text document. #88](https://github.com/kaby76/AntlrVSIX/issues/88)
+* Add Visual Studio Code client to Marketplace.
 * Add existing transforms not in Trash to Trash. Make sure they work.
 * Add expression rule optimization. Verify that this works with Java.
 * Add left factoring and inverse? Not sure, as Unify is a superset of left factoring.

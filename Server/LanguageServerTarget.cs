@@ -388,6 +388,12 @@
                 {
                     ParsingResults pd = ParsingResultsFactory.Create(document);
                     string code = pd.Code;
+                    if (trace)
+                    {
+                        Logger.Log.WriteLine("making change, code before");
+                        Logger.Log.WriteLine(code);
+                        Logger.Log.WriteLine("----------------------");
+                    }
                     int start_index = 0;
                     int end_index = 0;
                     foreach (TextDocumentContentChangeEvent change in request.ContentChanges)
@@ -412,6 +418,12 @@
                                 + text
                                 + code.Substring(0 + start_index + end_index - start_index);
                         code = n;
+                    }
+                    if (trace)
+                    {
+                        Logger.Log.WriteLine("making change, code after");
+                        Logger.Log.WriteLine(code);
+                        Logger.Log.WriteLine("----------------------");
                     }
                     document.Code = code;
                     List<ParsingResults> to_do = new LanguageServer.Module().Compile();
