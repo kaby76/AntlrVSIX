@@ -224,6 +224,7 @@ See [this guide](PriorReleases.md).
 ## Planned for v8.1 (end of Aug 2020):
 
 * Fix critical bugs:
+   - [JSON transport api is erroneously multi-threaded #89](https://github.com/kaby76/AntlrVSIX/issues/89)
    - [When typing fast, the LSP packets can be delivered to the server out of order. #87](https://github.com/kaby76/AntlrVSIX/issues/87)
    - [Killing the server does not go back to a good state of the text document. #88](https://github.com/kaby76/AntlrVSIX/issues/88)
 * Add Visual Studio Code client to Marketplace.
