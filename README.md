@@ -221,7 +221,7 @@ See [this guide](PriorReleases.md).
 
 # Roadmap
 
-## Planned for v8.1 (end of Aug 2020):
+## Planned for v8.1 (mid Sept 2020):
 
 * Fix critical bugs:
    - [JSON transport api is erroneously multi-threaded #89](https://github.com/kaby76/AntlrVSIX/issues/89)
@@ -238,13 +238,13 @@ See [this guide](PriorReleases.md).
 * Fix ["rup" doesn't work in some cases #81](https://github.com/kaby76/AntlrVSIX/issues/81)
 * Fix ["has dr" not working, slow as hell #82](https://github.com/kaby76/AntlrVSIX/issues/82)
 
-## Planned for v9
+## Planned for v9 (mid Oct 2020)
 
 * Add flexible parser to read any grammar.
 * Add AST for grammars. Rewrite all with ASTs for syntax-independent code.
 * Add ISO 14977 EBNF.
 
-## Planned for v10
+## Planned for v10 (mid Nov 2020)
 
 * Add grammar diff, think about 3-way grammar merge.
 * Rebrand.
