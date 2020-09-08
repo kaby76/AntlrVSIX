@@ -11,7 +11,7 @@
         Antlr4.Runtime.Parser Parser { get; }
         Antlr4.Runtime.Lexer Lexer { get; }
         int QuietAfter { get; set; }
-        void Parse(ParsingResults pd);
+        void Parse(ParsingResults pd, bool bail);
         void Parse(string code,
             out CommonTokenStream TokStream,
             out Parser Parser,

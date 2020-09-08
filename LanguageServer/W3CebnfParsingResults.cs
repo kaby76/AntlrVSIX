@@ -18,18 +18,18 @@
             Passes.Add(() =>
             {
                 int before_count = 0;
-                if (!ParsingResults._dependent_grammars.ContainsKey(this.FullFileName))
+                if (!ParsingResults.InverseImports.ContainsKey(this.FullFileName))
                 {
-                    ParsingResults._dependent_grammars.Add(this.FullFileName);
+                    ParsingResults.InverseImports.Add(this.FullFileName);
                 }
-                foreach (KeyValuePair<string, List<string>> x in ParsingResults._dependent_grammars)
+                foreach (KeyValuePair<string, List<string>> x in ParsingResults.InverseImports)
                 {
                     before_count++;
                     before_count = before_count + x.Value.Count;
                 }
                 if (ParseTree == null) return false;
                 int after_count = 0;
-                foreach (KeyValuePair<string, List<string>> dep in ParsingResults._dependent_grammars)
+                foreach (KeyValuePair<string, List<string>> dep in ParsingResults.InverseImports)
                 {
                     string name = dep.Key;
                     Workspaces.Document x = Workspaces.Workspace.Instance.FindDocument(name);
@@ -50,7 +50,7 @@
             {
                 // The workspace is completely loaded. Create scopes for all files in workspace
                 // if they don't already exist.
-                foreach (KeyValuePair<string, List<string>> dep in _dependent_grammars)
+                foreach (KeyValuePair<string, List<string>> dep in InverseImports)
                 {
                     string name = dep.Key;
                     _scopes.TryGetValue(name, out IScope file_scope);
@@ -792,7 +792,7 @@
             return false;
         }
 
-        public override void Parse(ParsingResults pd)
+        public override void Parse(ParsingResults pd, bool bail)
         {
             string ffn = pd.FullFileName;
             string code = pd.Code;
@@ -819,6 +819,7 @@
             parser.RemoveErrorListeners();
             var parser_error_listener = new ErrorListener<IToken>(parser, lexer, cts, pd.QuietAfter);
             parser.AddErrorListener(parser_error_listener);
+            if (bail) parser.ErrorHandler = new BailErrorStrategy();
             try
             {
                 pt = parser.prods();
@@ -904,6 +905,15 @@
             ParseTree = pt;
         }
 
+        public override object Clone()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void GetGrammarBasics()
+        {
+            throw new NotImplementedException();
+        }
 
         public class Pass2Listener : W3CebnfParserBaseListener
         {

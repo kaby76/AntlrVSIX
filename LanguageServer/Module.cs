@@ -10,6 +10,21 @@
     using System.Linq;
     using System.Text;
     using Workspaces;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+    static class Foobar
+    {
+        public static HashSet<ParsingResults> Subtract(this HashSet<ParsingResults> a, HashSet<ParsingResults> b)
+        {
+            HashSet<ParsingResults> result = new HashSet<ParsingResults>();
+            foreach (var t in a)
+            {
+                if (b.Contains(t)) continue;
+                result.Add(t);
+            }
+            return result;
+        }
+    }
 
     public class Module
     {
@@ -745,94 +760,59 @@
             {
                 Workspace ws = Workspaces.Workspace.Instance;
 
-                // Get all changed files.
-                HashSet<ParsingResults> to_do = new HashSet<ParsingResults>();
+                // Parse changed files. If it's a combined grammar, no need to read
+                // other files. If it's a parser grammar, get the lexer grammar and read
+                // that. If it's a lexer grammar, read the parser grammar.
+                // This has to be done intelligently. We don't want to parse every damn
+                // file here. It's not going to be useful, and some files may not even work.
 
+                // Let's find all changed files. Assume that the "workspace" contains
+                // changed files. If it's not in the workspace already, then the file
+                // has not changed, so we are not interested in it--unless it is a
+                // depedency.
             DoAgain:
 
-                // Get current directory, and add all grammar files.
+                HashSet<ParsingResults> to_do = new HashSet<ParsingResults>();
+                HashSet<ParsingResults> new_to_do = new HashSet<ParsingResults>();
                 foreach (Document document in Workspaces.DFSContainer.DFS(ws))
                 {
+                    if (!document.Changed) continue;
                     string file_name = document.FullPath;
-                    if (file_name == null)
-                    {
-                        continue;
-                    }
-
+                    if (file_name == null) continue;
                     Container parent = document.Parent;
-                    var gd = LanguageServer.ParserDescriptionFactory.Create(document);
-                    if (gd == null)
-                    {
-                        if (document.ParseAs != null)
-                            System.Console.Error.WriteLine("Unknown parse type.");
-                        continue;
-                    }
-
-                    // Get suffix of file_name.
-                    string extension = System.IO.Path.GetExtension(file_name);
-                    string directory = System.IO.Path.GetDirectoryName(file_name);
-                    if (directory == "") directory = ".";
-                    foreach (string file in System.IO.Directory.GetFiles(directory))
-                    {
-                        if (System.IO.Path.GetExtension(file) != extension)
-                        {
-                            continue;
-                        }
-
-                        Document x = Workspaces.Workspace.Instance.FindDocument(file);
-                        if (x == null)
-                        {
-                            // Add document.
-                            Container proj = parent;
-                            Document new_doc = new Workspaces.Document(file);
-                            proj.AddChild(new_doc);
-                        }
-
-                        var g2 = LanguageServer.ParserDescriptionFactory.Create(document);
-                        if (g2 == null)
-                        {
-                            continue;
-                        }
-
-                        ParsingResults p2 = ParsingResultsFactory.Create(document);
-                        if (!p2.Changed)
-                        {
-                            continue;
-                        }
-
-                        to_do.Add(p2);
-                    }
+                    ParsingResults v = LanguageServer.ParserDescriptionFactory.Create(document);
+                    if (v == null && document.ParseAs == null) continue;
+                    if (new_to_do.Contains(v)) continue;
+                    new_to_do.Add(v);
                 }
 
-                foreach (Document document in Workspaces.DFSContainer.DFS(ws))
+                for (; ;)
                 {
-                    string file_name = document.FullPath;
-                    if (file_name == null)
+                    HashSet<ParsingResults> diff = new_to_do.Subtract(to_do);
+                    to_do = new_to_do;
+                    if (diff.Count == 0) break;
+
+                    // Do a quick bail-mode parse to determine Imports, InverseImports, and 
+                    // workspace changes.
+                    foreach (ParsingResults v in diff)
                     {
-                        continue;
+                        v.Parse();
+                        v.GetGrammarBasics();
                     }
 
-                    var gd = LanguageServer.ParserDescriptionFactory.Create(document);
-                    if (gd == null)
+                    // Add all files to workspace.
+                    new_to_do = new HashSet<ParsingResults>();
+                    foreach (KeyValuePair<string, List<string>> dep in ParsingResults.InverseImports)
                     {
-                        continue;
+                        string name = dep.Key;
+                        Workspaces.Document x = Workspaces.Workspace.Instance.FindDocument(name);
+                        ParsingResults v = LanguageServer.ParserDescriptionFactory.Create(x);
+                        new_to_do.Add(v);
                     }
-                    // file_name can be a URI, so this doesn't make sense.
-                    //if (!System.IO.File.Exists(file_name)) continue;
-                    ParsingResults pd = ParsingResultsFactory.Create(document);
-                    if (!pd.Changed)
-                    {
-                        continue;
-                    }
-
-                    to_do.Add(pd);
                 }
+
+                // Sort the grammars files based on includes to derive the symbol table.
                 Digraph<ParsingResults> g = ConstructGraph(to_do);
-                foreach (ParsingResults v in g.Vertices)
-                {
-                    v.Item.Changed = true; // Force.
-                    v.Parse();
-                }
                 bool changed = true;
                 for (int pass = 0; changed; pass++)
                 {

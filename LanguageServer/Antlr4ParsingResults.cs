@@ -10,79 +10,16 @@
     using System.Linq;
     using System.Text;
 
-    public class Antlr4ParsingResults : ParsingResults, IParserDescription
+    public class Antlr4ParsingResults : ParsingResults
     {
         public Antlr4ParsingResults(Workspaces.Document doc) : base(doc)
         {
             // Passes executed in order for all files.
             Passes.Add(() =>
             {
-                // Gather Imports from grammars.
-                // Gather _dependent_grammars map.
-                int before_count = 0;
-                if (!ParsingResults._dependent_grammars.ContainsKey(this.FullFileName))
-                {
-                    ParsingResults._dependent_grammars.Add(this.FullFileName);
-                }
-                foreach (KeyValuePair<string, List<string>> x in ParsingResults._dependent_grammars)
-                {
-                    before_count++;
-                    before_count = before_count + x.Value.Count;
-                }
-                if (ParseTree == null) return false;
-                ParseTreeWalker.Default.Walk(new Pass0Listener(this), ParseTree);
-                int after_count = 0;
-                foreach (KeyValuePair<string, List<string>> dep in ParsingResults._dependent_grammars)
-                {
-                    string name = dep.Key;
-                    Workspaces.Document x = Workspaces.Workspace.Instance.FindDocument(name);
-                    if (x == null)
-                    {
-                        // Add document.
-                        Workspaces.Container proj = Item.Parent;
-                        Workspaces.Document new_doc = new Workspaces.Document(name);
-                        proj.AddChild(new_doc);
-                        after_count++;
-                    }
-                    after_count++;
-                    after_count = after_count + dep.Value.Count;
-                }
-                return before_count != after_count;
-            });
-            Passes.Add(() =>
-            {
-                // For all imported grammars across the entire universe,
-                // make sure all are loaded in the workspace,
-                // then restart.
-                foreach (KeyValuePair<string, List<string>> dep in ParsingResults._dependent_grammars)
-                {
-                    string name = dep.Key;
-                    Workspaces.Document x = Workspaces.Workspace.Instance.FindDocument(name);
-                    if (x == null)
-                    {
-                        // Add document.
-                        Workspaces.Container proj = Item.Parent;
-                        Workspaces.Document new_doc = new Workspaces.Document(name);
-                        proj.AddChild(new_doc);
-                        return true;
-                    }
-                    foreach (string y in dep.Value)
-                    {
-                        Workspaces.Document z = Workspaces.Workspace.Instance.FindDocument(y);
-                        if (z == null)
-                        {
-                            // Add document.
-                            Workspaces.Container proj = Item.Parent;
-                            Workspaces.Document new_doc = new Workspaces.Document(y);
-                            proj.AddChild(new_doc);
-                            return true;
-                        }
-                    }
-                }
-
-                // The workspace is completely loaded. Create scopes for all files in workspace
+                // Create scopes for all files in workspace
                 // if they don't already exist.
-                foreach (KeyValuePair<string, List<string>> dep in _dependent_grammars)
+                foreach (KeyValuePair<string, List<string>> dep in InverseImports)
                 {
                     string name = dep.Key;
                     _scopes.TryGetValue(name, out IScope file_scope);
@@ -879,7 +816,7 @@
             return false;
         }
 
-        public override void Parse(ParsingResults pd)
+        public override void Parse(ParsingResults pd, bool bail)
         {
             string ffn = pd.FullFileName;
             string code = pd.Code;
@@ -906,6 +843,7 @@
             parser.RemoveErrorListeners();
             var parser_error_listener = new ErrorListener<IToken>(parser, lexer, cts, pd.QuietAfter);
             parser.AddErrorListener(parser_error_listener);
+            if (bail) parser.ErrorHandler = new BailErrorStrategy();
             try
             {
                 pt = parser.grammarSpec();
@@ -991,6 +929,34 @@
             ParseTree = pt;
         }
 
+        public override object Clone()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void GetGrammarBasics()
+        {
+            // Gather Imports from grammars.
+            // Gather InverseImports map.
+            if (!ParsingResults.InverseImports.ContainsKey(this.FullFileName))
+            {
+                ParsingResults.InverseImports.Add(this.FullFileName);
+            }
+            if (ParseTree == null) return;
+            ParseTreeWalker.Default.Walk(new Pass0Listener(this), ParseTree);
+            foreach (KeyValuePair<string, List<string>> dep in ParsingResults.InverseImports)
+            {
+                string name = dep.Key;
+                Workspaces.Document x = Workspaces.Workspace.Instance.FindDocument(name);
+                if (x == null)
+                {
+                    // Add document.
+                    Workspaces.Container proj = Item.Parent;
+                    Workspaces.Document new_doc = new Workspaces.Document(name);
+                    proj.AddChild(new_doc);
+                }
+            }
+        }
 
         public class Pass0Listener : ANTLRv4ParserBaseListener
         {
@@ -1008,9 +974,9 @@
             public Pass0Listener(ParsingResults pd)
             {
                 _pd = pd;
-                if (!ParsingResults._dependent_grammars.ContainsKey(_pd.FullFileName))
+                if (!ParsingResults.InverseImports.ContainsKey(_pd.FullFileName))
                 {
-                    ParsingResults._dependent_grammars.Add(_pd.FullFileName);
+                    ParsingResults.InverseImports.Add(_pd.FullFileName);
                 }
             }
 
@@ -1058,13 +1024,13 @@
                 }
 
                 _pd.Imports.Add(dep);
-                if (!ParsingResults._dependent_grammars.ContainsKey(dep))
+                if (!ParsingResults.InverseImports.ContainsKey(dep))
                 {
-                    ParsingResults._dependent_grammars.Add(dep);
+                    ParsingResults.InverseImports.Add(dep);
                 }
 
                 bool found = false;
-                foreach (string f in ParsingResults._dependent_grammars[dep])
+                foreach (string f in ParsingResults.InverseImports[dep])
                 {
                     if (f == file)
                     {
@@ -1074,7 +1040,7 @@
                 }
                 if (!found)
                 {
-                    ParsingResults._dependent_grammars.Add(dep, file);
+                    ParsingResults.InverseImports.Add(dep, file);
                 }
                 saw_tokenVocab_option = true;
             }
@@ -1102,13 +1068,13 @@
                 }
 
                 _pd.Imports.Add(dep);
-                if (!ParsingResults._dependent_grammars.ContainsKey(dep))
+                if (!ParsingResults.InverseImports.ContainsKey(dep))
                 {
-                    ParsingResults._dependent_grammars.Add(dep);
+                    ParsingResults.InverseImports.Add(dep);
                 }
 
                 bool found = false;
-                foreach (string f in ParsingResults._dependent_grammars[dep])
+                foreach (string f in ParsingResults.InverseImports[dep])
                 {
                     if (f == file)
                     {
@@ -1118,7 +1084,7 @@
                 }
                 if (!found)
                 {
-                    ParsingResults._dependent_grammars.Add(dep, file);
+                    ParsingResults.InverseImports.Add(dep, file);
                 }
             }
 
@@ -1130,45 +1096,72 @@
                 }
 
                 // We didn't see an option to include lexer grammar.
-
-                if (Type != GrammarType.Parser)
+                if (Type == GrammarType.Lexer)
                 {
-                    return;
-                }
-
-                // It's a parser grammar, but we didn't see the tokenVocab option for the lexer.
-                // We must assume a lexer grammar in this directory.
-                // BUT!!!! There could be many things wrong here, so just don't do this willy nilly.
-
-                string file = _pd.Item.FullPath;
-                string dep = file.Replace("Parser.g4", "Lexer.g4");
-                if (dep == file)
-                {
-                    // If the file is not named correctly so that it ends in Parser.g4,
-                    // then it's probably a mistake. I don't know where to get the lexer
-                    // grammar.
-                    return;
-                }
-
-                string dir = System.IO.Path.GetDirectoryName(file);
-                _pd.Imports.Add(dep);
-                if (!ParsingResults._dependent_grammars.ContainsKey(dep))
-                {
-                    ParsingResults._dependent_grammars.Add(dep);
-                }
-
-                bool found = false;
-                foreach (string f in ParsingResults._dependent_grammars[dep])
-                {
-                    if (f == file)
+                    string file = _pd.Item.FullPath;
+                    string dep = file.Replace("Lexer.g4", "Parser.g4");
+                    if (dep == file)
                     {
-                        found = true;
-                        break;
+                        // If the file is not named correctly so that it ends in Parser.g4,
+                        // then it's probably a mistake. I don't know where to get the lexer
+                        // grammar.
+                        return;
+                    }
+                    if (!ParsingResults.InverseImports.ContainsKey(dep))
+                    {
+                        ParsingResults.InverseImports.Add(dep);
+                    }
+
+                    bool found = false;
+                    foreach (string f in ParsingResults.InverseImports[dep])
+                    {
+                        if (f == file)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found)
+                    {
+                        ParsingResults.InverseImports.Add(file, dep);
                     }
                 }
-                if (!found)
+                if (Type == GrammarType.Parser)
                 {
-                    ParsingResults._dependent_grammars.Add(dep, file);
+                    // It's a parser grammar, but we didn't see the tokenVocab option for the lexer.
+                    // We must assume a lexer grammar in this directory.
+                    // BUT!!!! There could be many things wrong here, so just don't do this willy nilly.
+
+                    string file = _pd.Item.FullPath;
+                    string dep = file.Replace("Parser.g4", "Lexer.g4");
+                    if (dep == file)
+                    {
+                        // If the file is not named correctly so that it ends in Parser.g4,
+                        // then it's probably a mistake. I don't know where to get the lexer
+                        // grammar.
+                        return;
+                    }
+
+                    string dir = System.IO.Path.GetDirectoryName(file);
+                    _pd.Imports.Add(dep);
+                    if (!ParsingResults.InverseImports.ContainsKey(dep))
+                    {
+                        ParsingResults.InverseImports.Add(dep);
+                    }
+
+                    bool found = false;
+                    foreach (string f in ParsingResults.InverseImports[dep])
+                    {
+                        if (f == file)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found)
+                    {
+                        ParsingResults.InverseImports.Add(dep, file);
+                    }
                 }
             }
         }

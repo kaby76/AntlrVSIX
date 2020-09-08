@@ -8,7 +8,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class ParsingResults : IParserDescription, ICloneable
+    public abstract class ParsingResults : IParserDescription, ICloneable
     {
 
 
@@ -145,7 +145,7 @@
 
 
         protected static readonly Dictionary<string, IScope> _scopes = new Dictionary<string, IScope>();
-        public static Algorithms.Utils.MultiMap<string, string> _dependent_grammars = new Algorithms.Utils.MultiMap<string, string>();
+        public static Algorithms.Utils.MultiMap<string, string> InverseImports = new Algorithms.Utils.MultiMap<string, string>();
 
 
         public virtual List<string> Candidates(int char_index)
@@ -189,10 +189,7 @@
             }
         }
 
-        public object Clone()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract object Clone();
 
         public virtual Dictionary<IToken, int> ExtractComments(string code)
         {
@@ -290,10 +287,7 @@
 #pragma warning restore 0168
         }
 
-        public virtual bool IsFileType(string ffn)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract bool IsFileType(string ffn);
 
         private void Nuke(IScope scope)
         {
@@ -322,7 +316,7 @@
             Item.Changed = true;
         }
 
-        public virtual void Parse()
+        public virtual void Parse(bool bail = true)
         {
             Workspaces.Document document = Item;
             string code = document.Code;
@@ -340,7 +334,7 @@
                 throw new Exception();
             }
 
-            gd.Parse(this);
+            gd.Parse(this, bail);
 
             AllNodes = DFSVisitor.DFS(ParseTree as ParserRuleContext);
             Comments = gd.ExtractComments(code);
@@ -354,21 +348,16 @@
             Cleanup();
         }
 
-        public virtual void Parse(ParsingResults pd)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void Parse(ParsingResults pd, bool bail);
 
-        public virtual void Parse(string code, out CommonTokenStream TokStream, out Parser Parser, out Lexer Lexer, out IParseTree ParseTree)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void Parse(string code, out CommonTokenStream TokStream, out Parser Parser, out Lexer Lexer, out IParseTree ParseTree);
 
         public bool Pass(int pass_number)
         {
             return Passes[pass_number]();
         }
 
+        public abstract void GetGrammarBasics();
 
     }
 }

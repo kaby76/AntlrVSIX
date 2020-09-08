@@ -45,14 +45,14 @@
                 int before_count = read_files.Count;
                 foreach (string f in read_files)
                 {
-                    List<string> additional = ParsingResults._dependent_grammars.Where(
+                    List<string> additional = ParsingResults.InverseImports.Where(
                         t => t.Value.Contains(f)).Select(
                         t => t.Key).ToList();
                     read_files = read_files.Union(additional).ToHashSet();
                 }
                 foreach (string f in read_files)
                 {
-                    IEnumerable<List<string>> additional = ParsingResults._dependent_grammars.Where(
+                    IEnumerable<List<string>> additional = ParsingResults.InverseImports.Where(
                         t => t.Key == f).Select(
                         t => t.Value);
                     foreach (List<string> t in additional)
@@ -192,14 +192,14 @@
                 int before_count = read_files.Count;
                 foreach (string f in read_files)
                 {
-                    List<string> additional = ParsingResults._dependent_grammars.Where(
+                    List<string> additional = ParsingResults.InverseImports.Where(
                         t => t.Value.Contains(f)).Select(
                         t => t.Key).ToList();
                     read_files = read_files.Union(additional).ToHashSet();
                 }
                 foreach (string f in read_files)
                 {
-                    IEnumerable<List<string>> additional = ParsingResults._dependent_grammars.Where(
+                    IEnumerable<List<string>> additional = ParsingResults.InverseImports.Where(
                         t => t.Key == f).Select(
                         t => t.Value);
                     foreach (List<string> t in additional)
