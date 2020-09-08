@@ -912,7 +912,12 @@
 
         public override void GetGrammarBasics()
         {
-            throw new NotImplementedException();
+            // Gather Imports from grammars.
+            // Gather InverseImports map.
+            if (!ParsingResults.InverseImports.ContainsKey(this.FullFileName))
+            {
+                ParsingResults.InverseImports.Add(this.FullFileName);
+            }
         }
 
         public class Pass2Listener : W3CebnfParserBaseListener

@@ -1095,7 +1095,6 @@
                     return;
                 }
 
-                // We didn't see an option to include lexer grammar.
                 if (Type == GrammarType.Lexer)
                 {
                     string file = _pd.Item.FullPath;

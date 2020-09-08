@@ -974,7 +974,26 @@
 
         public override void GetGrammarBasics()
         {
-            throw new NotImplementedException();
+            // Gather Imports from grammars.
+            // Gather InverseImports map.
+            if (!ParsingResults.InverseImports.ContainsKey(this.FullFileName))
+            {
+                ParsingResults.InverseImports.Add(this.FullFileName);
+            }
+            if (ParseTree == null) return;
+            ParseTreeWalker.Default.Walk(new Pass0Listener(this), ParseTree);
+            foreach (KeyValuePair<string, List<string>> dep in ParsingResults.InverseImports)
+            {
+                string name = dep.Key;
+                Workspaces.Document x = Workspaces.Workspace.Instance.FindDocument(name);
+                if (x == null)
+                {
+                    // Add document.
+                    Workspaces.Container proj = Item.Parent;
+                    Workspaces.Document new_doc = new Workspaces.Document(name);
+                    proj.AddChild(new_doc);
+                }
+            }
         }
 
         public class Pass0Listener : ANTLRv2ParserBaseListener
@@ -1006,6 +1025,7 @@
                 else
                     Type = GrammarType.Lexer;
             }
+            
             public override void EnterTreeParserSpec([NotNull] ANTLRv2Parser.TreeParserSpecContext context)
             {
             }
@@ -1027,44 +1047,79 @@
 
                 // We didn't see an option to include lexer grammar.
 
-                if (Type != GrammarType.Parser)
+                if (Type != GrammarType.Lexer)
                 {
-                    return;
-                }
+                    // It's a parser grammar, but we didn't see the tokenVocab option for the lexer.
+                    // We must assume a lexer grammar in this directory.
+                    // BUT!!!! There could be many things wrong here, so just don't do this willy nilly.
 
-                // It's a parser grammar, but we didn't see the tokenVocab option for the lexer.
-                // We must assume a lexer grammar in this directory.
-                // BUT!!!! There could be many things wrong here, so just don't do this willy nilly.
-
-                string file = _pd.Item.FullPath;
-                string dep = file.Replace("Parser.g2", "Lexer.g2");
-                if (dep == file)
-                {
-                    // If the file is not named correctly so that it ends in Parser.g4,
-                    // then it's probably a mistake. I don't know where to get the lexer
-                    // grammar.
-                    return;
-                }
-
-                string dir = System.IO.Path.GetDirectoryName(file);
-                _pd.Imports.Add(dep);
-                if (!ParsingResults.InverseImports.ContainsKey(dep))
-                {
-                    ParsingResults.InverseImports.Add(dep);
-                }
-
-                bool found = false;
-                foreach (string f in ParsingResults.InverseImports[dep])
-                {
-                    if (f == file)
+                    string file = _pd.Item.FullPath;
+                    string dep = file.Replace("Lexer.g2", "Parser.g2");
+                    if (dep == file)
                     {
-                        found = true;
-                        break;
+                        // If the file is not named correctly so that it ends in Parser.g4,
+                        // then it's probably a mistake. I don't know where to get the lexer
+                        // grammar.
+                        return;
+                    }
+
+                    string dir = System.IO.Path.GetDirectoryName(file);
+                    _pd.Imports.Add(dep);
+                    if (!ParsingResults.InverseImports.ContainsKey(dep))
+                    {
+                        ParsingResults.InverseImports.Add(dep);
+                    }
+
+                    bool found = false;
+                    foreach (string f in ParsingResults.InverseImports[dep])
+                    {
+                        if (f == file)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found)
+                    {
+                        ParsingResults.InverseImports.Add(dep, file);
                     }
                 }
-                if (!found)
+                if (Type != GrammarType.Parser)
                 {
-                    ParsingResults.InverseImports.Add(dep, file);
+                    // It's a parser grammar, but we didn't see the tokenVocab option for the lexer.
+                    // We must assume a lexer grammar in this directory.
+                    // BUT!!!! There could be many things wrong here, so just don't do this willy nilly.
+
+                    string file = _pd.Item.FullPath;
+                    string dep = file.Replace("Parser.g2", "Lexer.g2");
+                    if (dep == file)
+                    {
+                        // If the file is not named correctly so that it ends in Parser.g4,
+                        // then it's probably a mistake. I don't know where to get the lexer
+                        // grammar.
+                        return;
+                    }
+
+                    string dir = System.IO.Path.GetDirectoryName(file);
+                    _pd.Imports.Add(dep);
+                    if (!ParsingResults.InverseImports.ContainsKey(dep))
+                    {
+                        ParsingResults.InverseImports.Add(dep);
+                    }
+
+                    bool found = false;
+                    foreach (string f in ParsingResults.InverseImports[dep])
+                    {
+                        if (f == file)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found)
+                    {
+                        ParsingResults.InverseImports.Add(dep, file);
+                    }
                 }
             }
         }
