@@ -1,21 +1,16 @@
 {
     "name": "Antlrvsix-vscode",
-    "description": "Language server for Antlr2, 3, 4, Bison, W3C EBNF",
     "author": "Ken Domino",
-    "license": "MIT",
-    "version": "0.0.1",
-    "publisher": "KenDomino",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/kaby76/AntlrVSIX"
-    },
-    "bugs": {
-        "url": "https://github.com/kaby76/AntlrVSIX/issues"
-    },
+    "bugs": { "url": "https://github.com/kaby76/AntlrVSIX/issues" },
     "categories": [],
-    "keywords": [
-        "antlr bison ebnf"
-    ],
+    "description": "Language server for Antlr2, 3, 4, Bison, W3C EBNF",
+    "homepage": "https://github.com/kaby76/AntlrVSIX/blob/master/README.md",
+    "icon": "../Client/AntlrVSIX_large.png",
+    "keywords": [ "antlr", "bison", "ebnf" ],
+    "license": "MIT",
+    "publisher": "KenDomino",
+    "repository": { "type" : "git", "url" : "https://github.com/kaby76/AntlrVSIX" },
+    "version": "0.0.1",
     "engines": {
         "vscode": "^1.48.0"
     },
