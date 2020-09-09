@@ -1,10 +1,10 @@
 {
-    "name": "Antlrvsix",
+    "name": "Antlrvsix-vscode",
     "description": "Language server for Antlr2, 3, 4, Bison, W3C EBNF",
     "author": "Ken Domino",
     "license": "MIT",
-    "version": "1.0.0",
-    "publisher": "domemtech",
+    "version": "0.0.1",
+    "publisher": "KenDomino",
     "repository": {
         "type": "git",
         "url": "https://github.com/kaby76/AntlrVSIX"
@@ -17,7 +17,7 @@
         "antlr bison ebnf"
     ],
     "engines": {
-        "vscode": "^1.49.0"
+        "vscode": "^1.48.0"
     },
     "activationEvents": [
         "onLanguage:antlr2",
