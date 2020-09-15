@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using System;
+using System.Collections.Generic;
 
 namespace Protocol
 {
@@ -26,7 +26,7 @@ namespace Protocol
         // Parameters:
         //   val:
         //     The value to store in the Microsoft.VisualStudio.LanguageServer.Protocol.SumType`2.
-        public SumType(T1 val) { throw new NotImplementedException(); }
+        public SumType(T1 val) { this.Value = (object)val; }
         //
         // Summary:
         //     Initializes a new instance of the Microsoft.VisualStudio.LanguageServer.Protocol.SumType`2
@@ -35,13 +35,13 @@ namespace Protocol
         // Parameters:
         //   val:
         //     The value to store in the Microsoft.VisualStudio.LanguageServer.Protocol.SumType`2.
-        public SumType(T2 val) { throw new NotImplementedException(); }
+        public SumType(T2 val) { this.Value = (object)val; }
 
         public object Value { get; }
 
-        public override bool Equals(object obj) { throw new NotImplementedException(); }
-        public bool Equals(SumType<T1, T2> other) { throw new NotImplementedException(); }
-        public override int GetHashCode() { throw new NotImplementedException(); }
+        public override bool Equals(object obj) { return obj is SumType<T1, T2> other && this.Equals(other); }
+        public bool Equals(SumType<T1, T2> other) { return EqualityComparer<object>.Default.Equals(this.Value, other.Value); }
+        public override int GetHashCode() { return EqualityComparer<object>.Default.GetHashCode(this.Value) - 1937169414; }
         //
         // Summary:
         //     Runs a delegate corresponding to which type is contained inside this instance.
@@ -64,10 +64,21 @@ namespace Protocol
         // Returns:
         //     The TResult instance created by the delegate corresponding to the current type
         //     stored in this instance.
-        public TResult Match<TResult>(Func<T1, TResult> firstMatch, Func<T2, TResult> secondMatch, Func<TResult> defaultMatch = null) { throw new NotImplementedException(); }
+        public TResult Match<TResult>(Func<T1, TResult> firstMatch, Func<T2, TResult> secondMatch, Func<TResult> defaultMatch = null)
+        {
+            if (firstMatch == null)
+                throw new ArgumentNullException(nameof(firstMatch));
+            if (secondMatch == null)
+                throw new ArgumentNullException(nameof(secondMatch));
+            if (this.Value is T1 obj1)
+                return firstMatch(obj1);
+            if (this.Value is T2 obj2)
+                return secondMatch(obj2);
+            return defaultMatch != null ? defaultMatch() : default(TResult);
+        }
 
-        public static bool operator ==(SumType<T1, T2> left, SumType<T1, T2> right) { throw new NotImplementedException(); }
-        public static bool operator !=(SumType<T1, T2> left, SumType<T1, T2> right) { throw new NotImplementedException(); }
+        public static bool operator ==(SumType<T1, T2> left, SumType<T1, T2> right) { return left.Equals(right); }
+        public static bool operator !=(SumType<T1, T2> left, SumType<T1, T2> right) { return !(left == right); }
 
         //
         // Summary:
@@ -76,7 +87,7 @@ namespace Protocol
         // Parameters:
         //   val:
         //     Value to be wrapped.
-        public static implicit operator SumType<T1, T2>(T1 val) { throw new NotImplementedException(); }
+        public static implicit operator SumType<T1, T2>(T1 val) { return new SumType<T1, T2>(val); }
         //
         // Summary:
         //     Implicitly wraps a value of type T2 with a Microsoft.VisualStudio.LanguageServer.Protocol.SumType`2.
@@ -84,7 +95,7 @@ namespace Protocol
         // Parameters:
         //   val:
         //     Value to be wrapped.
-        public static implicit operator SumType<T1, T2>(T2 val) { throw new NotImplementedException(); }
+        public static implicit operator SumType<T1, T2>(T2 val) { return new SumType<T1, T2>(val); }
         //
         // Summary:
         //     Attempts to cast an instance of Microsoft.VisualStudio.LanguageServer.Protocol.SumType`2
@@ -98,7 +109,12 @@ namespace Protocol
         //   T:System.InvalidCastException:
         //     Thrown if this instance of Microsoft.VisualStudio.LanguageServer.Protocol.SumType`2
         //     does not contain an instance of T1.
-        public static explicit operator T1(SumType<T1, T2> sum) { throw new NotImplementedException(); }
+        public static explicit operator T1(SumType<T1, T2> sum)
+        {
+            if (sum.Value is T1 obj1)
+                return obj1;
+            throw new InvalidCastException();
+        }
         //
         // Summary:
         //     Attempts to cast an instance of Microsoft.VisualStudio.LanguageServer.Protocol.SumType`2
@@ -112,7 +128,13 @@ namespace Protocol
         //   T:System.InvalidCastException:
         //     Thrown if this instance of Microsoft.VisualStudio.LanguageServer.Protocol.SumType`2
         //     does not contain an instance of T2.
-        public static explicit operator T2(SumType<T1, T2> sum) { throw new NotImplementedException(); }
+        public static explicit operator T2(SumType<T1, T2> sum)
+        {
+            if (sum.Value is T2 obj2)
+                return obj2;
+            throw new InvalidCastException();
+        }
+
     }
 
     //
@@ -139,7 +161,7 @@ namespace Protocol
         // Parameters:
         //   val:
         //     The value to store in the Microsoft.VisualStudio.LanguageServer.Protocol.SumType`3.
-        public SumType(T1 val) { throw new NotImplementedException(); }
+        public SumType(T1 val) { this.Value = (object)val; }
         //
         // Summary:
         //     Initializes a new instance of the Microsoft.VisualStudio.LanguageServer.Protocol.SumType`3
@@ -148,7 +170,7 @@ namespace Protocol
         // Parameters:
         //   val:
         //     The value to store in the Microsoft.VisualStudio.LanguageServer.Protocol.SumType`3.
-        public SumType(T2 val) { throw new NotImplementedException(); }
+        public SumType(T2 val) { this.Value = (object)val; }
         //
         // Summary:
         //     Initializes a new instance of the Microsoft.VisualStudio.LanguageServer.Protocol.SumType`3
@@ -157,13 +179,13 @@ namespace Protocol
         // Parameters:
         //   val:
         //     The value to store in the Microsoft.VisualStudio.LanguageServer.Protocol.SumType`3.
-        public SumType(T3 val) { throw new NotImplementedException(); }
+        public SumType(T3 val) { this.Value = (object)val; }
 
         public object Value { get; }
 
-        public override bool Equals(object obj) { throw new NotImplementedException(); }
-        public bool Equals(SumType<T1, T2, T3> other) { throw new NotImplementedException(); }
-        public override int GetHashCode() { throw new NotImplementedException(); }
+        public override bool Equals(object obj) { return obj is SumType<T1, T2, T3> other && this.Equals(other); }
+        public bool Equals(SumType<T1, T2, T3> other) { return EqualityComparer<object>.Default.Equals(this.Value, other.Value); }
+        public override int GetHashCode() { return EqualityComparer<object>.Default.GetHashCode(this.Value) - 1937169414; }
         //
         // Summary:
         //     Runs a delegate corresponding to which type is contained inside this instance.
@@ -189,10 +211,25 @@ namespace Protocol
         // Returns:
         //     The TResult instance created by the delegate corresponding to the current type
         //     stored in this instance.
-        public TResult Match<TResult>(Func<T1, TResult> firstMatch, Func<T2, TResult> secondMatch, Func<T3, TResult> thirdMatch, Func<TResult> defaultMatch = null) { throw new NotImplementedException(); }
+        public TResult Match<TResult>(Func<T1, TResult> firstMatch, Func<T2, TResult> secondMatch, Func<T3, TResult> thirdMatch, Func<TResult> defaultMatch = null)
+        {
+            if (firstMatch == null)
+                throw new ArgumentNullException(nameof(firstMatch));
+            if (secondMatch == null)
+                throw new ArgumentNullException(nameof(secondMatch));
+            if (thirdMatch == null)
+                throw new ArgumentNullException(nameof(thirdMatch));
+            if (this.Value is T1 obj1)
+                return firstMatch(obj1);
+            if (this.Value is T2 obj2)
+                return secondMatch(obj2);
+            if (this.Value is T3 obj3)
+                return thirdMatch(obj3);
+            return defaultMatch != null ? defaultMatch() : default(TResult);
+        }
 
-        public static bool operator ==(SumType<T1, T2, T3> left, SumType<T1, T2, T3> right) { throw new NotImplementedException(); }
-        public static bool operator !=(SumType<T1, T2, T3> left, SumType<T1, T2, T3> right) { throw new NotImplementedException(); }
+        public static bool operator ==(SumType<T1, T2, T3> left, SumType<T1, T2, T3> right) { return left.Equals(right); }
+        public static bool operator !=(SumType<T1, T2, T3> left, SumType<T1, T2, T3> right) { return !(left == right); }
 
         //
         // Summary:
@@ -201,7 +238,7 @@ namespace Protocol
         // Parameters:
         //   val:
         //     Value to be wrap.
-        public static implicit operator SumType<T1, T2, T3>(T2 val) { throw new NotImplementedException(); }
+        public static implicit operator SumType<T1, T2, T3>(T2 val) { return new SumType<T1, T2, T3>(val); }
         //
         // Summary:
         //     Implicitly wraps a value of type T3 with a Microsoft.VisualStudio.LanguageServer.Protocol.SumType`3.
@@ -209,7 +246,7 @@ namespace Protocol
         // Parameters:
         //   val:
         //     Value to be wrap.
-        public static implicit operator SumType<T1, T2, T3>(T3 val) { throw new NotImplementedException(); }
+        public static implicit operator SumType<T1, T2, T3>(T3 val) { return new SumType<T1, T2, T3>(val); }
         //
         // Summary:
         //     Implicitly wraps an instance of Microsoft.VisualStudio.LanguageServer.Protocol.SumType`2
@@ -218,7 +255,22 @@ namespace Protocol
         // Parameters:
         //   sum:
         //     Sum instance to wrap.
-        public static implicit operator SumType<T1, T2, T3>(SumType<T1, T2> sum) { throw new NotImplementedException(); }
+        public static implicit operator SumType<T1, T2, T3>(SumType<T1, T2> sum)
+        {
+            throw new NotImplementedException();
+            // ISSUE: method pointer
+            // ISSUE: method pointer
+            //return sum.Match<SumType<T1, T2, T3>>(
+            //    SumType<T1, T2, T3>.<>c.<>9__9_0 ??
+            //    (SumType<T1, T2, T3>.<>c.<>9__9_0
+            //        = new Func<T1, SumType<T1, T2, T3>>(
+            //            (object)SumType<T1, T2, T3>.<>c.<>9, __methodptr(<op_Implicit>b__9_0))),
+            //            SumType<T1, T2, T3>.<>c.<>9__9_1 ??
+            //            (SumType<T1, T2, T3>.<>c.<>9__9_1
+            //            = new Func<T2, SumType<T1, T2, T3>>(
+            //                (object)SumType<T1, T2, T3>.<>c.<>9, __methodptr(<op_Implicit>b__9_1))),
+            //            (Func<SumType<T1, T2, T3>>)null);
+        }
         //
         // Summary:
         //     Implicitly wraps a value of type T1 with a Microsoft.VisualStudio.LanguageServer.Protocol.SumType`3.
@@ -226,7 +278,7 @@ namespace Protocol
         // Parameters:
         //   val:
         //     Value to be wrap.
-        public static implicit operator SumType<T1, T2, T3>(T1 val) { throw new NotImplementedException(); }
+        public static implicit operator SumType<T1, T2, T3>(T1 val) { return new SumType<T1, T2, T3>(val); }
         //
         // Summary:
         //     Attempts to cast an instance of Microsoft.VisualStudio.LanguageServer.Protocol.SumType`3
@@ -235,7 +287,14 @@ namespace Protocol
         // Parameters:
         //   sum:
         //     Sum instance to downcast.
-        public static explicit operator SumType<T1, T2>(SumType<T1, T2, T3> sum) { throw new NotImplementedException(); }
+        public static explicit operator SumType<T1, T2>(SumType<T1, T2, T3> sum)
+        {
+            if (sum.Value is T1 obj1)
+                return (SumType<T1, T2>)obj1;
+            if (sum.Value is T2 obj2)
+                return (SumType<T1, T2>)obj2;
+            throw new InvalidCastException();
+        }
         //
         // Summary:
         //     Attempts to cast an instance of Microsoft.VisualStudio.LanguageServer.Protocol.SumType`2
@@ -249,7 +308,12 @@ namespace Protocol
         //   T:System.InvalidCastException:
         //     Thrown if this instance of Microsoft.VisualStudio.LanguageServer.Protocol.SumType`3
         //     does not contain an instance of T2.
-        public static explicit operator T2(SumType<T1, T2, T3> sum) { throw new NotImplementedException(); }
+        public static explicit operator T2(SumType<T1, T2, T3> sum)
+        {
+            if (sum.Value is T2 obj)
+                return obj;
+            throw new InvalidCastException();
+        }
         //
         // Summary:
         //     Attempts to cast an instance of Microsoft.VisualStudio.LanguageServer.Protocol.SumType`3
@@ -263,7 +327,12 @@ namespace Protocol
         //   T:System.InvalidCastException:
         //     Thrown if this instance of Microsoft.VisualStudio.LanguageServer.Protocol.SumType`3
         //     does not contain an instance of T3.
-        public static explicit operator T3(SumType<T1, T2, T3> sum) { throw new NotImplementedException(); }
+        public static explicit operator T3(SumType<T1, T2, T3> sum)
+        {
+            if (sum.Value is T3 obj)
+                return obj;
+            throw new InvalidCastException();
+        }
         //
         // Summary:
         //     Attempts to cast an instance of Microsoft.VisualStudio.LanguageServer.Protocol.SumType`3
@@ -277,6 +346,11 @@ namespace Protocol
         //   T:System.InvalidCastException:
         //     Thrown if this instance of Microsoft.VisualStudio.LanguageServer.Protocol.SumType`3
         //     does not contain an instance of T1.
-        public static explicit operator T1(SumType<T1, T2, T3> sum) { throw new NotImplementedException(); }
+        public static explicit operator T1(SumType<T1, T2, T3> sum)
+        {
+            if (sum.Value is T1 obj)
+                return obj;
+            throw new InvalidCastException();
+        }
     }
 }

@@ -637,7 +637,7 @@
 
         public static Document CheckDoc(string uri)
         {
-            string file_name = uri;
+            string file_name = uri.Replace("file:///", "");
             Document document = Workspaces.Workspace.Instance.FindDocument(file_name);
             if (document == null)
             {

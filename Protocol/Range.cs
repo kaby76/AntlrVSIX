@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Protocol
@@ -22,8 +23,11 @@ namespace Protocol
         [DataMember(Name = "end")]
         public Position End { get; set; }
 
-        public override bool Equals(object obj) { throw new NotImplementedException(); }
-        public bool Equals(Range other) { throw new NotImplementedException(); }
-        public override int GetHashCode() { throw new NotImplementedException(); }
+        public override bool Equals(object obj) { return this.Equals(obj as Range); }
+        public bool Equals(Range other) { return other != null && EqualityComparer<Position>.Default.Equals(this.Start, other.Start) && EqualityComparer<Position>.Default.Equals(this.End, other.End); }
+        public override int GetHashCode()
+        {
+            return (int)((long)-1676728671 * (long)-1521134295 + EqualityComparer<Position>.Default.GetHashCode(this.Start)) * -1521134295 + EqualityComparer<Position>.Default.GetHashCode(this.End);
+        }
     }
 }
