@@ -1,11 +1,10 @@
 ﻿namespace Server
 {
-    using Microsoft.VisualStudio.LanguageServer.Protocol;
+    using Protocol;
     using System;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.IO;
-    using System.Linq;
     using System.Threading.Tasks;
 
     internal class Program : IDisposable
@@ -208,7 +207,7 @@
         }
     }
 
-    public class DiagnosticTag : INotifyPropertyChanged
+    public class MyDiagnosticTag : INotifyPropertyChanged
     {
         private string text;
         private DiagnosticSeverity severity;

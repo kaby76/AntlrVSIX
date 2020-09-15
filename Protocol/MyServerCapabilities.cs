@@ -1,8 +1,7 @@
-﻿using Microsoft.VisualStudio.LanguageServer.Protocol;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace Server
+namespace Protocol
 {
     //
     // Summary:
@@ -16,7 +15,7 @@ namespace Server
         // Summary:
         //     Gets or sets the value which indicates how text document are synced.
         [DataMember(Name = "textDocumentSync")]
-        [JsonConverter(typeof(TextDocumentSyncConverter))]
+   //TODO     [JsonConverter(typeof(TextDocumentSyncConverter))]
         public TextDocumentSyncOptions TextDocumentSync { get; set; }
 
         //
@@ -128,7 +127,7 @@ namespace Server
         // Summary:
         //     Gets or sets the value which indicates if folding range is supported.
         [DataMember(Name = "foldingRangeProvider")]
-        [JsonConverter(typeof(FoldingRangeOptionsConverter))]
+   //TODO     [JsonConverter(typeof(FoldingRangeOptionsConverter))]
         public FoldingRangeProviderOptions FoldingRangeProvider { get; set; }
 
         //

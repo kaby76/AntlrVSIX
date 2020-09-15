@@ -1,10 +1,10 @@
 ﻿namespace Server
 {
-    using LoggerNs;
     using LanguageServer;
-    using Microsoft.VisualStudio.LanguageServer.Protocol;
+    using LoggerNs;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
+    using Protocol;
     using StreamJsonRpc;
     using System;
     using System.Collections.Generic;
@@ -13,7 +13,6 @@
     using System.Threading;
     using Workspaces;
     using DocumentSymbol = LanguageServer.DocumentSymbol;
-    using Location = LanguageServer.Location;
 
     public class LanguageServerTarget
     {
@@ -23,7 +22,6 @@
         private static readonly object _object = new object();
         private readonly Dictionary<string, bool> ignore_next_change = new Dictionary<string, bool>();
         private int current_version;
-        private bool first_change = true;
 
         public LanguageServerTarget(LSPServer server)
         {
@@ -38,12 +36,12 @@
             {
                 throw new LanguageServerException("No changes were needed, none made.");
             }
-            Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]> a = new Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]>();
+            var a = new Dictionary<string, Protocol.TextEdit[]>();
             foreach (var pair in ch)
             {
                 var fn = pair.Key;
                 var new_code = pair.Value;
-                Document document = CheckDoc(new Uri(fn));
+                Document document = CheckDoc(fn);
                 var code = document.Code;
                 List<LanguageServer.TextEdit> edits = new List<LanguageServer.TextEdit>();
                 Diff_match_patch diff = new Diff_match_patch();
@@ -108,13 +106,13 @@
                 }
                 var changes = edits.ToArray();
 
-                List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit> new_list = new List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit>();
+                List<Protocol.TextEdit> new_list = new List<Protocol.TextEdit>();
                 int count = 0;
                 foreach (LanguageServer.TextEdit delta in changes)
                 {
-                    Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit new_edit = new Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit
+                    var new_edit = new Protocol.TextEdit
                     {
-                        Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range()
+                        Range = new Protocol.Range()
                     };
                     (int, int) lcs = new LanguageServer.Module().GetLineColumn(delta.range.Start.Value, document);
                     (int, int) lce = new LanguageServer.Module().GetLineColumn(delta.range.End.Value, document);
@@ -445,7 +443,7 @@
                                         int end_index = 0;
                                         foreach (TextDocumentContentChangeEvent change in request.ContentChanges)
                                         {
-                                            Microsoft.VisualStudio.LanguageServer.Protocol.Range range = change.Range;
+                                            var range = change.Range;
                                             int length = change.RangeLength; // Why? range encodes start and end => length!
                                             string text = change.Text;
                                             {
@@ -480,7 +478,7 @@
                                         ignore_next_change.Remove(document.FullPath);
                                     }
                                     current_version = version + 1;
-                                    first_change = false;
+                                    //first_change = false;
 
                                     //          break;
                                 }
@@ -637,10 +635,9 @@
             }
         }
 
-        public static Document CheckDoc(System.Uri uri)
+        public static Document CheckDoc(string uri)
         {
-            string decoded = System.Web.HttpUtility.UrlDecode(uri.AbsoluteUri);
-            string file_name = new Uri(decoded).LocalPath;
+            string file_name = uri;
             Document document = Workspaces.Workspace.Instance.FindDocument(file_name);
             if (document == null)
             {
@@ -714,7 +711,7 @@
                     int index_end = quick_info.Range.End.Value;
                     (int, int) lcs = new LanguageServer.Module().GetLineColumn(index_start, document);
                     (int, int) lce = new LanguageServer.Module().GetLineColumn(index_end, document);
-                    hover.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range
+                    hover.Range = new Protocol.Range
                     {
                         Start = new Position(lcs.Item1, lcs.Item2),
                         End = new Position(lce.Item1, lce.Item2)
@@ -774,16 +771,16 @@
                         (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
                         Logger.Log.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
                     }
-                    IList<Location> found = new LanguageServer.Module().FindDefs(index, document);
+                    var found = new LanguageServer.Module().FindDefs(index, document);
                     List<object> locations = new List<object>();
-                    foreach (Location f in found)
+                    foreach (var f in found)
                     {
-                        Microsoft.VisualStudio.LanguageServer.Protocol.Location location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location
+                        Protocol.Location location = new Protocol.Location
                         {
-                            Uri = new Uri(f.Uri.FullPath)
+                            Uri = f.Uri.FullPath
                         };
                         Document def_document = _workspace.FindDocument(f.Uri.FullPath);
-                        location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
+                        location.Range = new Protocol.Range();
                         (int, int) lcs = new LanguageServer.Module().GetLineColumn(f.Range.Start.Value, def_document);
                         (int, int) lce = new LanguageServer.Module().GetLineColumn(f.Range.End.Value, def_document);
                         location.Range.Start = new Position(lcs.Item1, lcs.Item2);
@@ -823,16 +820,16 @@
                         (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
                         Logger.Log.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
                     }
-                    IList<Location> found = new LanguageServer.Module().FindDefs(index, document);
+                    var found = new LanguageServer.Module().FindDefs(index, document);
                     List<object> locations = new List<object>();
-                    foreach (Location f in found)
+                    foreach (var f in found)
                     {
-                        Microsoft.VisualStudio.LanguageServer.Protocol.Location location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location
+                        Protocol.Location location = new Protocol.Location
                         {
-                            Uri = new Uri(f.Uri.FullPath)
+                            Uri = f.Uri.FullPath
                         };
                         Document def_document = _workspace.FindDocument(f.Uri.FullPath);
-                        location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
+                        location.Range = new Protocol.Range();
                         (int, int) lcs = new LanguageServer.Module().GetLineColumn(f.Range.Start.Value, def_document);
                         (int, int) lce = new LanguageServer.Module().GetLineColumn(f.Range.End.Value, def_document);
                         location.Range.Start = new Position(lcs.Item1, lcs.Item2);
@@ -872,16 +869,16 @@
                         (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
                         Logger.Log.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
                     }
-                    IList<Location> found = new LanguageServer.Module().FindDefs(index, document);
+                    var found = new LanguageServer.Module().FindDefs(index, document);
                     List<object> locations = new List<object>();
-                    foreach (Location f in found)
+                    foreach (var f in found)
                     {
-                        Microsoft.VisualStudio.LanguageServer.Protocol.Location location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location
+                        var location = new Protocol.Location
                         {
-                            Uri = new Uri(f.Uri.FullPath)
+                            Uri = f.Uri.FullPath
                         };
                         Document def_document = _workspace.FindDocument(f.Uri.FullPath);
-                        location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
+                        location.Range = new Protocol.Range();
                         (int, int) lcs = new LanguageServer.Module().GetLineColumn(f.Range.Start.Value, def_document);
                         (int, int) lce = new LanguageServer.Module().GetLineColumn(f.Range.End.Value, def_document);
                         location.Range.Start = new Position(lcs.Item1, lcs.Item2);
@@ -921,16 +918,16 @@
                         (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
                         Logger.Log.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
                     }
-                    IEnumerable<Location> found = new LanguageServer.Module().FindRefsAndDefs(index, document);
+                    var found = new LanguageServer.Module().FindRefsAndDefs(index, document);
                     List<object> locations = new List<object>();
-                    foreach (Location f in found)
+                    foreach (var f in found)
                     {
-                        Microsoft.VisualStudio.LanguageServer.Protocol.Location location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location
+                        var location = new Protocol.Location
                         {
-                            Uri = new Uri(f.Uri.FullPath)
+                            Uri = f.Uri.FullPath
                         };
                         Document def_document = _workspace.FindDocument(f.Uri.FullPath);
-                        location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
+                        location.Range = new Protocol.Range();
                         (int, int) lcs = new LanguageServer.Module().GetLineColumn(f.Range.Start.Value, def_document);
                         (int, int) lce = new LanguageServer.Module().GetLineColumn(f.Range.End.Value + 1, def_document);
                         location.Range.Start = new Position(lcs.Item1, lcs.Item2);
@@ -944,7 +941,7 @@
                         Logger.Log.WriteLine(string.Join(
                             System.Environment.NewLine, result.Select(s =>
                         {
-                            var v = (Microsoft.VisualStudio.LanguageServer.Protocol.Location)s;
+                            var v = (Protocol.Location)s;
                             var dd = CheckDoc(v.Uri);
                             return "<" + v.Uri +
                                 ",[" + new LanguageServer.Module().GetIndex(
@@ -994,17 +991,17 @@
                         (int, int) back = new LanguageServer.Module().GetLineColumn(index, document);
                         Logger.Log.WriteLine("back to l,c = " + back.Item1 + "," + back.Item2);
                     }
-                    IEnumerable<Location> found = new LanguageServer.Module().FindRefsAndDefs(index, document);
+                    var found = new LanguageServer.Module().FindRefsAndDefs(index, document);
                     List<object> locations = new List<object>();
-                    foreach (Location f in found)
+                    foreach (var f in found)
                     {
                         if (f.Uri.FullPath != document.FullPath)
                         {
                             continue;
                         }
-                        Microsoft.VisualStudio.LanguageServer.Protocol.DocumentHighlight location = new DocumentHighlight();
+                        DocumentHighlight location = new DocumentHighlight();
                         Document def_document = _workspace.FindDocument(f.Uri.FullPath);
-                        location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range();
+                        location.Range = new Protocol.Range();
                         (int, int) lcs = new LanguageServer.Module().GetLineColumn(f.Range.Start.Value, def_document);
                         (int, int) lce = new LanguageServer.Module().GetLineColumn(f.Range.End.Value + 1, def_document);
                         location.Range.Start = new Position(lcs.Item1, lcs.Item2);
@@ -1077,13 +1074,13 @@
                         }
 
                         si.Name = s.name;
-                        si.Location = new Microsoft.VisualStudio.LanguageServer.Protocol.Location
+                        si.Location = new Protocol.Location
                         {
                             Uri = request.TextDocument.Uri
                         };
                         (int, int) lcs = new LanguageServer.Module().GetLineColumn(s.range.Start.Value, document);
                         (int, int) lce = new LanguageServer.Module().GetLineColumn(s.range.End.Value, document);
-                        si.Location.Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range
+                        si.Location.Range = new Protocol.Range
                         {
                             Start = new Position(lcs.Item1, lcs.Item2),
                             End = new Position(lce.Item1, lce.Item2)
@@ -1227,14 +1224,14 @@
                     }
                     DocumentFormattingParams request = arg.ToObject<DocumentFormattingParams>();
                     Document document = CheckDoc(request.TextDocument.Uri);
-                    List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit> new_list = new List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit>();
+                    var new_list = new List<Protocol.TextEdit>();
                     LanguageServer.TextEdit[] changes = new LanguageServer.Module().Reformat(document);
                     int count = 0;
                     foreach (LanguageServer.TextEdit delta in changes)
                     {
-                        Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit new_edit = new Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit
+                        var new_edit = new Protocol.TextEdit
                         {
-                            Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range()
+                            Range = new Protocol.Range()
                         };
                         (int, int) lcs = new LanguageServer.Module().GetLineColumn(delta.range.Start.Value, document);
                         (int, int) lce = new LanguageServer.Module().GetLineColumn(delta.range.End.Value, document);
@@ -1321,18 +1318,18 @@
                         Dictionary<string, LanguageServer.TextEdit[]> changes = new LanguageServer.Module().Rename(index, new_name, document);
                         edit = new WorkspaceEdit();
                         int count = 0;
-                        Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]> edit_changes_array = new Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]>();
+                        var edit_changes_array = new Dictionary<string, Protocol.TextEdit[]>();
                         foreach (KeyValuePair<string, LanguageServer.TextEdit[]> pair in changes)
                         {
                             string doc = pair.Key;
                             Uri uri = new Uri(doc);
                             LanguageServer.TextEdit[] val = pair.Value;
-                            List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit> new_list = new List<Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit>();
+                            var new_list = new List<Protocol.TextEdit>();
                             foreach (LanguageServer.TextEdit v in val)
                             {
-                                Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit new_edit = new Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit
+                                var new_edit = new Protocol.TextEdit
                                 {
-                                    Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range()
+                                    Range = new Protocol.Range()
                                 };
                                 (int, int) lcs = new LanguageServer.Module().GetLineColumn(v.range.Start.Value, document);
                                 (int, int) lce = new LanguageServer.Module().GetLineColumn(v.range.End.Value, document);
@@ -1389,7 +1386,7 @@
                     var a1 = arg1.ToObject<string>();
                     var a2 = arg2.ToObject<int>();
                     var a3 = arg3.ToObject<int>();
-                    Document document = CheckDoc(new Uri(a1));
+                    Document document = CheckDoc(a1);
                     var start = a2;
                     var end = a3;
                     if (trace)
@@ -1446,7 +1443,7 @@
                 int next_sym = forward ? int.MaxValue : -1;
                 try
                 {
-                    Document document = CheckDoc(new Uri(ffn));
+                    Document document = CheckDoc(ffn);
                     if (trace)
                     {
                         Logger.Log.WriteLine("<-- CMNextSymbol");
@@ -1454,9 +1451,9 @@
                         (int, int) bs = new LanguageServer.Module().GetLineColumn(pos, document);
                         Logger.Log.WriteLine("");
                     }
-                    IEnumerable<Location> r = new LanguageServer.Module().GetDefs(document);
+                    var r = new LanguageServer.Module().GetDefs(document);
                     List<object> symbols = new List<object>();
-                    foreach (Location s in r)
+                    foreach (var s in r)
                     {
                         if (forward)
                         {
@@ -1504,7 +1501,7 @@
                 try
                 {
                     string a1 = arg1.ToObject<string>();
-                    Document document = CheckDoc(new Uri(a1));
+                    Document document = CheckDoc(a1);
                     int a2 = arg2.ToObject<int>();
                     bool a3 = arg3.ToObject<bool>();
                     if (trace)
@@ -1537,7 +1534,7 @@
                 try
                 {
                     string a1 = arg1.ToObject<string>();
-                    Document document = CheckDoc(new Uri(a1));
+                    Document document = CheckDoc(a1);
                     int a2 = arg2.ToObject<int>();
                     bool a3 = arg3.ToObject<bool>();
                     if (trace)
@@ -1571,7 +1568,7 @@
                     string a1 = arg1.ToObject<string>();
                     int a2 = arg2.ToObject<int>();
                     int a3 = arg3.ToObject<int>();
-                    Document document = CheckDoc(new Uri(a1));
+                    Document document = CheckDoc(a1);
                     int start = a2;
                     int end = a3;
                     if (trace)
@@ -1607,7 +1604,7 @@
                     string a1 = arg1.ToObject<string>();
                     int a2 = arg2.ToObject<int>();
                     int a3 = arg3.ToObject<int>();
-                    Document document = CheckDoc(new Uri(a1));
+                    Document document = CheckDoc(a1);
                     int start = a2;
                     int end = a3;
                     if (trace)
@@ -1639,7 +1636,7 @@
                 try
                 {
                     string a1 = arg1.ToObject<string>();
-                    Document document = CheckDoc(new Uri(a1));
+                    Document document = CheckDoc(a1);
                     if (trace)
                     {
                         Logger.Log.WriteLine("<-- CMMoveStartRuleToTop");
@@ -1668,7 +1665,7 @@
                 try
                 {
                     var a1 = arg1.ToObject<string>();
-                    Document document = CheckDoc(new Uri(a1));
+                    Document document = CheckDoc(a1);
                     var type = arg2.ToObject<LspAntlr.ReorderType>();
                     if (trace)
                     {
@@ -1709,7 +1706,7 @@
                 try
                 {
                     var a1 = arg1.ToObject<string>();
-                    Document document = CheckDoc(new Uri(a1));
+                    Document document = CheckDoc(a1);
                     var type = arg2.ToObject<LspAntlr.ReorderType>();
                     var split = arg1.ToObject<bool>();
                     if (trace)
@@ -1771,7 +1768,7 @@
                     string a1 = arg1.ToObject<string>();
                     int a2 = arg2.ToObject<int>();
                     int a3 = arg3.ToObject<int>();
-                    Document document = CheckDoc(new Uri(a1));
+                    Document document = CheckDoc(a1);
                     int start = a2;
                     int end = a3;
                     if (trace)
@@ -1808,7 +1805,7 @@
                     string a1 = arg1.ToObject<string>();
                     int a2 = arg2.ToObject<int>();
                     int a3 = arg3.ToObject<int>();
-                    Document document = CheckDoc(new Uri(a1));
+                    Document document = CheckDoc(a1);
                     int start = a2;
                     int end = a3;
                     if (trace)
@@ -1844,7 +1841,7 @@
                     string a1 = arg1.ToObject<string>();
                     int a2 = arg2.ToObject<int>();
                     int a3 = arg3.ToObject<int>();
-                    Document document = CheckDoc(new Uri(a1));
+                    Document document = CheckDoc(a1);
                     int start = a2;
                     int end = a3;
                     if (trace)
@@ -1877,7 +1874,7 @@
             {
                 try
                 {
-                    Uri request = arg.ToObject<Uri>();
+                    var request = arg.ToObject<string>();
                     Document document = CheckDoc(request);
                     if (trace)
                     {
@@ -1909,7 +1906,7 @@
                     string a1 = arg1.ToObject<string>();
                     int a2 = arg2.ToObject<int>();
                     int a3 = arg3.ToObject<int>();
-                    Document document = CheckDoc(new Uri(a1));
+                    Document document = CheckDoc(a1);
                     int start = a2;
                     int end = a3;
                     if (trace)
@@ -1942,7 +1939,7 @@
             {
                 try
                 {
-                    Uri request = arg.ToObject<Uri>();
+                    string request = arg.ToObject<string>();
                     Document document = CheckDoc(request);
                     if (trace)
                     {
@@ -1973,7 +1970,7 @@
                     string a1 = arg1.ToObject<string>();
                     int a2 = arg2.ToObject<int>();
                     int a3 = arg3.ToObject<int>();
-                    Document document = CheckDoc(new Uri(a1));
+                    Document document = CheckDoc(a1);
                     int start = a2;
                     int end = a3;
                     if (trace)
@@ -2009,7 +2006,7 @@
                     string a1 = arg1.ToObject<string>();
                     int a2 = arg2.ToObject<int>();
                     int a3 = arg3.ToObject<int>();
-                    Document document = CheckDoc(new Uri(a1));
+                    Document document = CheckDoc(a1);
                     int start = a2;
                     int end = a3;
                     if (trace)
@@ -2045,7 +2042,7 @@
                     string a1 = arg1.ToObject<string>();
                     int a2 = arg2.ToObject<int>();
                     int a3 = arg3.ToObject<int>();
-                    Document document = CheckDoc(new Uri(a1));
+                    Document document = CheckDoc(a1);
                     int start = a2;
                     int end = a3;
                     if (trace)
@@ -2079,7 +2076,7 @@
                 try
                 {
                     string a1 = arg1.ToObject<string>();
-                    Document document = CheckDoc(new Uri(a1));
+                    Document document = CheckDoc(a1);
                     if (trace)
                     {
                         Logger.Log.WriteLine("<-- CMPerformAnalysis");
@@ -2109,7 +2106,7 @@
                     string a1 = arg1.ToObject<string>();
                     int a2 = arg2.ToObject<int>();
                     int a3 = arg3.ToObject<int>();
-                    Document document = CheckDoc(new Uri(a1));
+                    Document document = CheckDoc(a1);
                     int start = a2;
                     int end = a3;
                     if (trace)
@@ -2145,7 +2142,7 @@
                     string a1 = arg1.ToObject<string>();
                     int a2 = arg2.ToObject<int>();
                     int a3 = arg3.ToObject<int>();
-                    Document document = CheckDoc(new Uri(a1));
+                    Document document = CheckDoc(a1);
                     int start = a2;
                     int end = a3;
                     if (trace)
@@ -2197,7 +2194,7 @@
             }
         }
 
-        [JsonRpcMethod("textDocument/semanticTokens/full")]
+        [JsonRpcMethod(Methods.TextDocumentSemanticTokensFull)]
         public SemanticTokens SemanticTokens(JToken arg)
         {
             lock (_object)

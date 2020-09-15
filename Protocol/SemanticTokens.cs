@@ -1,7 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-
-namespace Server
+namespace Protocol
 {
 
 

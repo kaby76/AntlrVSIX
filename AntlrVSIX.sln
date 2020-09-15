@@ -89,6 +89,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trash", "Trash\Trash.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NWayDiff", "NWayDiff\NWayDiff.csproj", "{7761D467-8CA0-44CC-BC4B-31D5F65C9689}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Protocol", "Protocol\Protocol.csproj", "{1D5542D2-43F0-4330-9CD4-98EDADB19D47}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -143,6 +145,10 @@ Global
 		{7761D467-8CA0-44CC-BC4B-31D5F65C9689}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7761D467-8CA0-44CC-BC4B-31D5F65C9689}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7761D467-8CA0-44CC-BC4B-31D5F65C9689}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D5542D2-43F0-4330-9CD4-98EDADB19D47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D5542D2-43F0-4330-9CD4-98EDADB19D47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D5542D2-43F0-4330-9CD4-98EDADB19D47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D5542D2-43F0-4330-9CD4-98EDADB19D47}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

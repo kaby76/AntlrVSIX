@@ -1,8 +1,8 @@
 ﻿namespace Server
 {
     using LanguageServer;
-    using Microsoft.VisualStudio.LanguageServer.Protocol;
     using Newtonsoft.Json.Linq;
+    using Protocol;
     using StreamJsonRpc;
     using System;
     using System.Collections.Generic;
@@ -11,7 +11,6 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Windows.Input;
 
     public class LSPServer : INotifyPropertyChanged, IDisposable
     {
@@ -63,7 +62,7 @@
             {
                 PublishDiagnosticParams parameter = new PublishDiagnosticParams
                 {
-                    Uri = new Uri(file),
+                    Uri = file,
                     Diagnostics = Array.Empty<Diagnostic>()
                 };
                 _ = rpc.NotifyWithParameterObjectAsync(Methods.TextDocumentPublishDiagnosticsName, parameter);
@@ -86,14 +85,14 @@
                             severity = DiagnosticSeverity.Error;
                             break;
                     }
-                    var document = LanguageServerTarget.CheckDoc(new Uri(info.Document));
+                    var document = LanguageServerTarget.CheckDoc(info.Document);
                     (int, int) bs = new LanguageServer.Module().GetLineColumn(info.Start, document);
                     (int, int) be = new LanguageServer.Module().GetLineColumn(info.End, document);
                     Diagnostic diagnostic = new Diagnostic
                     {
                         Message = info.Message,
                         Severity = severity,
-                        Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range
+                        Range = new Protocol.Range
                         {
                             Start = new Position(bs.Item1, bs.Item2),
                             End = new Position(be.Item1, be.Item2)
@@ -105,7 +104,7 @@
 
                 PublishDiagnosticParams parameter = new PublishDiagnosticParams
                 {
-                    Uri = new Uri(file),
+                    Uri = file,
                     Diagnostics = diagnostics.ToArray()
                 };
                 if (maxProblems > -1)
@@ -138,7 +137,7 @@
 #pragma warning restore VSTHRD110
         }
 
-        public bool ApplyEdit(string transaction_name, Dictionary<string, Microsoft.VisualStudio.LanguageServer.Protocol.TextEdit[]> changes)
+        public bool ApplyEdit(string transaction_name, Dictionary<string,Protocol.TextEdit[]> changes)
         {
             WorkspaceEdit edit = new WorkspaceEdit()
             {
@@ -210,7 +209,7 @@
                 {
                     Message = "This is an " + Enum.GetName(typeof(DiagnosticSeverity), severity),
                     Severity = severity,
-                    Range = new Microsoft.VisualStudio.LanguageServer.Protocol.Range
+                    Range = new Protocol.Range
                     {
                         Start = new Position(0, 0),
                         End = new Position(0, 10)
