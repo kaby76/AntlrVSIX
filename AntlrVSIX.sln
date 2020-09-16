@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "corpus-for-codebuff", "corp
 		corpus-for-codebuff\R.g4 = corpus-for-codebuff\R.g4
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntlrVSIX", "Client\AntlrVSIX.csproj", "{99377F57-EC77-4949-A670-F97989990A3C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntlrVSIX", "VsIde\AntlrVSIX.csproj", "{99377F57-EC77-4949-A670-F97989990A3C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{F3E5473A-9283-4964-9FE9-726D21AAD349} = {F3E5473A-9283-4964-9FE9-726D21AAD349}
 		{E912AE6C-996B-46A9-9F55-C823EB9B4F47} = {E912AE6C-996B-46A9-9F55-C823EB9B4F47}
