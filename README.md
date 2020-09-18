@@ -2,7 +2,7 @@
 
 AntlrVSIX is a tool to support editing, analysis, refactoring,
 and conversion of Antlr2, Antlr3, Antlr4, Bison and W3C EBNF grammars. It contains
-an extension for Visual Studio 2019 and Visual Studio Code, and a stand-alone command-line tool
+an extension for Visual Studio 2019, Visual Studio Code, Gnu Emacs and a stand-alone command-line tool
 known as [Trash](doc/Trash.md) for editing grammar files directly without
 Visual Studio, runnable on Windows or Linux.
 It is implemented using Microsoft's [Language Server Protocol (LSP)](https://langserver.org/) 
@@ -220,13 +220,15 @@ See [this guide](PriorReleases.md).
 
 # Roadmap
 
-## Planned for v8.1 (mid Sept 2020):
+## Planned for v8.1 (end Sept 2020):
 
 * Fix critical bugs:
    - [JSON transport api is erroneously multi-threaded #89](https://github.com/kaby76/AntlrVSIX/issues/89)
    - [When typing fast, the LSP packets can be delivered to the server out of order. #87](https://github.com/kaby76/AntlrVSIX/issues/87)
    - [Killing the server does not go back to a good state of the text document. #88](https://github.com/kaby76/AntlrVSIX/issues/88)
 * Add Visual Studio Code client to Marketplace.
+* Add Gnu Emacs extension.
+* Replace [Microsoft.VisualStudio.LanguageServer.Protocol](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/) with a drop-in replacement in order to handle semantic highlighting.
 * Add existing transforms not in Trash to Trash. Make sure they work.
 * Add expression rule optimization. Verify that this works with Java.
 * Add left factoring and inverse? Not sure, as Unify is a superset of left factoring.
