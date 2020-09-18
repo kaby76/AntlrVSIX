@@ -5,6 +5,7 @@
     using System.Collections.ObjectModel;
     using System.ComponentModel;
     using System.IO;
+    using System.Text;
     using System.Threading.Tasks;
 
     internal class Program : IDisposable
@@ -31,6 +32,12 @@
 
         class Dup : Stream
         {
+            string _name;
+
+            private Dup() { }
+
+            public Dup(string name) { _name = name; }
+
             public override bool CanRead { get { return false; } }
 
             public override bool CanSeek { get { return false; } }
@@ -62,12 +69,15 @@
 
             public override void Write(byte[] buffer, int offset, int count)
             {
-                LoggerNs.Logger.Log.WriteLine("Receiving raw message from client");
+                DateTime now = DateTime.Now;
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("Raw message from " + _name + " " + now.ToString());
                 var truncated_array = new byte[count];
                 for (int i = offset; i < offset + count; ++i)
                     truncated_array[i - offset] = buffer[i];
                 string str = System.Text.Encoding.Default.GetString(truncated_array);
-                LoggerNs.Logger.Log.WriteLine("data = '" + str);
+                sb.AppendLine("data = '" + str);
+                LoggerNs.Logger.Log.WriteLine(sb.ToString());
             }
         }
 
@@ -79,7 +89,9 @@
         {
             System.IO.Stream stdin = Console.OpenStandardInput();
             System.IO.Stream stdout = Console.OpenStandardOutput();
-            stdin = new LspTools.LspHelpers.EchoStream(stdin, new Dup(),
+            stdin = new LspTools.LspHelpers.EchoStream(stdin, new Dup("editor"),
+                    LspTools.LspHelpers.EchoStream.StreamOwnership.OwnNone);
+            stdout = new LspTools.LspHelpers.EchoStream(stdout, new Dup("server"),
                     LspTools.LspHelpers.EchoStream.StreamOwnership.OwnNone);
             languageServer = new LSPServer(stdout, stdin);
             languageServer.Disconnected += OnDisconnected;

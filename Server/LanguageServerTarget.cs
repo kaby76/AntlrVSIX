@@ -637,7 +637,9 @@
 
         public static Document CheckDoc(string uri)
         {
-            string file_name = uri.Replace("file:///", "");
+            var decoded_string = System.Uri.UnescapeDataString(uri);
+            var uri_decoded_string = new Uri(decoded_string);
+            var file_name = uri_decoded_string.LocalPath;
             Document document = Workspaces.Workspace.Instance.FindDocument(file_name);
             if (document == null)
             {
@@ -777,7 +779,7 @@
                     {
                         Protocol.Location location = new Protocol.Location
                         {
-                            Uri = f.Uri.FullPath
+                            Uri = new Uri(f.Uri.FullPath).ToString()
                         };
                         Document def_document = _workspace.FindDocument(f.Uri.FullPath);
                         location.Range = new Protocol.Range();
@@ -826,7 +828,7 @@
                     {
                         Protocol.Location location = new Protocol.Location
                         {
-                            Uri = f.Uri.FullPath
+                            Uri = new Uri(f.Uri.FullPath).ToString()
                         };
                         Document def_document = _workspace.FindDocument(f.Uri.FullPath);
                         location.Range = new Protocol.Range();
@@ -875,7 +877,7 @@
                     {
                         var location = new Protocol.Location
                         {
-                            Uri = f.Uri.FullPath
+                            Uri = new Uri(f.Uri.FullPath).ToString()
                         };
                         Document def_document = _workspace.FindDocument(f.Uri.FullPath);
                         location.Range = new Protocol.Range();
@@ -924,7 +926,7 @@
                     {
                         var location = new Protocol.Location
                         {
-                            Uri = f.Uri.FullPath
+                            Uri = new Uri(f.Uri.FullPath).ToString()
                         };
                         Document def_document = _workspace.FindDocument(f.Uri.FullPath);
                         location.Range = new Protocol.Range();

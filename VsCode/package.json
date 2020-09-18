@@ -7,7 +7,7 @@
     "categories": [],
     "description": "Language server for Antlr2, 3, 4, Bison, W3C EBNF",
     "homepage": "https://github.com/kaby76/AntlrVSIX/blob/master/README.md",
-    "icon": "../VsIde/AntlrVSIX_large.png",
+    "icon": "AntlrVSIX_large.png",
     "keywords": [
         "antlr",
         "bison",

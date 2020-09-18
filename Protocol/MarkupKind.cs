@@ -14,10 +14,12 @@ namespace Protocol
         //
         // Summary:
         //     Markup type is plain text.
+        [EnumMember(Value = "plaintext")]
         PlainText = 0,
         //
         // Summary:
         //     Markup type is Markdown.
+        [EnumMember(Value = "markdown")]
         Markdown = 1
     }
 }
