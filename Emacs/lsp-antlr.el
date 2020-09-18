@@ -52,7 +52,7 @@ finding the executable with `exec-path'."
 
 (lsp-register-client
  (make-lsp-client :new-connection (lsp-stdio-connection 'lsp-clients--antlr-command)
-                  :major-modes '(antlr-mode)
+                  :major-modes '(antlr-mode bison-mode)
                   :priority -1
                   :server-id 'antlrvsix))
 
