@@ -11,7 +11,11 @@ to the latest version.
 6) M-x lsp-mode
 7) M-x load-file
   * lsp-antlr.el (in this directory)
-8) M-x lsp
+8) M-x set-variable
+  * lsp-enable-semantic-highlighting => true
+9) M-x set-variable
+  * lsp-clients-antlr-executable => "....full path of server.exe for antlrvsix"
+10) M-x lsp
 
 The executable "Server.exe" should start up once you provide information on how to open this file (in a project).
 You may have to tidle with the full path name of the .exe file to where it is actually located.

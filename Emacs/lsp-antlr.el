@@ -32,7 +32,7 @@
   :tag "Language Server"
   :package-version '(lsp-mode . "6.2"))
 
-(defcustom lsp-clients-antlr-executable "c:/users/kenne/documents/antlrvsix2/server/bin/debug/netcoreapp3.1/server.exe"
+(defcustom lsp-clients-antlr-executable "c:/users/kenne/documents/antlrvsix/server/bin/debug/netcoreapp3.1/server.exe"
   "The antlrvsix executable to use.
 Leave as just the executable name to use the default behavior of
 finding the executable with `exec-path'."
