@@ -4,11 +4,9 @@
     using System;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
-    using System.IO;
-    using System.Text;
     using System.Threading.Tasks;
 
-    internal class Program : IDisposable
+    internal partial class Program : IDisposable
     {
         private string logMessage;
         private readonly ObservableCollection<DiagnosticTag> tags = new ObservableCollection<DiagnosticTag>();
@@ -28,57 +26,6 @@
 #pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
             program.MainAsync(args).GetAwaiter().GetResult();
 #pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
-        }
-
-        class Dup : Stream
-        {
-            string _name;
-
-            private Dup() { }
-
-            public Dup(string name) { _name = name; }
-
-            public override bool CanRead { get { return false; } }
-
-            public override bool CanSeek { get { return false; } }
-
-            public override bool CanWrite { get { return true; } }
-
-            public override long Length => throw new NotImplementedException();
-
-            public override long Position { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-            public override void Flush()
-            {
-            }
-
-            public override int Read(byte[] buffer, int offset, int count)
-            {
-                throw new NotImplementedException();
-            }
-
-            public override long Seek(long offset, SeekOrigin origin)
-            {
-                throw new NotImplementedException();
-            }
-
-            public override void SetLength(long value)
-            {
-                throw new NotImplementedException();
-            }
-
-            public override void Write(byte[] buffer, int offset, int count)
-            {
-                DateTime now = DateTime.Now;
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine("Raw message from " + _name + " " + now.ToString());
-                var truncated_array = new byte[count];
-                for (int i = offset; i < offset + count; ++i)
-                    truncated_array[i - offset] = buffer[i];
-                string str = System.Text.Encoding.Default.GetString(truncated_array);
-                sb.AppendLine("data = '" + str);
-                LoggerNs.Logger.Log.WriteLine(sb.ToString());
-            }
         }
 
 #pragma warning disable IDE0060 // Remove unused parameter
