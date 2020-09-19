@@ -7,9 +7,9 @@ namespace Protocol
     // Summary:
     //     Class which represents server capabilities.
     [DataContract]
-    public class MyServerCapabilities
+    public class ServerCapabilities
     {
-        public MyServerCapabilities() { }
+        public ServerCapabilities() { }
 
         //
         // Summary:

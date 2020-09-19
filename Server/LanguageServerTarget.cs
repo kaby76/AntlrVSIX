@@ -144,7 +144,7 @@
                     Logger.Log.WriteLine("<-- Initialize");
                     Logger.Log.WriteLine(arg.ToString());
                 }
-                MyServerCapabilities capabilities = new MyServerCapabilities
+                ServerCapabilities capabilities = new ServerCapabilities
                 {
                     TextDocumentSync = new TextDocumentSyncOptions
                     {
@@ -225,7 +225,7 @@
                     },
                 };
 
-                MyInitializeResult result = new MyInitializeResult
+                InitializeResult result = new InitializeResult
                 {
                     Capabilities = capabilities
                 };

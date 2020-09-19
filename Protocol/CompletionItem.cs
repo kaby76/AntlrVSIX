@@ -10,7 +10,11 @@ namespace Protocol
     [DataContract]
     public class CompletionItem
     {
-        public CompletionItem() { }
+        public CompletionItem()
+        {
+            Kind = CompletionItemKind.Text;
+            InsertTextFormat = InsertTextFormat.Plaintext;
+        }
 
         //
         // Summary:
