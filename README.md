@@ -2,18 +2,20 @@
 
 AntlrVSIX is a tool to support editing, analysis, refactoring,
 and conversion of Antlr2, Antlr3, Antlr4, Bison and W3C EBNF grammars. It contains
-an extension for Visual Studio 2019, Visual Studio Code, Gnu Emacs and a stand-alone command-line tool
+an extension for Visual Studio 2019, Visual Studio Code, Gnu Emacs,
+a Language Server Protocol server,
+and a stand-alone command-line tool
 known as [Trash](doc/Trash.md) for editing grammar files directly without
 Visual Studio, runnable on Windows or Linux.
 It is implemented using Microsoft's [Language Server Protocol (LSP)](https://langserver.org/) 
-[client](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Client/) and
-[server](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/) APIs,
+[client](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Client/) for Visual Studio 2019.
+The server is implemented using
 [Antlr](https://www.antlr.org/), [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks),
 [XPath2](https://en.wikipedia.org/wiki/XPath), 
 [S-expressions](https://en.wikipedia.org/wiki/S-expression)
 for Antlr parse trees,
 and a number of other tools.
-Most of the extension is implemented in C#.
+Most of the code is implemented in C#.
 The extension for VS Code is written in Typescript.
 Supported are colorized tagging, hover, go to def, find all refs,
 replace, and reformat. Beyond the basic LSP commands, the tool supports
