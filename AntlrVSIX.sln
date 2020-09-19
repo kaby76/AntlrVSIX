@@ -57,6 +57,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{65955E78-371
 		doc\Trash.md = doc\Trash.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Emacs", "Emacs", "{65955E78-3712-4604-B151-4A2F7474BA58}"
+	ProjectSection(SolutionItems) = preProject
+		Emacs\readme.md = Emacs\readme.md
+		Emacs\lsp-antlr.el = Emacs\lsp-antlr.el
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VsCode", "VsCode", "{65955E78-3712-4604-B151-4A2F7474BA58}"
+	ProjectSection(SolutionItems) = preProject
+		VsCode\AntlrVSIX_large.png = VsCode\AntlrVSIX_large.png
+		VsCode\clean.sh = VsCode\clean.sh
+		VsCode\install.sh = VsCode\install.sh
+		VsCode\package.json = VsCode\package.json
+		VsCode\tsconfig.json = VsCode\tsconfig.json
+	EndProjectSection
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "pics", "pics", "{AB776C0F-4B61-4EDF-A654-40A9259855CD}"
 	ProjectSection(SolutionItems) = preProject
 		doc\pics\2019-08-08-10.png = doc\pics\2019-08-08-10.png
