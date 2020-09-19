@@ -2,7 +2,7 @@
 
 AntlrVSIX is a tool to support editing, analysis, refactoring,
 and conversion of Antlr2, Antlr3, Antlr4, Bison and W3C EBNF grammars. It contains
-an extension for Visual Studio 2019, Visual Studio Code, Gnu Emacs,
+extensions for Visual Studio 2019, Visual Studio Code, Gnu Emacs,
 a Language Server Protocol server,
 and a stand-alone command-line tool
 known as [Trash](doc/Trash.md) for editing grammar files directly without
