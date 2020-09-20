@@ -52,7 +52,7 @@
                 for (int i = offset; i < offset + count; ++i)
                     truncated_array[i - offset] = buffer[i];
                 string str = System.Text.Encoding.Default.GetString(truncated_array);
-                sb.AppendLine("data = '" + str);
+                sb.AppendLine("data (length " + str.Length + ")= '" + str + "'");
                 LoggerNs.Logger.Log.WriteLine(sb.ToString());
             }
         }
