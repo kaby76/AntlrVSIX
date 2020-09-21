@@ -5,15 +5,15 @@
 
     public class Container
     {
-        public virtual Document FindDocument(string ffn) { return null; }
-        public virtual Project FindProject(string ffn) { return null; }
-        public virtual Project FindProject(string canonical_name, string name, string ffn) { return null; }
         public virtual Container Parent
         {
             get;
             set;
         }
         public virtual Container AddChild(Container c) { return null; }
+        public virtual Document FindDocument(string ffn) { return null; }
+        public virtual Project FindProject(string ffn) { return null; }
+        public virtual Project FindProject(string canonical_name, string name, string ffn) { return null; }
     }
 
     public class DFSContainer

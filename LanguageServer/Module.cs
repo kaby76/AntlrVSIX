@@ -1,8 +1,8 @@
 ﻿namespace LanguageServer
 {
-    using LoggerNs;
     using Algorithms;
     using Antlr4.Runtime.Tree;
+    using LoggerNs;
     using Microsoft.CodeAnalysis;
     using Symtab;
     using System;
@@ -10,7 +10,6 @@
     using System.Linq;
     using System.Text;
     using Workspaces;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     static class Foobar
     {

@@ -47,7 +47,7 @@
             {
                 DateTime now = DateTime.Now;
                 StringBuilder sb = new StringBuilder();
-                sb.AppendLine("Raw message from " + _name + " " + now.ToString());
+                sb.AppendLine("Raw message from " + _name + " " + now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
                 var truncated_array = new byte[count];
                 for (int i = offset; i < offset + count; ++i)
                     truncated_array[i - offset] = buffer[i];

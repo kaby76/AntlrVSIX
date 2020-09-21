@@ -1,69 +1,69 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Antlr4 Remove="LexBasic.g4" />
-  </ItemGroup>
+	<ItemGroup>
+		<Antlr4 Remove="LexBasic.g4" />
+	</ItemGroup>
 
-  <ItemGroup>
-	  <Antlr4 Include="ANTLRv2Parser.g4">
-		  <Package>LanguageServer</Package>
-	  </Antlr4>
-	  <Antlr4 Include="ANTLRv2Lexer.g4">
-		  <Package>LanguageServer</Package>
-	  </Antlr4>
-	  <Antlr4 Include="ANTLRv3Parser.g4">
-		  <Package>LanguageServer</Package>
-	  </Antlr4>
-	  <Antlr4 Include="ANTLRv3Lexer.g4">
-		  <Package>LanguageServer</Package>
-	  </Antlr4>
-	  <Antlr4 Include="ANTLRv4Lexer.g4">
-      <Package>LanguageServer</Package>
-    </Antlr4>
-    <Antlr4 Include="ANTLRv4Parser.g4">
-      <Package>LanguageServer</Package>
-    </Antlr4>
-    <Antlr4 Include="BisonLexer.g4">
-      <Package>LanguageServer</Package>
-    </Antlr4>
-	  <Antlr4 Include="BisonParser.g4">
-		  <Package>LanguageServer</Package>
-	  </Antlr4>
-	  <Antlr4 Include="W3CebnfParser.g4">
-		  <Package>LanguageServer</Package>
-	  </Antlr4>
-	  <Antlr4 Include="W3CebnfLexer.g4">
-		  <Package>LanguageServer</Package>
-	  </Antlr4>
-  </ItemGroup>
+	<ItemGroup>
+		<Antlr4 Include="ANTLRv2Parser.g4">
+			<Package>LanguageServer</Package>
+		</Antlr4>
+		<Antlr4 Include="ANTLRv2Lexer.g4">
+			<Package>LanguageServer</Package>
+		</Antlr4>
+		<Antlr4 Include="ANTLRv3Parser.g4">
+			<Package>LanguageServer</Package>
+		</Antlr4>
+		<Antlr4 Include="ANTLRv3Lexer.g4">
+			<Package>LanguageServer</Package>
+		</Antlr4>
+		<Antlr4 Include="ANTLRv4Lexer.g4">
+			<Package>LanguageServer</Package>
+		</Antlr4>
+		<Antlr4 Include="ANTLRv4Parser.g4">
+			<Package>LanguageServer</Package>
+		</Antlr4>
+		<Antlr4 Include="BisonLexer.g4">
+			<Package>LanguageServer</Package>
+		</Antlr4>
+		<Antlr4 Include="BisonParser.g4">
+			<Package>LanguageServer</Package>
+		</Antlr4>
+		<Antlr4 Include="W3CebnfParser.g4">
+			<Package>LanguageServer</Package>
+		</Antlr4>
+		<Antlr4 Include="W3CebnfLexer.g4">
+			<Package>LanguageServer</Package>
+		</Antlr4>
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Antlr4.Runtime.Standard" Version="4.8.0" />
-    <PackageReference Include="Antlr4BuildTasks" Version="8.3" />
-    <PackageReference Include="cs-codebuff" Version="3.0.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.6.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.6.0" />
-    <PackageReference Include="AntlrTreeEditing" Version="1.7" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Antlr4.Runtime.Standard" Version="4.8.0" />
+		<PackageReference Include="Antlr4BuildTasks" Version="8.3" />
+		<PackageReference Include="AntlrTreeEditing" Version="1.7" />
+		<PackageReference Include="cs-codebuff" Version="3.0.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.6.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.6.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Algorithms\Algorithms.csproj" />
-    <ProjectReference Include="..\Logger\Logger.csproj" />
-    <ProjectReference Include="..\NWayDiff\NWayDiff.csproj" />
-    <ProjectReference Include="..\Symtab\Symtab.csproj" />
-    <ProjectReference Include="..\Workspaces\Workspaces.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Algorithms\Algorithms.csproj" />
+		<ProjectReference Include="..\Logger\Logger.csproj" />
+		<ProjectReference Include="..\NWayDiff\NWayDiff.csproj" />
+		<ProjectReference Include="..\Symtab\Symtab.csproj" />
+		<ProjectReference Include="..\Workspaces\Workspaces.csproj" />
+	</ItemGroup>
 
-  <PropertyGroup>
-    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
-  </PropertyGroup>
+	<PropertyGroup>
+		<RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn>1701;1702;3021</NoWarn>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<NoWarn>1701;1702;3021</NoWarn>
+	</PropertyGroup>
 
 </Project>

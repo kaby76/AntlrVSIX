@@ -1,9 +1,8 @@
-﻿using System.Diagnostics;
-
-namespace Workspaces
+﻿namespace Workspaces
 {
     using Antlr4.Runtime.Tree;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
 
     public class Document : Container
@@ -12,16 +11,6 @@ namespace Workspaces
         private readonly Dictionary<string, string> _properties = new Dictionary<string, string>();
         private readonly Dictionary<string, bool> _lazy_evaluated = new Dictionary<string, bool>();
         private string _parse_as;
-
-        public Document(string ffn)
-        {
-            FullPath = Util.GetProperFilePathCapitalization(ffn);
-            Changed = false;
-        }
-
-        public string ParseAs { get; set; }
-
-        public string FullPath { get; private set; }
 
         public bool Changed { get; set; }
 
@@ -52,6 +41,28 @@ namespace Workspaces
             }
         }
 
+        public Dictionary<TerminalNodeImpl, int> Defs
+        {
+            get;
+            set;
+        }
+
+        public string FullPath { get; private set; }
+
+        public string ParseAs { get; set; }
+
+        public Dictionary<TerminalNodeImpl, int> Refs
+        {
+            get;
+            set;
+        }
+
+        public Document(string ffn)
+        {
+            FullPath = Util.GetProperFilePathCapitalization(ffn);
+            Changed = false;
+        }
+
         public void AddProperty(string name, string value)
         {
             _properties[name] = value;
@@ -64,32 +75,6 @@ namespace Workspaces
             _lazy_evaluated[name] = false;
         }
 
-        public string GetProperty(string name)
-        {
-            if (name is null)
-            {
-                throw new System.ArgumentNullException(nameof(name));
-            }
-            return null;
-        }
-
-        public IParseTree GetParseTree()
-        {
-            return null;
-        }
-
-        public Dictionary<TerminalNodeImpl, int> Refs
-        {
-            get;
-            set;
-        }
-
-        public Dictionary<TerminalNodeImpl, int> Defs
-        {
-            get;
-            set;
-        }
-
         public override Document FindDocument(string ffn)
         {
             var normalized_ffn = Util.GetProperFilePathCapitalization(ffn);
@@ -100,6 +85,20 @@ namespace Workspaces
                 return this;
             }
 
+            return null;
+        }
+
+        public IParseTree GetParseTree()
+        {
+            return null;
+        }
+
+        public string GetProperty(string name)
+        {
+            if (name is null)
+            {
+                throw new System.ArgumentNullException(nameof(name));
+            }
             return null;
         }
     }

@@ -11,17 +11,12 @@
         private string _ffn;
         private readonly List<Container> _contents = new List<Container>();
 
-        public static Workspace Initialize(string name, string ffn)
-        {
-            if (_instance != null)
-            {
-                return _instance;
-            }
+        public IEnumerable<Container> Children => _contents;
 
-            Workspace i = Instance;
-            i._name = name;
-            i._ffn = ffn;
-            return i;
+        public string FFN
+        {
+            get => _ffn;
+            set => _ffn = value;
         }
 
         public static Workspace Instance
@@ -43,19 +38,39 @@
             set => _name = value;
         }
 
-        public string FFN
-        {
-            get => _ffn;
-            set => _ffn = value;
-        }
-
-        public IEnumerable<Container> Children => _contents;
-
         public override Container AddChild(Container doc)
         {
             _contents.Add(doc);
             doc.Parent = this;
             return doc;
+        }
+
+        public IEnumerable<Document> AllDocuments()
+        {
+            HashSet<Container> visited = new HashSet<Container>();
+            Stack<Container> stack = new Stack<Container>();
+            stack.Push(this);
+            while (stack.Any())
+            {
+                Container current = stack.Pop();
+                if (visited.Contains(current))
+                {
+                    continue;
+                }
+
+                visited.Add(current);
+                if (current is Document)
+                {
+                    yield return current as Document;
+                }
+                else
+                {
+                    foreach (Container c in _contents)
+                    {
+                        stack.Push(c);
+                    }
+                }
+            }
         }
 
         public override Document FindDocument(string ffn)
@@ -96,34 +111,6 @@
             return null;
         }
 
-        public IEnumerable<Document> AllDocuments()
-        {
-            HashSet<Container> visited = new HashSet<Container>();
-            Stack<Container> stack = new Stack<Container>();
-            stack.Push(this);
-            while (stack.Any())
-            {
-                Container current = stack.Pop();
-                if (visited.Contains(current))
-                {
-                    continue;
-                }
-
-                visited.Add(current);
-                if (current is Document)
-                {
-                    yield return current as Document;
-                }
-                else
-                {
-                    foreach (Container c in _contents)
-                    {
-                        stack.Push(c);
-                    }
-                }
-            }
-        }
-
         public override Project FindProject(string ffn)
         {
             foreach (Container doc in _contents)
@@ -148,6 +135,19 @@
                 }
             }
             return null;
+        }
+      
+        public static Workspace Initialize(string name, string ffn)
+        {
+            if (_instance != null)
+            {
+                return _instance;
+            }
+
+            Workspace i = Instance;
+            i._name = name;
+            i._ffn = ffn;
+            return i;
         }
     }
 }

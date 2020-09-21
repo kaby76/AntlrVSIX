@@ -1028,12 +1028,15 @@
                 {
                     if (trace)
                     {
-                        Logger.Log.WriteLine("<-- TextDocumentDocumentSymbol");
+                        Logger.Log.WriteLine("<-- TextDocumentDocumentSymbol "
+                            + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
                         Logger.Log.WriteLine(arg.ToString());
                     }
                     DocumentSymbolParams request = arg.ToObject<DocumentSymbolParams>();
                     Document document = CheckDoc(request.TextDocument.Uri);
+                    Logger.Log.WriteLine("B4 GetSymbols " + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
                     IEnumerable<DocumentSymbol> r = new LanguageServer.Module().GetSymbols(document);
+                    Logger.Log.WriteLine("Af GetSymbols " + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
                     List<object> symbols = new List<object>();
                     foreach (DocumentSymbol s in r)
                     {
@@ -1089,8 +1092,10 @@
                         };
                         symbols.Add(si);
                     }
+                    Logger.Log.WriteLine("Af list " + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
                     if (trace)
                     {
+                        Logger.Log.WriteLine(DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
                         Logger.Log.Write("returning ");
                         Logger.Log.WriteLine(string.Join(" ", symbols.Select(s =>
                         {
@@ -1109,6 +1114,7 @@
                         })));
                     }
                     result = symbols.ToArray();
+                    Logger.Log.WriteLine("B4 return " + DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
                 }
                 catch (Exception)
                 { }

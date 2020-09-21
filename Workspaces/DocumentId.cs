@@ -20,16 +20,6 @@
             return new DocumentId(Guid.NewGuid(), debugName);
         }
 
-        internal string GetDebuggerDisplay()
-        {
-            return string.Format("({0}, #{1} - {2})", GetType().Name, Id, DebugName);
-        }
-
-        public override string ToString()
-        {
-            return GetDebuggerDisplay();
-        }
-
         public override bool Equals(object obj)
         {
             return Equals(obj as DocumentId);
@@ -40,9 +30,19 @@
             return other is object && Id == other.Id;
         }
 
+        internal string GetDebuggerDisplay()
+        {
+            return string.Format("({0}, #{1} - {2})", GetType().Name, Id, DebugName);
+        }
+
         public override int GetHashCode()
         {
             return Id.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return GetDebuggerDisplay();
         }
 
         public static bool operator ==(DocumentId left, DocumentId right)

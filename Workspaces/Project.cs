@@ -13,17 +13,13 @@
         private readonly Dictionary<string, string> _properties = new Dictionary<string, string>();
         private readonly Dictionary<string, bool> _lazy_evaluated = new Dictionary<string, bool>();
 
-        public string Name
-        {
-            get => _name;
-            set => _name = value;
-        }
-
         public string CanonicalName
         {
             get => _canonical_name;
             set => _canonical_name = value;
         }
+
+        public IEnumerable<Container> Children => _contents;
 
         public string FullPath
         {
@@ -31,11 +27,29 @@
             set => _ffn = value;
         }
 
+        public string Name
+        {
+            get => _name;
+            set => _name = value;
+        }
+
         public Project(string canonical_name, string name, string ffn)
         {
             _canonical_name = canonical_name;
             _name = name;
             _ffn = ffn;
+        }
+
+        public override Container AddChild(Container doc)
+        {
+            if (doc == null)
+            {
+                throw new System.Exception("Trying to add null document.");
+            }
+
+            _contents.Add(doc);
+            doc.Parent = this;
+            return doc;
         }
 
         public Document AddDocument(Document doc)
@@ -62,11 +76,17 @@
             _lazy_evaluated[name] = true;
         }
 
-        public string GetProperty(string name)
+        public override Document FindDocument(string ffn)
         {
-            _lazy_evaluated.TryGetValue(name, out _);
-            string result = null;
-            return result;
+            foreach (Container doc in _contents)
+            {
+                Document found = doc.FindDocument(ffn);
+                if (found != null)
+                {
+                    return found;
+                }
+            }
+            return null;
         }
 
         public override Project FindProject(string ffn)
@@ -112,32 +132,11 @@
             return null;
         }
 
-        public override Document FindDocument(string ffn)
+        public string GetProperty(string name)
         {
-            foreach (Container doc in _contents)
-            {
-                Document found = doc.FindDocument(ffn);
-                if (found != null)
-                {
-                    return found;
-                }
-            }
-            return null;
+            _lazy_evaluated.TryGetValue(name, out _);
+            string result = null;
+            return result;
         }
-
-        public IEnumerable<Container> Children => _contents;
-        public override Container AddChild(Container doc)
-        {
-            if (doc == null)
-            {
-                throw new System.Exception("Trying to add null document.");
-            }
-
-            _contents.Add(doc);
-            doc.Parent = this;
-            return doc;
-        }
-
-
     }
 }
