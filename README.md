@@ -243,6 +243,7 @@ See [this guide](PriorReleases.md).
 * Add WC3 EBNF.
 * Fix ["rup" doesn't work in some cases #81](https://github.com/kaby76/AntlrVSIX/issues/81)
 * Fix ["has dr" not working, slow as hell #82](https://github.com/kaby76/AntlrVSIX/issues/82)
+* Fix [Performance still an issue #90](https://github.com/kaby76/AntlrVSIX/issues/90)
 
 ## Planned for v9 (mid Oct 2020)
 
