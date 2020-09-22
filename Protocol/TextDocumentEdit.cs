@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace Protocol
 {
@@ -15,11 +16,13 @@ namespace Protocol
         //     Gets or sets a document identifier indication which document to apply the edits
         //     to.
         [DataMember(Name = "textDocument")]
+        [JsonProperty(Required = Required.Always)]
         public VersionedTextDocumentIdentifier TextDocument { get; set; }
         //
         // Summary:
         //     Gets or sets the array of edits to be applied to the document.
         [DataMember(Name = "edits")]
+        [JsonProperty(Required = Required.Always)]
         public TextEdit[] Edits { get; set; }
     }
 }
