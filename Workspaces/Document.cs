@@ -13,7 +13,6 @@
         private string _parse_as;
 
         public bool Changed { get; set; }
-
         public string Code
         {
             get
@@ -37,20 +36,18 @@
                     return;
                 }
                 Changed = true;
+                Indices = null;
                 _contents = value;
             }
         }
-
         public Dictionary<TerminalNodeImpl, int> Defs
         {
             get;
             set;
         }
-
         public string FullPath { get; private set; }
-
+        public int[] Indices { get; set; }
         public string ParseAs { get; set; }
-
         public Dictionary<TerminalNodeImpl, int> Refs
         {
             get;

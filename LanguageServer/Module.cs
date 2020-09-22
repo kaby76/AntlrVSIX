@@ -7,6 +7,7 @@
     using Symtab;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Text;
     using Workspaces;
@@ -30,6 +31,65 @@
 
         public enum RecoveryStrategy { Bail, Standard };
 
+        private void ComputeIndexes(Document doc)
+        {
+            List<int> indices = new List<int>();
+            int cur_index = 0;
+            int cur_line = 0; // zero based LSP.
+            int cur_col = 0; // zero based LSP.
+            indices.Add(cur_index);
+            string buffer = doc.Code;
+            int length = doc.Code.Length;
+            // Go through file and record index of start of each line.
+            for (int i = 0; i < length; ++i)
+            {
+                if (cur_index >= length)
+                {
+                    break;
+                }
+
+                char ch = buffer[cur_index];
+                if (ch == '\r')
+                {
+                    if (cur_index + 1 >= length)
+                    {
+                        break;
+                    }
+                    else if (buffer[cur_index + 1] == '\n')
+                    {
+                        cur_line++;
+                        cur_col = 0;
+                        cur_index += 2;
+                        indices.Add(cur_index);
+                    }
+                    else
+                    {
+                        // Error in code.
+                        cur_line++;
+                        cur_col = 0;
+                        cur_index += 1;
+                        indices.Add(cur_index);
+                    }
+                }
+                else if (ch == '\n')
+                {
+                    cur_line++;
+                    cur_col = 0;
+                    cur_index += 1;
+                    indices.Add(cur_index);
+                }
+                else
+                {
+                    cur_col += 1;
+                    cur_index += 1;
+                }
+                if (cur_index >= length)
+                {
+                    break;
+                }
+            }
+            doc.Indices = indices.ToArray();
+        }
 
         public int GetIndex(int line, int column, Document doc)
         {
@@ -39,6 +99,8 @@
             {
                 return 0;
             }
+
+            if (doc.Indices == null) ComputeIndexes(doc);
 
             int cur_line = 0;
             int cur_col = 0;
@@ -91,6 +153,10 @@
                     break;
                 }
             }
+
+            int low = doc.Indices[line];
+            var myindex = low + column;
+            if (index != myindex) throw new Exception();
             return index;
         }
 
@@ -102,6 +168,8 @@
             {
                 return (0, 0);
             }
+
+            if (doc.Indices == null) ComputeIndexes(doc);
 
             int cur_line = 0; // zero based LSP.
             int cur_col = 0; // zero based LSP.
@@ -154,7 +222,24 @@
                     break;
                 }
             }
-            return (cur_line, cur_col);
+            var check = (cur_line, cur_col);
+
+            // Binary search.
+            int low = 0;
+            int high = doc.Indices.Length - 1;
+            int i = 0;
+            while (low <= high)
+            {
+                i = (low + high) / 2;
+                var v = doc.Indices[i];
+                if (v < index) low = i + 1;
+                else if (v > index) high = i - 1;
+                else break;
+            }
+            var min = low <= high ? i : high;
+            var myindex = (min, index - doc.Indices[min]);
+            if (check != myindex) throw new Exception();
+            return check;
         }
 
         public QuickInfo GetQuickInfo(int index, Document doc)
