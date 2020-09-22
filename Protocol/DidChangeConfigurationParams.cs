@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using Newtonsoft.Json;
+using System.Runtime.Serialization;
 
 namespace Protocol
 {
@@ -11,10 +12,11 @@ namespace Protocol
     {
         public DidChangeConfigurationParams() { }
 
-        //
-        // Summary:
-        //     Gets or sets the settings that are applicable to the language server.
+        /**
+	     * The actual changed settings
+	     */
         [DataMember(Name = "settings")]
+        [JsonProperty(Required = Required.Always)]
         public object Settings { get; set; }
     }
 }

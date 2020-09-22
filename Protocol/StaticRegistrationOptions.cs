@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using Newtonsoft.Json;
+using System.Runtime.Serialization;
 
 namespace Protocol
 {
@@ -8,10 +9,14 @@ namespace Protocol
     [DataContract]
     public class StaticRegistrationOptions
     {
+        public StaticRegistrationOptions() { }
+
         /**
          * The id used to register the request. The id can be used to deregister
          * the request again. See also Registration#id.
          */
+        [DataMember(Name = "id")]
+        [JsonProperty(Required = Required.Default)]
         string id { get; set; }
     }
 }
