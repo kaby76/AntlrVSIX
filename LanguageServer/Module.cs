@@ -93,7 +93,6 @@
 
         public int GetIndex(int line, int column, Document doc)
         {
-            int index = 0;
             string buffer = doc.Code;
             if (buffer == null)
             {
@@ -102,61 +101,8 @@
 
             if (doc.Indices == null) ComputeIndexes(doc);
 
-            int cur_line = 0;
-            int cur_col = 0;
-            for (; ; )
-            {
-                if (cur_line > line)
-                {
-                    break;
-                }
-
-                if (cur_line >= line && cur_col >= column)
-                {
-                    break;
-                }
-
-                char ch = buffer[index];
-                if (ch == '\r')
-                {
-                    if (index + 1 >= buffer.Length)
-                    {
-                        break;
-                    }
-                    else if (buffer[index + 1] == '\n')
-                    {
-                        cur_line++;
-                        cur_col = 0;
-                        index += 2;
-                    }
-                    else
-                    {
-                        // Error in code.
-                        cur_line++;
-                        cur_col = 0;
-                        index += 1;
-                    }
-                }
-                else if (ch == '\n')
-                {
-                    cur_line++;
-                    cur_col = 0;
-                    index += 1;
-                }
-                else
-                {
-                    cur_col += 1;
-                    index += 1;
-                }
-                if (index >= buffer.Length)
-                {
-                    break;
-                }
-            }
-
             int low = doc.Indices[line];
-            var myindex = low + column;
-            if (index != myindex) throw new Exception();
+            var index = low + column;
             return index;
         }
 
@@ -170,59 +116,6 @@
             }
 
             if (doc.Indices == null) ComputeIndexes(doc);
-
-            int cur_line = 0; // zero based LSP.
-            int cur_col = 0; // zero based LSP.
-            for (; ; )
-            {
-                if (cur_index >= buffer.Length)
-                {
-                    break;
-                }
-
-                if (cur_index >= index)
-                {
-                    break;
-                }
-
-                char ch = buffer[cur_index];
-                if (ch == '\r')
-                {
-                    if (cur_index + 1 >= buffer.Length)
-                    {
-                        break;
-                    }
-                    else if (buffer[cur_index + 1] == '\n')
-                    {
-                        cur_line++;
-                        cur_col = 0;
-                        cur_index += 2;
-                    }
-                    else
-                    {
-                        // Error in code.
-                        cur_line++;
-                        cur_col = 0;
-                        cur_index += 1;
-                    }
-                }
-                else if (ch == '\n')
-                {
-                    cur_line++;
-                    cur_col = 0;
-                    cur_index += 1;
-                }
-                else
-                {
-                    cur_col += 1;
-                    cur_index += 1;
-                }
-                if (cur_index >= buffer.Length)
-                {
-                    break;
-                }
-            }
-            var check = (cur_line, cur_col);
 
             // Binary search.
             int low = 0;
@@ -238,8 +131,7 @@
             }
             var min = low <= high ? i : high;
             var myindex = (min, index - doc.Indices[min]);
-            if (check != myindex) throw new Exception();
-            return check;
+            return myindex;
         }
 
         public QuickInfo GetQuickInfo(int index, Document doc)
