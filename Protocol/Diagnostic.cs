@@ -15,12 +15,14 @@ namespace Protocol
         // Summary:
         // The range at which the message applies.
         [DataMember(Name = "range")]
+        [JsonProperty(Required = Required.Always)]
         public Range Range { get; set; }
         //
         // Summary:
         // The diagnostic's severity. Can be omitted. If omitted it is up to the
         // client to interpret diagnostics as error, warning, info or hint.
         [DataMember(Name = "severity")]
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public DiagnosticSeverity Severity { get; set; }
         //
         // Summary:
@@ -38,6 +40,7 @@ namespace Protocol
         // Summary:
         //     Gets or sets the diagnostic's message.
         [DataMember(Name = "message")]
+        [JsonProperty(Required = Required.Always)]
         public string Message { get; set; }
         //
         // Summary:

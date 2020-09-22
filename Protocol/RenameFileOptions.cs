@@ -3,18 +3,17 @@ using Newtonsoft.Json;
 
 namespace Protocol
 {
-    //  Options to create a file.
     [DataContract]
-    public class CreateFileOptions
+    public class RenameFileOptions
     {
-        public CreateFileOptions() { }
+        public RenameFileOptions() { }
 
-        // Overwrite existing file. Overwrite wins over `ignoreIfExists`
+        // Overwrite target if existing. Overwrite wins over `ignoreIfExists`
         [DataMember(Name = "overwrite")]
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public bool Overwrite { get; set; }
 
-        // Ignore if exists.
+        // Ignores if target exists.
         [DataMember(Name = "ignoreIfExists")]
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public bool IgnoreIfExists { get; set; }

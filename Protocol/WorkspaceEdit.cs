@@ -13,14 +13,21 @@ namespace Protocol
     {
         public WorkspaceEdit() { }
 
-        //
-        // Summary:
-        //     Gets or sets a dictionary holding changes to existing resources
+        // Holds changes to existing resources.
         [DataMember(Name = "changes")]
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public Dictionary<string, TextEdit[]> Changes { get; set; }
+
+        // Depending on the client capability `workspace.workspaceEdit.resourceOperations` document changes
+	    // are either an array of `TextDocumentEdit`s to express changes to n different text documents
+        // where each text document edit addresses a specific version of a text document.Or it can contain
+        // above `TextDocumentEdit`s mixed with create, rename and delete file / folder operations.
         //
-        // Summary:
-        //     Gets or sets an array representing versioned document changes
+	    // Whether a client supports versioned document edits is expressed via
+	    // `workspace.workspaceEdit.documentChanges` client capability.
+	    //
+	    // If a client neither supports `documentChanges` nor `workspace.workspaceEdit.resourceOperations` then
+        // only plain `TextEdit`s using the `changes` property are supported.
         [DataMember(Name = "documentChanges")]
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public TextDocumentEdit[] DocumentChanges { get; set; }

@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace Protocol
 {
@@ -14,6 +15,7 @@ namespace Protocol
         // Summary:
         //     Gets or sets the URI of the text document.
         [DataMember(Name = "uri")]
+        [JsonProperty(Required = Required.Always)]
         public string Uri { get; set; }
     }
 }
