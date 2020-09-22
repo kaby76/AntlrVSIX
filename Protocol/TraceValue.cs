@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System.Runtime.Serialization;
 
 namespace Protocol
 {
@@ -7,19 +8,22 @@ namespace Protocol
     // Summary:
     //     Enum which represents language server trace setting.
     [JsonConverter(typeof(StringEnumConverter))]
-    public enum TraceSetting
+    public enum TraceValue
     {
         //
         // Summary:
         //     Setting for 'off'.
+        [EnumMember(Value = "off")]
         Off = 0,
         //
         // Summary:
-        //     Setting for 'messages'
+        //     Setting for 'message'
+        [EnumMember(Value = "message")]
         Messages = 1,
         //
         // Summary:
         //     Setting for 'verbose'
+        [EnumMember(Value = "verbose")]
         Verbose = 2
     }
 }
