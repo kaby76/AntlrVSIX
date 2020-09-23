@@ -1,13 +1,12 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Runtime.Serialization;
 
 namespace Protocol
 {
     [DataContract]
-    public class ClientInfo
+    public class _InitializeParams_ClientInfo
     {
-        public ClientInfo() { }
+        public _InitializeParams_ClientInfo() { }
 
 		/**
 		 * The name of the client as defined by the client.

@@ -16,7 +16,7 @@ namespace Protocol
 	     */
         [DataMember(Name = "workspace")]
         [JsonProperty(Required = Required.Default)]
-        public _WorkspaceClientCapabilities Workspace { get; set; }
+        public _ClientCapabilities_Workspace Workspace { get; set; }
 
         /**
 	     * Text document specific client capabilities.
@@ -30,7 +30,7 @@ namespace Protocol
 	     */
         [DataMember(Name = "experimental")]
         [JsonProperty(Required = Required.Default)]
-        public _WindowClientCapabilities Window { get; set; }
+        public _ClientCapabilities_Window Window { get; set; }
      
         /**
 	     * Experimental client capabilities.

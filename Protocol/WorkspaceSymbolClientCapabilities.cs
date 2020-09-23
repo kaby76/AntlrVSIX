@@ -6,6 +6,8 @@ namespace Protocol
 	[DataContract]
 	public class WorkspaceSymbolClientCapabilities
     {
+		public WorkspaceSymbolClientCapabilities() { }
+
 		/**
 		 * Symbol request supports dynamic registration.
 		 */
@@ -18,6 +20,6 @@ namespace Protocol
 		 */
 		[DataMember(Name = "symbolKind")]
 		[JsonProperty(Required = Required.Default)]
-		public _SymbolKindSet SymbolKind { get; set; }
+		public _WorkspaceSymbolClientCapabilities_SymbolKind SymbolKind { get; set; }
 	}
 }

@@ -28,7 +28,7 @@ namespace Protocol
 	     */
         [DataMember(Name = "clientInfo")]
         [JsonProperty(Required = Required.Default)]
-        public ClientInfo ClientInfo { get; set; }
+        public _InitializeParams_ClientInfo ClientInfo { get; set; }
 
         /**
 	     * The rootPath of the workspace. Is null

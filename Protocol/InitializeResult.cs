@@ -1,19 +1,26 @@
-﻿using System.Runtime.Serialization;
+﻿using Newtonsoft.Json;
+using System.Runtime.Serialization;
 
 namespace Protocol
 {
-    //
-    // Summary:
-    //     Class which represents the result returned by the initialize request.
     [DataContract]
     public class InitializeResult
     {
         public InitializeResult() { }
 
-        //
-        // Summary:
-        //     Gets or sets the server capabilities.
+        /**
+	     * The capabilities the language server provides.
+	     */
         [DataMember(Name = "capabilities")]
         public ServerCapabilities Capabilities { get; set; }
+
+        /**
+	     * Information about the server.
+	     *
+	     * @since 3.15.0
+	     */
+        [DataMember(Name = "serverInfo")]
+        [JsonProperty(Required = Required.Default)]
+        public _InitializeResults_ServerInfo ServerInfo { get; set; }
     }
 }

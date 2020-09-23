@@ -4,9 +4,9 @@ using Newtonsoft.Json;
 namespace Protocol
 {
     [DataContract]
-    public class _WorkspaceClientCapabilities
+    public class _ClientCapabilities_Workspace
     {
-        public _WorkspaceClientCapabilities() { }
+        public _ClientCapabilities_Workspace() { }
 
         /**
 		 * The client supports applying batch edits

@@ -4,9 +4,9 @@ using Newtonsoft.Json;
 namespace Protocol
 {
 	[DataContract]
-	public class _WindowClientCapabilities
+	public class _ClientCapabilities_Window
     {
-		public _WindowClientCapabilities() { }
+		public _ClientCapabilities_Window() { }
 
 		/**
 		 * Whether client supports handling progress notifications. If set servers are allowed to

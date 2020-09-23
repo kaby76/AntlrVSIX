@@ -4,9 +4,9 @@ using Newtonsoft.Json;
 namespace Protocol
 {
     [DataContract]
-    public class _SymbolKindSet
+    public class _WorkspaceSymbolClientCapabilities_SymbolKind
 	{
-		public _SymbolKindSet() { }
+		public _WorkspaceSymbolClientCapabilities_SymbolKind() { }
 
 		/**
 		 * The symbol kind values the client supports. When this
