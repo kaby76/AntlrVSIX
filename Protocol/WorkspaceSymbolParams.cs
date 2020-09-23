@@ -1,26 +1,29 @@
-﻿using System;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace Protocol
 {
-    //
-    // Summary:
-    //     Class which represents the parameter that's sent with the 'workspace/symbol'
-    //     request.
+    /**
+     * The parameters of a Workspace Symbol Request.
+     */
     [DataContract]
-    public class WorkspaceSymbolParams
+    public class WorkspaceSymbolParams : WorkDoneProgressParams, IPartialResultParams
     {
         public WorkspaceSymbolParams() { }
 
-        //
-        // Summary:
-        //     Gets or sets the query (a non-empty string).
+        /**
+	     * A query string to filter symbols by. Clients may send an empty
+	     * string here to request all symbols.
+	     */
         [DataMember(Name = "query")]
         public string Query { get; set; }
-        //
-        // Summary:
-        //     Gets or sets the value of the Progress instance.
-        [DataMember(Name = "partialResultToken", IsRequired = false)]
-        public IProgress<SymbolInformation[]> PartialResultToken { get; set; }
+
+        /**
+	     * An optional token that a server can use to report partial results (e.g. streaming) to
+	     * the client.
+	     */
+        [DataMember(Name = "partialResultToken")]
+        [JsonProperty(Required = Required.Default)]
+        public SumType<int, string> PartialResultToken { get; set; }
     }
 }

@@ -353,4 +353,74 @@ namespace Protocol
             throw new InvalidCastException();
         }
     }
+
+    [JsonConverter(typeof(SumConverter))]
+    public struct SumType<T1, T2, T3, T4> : ISumType, IEquatable<SumType<T1, T2, T3, T4>>
+    {
+        public SumType(T1 val) { this.Value = (object)val; }
+        public SumType(T2 val) { this.Value = (object)val; }
+        public SumType(T3 val) { this.Value = (object)val; }
+        public SumType(T4 val) { this.Value = (object)val; }
+        public object Value { get; }
+        public override bool Equals(object obj) { return obj is SumType<T1, T2, T3, T4> other && this.Equals(other); }
+        public bool Equals(SumType<T1, T2, T3, T4> other) { return EqualityComparer<object>.Default.Equals(this.Value, other.Value); }
+        public override int GetHashCode() { return EqualityComparer<object>.Default.GetHashCode(this.Value) - 1937169414; }
+        public TResult Match<TResult>(Func<T1, TResult> firstMatch, Func<T2, TResult> secondMatch, Func<T3, TResult> thirdMatch, Func<T3, TResult> forthMatch, Func<TResult> defaultMatch = null)
+        {
+            if (firstMatch == null)
+                throw new ArgumentNullException(nameof(firstMatch));
+            if (secondMatch == null)
+                throw new ArgumentNullException(nameof(secondMatch));
+            if (thirdMatch == null)
+                throw new ArgumentNullException(nameof(thirdMatch));
+            if (this.Value is T1 obj1)
+                return firstMatch(obj1);
+            if (this.Value is T2 obj2)
+                return secondMatch(obj2);
+            if (this.Value is T3 obj3)
+                return thirdMatch(obj3);
+            return defaultMatch != null ? defaultMatch() : default(TResult);
+        }
+        public static bool operator ==(SumType<T1, T2, T3, T4> left, SumType<T1, T2, T3, T4> right) { return left.Equals(right); }
+        public static bool operator !=(SumType<T1, T2, T3, T4> left, SumType<T1, T2, T3, T4> right) { return !(left == right); }
+        public static implicit operator SumType<T1, T2, T3, T4>(T1 val) { return new SumType<T1, T2, T3, T4>(val); }
+        public static implicit operator SumType<T1, T2, T3, T4>(T2 val) { return new SumType<T1, T2, T3, T4>(val); }
+        public static implicit operator SumType<T1, T2, T3, T4>(T3 val) { return new SumType<T1, T2, T3, T4>(val); }
+        public static implicit operator SumType<T1, T2, T3, T4>(SumType<T1, T2> sum)
+        {
+            throw new NotImplementedException();
+        }
+        public static explicit operator SumType<T1, T2>(SumType<T1, T2, T3, T4> sum)
+        {
+            if (sum.Value is T1 obj1)
+                return (SumType<T1, T2>)obj1;
+            if (sum.Value is T2 obj2)
+                return (SumType<T1, T2>)obj2;
+            throw new InvalidCastException();
+        }
+        public static explicit operator T1(SumType<T1, T2, T3, T4> sum)
+        {
+            if (sum.Value is T1 obj)
+                return obj;
+            throw new InvalidCastException();
+        }
+        public static explicit operator T2(SumType<T1, T2, T3, T4> sum)
+        {
+            if (sum.Value is T2 obj)
+                return obj;
+            throw new InvalidCastException();
+        }
+        public static explicit operator T3(SumType<T1, T2, T3, T4> sum)
+        {
+            if (sum.Value is T3 obj)
+                return obj;
+            throw new InvalidCastException();
+        }
+        public static explicit operator T4(SumType<T1, T2, T3, T4> sum)
+        {
+            if (sum.Value is T4 obj)
+                return obj;
+            throw new InvalidCastException();
+        }
+    }
 }

@@ -3,8 +3,13 @@ using System.Runtime.Serialization;
 
 namespace Protocol
 {
+    public interface IPartialResultParams
+    {
+        SumType<int, string> PartialResultToken { get; set; }
+    }
+
     [DataContract]
-    public class PartialResultParams
+    public class PartialResultParams : IPartialResultParams
     {
         public PartialResultParams() { }
 
