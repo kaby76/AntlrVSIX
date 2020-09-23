@@ -1,25 +1,27 @@
 ﻿using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace Protocol
 {
-    //
-    // Summary:
-    //     Class representing the parameters sent from a server to a client for the workspace/applyEdit
-    //     request.
     [DataContract]
     public class ApplyWorkspaceEditParams
     {
         public ApplyWorkspaceEditParams() { }
 
-        //
-        // Summary:
-        //     Gets or sets the label associated with this edit.
+        /**
+	     * An optional label of the workspace edit. This label is
+	     * presented in the user interface for example on an undo
+	     * stack to undo the workspace edit.
+	     */
         [DataMember(Name = "label")]
+        [JsonProperty(Required = Required.Default)]
         public string Label { get; set; }
-        //
-        // Summary:
-        //     Gets or sets the edit to be applied to the workspace.
+
+        /**
+	     * The edits to apply.
+	     */
         [DataMember(Name = "edit")]
+        [JsonProperty(Required = Required.Always)]
         public WorkspaceEdit Edit { get; set; }
     }
 }
