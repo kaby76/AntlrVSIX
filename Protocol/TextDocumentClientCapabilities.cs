@@ -1,117 +1,187 @@
 ﻿using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace Protocol
 {
-    //
-    // Summary:
-    //     Class which represents text document capabilities.
+    /**
+     * Text document specific client capabilities.
+     */
     [DataContract]
     public class TextDocumentClientCapabilities
     {
         public TextDocumentClientCapabilities() { }
 
-        //
-        // Summary:
-        //     Gets or sets the setting which determines if rename can be dynamically registered.
-        [DataMember(Name = "rename")]
-        public DynamicRegistrationSetting Rename { get; set; }
-        //
-        // Summary:
-        //     Gets or sets the setting which determines if document link can be dynamically
-        //     registered.
-        [DataMember(Name = "documentLink")]
-        public DynamicRegistrationSetting DocumentLink { get; set; }
-        //
-        // Summary:
-        //     Gets or sets the setting which determines if code lens can be dynamically registered.
-        [DataMember(Name = "codeLens")]
-        public DynamicRegistrationSetting CodeLens { get; set; }
-        //
-        // Summary:
-        //     Gets or sets the setting which determines if code action can be dynamically registered.
-        [DataMember(Name = "codeAction")]
-        public CodeActionSetting CodeAction { get; set; }
-        //
-        // Summary:
-        //     Gets or sets the settings which determines if type definition can be dynamically
-        //     registered.
-        [DataMember(Name = "typeDefinition")]
-        public DynamicRegistrationSetting TypeDefinition { get; set; }
-        //
-        // Summary:
-        //     Gets or sets the settings which determines if implementation can be dynamically
-        //     registered.
-        [DataMember(Name = "implementation")]
-        public DynamicRegistrationSetting Implementation { get; set; }
-        //
-        // Summary:
-        //     Gets or sets the setting which determines if definition can be dynamically registered.
-        [DataMember(Name = "definition")]
-        public DynamicRegistrationSetting Definition { get; set; }
-        //
-        // Summary:
-        //     Gets or sets the setting which determines if on type formatting can be dynamically
-        //     registered.
-        [DataMember(Name = "onTypeFormatting")]
-        public DynamicRegistrationSetting OnTypeFormatting { get; set; }
-        //
-        // Summary:
-        //     Gets or sets the setting which determines if range formatting can be dynamically
-        //     registered.
-        [DataMember(Name = "rangeFormatting")]
-        public DynamicRegistrationSetting RangeFormatting { get; set; }
-        //
-        // Summary:
-        //     Gets or sets the setting which determines if formatting can be dynamically registered.
-        [DataMember(Name = "formatting")]
-        public DynamicRegistrationSetting Formatting { get; set; }
-        //
-        // Summary:
-        //     Gets or sets the setting which determines if document symbol can be dynamically
-        //     registered.
-        [DataMember(Name = "documentSymbol")]
-        public DocumentSymbolSetting DocumentSymbol { get; set; }
-        //
-        // Summary:
-        //     Gets or sets the setting which determines if document highlight can be dynamically
-        //     registered.
-        [DataMember(Name = "documentHighlight")]
-        public DynamicRegistrationSetting DocumentHighlight { get; set; }
-        //
-        // Summary:
-        //     Gets or sets the setting which determines if references can be dynamically registered.
-        [DataMember(Name = "references")]
-        public DynamicRegistrationSetting References { get; set; }
-        //
-        // Summary:
-        //     Gets or sets the setting which determines if signature help can be dynamically
-        //     registered.
-        [DataMember(Name = "signatureHelp")]
-        public SignatureHelpSetting SignatureHelp { get; set; }
-        //
-        // Summary:
-        //     Gets or sets the setting which determines if hover can be dynamically registered.
-        [DataMember(Name = "hover")]
-        public HoverSetting Hover { get; set; }
-        //
-        // Summary:
-        //     Gets or sets the completion setting.
-        [DataMember(Name = "completion")]
-        public CompletionSetting Completion { get; set; }
-        //
-        // Summary:
-        //     Gets or sets the synchronization setting.
         [DataMember(Name = "synchronization")]
-        public SynchronizationSetting Synchronization { get; set; }
-        //
-        // Summary:
-        //     Gets or sets the setting which determines how folding range is supported.
-        [DataMember(Name = "foldingRange")]
-        public FoldingRangeSetting FoldingRange { get; set; }
-        //
-        // Summary:
-        //     Gets or sets the setting publish diagnostics setting
+        [JsonProperty(Required = Required.Default)]
+        public TextDocumentSyncClientCapabilities Synchronization { get; set; }
+
+        /**
+	     * Capabilities specific to the `textDocument/completion` request.
+	     */
+        [DataMember(Name = "completion")]
+        [JsonProperty(Required = Required.Default)]
+        public CompletionClientCapabilities Completion { get; set; }
+        
+        /**
+	     * Capabilities specific to the `textDocument/hover` request.
+	     */
+        [DataMember(Name = "hover")]
+        [JsonProperty(Required = Required.Default)]
+        public HoverClientCapabilities Hover { get; set; }
+
+        /**
+	     * Capabilities specific to the `textDocument/signatureHelp` request.
+	     */
+        [DataMember(Name = "signatureHelp")]
+        [JsonProperty(Required = Required.Default)]
+        public SignatureHelpClientCapabilities SignatureHelp { get; set; }
+
+        /**
+          * Capabilities specific to the `textDocument/declaration` request.
+          *
+          * @since 3.14.0
+          */
+        [DataMember(Name = "declaration")]
+        [JsonProperty(Required = Required.Default)]
+        public DeclarationClientCapabilities Declaration { get; set; }
+
+        /**
+	     * Capabilities specific to the `textDocument/definition` request.
+	     */
+        [DataMember(Name = "definition")]
+        [JsonProperty(Required = Required.Default)]
+        public DefinitionClientCapabilities Definition { get; set; }
+
+        /**
+	     * Capabilities specific to the `textDocument/typeDefinition` request.
+	     *
+	     * @since 3.6.0
+	     */
+        [DataMember(Name = "typeDefinition")]
+        [JsonProperty(Required = Required.Default)]
+        public TypeDefinitionClientCapabilities TypeDefinition { get; set; }
+
+        /**
+	     * Capabilities specific to the `textDocument/implementation` request.
+	     *
+	     * @since 3.6.0
+	     */
+        [DataMember(Name = "implementation")]
+        [JsonProperty(Required = Required.Default)]
+        public ImplementationClientCapabilities Implementation { get; set; }
+
+        /**
+	     * Capabilities specific to the `textDocument/references` request.
+	     */
+        [DataMember(Name = "references")]
+        [JsonProperty(Required = Required.Default)]
+        public ReferenceClientCapabilities References { get; set; }
+
+        /**
+	     * Capabilities specific to the `textDocument/documentHighlight` request.
+	     */
+        [DataMember(Name = "documentHighlight")]
+        [JsonProperty(Required = Required.Default)]
+        public DocumentHighlightClientCapabilities DocumentHighlight { get; set; }
+
+        /**
+	     * Capabilities specific to the `textDocument/documentSymbol` request.
+	     */
+        [DataMember(Name = "documentSymbol")]
+        [JsonProperty(Required = Required.Default)]
+        public DocumentSymbolClientCapabilities DocumentSymbol { get; set; }
+
+        /**
+          * Capabilities specific to the `textDocument/codeAction` request.
+          */
+        [DataMember(Name = "codeAction")]
+        [JsonProperty(Required = Required.Default)]
+        public CodeActionClientCapabilities CodeAction { get; set; }
+
+        /**
+	     * Capabilities specific to the `textDocument/codeLens` request.
+	     */
+        [DataMember(Name = "codeLens")]
+        [JsonProperty(Required = Required.Default)]
+        public CodeLensClientCapabilities CodeLens { get; set; }
+
+        /**
+	     * Capabilities specific to the `textDocument/documentLink` request.
+	     */
+        [DataMember(Name = "documentLink")]
+        [JsonProperty(Required = Required.Default)]
+        public DocumentLinkClientCapabilities DocumentLink { get; set; }
+
+        /**
+	     * Capabilities specific to the `textDocument/documentColor` and the
+	     * `textDocument/colorPresentation` request.
+	     *
+	     * @since 3.6.0
+	     */
+        [DataMember(Name = "colorProvider")]
+        [JsonProperty(Required = Required.Default)]
+        public DocumentColorClientCapabilities ColorProvider { get; set; }
+
+        /**
+	     * Capabilities specific to the `textDocument/formatting` request.
+	     */
+        [DataMember(Name = "formatting")]
+        [JsonProperty(Required = Required.Default)]
+        public DocumentFormattingClientCapabilities Formatting { get; set; }
+
+        /**
+	     * Capabilities specific to the `textDocument/rangeFormatting` request.
+	     */
+        [DataMember(Name = "rangeFormatting")]
+        [JsonProperty(Required = Required.Default)]
+        public DocumentRangeFormattingClientCapabilities RangeFormatting { get; set; }
+
+        /** request.
+	     * Capabilities specific to the `textDocument/onTypeFormatting` request.
+	     */
+        [DataMember(Name = "onTypeFormatting")]
+        [JsonProperty(Required = Required.Default)]
+        public DocumentOnTypeFormattingClientCapabilities OnTypeFormatting { get; set; }
+
+        /**
+	     * Capabilities specific to the `textDocument/rename` request.
+	     */
+        [DataMember(Name = "rename")]
+        [JsonProperty(Required = Required.Default)]
+        public RenameClientCapabilities Rename { get; set; }
+
+        /**
+         * Capabilities specific to the `textDocument/publishDiagnostics` notification.
+         */
         [DataMember(Name = "publishDiagnostics")]
-        public PublishDiagnosticsSetting PublishDiagnostics { get; set; }
+        [JsonProperty(Required = Required.Default)]
+        public PublishDiagnosticsClientCapabilities PublishDiagnostics { get; set; }
+
+        /**
+	     * Capabilities specific to the `textDocument/foldingRange` request.
+	     *
+	     * @since 3.10.0
+	     */
+        [DataMember(Name = "foldingRange")]
+        [JsonProperty(Required = Required.Default)]
+        public FoldingRangeClientCapabilities FoldingRange { get; set; }
+
+        /**
+	     * Capabilities specific to the `textDocument/selectionRange` request.
+	     *
+	     * @since 3.15.0
+	     */
+        [DataMember(Name = "selectionRange")]
+        [JsonProperty(Required = Required.Default)]
+        public SelectionRangeClientCapabilities SelectionRange { get; set; }
+
+        /**
+	     * Capabilities specific to the `textDocument/semanticTokens/*` requests.
+	     *
+	     * @since 3.16.0
+	     */
+        [DataMember(Name = "semanticTokens")]
+        [JsonProperty(Required = Required.Default)]
+        public SemanticTokensClientCapabilities SemanticTokens { get; set; }
     }
 }

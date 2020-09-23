@@ -3,9 +3,6 @@ using Newtonsoft.Json;
 
 namespace Protocol
 {
-    //
-    // Summary:
-    //     Class which represents client capabilities.
     [DataContract]
     public class ClientCapabilities
     {

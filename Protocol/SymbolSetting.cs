@@ -15,6 +15,6 @@ namespace Protocol
         //     Gets or sets the Microsoft.VisualStudio.LanguageServer.Protocol.SymbolKindSetting
         //     information.
         [DataMember(Name = "symbolKind")]
-        public SymbolKindSetting SymbolKind { get; set; }
+        public _DocumentSymbolClientCapabilities_SymbolKind SymbolKind { get; set; }
     }
 }
