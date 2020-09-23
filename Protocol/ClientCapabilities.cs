@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace Protocol
 {
@@ -10,20 +11,32 @@ namespace Protocol
     {
         public ClientCapabilities() { }
 
-        //
-        // Summary:
-        //     Gets or sets the workspace capabilities.
+        /**
+	     * Workspace specific client capabilities.
+	     */
         [DataMember(Name = "workspace")]
-        public WorkspaceClientCapabilities Workspace { get; set; }
-        //
-        // Summary:
-        //     Gets or sets the text document capabilities.
+        [JsonProperty(Required = Required.Default)]
+        public _WorkspaceClientCapabilities Workspace { get; set; }
+
+        /**
+	     * Text document specific client capabilities.
+	     */
         [DataMember(Name = "textDocument")]
+        [JsonProperty(Required = Required.Default)]
         public TextDocumentClientCapabilities TextDocument { get; set; }
-        //
-        // Summary:
-        //     Gets or sets the experimental capabilities.
+
+        /**
+	     * Window specific client capabilities.
+	     */
         [DataMember(Name = "experimental")]
+        [JsonProperty(Required = Required.Default)]
+        public _WindowClientCapabilities Window { get; set; }
+     
+        /**
+	     * Experimental client capabilities.
+	     */
+        [DataMember(Name = "experimental")]
+        [JsonProperty(Required = Required.Default)]
         public object Experimental { get; set; }
     }
 }
