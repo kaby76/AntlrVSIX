@@ -23,7 +23,8 @@ namespace Protocol
 		 */
 		[DataMember(Name = "tagSupport")]
 		[JsonProperty(Required = Required.Default)]
-		public _PublishDiagnosticsClientCapabilities_TagSupport TagSupport { get; set; }
+		//TODO public _PublishDiagnosticsClientCapabilities_TagSupport TagSupport { get; set; }
+		public SumType<bool,_PublishDiagnosticsClientCapabilities_TagSupport> TagSupport { get; set; }
 
 		/**
 		 * Whether the client interprets the version property of the

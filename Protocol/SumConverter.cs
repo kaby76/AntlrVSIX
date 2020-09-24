@@ -2,75 +2,68 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Protocol
 {
 
-    /// <summary>Converter to translate to and from SumTypes.</summary>
     public class SumConverter : JsonConverter
     {
         private readonly object converterSyncObj;
         private JsonConverter primitiveConverter;
 
-        /// <inheritdoc />
         public override bool CanConvert(Type objectType)
         {
             return true;
         }
 
-        /// <inheritdoc />
         public override object ReadJson(
           JsonReader reader,
           Type objectType,
           object existingValue,
           JsonSerializer serializer)
         {
-            Dictionary<Type, ConstructorInfo> dictionary
-                //= objectType
-                //.GetTypeInfo()
-                //.DeclaredConstructors
-                ;
+            ConstructorInfo[] a = objectType.GetConstructors();
+            IEnumerable<ConstructorInfo> b = objectType.GetTypeInfo().DeclaredConstructors;
+
             JToken jtoken = JToken.ReadFrom(reader);
             object converterSyncObj = this.converterSyncObj;
-            bool lockTaken = false;
             try
             {
-                //Monitor.Enter(converterSyncObj, ref lockTaken);
-                // ISSUE: method pointer
-                Tuple<int, Type> tuple = null;
-                //foreach (Tuple<int, Type> tuple in ((IEnumerable<Type>)objectType.GenericTypeArguments).Select(
-                //    SumConverter.9__3_2 ?? (SumConverter.9__3_2 = new Func<Type, int, Tuple<int, Type>>()))
+                lock (converterSyncObj)
                 {
-                    try
+                    foreach (Type con in objectType.GenericTypeArguments)
                     {
-                        int num = tuple.Item1;
-                        Type key = tuple.Item2;
-                        ((ICollection<JsonConverter>)serializer.Converters).Add(this.primitiveConverter);
-                        object[] parameters = new object[1]
+                        foreach (var c in b)
                         {
-                            jtoken.ToObject(key, serializer)
-                        };
-                        //return dictionary[key].Invoke(parameters);
-                    }
-                    catch
-                    {
-                    }
-                    finally
-                    {
-                        ((ICollection<JsonConverter>)serializer.Converters).Remove(this.primitiveConverter);
+                            try
+                            {
+                                Type key = con;
+                                ((ICollection<JsonConverter>)serializer.Converters).Add(this.primitiveConverter);
+                                object[] parameters = new object[1]
+                                {
+                                jtoken.ToObject(key, serializer)
+                                };
+                                return c.Invoke(parameters);
+                            }
+                            catch
+                            {
+                            }
+                            finally
+                            {
+                                ((ICollection<JsonConverter>)serializer.Converters).Remove(this.primitiveConverter);
+                            }
+                        }
                     }
                 }
             }
             finally
             {
-                //if (lockTaken)
-                //    Monitor.Exit(converterSyncObj);
             }
             throw new JsonSerializationException();
         }
 
-        /// <inheritdoc />
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             JsonWriter jsonWriter = writer;
@@ -88,6 +81,30 @@ namespace Protocol
         {
             this.converterSyncObj = new object();
             this.primitiveConverter = (JsonConverter)new StrictPrimitiveConverter();
+        }
+
+        private sealed class XXX
+        {
+            public static readonly XXX Nine = new XXX();
+
+            public XXX()
+            {
+            }
+
+            internal Type Nine__3_0(ConstructorInfo info)
+            {
+                return ((IEnumerable<ParameterInfo>)info.GetParameters()).First<ParameterInfo>().ParameterType;
+            }
+
+            internal ConstructorInfo Nine__3_1(ConstructorInfo info)
+            {
+                return info;
+            }
+
+            internal Tuple<int, Type> Nine__3_2(Type value, int index)
+            {
+                return new Tuple<int, Type>(index, value);
+            }
         }
     }
 }

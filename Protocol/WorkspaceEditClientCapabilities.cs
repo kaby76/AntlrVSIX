@@ -33,6 +33,6 @@ namespace Protocol
 		 */
 		[DataMember(Name = "failureHandling")]
 		[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-		public FailureHandlingKind[] FailureHandling;
+		public FailureHandlingKind FailureHandling;
 	}
 }

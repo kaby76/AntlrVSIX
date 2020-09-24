@@ -144,6 +144,9 @@
                     Logger.Log.WriteLine("<-- Initialize");
                     Logger.Log.WriteLine(arg.ToString());
                 }
+
+                var init_params = arg.ToObject<InitializeParams>();
+
                 ServerCapabilities capabilities = new ServerCapabilities
                 {
                     TextDocumentSync = new TextDocumentSyncOptions

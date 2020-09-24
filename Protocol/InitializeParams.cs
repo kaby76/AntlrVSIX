@@ -18,7 +18,8 @@ namespace Protocol
 	     * If the parent process is not alive then the server should exit (see exit notification) its process.
 	     */
         [DataMember(Name = "processId")]
-        [JsonProperty(Required = Required.Always)]
+        //OK if missing [JsonProperty(Required = Required.Always)]
+        [JsonProperty(Required = Required.Default)]
         public int? ProcessId { get; set; }
 
         /**
@@ -47,7 +48,8 @@ namespace Protocol
 	     */
         [DataMember(Name = "rootUri")]
         [JsonConverter(typeof(DocumentUriConverter))]
-        [JsonProperty(Required = Required.Always)]
+        //OK if missing [JsonProperty(Required = Required.Always)]
+        [JsonProperty(Required = Required.Default)]
         public Uri RootUri { get; set; }
 
         /**
@@ -61,6 +63,7 @@ namespace Protocol
 	     * The capabilities provided by the client (editor or tool)
 	     */
         [DataMember(Name = "capabilities")]
+        [JsonProperty(Required = Required.Default)]
         public ClientCapabilities Capabilities { get; set; }
 
         /**
@@ -79,7 +82,7 @@ namespace Protocol
 	     * @since 3.6.0
 	     */
         [DataMember(Name = "workspaceFolders")]
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(Required = Required.Default)]
         public WorkspaceFolder[] WorkspaceFolders { get; set; }
     }
 }

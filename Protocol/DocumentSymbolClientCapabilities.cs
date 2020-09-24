@@ -38,6 +38,6 @@ namespace Protocol
 	     */
         [DataMember(Name = "tagSupport")]
         [JsonProperty(Required = Required.Default)]
-        public bool? TagSupport { get; set; }
+        public _DocumentSymbolClientCapabilities_TagSupport TagSupport { get; set; }
     }
 }

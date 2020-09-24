@@ -25,7 +25,7 @@ namespace Protocol
         /**
 	     * Window specific client capabilities.
 	     */
-        [DataMember(Name = "experimental")]
+        [DataMember(Name = "window")]
         [JsonProperty(Required = Required.Default)]
         public _ClientCapabilities_Window Window { get; set; }
      
