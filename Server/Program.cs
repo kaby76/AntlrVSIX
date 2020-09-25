@@ -1,6 +1,6 @@
 ﻿namespace Server
 {
-    using Protocol;
+    using LspTypes;
     using System;
     using System.Collections.ObjectModel;
     using System.ComponentModel;

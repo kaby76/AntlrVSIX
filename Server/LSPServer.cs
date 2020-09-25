@@ -2,7 +2,7 @@
 {
     using LanguageServer;
     using Newtonsoft.Json.Linq;
-    using Protocol;
+    using LspTypes;
     using StreamJsonRpc;
     using System;
     using System.Collections.Generic;
@@ -92,7 +92,7 @@
                     {
                         Message = info.Message,
                         Severity = severity,
-                        Range = new Protocol.Range
+                        Range = new LspTypes.Range
                         {
                             Start = new Position(bs.Item1, bs.Item2),
                             End = new Position(be.Item1, be.Item2)
@@ -137,7 +137,7 @@
 #pragma warning restore VSTHRD110
         }
 
-        public bool ApplyEdit(string transaction_name, Dictionary<string,Protocol.TextEdit[]> changes)
+        public bool ApplyEdit(string transaction_name, Dictionary<string, LspTypes.TextEdit[]> changes)
         {
             WorkspaceEdit edit = new WorkspaceEdit()
             {
@@ -209,7 +209,7 @@
                 {
                     Message = "This is an " + Enum.GetName(typeof(DiagnosticSeverity), severity),
                     Severity = severity,
-                    Range = new Protocol.Range
+                    Range = new LspTypes.Range
                     {
                         Start = new Position(0, 0),
                         End = new Position(0, 10)

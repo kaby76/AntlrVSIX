@@ -6,7 +6,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Protocol\Protocol.csproj" />
+		<PackageReference Include="LspTypes" Version="0.0.1" />
 	</ItemGroup>
 
 </Project>

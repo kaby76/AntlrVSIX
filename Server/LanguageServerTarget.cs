@@ -4,7 +4,7 @@
     using LoggerNs;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
-    using Protocol;
+    using LspTypes;
     using StreamJsonRpc;
     using System;
     using System.Collections.Generic;
@@ -36,7 +36,7 @@
             {
                 throw new LanguageServerException("No changes were needed, none made.");
             }
-            var a = new Dictionary<string, Protocol.TextEdit[]>();
+            var a = new Dictionary<string, LspTypes.TextEdit[]>();
             foreach (var pair in ch)
             {
                 var fn = pair.Key;
@@ -106,13 +106,13 @@
                 }
                 var changes = edits.ToArray();
 
-                List<Protocol.TextEdit> new_list = new List<Protocol.TextEdit>();
+                List<LspTypes.TextEdit> new_list = new List<LspTypes.TextEdit>();
                 int count = 0;
                 foreach (LanguageServer.TextEdit delta in changes)
                 {
-                    var new_edit = new Protocol.TextEdit
+                    var new_edit = new LspTypes.TextEdit
                     {
-                        Range = new Protocol.Range()
+                        Range = new LspTypes.Range()
                     };
                     (int, int) lcs = new LanguageServer.Module().GetLineColumn(delta.range.Start.Value, document);
                     (int, int) lce = new LanguageServer.Module().GetLineColumn(delta.range.End.Value, document);
@@ -198,7 +198,7 @@
 
                     RenameProvider = true,
 
-                    FoldingRangeProvider = null,
+                    FoldingRangeProvider = new SumType<bool, FoldingRangeOptions, FoldingRangeRegistrationOptions>(false),
 
                     ExecuteCommandProvider = null,
 
@@ -716,7 +716,7 @@
                     int index_end = quick_info.Range.End.Value;
                     (int, int) lcs = new LanguageServer.Module().GetLineColumn(index_start, document);
                     (int, int) lce = new LanguageServer.Module().GetLineColumn(index_end, document);
-                    hover.Range = new Protocol.Range
+                    hover.Range = new LspTypes.Range
                     {
                         Start = new Position(lcs.Item1, lcs.Item2),
                         End = new Position(lce.Item1, lce.Item2)
@@ -780,12 +780,12 @@
                     List<object> locations = new List<object>();
                     foreach (var f in found)
                     {
-                        Protocol.Location location = new Protocol.Location
+                        LspTypes.Location location = new LspTypes.Location
                         {
                             Uri = new Uri(f.Uri.FullPath).ToString()
                         };
                         Document def_document = _workspace.FindDocument(f.Uri.FullPath);
-                        location.Range = new Protocol.Range();
+                        location.Range = new LspTypes.Range();
                         (int, int) lcs = new LanguageServer.Module().GetLineColumn(f.Range.Start.Value, def_document);
                         (int, int) lce = new LanguageServer.Module().GetLineColumn(f.Range.End.Value, def_document);
                         location.Range.Start = new Position(lcs.Item1, lcs.Item2);
@@ -829,12 +829,12 @@
                     List<object> locations = new List<object>();
                     foreach (var f in found)
                     {
-                        Protocol.Location location = new Protocol.Location
+                        LspTypes.Location location = new LspTypes.Location
                         {
                             Uri = new Uri(f.Uri.FullPath).ToString()
                         };
                         Document def_document = _workspace.FindDocument(f.Uri.FullPath);
-                        location.Range = new Protocol.Range();
+                        location.Range = new LspTypes.Range();
                         (int, int) lcs = new LanguageServer.Module().GetLineColumn(f.Range.Start.Value, def_document);
                         (int, int) lce = new LanguageServer.Module().GetLineColumn(f.Range.End.Value, def_document);
                         location.Range.Start = new Position(lcs.Item1, lcs.Item2);
@@ -878,12 +878,12 @@
                     List<object> locations = new List<object>();
                     foreach (var f in found)
                     {
-                        var location = new Protocol.Location
+                        var location = new LspTypes.Location
                         {
                             Uri = new Uri(f.Uri.FullPath).ToString()
                         };
                         Document def_document = _workspace.FindDocument(f.Uri.FullPath);
-                        location.Range = new Protocol.Range();
+                        location.Range = new LspTypes.Range();
                         (int, int) lcs = new LanguageServer.Module().GetLineColumn(f.Range.Start.Value, def_document);
                         (int, int) lce = new LanguageServer.Module().GetLineColumn(f.Range.End.Value, def_document);
                         location.Range.Start = new Position(lcs.Item1, lcs.Item2);
@@ -927,12 +927,12 @@
                     List<object> locations = new List<object>();
                     foreach (var f in found)
                     {
-                        var location = new Protocol.Location
+                        var location = new LspTypes.Location
                         {
                             Uri = new Uri(f.Uri.FullPath).ToString()
                         };
                         Document def_document = _workspace.FindDocument(f.Uri.FullPath);
-                        location.Range = new Protocol.Range();
+                        location.Range = new LspTypes.Range();
                         (int, int) lcs = new LanguageServer.Module().GetLineColumn(f.Range.Start.Value, def_document);
                         (int, int) lce = new LanguageServer.Module().GetLineColumn(f.Range.End.Value + 1, def_document);
                         location.Range.Start = new Position(lcs.Item1, lcs.Item2);
@@ -946,7 +946,7 @@
                         Logger.Log.WriteLine(string.Join(
                             System.Environment.NewLine, result.Select(s =>
                         {
-                            var v = (Protocol.Location)s;
+                            var v = (LspTypes.Location)s;
                             var dd = CheckDoc(v.Uri);
                             return "<" + v.Uri +
                                 ",[" + new LanguageServer.Module().GetIndex(
@@ -1006,7 +1006,7 @@
                         }
                         DocumentHighlight location = new DocumentHighlight();
                         Document def_document = _workspace.FindDocument(f.Uri.FullPath);
-                        location.Range = new Protocol.Range();
+                        location.Range = new LspTypes.Range();
                         (int, int) lcs = new LanguageServer.Module().GetLineColumn(f.Range.Start.Value, def_document);
                         (int, int) lce = new LanguageServer.Module().GetLineColumn(f.Range.End.Value + 1, def_document);
                         location.Range.Start = new Position(lcs.Item1, lcs.Item2);
@@ -1082,13 +1082,13 @@
                         }
 
                         si.Name = s.name;
-                        si.Location = new Protocol.Location
+                        si.Location = new LspTypes.Location
                         {
                             Uri = request.TextDocument.Uri
                         };
                         (int, int) lcs = new LanguageServer.Module().GetLineColumn(s.range.Start.Value, document);
                         (int, int) lce = new LanguageServer.Module().GetLineColumn(s.range.End.Value, document);
-                        si.Location.Range = new Protocol.Range
+                        si.Location.Range = new LspTypes.Range
                         {
                             Start = new Position(lcs.Item1, lcs.Item2),
                             End = new Position(lce.Item1, lce.Item2)
@@ -1235,14 +1235,14 @@
                     }
                     DocumentFormattingParams request = arg.ToObject<DocumentFormattingParams>();
                     Document document = CheckDoc(request.TextDocument.Uri);
-                    var new_list = new List<Protocol.TextEdit>();
+                    var new_list = new List<LspTypes.TextEdit>();
                     LanguageServer.TextEdit[] changes = new LanguageServer.Module().Reformat(document);
                     int count = 0;
                     foreach (LanguageServer.TextEdit delta in changes)
                     {
-                        var new_edit = new Protocol.TextEdit
+                        var new_edit = new LspTypes.TextEdit
                         {
-                            Range = new Protocol.Range()
+                            Range = new LspTypes.Range()
                         };
                         (int, int) lcs = new LanguageServer.Module().GetLineColumn(delta.range.Start.Value, document);
                         (int, int) lce = new LanguageServer.Module().GetLineColumn(delta.range.End.Value, document);
@@ -1329,18 +1329,18 @@
                         Dictionary<string, LanguageServer.TextEdit[]> changes = new LanguageServer.Module().Rename(index, new_name, document);
                         edit = new WorkspaceEdit();
                         int count = 0;
-                        var edit_changes_array = new Dictionary<string, Protocol.TextEdit[]>();
+                        var edit_changes_array = new Dictionary<string, LspTypes.TextEdit[]>();
                         foreach (KeyValuePair<string, LanguageServer.TextEdit[]> pair in changes)
                         {
                             string doc = pair.Key;
                             Uri uri = new Uri(doc);
                             LanguageServer.TextEdit[] val = pair.Value;
-                            var new_list = new List<Protocol.TextEdit>();
+                            var new_list = new List<LspTypes.TextEdit>();
                             foreach (LanguageServer.TextEdit v in val)
                             {
-                                var new_edit = new Protocol.TextEdit
+                                var new_edit = new LspTypes.TextEdit
                                 {
-                                    Range = new Protocol.Range()
+                                    Range = new LspTypes.Range()
                                 };
                                 (int, int) lcs = new LanguageServer.Module().GetLineColumn(v.range.Start.Value, document);
                                 (int, int) lce = new LanguageServer.Module().GetLineColumn(v.range.End.Value, document);
