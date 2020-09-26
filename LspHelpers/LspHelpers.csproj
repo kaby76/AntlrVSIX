@@ -6,7 +6,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="LspTypes" Version="0.0.1" />
+		<PackageReference Include="LspTypes" Version="0.0.2" />
 	</ItemGroup>
 
 </Project>
