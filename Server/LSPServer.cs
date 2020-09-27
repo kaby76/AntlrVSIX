@@ -169,7 +169,7 @@
             ShowMessageRequestParams parameter = new ShowMessageRequestParams
             {
                 Message = message,
-                MessageType = messageType,
+                Type = (int)messageType,
                 Actions = actionItems.Select(a => new MessageActionItem { Title = a }).ToArray()
             };
             JToken response = await rpc.InvokeWithParameterObjectAsync<JToken>(Methods.WindowShowMessageRequestName, parameter).ConfigureAwait(false); ;

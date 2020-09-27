@@ -447,7 +447,7 @@
                                         foreach (TextDocumentContentChangeEvent change in request.ContentChanges)
                                         {
                                             var range = change.Range;
-                                            int length = change.RangeLength; // Why? range encodes start and end => length!
+                                            int length = change.RangeLength ?? 0; // Why? range encodes start and end => length!
                                             string text = change.Text;
                                             {
                                                 int line = range.Start.Line;
