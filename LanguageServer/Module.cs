@@ -137,9 +137,10 @@
         public QuickInfo GetQuickInfo(int index, Document doc)
         {
             ParsingResults pd = ParsingResultsFactory.Create(doc);
+            var workspace = doc.Workspace;
             if (pd.ParseTree == null)
             {
-                Compile();
+                Compile(workspace);
             }
 
             Antlr4.Runtime.Tree.IParseTree pt = LanguageServer.Util.Find(index, doc);
@@ -224,9 +225,10 @@
         public int GetTag(int index, Document doc)
         {
             ParsingResults pd = ParsingResultsFactory.Create(doc);
+            var workspace = doc.Workspace;
             if (pd.ParseTree == null)
             {
-                Compile();
+                Compile(workspace);
             }
 
             Antlr4.Runtime.Tree.IParseTree pt = LanguageServer.Util.Find(index, doc);
@@ -261,9 +263,10 @@
         public DocumentSymbol GetDocumentSymbol(int index, Document doc)
         {
             ParsingResults pd = ParsingResultsFactory.Create(doc);
+            var workspace = doc.Workspace;
             if (pd.ParseTree == null)
             {
-                Compile();
+                Compile(workspace);
             }
 
             Antlr4.Runtime.Tree.IParseTree pt = LanguageServer.Util.Find(index, doc);
@@ -297,9 +300,10 @@
         public IEnumerable<DocumentSymbol> GetSymbols(Document doc)
         {
             ParsingResults pd = ParsingResultsFactory.Create(doc);
+            var workspace = doc.Workspace;
             if (pd.ParseTree == null)
             {
-                Compile();
+                Compile(workspace);
             }
 
             List<DocumentSymbol> combined = new List<DocumentSymbol>();
@@ -351,9 +355,10 @@
             try
             {
                 ParsingResults pd = ParsingResultsFactory.Create(doc);
+                var workspace = doc.Workspace;
                 if (pd.ParseTree == null)
                 {
-                    Compile();
+                    Compile(workspace);
                 }
 
                 List<Info> combined = new List<Info>();
@@ -394,9 +399,10 @@
             try
             {
                 ParsingResults pd = ParsingResultsFactory.Create(doc);
+                var workspace = doc.Workspace;
                 if (pd.ParseTree == null)
                 {
-                    Compile();
+                    Compile(workspace);
                 }
 
                 List<Info> combined = new List<Info>();
@@ -433,9 +439,10 @@
         public IEnumerable<Workspaces.Range> GetErrors(Workspaces.Range range, Document doc)
         {
             ParsingResults pd = ParsingResultsFactory.Create(doc);
+            var workspace = doc.Workspace;
             if (pd.ParseTree == null)
             {
-                Compile();
+                Compile(workspace);
             }
 
             List<Range> result = new List<Workspaces.Range>();
@@ -491,6 +498,7 @@
             {
                 return result;
             }
+            var workspace = doc.Workspace;
 
             IParseTree ref_pt = Util.Find(index, doc);
             if (ref_pt == null)
@@ -501,7 +509,7 @@
             ParsingResults ref_pd = ParsingResultsFactory.Create(doc);
             if (ref_pd.ParseTree == null)
             {
-                Compile();
+                Compile(workspace);
             }
 
             ref_pd.Attributes.TryGetValue(ref_pt, out IList<Symtab.CombinedScopeSymbol> list_values);
@@ -537,7 +545,7 @@
                         continue;
                     }
 
-                    Document def_item = Workspaces.Workspace.Instance.FindDocument(def_file);
+                    Document def_item = workspace.FindDocument(def_file);
                     if (def_item == null)
                     {
                         continue;
@@ -562,11 +570,12 @@
             {
                 return result;
             }
+            var workspace = doc.Workspace;
 
             ParsingResults ref_pd = ParsingResultsFactory.Create(doc);
             if (ref_pd.ParseTree == null)
             {
-                Compile();
+                Compile(workspace);
             }
 
             ref_pd.Attributes.TryGetValue(ref_pt, out IList<Symtab.CombinedScopeSymbol> list_value);
@@ -612,7 +621,7 @@
                         new Location()
                         {
                             Range = new Workspaces.Range(def.Token.StartIndex, def.Token.StopIndex),
-                            Uri = Workspaces.Workspace.Instance.FindDocument(def.file)
+                            Uri = workspace.FindDocument(def.file)
                         });
                     var dd = def as BaseSymbol;
                     foreach (var r in dd.Refs)
@@ -621,7 +630,7 @@
                             new Location()
                             {
                                 Range = new Workspaces.Range(r.Token.StartIndex, r.Token.StopIndex),
-                                Uri = Workspaces.Workspace.Instance.FindDocument(r.file)
+                                Uri = workspace.FindDocument(r.file)
                             });
                     }
                 }
@@ -633,9 +642,10 @@
         {
             List<Location> result = new List<Location>();
             ParsingResults ref_pd = ParsingResultsFactory.Create(doc);
+            var workspace = doc.Workspace;
             if (ref_pd.ParseTree == null)
             {
-                Compile();
+                Compile(workspace);
             }
 
             foreach (KeyValuePair<TerminalNodeImpl, int> value in ref_pd.Defs)
@@ -646,7 +656,7 @@
                     new Location()
                     {
                         Range = new Workspaces.Range(sym.StartIndex, sym.StopIndex),
-                        Uri = Workspaces.Workspace.Instance.FindDocument(sym.InputStream.SourceName)
+                        Uri = workspace.FindDocument(sym.InputStream.SourceName)
                     });
             }
             return result;
@@ -656,9 +666,10 @@
         {
             List<TerminalNodeImpl> result = new List<TerminalNodeImpl>();
             ParsingResults ref_pd = ParsingResultsFactory.Create(doc);
+            var workspace = doc.Workspace;
             if (ref_pd.ParseTree == null)
             {
-                Compile();
+                Compile(workspace);
             }
 
             foreach (KeyValuePair<TerminalNodeImpl, int> value in ref_pd.Refs)
@@ -673,9 +684,10 @@
         {
             List<TerminalNodeImpl> result = new List<TerminalNodeImpl>();
             ParsingResults ref_pd = ParsingResultsFactory.Create(doc);
+            var workspace = doc.Workspace;
             if (ref_pd.ParseTree == null)
             {
-                Compile();
+                Compile(workspace);
             }
 
             foreach (KeyValuePair<TerminalNodeImpl, int> value in ref_pd.Defs)
@@ -699,11 +711,12 @@
             while (stack.Count > 0)
             {
                 ParsingResults f = stack.Pop();
+                var workspace = f.Item.Workspace;
                 g.AddVertex(f);
                 done.Add(f);
                 foreach (string d in f.PropagateChangesTo)
                 {
-                    Document d_doc = Workspace.Instance.FindDocument(d);
+                    Document d_doc = workspace.FindDocument(d);
                     ParsingResults d_pd = ParsingResultsFactory.Create(d_doc);
                     if (done.Contains(d_pd))
                     {
@@ -717,11 +730,12 @@
             foreach (ParsingResults v in g.Vertices)
             {
                 HashSet<string> deps = v.PropagateChangesTo;
-                Document doc = Workspace.Instance.FindDocument(v.FullFileName);
+                var workspace = v.Item.Workspace;
+                Document doc = workspace.FindDocument(v.FullFileName);
                 ParsingResults pd = ParsingResultsFactory.Create(doc);
                 foreach (string d in deps)
                 {
-                    Document d_doc = Workspace.Instance.FindDocument(d);
+                    Document d_doc = workspace.FindDocument(d);
                     ParsingResults d_pd = ParsingResultsFactory.Create(d_doc);
                     g.AddEdge(new DirectedEdge<ParsingResults>(pd, d_pd));
                 }
@@ -730,12 +744,10 @@
             return g;
         }
 
-        public List<ParsingResults> Compile()
+        public List<ParsingResults> Compile(Workspace workspace)
         {
             try
             {
-                Workspace ws = Workspaces.Workspace.Instance;
-
                 // Parse changed files. If it's a combined grammar, no need to read
                 // other files. If it's a parser grammar, get the lexer grammar and read
                 // that. If it's a lexer grammar, read the parser grammar.
@@ -750,7 +762,7 @@
 
                 HashSet<ParsingResults> to_do = new HashSet<ParsingResults>();
                 HashSet<ParsingResults> new_to_do = new HashSet<ParsingResults>();
-                foreach (Document document in Workspaces.DFSContainer.DFS(ws))
+                foreach (Document document in Workspaces.DFSContainer.DFS(workspace))
                 {
                     if (!document.Changed) continue;
                     string file_name = document.FullPath;
@@ -781,7 +793,7 @@
                     foreach (KeyValuePair<string, List<string>> dep in ParsingResults.InverseImports)
                     {
                         string name = dep.Key;
-                        Workspaces.Document x = Workspaces.Workspace.Instance.FindDocument(name);
+                        Workspaces.Document x = workspace.FindDocument(name);
                         ParsingResults v = LanguageServer.ParserDescriptionFactory.Create(x);
                         new_to_do.Add(v);
                     }
@@ -1029,9 +1041,10 @@
         public List<string> Completion(int char_index, Document document)
         {
             ParsingResults ref_pd = ParsingResultsFactory.Create(document);
+            var workspace = document.Workspace;
             if (ref_pd.ParseTree == null)
             {
-                Compile();
+                Compile(workspace);
             }
 
             List<string> result = ref_pd.Candidates(char_index);

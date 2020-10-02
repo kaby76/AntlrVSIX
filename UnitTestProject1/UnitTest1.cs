@@ -35,7 +35,8 @@ namespace UnitTestProject1
             }
             document.Changed = true;
             _ = ParsingResultsFactory.Create(document);
-            _ = new LanguageServer.Module().Compile();
+            var workspace = document.Workspace;
+            _ = new LanguageServer.Module().Compile(workspace);
             return document;
         }
 
@@ -68,7 +69,8 @@ namespace UnitTestProject1
             }
             document.Changed = true;
             _ = ParsingResultsFactory.Create(document);
-            _ = new LanguageServer.Module().Compile();
+            var workspace = document.Workspace;
+            _ = new LanguageServer.Module().Compile(workspace);
             return document;
         }
 

@@ -32,7 +32,7 @@
                 foreach (KeyValuePair<string, List<string>> dep in ParsingResults.InverseImports)
                 {
                     string name = dep.Key;
-                    Workspaces.Document x = Workspaces.Workspace.Instance.FindDocument(name);
+                    Workspaces.Document x = item.Workspace.FindDocument(name);
                     if (x == null)
                     {
                         // Add document.
@@ -347,7 +347,7 @@
                                     {
                                         continue;
                                     }
-                                    Workspaces.Document def_document = Workspaces.Workspace.Instance.FindDocument(def_file);
+                                    Workspaces.Document def_document = pd.Item.Workspace.FindDocument(def_file);
                                     if (def_document == null)
                                     {
                                         continue;
@@ -450,7 +450,7 @@
                                     {
                                         continue;
                                     }
-                                    Workspaces.Document def_document = Workspaces.Workspace.Instance.FindDocument(def_file);
+                                    Workspaces.Document def_document = pd.Item.Workspace.FindDocument(def_file);
                                     if (def_document == null)
                                     {
                                         continue;
@@ -553,7 +553,7 @@
                                     {
                                         continue;
                                     }
-                                    Workspaces.Document def_document = Workspaces.Workspace.Instance.FindDocument(def_file);
+                                    Workspaces.Document def_document = pd.Item.Workspace.FindDocument(def_file);
                                     if (def_document == null)
                                     {
                                         continue;
@@ -657,7 +657,7 @@
                                     {
                                         continue;
                                     }
-                                    Workspaces.Document def_document = Workspaces.Workspace.Instance.FindDocument(def_file);
+                                    Workspaces.Document def_document = pd.Item.Workspace.FindDocument(def_file);
                                     if (def_document == null)
                                     {
                                         continue;

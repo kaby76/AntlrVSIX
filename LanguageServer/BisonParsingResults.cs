@@ -33,10 +33,11 @@
                 if (ParseTree == null) return false;
                 ParseTreeWalker.Default.Walk(new Pass0Listener(this), ParseTree);
                 int after_count = 0;
+                var workspace = doc.Workspace;
                 foreach (KeyValuePair<string, List<string>> dep in ParsingResults.InverseImports)
                 {
                     string name = dep.Key;
-                    Workspaces.Document x = Workspaces.Workspace.Instance.FindDocument(name);
+                    Workspaces.Document x = workspace.FindDocument(name);
                     if (x == null)
                     {
                         // Add document.
@@ -55,10 +56,11 @@
                 // For all imported grammars across the entire universe,
                 // make sure all are loaded in the workspace,
                 // then restart.
+                var workspace = doc.Workspace;
                 foreach (KeyValuePair<string, List<string>> dep in ParsingResults.InverseImports)
                 {
                     string name = dep.Key;
-                    Workspaces.Document x = Workspaces.Workspace.Instance.FindDocument(name);
+                    Workspaces.Document x = workspace.FindDocument(name);
                     if (x == null)
                     {
                         // Add document.
@@ -69,7 +71,7 @@
                     }
                     foreach (string y in dep.Value)
                     {
-                        Workspaces.Document z = Workspaces.Workspace.Instance.FindDocument(y);
+                        Workspaces.Document z = workspace.FindDocument(y);
                         if (z == null)
                         {
                             // Add document.
@@ -475,6 +477,8 @@
                 {
                     return null;
                 }
+
+                var workspace = pd.Item.Workspace;
                 bool first = true;
                 StringBuilder sb = new StringBuilder();
                 foreach (CombinedScopeSymbol value in list_value)
@@ -517,7 +521,7 @@
                         {
                             continue;
                         }
-                        Workspaces.Document def_document = Workspaces.Workspace.Instance.FindDocument(def_file);
+                        Workspaces.Document def_document = workspace.FindDocument(def_file);
                         if (def_document == null)
                         {
                             continue;
@@ -578,6 +582,8 @@
                 {
                     return null;
                 }
+
+                var workspace = pd.Item.Workspace;
                 bool first = true;
                 StringBuilder sb = new StringBuilder();
                 foreach (CombinedScopeSymbol value in list_value)
@@ -620,7 +626,7 @@
                         {
                             continue;
                         }
-                        Workspaces.Document def_document = Workspaces.Workspace.Instance.FindDocument(def_file);
+                        Workspaces.Document def_document = workspace.FindDocument(def_file);
                         if (def_document == null)
                         {
                             continue;
@@ -681,6 +687,8 @@
                 {
                     return null;
                 }
+
+                var workspace = pd.Item.Workspace;
                 bool first = true;
                 StringBuilder sb = new StringBuilder();
                 foreach (CombinedScopeSymbol value in list_value)
@@ -723,7 +731,7 @@
                         {
                             continue;
                         }
-                        Workspaces.Document def_document = Workspaces.Workspace.Instance.FindDocument(def_file);
+                        Workspaces.Document def_document = workspace.FindDocument(def_file);
                         if (def_document == null)
                         {
                             continue;
@@ -785,6 +793,8 @@
                 {
                     return null;
                 }
+
+                var workspace = pd.Item.Workspace;
                 bool first = true;
                 StringBuilder sb = new StringBuilder();
                 foreach (CombinedScopeSymbol value in list_value)
@@ -827,7 +837,7 @@
                         {
                             continue;
                         }
-                        Workspaces.Document def_document = Workspaces.Workspace.Instance.FindDocument(def_file);
+                        Workspaces.Document def_document = workspace.FindDocument(def_file);
                         if (def_document == null)
                         {
                             continue;

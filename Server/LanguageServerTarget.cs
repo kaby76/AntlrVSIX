@@ -37,11 +37,13 @@
                 throw new LanguageServerException("No changes were needed, none made.");
             }
             var a = new Dictionary<string, LspTypes.TextEdit[]>();
+            Workspace workspace = null;
             foreach (var pair in ch)
             {
                 var fn = pair.Key;
                 var new_code = pair.Value;
                 Document document = CheckDoc(fn);
+                workspace = document.Workspace;
                 var code = document.Code;
                 List<LanguageServer.TextEdit> edits = new List<LanguageServer.TextEdit>();
                 Diff_match_patch diff = new Diff_match_patch();
@@ -130,7 +132,8 @@
                 document.Code = new_code;
             }
             // Recompile only after every single change everywhere is in.
-            _ = new LanguageServer.Module().Compile();
+            if (workspace != null)
+                _ = new LanguageServer.Module().Compile(workspace);
             server.ApplyEdit(transaction_name, a);
         }
 
@@ -402,7 +405,8 @@
                 DidOpenTextDocumentParams request = arg.ToObject<DidOpenTextDocumentParams>();
                 var document = CheckDoc(request.TextDocument.Uri);
                 document.Code = request.TextDocument.Text;
-                List<ParsingResults> to_do = new LanguageServer.Module().Compile();
+                var workspace = document.Workspace;
+                List<ParsingResults> to_do = new LanguageServer.Module().Compile(workspace);
             }
         }
 
@@ -474,7 +478,8 @@
                                             Logger.Log.WriteLine("----------------------");
                                         }
                                         document.Code = code;
-                                        List<ParsingResults> to_do = new LanguageServer.Module().Compile();
+                                        var workspace = document.Workspace;
+                                        List<ParsingResults> to_do = new LanguageServer.Module().Compile(workspace);
                                     }
                                     else
                                     {
@@ -638,12 +643,12 @@
             }
         }
 
-        public static Document CheckDoc(string uri)
+        public Document CheckDoc(string uri)
         {
             var decoded_string = System.Uri.UnescapeDataString(uri);
             var uri_decoded_string = new Uri(decoded_string);
             var file_name = uri_decoded_string.LocalPath;
-            Document document = Workspaces.Workspace.Instance.FindDocument(file_name);
+            Document document = this._workspace.FindDocument(file_name);
             if (document == null)
             {
                 document = new Workspaces.Document(file_name);
@@ -659,7 +664,7 @@
                 catch (IOException)
                 {
                 }
-                Project project = Workspaces.Workspace.Instance.FindProject("Misc");
+                Project project = this._workspace.FindProject("Misc");
                 if (project == null)
                 {
                     project = new Project("Misc", "Misc", "Misc");
@@ -668,7 +673,7 @@
                 project.AddDocument(document);
                 document.Changed = true;
                 _ = ParsingResultsFactory.Create(document);
-                _ = new LanguageServer.Module().Compile();
+                _ = new LanguageServer.Module().Compile(this._workspace);
             }
             return document;
         }

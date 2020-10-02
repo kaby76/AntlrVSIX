@@ -14,6 +14,20 @@
         public virtual Document FindDocument(string ffn) { return null; }
         public virtual Project FindProject(string ffn) { return null; }
         public virtual Project FindProject(string canonical_name, string name, string ffn) { return null; }
+
+        public virtual Workspace Workspace
+        {
+            get
+            {
+                var c = this;
+                for (;;)
+                {
+                    if (c is Workspace) return c as Workspace;
+                    c = this.Parent;
+                    if (c is null) return null;
+                }
+            }
+        }
     }
 
     public class DFSContainer

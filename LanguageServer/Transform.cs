@@ -643,6 +643,7 @@
             Dictionary<string, string> subs = new Dictionary<string, string>();
 
             var stack = new Stack<Document>();
+            var workspace = document.Workspace;
             stack.Push(document);
             while (stack.Any())
             {
@@ -652,7 +653,7 @@
 
                 foreach (var c in pd_doc.Imports)
                 {
-                    Workspaces.Document d = Workspaces.Workspace.Instance.FindDocument(c);
+                    Workspaces.Document d = workspace.FindDocument(c);
                     if (d == null)
                     {
                         continue;
@@ -750,7 +751,7 @@
             // Check if initial file is a grammar.
             if (!(ParsingResultsFactory.Create(document) is ParsingResults pd_parser))
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
-
+            var workspace = document.Workspace;
             ExtractGrammarType egt = new ExtractGrammarType();
             ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
             bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
@@ -771,7 +772,7 @@
 
                 foreach (var c in pd_doc.Imports)
                 {
-                    Workspaces.Document d = Workspaces.Workspace.Instance.FindDocument(c);
+                    Workspaces.Document d = workspace.FindDocument(c);
                     if (d == null)
                     {
                         continue;
@@ -1456,6 +1457,7 @@
                 throw new LanguageServerException("A split grammar file is not selected. Please select one first.");
             }
 
+            var workspace = document.Workspace;
             TableOfRules table = new TableOfRules(pd_parser, document);
             table.ReadRules();
             table.FindPartitions();
@@ -1559,7 +1561,7 @@
                 List<ParsingResults> grammars = new List<ParsingResults>();
                 foreach (string f in read_files)
                 {
-                    Workspaces.Document d = Workspaces.Workspace.Instance.FindDocument(f);
+                    Workspaces.Document d = workspace.FindDocument(f);
                     if (d == null)
                     {
                         continue;
@@ -1576,7 +1578,7 @@
 
                 // Read now lexer grammar. The parser grammar was already read.
                 ParsingResults pd_lexer = grammars[1];
-                Workspaces.Document ldocument = Workspaces.Workspace.Instance.FindDocument(pd_lexer.FullFileName);
+                Workspaces.Document ldocument = workspace.FindDocument(pd_lexer.FullFileName);
                 TableOfRules lexer_table = new TableOfRules(pd_lexer, ldocument);
                 lexer_table.ReadRules();
                 lexer_table.FindPartitions();
@@ -2014,7 +2016,7 @@
         {
             if (!(ParsingResultsFactory.Create(document) is ParsingResults pd_parser))
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
-
+            var workspace = document.Workspace;
             var pr = ParsingResultsFactory.Create(document);
             var aparser = pr.Parser;
             var atree = pr.ParseTree;
@@ -2053,7 +2055,7 @@
                 if (def_file == null)
                     continue;
 
-                Document doc = Workspaces.Workspace.Instance.FindDocument(def_file);
+                Document doc = workspace.FindDocument(def_file);
                 if (doc == null)
                     continue;
 
@@ -2090,7 +2092,7 @@
                             if (def_file2 == null)
                                 continue;
 
-                            Document doc2 = Workspaces.Workspace.Instance.FindDocument(def_file2);
+                            Document doc2 = workspace.FindDocument(def_file2);
                             if (doc2 == null)
                                 continue;
 
@@ -3751,6 +3753,8 @@
                 throw new LanguageServerException("A parser or combined grammar file is not selected. Please select one first.");
             }
 
+            var workspace = document.Workspace;
+
             // Find all other grammars by walking dependencies (import, vocab, file names).
             HashSet<string> read_files = new HashSet<string>
             {
@@ -3763,7 +3767,7 @@
             Dictionary<string, string> subs = new Dictionary<string, string>();
             foreach (string f in read_files)
             {
-                Workspaces.Document whatever_document = Workspaces.Workspace.Instance.FindDocument(f);
+                Workspaces.Document whatever_document = workspace.FindDocument(f);
                 if (whatever_document == null)
                 {
                     continue;
@@ -3914,7 +3918,7 @@
             string where_to_stuff = null;
             foreach (string f in read_files)
             {
-                Workspaces.Document whatever_document = Workspaces.Workspace.Instance.FindDocument(f);
+                Workspaces.Document whatever_document = workspace.FindDocument(f);
                 if (whatever_document == null)
                 {
                     continue;
@@ -3936,7 +3940,7 @@
             // Find string literals in parser and combined grammars and substitute.
             foreach (string f in read_files)
             {
-                Workspaces.Document whatever_document = Workspaces.Workspace.Instance.FindDocument(f);
+                Workspaces.Document whatever_document = workspace.FindDocument(f);
                 if (whatever_document == null)
                 {
                     continue;
@@ -3949,7 +3953,7 @@
             Dictionary<string, string> new_subs = new Dictionary<string, string>();
             foreach (string f in read_files)
             {
-                Workspaces.Document whatever_document = Workspaces.Workspace.Instance.FindDocument(f);
+                Workspaces.Document whatever_document = workspace.FindDocument(f);
                 if (whatever_document == null)
                 {
                     continue;
@@ -4020,7 +4024,7 @@
             }
             if (new_subs.Count > 0)
             {
-                Workspaces.Document whatever_document = Workspaces.Workspace.Instance.FindDocument(where_to_stuff);
+                Workspaces.Document whatever_document = workspace.FindDocument(where_to_stuff);
                 ParsingResults pd_whatever = ParsingResultsFactory.Create(whatever_document) as ParsingResults;
                 string old_code = pd_whatever.Code;
                 if (result.TryGetValue(where_to_stuff, out string other))
@@ -4425,6 +4429,8 @@
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
 
+            var workspace = document.Workspace;
+
             // Check cursor position. It is either the LHS symbol of a rule,
             // which means the user wants to unroll all applied occurrences of the rule
             // or it is on a symbol in the RHS of the rule, which means the
@@ -4468,7 +4474,7 @@
                         if (!(s is NonterminalSymbol)) return false;
                         string def_file = s.file;
                         if (def_file == null) return false;
-                        Workspaces.Document def_document = Workspaces.Workspace.Instance.FindDocument(def_file);
+                        Workspaces.Document def_document = workspace.FindDocument(def_file);
                         if (def_document == null) return false;
                         ParsingResults def_pd = ParsingResultsFactory.Create(def_document);
                         if (def_pd == null) return false;

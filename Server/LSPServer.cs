@@ -85,7 +85,7 @@
                             severity = DiagnosticSeverity.Error;
                             break;
                     }
-                    var document = LanguageServerTarget.CheckDoc(info.Document);
+                    var document = target.CheckDoc(info.Document);
                     (int, int) bs = new LanguageServer.Module().GetLineColumn(info.Start, document);
                     (int, int) be = new LanguageServer.Module().GetLineColumn(info.End, document);
                     Diagnostic diagnostic = new Diagnostic

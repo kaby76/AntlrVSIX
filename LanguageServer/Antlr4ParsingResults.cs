@@ -322,7 +322,9 @@
                         {
                             continue;
                         }
-                        Workspaces.Document def_document = Workspaces.Workspace.Instance.FindDocument(def_file);
+
+                        var workspace = pd.Item.Workspace;
+                        Workspaces.Document def_document = workspace.FindDocument(def_file);
                         if (def_document == null)
                         {
                             continue;
@@ -427,7 +429,9 @@
                         {
                             continue;
                         }
-                        Workspaces.Document def_document = Workspaces.Workspace.Instance.FindDocument(def_file);
+
+                        var workspace = pd.Item.Workspace;
+                        Workspaces.Document def_document = workspace.FindDocument(def_file);
                         if (def_document == null)
                         {
                             continue;
@@ -532,7 +536,9 @@
                         {
                             continue;
                         }
-                        Workspaces.Document def_document = Workspaces.Workspace.Instance.FindDocument(def_file);
+
+                        var workspace = pd.Item.Workspace;
+                        Workspaces.Document def_document = workspace.FindDocument(def_file);
                         if (def_document == null)
                         {
                             continue;
@@ -638,7 +644,9 @@
                         {
                             continue;
                         }
-                        Workspaces.Document def_document = Workspaces.Workspace.Instance.FindDocument(def_file);
+
+                        var workspace = pd.Item.Workspace;
+                        Workspaces.Document def_document = workspace.FindDocument(def_file);
                         if (def_document == null)
                         {
                             continue;
@@ -944,10 +952,11 @@
             }
             if (ParseTree == null) return;
             ParseTreeWalker.Default.Walk(new Pass0Listener(this), ParseTree);
+            var workspace = this.Item.Workspace;
             foreach (KeyValuePair<string, List<string>> dep in ParsingResults.InverseImports)
             {
                 string name = dep.Key;
-                Workspaces.Document x = Workspaces.Workspace.Instance.FindDocument(name);
+                Workspaces.Document x = workspace.FindDocument(name);
                 if (x == null)
                 {
                     // Add document.
