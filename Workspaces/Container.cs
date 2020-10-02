@@ -23,7 +23,7 @@
                 for (;;)
                 {
                     if (c is Workspace) return c as Workspace;
-                    c = this.Parent;
+                    c = c.Parent;
                     if (c is null) return null;
                 }
             }
