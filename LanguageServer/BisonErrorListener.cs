@@ -1,5 +1,4 @@
-﻿// Template generated code from Antlr4BuildTasks.Template v 3.0
-namespace LanguageServer
+﻿namespace LanguageServer
 {
     using Antlr4.Runtime;
     using System.IO;
