@@ -225,7 +225,7 @@ See [this guide](PriorReleases.md).
 
 # Roadmap
 
-## Planned for v8.1 (end Sept 2020):
+## Planned for v8.1 (mid Oct 2020):
 
 * Fix critical bugs:
    - [JSON transport api is erroneously multi-threaded #89](https://github.com/kaby76/AntlrVSIX/issues/89)
@@ -234,6 +234,7 @@ See [this guide](PriorReleases.md).
 * Add Visual Studio Code client to Marketplace.
 * Add Gnu Emacs extension.
 * Replace [Microsoft.VisualStudio.LanguageServer.Protocol](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/) with a drop-in replacement in order to handle semantic highlighting.
+* Add ungroup transform.
 * Add existing transforms not in Trash to Trash. Make sure they work.
 * Add expression rule optimization. Verify that this works with Java.
 * Add left factoring and inverse? Not sure, as Unify is a superset of left factoring.
@@ -245,15 +246,16 @@ See [this guide](PriorReleases.md).
 * Fix ["has dr" not working, slow as hell #82](https://github.com/kaby76/AntlrVSIX/issues/82)
 * Fix [Performance still an issue #90](https://github.com/kaby76/AntlrVSIX/issues/90)
 
-## Planned for v9 (mid Oct 2020)
-
-* Add flexible parser to read any grammar.
-* Add AST for grammars. Rewrite all with ASTs for syntax-independent code.
-* Add ISO 14977 EBNF.
-
-## Planned for v10 (mid Nov 2020)
+## Planned for v9 (end Oct 2020)
 
 * Add grammar diff, think about 3-way grammar merge.
+* Add ISO 14977 EBNF.
+
+## Planned for v10 (end Nov 2020)
+
 * Rebrand.
+* Add flexible parser to read any grammar.
+* Add AST for grammars. Rewrite all with ASTs for syntax-independent code.
+
 
 Any questions, email me at ken.domino <at> gmail.com
