@@ -36,28 +36,40 @@ analysis, refactoring, and conversion.
 
 # Installation
 
-Antlrvsix supports Visual Studio 2019.
-I recommend that you use version 16.7 since it has the latest bug fixes.
-If you find this extension not to your liking, use VSCode and Mike Lischke's
-[vscode-antlr4](https://github.com/mike-lischke/vscode-antlr4). Antlrvsix contains
-a command-line tool if you want to automate transformations on a
+## Visual Studio 2019
+
+For Visual Studio 2019, I recommend that you use the latest, upgraded version since it has the latest bug fixes.
+To install, visit the [Visual Studio Marketplace for VS2019 for Antlrvsix](https://marketplace.visualstudio.com/items?itemName=KenDomino.AntlrVSIX). Download and install the .vsix file. You can also install it through the `Manage Extensions`
+menu item in Visual Studio 2019.
+
+If you find this extension not to your liking, you can try to use the extension for Visual Studio Code.
+I found that it is sometimes easier to insall [Open in Visual Studio Code](https://github.com/madskristensen/OpenInVsCode/)
+and just edit the grammar in VSCode due to VS2019 not directly supporting LSP semantic highlighting.
+
+## Visual Studio Code
+
+For Visual Studio Code, visit the [Visual Studio Marketplace for VSCode for Antlrvsix](https://marketplace.visualstudio.com/items?itemName=KenDomino.Antlrvsix-vscode). Download and install the the .vsix file. NB: the vsix file between VS2019 and VSCode are
+not the same files.
+
+## GNU Emacs
+
+For Emacs, you will need to follow the instructions [here](https://github.com/kaby76/AntlrVSIX/tree/master/Emacs).
+
+## Alterantives
+
+Mike Lischke's
+[vscode-antlr4](https://github.com/mike-lischke/vscode-antlr4) is a good tool for VSCode for Antlr grammars, which
+you may prefer. However, Antlrvsix contains
+a command-line tool that can be used to automate transformations on a
 Antlr grammar, or want to quickly run a parser over a grammar file and
-use XPath to query items in the parse tree.
+use XPath to query items in the parse tree. There is no tool like it, and it is quite powerful.
 
 If you are just building and running an Antlr application and don't care about
-editing features, then you just need Net Core 3.1. Builds are supported 
-using [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks).
+editing features (i.e., you don't care for highlighting the grammar, go to def, etc.),
+then you just use [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks).
 
-You can install the extension in one of four ways:
+## Nightly build
 
-* [Download the .vsix from the Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=KenDomino.AntlrVSIX)
-with a web browser, then executing the .vsix file from a Windows Explorer.
-* Download and install the extension within Visual Studio 2019 via "Extensions | Manage Extensions",
-search for Antlrvsix, and "install".
-* Build a copy of the .vsix from the sources in this repository and install. NB: I sometimes check in code
-into the repository that does not compile. This is because I alone make changes to the code, and it is undergoing
-huge changes.
-Grab the source for a released version to be safe.
 * Each night at 0h 0m UTC, Appveyor builds the latest source. The output of the build can be downloaded
 at https://ci.appveyor.com/api/projects/kaby76/antlrvsix/artifacts/Client/bin/Debug/AntlrVSIX.vsix.
 However, there is no guarantee that this version will work.
