@@ -60,7 +60,7 @@ For Emacs, you will need to follow the instructions [here](https://github.com/ka
 Mike Lischke's
 [vscode-antlr4](https://github.com/mike-lischke/vscode-antlr4) is a good tool for VSCode for Antlr grammars, which
 you may prefer. However, Antlrvsix contains
-a command-line tool that can be used to automate transformations on a
+a command-line tool that can be used to automate transformations on an
 Antlr grammar, or want to quickly run a parser over a grammar file and
 use XPath to query items in the parse tree. There is no tool like it, and it is quite powerful.
 
@@ -247,6 +247,7 @@ See [this guide](PriorReleases.md).
 * Add Gnu Emacs extension.
 * Replace [Microsoft.VisualStudio.LanguageServer.Protocol](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/) with a drop-in replacement in order to handle semantic highlighting.
 * Add ungroup transform.
+* Add de-label transform.
 * Add existing transforms not in Trash to Trash. Make sure they work.
 * Add expression rule optimization. Verify that this works with Java.
 * Add left factoring and inverse? Not sure, as Unify is a superset of left factoring.
