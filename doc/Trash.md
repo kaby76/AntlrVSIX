@@ -109,6 +109,7 @@ cd <em>string</em>?
 </pre>
 
 Change current directory. If string is not given, change to the user's home directory.
+`cd` accepts wildcards.
 
 ### Combine
 
@@ -177,6 +178,19 @@ with the lexer rule LHS symbol.
 
 For for further details, see the [fold literal](refactoring.md#replace-literals-in-parser-with-lexer-token-symbols) refactoring details.
 
+### Group
+
+<pre>
+group <em>string</em>
+</pre>
+
+Perform a recursive left- and right- factorization of alternatives for rules.
+The nodes specified must be for `ruleAltList`, `lexerAltList`, or `altList`.
+A common prefix and suffix is performed on the alternatives, and
+a new expression derived. The process repeats for alternatives nested. 
+
+For for further details, see the [Group alts](refactoring.md#group-alts) refactoring details.
+
 ### Has
 
 <pre>
@@ -213,6 +227,7 @@ ls <em>string</em>
 </pre>
 
 List directory contents. If string is not given, list the current directory contents.
+`ls` accepts wildcards.
 
 ### Mvsr
 
@@ -249,6 +264,14 @@ print
 
 Print out text file at the top of stack.
 
+### Pwd
+
+<pre>
+pwd
+</pre>
+
+Print out the current working directory.
+
 ### Quit
 
 <pre>
@@ -264,6 +287,7 @@ read <em>string</em>
 </pre>
 
 Read the text file _file-name_ and place it on the top of the stack.
+`read` accepts wildcards.
 
 ### Rename
 
@@ -307,6 +331,17 @@ rr
 </pre>
 
 Replace left indirect or direct recursion with right recursion.
+
+### Run
+
+<pre>
+run arg1 (arg2 arg3? )?
+</pre>
+
+Generate a parser using the Antlr tool on 
+the grammar specified by the current workspace
+run the generated parser, output a tree or 
+find elements in the tree.
 
 ### Rup
 
@@ -386,18 +421,25 @@ into a reference of the rule name that occurs at the specified node.
 The resulting code is parsed and placed
 on the top of stack.
 
-### Unify
+### Ungroup
 
 <pre>
-unify <em>string</em>
+ungroup <em>string</em>
 </pre>
 
-Perform a recursive left- and right- factorization of alternatives for rules.
-The nodes specified must be for `ruleAltList`, `lexerAltList`, or `altList`.
-A common prefix and suffix is performed on the alternatives, and
-a new expression derived. The process repeats for alternatives nested. 
+Perform an ungroup transformation of the `element` node(s) specified
+by the string.
 
-For for further details, see the [Unify alts to EBNF](refactoring.md#unify-alts-to-ebnf) refactoring details.
+For for further details, see the [Ungroup alts](refactoring.md#ungroup-alts) refactoring details.
+
+
+### Workspace
+
+<pre>
+workspace
+</pre>
+
+Create a new workspace.
 
 ### Write
 

@@ -434,10 +434,10 @@ _After_
     D: 'uvw' 'xyz'+;
 
 
-### Unify alts to EBNF
+### Group alts
 
 After unfolding rules, you will probably notice some `ruleAltList` or other
-alt lists that have a common left factor. The Unify transform is a
+alt lists that have a common left factor. The Group transform is a
 generalization of the left factoring rule. This powerful transform performs
 a N-way merge of all the alts into one sequence with ebnf blocks
 created for non-common elements.
@@ -447,14 +447,37 @@ _Before_
     grammar CommonFactors;
     a : 'X' 'B' 'Z' | 'X' 'C' 'Z' | 'X' 'D' 'Z' ;
 
-_[Trash command](Trash.md#unify)_
+_[Trash command](Trash.md#group)_
 
-    unify "//parserRuleSpec[RULE_REF/text() = 'a']//ruleAltList"
+    group "//parserRuleSpec[RULE_REF/text() = 'a']//ruleAltList"
 
 _After_
 
     grammar CommonFactors;
     a : 'X' ( 'B' | 'C' | 'D' ) 'Z' ;
+
+### Ungroup alts
+
+The Ungroup transform is the inverse transform of the Group transform.
+This transform can be used to fix an indirect left recursion within a rule
+where Antlr cannot handle alternatives with an alt expression in the beginning
+of an alt. The classic example is the `primaryNoNewArray` rule of the Java
+grammar from the Java. To use this transform, you must specify a set of `element`
+Antlr tree context in the Antlr grammar.
+
+_Before_
+
+    grammar CF2;
+    a : (a | 'X') 'B' 'Z' | 'C' ;
+
+_[Trash command](Trash.md#ungroup)_
+
+    ungroup "//parserRuleSpec[RULE_REF/text() = 'a']//ruleAltList"
+
+_After_
+
+    grammar CommonFactors;
+    a : a 'B' 'Z' | 'X' 'B' 'Z' | 'C' ;
 
 ### Rename
 
