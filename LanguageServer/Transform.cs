@@ -6756,8 +6756,7 @@
                                         {
                                             firstfirst = false;
                                             TreeEdits.AddChildren(sub_alternative,
-                                                new List<IParseTree>() { diff.lines[k].text
-                            as ANTLRv4Parser.ElementContext });
+                                                new List<IParseTree>() { diff.lines[k].text as ANTLRv4Parser.ElementContext });
                                         }
                                     }
                                 }
@@ -6808,30 +6807,74 @@
             {
                 foreach (var n in nodes)
                 {
-                    if (!(n is ANTLRv4Parser.BlockContext))
-                        throw new Exception("Node isn't an Antlr4 BlockContext type");
+                    if (!(n is ANTLRv4Parser.ElementContext))
+                        throw new Exception("Node isn't an Antlr4 ElementContext type");
                 }
             }
 
             // Get all intertoken text immediately for source reconstruction.
             var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
 
-            // Get this alt.
+            // Ungroup each element which directly contains ()'s.
             foreach (var n in nodes)
             {
-                IParseTree alt = n;
-                for (; alt != null; alt = alt.Parent)
+                var element = n as ANTLRv4Parser.ElementContext;
+                if (element == null) continue;
+                var alt_list = element.ebnf()?.block()?.altList();
+                if (alt_list == null) continue;
+
+                var alternative_parent = n.Parent as ANTLRv4Parser.AlternativeContext;
+                if (alternative_parent == null) continue;
+                var labeled_alt_parent = alternative_parent.Parent as ANTLRv4Parser.LabeledAltContext;
+                if (labeled_alt_parent == null) continue;
+                var rule_alt_list_parent = labeled_alt_parent?.Parent as ANTLRv4Parser.RuleAltListContext;
+                if (rule_alt_list_parent == null) continue;
+
+                var construct = new CTree.Class1(pd_parser.Parser, new Dictionary<string, object>());
+
                 {
-                    if (alt as ANTLRv4Parser.LabeledAltContext != null) break;
+                    var new_labeled_alt_parent = construct.CreateTree(
+                        "( labeledAlt )") as ANTLRv4Parser.LabeledAltContext;
+                    TreeEdits.Replace(labeled_alt_parent, new_labeled_alt_parent);
+
+                    bool first = true;
+                    foreach (var alternative in alt_list.alternative())
+                    {
+                        if (!first)
+                        {
+                            var token4 = new CommonToken(ANTLRv4Lexer.OR) { Line = -1, Column = -1, Text = "|" };
+                            var new_or = new TerminalNodeImpl(token4);
+                            new_labeled_alt_parent.AddChild(new_or);
+                            new_or.Parent = new_labeled_alt_parent;
+                        }
+                        first = false;
+
+                        // Make a copy of all elements in this alternative before/after this element.
+                        ANTLRv4Parser.AlternativeContext new_alternative_parent = TreeEdits.CopyTreeRecursive(alternative_parent, null, text_before) as ANTLRv4Parser.AlternativeContext;
+                        // Nuke the corresponding child for element.
+                        int i = 0;
+                        for (i = 0; i < alternative_parent.children.Count; ++i)
+                        {
+                            if (alternative_parent.children[i] == element) break;
+                        }
+                        TreeEdits.Delete(new_alternative_parent.children[i]);
+                        var copy = TreeEdits.CopyTreeRecursive(alternative, null, text_before) as ANTLRv4Parser.AlternativeContext;
+                        new_alternative_parent.children.Insert(i, copy);
+                        copy.Parent = new_alternative_parent;
+                        new_labeled_alt_parent.AddChild(new_alternative_parent);
+                        new_alternative_parent.Parent = new_labeled_alt_parent;
+                    }
                 }
-                if (alt == null) continue;
-                // We are going to nuke alt and replace it with two new alts.
-                var ruleAltList = alt.Parent;
             }
+            StringBuilder sb = new StringBuilder();
 
-            throw new NotImplementedException();
+            TreeEdits.Reconstruct(sb, pd_parser.ParseTree, text_before);
+            var new_code = sb.ToString();
+            if (new_code != pd_parser.Code)
+            {
+                result.Add(document.FullPath, new_code);
+            }
+            return result;
         }
-
-
     }
 }
