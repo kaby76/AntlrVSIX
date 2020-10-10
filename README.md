@@ -43,8 +43,8 @@ To install, visit the [Visual Studio Marketplace for VS2019 for Antlrvsix](https
 menu item in Visual Studio 2019.
 
 If you find this extension not to your liking, you can try to use the extension for Visual Studio Code.
-I found that it is sometimes easier to insall [Open in Visual Studio Code](https://github.com/madskristensen/OpenInVsCode/)
-and just edit the grammar in VSCode due to VS2019 not directly supporting LSP semantic highlighting.
+I found that it is sometimes easier to install [Open in Visual Studio Code](https://github.com/madskristensen/OpenInVsCode/)
+and edit the grammar in VSCode due to VS2019 not directly supporting LSP semantic highlighting.
 
 ## Visual Studio Code
 
@@ -55,7 +55,7 @@ not the same files.
 
 For Emacs, you will need to follow the instructions [here](https://github.com/kaby76/AntlrVSIX/tree/master/Emacs).
 
-## Alterantives
+## Alternatives
 
 Mike Lischke's
 [vscode-antlr4](https://github.com/mike-lischke/vscode-antlr4) is a good tool for VSCode for Antlr grammars, which
