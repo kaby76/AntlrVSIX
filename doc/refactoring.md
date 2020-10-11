@@ -657,3 +657,45 @@ _Modified grammar_
     INT : [0-9]+ ;
     WS : [ \t\n]+ -> skip ;
 
+### Delabel
+
+* Antlr allows for labeling of grammar symbols so one can reference
+a particular symbol using the label in code. However, Antlr already
+provides mechanisms to reference symbols through other accessor functions.
+This transform removes the labeling in a grammar.
+
+The transform looks for the following nodes then deletes them:
+
+    //labeledAlt/(POUND | identifier)
+    //labeledLexerElement/(identifier | ASSIGN | PLUS_ASSIGN)
+    //labeledElement/(identifier | ASSIGN | PLUS_ASSIGN)
+    
+_Original grammar_
+
+    grammar Kleene;
+    s : a ;
+    a : a ';' e1=e  # alt1
+      | e2=e # alt2
+      ;
+    e : lhs=e '*' rhs=e # alt1e
+      | INT # alt2e
+      ;
+    INT : [0-9]+ ;
+    WS : [ \t\n]+ -> skip ;
+
+_[Trash command](Trash.md#kleene)_
+
+    delabel
+
+_Modified grammar_
+
+    grammar Kleene;
+    s : a ;
+    a : a ';'e
+      |e
+      ;
+    e :e '*'e
+      | INT
+      ;
+    INT : [0-9]+ ;
+    WS : [ \t\n]+ -> skip ;
