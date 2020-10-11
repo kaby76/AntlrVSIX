@@ -66,7 +66,9 @@ use XPath to query items in the parse tree. There is no tool like it, and it is 
 
 If you are just building and running an Antlr application and don't care about
 editing features (i.e., you don't care for highlighting the grammar, go to def, etc.),
-then you just use [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks).
+then you just use [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks). Antlr4BuildTasks
+is a replacement of [Antlr4cs](https://github.com/tunnelvisionlabs/antlr4cs) and the
+build tool contained in that library.
 
 ## Nightly build
 
@@ -140,6 +142,7 @@ The refactorings implemented are:
 * Replace parser rule symbols that conflict with Antlr keywords
 * [Replace string literals in parser with lexer symbols](doc/refactoring.md#replace-literals-in-parser-with-lexer-token-symbols)
 * Replace string literals in parser with lexer symbols, with lexer rule create
+* [Delabel]() removes the annoying and mostly useless labeling in an Antlr grammar.
 
 ### Splitting and combining
 
