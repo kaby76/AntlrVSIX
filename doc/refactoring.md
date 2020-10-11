@@ -626,7 +626,7 @@ _Final modified grammar_
 
 ### Kleene
 
-* Left and right recursion are verbose and not efficient in
+Left and right recursion are verbose and not efficient in
 parse tree size. The Kleene replacement transform takes a LHS
 symbol and checks whether the rule contains direct left or direct right
 recursion. If so, it replaces the alternatives with a Kleene
@@ -659,7 +659,7 @@ _Modified grammar_
 
 ### Delabel
 
-* Antlr allows for labeling of grammar symbols so one can reference
+Antlr allows for labeling of grammar symbols so one can reference
 a particular symbol using the label in code. However, Antlr already
 provides mechanisms to reference symbols through other accessor functions.
 This transform removes the labeling in a grammar.
