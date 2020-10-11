@@ -68,11 +68,11 @@ If you are just building and running an Antlr application and don't care about
 editing features (i.e., you don't care for highlighting the grammar, go to def, etc.),
 then you just use [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks). Antlr4BuildTasks
 is a replacement of [Antlr4cs](https://github.com/tunnelvisionlabs/antlr4cs) and the
-build tool contained in that library.
+build tool contained in that library. The Antlr4cs is several versions behind the latest Antlr release.
 
 ## Nightly build
 
-* Each night at 0h 0m UTC, Appveyor builds the latest source. The output of the build can be downloaded
+Each night at 0h 0m UTC, Appveyor builds the latest source. The output of the build can be downloaded
 at https://ci.appveyor.com/api/projects/kaby76/antlrvsix/artifacts/Client/bin/Debug/AntlrVSIX.vsix.
 However, there is no guarantee that this version will work.
 
