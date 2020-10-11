@@ -95,9 +95,8 @@ after installing the extension in Visual Studio 2019, or unpacking
 it directly from the downloaded .vsix--a ZIP file.
 It should be under
 "C:/Users/userid/AppData/Local/Microsoft/VisualStudio/.../AntlrVSIX/8.0/Trash/netcoreapp3.1/Trash.exe".
-Once you find the executable, execute it.
-
-For a list of commands in Trash, see this [documentation](doc/Trash.md).
+Once you find the executable, please refer to
+the [documentation](doc/Trash.md).
 
 ## Analysis
 
