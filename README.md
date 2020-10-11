@@ -142,7 +142,7 @@ The refactorings implemented are:
 * Replace parser rule symbols that conflict with Antlr keywords
 * [Replace string literals in parser with lexer symbols](doc/refactoring.md#replace-literals-in-parser-with-lexer-token-symbols)
 * Replace string literals in parser with lexer symbols, with lexer rule create
-* [Delabel]() removes the annoying and mostly useless labeling in an Antlr grammar.
+* [Delabel](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#delabel) removes the annoying and mostly useless labeling in an Antlr grammar.
 
 ### Splitting and combining
 
