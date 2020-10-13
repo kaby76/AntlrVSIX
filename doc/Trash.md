@@ -124,7 +124,7 @@ order is irrelevant.
 ### Convert
 
 <pre>
-convert
+convert (antlr2 | antlr3 | antlr4 | bison | ebnf)?
 </pre>
 
 Convert the parsed grammar file at the top of stack into Antlr4 syntax. The
@@ -241,10 +241,10 @@ to the top of the grammar.
 ### Parse
 
 <pre>
-parse (antlr2 | antlr3 | antlr4)?
+parse (antlr2 | antlr3 | antlr4 | bison | ebnf)?
 </pre>
 
-Parse the flie at the top of stack with the given parser type (_antlr2_, _antlr3, _antlr4_, or _bison_).
+Parse the flie at the top of stack with the given parser type (_antlr2_, _antlr3, _antlr4_, _bison_, etc).
 
 ### Pop
 
