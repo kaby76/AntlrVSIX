@@ -171,11 +171,28 @@ range
    ;
 
 terminal_
-   : (CHAR_LITERAL
+   : (CHAR_LITERAL elementOptions?
         | TOKEN_REF (argActionBlock | )
-        | STRING_LITERAL
+        | STRING_LITERAL elementOptions?
         | DOT
      ) (ROOT | BANG)?
+   ;
+
+elementOptions
+   : OPEN_ELEMENT_OPTION defaultNodeOption CLOSE_ELEMENT_OPTION
+   | OPEN_ELEMENT_OPTION elementOption (SEMI elementOption)* CLOSE_ELEMENT_OPTION
+   ;
+
+defaultNodeOption
+   : elementOptionId
+   ;
+
+elementOption
+   : id EQUAL ( elementOptionId | STRING_LITERAL | DOUBLE_QUOTE_STRING_LITERAL | DOUBLE_ANGLE_STRING_LITERAL)
+   ;
+
+elementOptionId
+   : id (DOT id )*
    ;
 
 notTerminal

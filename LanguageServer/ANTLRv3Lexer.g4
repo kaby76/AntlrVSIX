@@ -180,6 +180,7 @@ fragment WS_LOOP : (WS | SL_COMMENT | ML_COMMENT)* ;
  
 AT : At ;
 BANG : '!' ;
+CLOSE_ELEMENT_OPTION : Gt ;
 COLON : Colon ;
 COLONCOLON : DColon ;
 COMMA : Comma ;
@@ -188,6 +189,7 @@ EQUAL : Equal ;
 LBRACE : LBrace ;
 LBRACK : LBrack ;
 LPAREN : LParen ;
+OPEN_ELEMENT_OPTION : Lt ;
 OR : Pipe ;
 PLUS : Plus ;
 QM : Question ;
