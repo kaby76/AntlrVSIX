@@ -255,6 +255,7 @@ See [this guide](PriorReleases.md).
 * Fix ["rup" doesn't work in some cases #81](https://github.com/kaby76/AntlrVSIX/issues/81)
 * Fix ["has dr" not working, slow as hell #82](https://github.com/kaby76/AntlrVSIX/issues/82)
 * Fix [Performance still an issue #90](https://github.com/kaby76/AntlrVSIX/issues/90)
+* Fix [ANTLR3 grammars are wrong #93](https://github.com/kaby76/AntlrVSIX/issues/93)
 * Rename Unify command to Group.
 * Add Ungroup transform.
 * Add de-label transform.
