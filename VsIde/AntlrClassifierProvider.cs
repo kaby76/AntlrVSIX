@@ -10,7 +10,7 @@
     using Color = System.Drawing.Color;
 
     [Export(typeof(ITaggerProvider))]
-    [ContentType("any")]
+    [ContentType("Antlr")]
     [TagType(typeof(ClassificationTag))]
     internal sealed class AntlrClassifierProvider : ITaggerProvider
     {
