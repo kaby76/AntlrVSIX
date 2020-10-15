@@ -172,7 +172,7 @@ range
 
 terminal_
    : (CHAR_LITERAL elementOptions?
-        | TOKEN_REF (argActionBlock | )
+        | TOKEN_REF elementOptions? (argActionBlock | )
         | STRING_LITERAL elementOptions?
         | DOT
      ) (ROOT | BANG)?
@@ -234,10 +234,10 @@ rewrite_tree_element
    ;
 
 rewrite_tree_atom
-   : CHAR_LITERAL
-   | TOKEN_REF argActionBlock?
+   : CHAR_LITERAL elementOptions?
+   | TOKEN_REF elementOptions? argActionBlock?
    | RULE_REF
-   | STRING_LITERAL
+   | STRING_LITERAL elementOptions?
    | DOLLAR id
    | actionBlock
    ;

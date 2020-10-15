@@ -143,7 +143,7 @@
 
 
         protected static readonly Dictionary<string, IScope> _scopes = new Dictionary<string, IScope>();
-        public static Algorithms.Utils.MultiMap<string, string> InverseImports = new Algorithms.Utils.MultiMap<string, string>();
+        public static Dictionary<string, HashSet<string>> InverseImports = new Dictionary<string, HashSet<string>>();
 
 
         public virtual List<string> Candidates(int char_index)
@@ -314,7 +314,7 @@
             Item.Changed = true;
         }
 
-        public virtual void Parse(bool bail = true)
+        public virtual void Parse()
         {
             Workspaces.Document document = Item;
             string code = document.Code;
@@ -332,6 +332,7 @@
                 throw new Exception();
             }
 
+            bool bail = QuietAfter == 0;
             gd.Parse(this, bail);
 
             AllNodes = DFSVisitor.DFS(ParseTree as ParserRuleContext);

@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LanguageServer
+﻿namespace LanguageServer
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
     using Antlr4.Runtime;
-    using Antlr4.Runtime.Misc;
-    using System.Linq;
+    using System.IO;
 
     public class ErrorListener<S> : ConsoleErrorListener<S>
     {

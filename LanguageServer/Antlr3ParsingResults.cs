@@ -24,9 +24,9 @@ namespace LanguageServer
                 int before_count = 0;
                 if (!ParsingResults.InverseImports.ContainsKey(this.FullFileName))
                 {
-                    ParsingResults.InverseImports.Add(this.FullFileName);
+                    ParsingResults.InverseImports.Add(this.FullFileName, new HashSet<string>());
                 }
-                foreach (KeyValuePair<string, List<string>> x in ParsingResults.InverseImports)
+                foreach (KeyValuePair<string, HashSet<string>> x in ParsingResults.InverseImports)
                 {
                     before_count++;
                     before_count = before_count + x.Value.Count;
@@ -35,7 +35,7 @@ namespace LanguageServer
                 ParseTreeWalker.Default.Walk(new Pass0Listener(this), ParseTree);
                 int after_count = 0;
                 var workspace = this.Item.Workspace;
-                foreach (KeyValuePair<string, List<string>> dep in ParsingResults.InverseImports)
+                foreach (KeyValuePair<string, HashSet<string>> dep in ParsingResults.InverseImports)
                 {
                     string name = dep.Key;
                     Workspaces.Document x = workspace.FindDocument(name);
@@ -58,7 +58,7 @@ namespace LanguageServer
                 // make sure all are loaded in the workspace,
                 // then restart.
                 var workspace = this.Item.Workspace;
-                foreach (KeyValuePair<string, List<string>> dep in ParsingResults.InverseImports)
+                foreach (KeyValuePair<string, HashSet<string>> dep in ParsingResults.InverseImports)
                 {
                     string name = dep.Key;
                     Workspaces.Document x = workspace.FindDocument(name);
@@ -86,7 +86,7 @@ namespace LanguageServer
 
                 // The workspace is completely loaded. Create scopes for all files in workspace
                 // if they don't already exist.
-                foreach (KeyValuePair<string, List<string>> dep in InverseImports)
+                foreach (KeyValuePair<string, HashSet<string>> dep in InverseImports)
                 {
                     string name = dep.Key;
                     _scopes.TryGetValue(name, out IScope file_scope);
@@ -900,7 +900,7 @@ namespace LanguageServer
             parser.RemoveErrorListeners();
             var parser_error_listener = new ErrorListener<IToken>(parser, lexer, cts, pd.QuietAfter);
             parser.AddErrorListener(parser_error_listener);
-            if (bail) parser.ErrorHandler = new BailErrorStrategy();
+            if (bail) parser.ErrorHandler = new BailErrorHandler();
 
             try
             {
@@ -916,7 +916,7 @@ namespace LanguageServer
             //string fn = System.IO.Path.GetFileName(ffn);
             //fn = "c:\\temp\\" + fn;
             //System.IO.File.WriteAllText(fn, sb.ToString());
-            if (parser_error_listener.had_error)
+            if (parser_error_listener.had_error || lexer_error_listener.had_error)
             {
                 System.Console.Error.WriteLine("Error in parse of " + ffn);
             }
@@ -998,12 +998,12 @@ namespace LanguageServer
             // Gather InverseImports map.
             if (!ParsingResults.InverseImports.ContainsKey(this.FullFileName))
             {
-                ParsingResults.InverseImports.Add(this.FullFileName);
+                ParsingResults.InverseImports.Add(this.FullFileName, new HashSet<string>());
             }
             if (ParseTree == null) return;
             ParseTreeWalker.Default.Walk(new Pass0Listener(this), ParseTree);
             var workspace = this.Item.Workspace;
-            foreach (KeyValuePair<string, List<string>> dep in ParsingResults.InverseImports)
+            foreach (KeyValuePair<string, HashSet<string>> dep in ParsingResults.InverseImports)
             {
                 string name = dep.Key;
                 Workspaces.Document x = workspace.FindDocument(name);
@@ -1035,7 +1035,7 @@ namespace LanguageServer
                 _pd = pd;
                 if (!ParsingResults.InverseImports.ContainsKey(_pd.FullFileName))
                 {
-                    ParsingResults.InverseImports.Add(_pd.FullFileName);
+                    ParsingResults.InverseImports.Add(_pd.FullFileName, new HashSet<string>());
                 }
             }
 
@@ -1085,7 +1085,7 @@ namespace LanguageServer
                 _pd.Imports.Add(dep);
                 if (!ParsingResults.InverseImports.ContainsKey(dep))
                 {
-                    ParsingResults.InverseImports.Add(dep);
+                    ParsingResults.InverseImports.Add(dep, new HashSet<string>());
                 }
 
                 bool found = false;
@@ -1099,7 +1099,7 @@ namespace LanguageServer
                 }
                 if (!found)
                 {
-                    ParsingResults.InverseImports.Add(dep, file);
+                    ParsingResults.InverseImports[dep].Add(file);
                 }
                 saw_tokenVocab_option = true;
             }
@@ -1124,7 +1124,7 @@ namespace LanguageServer
                     }
                     if (!ParsingResults.InverseImports.ContainsKey(dep))
                     {
-                        ParsingResults.InverseImports.Add(dep);
+                        ParsingResults.InverseImports.Add(dep, new HashSet<string>());
                     }
 
                     bool found = false;
@@ -1138,7 +1138,7 @@ namespace LanguageServer
                     }
                     if (!found)
                     {
-                        ParsingResults.InverseImports.Add(file, dep);
+                        ParsingResults.InverseImports[dep].Add(dep);
                     }
                 }
 
@@ -1162,7 +1162,7 @@ namespace LanguageServer
                     _pd.Imports.Add(dep);
                     if (!ParsingResults.InverseImports.ContainsKey(dep))
                     {
-                        ParsingResults.InverseImports.Add(dep);
+                        ParsingResults.InverseImports.Add(dep, new HashSet<string>());
                     }
 
                     bool found = false;
@@ -1176,7 +1176,7 @@ namespace LanguageServer
                     }
                     if (!found)
                     {
-                        ParsingResults.InverseImports.Add(dep, file);
+                        ParsingResults.InverseImports[dep].Add(file);
                     }
                 }
             }

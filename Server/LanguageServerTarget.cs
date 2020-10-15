@@ -404,7 +404,18 @@
                 }
                 DidOpenTextDocumentParams request = arg.ToObject<DidOpenTextDocumentParams>();
                 var document = CheckDoc(request.TextDocument.Uri);
+                var language_id = request.TextDocument.LanguageId;
                 document.Code = request.TextDocument.Text;
+                if (language_id == "antlr2")
+                    document.ParseAs = language_id;
+                else if (language_id == "antlr3")
+                    document.ParseAs = language_id;
+                else if (language_id == "antlr4")
+                    document.ParseAs = language_id;
+                else if (language_id == "ebnf")
+                    document.ParseAs = language_id;
+                else if (language_id == "bison")
+                    document.ParseAs = language_id;
                 var workspace = document.Workspace;
                 List<ParsingResults> to_do = new LanguageServer.Module().Compile(workspace);
             }

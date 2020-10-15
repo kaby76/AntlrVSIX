@@ -21,7 +21,7 @@
             BisonLexer lexer = new BisonLexer(str);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             BisonParser parser = new BisonParser(tokens);
-            BisonErrorListener<IToken> elistener = new BisonErrorListener<IToken>(parser, lexer, tokens, errors);
+            ErrorListenerBison<IToken> elistener = new ErrorListenerBison<IToken>(parser, lexer, tokens, errors);
             parser.AddErrorListener(elistener);
             BisonParser.InputContext tree = parser.input();
             string error_file_name = ffn.Replace(".g4", ".txt");

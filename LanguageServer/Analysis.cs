@@ -52,10 +52,10 @@
                 }
                 foreach (string f in read_files)
                 {
-                    IEnumerable<List<string>> additional = ParsingResults.InverseImports.Where(
+                    var additional = ParsingResults.InverseImports.Where(
                         t => t.Key == f).Select(
                         t => t.Value);
-                    foreach (List<string> t in additional)
+                    foreach (var t in additional)
                     {
                         read_files = read_files.Union(t).ToHashSet();
                     }
@@ -199,10 +199,10 @@
                 }
                 foreach (string f in read_files)
                 {
-                    IEnumerable<List<string>> additional = ParsingResults.InverseImports.Where(
+                    var additional = ParsingResults.InverseImports.Where(
                         t => t.Key == f).Select(
                         t => t.Value);
-                    foreach (List<string> t in additional)
+                    foreach (var t in additional)
                     {
                         read_files = read_files.Union(t).ToHashSet();
                     }

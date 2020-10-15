@@ -20,16 +20,16 @@
                 int before_count = 0;
                 if (!ParsingResults.InverseImports.ContainsKey(this.FullFileName))
                 {
-                    ParsingResults.InverseImports.Add(this.FullFileName);
+                    ParsingResults.InverseImports.Add(this.FullFileName, new HashSet<string>());
                 }
-                foreach (KeyValuePair<string, List<string>> x in ParsingResults.InverseImports)
+                foreach (KeyValuePair<string, HashSet<string>> x in ParsingResults.InverseImports)
                 {
                     before_count++;
                     before_count = before_count + x.Value.Count;
                 }
                 if (ParseTree == null) return false;
                 int after_count = 0;
-                foreach (KeyValuePair<string, List<string>> dep in ParsingResults.InverseImports)
+                foreach (KeyValuePair<string, HashSet<string>> dep in ParsingResults.InverseImports)
                 {
                     string name = dep.Key;
                     Workspaces.Document x = item.Workspace.FindDocument(name);
@@ -50,7 +50,7 @@
             {
                 // The workspace is completely loaded. Create scopes for all files in workspace
                 // if they don't already exist.
-                foreach (KeyValuePair<string, List<string>> dep in InverseImports)
+                foreach (KeyValuePair<string, HashSet<string>> dep in InverseImports)
                 {
                     string name = dep.Key;
                     _scopes.TryGetValue(name, out IScope file_scope);
@@ -834,7 +834,7 @@
             //string fn = System.IO.Path.GetFileName(ffn);
             //fn = "c:\\temp\\" + fn;
             //System.IO.File.WriteAllText(fn, sb.ToString());
-            if (parser_error_listener.had_error)
+            if (parser_error_listener.had_error || lexer_error_listener.had_error)
             {
                 System.Console.Error.WriteLine("Error in parse of " + ffn);
             }
@@ -916,7 +916,7 @@
             // Gather InverseImports map.
             if (!ParsingResults.InverseImports.ContainsKey(this.FullFileName))
             {
-                ParsingResults.InverseImports.Add(this.FullFileName);
+                ParsingResults.InverseImports.Add(this.FullFileName, new HashSet<string>());
             }
         }
 

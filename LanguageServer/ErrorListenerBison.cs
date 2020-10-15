@@ -4,7 +4,7 @@
     using System.IO;
     using System.Text;
 
-    public class BisonErrorListener<S> : ConsoleErrorListener<S>
+    public class ErrorListenerBison<S> : ConsoleErrorListener<S>
     {
         public bool had_error;
         private readonly Parser _parser;
@@ -12,7 +12,7 @@
         private readonly CommonTokenStream _token_stream;
         private readonly StringBuilder _errors;
 
-        public BisonErrorListener(Parser parser, Lexer lexer, CommonTokenStream token_stream, StringBuilder errors)
+        public ErrorListenerBison(Parser parser, Lexer lexer, CommonTokenStream token_stream, StringBuilder errors)
         {
             _parser = parser;
             _lexer = lexer;
