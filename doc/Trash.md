@@ -202,6 +202,14 @@ of a parser or lexer rule has left or right recursion.
 
 For for further details, see the [analysis](analysis.md#has-directindirect-recursion) section.
 
+### Help
+
+<pre>
+help
+</pre>
+
+Print out a list of commands.
+
 ### History
 
 <pre>
