@@ -246,24 +246,24 @@ See [this guide](PriorReleases.md).
    - [JSON transport api is erroneously multi-threaded #89](https://github.com/kaby76/AntlrVSIX/issues/89)
    - [When typing fast, the LSP packets can be delivered to the server out of order. #87](https://github.com/kaby76/AntlrVSIX/issues/87)
    - [Killing the server does not go back to a good state of the text document. #88](https://github.com/kaby76/AntlrVSIX/issues/88)
-* Add Visual Studio Code client to Marketplace.
-* Add Gnu Emacs extension.
-* Replace [Microsoft.VisualStudio.LanguageServer.Protocol](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/) with a drop-in replacement in order to handle semantic highlighting.
-* Add multi-line commands to Trash.
-* Add comment lines and blocks to Trash.
-* Add WC3 EBNF.
 * Fix ["rup" doesn't work in some cases #81](https://github.com/kaby76/AntlrVSIX/issues/81)
 * Fix ["has dr" not working, slow as hell #82](https://github.com/kaby76/AntlrVSIX/issues/82)
 * Fix [Performance still an issue #90](https://github.com/kaby76/AntlrVSIX/issues/90)
 * Fix [ANTLR3 grammars are wrong #93](https://github.com/kaby76/AntlrVSIX/issues/93)
-* Fix [Performance Problems #96](https://github.com/kaby76/AntlrVSIX/issues/96)
-* Rename Unify command to Group.
-* Add Ungroup transform.
-* Add de-label transform.
+* Fix [Performance Problems #96](https://github.com/kaby76/AntlrVSIX/issues/96)* Add Visual Studio Code client to Marketplace.
+* Add Gnu Emacs extension.
+* Add parsing of multi-line commands in Trash.
+* Add comment lines and blocks in Trash.
+* Add WC3 EBNF.
+* Add help command in Trash.
+* Rename Unify command to Group in Trash.
+* Add Ungroup transform in Trash.
+* Add de-label transform in Trash.
 * Add existing transforms not in Trash to Trash. Make sure they work.
 * Add expression rule optimization. Verify that this works with Java.
 * Add left factoring and inverse? Not sure, as Unify is a superset of left factoring.
 * Add in empty string alternative hoist transforms.
+* Replace [Microsoft.VisualStudio.LanguageServer.Protocol](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/) with a drop-in replacement in order to handle semantic highlighting.
 
 ## Planned for v9 (end Oct 2020)
 
