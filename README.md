@@ -74,7 +74,7 @@ build tool contained in that library. The Antlr4cs is several versions behind th
 ## Nightly build
 
 Each night at 0h 0m UTC, Appveyor builds the latest source. The output of the build can be downloaded
-at https://ci.appveyor.com/api/projects/kaby76/antlrvsix/artifacts/Client/bin/Debug/AntlrVSIX.vsix.
+at https://ci.appveyor.com/api/projects/kaby76/antlrvsix/artifacts/VsIde/bin/Debug/AntlrVSIX.vsix.
 However, there is no guarantee that this version will work.
 
 # Documentation
