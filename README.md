@@ -5,7 +5,8 @@ and conversion of Antlr2, Antlr3, Antlr4, Bison and W3C EBNF grammars. It contai
 extensions for Visual Studio 2019, Visual Studio Code, Gnu Emacs,
 a [Language Server Protocol (LSP)](https://langserver.org/) server,
 and a stand-alone command-line tool
-known as [Trash](doc/Trash.md) for editing grammar files directly without
+known as [Trash](https://github.com/kaby76/AntlrVSIX/blob/master/doc/Trash.md)
+for editing grammar files directly without
 Visual Studio, runnable on Windows or Linux.
 All clients use the LSP server implemented in this repository. The
 clients each are implemented elsewhere, but a thin shim is provided in this
@@ -80,7 +81,7 @@ However, there is no guarantee that this version will work.
 
 ## Guide to basic features
 
-For information on how basic use, see the [User Guide](doc/readme.md).
+For information on how basic use, see the [User Guide](https://github.com/kaby76/AntlrVSIX/blob/master/doc/readme.md).
 
 ## Running the **Trash** command-line engine
 
@@ -96,13 +97,13 @@ it directly from the downloaded .vsix--a ZIP file.
 It should be under
 "C:/Users/userid/AppData/Local/Microsoft/VisualStudio/.../AntlrVSIX/8.0/Trash/netcoreapp3.1/Trash.exe".
 Once you find the executable, please refer to
-the [documentation](doc/Trash.md).
+the [documentation](https://github.com/kaby76/AntlrVSIX/blob/master/doc/Trash.md).
 
 ## Analysis
 
 ### Recursion
 
-* [Has direct/indirect recursion](doc/analysis.md#has)
+* [Has direct/indirect recursion](https://github.com/kaby76/AntlrVSIX/blob/master/doc/analysis.md#has-directindirect-recursion)
 
 ## Refactoring
 
@@ -117,42 +118,42 @@ The refactorings implemented are:
 
 ### Raw tree editing
 
-* [Delete parse tree node](doc/refactoring.md#delete-parse-tree-node)
+* [Delete parse tree node](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#delete-parse-tree-node)
 
 ### Reordering
 
-* [Move start rule to top](doc/refactoring.md#move-start-rule)
-* [Reorder parser rules](doc/refactoring.md#reorder-parser-rules)
-* [Sort modes](doc/refactoring.md#sort-modes)
+* [Move start rule to top](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#move-start-rule)
+* [Reorder parser rules](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#reorder-parser-rules)
+* [Sort modes](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#sort-modes)
 
 ### Changing rules
 
-* [Remove useless parentheses](doc/refactoring.md#remove-useless-parentheses)
-* [Remove useless parser rules](doc/refactoring.md#remove-useless-productions)
-* [Rename lexer or parser symbol](doc/refactoring.md#rename)
-* [Unfold](doc/refactoring.md#Unfold)
-* [Group alts](doc/refactoring.md#group-alts)
-* [Ungroup alts](doc/refactoring.md#ungroup-alts)
-* [Upper and lower case string literals](doc/refactoring.md#upper-and-lower-case-string-literals)
-* [Fold](doc/refactoring.md#Fold)
-* [Replace direct left recursion with right recursion]()
-* [Replace direct left/right recursion with Kleene operator](doc/refactoring.md#Kleene)
+* [Remove useless parentheses](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#remove-useless-parentheses)
+* [Remove useless parser rules](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#remove-useless-productions)
+* [Rename lexer or parser symbol](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#rename)
+* [Unfold](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#Unfold)
+* [Group alts](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#group-alts)
+* [Ungroup alts](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#ungroup-alts)
+* [Upper and lower case string literals](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#upper-and-lower-case-string-literals)
+* [Fold](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#Fold)
+* Replace direct left recursion with right recursion
+* [Replace direct left/right recursion with Kleene operator](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#Kleene)
 * Replace indirect left recursion with right recursion
 * Replace parser rule symbols that conflict with Antlr keywords
-* [Replace string literals in parser with lexer symbols](doc/refactoring.md#replace-literals-in-parser-with-lexer-token-symbols)
+* [Replace string literals in parser with lexer symbols](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#replace-literals-in-parser-with-lexer-token-symbols)
 * Replace string literals in parser with lexer symbols, with lexer rule create
-* [Delabel](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#delabel) removes the annoying and mostly useless labeling in an Antlr grammar.
+* [Delabel removes the annoying and mostly useless labeling in an Antlr grammar](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#delabel)
 
 ### Splitting and combining
 
-* [Split combined grammars](doc/refactoring.md#splitting-and-combining-grammars)
-* [Combine splitted grammars](doc/refactoring.md#splitting-and-combining-grammars)
+* [Split combined grammars](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#splitting-and-combining-grammars)
+* [Combine splitted grammars](https://github.com/kaby76/AntlrVSIX/blob/master/doc/refactoring.md#splitting-and-combining-grammars)
 
 ## Conversion
 
-* [Antlr3 import](doc/Import.md#antlr3)
-* [Antlr2 import](doc/Import.md#antlr2)
-* [Bison import](doc/Import.md#bison)
+* [Antlr3 import](https://github.com/kaby76/AntlrVSIX/blob/master/doc/Import.md#antlr3)
+* [Antlr2 import](https://github.com/kaby76/AntlrVSIX/blob/master/doc/Import.md#antlr2)
+* [Bison import](https://github.com/kaby76/AntlrVSIX/blob/master/doc/Import.md#bison)
 
 ---------
 
@@ -236,7 +237,7 @@ for Windows or Linux.
 
 # Prior Releases
 
-See [this guide](PriorReleases.md).
+See [this guide](https://github.com/kaby76/AntlrVSIX/blob/master/PriorReleases.md).
 
 # Roadmap
 
