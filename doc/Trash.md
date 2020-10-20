@@ -138,6 +138,18 @@ resulting Antlr4 grammar replaces the top of stack.
 
 Print out the parse tree for the file at the top of stack.
 
+### Delabel
+
+<pre>
+delabel
+</pre>
+
+Remove all labels from an Antlr4 grammar that is on the top of stack, e.g.,
+"expr : lhs=expr (PLUS | MINUS) rhs=expr # foobar1 ....." => "expr : expr (PLUS | MINUS) expr ....."
+
+Example:
+    delabel
+
 ### Delete
 
 <pre>
