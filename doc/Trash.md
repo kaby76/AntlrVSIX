@@ -67,6 +67,11 @@ alias <em>id</em> = <em>string</em>
 Set up an alias that assigns <em>string</em> to <em>id</em>. The command <em>string</em> 
 is executed with <em>id</em>.
 
+Example:
+
+    alias h=history
+    h
+
 ### Analyze
 
 _Trash_ can perform an analysis of a grammar. The analysis includes a count of symbol
@@ -75,6 +80,10 @@ type, cycles, and unused symbols.
 <pre>
 analyze
 </pre>
+
+Example:
+
+    analyze
 
 ### History expansion
 
@@ -111,6 +120,11 @@ cd <em>string</em>?
 Change current directory. If string is not given, change to the user's home directory.
 `cd` accepts wildcards.
 
+Example:
+
+    cd
+    cd *foo
+
 ### Combine
 
 <pre>
@@ -121,14 +135,25 @@ Combine two grammars on top of stack into one grammar.
 One grammar must be a lexer grammar, the other a parser grammar,
 order is irrelevant.
 
+Example:
+
+    (top of stack contains a lexer file and a parser file, both parsed.)
+    combine
+
 ### Convert
 
 <pre>
 convert (antlr2 | antlr3 | antlr4 | bison | ebnf)?
 </pre>
 
-Convert the parsed grammar file at the top of stack into Antlr4 syntax. The
-resulting Antlr4 grammar replaces the top of stack.
+Convert the parsed grammar file at the top of stack into Antlr4 syntax. If the type of
+grammar cannot be inferred from the file suffix, a type can be supplied with the command.
+The resulting Antlr4 grammar replaces the top of stack.
+
+Example:
+
+    (top of stack contains a grammar file that is Antlr2 or 3, Bison, or EBNF syntax.)
+    combine antlr3
 
 ### "."
 
@@ -137,6 +162,10 @@ resulting Antlr4 grammar replaces the top of stack.
 </pre>
 
 Print out the parse tree for the file at the top of stack.
+
+Example:
+
+    .
 
 ### Delabel
 
@@ -148,6 +177,7 @@ Remove all labels from an Antlr4 grammar that is on the top of stack, e.g.,
 "expr : lhs=expr (PLUS | MINUS) rhs=expr # foobar1 ....." => "expr : expr (PLUS | MINUS) expr ....."
 
 Example:
+
     delabel
 
 ### Delete
@@ -156,7 +186,11 @@ Example:
 delete <em>string</em>
 </pre>
 
-Delete nodes specified with the XPath expression string.
+Delete nodes in the parsed file at the top of stack specified by the XPath expression string.
+
+Example:
+
+    delete "//parserRuleSpec[RULE_REF/text() = 'normalAnnotation']"
 
 For for further details, see the [Delete parse tree node](refactoring.md#delete-parse-tree-node) refactoring details.
 
@@ -167,6 +201,10 @@ find <em>string</em>
 </pre>
 
 Find all sub-trees in the parsed file at the top of stack using the given XPath expression string.
+
+Example:
+
+    find "//parserRuleSpec[RULE_REF/text() = 'normalAnnotation']"
 
 ### Fold
 
