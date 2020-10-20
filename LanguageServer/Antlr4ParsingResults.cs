@@ -851,7 +851,12 @@
             parser.RemoveErrorListeners();
             var parser_error_listener = new ErrorListener<IToken>(parser, lexer, cts, pd.QuietAfter);
             parser.AddErrorListener(parser_error_listener);
-            if (bail) parser.ErrorHandler = new BailErrorStrategy();
+            BailErrorHandler bail_error_handler = null;
+            if (bail)
+            {
+                bail_error_handler = new BailErrorHandler();
+                parser.ErrorHandler = bail_error_handler;
+            }
             try
             {
                 pt = parser.grammarSpec();
@@ -866,7 +871,7 @@
             //string fn = System.IO.Path.GetFileName(ffn);
             //fn = "c:\\temp\\" + fn;
             //System.IO.File.WriteAllText(fn, sb.ToString());
-            if (parser_error_listener.had_error || lexer_error_listener.had_error)
+            if (parser_error_listener.had_error || lexer_error_listener.had_error || (bail_error_handler != null && bail_error_handler.had_error))
             {
                 System.Console.Error.WriteLine("Error in parse of " + ffn);
             }

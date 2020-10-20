@@ -1019,11 +1019,13 @@
             lexer.AddErrorListener(lexer_error_listener);
             parser.RemoveErrorListeners();
             var parser_error_listener = new ErrorListener<IToken>(parser, lexer, cts, pd.QuietAfter);
+            parser.AddErrorListener(parser_error_listener);
+            BailErrorHandler bail_error_handler = null;
             if (bail)
             {
-                parser.ErrorHandler = new BailErrorHandler();
+                bail_error_handler = new BailErrorHandler();
+                parser.ErrorHandler = bail_error_handler;
             }
-            parser.AddErrorListener(parser_error_listener);
             try
             {
                 pt = parser.input();
@@ -1038,7 +1040,7 @@
             //string fn = System.IO.Path.GetFileName(ffn);
             //fn = "c:\\temp\\" + fn;
             //System.IO.File.WriteAllText(fn, sb.ToString());
-            if (parser_error_listener.had_error || lexer_error_listener.had_error)
+            if (parser_error_listener.had_error || lexer_error_listener.had_error || (bail_error_handler != null && bail_error_handler.had_error))
             {
                 System.Console.Error.WriteLine("Error in parse of " + ffn);
             }

@@ -181,97 +181,56 @@ Bash script "clean.sh" in the Antlrvsix source to clean out the build files so o
 
 ---------
 
-# Current Release v8.0 (18 Aug 2020)
-
-This release is a major organizational and feature change.
-For the extension itself, there are several new transforms 
-and some bug fixes.
-But, the main goal has been to reposition the tool to be used
-for refactorings of the Java grammar from specification in
-an automated way. To that end, I also wrote
-[ScrapeJavaSpec](https://github.com/kaby76/ScrapeJavaSpec),
-a tool that
-scrapes the Java grammar directly from the online specification,
-and outputs an Antlr4 grammar. This works wonderfully not only
-for the existing grammars [Java8](https://github.com/antlr/grammars-v4/tree/master/java/java8),
-[Java9](https://github.com/antlr/grammars-v4/tree/master/java/java9),
-but also for versions 10, 11, 12, 13, and 14, in minutes!
-Added with this release of Antlrvsix are several new refactorings,
-like "unify", which I
-have tested on the Java grammar.
-The next step with the next release will be
-to add the rest of the refactorings and
-optimize the Java grammar for speed so that it is as fast as
-[Parr's Java grammar](https://github.com/antlr/grammars-v4/tree/master/java/java).
-Also added to this release were
-conversions for Antlr2 and Antlr3 grammars. But, in order to write
-the conversion methods, I had to write Antlr4 grammars for these older syntaxes.
-Since it was not much trouble, I
-decided it was not too much effort to also provide LSP services for
-Antlr2, Antlr3, and Bison grammars!
-The other major software that is new with this release is an XPath2
-engine. This was a port of the Java code for the Eclipse XPath engine
-to C#, and an added layer to wrap Antlr parse trees.
-
-* Add editor support for Antlr2, Antlr3, and Bison grammars.
-* Add convert Antlr2 and Antlr3 grammars to Antlr4.
-* Add **Trash**, the **Tr**ansformation system for **A**ntlr **Sh**ell,
-a completely command-line interface to apply transforms to a grammar,
-for Windows or Linux.
-  * Expose many of the current transforms in the **Trash** tool.
-  * Add additional transform **unify**, **ulliteral**.
-* Add XPath2 engine so as to identify Antlr parse tree nodes for transforms.
-* Move all Antlr tree editing routines into a NuGet package
-  * Add XPath based on Eclipse XPath2.
-  * Add CTree, an S-expression library to specify and link in sub-trees.
-  * Move replace and delete to this NuGet library.
-  * Add observer pattern for parse tree node edits to keep XPath DOM in sync.
-* Rewrite the existing transforms and analyses using XPath and S-expresions.
-* Remove templates from extension and place in Antlr4BuildTasks.Templates.
-* Add nightly unit tests to build (find def, find refs and defs, etc).
-* Make signficant updates to the documentation.
-* Fix [Import of grammar with multiple rules for LHS symbol crashes. #69](https://github.com/kaby76/AntlrVSIX/issues/69).
-* Fix [Add transform to input string literals and convert to case insensitive literal or vice versa. #71](https://github.com/kaby76/AntlrVSIX/issues/71).
-* Fix [LanguageServer.Module.GetDefsAndRefs() not working right #74](https://github.com/kaby76/AntlrVSIX/issues/74).
-* Fix [Workspace.FindDocument() and Document.FindDocument() need to use normalized file paths. #75](https://github.com/kaby76/AntlrVSIX/issues/75).
-
 # Prior Releases
 
 See [this guide](https://github.com/kaby76/AntlrVSIX/blob/master/PriorReleases.md).
 
 # Roadmap
 
-## Planned for v8.1 (mid Oct 2020):
+## Current release v8.1 (20 Oct 2020):
 
-* Fix critical bugs:
-   - [JSON transport api is erroneously multi-threaded #89](https://github.com/kaby76/AntlrVSIX/issues/89)
-   - [When typing fast, the LSP packets can be delivered to the server out of order. #87](https://github.com/kaby76/AntlrVSIX/issues/87)
-   - [Killing the server does not go back to a good state of the text document. #88](https://github.com/kaby76/AntlrVSIX/issues/88)
+This release is a mix of organizational and feature changes.
+There are some important bug fixes associated with synchronization (#87, #88, #89),
+performance (#82, #90, #96). I added two clients: Emacs and VSCode.
+And, in whatever free time I had, I added a few new commands to Trash.
+Under the covers, I replaced a basic library that I was using
+from Microsoft for the [Microsoft.VisualStudio.LanguageServer.Protocol](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/),
+with one I wrote, which ended taking a week of 12+ hour days.
+A number of things I wanted to get done for transforming the Java grammar
+from the spec I pushed off to the next release in order to fix more critical issues.
+
 * Fix ["rup" doesn't work in some cases #81](https://github.com/kaby76/AntlrVSIX/issues/81)
 * Fix ["has dr" not working, slow as hell #82](https://github.com/kaby76/AntlrVSIX/issues/82)
+* Fix [Rename "unify" to "group" #86](https://github.com/kaby76/AntlrVSIX/issues/86)
+* Fix [When typing fast, the LSP packets can be delivered to the server out of order. #87](https://github.com/kaby76/AntlrVSIX/issues/87)
+* Fix [Killing the server does not go back to a good state of the text document. #88](https://github.com/kaby76/AntlrVSIX/issues/88)
+* Fix [JSON transport api is erroneously multi-threaded #89](https://github.com/kaby76/AntlrVSIX/issues/89)
 * Fix [Performance still an issue #90](https://github.com/kaby76/AntlrVSIX/issues/90)
 * Fix [ANTLR3 grammars are wrong #93](https://github.com/kaby76/AntlrVSIX/issues/93)
-* Fix [Performance Problems #96](https://github.com/kaby76/AntlrVSIX/issues/96)* Add Visual Studio Code client to Marketplace.
+* Fix [Selecting type of file should be respected by the DidOpen call. #94](https://github.com/kaby76/AntlrVSIX/issues/94)
+* Fix [Error recovery in server not considering lexer errors #95](https://github.com/kaby76/AntlrVSIX/issues/95)
+* Fix [Performance Problems #96](https://github.com/kaby76/AntlrVSIX/issues/96)
+* Fix [Links to User Guide and Documentation are broken #97](https://github.com/kaby76/AntlrVSIX/issues/97)
+* Add Visual Studio Code client to Marketplace.
 * Add Gnu Emacs extension.
-* Add parsing of multi-line commands in Trash.
-* Add comment lines and blocks in Trash.
-* Add WC3 EBNF.
-* Add help command in Trash.
-* Rename Unify command to Group in Trash.
+* Add WC3 EBNF parsing and conversion.
+* Add comment lines in Trash.
+* Add Help command in Trash.
 * Add Ungroup transform in Trash.
-* Add de-label transform in Trash.
+* Add Delabel transform in Trash.
+* Replace [Microsoft.VisualStudio.LanguageServer.Protocol](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/) with a drop-in replacement in order to handle semantic highlighting.
+
+## Planned for v8.2 (beginning of Nov 2020)
+
+* Add Intellij plugin.
 * Add existing transforms not in Trash to Trash. Make sure they work.
 * Add expression rule optimization. Verify that this works with Java.
 * Add left factoring and inverse? Not sure, as Unify is a superset of left factoring.
 * Add in empty string alternative hoist transforms.
-* Replace [Microsoft.VisualStudio.LanguageServer.Protocol](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/) with a drop-in replacement in order to handle semantic highlighting.
-
-## Planned for v9 (end Oct 2020)
-
 * Add grammar diff, think about 3-way grammar merge.
 * Add ISO 14977 EBNF.
 
-## Planned for v10 (end Nov 2020)
+## Planned for v9 (end Dec 2020)
 
 * Rebrand.
 * Add flexible parser to read any grammar.
