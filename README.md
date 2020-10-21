@@ -195,15 +195,16 @@ and performance (#82, #90, #96). Getting a little bored, and realizing that it i
 time to take advantage of the LSP server, I added two new clients to support
 now three clients: VS2019, Emacs, and VSCode. (I am working on
 the IntellijIdea and VIM clients.)
-And, in whatever free time I had, I added a few new commands to Trash.
+And, I added a few new commands to Trash.
 Under the covers, I replaced a basic library that I was using
 from Microsoft for the [Microsoft.VisualStudio.LanguageServer.Protocol](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/),
 with one I wrote, which ended taking a week of 12+ hour days.
 Not being able myself to remember the commands of Trash--because it is now
-getting pretty large--I decided to add help, and in the process reorganize the
+getting pretty large--I decided to add help, and reorganize the
 underlying command-line interpreter.
 A number of things I wanted to get done for transforming the Java grammar
-from the spec I pushed off to the next release in order to fix more critical issues.
+from the spec I had to push off to the next release in order to deal
+with more critical issues.
 
 There are still some significant problems with semantic highlighting and synchronization,
 but I will work through these in due time.
