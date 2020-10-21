@@ -187,7 +187,7 @@ See [this guide](https://github.com/kaby76/AntlrVSIX/blob/master/PriorReleases.m
 
 # Roadmap
 
-## Current release v8.1 (20 Oct 2020):
+## Current release v8.1 (21 Oct 2020):
 
 This release is a mix of organizational and feature changes.
 There are some important bug fixes associated with synchronization (#87, #88, #89),
