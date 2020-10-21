@@ -191,9 +191,10 @@ See [this guide](https://github.com/kaby76/AntlrVSIX/blob/master/PriorReleases.m
 
 This release is a mix of organizational and feature changes.
 There are some important bug fixes associated with synchronization (#87, #88, #89),
-and performance (#82, #90, #96). Getting a little bored, and realizing that is
-now time to take advantage of the LSP server, I added two new clients to support
-now three clients: VS2019, Emacs, and VSCode.
+and performance (#82, #90, #96). Getting a little bored, and realizing that it is
+time to take advantage of the LSP server, I added two new clients to support
+now three clients: VS2019, Emacs, and VSCode. (I am working on
+the IntellijIdea and VIM clients.)
 And, in whatever free time I had, I added a few new commands to Trash.
 Under the covers, I replaced a basic library that I was using
 from Microsoft for the [Microsoft.VisualStudio.LanguageServer.Protocol](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/),
