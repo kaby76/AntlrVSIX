@@ -191,13 +191,21 @@ See [this guide](https://github.com/kaby76/AntlrVSIX/blob/master/PriorReleases.m
 
 This release is a mix of organizational and feature changes.
 There are some important bug fixes associated with synchronization (#87, #88, #89),
-performance (#82, #90, #96). I added two clients: Emacs and VSCode.
+and performance (#82, #90, #96). Getting a little bored, and realizing that is
+now time to take advantage of the LSP server, I added two new clients to support
+now three clients: VS2019, Emacs, and VSCode.
 And, in whatever free time I had, I added a few new commands to Trash.
 Under the covers, I replaced a basic library that I was using
 from Microsoft for the [Microsoft.VisualStudio.LanguageServer.Protocol](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/),
 with one I wrote, which ended taking a week of 12+ hour days.
+Not being able myself to remember the commands of Trash--because it is now
+getting pretty large--I decided to add help, and in the process reorganize the
+underlying command-line interpreter.
 A number of things I wanted to get done for transforming the Java grammar
 from the spec I pushed off to the next release in order to fix more critical issues.
+
+There are still some significant problems with semantic highlighting and synchronization,
+but I will work through these in due time.
 
 * Fix ["rup" doesn't work in some cases #81](https://github.com/kaby76/AntlrVSIX/issues/81)
 * Fix ["has dr" not working, slow as hell #82](https://github.com/kaby76/AntlrVSIX/issues/82)
