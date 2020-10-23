@@ -230,7 +230,11 @@ but I will work through these in due time.
 * Add Delabel transform in Trash.
 * Replace [Microsoft.VisualStudio.LanguageServer.Protocol](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/) with a drop-in replacement in order to handle semantic highlighting.
 
-## Planned for v8.2 (beginning of Nov 2020)
+## Planned for v8.2 (End of Oct 2020)
+
+* Bug fixes for performance, colorization, ulliteral, unulliteral
+
+## Planned for v8.3 (Mid Nov 2020)
 
 * Add Intellij plugin.
 * Add existing transforms not in Trash to Trash. Make sure they work.
