@@ -227,6 +227,10 @@
 
                 if (AllNodes != null)
                 {
+                    ColorizedList = new Dictionary<IToken, int>();
+                    Refs = new Dictionary<TerminalNodeImpl, int>();
+                    Defs = new Dictionary<TerminalNodeImpl, int>();
+                    PopupList = new Dictionary<TerminalNodeImpl, int>();
                     Func<IParserDescription, Dictionary<IParseTree, IList<CombinedScopeSymbol>>, IParseTree, int> fun = gd.Classify;
                     IEnumerable<IParseTree> it = AllNodes.Where(n => n is TerminalNodeImpl);
                     foreach (var n in it)
@@ -241,7 +245,7 @@
                                 ColorizedList.Add(t.Symbol, i);
                             }
                         }
-                        catch (Exception) { }
+                        catch (Exception eeks) { }
                         try
                         {
                             if (i == (int)LanguageServer.Antlr4ParsingResults.AntlrClassifications.ClassificationNonterminalRef
@@ -254,7 +258,7 @@
                                 PopupList.Add(t, i);
                             }
                         }
-                        catch (Exception) { }
+                        catch (Exception eeks) { }
                         try
                         {
                             if (i == (int)LanguageServer.Antlr4ParsingResults.AntlrClassifications.ClassificationNonterminalDef
@@ -267,7 +271,7 @@
                                 PopupList.Add(t, i);
                             }
                         }
-                        catch (Exception) { }
+                        catch (Exception eeks) { }
                     }
                 }
 
