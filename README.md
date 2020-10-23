@@ -232,7 +232,7 @@ but I will work through these in due time.
 
 ## Planned for v8.2 (End of Oct 2020)
 
-* Bug fixes for performance, colorization, ulliteral, unulliteral
+* Bug fixes for performance, colorization, ulliteral, unulliteral, cd, alias
 
 ## Planned for v8.3 (Mid Nov 2020)
 
