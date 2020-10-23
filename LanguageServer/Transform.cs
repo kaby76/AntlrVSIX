@@ -6315,8 +6315,8 @@ and not(lexerRuleBlock//ebnfSuffix)
                 bool ok = true;
                 foreach (var element in lexer_element)
                 {
-                    var st = element.lexerAtom().LEXER_CHAR_SET().GetText();
-                    if (st.Length != 4)
+                    var st = element.lexerAtom()?.LEXER_CHAR_SET()?.GetText();
+                    if (st == null || st.Length != 4)
                     {
                         ok = false;
                         break;
