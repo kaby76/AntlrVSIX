@@ -6152,101 +6152,93 @@
             }
 
             // Find keyword-like literals in lexer rules.
-            List<TerminalNodeImpl> to_check_literals;
-            List<ANTLRv4Parser.LexerElementsContext> elements;
+            List<ANTLRv4Parser.LexerRuleSpecContext> to_check_lexer_rule_spec;
             var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
             using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext = AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
-                var dom_literals = engine.parseExpression(
-                        @"//lexerRuleSpec
-                        /lexerRuleBlock
-                            /lexerAltList[not(@ChildCount > 1)]
-                                /lexerAlt
-                                    /lexerElements[not(@ChildCount > 1)]
-                                        /lexerElement[not(@ChildCount > 1)]
-                                            /lexerAtom
-                                                /terminal[not(@ChildCount > 1)]
-                                                    /STRING_LITERAL",
+                var dom_lexer_rule_spec = engine.parseExpression(
+                        @"
+//lexerRuleSpec[lexerRuleBlock/lexerAltList[not(@ChildCount > 1)]/lexerAlt/lexerElements[not(@ChildCount > 1)]
+    /lexerElement[not(@ChildCount > 1)]/lexerAtom/terminal[not(@ChildCount > 1)]/STRING_LITERAL]",
                         new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
                     .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement)).ToArray();
-                elements = engine.parseExpression(
-                        "../../../..",
-                        new StaticContextBuilder()).evaluate(dynamicContext, dom_literals)
-                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as ANTLRv4Parser.LexerElementsContext).ToList();
-                to_check_literals = dom_literals.Select(x => x.AntlrIParseTree as TerminalNodeImpl).ToList();
+                to_check_lexer_rule_spec = dom_lexer_rule_spec.Select(x => x.AntlrIParseTree as ANTLRv4Parser.LexerRuleSpecContext).ToList();
             }
-            List<IParseTree> subs_elems = new List<IParseTree>();
-            List<IParseTree> subs_lit = new List<IParseTree>();
-            // Make up translation map. Note if the symbol is outside the range [start, end],
-            // then don't add an entry for it.
-            for (int i = 0; i < to_check_literals.Count; ++i)
+            var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
+            for (int i = 0; i < to_check_lexer_rule_spec.Count; ++i)
             {
-                var lexer_literal = to_check_literals[i];
-                var elems = elements[i];
-                var ok = true;
-                var ll = lexer_literal;
-                var tok = pd_parser.TokStream.Get(ll.SourceInterval.a);
-                if (nodes != null && !nodes.Where(n => n.Symbol == tok).Any())
+                var lexer_rule_spec = to_check_lexer_rule_spec[i];
+                if (lexer_rule_spec.FRAGMENT() != null) continue;
+                var lexer_elements = lexer_rule_spec?.lexerRuleBlock()?.lexerAltList()?.lexerAlt()[0]?.lexerElements();
+                var lexer_element = lexer_elements?.lexerElement();
+                // Verify
+                bool ok = true;
+                foreach (var element in lexer_element)
                 {
-                    continue;
-                }
-                var s = ll.GetText();
-                s = s.Substring(1).Substring(0, s.Length - 2);
-                foreach (var cc in s)
-                {
-                    if (!char.IsLetterOrDigit(cc))
+                    var s = element.lexerAtom()?.terminal()?.STRING_LITERAL()?.GetText();
+                    if (s == null || s.Length <= 2)
+                    {
+                        ok = false;
+                        break;
+                    }
+                    string new_str = "";
+                    foreach (var cc in s)
+                    {
+                        string rep = (Char.ToUpper(cc) == Char.ToLower(cc)) ? cc.ToString() : (Char.ToLower(cc).ToString() + Char.ToUpper(cc).ToString());
+                        new_str = new_str + rep;
+                    }
+                    if (new_str == s)
                     {
                         ok = false;
                         break;
                     }
                 }
-                if (!ok)
+                if (!ok) continue;
+
+                StringBuilder rep_sb = new StringBuilder();
+                foreach (var element in lexer_element)
                 {
-                    continue;
-                }
-                subs_lit.Add(ll);
-                subs_elems.Add(elems);
-            }
-
-            var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
-
-            TreeEdits.Replace(pd_parser.ParseTree,
-                (in IParseTree n, out bool c) =>
-                {
-                    c = true;
-                    if (!subs_elems.Contains(n))
-                        return null;
-                    int i = subs_elems.IndexOf(n);
-                    c = false;
-
-                    // This node is the lexerElements node. Go through all leaves and convert
-                    // a string literal to a list of lexer char sets.
-                    // Then, construct a lexerElements node with the replacement sets.
-                    var new_lexerelements = new ANTLRv4Parser.LexerElementsContext(null, 0);
-
-                    var literal = subs_lit[i];
-                    var s = literal.GetText();
-                    s = s.Substring(1).Substring(0, s.Length - 2);
+                    var s_orig = element.lexerAtom()?.terminal()?.STRING_LITERAL()?.GetText();
+                    var s = s_orig.Substring(1).Substring(0, s_orig.Length - 2);
+                    string new_str = "";
                     foreach (var cc in s)
                     {
-                        var token = new CommonToken(ANTLRv4Lexer.LEXER_CHAR_SET)
-                        {
-                            Line = -1,
-                            Column = -1,
-                            Text =
-                                "[" + char.ToLower(cc) + char.ToUpper(cc) + "]"
-                        };
-                        var set = new TerminalNodeImpl(token);
-                        var construct = new CTree.Class1(pd_parser.Parser,
-                            new Dictionary<string, object>()
-                                {{"id", set}});
-                        var la = construct.CreateTree("( lexerElement ( lexerAtom {id} ))") as ANTLRv4Parser.LexerElementContext;
-                        new_lexerelements.AddChild(la);
-                        la.Parent = new_lexerelements;
+                        string rep = (Char.ToUpper(cc) == Char.ToLower(cc)) ? cc.ToString() : (Char.ToLower(cc).ToString() + Char.ToUpper(cc).ToString());
+                        new_str = new_str + rep;
                     }
-                    return new_lexerelements;
-                });
+                    if (new_str == s)
+                    {
+                        rep_sb.Append(s_orig);
+                    }
+                    else
+                    {
+                        new_str = "";
+                        foreach (var cc in s)
+                        {
+                            string rep = (Char.ToUpper(cc) == Char.ToLower(cc)) ? cc.ToString() : (Char.ToLower(cc).ToString() + Char.ToUpper(cc).ToString());
+                            if (rep == "[") rep = "\\[";
+                            else if (rep == "]") rep = "\\]";
+                            else if (rep == "-") rep = "\\-";
+                            new_str = new_str + " [" + rep + "]";
+                        }
+                        rep_sb.Append(new_str);
+                    }
+                }
+                var token = new CommonToken(ANTLRv4Lexer.STRING_LITERAL)
+                {
+                    Line = -1,
+                    Column = -1,
+                    Text = rep_sb.ToString()
+                };
+                var string_literal = new TerminalNodeImpl(token);
+                var construct = new CTree.Class1(pd_parser.Parser,
+                    new Dictionary<string, object>()
+                        {{"id", string_literal}});
+                var les = construct.CreateTree("( lexerElements ( lexerElement ( lexerAtom {id} )))");
+                TreeEdits.Replace(lexer_elements, les);
+            }
+
             StringBuilder sb = new StringBuilder();
             TreeEdits.Reconstruct(sb, pd_parser.ParseTree, text_before);
             var new_code = sb.ToString();
