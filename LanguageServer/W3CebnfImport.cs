@@ -57,7 +57,7 @@
             TreeEdits.InsertBefore(tree.GetChild(0), "grammar " + name + ";" + Environment.NewLine);
 
             using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                new AntlrTreeEditing.AntlrDOM.ConvertToDOM().Try(tree, parser))
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
@@ -70,7 +70,7 @@
             }
 
             using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                new AntlrTreeEditing.AntlrDOM.ConvertToDOM().Try(tree, parser))
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
@@ -86,7 +86,7 @@
             // Convert double-quoted string literals to single quote.
             {
                 using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                    new AntlrTreeEditing.AntlrDOM.ConvertToDOM().Try(tree, parser))
                 {
                     org.eclipse.wst.xml.xpath2.processor.Engine engine =
                      new org.eclipse.wst.xml.xpath2.processor.Engine();

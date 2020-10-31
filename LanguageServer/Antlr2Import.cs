@@ -62,7 +62,7 @@
 
             // Remove "header".
             using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                    new AntlrTreeEditing.AntlrDOM.ConvertToDOM().Try(tree, parser))
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();               
@@ -76,7 +76,7 @@
 
             // Remove classDef action blocks for now.
             using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                    new AntlrTreeEditing.AntlrDOM.ConvertToDOM().Try(tree, parser))
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
@@ -94,7 +94,7 @@
             // This specifically looks at the options at the top of the file,
             // not rule-based options. That will be handled separately below.
             using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                    new AntlrTreeEditing.AntlrDOM.ConvertToDOM().Try(tree, parser))
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
@@ -135,7 +135,7 @@
 
             // Delete rule options.
             using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                    new AntlrTreeEditing.AntlrDOM.ConvertToDOM().Try(tree, parser))
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
@@ -173,7 +173,7 @@
 
             // Parser and Lexer in One Definition
             using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                    new AntlrTreeEditing.AntlrDOM.ConvertToDOM().Try(tree, parser))
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
@@ -230,7 +230,7 @@
             if (StripLabelOperator)
             {
                 using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                    new AntlrTreeEditing.AntlrDOM.ConvertToDOM().Try(tree, parser))
                 {
                     org.eclipse.wst.xml.xpath2.processor.Engine engine =
                      new org.eclipse.wst.xml.xpath2.processor.Engine();
@@ -248,7 +248,7 @@
             if (StripActionBlocks)
             {
                 using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                    new AntlrTreeEditing.AntlrDOM.ConvertToDOM().Try(tree, parser))
                 {
                     org.eclipse.wst.xml.xpath2.processor.Engine engine =
                      new org.eclipse.wst.xml.xpath2.processor.Engine();
@@ -265,7 +265,7 @@
             // Remove syntactic predicates.
             {
                 using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                    new AntlrTreeEditing.AntlrDOM.ConvertToDOM().Try(tree, parser))
                 {
                     org.eclipse.wst.xml.xpath2.processor.Engine engine =
                      new org.eclipse.wst.xml.xpath2.processor.Engine();
@@ -282,7 +282,7 @@
             // Convert double-quoted string literals to single quote.
             {
                 using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                    new AntlrTreeEditing.AntlrDOM.ConvertToDOM().Try(tree, parser))
                 {
                     org.eclipse.wst.xml.xpath2.processor.Engine engine =
                      new org.eclipse.wst.xml.xpath2.processor.Engine();
@@ -319,7 +319,7 @@
             //  Remove "protected" for parser symbols.
             {
                 using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                    new AntlrTreeEditing.AntlrDOM.ConvertToDOM().Try(tree, parser))
                 {
                     org.eclipse.wst.xml.xpath2.processor.Engine engine =
                      new org.eclipse.wst.xml.xpath2.processor.Engine();
@@ -337,7 +337,7 @@
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
                 AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser);
+                    new AntlrTreeEditing.AntlrDOM.ConvertToDOM().Try(tree, parser);
                 var nodes = engine.parseExpression(
                         @"//rule_
                             [not(id/TOKEN_REF/text() = //rule_[id/RULE_REF]/altList//TOKEN_REF/text())]

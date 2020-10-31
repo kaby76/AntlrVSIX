@@ -43,7 +43,7 @@
 
             // Collect terminals.
             using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                    new AntlrTreeEditing.AntlrDOM.ConvertToDOM().Try(tree, parser))
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();
@@ -64,7 +64,7 @@
 
             // Collect rules.
             using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(tree, parser))
+                    new AntlrTreeEditing.AntlrDOM.ConvertToDOM().Try(tree, parser))
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine =
                     new org.eclipse.wst.xml.xpath2.processor.Engine();

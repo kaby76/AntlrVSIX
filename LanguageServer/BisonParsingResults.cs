@@ -133,7 +133,7 @@
                 this.Attributes[ParseTree] = new List<CombinedScopeSymbol>() { (CombinedScopeSymbol)this.RootScope };
                 // Collect def lexer symbols.
                 using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                        AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(this.ParseTree, this.Parser))
+                        new AntlrTreeEditing.AntlrDOM.ConvertToDOM().Try(this.ParseTree, this.Parser))
                 {
                     org.eclipse.wst.xml.xpath2.processor.Engine engine =
                         new org.eclipse.wst.xml.xpath2.processor.Engine();
@@ -191,7 +191,7 @@
 
                 // Collect def parser symbols.
                 using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                        AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(this.ParseTree, this.Parser))
+                        new AntlrTreeEditing.AntlrDOM.ConvertToDOM().Try(this.ParseTree, this.Parser))
                 {
                     org.eclipse.wst.xml.xpath2.processor.Engine engine =
                         new org.eclipse.wst.xml.xpath2.processor.Engine();
@@ -222,7 +222,7 @@
                 if (ParseTree == null) return false;
                 // Collect ref symbols.
                 using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                        AntlrTreeEditing.AntlrDOM.ConvertToDOM.Try(this.ParseTree, this.Parser))
+                        new AntlrTreeEditing.AntlrDOM.ConvertToDOM().Try(this.ParseTree, this.Parser))
                 {
                     org.eclipse.wst.xml.xpath2.processor.Engine engine =
                         new org.eclipse.wst.xml.xpath2.processor.Engine();
