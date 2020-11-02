@@ -92,6 +92,17 @@
             if (File.Exists(ffn))
             {
                 Document document = new Workspaces.Document(ffn);
+                AddChild(document);
+                return document;
+            }
+            return null;
+        }
+
+        public override Document ReadDocument(string ffn)
+        {
+            var document = FindDocument(ffn);
+            if (document != null)
+            {
                 try
                 {   // Open the text file using a stream reader.
                     using (StreamReader sr = new StreamReader(ffn))
@@ -105,10 +116,8 @@
                 {
                     return null;
                 }
-                AddChild(document);
-                return document;
             }
-            return null;
+            return document;
         }
 
         public override Project FindProject(string ffn)
