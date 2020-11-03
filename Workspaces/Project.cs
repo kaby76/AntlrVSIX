@@ -6,62 +6,21 @@
     {
         public uint _id;
         public int _hash;
-        private string _canonical_name;
-        private string _name;
-        private string _ffn;
-        private readonly List<Container> _contents = new List<Container>();
         private readonly Dictionary<string, string> _properties = new Dictionary<string, string>();
         private readonly Dictionary<string, bool> _lazy_evaluated = new Dictionary<string, bool>();
 
-        public string CanonicalName
-        {
-            get => _canonical_name;
-            set => _canonical_name = value;
-        }
-
-        public IEnumerable<Container> Children => _contents;
-
-        public string FullPath
-        {
-            get => _ffn;
-            set => _ffn = value;
-        }
-
-        public string Name
-        {
-            get => _name;
-            set => _name = value;
-        }
 
         public Project(string canonical_name, string name, string ffn)
         {
-            _canonical_name = canonical_name;
-            _name = name;
-            _ffn = ffn;
+            this.CanonicalName = canonical_name;
+            this.Name = name;
+            this.FullPath = ffn;
         }
 
-        public override Container AddChild(Container doc)
-        {
-            if (doc == null)
-            {
-                throw new System.Exception("Trying to add null document.");
-            }
-
-            _contents.Add(doc);
-            doc.Parent = this;
-            return doc;
-        }
 
         public Document AddDocument(Document doc)
         {
-            if (doc == null)
-            {
-                throw new System.Exception("Trying to add null document.");
-            }
-
-            _contents.Add(doc);
-            doc.Parent = this;
-            return doc;
+            return AddChild(doc) as Document;
         }
 
         public void AddProperty(string name)
@@ -74,62 +33,6 @@
         {
             _properties[name] = value;
             _lazy_evaluated[name] = true;
-        }
-
-        public override Document FindDocument(string ffn)
-        {
-            foreach (Container doc in _contents)
-            {
-                Document found = doc.FindDocument(ffn);
-                if (found != null)
-                {
-                    return found;
-                }
-            }
-            return null;
-        }
-
-        public override Project FindProject(string ffn)
-        {
-            if (ffn == null && FullPath == null)
-            {
-                return null;
-            }
-
-            if (FullPath.ToLower() == ffn.ToLower())
-            {
-                return this;
-            }
-
-            foreach (Container proj in _contents)
-            {
-                Project found = proj.FindProject(ffn);
-                if (found != null)
-                {
-                    return found;
-                }
-            }
-            return null;
-        }
-
-        public override Project FindProject(string canonical_name, string name, string ffn)
-        {
-            if (CanonicalName == canonical_name &&
-                Name == name &&
-                FullPath.ToLower() == ffn.ToLower())
-            {
-                return this;
-            }
-
-            foreach (Container proj in _contents)
-            {
-                Project found = proj.FindProject(canonical_name, name, ffn);
-                if (found != null)
-                {
-                    return found;
-                }
-            }
-            return null;
         }
 
         public string GetProperty(string name)

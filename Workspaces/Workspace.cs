@@ -9,9 +9,6 @@
         private static Workspace _instance;
         private string _name;
         private string _ffn;
-        private readonly List<Container> _contents = new List<Container>();
-
-        public IEnumerable<Container> Children => _contents;
 
         public string FFN
         {
@@ -30,19 +27,6 @@
 
                 return _instance;
             }
-        }
-
-        public string Name
-        {
-            get => _name;
-            set => _name = value;
-        }
-
-        public override Container AddChild(Container doc)
-        {
-            _contents.Add(doc);
-            doc.Parent = this;
-            return doc;
         }
 
         public IEnumerable<Document> AllDocuments()
@@ -65,7 +49,7 @@
                 }
                 else
                 {
-                    foreach (Container c in _contents)
+                    foreach (Container c in this.Children)
                     {
                         stack.Push(c);
                     }
@@ -80,9 +64,9 @@
                 return null;
             }
 
-            foreach (Container doc in _contents)
+            foreach (Container container in this.Children)
             {
-                Document found = doc.FindDocument(ffn);
+                Document found = container.FindDocument(ffn);
                 if (found != null)
                 {
                     return found;
@@ -122,9 +106,9 @@
 
         public override Project FindProject(string ffn)
         {
-            foreach (Container doc in _contents)
+            foreach (Container container in this.Children)
             {
-                Project found = doc.FindProject(ffn);
+                Project found = container.FindProject(ffn);
                 if (found != null)
                 {
                     return found;
@@ -135,7 +119,7 @@
 
         public override Project FindProject(string canonical_name, string name, string ffn)
         {
-            foreach (Container doc in _contents)
+            foreach (Container doc in this.Children)
             {
                 Project found = doc.FindProject(canonical_name, name, ffn);
                 if (found != null)
