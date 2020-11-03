@@ -6308,7 +6308,7 @@ and not(lexerRuleBlock//ebnfSuffix)
                 foreach (var element in lexer_element)
                 {
                     var st = element.lexerAtom()?.LEXER_CHAR_SET()?.GetText();
-                    if (st == null || st.Length != 4)
+                    if (st == null || !(st.Length == 4 || st.Length == 3))
                     {
                         ok = false;
                         break;
