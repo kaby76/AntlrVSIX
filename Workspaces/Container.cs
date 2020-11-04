@@ -49,9 +49,10 @@
         }
 
         public virtual Document ReadDocument(string ffn) { return null; }
+        
         public virtual Project FindProject(string ffn)
         {
-            if (ffn == null && FullPath == null)
+            if (ffn == null || FullPath == null)
             {
                 return null;
             }
@@ -95,8 +96,8 @@
         public virtual Project FindProject(string canonical_name, string name, string ffn)
         {
             if (CanonicalName == canonical_name &&
-Name == name &&
-FullPath.ToLower() == ffn.ToLower())
+                Name == name &&
+                FullPath.ToLower() == ffn.ToLower())
             {
                 return this as Project;
             }
