@@ -807,6 +807,7 @@
                 var doc = stack.Pop();
                 if (!(ParsingResultsFactory.Create(doc) is ParsingResults pd_doc))
                     continue;
+                check_list.Add(doc);
 
                 foreach (var c in pd_doc.Imports)
                 {
@@ -815,8 +816,6 @@
                     {
                         continue;
                     }
-
-                    check_list.Add(d);
                     stack.Push(d);
                 }
             }
@@ -826,6 +825,7 @@
                 var doc = stack.Pop();
                 if (!(ParsingResultsFactory.Create(doc) is Antlr4ParsingResults pd_doc))
                     continue;
+                check_list.Add(doc);
 
                 _ = Antlr4ParsingResults.InverseImports.TryGetValue(doc.FullPath, out HashSet<string> inverse);
 
@@ -836,8 +836,6 @@
                     {
                         continue;
                     }
-
-                    check_list.Add(d);
                     stack.Push(d);
                 }
             }
