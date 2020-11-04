@@ -1,5 +1,47 @@
 # Prior Releases
 
+## Release v8.1 (21 Oct 2020):
+
+This release is a mix of organizational and feature changes.
+There are some important bug fixes associated with synchronization (#87, #88, #89),
+and performance (#82, #90, #96). Getting a little bored, and realizing that it is
+time to take advantage of the LSP server, I added two new clients to support
+now three clients: VS2019, Emacs, and VSCode. (I am working on
+the IntellijIdea and VIM clients.)
+And, I added a few new commands to Trash.
+Under the covers, I replaced a basic library that I was using
+from Microsoft for the [Microsoft.VisualStudio.LanguageServer.Protocol](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/),
+with one I wrote, which ended taking a week of 12+ hour days.
+Not being able myself to remember the commands of Trash--because it is now
+getting pretty large--I decided to add help, and reorganize the
+underlying command-line interpreter.
+A number of things I wanted to get done for transforming the Java grammar
+from the spec I had to push off to the next release in order to deal
+with more critical issues.
+
+There are still some significant problems with semantic highlighting and synchronization,
+but I will work through these in due time.
+
+* Fix ["rup" doesn't work in some cases #81](https://github.com/kaby76/AntlrVSIX/issues/81)
+* Fix ["has dr" not working, slow as hell #82](https://github.com/kaby76/AntlrVSIX/issues/82)
+* Fix [Rename "unify" to "group" #86](https://github.com/kaby76/AntlrVSIX/issues/86)
+* Fix [When typing fast, the LSP packets can be delivered to the server out of order. #87](https://github.com/kaby76/AntlrVSIX/issues/87)
+* Fix [Killing the server does not go back to a good state of the text document. #88](https://github.com/kaby76/AntlrVSIX/issues/88)
+* Fix [JSON transport api is erroneously multi-threaded #89](https://github.com/kaby76/AntlrVSIX/issues/89)
+* Fix [Performance still an issue #90](https://github.com/kaby76/AntlrVSIX/issues/90)
+* Fix [ANTLR3 grammars are wrong #93](https://github.com/kaby76/AntlrVSIX/issues/93)
+* Fix [Selecting type of file should be respected by the DidOpen call. #94](https://github.com/kaby76/AntlrVSIX/issues/94)
+* Fix [Error recovery in server not considering lexer errors #95](https://github.com/kaby76/AntlrVSIX/issues/95)
+* Fix [Performance Problems #96](https://github.com/kaby76/AntlrVSIX/issues/96)
+* Add Visual Studio Code client to Marketplace.
+* Add Gnu Emacs extension.
+* Add WC3 EBNF parsing and conversion.
+* Add comment lines in Trash.
+* Add Help command in Trash.
+* Add Ungroup transform in Trash.
+* Add Delabel transform in Trash.
+* Replace [Microsoft.VisualStudio.LanguageServer.Protocol](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/) with a drop-in replacement in order to handle semantic highlighting.
+
 # Release v8.0 (18 Aug 2020)
 
 This release is a major organizational and feature change.

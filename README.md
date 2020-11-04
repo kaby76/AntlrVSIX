@@ -187,52 +187,52 @@ See [this guide](https://github.com/kaby76/AntlrVSIX/blob/master/PriorReleases.m
 
 # Roadmap
 
-## Current release v8.1 (21 Oct 2020):
+## Current release v8.2 (5 Nov 2020)
 
-This release is a mix of organizational and feature changes.
-There are some important bug fixes associated with synchronization (#87, #88, #89),
-and performance (#82, #90, #96). Getting a little bored, and realizing that it is
-time to take advantage of the LSP server, I added two new clients to support
-now three clients: VS2019, Emacs, and VSCode. (I am working on
-the IntellijIdea and VIM clients.)
-And, I added a few new commands to Trash.
-Under the covers, I replaced a basic library that I was using
-from Microsoft for the [Microsoft.VisualStudio.LanguageServer.Protocol](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/),
-with one I wrote, which ended taking a week of 12+ hour days.
-Not being able myself to remember the commands of Trash--because it is now
-getting pretty large--I decided to add help, and reorganize the
-underlying command-line interpreter.
-A number of things I wanted to get done for transforming the Java grammar
-from the spec I had to push off to the next release in order to deal
-with more critical issues.
+This release addresses bug and performance issues in Antlrvsix.
 
-There are still some significant problems with semantic highlighting and synchronization,
-but I will work through these in due time.
+Most of the bugs had to do with commands in Trash.
+In the command-line interpreter, I wrote a special Antlr stream that just
+didn't work all that well. So, with this release, I decided to rewrite this code.
+The command-line input now occurs in two passes: the first pass just reads a line of text
+until the end-of-line or end-of-file; the second pass parses the line of text
+with an Antlr parser using a much simplified grammar. This impacts most commands,
+such as alias, cd, ls, etc., but with those in particular,
+file globbing barely worked. The globbing code was a thin
+layer over Microsoft's basic FileInfo and DirectoryInfo APIs,
+which are really terrible. I replaced this code with a nice Unix Bash-like globbing library
+I wrote. However, files and directories are now case sensitive.
 
-* Fix ["rup" doesn't work in some cases #81](https://github.com/kaby76/AntlrVSIX/issues/81)
-* Fix ["has dr" not working, slow as hell #82](https://github.com/kaby76/AntlrVSIX/issues/82)
-* Fix [Rename "unify" to "group" #86](https://github.com/kaby76/AntlrVSIX/issues/86)
-* Fix [When typing fast, the LSP packets can be delivered to the server out of order. #87](https://github.com/kaby76/AntlrVSIX/issues/87)
-* Fix [Killing the server does not go back to a good state of the text document. #88](https://github.com/kaby76/AntlrVSIX/issues/88)
-* Fix [JSON transport api is erroneously multi-threaded #89](https://github.com/kaby76/AntlrVSIX/issues/89)
-* Fix [Performance still an issue #90](https://github.com/kaby76/AntlrVSIX/issues/90)
-* Fix [ANTLR3 grammars are wrong #93](https://github.com/kaby76/AntlrVSIX/issues/93)
-* Fix [Selecting type of file should be respected by the DidOpen call. #94](https://github.com/kaby76/AntlrVSIX/issues/94)
-* Fix [Error recovery in server not considering lexer errors #95](https://github.com/kaby76/AntlrVSIX/issues/95)
-* Fix [Performance Problems #96](https://github.com/kaby76/AntlrVSIX/issues/96)
+Recently, I had a task to merge a couple of large Antlr grammars.
+Some of the keyword
+rules in one grammar were in case-folding syntax (e.g., "TRUE: [tT][rR][uU][eE];"),
+while the other grammar where not (e.g., "TRUE: 'true';"). After
+playing around with the 'ulliteral' transform, I realized that it was not working well,
+so that required fixing. In addition, there was no inverve of the transform--which is
+very useful because Antlr warns if a grammar
+contains two lexer rules that match the same string literal, but not if one grammar
+is imported by the other, and not if the lexer rule is in case-folding syntax. I added
+'unulliteral' for these situations.
+
+Probably the most exciting change to Trash is the introduction of pipes between commands,
+similar to what you would see in Bash. Instead of passing a plain character buffer between
+commands, though, I pass parse trees. So, you can do something like this
+
+    read Expr.g4
+    parse
+    . | find //lexerRuleSpec/TOKEN_REF | text
+
+to print out the lexer rule symbols.
+
+* Fix ["alias w=write" does not work #105](https://github.com/kaby76/AntlrVSIX/issues/105)
+* Fix ["cd .." does not work #104](https://github.com/kaby76/AntlrVSIX/issues/104)
+* Fix [Ulliteral should be able to handle non-uppercase and non-lowercase characters like '_' #103](https://github.com/kaby76/AntlrVSIX/issues/103)
+* Partial fix [Antlr produces a warning for token rules that match the same string literal, but not for u/l cased defs #102](https://github.com/kaby76/AntlrVSIX/issues/102)
+* Fix [ulliteral of a string with numbers gives sets with dups e.g., "2" => "[22]" #101](https://github.com/kaby76/AntlrVSIX/issues/101)
+* Fix [Trash "foldlit //lexerRuleSpec/TOKEN_REF" really slow for PlSqlParser/Lexer.g4 #100](https://github.com/kaby76/AntlrVSIX/issues/100)
+* Fix [Trash crashes if given eof, in script not given "quit" command #98](https://github.com/kaby76/AntlrVSIX/issues/98)
 * Fix [Links to User Guide and Documentation are broken #97](https://github.com/kaby76/AntlrVSIX/issues/97)
-* Add Visual Studio Code client to Marketplace.
-* Add Gnu Emacs extension.
-* Add WC3 EBNF parsing and conversion.
-* Add comment lines in Trash.
-* Add Help command in Trash.
-* Add Ungroup transform in Trash.
-* Add Delabel transform in Trash.
-* Replace [Microsoft.VisualStudio.LanguageServer.Protocol](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/) with a drop-in replacement in order to handle semantic highlighting.
-
-## Planned for v8.2 (End of Oct 2020)
-
-* Bug fixes for performance, colorization, ulliteral, unulliteral, cd, alias
+* Fix [Performance Problems #96](https://github.com/kaby76/AntlrVSIX/issues/96)
 
 ## Planned for v8.3 (Mid Nov 2020)
 
