@@ -13,6 +13,8 @@ build_script:
   - cmd: set
   - cmd: MSBuild.exe /t:restore /p:Configuration=Debug /v:quiet AntlrVSIX.sln
   - cmd: MSBuild.exe /p:Configuration=Debug /v:normal AntlrVSIX.sln
+  - cmd: cd VsCode
+  - cmd: install-cmd.bat
 
 test_script:
   - cmd: cd UnitTestProject1
