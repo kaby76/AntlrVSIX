@@ -197,18 +197,20 @@ didn't work all that well. So, with this release, I decided to rewrite this code
 The command-line input now occurs in two passes: the first pass just reads a line of text
 until the end-of-line or end-of-file; the second pass parses the line of text
 with an Antlr parser using a much simplified grammar. This impacts most commands,
-such as alias, cd, ls, etc., but with those in particular,
-file globbing barely worked. The globbing code was a thin
+such as alias, cd, ls, etc. Also, in several commands 
+that allowed 'file globbing', it was not very good.
+The globbing code was a thin
 layer over Microsoft's basic FileInfo and DirectoryInfo APIs,
-which are really terrible. I replaced this code with a nice Unix Bash-like globbing library
-I wrote. However, files and directories are now case sensitive.
+which offers pattern matching of file names,
+but it is really limited. I replaced this code with a nice Unix Bash-like globbing library
+I wrote. File and directory names are now case sensitive.
 
 Recently, I had a task to merge a couple of large Antlr grammars.
 Some of the keyword
 rules in one grammar were in case-folding syntax (e.g., "TRUE: [tT][rR][uU][eE];"),
 while the other grammar where not (e.g., "TRUE: 'true';"). After
 playing around with the 'ulliteral' transform, I realized that it was not working well,
-so that required fixing. In addition, there was no inverve of the transform--which is
+so that needed fixing. In addition, there was no inverve of the transform--which is
 very useful because Antlr warns if a grammar
 contains two lexer rules that match the same string literal, but not if one grammar
 is imported by the other, and not if the lexer rule is in case-folding syntax. I added
