@@ -15,6 +15,7 @@ build_script:
   - cmd: MSBuild.exe /p:Configuration=Debug /v:normal AntlrVSIX.sln
   - cmd: cd VsCode
   - cmd: install-cmd.bat
+  - cmd: cd ..
 
 test_script:
   - cmd: cd UnitTestProject1
