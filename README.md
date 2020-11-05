@@ -56,26 +56,63 @@ not the same files.
 
 For Emacs, you will need to follow the instructions [here](https://github.com/kaby76/AntlrVSIX/tree/master/Emacs).
 
-## Alternatives
-
-Mike Lischke's
-[vscode-antlr4](https://github.com/mike-lischke/vscode-antlr4) is a good tool for VSCode for Antlr grammars, which
-you may prefer. However, Antlrvsix contains
-a command-line tool that can be used to automate transformations on an
-Antlr grammar, or want to quickly run a parser over a grammar file and
-use XPath to query items in the parse tree. There is no tool like it, and it is quite powerful.
-
-If you are just building and running an Antlr application and don't care about
-editing features (i.e., you don't care for highlighting the grammar, go to def, etc.),
-then you just use [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks). Antlr4BuildTasks
-is a replacement of [Antlr4cs](https://github.com/tunnelvisionlabs/antlr4cs) and the
-build tool contained in that library. The Antlr4cs is several versions behind the latest Antlr release.
-
 ## Nightly build
 
 Each night at 0h 0m UTC, Appveyor builds the latest source. The output of the build can be downloaded
-at https://ci.appveyor.com/api/projects/kaby76/antlrvsix/artifacts/VsIde/bin/Debug/AntlrVSIX.vsix.
-However, there is no guarantee that this version will work.
+from Appveyor.
+
+* [Antlrvsix for VS2019](https://ci.appveyor.com/api/projects/kaby76/antlrvsix/artifacts/VsIde/bin/Debug/AntlrVSIX.vsix)
+* [Antlrvsix for VSCode](https://ci.appveyor.com/api/projects/kaby76/antlrvsix/artifacts/VsCode/Antlrvsix-vscode-1.1.0.vsix)
+
+## Current release v8.2 VSIDE, v1.1 VSCode (5 Nov 2020)
+
+This release addresses bug and performance issues in Antlrvsix.
+
+Most of the bugs had to do with commands in Trash.
+In the command-line interpreter, I wrote a special Antlr stream that just
+didn't work all that well. So, with this release, I decided to rewrite this code.
+The command-line input now occurs in two passes: the first pass just reads a line of text
+until the end-of-line or end-of-file; the second pass parses the line of text
+with an Antlr parser using a much simplified grammar. This impacts most commands,
+such as alias, cd, ls, etc. Also, in several commands 
+that allowed 'file globbing', it was not very good.
+The globbing code was a thin
+layer over Microsoft's basic FileInfo and DirectoryInfo APIs,
+which offers pattern matching of file names,
+but it is really limited. I replaced this code with a nice Unix Bash-like globbing library
+I wrote. File and directory names are now case sensitive.
+
+Recently, I had a task to merge a couple of large Antlr grammars.
+Some of the keyword
+rules in one grammar were in case-folding syntax (e.g., "TRUE: [tT][rR][uU][eE];"),
+while the other grammar where not (e.g., "TRUE: 'true';"). After
+playing around with the 'ulliteral' transform, I realized that it was not working well,
+so that needed fixing. In addition, there was no inverve of the transform--which is
+very useful because Antlr warns if a grammar
+contains two lexer rules that match the same string literal, but not if one grammar
+is imported by the other, and not if the lexer rule is in case-folding syntax. I added
+'unulliteral' for these situations.
+
+Probably the most exciting change to Trash is the introduction of pipes between commands,
+similar to what you would see in Bash. Instead of passing a plain character buffer between
+commands, though, I pass parse trees. So, you can do something like this
+
+    read Expr.g4
+    parse
+    . | find //lexerRuleSpec/TOKEN_REF | text
+
+to print out the lexer rule symbols.
+
+* Fix ["alias w=write" does not work #105](https://github.com/kaby76/AntlrVSIX/issues/105)
+* Fix ["cd .." does not work #104](https://github.com/kaby76/AntlrVSIX/issues/104)
+* Fix [Ulliteral should be able to handle non-uppercase and non-lowercase characters like '_' #103](https://github.com/kaby76/AntlrVSIX/issues/103)
+* Partial fix [Antlr produces a warning for token rules that match the same string literal, but not for u/l cased defs #102](https://github.com/kaby76/AntlrVSIX/issues/102)
+* Fix [ulliteral of a string with numbers gives sets with dups e.g., "2" => "[22]" #101](https://github.com/kaby76/AntlrVSIX/issues/101)
+* Fix [Trash "foldlit //lexerRuleSpec/TOKEN_REF" really slow for PlSqlParser/Lexer.g4 #100](https://github.com/kaby76/AntlrVSIX/issues/100)
+* Fix [Trash crashes if given eof, in script not given "quit" command #98](https://github.com/kaby76/AntlrVSIX/issues/98)
+* Fix [Links to User Guide and Documentation are broken #97](https://github.com/kaby76/AntlrVSIX/issues/97)
+* Fix [Performance Problems #96](https://github.com/kaby76/AntlrVSIX/issues/96)
+
 
 # Documentation
 
@@ -187,55 +224,6 @@ See [this guide](https://github.com/kaby76/AntlrVSIX/blob/master/PriorReleases.m
 
 # Roadmap
 
-## Current release v8.2 (5 Nov 2020)
-
-This release addresses bug and performance issues in Antlrvsix.
-
-Most of the bugs had to do with commands in Trash.
-In the command-line interpreter, I wrote a special Antlr stream that just
-didn't work all that well. So, with this release, I decided to rewrite this code.
-The command-line input now occurs in two passes: the first pass just reads a line of text
-until the end-of-line or end-of-file; the second pass parses the line of text
-with an Antlr parser using a much simplified grammar. This impacts most commands,
-such as alias, cd, ls, etc. Also, in several commands 
-that allowed 'file globbing', it was not very good.
-The globbing code was a thin
-layer over Microsoft's basic FileInfo and DirectoryInfo APIs,
-which offers pattern matching of file names,
-but it is really limited. I replaced this code with a nice Unix Bash-like globbing library
-I wrote. File and directory names are now case sensitive.
-
-Recently, I had a task to merge a couple of large Antlr grammars.
-Some of the keyword
-rules in one grammar were in case-folding syntax (e.g., "TRUE: [tT][rR][uU][eE];"),
-while the other grammar where not (e.g., "TRUE: 'true';"). After
-playing around with the 'ulliteral' transform, I realized that it was not working well,
-so that needed fixing. In addition, there was no inverve of the transform--which is
-very useful because Antlr warns if a grammar
-contains two lexer rules that match the same string literal, but not if one grammar
-is imported by the other, and not if the lexer rule is in case-folding syntax. I added
-'unulliteral' for these situations.
-
-Probably the most exciting change to Trash is the introduction of pipes between commands,
-similar to what you would see in Bash. Instead of passing a plain character buffer between
-commands, though, I pass parse trees. So, you can do something like this
-
-    read Expr.g4
-    parse
-    . | find //lexerRuleSpec/TOKEN_REF | text
-
-to print out the lexer rule symbols.
-
-* Fix ["alias w=write" does not work #105](https://github.com/kaby76/AntlrVSIX/issues/105)
-* Fix ["cd .." does not work #104](https://github.com/kaby76/AntlrVSIX/issues/104)
-* Fix [Ulliteral should be able to handle non-uppercase and non-lowercase characters like '_' #103](https://github.com/kaby76/AntlrVSIX/issues/103)
-* Partial fix [Antlr produces a warning for token rules that match the same string literal, but not for u/l cased defs #102](https://github.com/kaby76/AntlrVSIX/issues/102)
-* Fix [ulliteral of a string with numbers gives sets with dups e.g., "2" => "[22]" #101](https://github.com/kaby76/AntlrVSIX/issues/101)
-* Fix [Trash "foldlit //lexerRuleSpec/TOKEN_REF" really slow for PlSqlParser/Lexer.g4 #100](https://github.com/kaby76/AntlrVSIX/issues/100)
-* Fix [Trash crashes if given eof, in script not given "quit" command #98](https://github.com/kaby76/AntlrVSIX/issues/98)
-* Fix [Links to User Guide and Documentation are broken #97](https://github.com/kaby76/AntlrVSIX/issues/97)
-* Fix [Performance Problems #96](https://github.com/kaby76/AntlrVSIX/issues/96)
-
 ## Planned for v8.3 (Mid Nov 2020)
 
 * Add Intellij plugin.
@@ -251,6 +239,22 @@ to print out the lexer rule symbols.
 * Rebrand.
 * Add flexible parser to read any grammar.
 * Add AST for grammars. Rewrite all with ASTs for syntax-independent code.
+
+
+## Alternatives
+
+Mike Lischke's
+[vscode-antlr4](https://github.com/mike-lischke/vscode-antlr4) is a good tool for VSCode for Antlr grammars, which
+you may prefer. However, Antlrvsix contains
+a command-line tool that can be used to automate transformations on an
+Antlr grammar, or want to quickly run a parser over a grammar file and
+use XPath to query items in the parse tree. There is no tool like it, and it is quite powerful.
+
+If you are just building and running an Antlr application and don't care about
+editing features (i.e., you don't care for highlighting the grammar, go to def, etc.),
+then you just use [Antlr4BuildTasks](https://github.com/kaby76/Antlr4BuildTasks). Antlr4BuildTasks
+is a replacement of [Antlr4cs](https://github.com/tunnelvisionlabs/antlr4cs) and the
+build tool contained in that library. The Antlr4cs is several versions behind the latest Antlr release.
 
 
 Any questions, email me at ken.domino <at> gmail.com
