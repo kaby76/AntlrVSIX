@@ -71,25 +71,36 @@ from Appveyor.
 This release addresses bug and performance issues in Antlrvsix.
 
 Most of the bugs had to do with commands in Trash.
-In the command-line interpreter, I wrote a special Antlr stream that just
-didn't work all that well. So, with this release, I decided to rewrite this code.
-The command-line input now occurs in two passes: the first pass just reads a line of text
-until the end-of-line or end-of-file; the second pass parses the line of text
-with an Antlr parser using a much simplified grammar. This impacts most commands,
-such as alias, cd, ls, etc. Also, in several commands 
-that allowed 'file globbing', it was not very good.
+In the command-line interpreter, I wrote two special Antlr streams that were very buggy.
+With this release, I rewrote this code to parse input
+in two steps: the first step reads a line of text
+until the end-of-line or end-of-file; the second step parses the line of text
+with an Antlr parser using a simplified grammar (it no longer considers whitespace in
+the parser grammar, and the lexer uses modes). This impacts most commands,
+such as alias, cd, ls, etc.
+
+In several commands in Trash, I allowed [file globbing](https://en.wikipedia.org/wiki/Glob_(programming)),
+e.g., "ls *.g4".
+However, I was never happy with the implementation becuase it was not very good.
 The globbing code was a thin
 layer over Microsoft's basic FileInfo and DirectoryInfo APIs,
-which offers pattern matching of file names,
-but it is really limited. I replaced this code with a nice Unix Bash-like globbing library
-I wrote. File and directory names are now case sensitive.
+which does a poor job at file pattern matching (e.g., you can't say something like 'ls *Lex*.g4',
+which has two asterisks).
+I replaced this code with a nice Unix Bash-like globbing library
+[I wrote](https://github.com/kaby76/AntlrVSIX/blob/4f54c980ae91cc32d32342c3a8d973b79aca925a/Trash/Globbing.cs).
+File and directory names, however, are now case sensitive because the file names should be
+more like Linux. In fact, I wrote [some code](https://github.com/kaby76/AntlrVSIX/blob/5fba2752ea797de42896511d2fc9b4d4bc792c7c/Workspaces/Document.cs#L77)
+long ago that takes great effort to mutate a name
+that is in the wrong case to the proper case. It should not even be there because
+Windows should not be allowing the user to enter file names with the wrong case.
+It is not portable.
 
 Recently, I had a task to merge a couple of large Antlr grammars.
 Some of the keyword
 rules in one grammar were in case-folding syntax (e.g., "TRUE: [tT][rR][uU][eE];"),
-while the other grammar where not (e.g., "TRUE: 'true';"). After
-playing around with the 'ulliteral' transform, I realized that it was not working well,
-so that needed fixing. In addition, there was no inverve of the transform--which is
+while in the other grammar the rules were not (e.g., "TRUE: 'true';"). After
+playing around with the 'ulliteral' transform, I realized that it was not working all that well.
+In addition, there was no inverse of the transform--which is
 very useful because Antlr warns if a grammar
 contains two lexer rules that match the same string literal, but not if one grammar
 is imported by the other, and not if the lexer rule is in case-folding syntax. I added
