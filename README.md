@@ -240,6 +240,8 @@ See [this guide](https://github.com/kaby76/AntlrVSIX/blob/master/PriorReleases.m
 
 ## Planned for v8.3 (Mid Nov 2020)
 
+* Add tests for Trash.
+* Fix prompt and echo for Trash.
 * Add Intellij plugin.
 * Add existing transforms not in Trash to Trash. Make sure they work.
 * Add expression rule optimization. Verify that this works with Java.
