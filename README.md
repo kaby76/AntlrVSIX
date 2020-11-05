@@ -81,7 +81,7 @@ such as alias, cd, ls, etc.
 
 In several commands in Trash, I allowed [file globbing](https://en.wikipedia.org/wiki/Glob_(programming)),
 e.g., "ls *.g4".
-However, I was never happy with the implementation becuase it was not very good.
+However, I was never happy with the implementation because it was not very good.
 The globbing code was a thin
 layer over Microsoft's basic FileInfo and DirectoryInfo APIs,
 which does a poor job at file pattern matching (e.g., you can't say something like 'ls *Lex*.g4',
