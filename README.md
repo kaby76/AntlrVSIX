@@ -58,6 +58,8 @@ For Emacs, you will need to follow the instructions [here](https://github.com/ka
 
 ## Nightly build
 
+[![Build status](https://ci.appveyor.com/api/projects/status/ekyhff3c28p5qgox?svg=true)](https://ci.appveyor.com/project/kaby76/antlrvsix)
+
 Each night at 0h 0m UTC, Appveyor builds the latest source. The output of the build can be downloaded
 from Appveyor.
 
@@ -198,8 +200,6 @@ The source code for the extension is open source, free of charge, and free of ad
 check out my [blog](http://codinggorilla.com).
 
 # Building Antlrvsix
-
-[![Build status](https://ci.appveyor.com/api/projects/status/ekyhff3c28p5qgox?svg=true)](https://ci.appveyor.com/project/kaby76/antlrvsix)
 
 * From a clean "git" root directory, open a "Developer command prompt", and execute:
   * msbuild /t:restore
