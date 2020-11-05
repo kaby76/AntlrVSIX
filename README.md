@@ -52,6 +52,9 @@ and edit the grammar in VSCode due to VS2019 not directly supporting LSP semanti
 For Visual Studio Code, visit the [Visual Studio Marketplace for VSCode for Antlrvsix](https://marketplace.visualstudio.com/items?itemName=KenDomino.Antlrvsix-vscode). Download and install the the .vsix file. NB: the vsix file between VS2019 and VSCode are
 not the same files.
 
+Note, to get semantic highlighting of grammar symbols, you need to make sure to pick a color theme that has them,
+such as "Light+", "Dark+", etc., and make sure the setting "File > Settings > Text Editor > Semantic Highlighting: Enabled, true". If you just start out with VSCode, you get nothing.
+
 ## GNU Emacs
 
 For Emacs, you will need to follow the instructions [here](https://github.com/kaby76/AntlrVSIX/tree/master/Emacs).
