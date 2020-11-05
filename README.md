@@ -67,7 +67,7 @@ Each night at 0h 0m UTC, Appveyor builds the latest source. The output of the bu
 from Appveyor.
 
 * [Antlrvsix for VS2019](https://ci.appveyor.com/api/projects/kaby76/antlrvsix/artifacts/VsIde/bin/Debug/AntlrVSIX.vsix)
-* [Antlrvsix for VSCode](https://ci.appveyor.com/api/projects/kaby76/antlrvsix/artifacts/VsCode/Antlrvsix-vscode-1.1.0.vsix)
+* [Antlrvsix for VSCode](https://ci.appveyor.com/api/projects/kaby76/antlrvsix/artifacts/VsCode/Antlrvsix-vscode-1.2.0.vsix)
 
 ## Current release v8.2 VSIDE, v1.1 VSCode (5 Nov 2020)
 
