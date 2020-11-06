@@ -39,13 +39,20 @@
                 if (inter != null)
                     foreach (var t in inter)
                     {
+                        var ty = tok.Symbol.Type;
+                        var name = lexer.Vocabulary.GetSymbolicName(ty);
                         StartLine(sb, level);
-                        sb.AppendLine("( " + lexer.ChannelNames[t.Channel] + " text=" + PerformEscapes(t.Text));
+                        sb.AppendLine("( " + name + " text=" + PerformEscapes(t.Text) + " " + lexer.ChannelNames[t.Channel]);
                     }
-                StartLine(sb, level);
-                sb.AppendLine("( " + lexer.ChannelNames[tok.Symbol.Channel] + " i=" + tree.SourceInterval.a
-                    + " txt=" + PerformEscapes(tree.GetText())
-                    + " tt=" + tok.Symbol.Type);
+                {
+                    var ty = tok.Symbol.Type;
+                    var name = lexer.Vocabulary.GetSymbolicName(ty);
+                    StartLine(sb, level);
+                    sb.AppendLine("( " + name  + " i=" + tree.SourceInterval.a
+                        + " txt=" + PerformEscapes(tree.GetText())
+                        + " tt=" + tok.Symbol.Type
+                        + " " + lexer.ChannelNames[tok.Symbol.Channel]);
+                }
             }
             else
             {
