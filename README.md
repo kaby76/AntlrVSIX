@@ -100,9 +100,10 @@ It is not portable.
 
 Recently, I had a task to merge a couple of large Antlr grammars.
 Some of the keyword
-rules in one grammar were in case-folding syntax (e.g., "TRUE: [tT][rR][uU][eE];"),
-while in the other grammar the rules were not (e.g., "TRUE: 'true';"). After
-playing around with the 'ulliteral' transform, I realized that it was not working all that well.
+rules in one grammar were in case-folding syntax (e.g., `TRUE: [tT][rR][uU][eE];`),
+while in the other grammar the rules were not (e.g., `TRUE: 'true';`). After
+playing around with the [ulliteral transform](https://github.com/kaby76/AntlrVSIX/blob/master/doc-8.2/refactoring.md#upper-and-lower-case-string-literals),
+I realized that it was not working all that well.
 In addition, there was no inverse of the transform--which is
 very useful because Antlr warns if a grammar
 contains two lexer rules that match the same string literal, but not if one grammar
