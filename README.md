@@ -117,7 +117,9 @@ commands, though, I pass parse trees. So, you can do something like this
     parse
     . | find //lexerRuleSpec/TOKEN_REF | text
 
-to print out the lexer rule symbols.
+to print out the lexer rule symbols. But, I have more things planned for the next few months.
+
+The complete list of bugs fixed in this release are:
 
 * Fix ["alias w=write" does not work #105](https://github.com/kaby76/AntlrVSIX/issues/105)
 * Fix ["cd .." does not work #104](https://github.com/kaby76/AntlrVSIX/issues/104)
