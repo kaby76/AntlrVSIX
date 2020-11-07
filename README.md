@@ -83,12 +83,12 @@ the parser grammar, and the lexer uses modes). This impacts most commands,
 such as alias, cd, ls, etc.
 
 In several commands in Trash, I allowed [file globbing](https://en.wikipedia.org/wiki/Glob_(programming)),
-e.g., "ls \*.g4".
+e.g., `ls \*.g4`.
 However, I was never happy with the implementation because it was not very good.
 The globbing code was a thin
 layer over Microsoft's basic FileInfo and DirectoryInfo APIs,
-which does a poor job at file pattern matching (e.g., you could not write 'ls \*Lex\*.g4',
-which has two asterisks, but it would for 'ls \*Lexer.g4').
+which does a poor job at file pattern matching (e.g., you could not write `ls \*Lex\*.g4`,
+which has two asterisks, but you could for `ls \*Lexer.g4`).
 I replaced this code with a nice Unix Bash-like globbing library
 [I wrote](https://github.com/kaby76/AntlrVSIX/blob/4f54c980ae91cc32d32342c3a8d973b79aca925a/Trash/Globbing.cs).
 File and directory names, however, are now case sensitive because the file names should be
