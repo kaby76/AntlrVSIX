@@ -6,8 +6,8 @@ extensions for Visual Studio 2019, Visual Studio Code, Gnu Emacs,
 a [Language Server Protocol (LSP)](https://langserver.org/) server,
 and a stand-alone command-line tool known as [Trash](https://github.com/kaby76/AntlrVSIX/blob/master/doc/Trash.md).
 Trash is analogous to
-[Bash](https://en.wikipedia.org/wiki/Bash_(Unix_shell)) in Linux
-but for parsing, using the lingua-franca of parse trees and XPath.
+[Bash](https://en.wikipedia.org/wiki/Bash_(Unix_shell))
+but for parsing, in the lingua-franca of parsing: parse trees and XPath.
 All clients use the LSP server implemented in this repository. The
 clients each are implemented elsewhere, but a thin shim is provided in this
 repository to get the client to work with the server.
