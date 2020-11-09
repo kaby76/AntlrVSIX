@@ -79,24 +79,23 @@ With this release, I rewrote this code to parse input
 in two steps: the first step reads a line of text
 until the end-of-line or end-of-file; the second step parses the line of text
 with an Antlr parser using a simplified grammar (it no longer considers whitespace in
-the parser grammar, and the lexer uses modes). This impacts most commands,
-such as alias, cd, ls, etc.
+the parser grammar, and the lexer uses modes).
 
-In several commands in Trash, I allowed [file globbing](https://en.wikipedia.org/wiki/Glob_(programming)),
+For several commands in Trash, I supported
+[file globbing](https://en.wikipedia.org/wiki/Glob_(programming)),
 e.g., `ls *.g4`.
 However, I was never happy with the implementation because it was not very good.
 The globbing code was a thin
 layer over Microsoft's basic FileInfo and DirectoryInfo APIs,
-which does a poor job at file pattern matching (e.g., you could not write `ls *Lex*.g4`,
-which has two asterisks, but you could for `ls *Lexer.g4`).
-I replaced this code with a nice Unix Bash-like globbing library
+which does a poor job at file pattern matching (e.g., one could not write `ls *Lex*.g4`,
+which has two asterisks, but one could for `ls *Lexer.g4`).
+I replaced this code with a Bash-like globbing library that
 [I wrote](https://github.com/kaby76/AntlrVSIX/blob/4f54c980ae91cc32d32342c3a8d973b79aca925a/Trash/Globbing.cs).
 File and directory names, however, are now case sensitive because the file names should be
-more like Linux. In fact, I wrote [some code](https://github.com/kaby76/AntlrVSIX/blob/5fba2752ea797de42896511d2fc9b4d4bc792c7c/Workspaces/Document.cs#L77)
+more like Linux, since this tool is intended to be platform independent. In fact, I wrote [code](https://github.com/kaby76/AntlrVSIX/blob/5fba2752ea797de42896511d2fc9b4d4bc792c7c/Workspaces/Document.cs#L77)
 long ago that takes great effort to mutate a name
-that is in the wrong case to the proper case. It should not even be there because
-Windows should not be allowing the user to enter file names with the wrong case.
-It is not portable.
+that is in the wrong case to the proper case. It should not even be there because it continues
+a non-portable feature. You will need to use the correct case for all file names.
 
 Recently, I had a task to merge a couple of large Antlr grammars.
 Some of the keyword
