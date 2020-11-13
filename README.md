@@ -240,10 +240,10 @@ See [this guide](https://github.com/kaby76/AntlrVSIX/blob/master/PriorReleases.m
 
 # Roadmap
 
-## Planned for v8.3 (Mid Nov 2020)
+## Planned for v8.3 (End Nov 2020)
 
 * Add tests for Trash.
-* Fix prompt and echo for Trash.
+* Replace in-process Trash with out-process tools.
 * Add Intellij plugin.
 * Add existing transforms not in Trash to Trash. Make sure they work.
 * Add expression rule optimization. Verify that this works with Java.
@@ -254,10 +254,10 @@ See [this guide](https://github.com/kaby76/AntlrVSIX/blob/master/PriorReleases.m
 
 ## Planned for v9 (end Dec 2020)
 
-* Rebrand.
-* Add flexible parser to read any grammar.
+* Add website-based Trash.
 * Add AST for grammars. Rewrite all with ASTs for syntax-independent code.
-
+* Add flexible parser to read any grammar.
+* Rebrand.
 
 ## Alternatives
 
