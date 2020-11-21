@@ -28,9 +28,9 @@
 
 using System;
 
-namespace Trash
+namespace Algorithms
 {
-	internal static class MyTuple
+	public static class MyTuple
 	{
 		public static MyTuple<T1, T2, T3, T4, T5, T6, T7, MyTuple<T8>> Create<T1, T2, T3, T4, T5, T6, T7, T8>
 			(
