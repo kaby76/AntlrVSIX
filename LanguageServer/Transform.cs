@@ -1179,9 +1179,12 @@
             {
                 var first = reorder.First();
                 var rule = first as ANTLRv4Parser.ParserRuleSpecContext;
-                var rs = rule.Parent as ANTLRv4Parser.RuleSpecContext;
-                rules = rs.Parent as ANTLRv4Parser.RulesContext;
-                rules.children = reorder.Select(t => t.Parent).ToArray();
+                if (rule != null)
+                {
+                    var rs = rule.Parent as ANTLRv4Parser.RuleSpecContext;
+                    rules = rs.Parent as ANTLRv4Parser.RulesContext;
+                    rules.children = reorder.Select(t => t.Parent).ToArray();
+                }
             }
 
             StringBuilder sb = new StringBuilder();
