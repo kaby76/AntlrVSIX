@@ -299,18 +299,22 @@ namespace Algorithms
 
 		public T1 Item1 {
 			get { return item1; }
-		}
+            set { item1 = value; }
+        }
 
 		public T2 Item2 {
 			get { return item2; }
+            set { item2 = value; }
 		}
 
 		public T3 Item3 {
 			get { return item3; }
+            set { item3 = value; }
 		}
 
 		public T4 Item4 {
 			get { return item4; }
+            set { item4 = value; }
 		}
 
 		int IComparable.CompareTo (object obj)
