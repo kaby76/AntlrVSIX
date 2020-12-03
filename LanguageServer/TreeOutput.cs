@@ -14,16 +14,16 @@
         private static int changed = 0;
         private static bool first_time = true;
 
-        public static StringBuilder OutputTree(IParseTree tree, Lexer lexer, CommonTokenStream stream)
+        public static StringBuilder OutputTree(IParseTree tree, Lexer lexer, Parser parser, CommonTokenStream stream)
         {
             changed = 0;
             first_time = true;
             var sb = new StringBuilder();
-            ParenthesizedAST(tree, sb, lexer, stream);
+            ParenthesizedAST(tree, sb, lexer, parser, stream);
             return sb;
         }
 
-        private static void ParenthesizedAST(IParseTree tree, StringBuilder sb, Lexer lexer, CommonTokenStream stream, int level = 0)
+        private static void ParenthesizedAST(IParseTree tree, StringBuilder sb, Lexer lexer, Parser parser, CommonTokenStream stream, int level = 0)
         {
             // Antlr always names a non-terminal with first letter lowercase,
             // but renames it when creating the type in C#. So, remove the prefix,
@@ -56,20 +56,17 @@
             }
             else
             {
-                var fixed_name = tree.GetType().ToString()
-                    .Replace("Antlr4.Runtime.Tree.", "");
-                fixed_name = Regex.Replace(fixed_name, "^.*[+]", "");
-                fixed_name = fixed_name.Substring(0, fixed_name.Length - "Context".Length);
-                fixed_name = fixed_name[0].ToString().ToLower()
-                             + fixed_name.Substring(1);
+                var x = tree as RuleContext;
+                var ri = x.RuleIndex;
+                var name = parser.RuleNames[ri];
                 StartLine(sb, level);
-                sb.Append("( " + fixed_name);
+                sb.Append("( " + name);
                 sb.AppendLine();
             }
             for (int i = 0; i < tree.ChildCount; ++i)
             {
                 var c = tree.GetChild(i);
-                ParenthesizedAST(c, sb, lexer, stream, level + 1);
+                ParenthesizedAST(c, sb, lexer, parser, stream, level + 1);
             }
             if (level == 0)
             {
