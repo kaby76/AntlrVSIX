@@ -158,7 +158,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AntlrTreeEditing" Version="2.0" />
+    <PackageReference Include="AntlrTreeEditing" Version="2.1" />
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.0.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp">
       <Version>3.7.0</Version>
