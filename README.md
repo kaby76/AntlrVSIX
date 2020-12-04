@@ -240,24 +240,31 @@ See [this guide](https://github.com/kaby76/AntlrVSIX/blob/master/PriorReleases.m
 
 # Roadmap
 
-## Planned for v8.3 (End Nov 2020)
+## Planned for v8.3 (mid Dec 2020)
 
 * Add tests for Trash.
-* Replace in-process Trash with out-process tools.
+* Part one of replacing in-process Trash with out-process tools: fast parse information passing.
+* Add grammar diff.
+* Add ISO 14977 EBNF.
+* [Include fix of Antlrv4parser.g4 grammar](https://github.com/antlr/grammars-v4/issues/1956)
+* [Fix Update to NET 5! #110](https://github.com/kaby76/AntlrVSIX/issues/110)
+* [Fix There should be a graph output command in Trash #108](https://github.com/kaby76/AntlrVSIX/issues/108)
+* [Fix TreeOutput.OutputTree should output tokens in similar format to parse tree nodes #107](https://github.com/kaby76/AntlrVSIX/issues/107)
+* [Fix "Find" should be renamed "XGrep" in Trash #106](https://github.com/kaby76/AntlrVSIX/issues/106)
+
+## Planned for v9 (end Dec 2020)
+
+* Part two of replacing in-process Trash with out-process tools: replace commands with out-of-process programs.
 * Add Intellij plugin.
 * Add existing transforms not in Trash to Trash. Make sure they work.
 * Add expression rule optimization. Verify that this works with Java.
 * Add left factoring and inverse? Not sure, as Unify is a superset of left factoring.
 * Add in empty string alternative hoist transforms.
-* Add grammar diff, think about 3-way grammar merge.
-* Add ISO 14977 EBNF.
-
-## Planned for v9 (end Dec 2020)
-
 * Add website-based Trash.
 * Add AST for grammars. Rewrite all with ASTs for syntax-independent code.
 * Add flexible parser to read any grammar.
-* Rebrand.
+* Partition Trash from Antlrvsix completely.
+* 3-way grammar merge.
 
 ## Alternatives
 
