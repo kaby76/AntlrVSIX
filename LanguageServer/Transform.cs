@@ -250,11 +250,14 @@
                 trees = ReadCsharpSource(document);
             }
 
-            public void ReadRules()
+            public TableOfRules() { }
+
+            public void ReadRules(IParseTree tree = null)
             {
+                tree = tree == null ? pd_parser.ParseTree : tree;
                 // Get rules, lhs, rhs.
                 listener = new ExtractRules();
-                ParseTreeWalker.Default.Walk(listener, pd_parser.ParseTree);
+                ParseTreeWalker.Default.Walk(listener, tree);
                 List<ITerminalNode> nonterminals = listener.LhsSymbol;
                 Dictionary<ITerminalNode, List<ITerminalNode>> rhs = listener.RhsSymbols;
                 for (int i = 0; i < listener.Rules.Count; ++i)
