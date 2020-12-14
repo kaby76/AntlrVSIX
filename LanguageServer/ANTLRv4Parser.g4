@@ -238,12 +238,12 @@ lexerAltList
 
 lexerAlt
    : lexerElements lexerCommands?
-   |
-   // explicitly allow empty alts
+   | // empty alt
    ;
 
 lexerElements
    : lexerElement+
+   | // empty alt
    ;
 
 lexerElement
