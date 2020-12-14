@@ -24,6 +24,16 @@ The extension for VS Code is written in Typescript.
 Supported are colorized tagging, hover, go to def, find all refs,
 replace, and reformat. Beyond the basic LSP commands, the tool supports
 analysis, refactoring, and conversion.
+__NB: Antlrvsix for Visual Studio 2019 v8.3 will not offer semantic highlighting
+by default because the [MS LSP client in VS2019](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Client/)
+does not support semantic highlighting. In fact,
+it is 3 years behind the protocol. In order to support it for VSCode,
+I had to rewrite the entire [language server protocol library](https://www.nuget.org/packages/Microsoft.VisualStudio.LanguageServer.Protocol/)
+(replacement [here](https://www.nuget.org/packages/LspTypes/))--in a week--in order to bring
+it up to date. MS is too slow. If you want semantic highlighting, you can turn on the feature
+in the Antlrvsix options. Or, better, you could edit your grammar file using VSCode with Antlrvsix-vscode
+or Mike's vscode-antlr extension for VSCode. This problem will be addressed in
+release v8.4 or v9.0.__
 
 ## Supported grammars and features
 
