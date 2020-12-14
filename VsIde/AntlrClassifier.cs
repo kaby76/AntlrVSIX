@@ -34,6 +34,10 @@
         public IEnumerable<ITagSpan<ClassificationTag>> GetTags(NormalizedSnapshotSpanCollection spans)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
+            if (!Options.Option.GetBoolean("SemanticHighlighting"))
+            {
+                yield break;
+            }
             // Checks to partially fix https://github.com/kaby76/AntlrVSIX/issues/31#.
             string ffn = _buffer.GetFFN();
             if (ffn == null)

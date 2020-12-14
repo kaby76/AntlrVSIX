@@ -16,6 +16,7 @@
             {"OverrideAntlrPluggins", true },
             {"OptInLogging", false },
             {"CorpusLocation", CorpusLocation },
+            {"SemanticHighlighting", false },
             {"AntlrNonterminalDef", "type" },
             {"AntlrNonterminalRef", "symbol definition" },
             {"AntlrTerminalDef", "type" },

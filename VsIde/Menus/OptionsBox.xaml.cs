@@ -1,32 +1,12 @@
 ﻿namespace LspAntlr
 {
-    using Options;
-    using System.Windows;
-    using System.Linq;
-    using System.Collections.Generic;
-    using LanguageServer;
     using Microsoft.VisualStudio.ComponentModelHost;
-    using Microsoft.VisualStudio.Editor;
-    using Microsoft.VisualStudio.LanguageServer.Client;
-    using Microsoft.VisualStudio.LanguageServer.Protocol;
     using Microsoft.VisualStudio.Shell;
-    using Microsoft.VisualStudio.Shell.Interop;
-    using Microsoft.VisualStudio.Threading;
-    using Microsoft.VisualStudio.Utilities;
-    using StreamJsonRpc;
-    using System;
-    using System.ComponentModel.Composition;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Runtime.InteropServices;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Microsoft.VisualStudio.PlatformUI;
-    using Microsoft.VisualStudio.Text;
     using Microsoft.VisualStudio.Text.Classification;
-    using Microsoft.VisualStudio.Text.Tagging;
-    using Color = System.Drawing.Color;
-    using Task = System.Threading.Tasks.Task;
+    using Options;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Media;
 
@@ -43,6 +23,7 @@
             override_antlr.IsChecked = Option.GetBoolean("OverrideAntlrPluggins");
             opt_in_reporting.IsChecked = Option.GetBoolean("OptInLogging");
             enable_completion.IsChecked = Option.GetBoolean("EnableCompletion");
+            semantic_highlighting.IsChecked = Option.GetBoolean("SemanticHighlighting");
 
             // Get list of all equivalence classes from VS.
             IComponentModel componentModel = Package.GetGlobalService(typeof(SComponentModel)) as IComponentModel;
@@ -202,6 +183,7 @@
             Option.SetBoolean("OverrideAntlrPluggins", inputDialog.override_antlr.IsChecked ?? false);
             Option.SetBoolean("OptInLogging", inputDialog.opt_in_reporting.IsChecked ?? false);
             Option.SetBoolean("EnableCompletion", inputDialog.enable_completion.IsChecked ?? false);
+            Option.SetBoolean("SemanticHighlighting", inputDialog.semantic_highlighting.IsChecked ?? false);
 
             Option.SetString("AntlrNonterminalDef", inputDialog.nonterminal_def_color.Text);
             Option.SetString("AntlrNonterminalRef", inputDialog.nonterminal_ref_color.Text);

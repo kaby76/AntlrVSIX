@@ -102,7 +102,7 @@
                 string f = System.IO.Path.GetFullPath(a.Location);
                 string p = System.IO.Path.GetDirectoryName(f);
                 string antlr_executable = p + System.IO.Path.DirectorySeparatorChar
-                                         + @"Server\netcoreapp3.1\Server.exe";
+                                         + @"Server\net5.0\Server.exe";
                 string workspace_path = cache_location;
                 if (string.IsNullOrEmpty(workspace_path))
                 {

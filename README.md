@@ -246,6 +246,7 @@ See [this guide](https://github.com/kaby76/AntlrVSIX/blob/master/PriorReleases.m
 * Part one of replacing in-process Trash with out-process tools: fast parse information passing.
 * Add grammar diff.
 * Add ISO 14977 EBNF.
+* [Turn off semantic highlighting for VS2019 Antlrvsix #114](https://github.com/kaby76/AntlrVSIX/issues/114)
 * [Include fix of Antlrv4parser.g4 grammar](https://github.com/antlr/grammars-v4/issues/1956)
 * [Fix Update to NET 5! #110](https://github.com/kaby76/AntlrVSIX/issues/110)
 * [Fix There should be a graph output command in Trash #108](https://github.com/kaby76/AntlrVSIX/issues/108)
