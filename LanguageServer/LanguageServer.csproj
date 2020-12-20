@@ -43,7 +43,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Antlr4.Runtime.Standard" Version="4.9" />
-		<PackageReference Include="Antlr4BuildTasks" Version="8.8" />
+		<PackageReference Include="Antlr4BuildTasks" Version="8.9" />
 		<PackageReference Include="AntlrTreeEditing" Version="2.1" />
 		<PackageReference Include="cs-codebuff" Version="3.0.0" />
 		<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.7.0" />
