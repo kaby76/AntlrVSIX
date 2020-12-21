@@ -12,11 +12,11 @@ namespace ZhangShashaCSharp
 		public Node root;
 		public Dictionary<int, Node> all_nodes = new Dictionary<int, Node>();
 		// function l() which gives the leftmost leaf for a given node (identified by post-order number).
-		public List<int> l = new List<int>();
+		Dictionary<int, int> ll = new Dictionary<int, int>();
 		// list of keyroots for a tree root, i.e., nodes with a left sibling, or in the case of the root, the root itself.
-		public List<int> keyroots = new List<int>();
+		List<int> keyroots = new List<int>();
 		// list of the labels of the nodes used for node comparison
-		public List<string> labels = new List<string>();
+		Dictionary<int, string> labels = new Dictionary<int, string>();
 		public Dictionary<Node, IParseTree> antlr_nodes = new Dictionary<Node, IParseTree>();
 
 		// the following constructor handles s-expression notation. E.g., ( f a ( b c ) )
@@ -52,13 +52,13 @@ namespace ZhangShashaCSharp
 			Traverse(root, labels);
 		}
 
-		private static List<string> Traverse(Node node, List<string> labels)
+		private static Dictionary<int, string> Traverse(Node node, Dictionary<int, string> labels)
 		{
 			for (int i = 0; i < node.children.Count; i++)
 			{
 				labels = Traverse(node.children[i], labels);
 			}
-			labels.Add(node.label);
+			labels.Add(node.postorder_number, node.label);
 			return labels;
 		}
 
@@ -84,16 +84,17 @@ namespace ZhangShashaCSharp
 		{
 			// put together a function which gives l()
 			Leftmost();
-			l = ComputeLeftMostLeaf(root, new List<int>());
+			var z = new Dictionary<int, int>();
+			ll = ComputeLeftMostLeaf(root, z);
 		}
 
-		private List<int> ComputeLeftMostLeaf(Node node, List<int> l)
+		private Dictionary<int, int> ComputeLeftMostLeaf(Node node, Dictionary<int, int> l)
 		{
 			for (int i = 0; i < node.children.Count; i++)
 			{
 				l = ComputeLeftMostLeaf(node.children[i], l);
 			}
-			l.Add(node.leftmost.postorder_number);
+			l.Add(node.postorder_number, node.leftmost.postorder_number);
 			return l;
 		}
 
@@ -123,19 +124,19 @@ namespace ZhangShashaCSharp
 		public void Keyroots()
 		{
 			// calculate the keyroots
-			for (int i = 0; i < l.Count; i++)
+			for (int i = 1; i <= ll.Count; i++)
 			{
 				int flag = 0;
-				for (int j = i + 1; j < l.Count; j++)
+				for (int j = i + 1; j <= ll.Count; j++)
 				{
-					if (l[j] == l[i])
+					if (ll[j] == ll[i])
 					{
 						flag = 1;
 					}
 				}
 				if (flag == 0)
 				{
-					this.keyroots.Add(i + 1);
+					this.keyroots.Add(i);
 				}
 			}
 		}
@@ -155,38 +156,38 @@ namespace ZhangShashaCSharp
 			tree2.Keyroots();
 			tree2.Traverse();
 
-			List<int> l1 = tree1.l;
+			Dictionary<int, int> l1 = tree1.ll;
 			List<int> keyroots1 = tree1.keyroots;
-			List<int> l2 = tree2.l;
+			Dictionary<int, int> l2 = tree2.ll;
 			List<int> keyroots2 = tree2.keyroots;
 
 			// space complexity of the algorithm
 			tree_distance = new int[l1.Count + 1, l2.Count + 1];
 			tree_operations = new List<Operation>[l1.Count + 1, l2.Count + 1];
-			for (int m = 0; m < l1.Count + 1; ++m)
-				for (int n = 0; n < l2.Count + 1; ++n)
+			for (int m = 0; m <= l1.Count; ++m)
+				for (int n = 0; n <= l2.Count; ++n)
 					tree_operations[m, n] = new List<Operation>();
 
 			// solve subproblems
-			for (int i1 = 1; i1 < keyroots1.Count + 1; i1++)
+			for (int i1 = 1; i1 <= keyroots1.Count; i1++)
 			{
-				for (int j1 = 1; j1 < keyroots2.Count + 1; j1++)
+				for (int j1 = 1; j1 <= keyroots2.Count; j1++)
 				{
 					int i = keyroots1[i1 - 1];
 					int j = keyroots2[j1 - 1];
-					(tree_distance[i, j], tree_operations[i, j]) = Treedist(l1, l2, i, j, tree1, tree2);
+					Treedist(l1, l2, i, j, tree1, tree2);
 				}
 			}
 
 			return (tree_distance[l1.Count, l2.Count], tree_operations[l1.Count, l2.Count]);
 		}
 
-		private static (int, List<Operation>) Treedist(List<int> l1, List<int> l2, int i, int j, Tree tree1, Tree tree2)
+		private static void Treedist(Dictionary<int, int> l1, Dictionary<int, int> l2, int i, int j, Tree tree1, Tree tree2)
 		{
-			int[,] forest_distance = new int[i + 1, j + 1];
-			List<Operation>[,] forest_operations = new List<Operation>[i + 1, j + 1];
-			for (int m = 0; m < i + 1; ++m)
-				for (int n = 0; n < j + 1; ++n)
+			int[,] forest_distance = new int[l1.Count + 1, l2.Count + 1];
+			List<Operation>[,] forest_operations = new List<Operation>[l1.Count + 1, l2.Count + 1];
+			for (int m = 0; m < l1.Count + 1; ++m)
+				for (int n = 0; n < l2.Count + 1; ++n)
 					forest_operations[m, n] = new List<Operation>();
 
 			// costs of the three atomic operations
@@ -194,130 +195,124 @@ namespace ZhangShashaCSharp
 			int Insert = 1;
 			int Relabel = 1;
 
-			forest_distance[0, 0] = 0;
-			forest_distance[l1[i - 1] - 1, 0] = 0;
-			forest_distance[0, l2[j - 1] - 1] = 0;
-
-			for (int i1 = l1[i - 1]; i1 <= i; i1++)
+			for (int i1 = l1[i]; i1 <= i; i1++)
 			{
 				forest_distance[i1, 0] = forest_distance[i1 - 1, 0] + Delete;
 				forest_operations[i1, 0] = new List<Operation>(forest_operations[i1 - 1, 0]);
-				forest_operations[i1, 0].Add(new Operation() { O = Operation.Op.Delete, N1 = i1 + 1});
+				forest_operations[i1, 0].Add(new Operation() { O = Operation.Op.Delete, N1 = i1});
 			}
-			for (int j1 = l2[j - 1]; j1 <= j; j1++)
+			for (int j1 = l2[j]; j1 <= j; j1++)
 			{
 				forest_distance[0, j1] = forest_distance[0, j1 - 1] + Insert;
 				forest_operations[0, j1] = new List<Operation>(forest_operations[0, j1 - 1]);
-				forest_operations[0, j1].Add(new Operation() { O = Operation.Op.Insert, N2 = j1 + 1});
+				forest_operations[0, j1].Add(new Operation() { O = Operation.Op.Insert, N2 = j1});
 			}
-			for (int i1 = l1[i - 1]; i1 <= i; i1++)
+			for (int i1 = l1[i]; i1 <= i; i1++)
 			{
-				for (int j1 = l2[j - 1]; j1 <= j; j1++)
+				for (int j1 = l2[j]; j1 <= j; j1++)
 				{
-					int i_temp = (l1[i - 1] > i1 - 1) ? 0 : i1 - 1;
-					int j_temp = (l2[j - 1] > j1 - 1) ? 0 : j1 - 1;
-					if ((l1[i1 - 1] == l1[i - 1]) && (l2[j1 - 1] == l2[j - 1]))
+					if (l1[i1] == l1[i] && l2[j1] == l2[j])
 					{
-						int Cost = (tree1.labels[i1 - 1].Equals(tree2.labels[j1 - 1])) ? 0 : Relabel;
-						
-						int test1;
-						List<Operation> list1;
-						if (forest_distance[i_temp, j1] + Delete > forest_distance[i1, j_temp] + Insert)
-                        {
-							test1 = forest_distance[i1, j_temp] + Insert;
-							list1 = new List<Operation>(forest_operations[i1, j_temp]);
-							list1.Add(new Operation() { O = Operation.Op.Insert, N2 = j_temp + 1 });
-							if (list1.Count != test1) throw new Exception();
+						var z = i1 - 1 < l1[i] ? 0 : i1 - 1;
+						var z2 = j1 - 1 < l2[j] ? 0 : j1 - 1;
+						var i_temp = forest_distance[z, j1] + Delete;
+						var i_list = new List<Operation>(forest_operations[z, j1]);
+						i_list.Add(new Operation() { O = Operation.Op.Delete, N1 = i1 });
+						var i_op = i_list;
+
+						var j_temp = forest_distance[i1, z2] + Insert;
+						var j_list = new List<Operation>(forest_operations[i1, z2]);
+						j_list.Add(new Operation() { O = Operation.Op.Insert, N2 = j1 });
+						var j_op = j_list;
+
+						var cost = tree1.labels[i1] == tree2.labels[j1] ? 0 : Relabel;
+						var k_temp = forest_distance[z, z2] + cost;
+						var k_list = new List<Operation>(forest_operations[z, z2]);
+						if (cost != 0)
+							k_list.Add(new Operation() { O = Operation.Op.Change, N1 = i1, N2 = j1 });
+						var k_op = k_list;
+
+						if (i_temp < j_temp)
+						{
+							if (i_temp < k_temp)
+							{
+								forest_distance[i1, j1] = i_temp;
+								forest_operations[i1, j1] = i_op;
+							}
+							else
+							{
+								forest_distance[i1, j1] = k_temp;
+								forest_operations[i1, j1] = k_op;
+							}
 						}
 						else
-                        {
-							test1 = forest_distance[i_temp, j1] + Delete;
-							list1 = new List<Operation>(forest_operations[i_temp, j1]);
-							list1.Add(new Operation() { O = Operation.Op.Delete, N1 = i_temp + 1 });
-							if (list1.Count != test1) throw new Exception();
-						}
-
-						int test2;
-						List<Operation> list2;
-						if (test1 > forest_distance[i_temp, j_temp] + Cost)
 						{
-							test2 = forest_distance[i_temp, j_temp] + Cost;
-							list2 = new List<Operation>(forest_operations[i_temp, j_temp]);
-							if (Cost > 0)
-								list2.Add(new Operation() { O = Operation.Op.Change, N1 = i1, N2 = j1 });
-							if (list2.Count != test2) throw new Exception();
-						}
-						else
-						{
-							test2 = test1;
-							list2 = new List<Operation>(list1);
-							if (list2.Count != test2) throw new Exception();
+							if (j_temp < k_temp)
+							{
+								forest_distance[i1, j1] = j_temp;
+								forest_operations[i1, j1] = j_op;
+							}
+							else
+							{
+								forest_distance[i1, j1] = k_temp;
+								forest_operations[i1, j1] = k_op;
+							}
 						}
 
-						var temp = Math.Min(
-							Math.Min(forest_distance[i_temp, j1] + Delete, forest_distance[i1, j_temp] + Insert),
-							forest_distance[i_temp, j_temp] + Cost);
-						if (test2 != temp) throw new Exception();
-
-						forest_distance[i1, j1] = test2;
-						forest_operations[i1, j1] = list2;
-						if (temp != test2) throw new Exception();
-						
-						tree_distance[i1, j1] = test2;
-						tree_operations[i1, j1] = list2;
+						tree_distance[i1, j1] = forest_distance[i1, j1];
+						tree_operations[i1, j1] = forest_operations[i1, j1];
 					}
 					else
 					{
-						int i1_temp = l1[i1 - 1] - 1;
-						int j1_temp = l2[j1 - 1] - 1;
+						var z = i1 - 1 < l1[i] ? 0 : i1 - 1;
+						var z2 = j1 - 1 < l2[j] ? 0 : j1 - 1;
+						var i_temp = forest_distance[z, j1] + Delete;
+						var i_list = new List<Operation>(forest_operations[z, j1]);
+						i_list.Add(new Operation() { O = Operation.Op.Delete, N1 = i1 });
+						var i_op = i_list;
 
-						int i_temp2 = (l1[i - 1] > i1_temp) ? 0 : i1_temp;
-						int j_temp2 = (l2[j - 1] > j1_temp) ? 0 : j1_temp;
+						var j_temp = forest_distance[i1, z2] + Insert;
+						var j_list = new List<Operation>(forest_operations[i1, z2]);
+						j_list.Add(new Operation() { O = Operation.Op.Insert, N2 = j1 });
+						var j_op = j_list;
 
-						int test1;
-						List<Operation> list1;
-						if (forest_distance[i_temp, j1] + Delete > forest_distance[i1, j_temp] + Insert)
+						var k_temp = forest_distance[z, z2] + tree_distance[i1, j1];
+						var k_list = new List<Operation>(forest_operations[z, z2]);
+						k_list.AddRange(tree_operations[i1, j1]);
+						var k_op = k_list;
+
+						if (i_temp < j_temp)
 						{
-							test1 = forest_distance[i1, j_temp] + Insert;
-							list1 = new List<Operation>(forest_operations[i1, j_temp]);
-							list1.Add(new Operation() { O = Operation.Op.Insert, N2 = j_temp + 1 });
-							if (list1.Count != test1) throw new Exception();
+							if (i_temp < k_temp)
+							{
+								forest_distance[i1, j1] = i_temp;
+								forest_operations[i1, j1] = i_op;
+							}
+							else
+							{
+								forest_distance[i1, j1] = k_temp;
+								forest_operations[i1, j1] = k_op;
+							}
 						}
 						else
 						{
-							test1 = forest_distance[i_temp, j1] + Delete;
-							list1 = new List<Operation>(forest_operations[i_temp, j1]);
-							list1.Add(new Operation() { O = Operation.Op.Delete, N1 = i_temp + 1 });
-							if (list1.Count != test1) throw new Exception();
+							if (j_temp < k_temp)
+							{
+								forest_distance[i1, j1] = j_temp;
+								forest_operations[i1, j1] = j_op;
+							}
+							else
+							{
+								forest_distance[i1, j1] = k_temp;
+								forest_operations[i1, j1] = k_op;
+							}
 						}
-
-						int test2;
-						List<Operation> list2;
-						if (test1 > forest_distance[i_temp2, j_temp2] + tree_distance[i1, j1])
-						{
-							test2 = forest_distance[i_temp2, j_temp2] + tree_distance[i1, j1];
-							list2 = new List<Operation>(forest_operations[i_temp2, j_temp2]);
-							list2.AddRange(tree_operations[i1, j1]);
-							if (list2.Count != test2) throw new Exception();
-						}
-						else
-						{
-							test2 = test1;
-							list2 = new List<Operation>(list1);
-							if (list2.Count != test2) throw new Exception();
-						}
-
-						var temp = Math.Min(
-							Math.Min(forest_distance[i_temp, j1] + Delete, forest_distance[i1, j_temp] + Insert),
-							forest_distance[i_temp2, j_temp2] + tree_distance[i1, j1]);
-						if (test2 != temp) throw new Exception();
-
-						forest_distance[i1, j1] = test2;
-						forest_operations[i1, j1] = list2;
 					}
 				}
 			}
-			return (forest_distance[i, j], tree_operations[i, j]);
+
+			tree_distance[i, j] = forest_distance[i, j];
+			tree_operations[i, j] = forest_operations[i, j];
 		}
 	}
 }
