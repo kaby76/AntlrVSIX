@@ -9,6 +9,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Iso14977ebnf.g4" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Antlr4 Include="ANTLRv2Parser.g4">
 			<Package>LanguageServer</Package>
 		</Antlr4>
@@ -33,6 +37,7 @@
 		<Antlr4 Include="BisonParser.g4">
 			<Package>LanguageServer</Package>
 		</Antlr4>
+		<Antlr4 Include="Iso14977ebnf.g4" />
 		<Antlr4 Include="W3CebnfParser.g4">
 			<Package>LanguageServer</Package>
 		</Antlr4>
