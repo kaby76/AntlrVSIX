@@ -2,12 +2,11 @@
 {
     using Antlr4.Runtime;
     using Antlr4.Runtime.Tree;
+    using org.eclipse.wst.xml.xpath2.processor.util;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
-    using org.eclipse.wst.xml.xpath2.processor.util;
-    using Antlr4.Runtime.Misc;
 
     // https://www.w3.org/TR/REC-xml/#sec-notation
 

@@ -1,8 +1,14 @@
-grammar Iso14977ebnf;
+parser grammar Iso14977Parser;
 
 // https://www.iso.org/standard/26153.html
 // https://dwheeler.com/essays/dont-use-iso-14977-ebnf.html
 // https://www.grammarware.net/text/2012/bnf-was-here.pdf
+
+options
+{
+    tokenVocab = Iso14977Lexer;
+    contextSuperClass=AttributedParseTreeNode;
+}
 
 /*
 The syntax of Extended BNF can be defined using
@@ -40,10 +46,14 @@ and gap-separator in Extended BNF.
 | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H'
 | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | '0' | 'P'
 | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X'
-| 'Y' | 'Z';
+| 'Y' | 'Z'
+;
+
 /* see 7.2 */ decimal_digit
 : '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7'
-| '8' | '9';
+| '8' | '9'
+;
+
 /*
 The representation of the following
 terminal-characters is defined in clauses 7.3,
@@ -58,7 +68,7 @@ end_group_symbol : ')' ;
 end_option_symbol : ']' | '/)' ;
 end_repeat_symbol : '}' | ':)' ;
 except_symbol : '-' ;
-first_quote_symbol : '�' ;
+first_quote_symbol : '\'' | '�' ;
 repetition_symbol : '*' ;
 second_quote_symbol : '"' ;
 special_sequence_symbol : '?' ;
@@ -71,13 +81,18 @@ terminator_symbol : ';' | '.' ;
 : ' ' | ':' | '+' | '_' | '%' | '@'
 | '&' | '#' | '$' | '<' | '>' | '\\'
 | '^' | '`' | '~' ;
+
 /* see 7.6 */ space_character : ' ' ;
+
 horizontal_tabulation_character
 : '\t' ;
+
 new_line
 : ('\n' | '\r')+ ;
+
 vertical_tabulation_character
 : '\r' ;
+
 form_feed
 : '\n' ;
 
@@ -86,6 +101,7 @@ The second part of the syntax defines the
 removal of unnecessary non-printing characters
 from a syntax.
 */
+
 /* see 6.2 */ terminal_character
 : letter
 | decimal_digit
@@ -108,25 +124,26 @@ from a syntax.
 | terminator_symbol
 | other_character
 ;
+
 /* see 6.3 */ gap_free_symbol
 : terminal_character
 // - (first quote symbol | second quote symbol)
 | terminal_string
 ;
+
 /* see 4.16 */ terminal_string
-: first_quote_symbol first_terminal_character
-  first_terminal_character*
-  first_quote_symbol
-| second_quote_symbol second_terminal_character
-  second_terminal_character*
-  second_quote_symbol
+: first_quote_symbol first_terminal_character+ first_quote_symbol
+| second_quote_symbol second_terminal_character+ second_quote_symbol
 ;
+
 /* see 4.17 */ first_terminal_character
 : terminal_character // - first quote symbol
 ;
+
 /* see 4.18 */ second_terminal_character
 : terminal_character // - second quote symbol
 ;
+
 /* see 6.4 */ gap_separator
 : space_character
 | horizontal_tabulation_character
@@ -135,7 +152,7 @@ from a syntax.
 | form_feed
 ;
 
-/* see 6.5 */ syntax
+/* see 6.5 */ syntax1
 : gap_separator*
 (gap_free_symbol gap_separator*)+
 ;
@@ -145,6 +162,7 @@ The third part of the syntax defines the
 removal of bracketed-textual-comments from
 gap-free-symbols that form a syntax.
 */
+
 /* see 6.6 */ commentless_symbol
 : terminal_character
 // - (letter
@@ -164,63 +182,75 @@ gap-free-symbols that form a syntax.
 /* see 4.9 */ integer
 : decimal_digit decimal_digit*
 ;
+
 /* see 4.14 */ meta_identifier
 : letter meta_identifier_character*
 ;
+
 /* see 4.15 */ meta_identifier_character
 : letter
 | decimal_digit
 ;
+
 /* see 4.19 */ special_sequence
 : special_sequence_symbol
 special_sequence_character*
 special_sequence_symbol
 ;
+
 /* see 4.20 */ special_sequence_character
 : terminal_character // - special_sequence_symbol
 ;
+
 /* see 6.7 */ comment_symbol
 : bracketed_textual_comment
 | other_character
 | commentless_symbol
 ;
+
 /* see 6.8 */ bracketed_textual_comment
 : start_comment_symbol comment_symbol*
 end_comment_symbol
 ;
-/* see 6.9 */ syntax1
+
+/* see 6.9 */ syntax2
 : bracketed_textual_comment*
 commentless_symbol
 bracketed_textual_comment*
-(commentless_symbol
-  bracketed_textual_comment*)*
+(commentless_symbol bracketed_textual_comment*)*
 ;
+
 /*
 The final part of the syntax defines the
 abstract syntax of Extended BNF, i.e. the
 structure in terms of the commentless symbols.
 */
 
-/* see 4.2 */ syntax2
+/* see 4.2 */ syntax3
 : syntax_rule syntax_rule*
 ;
+
 /* see 4.3 */ syntax_rule
 : meta_identifier defining_symbol
 definitions_list terminator_symbol
 ;
+
 /* see 4.4 */ definitions_list
 : single_definition
   (definition_separator_symbol
     single_definition)*
 ;
+
 /* see 4.5 */ single_definition
 : syntactic_term
   (concatenate_symbol syntactic_term)*
 ;
+
 /* see 4.6 */ syntactic_term
 : syntactic_factor
   (except_symbol syntactic_exception)?
 ;
+
 /* see 4.7 */ syntactic_exception
 :
 //? a syntactic-factor that could be replaced
@@ -228,10 +258,12 @@ definitions_list terminator_symbol
 //meta-identifiers
 // ?
 ;
+
 /* see 4.8 */ syntactic_factor
 : (integer repetition_symbol)?
   syntactic_primary
 ;
+
 /* see 4.10 */ syntactic_primary
 : optional_sequence
 | repeated_sequence
@@ -241,40 +273,22 @@ definitions_list terminator_symbol
 | special_sequence
 | empty_sequence
 ;
+
 /* see 4.11 */ optional_sequence
 : start_option_symbol definitions_list
   end_option_symbol
 ;
+
 /* see 4.12 */ repeated_sequence
 : start_repeat_symbol definitions_list
   end_repeat_symbol
 ;
+
 /* see 4.13 */ grouped_sequence
 : start_group_symbol definitions_list
   end_group_symbol
 ;
+
 /* see 4.21 */ empty_sequence
 :
 ;
-
-RepSym : '*';
-ExcSym : '-';
-ConSym : ',';
-DefSepSym : '|';
-DefSym : '=';
-TerSym : ';';
-
-SqSym : '\'';
-DqSym : '"';
-StartCommentSym : '(*';
-EndCommentSym : '*)';
-StartGroupSym : '(';
-EndGroupSym : ')';
-StartOptSym : '[';
-EndOptSym : ']';
-StartRepeatSym : '{';
-EndRepeatSym : '}';
-SpecialSeqSym : '?';
-
-SymbolKeyword : 'symbol';
-Identifier : [a-zA-Z0-9][a-zA-Z0-9_\-];
