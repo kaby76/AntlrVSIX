@@ -827,7 +827,7 @@
             }
             try
             {
-                pt = parser.syntax2();
+                pt = parser.syntax1();
             }
             catch (Exception)
             {
@@ -897,7 +897,7 @@
             parser.AddErrorListener(parser_error_listener);
             try
             {
-                pt = parser.syntax2();
+                pt = parser.syntax1();
             }
             catch (Exception)
             {

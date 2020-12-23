@@ -126,8 +126,13 @@ from a syntax.
 ;
 
 /* see 6.3 */ gap_free_symbol
-: terminal_character
-// - (first quote symbol | second quote symbol)
+: // terminal_character - (first_quote_symbol | second_quote_symbol)
+{ !(
+    InputStream.LA(1) == SQ
+    || InputStream.LA(1) == FSQ
+    || InputStream.LA(1) == DQ
+    ) }?
+    terminal_character
 | terminal_string
 ;
 
@@ -137,11 +142,20 @@ from a syntax.
 ;
 
 /* see 4.17 */ first_terminal_character
-: terminal_character // - first quote symbol
+: // terminal character - first_quote_symbol;
+{ !(
+    InputStream.LA(1) == SQ
+    || InputStream.LA(1) == FSQ
+    ) }?
+    terminal_character
 ;
 
 /* see 4.18 */ second_terminal_character
-: terminal_character // - second quote symbol
+: // terminal_character - second_quote_symbol
+{ !(
+    InputStream.LA(1) == DQ
+    ) }?
+    terminal_character
 ;
 
 /* see 6.4 */ gap_separator
@@ -153,8 +167,7 @@ from a syntax.
 ;
 
 /* see 6.5 */ syntax1
-: gap_separator*
-(gap_free_symbol gap_separator*)+
+: gap_separator* (gap_free_symbol gap_separator*)+ EOF
 ;
 
 /*
@@ -164,15 +177,48 @@ gap-free-symbols that form a syntax.
 */
 
 /* see 6.6 */ commentless_symbol
-: terminal_character
-//   - (letter
-//    | decimal_digit
-//    | first_quote_symbol
-//    | second_quote_symbol
-//    | start_comment_symbol
-//    | end_comment_symbol
-//    | special_sequence_symbol
-//    | other_character)}?
+:   // terminal_character
+    //   - (letter
+    //    | decimal_digit
+    //    | first_quote_symbol
+    //    | second_quote_symbol
+    //    | start_comment_symbol
+    //    | end_comment_symbol
+    //    | special_sequence_symbol
+    //    | other_character)
+    { !(
+    (InputStream.LA(1) >= Al && InputStream.LA(1) <= Zl)
+    || (InputStream.LA(1) >= Au && InputStream.LA(1) <= Zu)
+
+    || (InputStream.LA(1) >= N0 && InputStream.LA(1) <= N9)
+
+    || InputStream.LA(1) == SQ
+    || InputStream.LA(1) == FSQ
+
+    || InputStream.LA(1) == STARCP
+
+    || InputStream.LA(1) == OPSTAR
+
+    || InputStream.LA(1) == QM
+
+    || InputStream.LA(1) == QM
+    || InputStream.LA(1) == COLON
+    || InputStream.LA(1) == PLUS
+    || InputStream.LA(1) == UNDERSCORE
+    || InputStream.LA(1) == PERCENT
+    || InputStream.LA(1) == AT
+    || InputStream.LA(1) == AMP
+    || InputStream.LA(1) == POUND
+    || InputStream.LA(1) == DOLLAR
+    || InputStream.LA(1) == POUND
+    || InputStream.LA(1) == LT
+    || InputStream.LA(1) == GT
+    || InputStream.LA(1) == BSLASH
+    || InputStream.LA(1) == XOR
+    || InputStream.LA(1) == BQUOTE
+    || InputStream.LA(1) == TILDE
+    ) }?
+    terminal_character
 | meta_identifier
 | integer
 | terminal_string
@@ -199,7 +245,11 @@ special_sequence_symbol
 ;
 
 /* see 4.20 */ special_sequence_character
-: terminal_character // - special_sequence_symbol
+: // terminal_character - special_sequence_symbol
+{ !(
+    InputStream.LA(1) == QM
+    ) }?
+    terminal_character
 ;
 
 /* see 6.7 */ comment_symbol

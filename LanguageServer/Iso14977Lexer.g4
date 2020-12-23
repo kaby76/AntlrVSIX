@@ -72,7 +72,7 @@ EQUAL : '=' ;
 VBAR : '|';
 FSLASH: '/';
 EXCL: '!';
-ENDCOMMENT : '*)' ;
+STARCP : '*)' ;
 CP: ')';
 CB: ']';
 FSLASH_CP: '/)';
