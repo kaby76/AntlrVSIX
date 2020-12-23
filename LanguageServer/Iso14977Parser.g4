@@ -165,14 +165,14 @@ gap-free-symbols that form a syntax.
 
 /* see 6.6 */ commentless_symbol
 : terminal_character
-// - (letter
+//   - (letter
 //    | decimal_digit
 //    | first_quote_symbol
 //    | second_quote_symbol
 //    | start_comment_symbol
 //    | end_comment_symbol
 //    | special_sequence_symbol
-//    | other_character)
+//    | other_character)}?
 | meta_identifier
 | integer
 | terminal_string
@@ -209,8 +209,7 @@ special_sequence_symbol
 ;
 
 /* see 6.8 */ bracketed_textual_comment
-: start_comment_symbol comment_symbol*
-end_comment_symbol
+: start_comment_symbol comment_symbol* end_comment_symbol
 ;
 
 /* see 6.9 */ syntax2
@@ -218,6 +217,7 @@ end_comment_symbol
 commentless_symbol
 bracketed_textual_comment*
 (commentless_symbol bracketed_textual_comment*)*
+EOF
 ;
 
 /*
