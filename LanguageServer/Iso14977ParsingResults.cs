@@ -802,72 +802,152 @@
 
             IParseTree pt = null;
 
-            // Set up Antlr to parse input grammar.
-            byte[] byteArray = Encoding.UTF8.GetBytes(code);
-            AntlrInputStream ais = new AntlrInputStream(
-            new StreamReader(
-                new MemoryStream(byteArray)).ReadToEnd())
+            string newcode = code;
             {
-                name = ffn
-            };
-            var lexer = new Iso14977Lexer(ais);
-            CommonTokenStream cts = new CommonTokenStream(lexer);
-            var parser = new Iso14977Parser(cts);
-            lexer.RemoveErrorListeners();
-            var lexer_error_listener = new ErrorListener<int>(parser, lexer, cts, pd.QuietAfter);
-            lexer.AddErrorListener(lexer_error_listener);
-            parser.RemoveErrorListeners();
-            var parser_error_listener = new ErrorListener<IToken>(parser, lexer, cts, pd.QuietAfter);
-            parser.AddErrorListener(parser_error_listener);
-            BailErrorHandler bail_error_handler = null;
-            if (bail)
-            {
-                bail_error_handler = new BailErrorHandler();
-                parser.ErrorHandler = bail_error_handler;
-            }
-            try
-            {
-                pt = parser.syntax1();
-            }
-            catch (Exception)
-            {
-                // Parsing error.
-            }
-
-            //StringBuilder sb = new StringBuilder();
-            //TreeSerializer.ParenthesizedAST(pt, sb, "", cts);
-            //string fn = System.IO.Path.GetFileName(ffn);
-            //fn = "c:\\temp\\" + fn;
-            //System.IO.File.WriteAllText(fn, sb.ToString());
-            if (parser_error_listener.had_error || lexer_error_listener.had_error || (bail_error_handler != null && bail_error_handler.had_error))
-            {
-                System.Console.Error.WriteLine("Error in parse of " + ffn);
-            }
-            else
-            {
-                System.Console.Error.WriteLine("Parse completed of " + ffn);
-            }
-
-            pd.TokStream = cts;
-            pd.Parser = parser;
-            pd.Lexer = lexer;
-            pd.ParseTree = pt;
-            Stack<IParseTree> stack = new Stack<IParseTree>();
-            stack.Push(pt);
-            while (stack.Any())
-            {
-                var x = stack.Pop();
-                if (x is TerminalNodeImpl leaf)
+                // Set up Antlr to parse input grammar.
+                byte[] byteArray = Encoding.UTF8.GetBytes(newcode);
+                AntlrInputStream ais = new AntlrInputStream(
+                new StreamReader(
+                    new MemoryStream(byteArray)).ReadToEnd())
                 {
+                    name = ffn
+                };
+                var lexer = new Iso14977Lexer(ais);
+                CommonTokenStream cts = new CommonTokenStream(lexer);
+                var parser = new Iso14977Parser(cts);
+                lexer.RemoveErrorListeners();
+                var lexer_error_listener = new ErrorListener<int>(parser, lexer, cts, pd.QuietAfter);
+                lexer.AddErrorListener(lexer_error_listener);
+                parser.RemoveErrorListeners();
+                var parser_error_listener = new ErrorListener<IToken>(parser, lexer, cts, pd.QuietAfter);
+                parser.AddErrorListener(parser_error_listener);
+                BailErrorHandler bail_error_handler = null;
+                if (bail)
+                {
+                    bail_error_handler = new BailErrorHandler();
+                    parser.ErrorHandler = bail_error_handler;
+                }
+                try
+                {
+                    pt = parser.syntax1();
+                }
+                catch (Exception)
+                {
+                    // Parsing error.
+                }
+                if (parser_error_listener.had_error || lexer_error_listener.had_error || (bail_error_handler != null && bail_error_handler.had_error))
+                {
+                    System.Console.Error.WriteLine("Error in parse of " + ffn);
                 }
                 else
                 {
-                    var y = x as AttributedParseTreeNode;
-                    if (y != null) y.ParserDetails = pd;
-                    for (int i = 0; i < x.ChildCount; ++i)
+                    System.Console.Error.WriteLine("Parse completed of " + ffn);
+                }
+
+                // Create a new stream with gap-free symbols.
+                StringBuilder sb = new StringBuilder();
+                var s = new Stack<IParseTree>();
+                s.Push(pt);
+                while (s.Any())
+                {
+                    var n = s.Pop();
+                    if (n is Iso14977Parser.Gap_free_symbolContext gfs)
                     {
-                        var c = x.GetChild(i);
-                        if (c != null) stack.Push(c);
+                        TreeEdits.Reconstruct(sb, n, new Dictionary<TerminalNodeImpl, string>());
+                    }
+                    else if (n is ParserRuleContext prc)
+                    {
+                        for (int i = n.ChildCount - 1; i >= 0; i--)
+                        {
+                            s.Push(n.GetChild(i));
+                        }
+                    }
+                }
+                newcode = sb.ToString();
+            }
+
+            {
+                // Set up Antlr to parse input grammar.
+                byte[] byteArray = Encoding.UTF8.GetBytes(newcode);
+                AntlrInputStream ais = new AntlrInputStream(
+                new StreamReader(
+                    new MemoryStream(byteArray)).ReadToEnd())
+                {
+                    name = ffn
+                };
+                var lexer = new Iso14977Lexer(ais);
+                CommonTokenStream cts = new CommonTokenStream(lexer);
+                var parser = new Iso14977Parser(cts);
+                lexer.RemoveErrorListeners();
+                var lexer_error_listener = new ErrorListener<int>(parser, lexer, cts, pd.QuietAfter);
+                lexer.AddErrorListener(lexer_error_listener);
+                parser.RemoveErrorListeners();
+                var parser_error_listener = new ErrorListener<IToken>(parser, lexer, cts, pd.QuietAfter);
+                parser.AddErrorListener(parser_error_listener);
+                BailErrorHandler bail_error_handler = null;
+                if (bail)
+                {
+                    bail_error_handler = new BailErrorHandler();
+                    parser.ErrorHandler = bail_error_handler;
+                }
+                try
+                {
+                    pt = parser.syntax2();
+                }
+                catch (Exception)
+                {
+                    // Parsing error.
+                }
+                if (parser_error_listener.had_error || lexer_error_listener.had_error || (bail_error_handler != null && bail_error_handler.had_error))
+                {
+                    System.Console.Error.WriteLine("Error in parse of " + ffn);
+                }
+                else
+                {
+                    System.Console.Error.WriteLine("Parse completed of " + ffn);
+                }
+
+                // Create a new stream with gap-free symbols.
+                StringBuilder sb = new StringBuilder();
+                var s = new Stack<IParseTree>();
+                s.Push(pt);
+                while (s.Any())
+                {
+                    var n = s.Pop();
+                    if (n is Iso14977Parser.Gap_free_symbolContext gfs)
+                    {
+                        TreeEdits.Reconstruct(sb, n, new Dictionary<TerminalNodeImpl, string>());
+                    }
+                    else if (n is ParserRuleContext prc)
+                    {
+                        for (int i = n.ChildCount - 1; i >= 0; i--)
+                        {
+                            s.Push(n.GetChild(i));
+                        }
+                    }
+                }
+
+                pd.TokStream = cts;
+                pd.Parser = parser;
+                pd.Lexer = lexer;
+                pd.ParseTree = pt;
+                Stack<IParseTree> stack = new Stack<IParseTree>();
+                stack.Push(pt);
+                while (stack.Any())
+                {
+                    var x = stack.Pop();
+                    if (x is TerminalNodeImpl leaf)
+                    {
+                    }
+                    else
+                    {
+                        var y = x as AttributedParseTreeNode;
+                        if (y != null) y.ParserDetails = pd;
+                        for (int i = 0; i < x.ChildCount; ++i)
+                        {
+                            var c = x.GetChild(i);
+                            if (c != null) stack.Push(c);
+                        }
                     }
                 }
             }
