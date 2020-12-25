@@ -751,7 +751,7 @@
             var lexer = new W3CebnfLexer(ais);
             CommonTokenStream cts_off_channel = new CommonTokenStream(lexer, W3CebnfLexer.OFF_CHANNEL);
             lexer.RemoveErrorListeners();
-            var lexer_error_listener = new ErrorListener<int>(null, lexer, cts_off_channel, this.QuietAfter);
+            var lexer_error_listener = new ErrorListener<int>(null, lexer, this.QuietAfter);
             lexer.AddErrorListener(lexer_error_listener);
             Dictionary<IToken, int> new_list = new Dictionary<IToken, int>();
             int type = (int)AntlrClassifications.ClassificationComment;
@@ -814,10 +814,10 @@
             CommonTokenStream cts = new CommonTokenStream(lexer);
             var parser = new W3CebnfParser(cts);
             lexer.RemoveErrorListeners();
-            var lexer_error_listener = new ErrorListener<int>(parser, lexer, cts, pd.QuietAfter);
+            var lexer_error_listener = new ErrorListener<int>(parser, lexer, pd.QuietAfter);
             lexer.AddErrorListener(lexer_error_listener);
             parser.RemoveErrorListeners();
-            var parser_error_listener = new ErrorListener<IToken>(parser, lexer, cts, pd.QuietAfter);
+            var parser_error_listener = new ErrorListener<IToken>(parser, lexer, pd.QuietAfter);
             parser.AddErrorListener(parser_error_listener);
             BailErrorHandler bail_error_handler = null;
             if (bail)
@@ -890,10 +890,10 @@
             CommonTokenStream cts = new CommonTokenStream(lexer);
             var parser = new W3CebnfParser(cts);
             lexer.RemoveErrorListeners();
-            var lexer_error_listener = new ErrorListener<int>(parser, lexer, cts, this.QuietAfter);
+            var lexer_error_listener = new ErrorListener<int>(parser, lexer, this.QuietAfter);
             lexer.AddErrorListener(lexer_error_listener);
             parser.RemoveErrorListeners();
-            var parser_error_listener = new ErrorListener<IToken>(parser, lexer, cts, this.QuietAfter);
+            var parser_error_listener = new ErrorListener<IToken>(parser, lexer, this.QuietAfter);
             parser.AddErrorListener(parser_error_listener);
             try
             {

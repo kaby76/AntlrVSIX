@@ -1,4 +1,4 @@
-﻿namespace AntlrJson
+﻿namespace AltAntlr
 {
     using System;
     using System.Collections.Generic;

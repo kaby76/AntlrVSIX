@@ -26,7 +26,7 @@
             var lexer = new W3CebnfLexer(str);
             var tokens = new CommonTokenStream(lexer);
             var parser = new W3CebnfParser(tokens);
-            var elistener = new ErrorListener<IToken>(parser, lexer, tokens, 0);
+            var elistener = new ErrorListener<IToken>(parser, lexer, 0);
             parser.AddErrorListener(elistener);
             var tree = parser.prods();
             var error_file_name = ffn;

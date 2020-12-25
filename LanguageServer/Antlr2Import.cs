@@ -30,7 +30,7 @@
             var lexer = new ANTLRv2Lexer(str);
             var tokens = new CommonTokenStream(lexer);
             var parser = new ANTLRv2Parser(tokens);
-            var elistener = new ErrorListener<IToken>(parser, lexer, tokens, 0);
+            var elistener = new ErrorListener<IToken>(parser, lexer, 0);
             parser.AddErrorListener(elistener);
             var tree = parser.grammar_();
             var error_file_name = ffn;

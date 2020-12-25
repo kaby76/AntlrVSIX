@@ -846,10 +846,10 @@
             CommonTokenStream cts = new CommonTokenStream(lexer);
             ANTLRv4Parser parser = new ANTLRv4Parser(cts);
             lexer.RemoveErrorListeners();
-            var lexer_error_listener = new ErrorListener<int>(parser, lexer, cts, pd.QuietAfter);
+            var lexer_error_listener = new ErrorListener<int>(parser, lexer, pd.QuietAfter);
             lexer.AddErrorListener(lexer_error_listener);
             parser.RemoveErrorListeners();
-            var parser_error_listener = new ErrorListener<IToken>(parser, lexer, cts, pd.QuietAfter);
+            var parser_error_listener = new ErrorListener<IToken>(parser, lexer, pd.QuietAfter);
             parser.AddErrorListener(parser_error_listener);
             BailErrorHandler bail_error_handler = null;
             if (bail)
@@ -922,10 +922,10 @@
             CommonTokenStream cts = new CommonTokenStream(lexer);
             ANTLRv4Parser parser = new ANTLRv4Parser(cts);
             lexer.RemoveErrorListeners();
-            var lexer_error_listener = new ErrorListener<int>(parser, lexer, cts, this.QuietAfter);
+            var lexer_error_listener = new ErrorListener<int>(parser, lexer, this.QuietAfter);
             lexer.AddErrorListener(lexer_error_listener);
             parser.RemoveErrorListeners();
-            var parser_error_listener = new ErrorListener<IToken>(parser, lexer, cts, this.QuietAfter);
+            var parser_error_listener = new ErrorListener<IToken>(parser, lexer, this.QuietAfter);
             parser.AddErrorListener(parser_error_listener);
             try
             {

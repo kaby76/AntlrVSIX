@@ -107,6 +107,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NWayDiff", "NWayDiff\NWayDi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntlrJson", "AntlrJson\AntlrJson.csproj", "{DCD5D0F9-9C93-4508-9C6E-220507F77D02}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AltAntlr", "AltAntlr\AltAntlr.csproj", "{07FDFC76-13F5-4670-97D9-F17CFA2E883C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -165,6 +167,10 @@ Global
 		{DCD5D0F9-9C93-4508-9C6E-220507F77D02}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DCD5D0F9-9C93-4508-9C6E-220507F77D02}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DCD5D0F9-9C93-4508-9C6E-220507F77D02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07FDFC76-13F5-4670-97D9-F17CFA2E883C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07FDFC76-13F5-4670-97D9-F17CFA2E883C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07FDFC76-13F5-4670-97D9-F17CFA2E883C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07FDFC76-13F5-4670-97D9-F17CFA2E883C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

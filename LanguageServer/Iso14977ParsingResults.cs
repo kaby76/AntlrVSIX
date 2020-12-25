@@ -10,6 +10,7 @@
 	using System.Linq;
 	using System.Text;
 	using Workspaces;
+    using AltAntlr;
 
     internal class Iso14977ParsingResults : ParsingResults, IParserDescription
     {
@@ -751,7 +752,7 @@
             var lexer = new Iso14977Lexer(ais);
             CommonTokenStream cts_off_channel = new CommonTokenStream(lexer, W3CebnfLexer.OFF_CHANNEL);
             lexer.RemoveErrorListeners();
-            var lexer_error_listener = new ErrorListener<int>(null, lexer, cts_off_channel, this.QuietAfter);
+            var lexer_error_listener = new ErrorListener<int>(null, lexer, this.QuietAfter);
             lexer.AddErrorListener(lexer_error_listener);
             Dictionary<IToken, int> new_list = new Dictionary<IToken, int>();
             int type = (int)AntlrClassifications.ClassificationComment;
@@ -816,10 +817,10 @@
                 CommonTokenStream cts = new CommonTokenStream(lexer);
                 var parser = new Iso14977Parser(cts);
                 lexer.RemoveErrorListeners();
-                var lexer_error_listener = new ErrorListener<int>(parser, lexer, cts, pd.QuietAfter);
+                var lexer_error_listener = new ErrorListener<int>(parser, lexer, pd.QuietAfter);
                 lexer.AddErrorListener(lexer_error_listener);
                 parser.RemoveErrorListeners();
-                var parser_error_listener = new ErrorListener<IToken>(parser, lexer, cts, pd.QuietAfter);
+                var parser_error_listener = new ErrorListener<IToken>(parser, lexer, pd.QuietAfter);
                 parser.AddErrorListener(parser_error_listener);
                 BailErrorHandler bail_error_handler = null;
                 if (bail)
@@ -844,8 +845,14 @@
                     System.Console.Error.WriteLine("Parse completed of " + ffn);
                 }
 
+                MyTokenStream out_token_stream = new MyTokenStream();
+                out_token_stream.Text = code;
+                MyCharStream fake_char_stream = new MyCharStream();
+                fake_char_stream.Text = out_token_stream.Text;
+                MyLexer lexer2 = new MyLexer(null);
+                lexer2.InputStream = fake_char_stream;
+                out_token_stream.TokenSource = lexer2;
                 // Create a new stream with gap-free symbols.
-                StringBuilder sb = new StringBuilder();
                 var s = new Stack<IParseTree>();
                 s.Push(pt);
                 while (s.Any())
@@ -853,7 +860,49 @@
                     var n = s.Pop();
                     if (n is Iso14977Parser.Gap_free_symbolContext gfs)
                     {
-                        TreeEdits.Reconstruct(sb, n, new Dictionary<TerminalNodeImpl, string>());
+                        var start_token_index = gfs.SourceInterval.a;
+                        var stop_token_index = gfs.SourceInterval.b;
+                        for (int i = start_token_index; i <= stop_token_index; ++i)
+                        {
+                            cts.Seek(0);
+                            var t = cts.Get(i);
+                            var token = new MyToken();
+                            token.Type = t.Type;
+                            token.StartIndex = t.StartIndex;
+                            token.StopIndex = t.StopIndex;
+                            token.Line = t.Line;
+                            token.Column = t.Column;
+                            token.Channel = t.Channel;
+                            token.InputStream = lexer2.InputStream;
+                            token.TokenSource = lexer2;
+                            token.TokenIndex = t.TokenIndex;
+                            token.Text =
+                                out_token_stream.Text.Substring(token.StartIndex, token.StopIndex - token.StartIndex + 1);
+                            out_token_stream.Add(token);
+                        }
+                    }
+                    else if (n is TerminalNodeImpl term && term.Symbol.Type == Antlr4.Runtime.TokenConstants.EOF)
+                    {
+                        var start_token_index = term.SourceInterval.a;
+                        var stop_token_index = term.SourceInterval.b;
+                        for (int i = start_token_index; i <= stop_token_index; ++i)
+                        {
+                            cts.Seek(0);
+                            var t = cts.Get(i);
+                            var token = new MyToken();
+                            token.Type = t.Type;
+                            token.StartIndex = t.StartIndex;
+                            token.StopIndex = t.StopIndex;
+                            token.Line = t.Line;
+                            token.Column = t.Column;
+                            token.Channel = t.Channel;
+                            token.InputStream = lexer2.InputStream;
+                            token.TokenSource = lexer2;
+                            token.TokenIndex = t.TokenIndex;
+                            token.Text =
+                                out_token_stream.Text.Substring(token.StartIndex, token.StopIndex - token.StartIndex + 1);
+                            out_token_stream.Add(token);
+                        }
                     }
                     else if (n is ParserRuleContext prc)
                     {
@@ -863,36 +912,20 @@
                         }
                     }
                 }
-                newcode = sb.ToString();
-            }
 
-            {
                 // Set up Antlr to parse input grammar.
-                byte[] byteArray = Encoding.UTF8.GetBytes(newcode);
-                AntlrInputStream ais = new AntlrInputStream(
-                new StreamReader(
-                    new MemoryStream(byteArray)).ReadToEnd())
-                {
-                    name = ffn
-                };
-                var lexer = new Iso14977Lexer(ais);
-                CommonTokenStream cts = new CommonTokenStream(lexer);
-                var parser = new Iso14977Parser(cts);
-                lexer.RemoveErrorListeners();
-                var lexer_error_listener = new ErrorListener<int>(parser, lexer, cts, pd.QuietAfter);
-                lexer.AddErrorListener(lexer_error_listener);
-                parser.RemoveErrorListeners();
-                var parser_error_listener = new ErrorListener<IToken>(parser, lexer, cts, pd.QuietAfter);
-                parser.AddErrorListener(parser_error_listener);
-                BailErrorHandler bail_error_handler = null;
+                var parser2 = new Iso14977Parser(out_token_stream);
+                parser2.RemoveErrorListeners();
+                var parser_error_listener2 = new ErrorListener<IToken>(parser2, lexer2, pd.QuietAfter);
+                parser2.AddErrorListener(parser_error_listener);
                 if (bail)
                 {
                     bail_error_handler = new BailErrorHandler();
-                    parser.ErrorHandler = bail_error_handler;
+                    parser2.ErrorHandler = bail_error_handler;
                 }
                 try
                 {
-                    pt = parser.syntax2();
+                    pt = parser2.syntax2();
                 }
                 catch (Exception)
                 {
@@ -905,26 +938,6 @@
                 else
                 {
                     System.Console.Error.WriteLine("Parse completed of " + ffn);
-                }
-
-                // Create a new stream with gap-free symbols.
-                StringBuilder sb = new StringBuilder();
-                var s = new Stack<IParseTree>();
-                s.Push(pt);
-                while (s.Any())
-                {
-                    var n = s.Pop();
-                    if (n is Iso14977Parser.Gap_free_symbolContext gfs)
-                    {
-                        TreeEdits.Reconstruct(sb, n, new Dictionary<TerminalNodeImpl, string>());
-                    }
-                    else if (n is ParserRuleContext prc)
-                    {
-                        for (int i = n.ChildCount - 1; i >= 0; i--)
-                        {
-                            s.Push(n.GetChild(i));
-                        }
-                    }
                 }
 
                 pd.TokStream = cts;
@@ -970,10 +983,10 @@
             CommonTokenStream cts = new CommonTokenStream(lexer);
             var parser = new Iso14977Parser(cts);
             lexer.RemoveErrorListeners();
-            var lexer_error_listener = new ErrorListener<int>(parser, lexer, cts, this.QuietAfter);
+            var lexer_error_listener = new ErrorListener<int>(parser, lexer, this.QuietAfter);
             lexer.AddErrorListener(lexer_error_listener);
             parser.RemoveErrorListeners();
-            var parser_error_listener = new ErrorListener<IToken>(parser, lexer, cts, this.QuietAfter);
+            var parser_error_listener = new ErrorListener<IToken>(parser, lexer, this.QuietAfter);
             parser.AddErrorListener(parser_error_listener);
             try
             {

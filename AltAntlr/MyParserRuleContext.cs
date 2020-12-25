@@ -1,4 +1,4 @@
-﻿namespace AntlrJson
+﻿namespace AltAntlr
 {
     using Antlr4.Runtime;
     using Antlr4.Runtime.Misc;

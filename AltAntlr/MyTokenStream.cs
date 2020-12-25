@@ -1,4 +1,4 @@
-﻿namespace AntlrJson
+﻿namespace AltAntlr
 {
     using System;
     using System.Collections.Generic;
@@ -108,14 +108,14 @@
             // buf always has at least tokens[p==0] in this method due to ctor
             lastToken = tokens[p];
             // track last token for LT(-1)
-            // if we're at last token and no markers, opportunity to flush buffer
-            if (p == n - 1 && numMarkers == 0)
-            {
-                n = 0;
-                p = -1;
-                // p++ will leave this at 0
-                lastTokenBufferStart = lastToken;
-            }
+            //// if we're at last token and no markers, opportunity to flush buffer
+            //if (p == n - 1 && numMarkers == 0)
+            //{
+            //    n = 0;
+            //    p = -1;
+            //    // p++ will leave this at 0
+            //    lastTokenBufferStart = lastToken;
+            //}
             p++;
             currentTokenIndex++;
             Sync(1);
@@ -130,7 +130,7 @@
             return n;
         }
 
-        protected internal virtual void Add(IToken t)
+        public virtual void Add(IToken t)
         {
             if (t is IWritableToken)
             {
@@ -162,15 +162,15 @@
             if (numMarkers == 0)
             {
                 // can we release buffer?
-                if (p > 0)
-                {
-                    // Copy tokens[p]..tokens[n-1] to tokens[0]..tokens[(n-1)-p], reset ptrs
-                    // p is last valid token; move nothing if p==n as we have no valid char
-                    //                        System.Array.Copy(tokens, p, tokens, 0, n - p);
-                    // shift n-p tokens from p to 0
-                    n = n - p;
-                    p = 0;
-                }
+                //if (p > 0)
+                //{
+                //    // Copy tokens[p]..tokens[n-1] to tokens[0]..tokens[(n-1)-p], reset ptrs
+                //    // p is last valid token; move nothing if p==n as we have no valid char
+                //    //                        System.Array.Copy(tokens, p, tokens, 0, n - p);
+                //    // shift n-p tokens from p to 0
+                //    n = n - p;
+                //    p = 0;
+                //}
                 lastTokenBufferStart = lastToken;
             }
         }
@@ -236,7 +236,7 @@
             }
         }
 
-        public string Text { get; internal set; }
+        public string Text { get; set; }
 
         [return: NotNull]
         public virtual string GetText(Interval interval)

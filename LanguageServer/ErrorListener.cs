@@ -8,14 +8,12 @@
         public bool had_error;
         private Parser _parser;
         private Lexer _lexer;
-        private CommonTokenStream _token_stream;
         private int _quiet_after;
 
-        public ErrorListener(Parser parser, Lexer lexer, CommonTokenStream token_stream, int quiet_after)
+        public ErrorListener(Parser parser, Lexer lexer, int quiet_after)
         {
             _parser = parser;
             _lexer = lexer;
-            _token_stream = token_stream;
             _quiet_after = quiet_after;
         }
 
