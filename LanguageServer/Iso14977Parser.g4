@@ -277,7 +277,7 @@ structure in terms of the commentless symbols.
 */
 
 /* see 4.2 */ syntax3
-: syntax_rule syntax_rule*
+: syntax_rule syntax_rule* EOF
 ;
 
 /* see 4.3 */ syntax_rule
