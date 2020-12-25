@@ -845,19 +845,21 @@
                     System.Console.Error.WriteLine("Parse completed of " + ffn);
                 }
 
-                MyTokenStream out_token_stream = new MyTokenStream();
-                out_token_stream.Text = code;
-                MyCharStream fake_char_stream = new MyCharStream();
-                fake_char_stream.Text = out_token_stream.Text;
+                MyTokenStream out_token_stream2 = new MyTokenStream();
+                out_token_stream2.Text = code;
+                MyCharStream fake_char_stream2 = new MyCharStream();
+                fake_char_stream2.Text = out_token_stream2.Text;
                 MyLexer lexer2 = new MyLexer(null);
-                lexer2.InputStream = fake_char_stream;
-                out_token_stream.TokenSource = lexer2;
+                lexer2.InputStream = fake_char_stream2;
+                lexer2._vocabulary = lexer.Vocabulary as Vocabulary;
+                lexer2._channelNames = lexer.ChannelNames;
+                out_token_stream2.TokenSource = lexer2;
                 // Create a new stream with gap-free symbols.
-                var s = new Stack<IParseTree>();
-                s.Push(pt);
-                while (s.Any())
+                var s2 = new Stack<IParseTree>();
+                s2.Push(pt);
+                while (s2.Any())
                 {
-                    var n = s.Pop();
+                    var n = s2.Pop();
                     if (n is Iso14977Parser.Gap_free_symbolContext gfs)
                     {
                         var start_token_index = gfs.SourceInterval.a;
@@ -877,8 +879,8 @@
                             token.TokenSource = lexer2;
                             token.TokenIndex = t.TokenIndex;
                             token.Text =
-                                out_token_stream.Text.Substring(token.StartIndex, token.StopIndex - token.StartIndex + 1);
-                            out_token_stream.Add(token);
+                                out_token_stream2.Text.Substring(token.StartIndex, token.StopIndex - token.StartIndex + 1);
+                            out_token_stream2.Add(token);
                         }
                     }
                     else if (n is TerminalNodeImpl term && term.Symbol.Type == Antlr4.Runtime.TokenConstants.EOF)
@@ -900,21 +902,21 @@
                             token.TokenSource = lexer2;
                             token.TokenIndex = t.TokenIndex;
                             token.Text =
-                                out_token_stream.Text.Substring(token.StartIndex, token.StopIndex - token.StartIndex + 1);
-                            out_token_stream.Add(token);
+                                out_token_stream2.Text.Substring(token.StartIndex, token.StopIndex - token.StartIndex + 1);
+                            out_token_stream2.Add(token);
                         }
                     }
                     else if (n is ParserRuleContext prc)
                     {
                         for (int i = n.ChildCount - 1; i >= 0; i--)
                         {
-                            s.Push(n.GetChild(i));
+                            s2.Push(n.GetChild(i));
                         }
                     }
                 }
 
                 // Set up Antlr to parse input grammar.
-                var parser2 = new Iso14977Parser(out_token_stream);
+                var parser2 = new Iso14977Parser(out_token_stream2);
                 parser2.RemoveErrorListeners();
                 var parser_error_listener2 = new ErrorListener<IToken>(parser2, lexer2, pd.QuietAfter);
                 parser2.AddErrorListener(parser_error_listener);
@@ -932,6 +934,107 @@
                     // Parsing error.
                 }
                 if (parser_error_listener.had_error || lexer_error_listener.had_error || (bail_error_handler != null && bail_error_handler.had_error))
+                {
+                    System.Console.Error.WriteLine("Error in parse of " + ffn);
+                }
+                else
+                {
+                    System.Console.Error.WriteLine("Parse completed of " + ffn);
+                }
+
+                System.Console.WriteLine(TreeOutput.OutputTree(
+                        pt,
+                        lexer2,
+                        parser2,
+                        null));
+
+                MyTokenStream out_token_stream3 = new MyTokenStream();
+                out_token_stream3.Text = code;
+                MyCharStream fake_char_stream3 = new MyCharStream();
+                fake_char_stream3.Text = out_token_stream3.Text;
+                MyLexer lexer3 = new MyLexer(null);
+                lexer3.InputStream = fake_char_stream3;
+                out_token_stream3.TokenSource = lexer3;
+                // Create a new stream with gap-free symbols.
+                var s3 = new Stack<IParseTree>();
+                s3.Push(pt);
+                while (s3.Any())
+                {
+                    var n = s3.Pop();
+                    if (n is Iso14977Parser.Commentless_symbolContext gfs && !(gfs.Parent is Iso14977Parser.Comment_symbolContext))
+                    {
+                        var start_token_index = gfs.SourceInterval.a;
+                        var stop_token_index = gfs.SourceInterval.b;
+                        for (int i = start_token_index; i <= stop_token_index; ++i)
+                        {
+                            cts.Seek(0);
+                            var t = cts.Get(i);
+                            var token = new MyToken();
+                            token.Type = t.Type;
+                            token.StartIndex = t.StartIndex;
+                            token.StopIndex = t.StopIndex;
+                            token.Line = t.Line;
+                            token.Column = t.Column;
+                            token.Channel = t.Channel;
+                            token.InputStream = lexer2.InputStream;
+                            token.TokenSource = lexer2;
+                            token.TokenIndex = t.TokenIndex;
+                            token.Text =
+                                out_token_stream3.Text.Substring(token.StartIndex, token.StopIndex - token.StartIndex + 1);
+                            out_token_stream3.Add(token);
+                        }
+                    }
+                    else if (n is TerminalNodeImpl term && term.Symbol.Type == Antlr4.Runtime.TokenConstants.EOF)
+                    {
+                        var start_token_index = term.SourceInterval.a;
+                        var stop_token_index = term.SourceInterval.b;
+                        for (int i = start_token_index; i <= stop_token_index; ++i)
+                        {
+                            cts.Seek(0);
+                            var t = cts.Get(i);
+                            var token = new MyToken();
+                            token.Type = t.Type;
+                            token.StartIndex = t.StartIndex;
+                            token.StopIndex = t.StopIndex;
+                            token.Line = t.Line;
+                            token.Column = t.Column;
+                            token.Channel = t.Channel;
+                            token.InputStream = lexer2.InputStream;
+                            token.TokenSource = lexer2;
+                            token.TokenIndex = t.TokenIndex;
+                            token.Text =
+                                out_token_stream3.Text.Substring(token.StartIndex, token.StopIndex - token.StartIndex + 1);
+                            out_token_stream3.Add(token);
+                        }
+                    }
+                    else if (n is ParserRuleContext prc)
+                    {
+                        for (int i = n.ChildCount - 1; i >= 0; i--)
+                        {
+                            s3.Push(n.GetChild(i));
+                        }
+                    }
+                }
+
+                // Set up Antlr to parse input grammar.
+                var parser3 = new Iso14977Parser(out_token_stream3);
+                parser2.RemoveErrorListeners();
+                var parser_error_listener3 = new ErrorListener<IToken>(parser3, lexer3, pd.QuietAfter);
+                parser3.AddErrorListener(parser_error_listener3);
+                if (bail)
+                {
+                    bail_error_handler = new BailErrorHandler();
+                    parser2.ErrorHandler = bail_error_handler;
+                }
+                try
+                {
+                    pt = parser3.syntax3();
+                }
+                catch (Exception)
+                {
+                    // Parsing error.
+                }
+                if (parser_error_listener3.had_error || (bail_error_handler != null && bail_error_handler.had_error))
                 {
                     System.Console.Error.WriteLine("Error in parse of " + ffn);
                 }
