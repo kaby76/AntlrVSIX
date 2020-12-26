@@ -942,11 +942,11 @@
                     System.Console.Error.WriteLine("Parse completed of " + ffn);
                 }
 
-                System.Console.WriteLine(TreeOutput.OutputTree(
-                        pt,
-                        lexer2,
-                        parser2,
-                        null));
+                //System.Console.WriteLine(TreeOutput.OutputTree(
+                //        pt,
+                //        lexer2,
+                //        parser2,
+                //        null));
 
                 MyTokenStream out_token_stream3 = new MyTokenStream();
                 out_token_stream3.Text = code;

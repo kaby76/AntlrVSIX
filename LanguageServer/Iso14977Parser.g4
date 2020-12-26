@@ -195,11 +195,11 @@ gap-free-symbols that form a syntax.
     || InputStream.LA(1) == SQ
     || InputStream.LA(1) == FSQ
 
+    || InputStream.LA(1) == DQ
+
     || InputStream.LA(1) == STARCP
 
     || InputStream.LA(1) == OPSTAR
-
-    || InputStream.LA(1) == QM
 
     || InputStream.LA(1) == QM
     || InputStream.LA(1) == COLON
@@ -236,6 +236,7 @@ gap-free-symbols that form a syntax.
 /* see 4.15 */ meta_identifier_character
 : letter
 | decimal_digit
+| space_character // KED
 ;
 
 /* see 4.19 */ special_sequence
@@ -302,7 +303,7 @@ definitions_list terminator_symbol
 ;
 
 /* see 4.7 */ syntactic_exception
-:
+: syntactic_factor
 //? a syntactic-factor that could be replaced
 //by a syntactic-factor containing no
 //meta-identifiers
