@@ -193,13 +193,12 @@
                st.TryGetValue(p, out IList<CombinedScopeSymbol> list_value);
                if (list_value != null)
                {
-                        // There's a symbol table entry for the leaf node.
-                        // So, it is either a terminal, nonterminal,
-                        // channel, mode.
-                        // We don't care if it's a defining occurrence or
-                        // applied occurrence, just what type of symbol it
-                        // is.
-                        foreach (CombinedScopeSymbol value in list_value)
+                   // There's a symbol table entry for the leaf node.
+                   // So, it is either a terminal, nonterminal.
+                   // We don't care if it's a defining occurrence or
+                   // applied occurrence, just what type of symbol it
+                   // is.
+                   foreach (CombinedScopeSymbol value in list_value)
                    {
                        if (value is RefSymbol)
                        {
@@ -366,7 +365,7 @@
                                                     return false;
                                                 TerminalNodeImpl t1 = key as TerminalNodeImpl;
                                                 IToken s1 = t1.Symbol;
-                                                if (s1 == s.Token)
+                                                if (s.Token.Contains(s1))
                                                     return true;
                                                 return false;
                                             })
@@ -469,7 +468,7 @@
                                                     return false;
                                                 TerminalNodeImpl t1 = key as TerminalNodeImpl;
                                                 IToken s1 = t1.Symbol;
-                                                if (s1 == s.Token)
+                                                if (s.Token.Contains(s1))
                                                     return true;
                                                 return false;
                                             })
@@ -572,7 +571,7 @@
                                                     return false;
                                                 TerminalNodeImpl t1 = key as TerminalNodeImpl;
                                                 IToken s1 = t1.Symbol;
-                                                if (s1 == s.Token)
+                                                if (s.Token.Contains(s1))
                                                     return true;
                                                 return false;
                                             })
@@ -676,7 +675,7 @@
                                                     return false;
                                                 TerminalNodeImpl t1 = key as TerminalNodeImpl;
                                                 IToken s1 = t1.Symbol;
-                                                if (s1 == s.Token)
+                                                if (s.Token.Contains(s1))
                                                     return true;
                                                 return false;
                                             })
@@ -1121,7 +1120,7 @@
             }
         }
 
-        public class Pass2Listener : W3CebnfParserBaseListener
+        public class Pass2Listener : Iso14977ParserBaseListener
         {
             private readonly ParsingResults _pd;
 
@@ -1164,24 +1163,24 @@
                 return null;
             }
 
-            public override void EnterSymbol([NotNull] W3CebnfParser.SymbolContext context)
+            public override void EnterMeta_identifier([NotNull] Iso14977Parser.Meta_identifierContext context)
             {
-                var token_ref = context.SYMBOL();
-                if (token_ref != null && context.Parent is W3CebnfParser.LhsContext)
+                var chars_in_symbol = context.meta_identifier_character();
+                string id = String.Join("", chars_in_symbol.Select(t => t.Payload.GetText()));
+                if (context.Parent is Iso14977Parser.Syntax_ruleContext)
                 {
-                    string id = token_ref.GetText();
-                    List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
-                    ISymbol sym = new NonterminalSymbol(id, token_ref.Symbol);
-                    _pd.RootScope.define(ref sym);
-                    CombinedScopeSymbol s = (CombinedScopeSymbol)sym;
-                    _pd.Attributes[context] = new List<CombinedScopeSymbol>() { s };
-                    _pd.Attributes[token_ref] = new List<CombinedScopeSymbol>() { s };
+                    //List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
+                    //ISymbol sym = new NonterminalSymbol(id, token_ref.Symbol);
+                    //_pd.RootScope.define(ref sym);
+                    //CombinedScopeSymbol s = (CombinedScopeSymbol)sym;
+                    //_pd.Attributes[context] = new List<CombinedScopeSymbol>() { s };
+                    //_pd.Attributes[token_ref] = new List<CombinedScopeSymbol>() { s };
                 }
             }
         }
 
 
-        public class Pass3Listener : W3CebnfParserBaseListener
+        public class Pass3Listener : Iso14977ParserBaseListener
         {
             private readonly ParsingResults _pd;
 
@@ -1189,27 +1188,27 @@
             {
                 _pd = pd;
             }
-
-            public override void EnterSymbol([NotNull] W3CebnfParser.SymbolContext context)
+            public override void EnterMeta_identifier([NotNull] Iso14977Parser.Meta_identifierContext context)
             {
-                var token_ref = context.SYMBOL();
-                if (token_ref != null)
+                var chars_in_symbol = context.meta_identifier_character();
+                string id = String.Join("", chars_in_symbol.Select(t => t.Payload.GetText()));
+                
                 {
-                    for (var parent = context.Parent; parent != null; parent = parent.Parent)
-                        if (parent is W3CebnfParser.LhsContext) return;
-                    string id = token_ref.GetText();
-                    List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
-                    if (!list.Any())
-                    {
-                        ISymbol sym = new NonterminalSymbol(id, token_ref.Symbol);
-                        _pd.RootScope.define(ref sym);
-                        list = _pd.RootScope.LookupType(id).ToList();
-                    }
-                    List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
-                    CombinedScopeSymbol s = new RefSymbol(token_ref.Symbol, list);
-                    new_attrs.Add(s);
-                    _pd.Attributes[context] = new_attrs;
-                    _pd.Attributes[token_ref] = new_attrs;
+                    //for (var parent = context.Parent; parent != null; parent = parent.Parent)
+                    //    if (parent is W3CebnfParser.LhsContext) return;
+                    //string id = token_ref.GetText();
+                    //List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
+                    //if (!list.Any())
+                    //{
+                    //    ISymbol sym = new NonterminalSymbol(id, token_ref.Symbol);
+                    //    _pd.RootScope.define(ref sym);
+                    //    list = _pd.RootScope.LookupType(id).ToList();
+                    //}
+                    //List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
+                    //CombinedScopeSymbol s = new RefSymbol(token_ref.Symbol, list);
+                    //new_attrs.Add(s);
+                    //_pd.Attributes[context] = new_attrs;
+                    //_pd.Attributes[token_ref] = new_attrs;
                 }
             }
         }

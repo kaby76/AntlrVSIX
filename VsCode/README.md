@@ -160,7 +160,7 @@ To run the tool, you will need to find the **Trash.exe** executable
 after installing the extension in Visual Studio 2019, or unpacking
 it directly from the downloaded .vsix--a ZIP file.
 It should be under
-"C:/Users/userid/AppData/Local/Microsoft/VisualStudio/.../AntlrVSIX/8.0/Trash/netcoreapp3.1/Trash.exe".
+"C:/Users/userid/AppData/Local/Microsoft/VisualStudio/.../AntlrVSIX/<current-version>/Trash/net5-windows/Trash.exe".
 Once you find the executable, please refer to
 the [documentation](https://github.com/kaby76/AntlrVSIX/blob/master/doc/Trash.md).
 

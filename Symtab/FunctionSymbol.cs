@@ -1,6 +1,7 @@
 ﻿namespace Symtab
 {
     using Antlr4.Runtime;
+    using System.Collections.Generic;
 
     /// <summary>
     /// This symbol represents a function ala C, not a method ala Java.
@@ -12,7 +13,7 @@
         protected internal ParserRuleContext defNode;
         protected internal IType retType;
 
-        public FunctionSymbol(string n, IToken t) : base(n, t)
+        public FunctionSymbol(string n, IList<IToken> t) : base(n, t)
         {
         }
 

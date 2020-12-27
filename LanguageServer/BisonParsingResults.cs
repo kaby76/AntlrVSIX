@@ -156,7 +156,7 @@
                                 if (count == 1)
                                 {
                                     string tok = id.GetText();
-                                    ISymbol sym = new NonterminalSymbol(tok, token.Symbol);
+                                    ISymbol sym = new NonterminalSymbol(tok, new List<IToken>() { token.Symbol });
                                     this.RootScope.define(ref sym);
                                     CombinedScopeSymbol s = (CombinedScopeSymbol)sym;
                                     this.Attributes[id] = new List<CombinedScopeSymbol>() { s };
@@ -167,7 +167,7 @@
                                     string tag = parent.GetChild(0).GetText();
                                     tag = tag.Replace("<", "").Replace(">", "");
                                     string tok = id.GetText();
-                                    ISymbol sym = new NonterminalSymbol(tok, token.Symbol);
+                                    ISymbol sym = new NonterminalSymbol(tok, new List<IToken>() { token.Symbol });
                                     this.RootScope.define(ref sym);
                                     CombinedScopeSymbol s = (CombinedScopeSymbol)sym;
                                     this.Attributes[id] = new List<CombinedScopeSymbol>() { s };
@@ -178,7 +178,7 @@
                                     string tag = parent.GetChild(1).GetText();
                                     tag = tag.Replace("<", "").Replace(">", "");
                                     string tok = id.GetText();
-                                    ISymbol sym = new NonterminalSymbol(tok, token.Symbol);
+                                    ISymbol sym = new NonterminalSymbol(tok, new List<IToken>() { token.Symbol });
                                     this.RootScope.define(ref sym);
                                     CombinedScopeSymbol s = (CombinedScopeSymbol)sym;
                                     this.Attributes[id] = new List<CombinedScopeSymbol>() { s };
@@ -207,7 +207,7 @@
                         ITerminalNode lhs = lhs_id.ID();
                         TerminalNodeImpl rule_ref = lhs as TerminalNodeImpl;
                         string id = rule_ref.GetText();
-                        ISymbol s = new NonterminalSymbol(id, rule_ref.Symbol);
+                        ISymbol s = new NonterminalSymbol(id, new List<IToken>() { rule_ref.Symbol });
                         this.RootScope.define(ref s);
                         CombinedScopeSymbol s2 = (CombinedScopeSymbol)s;
                         this.Attributes[lhs_id] = new List<CombinedScopeSymbol>() { s2 };
@@ -255,12 +255,12 @@
                                 List<ISymbol> list = this.RootScope.LookupType(id_str).ToList();
                                 if (!list.Any())
                                 {
-                                    ISymbol s4 = new NonterminalSymbol(id_str, id_term.Symbol);
+                                    ISymbol s4 = new NonterminalSymbol(id_str, new List<IToken>() { id_term.Symbol });
                                     this.RootScope.define(ref s4);
                                     list = this.RootScope.LookupType(id_str).ToList();
                                 }
                                 List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
-                                CombinedScopeSymbol s = new RefSymbol(id_term.Symbol, list);
+                                CombinedScopeSymbol s = new RefSymbol(new List<IToken>() { id_term.Symbol }, list);
                                 new_attrs.Add(s);
                                 this.Attributes[s3] = new_attrs;
                                 this.Attributes[id] = new_attrs;
@@ -539,7 +539,7 @@
                                         return false;
                                     TerminalNodeImpl t1 = key as TerminalNodeImpl;
                                     IToken s1 = t1.Symbol;
-                                    if (s1 == s.Token)
+                                    if (s.Token.Contains(s1))
                                         return true;
                                     return false;
                                 })
@@ -644,7 +644,7 @@
                                         return false;
                                     TerminalNodeImpl t1 = key as TerminalNodeImpl;
                                     IToken s1 = t1.Symbol;
-                                    if (s1 == s.Token)
+                                    if (s.Token.Contains(s1))
                                         return true;
                                     return false;
                                 })
@@ -749,7 +749,7 @@
                                         return false;
                                     TerminalNodeImpl t1 = key as TerminalNodeImpl;
                                     IToken s1 = t1.Symbol;
-                                    if (s1 == s.Token)
+                                    if (s.Token.Contains(s1))
                                         return true;
                                     return false;
                                 })
@@ -855,7 +855,7 @@
                                         return false;
                                     TerminalNodeImpl t1 = key as TerminalNodeImpl;
                                     IToken s1 = t1.Symbol;
-                                    if (s1 == s.Token)
+                                    if (s.Token.Contains(s1))
                                         return true;
                                     return false;
                                 })

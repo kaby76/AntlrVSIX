@@ -5,8 +5,8 @@ npm i vscode-languageserver@7.0.0-next.7
 npm i vscode-languageserver-protocol@3.16.0-next.7
 npm i vscode-languageserver-types@3.16.0-next.3
 
-cp -r ../Server/bin/Debug/netcoreapp3.1 ./server
-cp -r ../Trash/bin/Debug/netcoreapp3.1 ./Trash
+cp -r ../Server/bin/Debug/net5.0 ./server
+cp -r ../Trash/bin/Debug/net5-windows ./Trash
 npm install
 npm run compile
 vsce package

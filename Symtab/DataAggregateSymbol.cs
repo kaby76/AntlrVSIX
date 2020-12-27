@@ -16,7 +16,7 @@
         protected internal int nextFreeFieldSlot = 0; // next slot to allocate
         protected internal int typeIndex;
 
-        public DataAggregateSymbol(string n, IToken t) : base(n, t)
+        public DataAggregateSymbol(string n, IList<IToken> t) : base(n, t)
         {
         }
 

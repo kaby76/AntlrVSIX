@@ -342,7 +342,7 @@
                                         return false;
                                     TerminalNodeImpl t1 = key as TerminalNodeImpl;
                                     IToken s1 = t1.Symbol;
-                                    if (s1 == s.Token)
+                                    if (s.Token.Contains(s1))
                                         return true;
                                     return false;
                                 })
@@ -449,7 +449,7 @@
                                         return false;
                                     TerminalNodeImpl t1 = key as TerminalNodeImpl;
                                     IToken s1 = t1.Symbol;
-                                    if (s1 == s.Token)
+                                    if (s.Token.Contains(s1))
                                         return true;
                                     return false;
                                 })
@@ -556,7 +556,7 @@
                                         return false;
                                     TerminalNodeImpl t1 = key as TerminalNodeImpl;
                                     IToken s1 = t1.Symbol;
-                                    if (s1 == s.Token)
+                                    if (s.Token.Contains(s1))
                                         return true;
                                     return false;
                                 })
@@ -664,7 +664,7 @@
                                         return false;
                                     TerminalNodeImpl t1 = key as TerminalNodeImpl;
                                     IToken s1 = t1.Symbol;
-                                    if (s1 == s.Token)
+                                    if (s.Token.Contains(s1))
                                         return true;
                                     return false;
                                 })
@@ -1250,7 +1250,7 @@
 
                 TerminalNodeImpl rule_ref = context.GetChild(i) as TerminalNodeImpl;
                 string id = rule_ref.GetText();
-                ISymbol sym = new NonterminalSymbol(id, rule_ref.Symbol);
+                ISymbol sym = new NonterminalSymbol(id, new List<IToken>() { rule_ref.Symbol });
                 _pd.RootScope.define(ref sym);
                 CombinedScopeSymbol s = (CombinedScopeSymbol)sym;
                 _pd.Attributes[context] = new List<CombinedScopeSymbol>() { s };
@@ -1280,7 +1280,7 @@
 
                 TerminalNodeImpl token_ref = context.GetChild(i) as TerminalNodeImpl;
                 string id = token_ref.GetText();
-                ISymbol sym = new TerminalSymbol(id, token_ref.Symbol);
+                ISymbol sym = new TerminalSymbol(id, new List<IToken>() { token_ref.Symbol });
                 _pd.RootScope.define(ref sym);
                 CombinedScopeSymbol s = (CombinedScopeSymbol)sym;
                 _pd.Attributes[context] = new List<CombinedScopeSymbol>() { s };
@@ -1293,7 +1293,7 @@
                 {
                     TerminalNodeImpl term = context.GetChild(0) as TerminalNodeImpl;
                     string id = term.GetText();
-                    ISymbol sym = new ModeSymbol(id, term.Symbol);
+                    ISymbol sym = new ModeSymbol(id, new List<IToken>() { term.Symbol });
                     _pd.RootScope.define(ref sym);
                     CombinedScopeSymbol s = (CombinedScopeSymbol)sym;
                     _pd.Attributes[context] = new List<CombinedScopeSymbol>() { s };
@@ -1303,7 +1303,7 @@
                 {
                     TerminalNodeImpl term = context.GetChild(0) as TerminalNodeImpl;
                     string id = term.GetText();
-                    ISymbol sym = new ChannelSymbol(id, term.Symbol);
+                    ISymbol sym = new ChannelSymbol(id, new List<IToken>() { term.Symbol });
                     _pd.RootScope.define(ref sym);
                     CombinedScopeSymbol s = (CombinedScopeSymbol)sym;
                     _pd.Attributes[context] = new List<CombinedScopeSymbol>() { s };
@@ -1325,7 +1325,7 @@
                     {
                         TerminalNodeImpl term = context.GetChild(0) as TerminalNodeImpl;
                         string id = term.GetText();
-                        ISymbol sym = new TerminalSymbol(id, term.Symbol);
+                        ISymbol sym = new TerminalSymbol(id, new List<IToken>() { term.Symbol });
                         _pd.RootScope.define(ref sym);
                         CombinedScopeSymbol s = (CombinedScopeSymbol)sym;
                         _pd.Attributes[context] = new List<CombinedScopeSymbol>() { s };
@@ -1352,12 +1352,12 @@
                     List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
                     if (!list.Any())
                     {
-                        ISymbol sym = new TerminalSymbol(id, context.TOKEN_REF().Symbol);
+                        ISymbol sym = new TerminalSymbol(id, new List<IToken>() { context.TOKEN_REF().Symbol });
                         _pd.RootScope.define(ref sym);
                         list = _pd.RootScope.LookupType(id).ToList();
                     }
                     List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
-                    CombinedScopeSymbol s = new RefSymbol(context.TOKEN_REF().Symbol, list);
+                    CombinedScopeSymbol s = new RefSymbol(new List<IToken>() { context.TOKEN_REF().Symbol }, list);
                     new_attrs.Add(s);
                     _pd.Attributes[context.TOKEN_REF()] = new_attrs;
                 }
@@ -1370,12 +1370,12 @@
                 List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
                 if (!list.Any())
                 {
-                    ISymbol sym = new NonterminalSymbol(id, first.Symbol);
+                    ISymbol sym = new NonterminalSymbol(id, new List<IToken>() { first.Symbol });
                     _pd.RootScope.define(ref sym);
                     list = _pd.RootScope.LookupType(id).ToList();
                 }
                 List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
-                CombinedScopeSymbol s = new RefSymbol(first.Symbol, list);
+                CombinedScopeSymbol s = new RefSymbol(new List<IToken>() { first.Symbol }, list);
                 new_attrs.Add(s);
                 _pd.Attributes[first] = new_attrs;
             }
@@ -1397,7 +1397,7 @@
                             sym_list = _pd.RootScope.LookupType(id).ToList();
                         }
                         List<CombinedScopeSymbol> ref_list = new List<CombinedScopeSymbol>();
-                        CombinedScopeSymbol s = new RefSymbol(term.Symbol, sym_list);
+                        CombinedScopeSymbol s = new RefSymbol(new List<IToken>() { term.Symbol }, sym_list);
                         ref_list.Add(s);
                         _pd.Attributes[context] = ref_list;
                         _pd.Attributes[context.GetChild(0)] = ref_list;
@@ -1414,7 +1414,7 @@
                             sym_list = _pd.RootScope.LookupType(id).ToList();
                         }
                         List<CombinedScopeSymbol> ref_list = new List<CombinedScopeSymbol>();
-                        CombinedScopeSymbol s = new RefSymbol(term.Symbol, sym_list);
+                        CombinedScopeSymbol s = new RefSymbol(new List<IToken>() { term.Symbol }, sym_list);
                         ref_list.Add(s);
                         _pd.Attributes[context] = ref_list;
                         _pd.Attributes[context.GetChild(0)] = ref_list;
@@ -1431,7 +1431,7 @@
                             sym_list = _pd.RootScope.LookupType(id).ToList();
                         }
                         List<CombinedScopeSymbol> ref_list = new List<CombinedScopeSymbol>();
-                        CombinedScopeSymbol s = new RefSymbol(term.Symbol, sym_list);
+                        CombinedScopeSymbol s = new RefSymbol(new List<IToken>() { term.Symbol }, sym_list);
                         ref_list.Add(s);
                         _pd.Attributes[context] = ref_list;
                         _pd.Attributes[context.GetChild(0)] = ref_list;

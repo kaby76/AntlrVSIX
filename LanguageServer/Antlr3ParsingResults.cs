@@ -412,7 +412,7 @@
                                                 return false;
                                             TerminalNodeImpl t1 = key as TerminalNodeImpl;
                                             IToken s1 = t1.Symbol;
-                                            if (s1 == s.Token)
+                                            if (s.Token.Contains(s1))
                                                 return true;
                                             return false;
                                         })
@@ -518,7 +518,7 @@
                                                 return false;
                                             TerminalNodeImpl t1 = key as TerminalNodeImpl;
                                             IToken s1 = t1.Symbol;
-                                            if (s1 == s.Token)
+                                            if (s.Token.Contains(s1))
                                                 return true;
                                             return false;
                                         })
@@ -624,7 +624,7 @@
                                                 return false;
                                             TerminalNodeImpl t1 = key as TerminalNodeImpl;
                                             IToken s1 = t1.Symbol;
-                                            if (s1 == s.Token)
+                                            if (s.Token.Contains(s1))
                                                 return true;
                                             return false;
                                         })
@@ -731,7 +731,7 @@
                                                 return false;
                                             TerminalNodeImpl t1 = key as TerminalNodeImpl;
                                             IToken s1 = t1.Symbol;
-                                            if (s1 == s.Token)
+                                            if (s.Token.Contains(s1))
                                                 return true;
                                             return false;
                                         })
@@ -1239,8 +1239,8 @@
                 var token_ref = id?.TOKEN_REF();
                 var rule_ref = id?.RULE_REF();
                 string name = id.GetText();
-                ISymbol sym = rule_ref != null ? (new NonterminalSymbol(name, rule_ref.Symbol) as ISymbol)
-                        : (new TerminalSymbol(name, token_ref.Symbol) as ISymbol);
+                ISymbol sym = rule_ref != null ? (new NonterminalSymbol(name, new List<IToken>() { rule_ref.Symbol }) as ISymbol)
+                        : (new TerminalSymbol(name, new List<IToken>() { token_ref.Symbol }) as ISymbol);
                 _pd.RootScope.define(ref sym);
                 CombinedScopeSymbol s = (CombinedScopeSymbol)sym;
                 _pd.Attributes[context] = new List<CombinedScopeSymbol>() { s };
@@ -1267,7 +1267,7 @@
                     {
                         TerminalNodeImpl term = context.GetChild(0) as TerminalNodeImpl;
                         string id = term.GetText();
-                        ISymbol sym = new TerminalSymbol(id, term.Symbol);
+                        ISymbol sym = new TerminalSymbol(id, new List<IToken>() { term.Symbol });
                         _pd.RootScope.define(ref sym);
                         CombinedScopeSymbol s = (CombinedScopeSymbol)sym;
                         _pd.Attributes[context] = new List<CombinedScopeSymbol>() { s };
@@ -1294,12 +1294,12 @@
                     List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
                     if (!list.Any())
                     {
-                        ISymbol sym = new TerminalSymbol(id, context.TOKEN_REF().Symbol);
+                        ISymbol sym = new TerminalSymbol(id, new List<IToken>() { context.TOKEN_REF().Symbol });
                         _pd.RootScope.define(ref sym);
                         list = _pd.RootScope.LookupType(id).ToList();
                     }
                     List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
-                    CombinedScopeSymbol s = new RefSymbol(context.TOKEN_REF().Symbol, list);
+                    CombinedScopeSymbol s = new RefSymbol(new List<IToken>() { context.TOKEN_REF().Symbol }, list);
                     new_attrs.Add(s);
                     _pd.Attributes[context.TOKEN_REF()] = new_attrs;
                 }
@@ -1309,12 +1309,12 @@
                     List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
                     if (!list.Any())
                     {
-                        ISymbol sym = new NonterminalSymbol(id, context.RULE_REF().Symbol);
+                        ISymbol sym = new NonterminalSymbol(id, new List<IToken>() { context.RULE_REF().Symbol });
                         _pd.RootScope.define(ref sym);
                         list = _pd.RootScope.LookupType(id).ToList();
                     }
                     List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
-                    CombinedScopeSymbol s = new RefSymbol(context.RULE_REF().Symbol, list);
+                    CombinedScopeSymbol s = new RefSymbol(new List<IToken>() { context.RULE_REF().Symbol }, list);
                     new_attrs.Add(s);
                     _pd.Attributes[context.RULE_REF()] = new_attrs;
                 }
@@ -1328,12 +1328,12 @@
                     List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
                     if (!list.Any())
                     {
-                        ISymbol sym = new TerminalSymbol(id, context.terminal_().TOKEN_REF().Symbol);
+                        ISymbol sym = new TerminalSymbol(id, new List<IToken>() { context.terminal_().TOKEN_REF().Symbol });
                         _pd.RootScope.define(ref sym);
                         list = _pd.RootScope.LookupType(id).ToList();
                     }
                     List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
-                    CombinedScopeSymbol s = new RefSymbol(context.terminal_().TOKEN_REF().Symbol, list);
+                    CombinedScopeSymbol s = new RefSymbol(new List<IToken>() { context.terminal_().TOKEN_REF().Symbol }, list);
                     new_attrs.Add(s);
                     _pd.Attributes[context.terminal_().TOKEN_REF()] = new_attrs;
                 }
@@ -1343,12 +1343,12 @@
                     List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
                     if (!list.Any())
                     {
-                        ISymbol sym = new NonterminalSymbol(id, context.RULE_REF().Symbol);
+                        ISymbol sym = new NonterminalSymbol(id, new List<IToken>() { context.RULE_REF().Symbol });
                         _pd.RootScope.define(ref sym);
                         list = _pd.RootScope.LookupType(id).ToList();
                     }
                     List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
-                    CombinedScopeSymbol s = new RefSymbol(context.RULE_REF().Symbol, list);
+                    CombinedScopeSymbol s = new RefSymbol(new List<IToken>() { context.RULE_REF().Symbol }, list);
                     new_attrs.Add(s);
                     _pd.Attributes[context.RULE_REF()] = new_attrs;
                 }

@@ -1,6 +1,7 @@
 ﻿namespace Symtab
 {
     using Antlr4.Runtime;
+    using System.Collections.Generic;
 
     /// <summary>
     /// A field symbol is just a variable that lives inside an aggregate like a
@@ -10,7 +11,7 @@
     {
         protected internal int slot;
 
-        public FieldSymbol(string n, IToken t) : base(n, t)
+        public FieldSymbol(string n, IList<IToken> t) : base(n, t)
         {
         }
 

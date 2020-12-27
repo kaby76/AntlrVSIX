@@ -12,7 +12,7 @@
         protected internal string superClassName; // null if this is Object
         protected internal int nextFreeMethodSlot = 0; // next slot to allocate
 
-        public InterfaceSymbol(string n, IToken t) : base(n, t)
+        public InterfaceSymbol(string n, IList<IToken> t) : base(n, t)
         {
         }
 

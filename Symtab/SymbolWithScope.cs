@@ -14,7 +14,7 @@
     {
         protected internal int index; // insertion order from 0; compilers often need this
 
-        public SymbolWithScope(string name, IToken token)
+        public SymbolWithScope(string name, IList<IToken> token)
         {
             Name = name;
             Token = token;
@@ -62,10 +62,10 @@
 
         public override int NumberOfSymbols => symbols.Count;
 
-        public virtual int line => Token != null ? Token.Line : 0;
-        public virtual int col => Token != null ? Token.Column : 0;
-        public virtual string file => Token != null ? Token.InputStream.SourceName : "";
-        public virtual IToken Token { get; protected set; }
+        public virtual int line => Token != null && Token.Any() ? Token.First().Line : 0;
+        public virtual int col => Token != null && Token.Any() ? Token.First().Column : 0;
+        public virtual string file => Token != null && Token.Any() ? Token.First().InputStream.SourceName : "";
+        public virtual IList<IToken> Token { get; protected set; }
 
         public override bool Equals(object obj)
         {

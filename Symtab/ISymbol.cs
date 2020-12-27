@@ -17,7 +17,7 @@
         int line { get; }
         int col { get; }
         string file { get; }
-        IToken Token { get; }
+        IList<IToken> Token { get; }
 
         // Resolve a ref or def into a def symbol.
         List<ISymbol> resolve();

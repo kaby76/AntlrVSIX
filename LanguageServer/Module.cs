@@ -553,7 +553,7 @@
 
                     Location new_loc = new Location()
                     {
-                        Range = new Workspaces.Range(def.Token.StartIndex, def.Token.StopIndex),
+                        Range = new Workspaces.Range(def.Token.First().StartIndex, def.Token.First().StopIndex),
                         Uri = def_item
                     };
                     result.Add(new_loc);
@@ -620,7 +620,7 @@
                     result.Add(
                         new Location()
                         {
-                            Range = new Workspaces.Range(def.Token.StartIndex, def.Token.StopIndex),
+                            Range = new Workspaces.Range(def.Token.First().StartIndex, def.Token.First().StopIndex),
                             Uri = workspace.FindDocument(def.file)
                         });
                     var dd = def as BaseSymbol;
@@ -629,7 +629,7 @@
                         result.Add(
                             new Location()
                             {
-                                Range = new Workspaces.Range(r.Token.StartIndex, r.Token.StopIndex),
+                                Range = new Workspaces.Range(r.Token.First().StartIndex, r.Token.First().StopIndex),
                                 Uri = workspace.FindDocument(r.file)
                             });
                     }

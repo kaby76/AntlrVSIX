@@ -17,7 +17,7 @@ namespace Symtab
             return Def;
         }
 
-        public RefSymbol(IToken t, List<ISymbol> def)
+        public RefSymbol(IList<IToken> t, List<ISymbol> def)
             : base(def.First().Name, t)
         {
             Def = def;

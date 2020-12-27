@@ -2108,7 +2108,7 @@
                 if (lhs == null)
                     continue;
 
-                TerminalNodeImpl lhs_term = TreeEdits.Find(lhs, tree);
+                TerminalNodeImpl lhs_term = TreeEdits.Find(lhs.First(), tree);
                 if (lhs_term == null)
                     continue;
 
@@ -2145,7 +2145,7 @@
                             if (lhs2 == null)
                                 continue;
 
-                            TerminalNodeImpl lhs_term2 = TreeEdits.Find(lhs2, tree2);
+                            TerminalNodeImpl lhs_term2 = TreeEdits.Find(lhs2.First(), tree2);
                             if (lhs_term2 == null)
                                 continue;
 
@@ -4535,8 +4535,8 @@
                             if (sym is RefSymbol) list_of_syms = sym.resolve();
                             if (list_of_syms.Count > 1) return false;
                             var s = list_of_syms.First();
-                            if (s.Token.InputStream.SourceName != def.Symbol.InputStream.SourceName) return false;
-                            if (s.Token.TokenIndex != def.Symbol.TokenIndex) return false;
+                            if (s.Token.First().InputStream.SourceName != def.Symbol.InputStream.SourceName) return false;
+                            if (s.Token.First().TokenIndex != def.Symbol.TokenIndex) return false;
                             return true;
                         }
                         else
@@ -4598,7 +4598,7 @@
                     {
                         var z2 = z as TerminalNodeImpl;
                         if (z2 == null) return false;
-                        return z2.Symbol?.TokenIndex == def_token.TokenIndex;
+                        return z2.Symbol?.TokenIndex == def_token.First().TokenIndex;
                     }).FirstOrDefault();
                 IParseTree rule;
                 for (rule = def_leaf; rule != null; rule = rule.Parent)
@@ -4761,7 +4761,7 @@
                     {
                         var z2 = z as TerminalNodeImpl;
                         if (z2 == null) return false;
-                        return z2.Symbol?.TokenIndex == def_token.TokenIndex;
+                        return z2.Symbol?.TokenIndex == def_token.First().TokenIndex;
                     }).FirstOrDefault();
                 IParseTree rule;
                 for (rule = def_leaf; rule != null; rule = rule.Parent)

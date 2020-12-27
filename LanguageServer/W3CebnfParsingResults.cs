@@ -365,7 +365,7 @@
                                                     return false;
                                                 TerminalNodeImpl t1 = key as TerminalNodeImpl;
                                                 IToken s1 = t1.Symbol;
-                                                if (s1 == s.Token)
+                                                if (s.Token.Contains(s1))
                                                     return true;
                                                 return false;
                                             })
@@ -468,7 +468,7 @@
                                                     return false;
                                                 TerminalNodeImpl t1 = key as TerminalNodeImpl;
                                                 IToken s1 = t1.Symbol;
-                                                if (s1 == s.Token)
+                                                if (s.Token.Contains(s1))
                                                     return true;
                                                 return false;
                                             })
@@ -571,7 +571,7 @@
                                                     return false;
                                                 TerminalNodeImpl t1 = key as TerminalNodeImpl;
                                                 IToken s1 = t1.Symbol;
-                                                if (s1 == s.Token)
+                                                if (s.Token.Contains(s1))
                                                     return true;
                                                 return false;
                                             })
@@ -675,7 +675,7 @@
                                                     return false;
                                                 TerminalNodeImpl t1 = key as TerminalNodeImpl;
                                                 IToken s1 = t1.Symbol;
-                                                if (s1 == s.Token)
+                                                if (s.Token.Contains(s1))
                                                     return true;
                                                 return false;
                                             })
@@ -975,7 +975,7 @@
                 {
                     string id = token_ref.GetText();
                     List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
-                    ISymbol sym = new NonterminalSymbol(id, token_ref.Symbol);
+                    ISymbol sym = new NonterminalSymbol(id, new List<IToken>() { token_ref.Symbol });
                     _pd.RootScope.define(ref sym);
                     CombinedScopeSymbol s = (CombinedScopeSymbol)sym;
                     _pd.Attributes[context] = new List<CombinedScopeSymbol>() { s };
@@ -1005,12 +1005,12 @@
                     List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
                     if (!list.Any())
                     {
-                        ISymbol sym = new NonterminalSymbol(id, token_ref.Symbol);
+                        ISymbol sym = new NonterminalSymbol(id, new List<IToken>() { token_ref.Symbol });
                         _pd.RootScope.define(ref sym);
                         list = _pd.RootScope.LookupType(id).ToList();
                     }
                     List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
-                    CombinedScopeSymbol s = new RefSymbol(token_ref.Symbol, list);
+                    CombinedScopeSymbol s = new RefSymbol(new List<IToken>() { token_ref.Symbol }, list);
                     new_attrs.Add(s);
                     _pd.Attributes[context] = new_attrs;
                     _pd.Attributes[token_ref] = new_attrs;

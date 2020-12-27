@@ -23,7 +23,7 @@
             return res;
         }
 
-        public BaseSymbol(string name, IToken token)
+        public BaseSymbol(string name, IList<IToken> token)
         {
             Name = name;
             Token = token;
@@ -104,10 +104,10 @@
         }
 
         public ISymbol definition { get; set; }
-        public virtual int line => Token != null ? Token.Line : 0;
-        public virtual int col => Token != null ? Token.Column : 0;
-        public virtual string file => Token != null ? Token.InputStream.SourceName : "";
-        public virtual IToken Token { get; protected set; }
+        public virtual int line => Token != null && Token.Any() ? Token.First().Line : 0;
+        public virtual int col => Token != null && Token.Any() ? Token.First().Column : 0;
+        public virtual string file => Token != null && Token.Any() ? Token.First().InputStream.SourceName : "";
+        public virtual IList<IToken> Token { get; protected set; }
     }
 
 }
