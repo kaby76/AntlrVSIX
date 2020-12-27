@@ -81,7 +81,8 @@ export function activate(context: vscode.ExtensionContext)
             {scheme: 'file', language: 'antlr3'},
             {scheme: 'file', language: 'antlr4'},
             {scheme: 'file', language: 'bison'},
-            {scheme: 'file', language: 'ebnf'}, 
+            {scheme: 'file', language: 'ebnf'},
+            {scheme: 'file', language: 'iso14977'},
         ]
     };
 

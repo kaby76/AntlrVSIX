@@ -28,7 +28,8 @@
     "onLanguage:antlr3",
     "onLanguage:antlr4",
     "onLanguage:bison",
-    "onLanguage:ebnf"
+    "onLanguage:ebnf",
+    "onLanguage:iso14977"
   ],
   "main": "./out/extension",
   "contributes": {
@@ -61,6 +62,13 @@
         "id": "ebnf",
         "extensions": [
           ".ebnf"
+        ]
+      },
+      {
+        "id": "iso14977",
+        "extensions": [
+          ".iso",
+          ".iso14977"
         ]
       }
     ],

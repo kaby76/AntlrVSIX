@@ -381,7 +381,7 @@
                                     IParseTree node = fod;
                                     for (; node != null; node = node.Parent)
                                     {
-                                        if (node is W3CebnfParser.ProdContext)
+                                        if (node is Iso14977Parser.Syntax_ruleContext)
                                         {
                                             break;
                                         }
@@ -484,7 +484,7 @@
                                     IParseTree node = fod;
                                     for (; node != null; node = node.Parent)
                                     {
-                                        if (node is W3CebnfParser.ProdContext)
+                                        if (node is Iso14977Parser.Syntax_ruleContext)
                                         {
                                             break;
                                         }
@@ -587,7 +587,7 @@
                                     IParseTree node = fod;
                                     for (; node != null; node = node.Parent)
                                     {
-                                        if (node is W3CebnfParser.ProdContext)
+                                        if (node is Iso14977Parser.Syntax_ruleContext)
                                         {
                                             break;
                                         }
@@ -691,7 +691,7 @@
                                     IParseTree node = fod;
                                     for (; node != null; node = node.Parent)
                                     {
-                                        if (node is W3CebnfParser.ProdContext)
+                                        if (node is Iso14977Parser.Syntax_ruleContext)
                                         {
                                             break;
                                         }
