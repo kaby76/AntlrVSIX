@@ -974,7 +974,6 @@
                 if (token_ref != null && context.Parent is W3CebnfParser.LhsContext)
                 {
                     string id = token_ref.GetText();
-                    List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
                     ISymbol sym = new NonterminalSymbol(id, new List<IToken>() { token_ref.Symbol });
                     _pd.RootScope.define(ref sym);
                     CombinedScopeSymbol s = (CombinedScopeSymbol)sym;

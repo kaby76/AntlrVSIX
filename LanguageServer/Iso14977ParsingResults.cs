@@ -11,6 +11,7 @@
 	using System.Text;
 	using Workspaces;
     using AltAntlr;
+    using AntlrTreeEditing;
 
     internal class Iso14977ParsingResults : ParsingResults, IParserDescription
     {
@@ -1169,12 +1170,14 @@
                 string id = String.Join("", chars_in_symbol.Select(t => t.Payload.GetText()));
                 if (context.Parent is Iso14977Parser.Syntax_ruleContext)
                 {
-                    //List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
-                    //ISymbol sym = new NonterminalSymbol(id, token_ref.Symbol);
-                    //_pd.RootScope.define(ref sym);
-                    //CombinedScopeSymbol s = (CombinedScopeSymbol)sym;
-                    //_pd.Attributes[context] = new List<CombinedScopeSymbol>() { s };
-                    //_pd.Attributes[token_ref] = new List<CombinedScopeSymbol>() { s };
+                    var frontier = TreeEdits.Frontier(context);
+                    var list = frontier.Select(t => t.Symbol).ToList();
+                    ISymbol sym = new NonterminalSymbol(id, list);
+                    _pd.RootScope.define(ref sym);
+                    CombinedScopeSymbol s = (CombinedScopeSymbol)sym;
+                    _pd.Attributes[context] = new List<CombinedScopeSymbol>() { s };
+                    foreach (var tr in frontier)
+                        _pd.Attributes[tr] = new List<CombinedScopeSymbol>() { s };
                 }
             }
         }
@@ -1192,24 +1195,27 @@
             {
                 var chars_in_symbol = context.meta_identifier_character();
                 string id = String.Join("", chars_in_symbol.Select(t => t.Payload.GetText()));
-                
+
+                if (context.Parent is Iso14977Parser.Syntax_ruleContext)
+                    return;
+
+                var frontier = TreeEdits.Frontier(context);
+                List<ISymbol> prior = _pd.RootScope.LookupType(id).ToList();
+                if (!prior.Any())
                 {
-                    //for (var parent = context.Parent; parent != null; parent = parent.Parent)
-                    //    if (parent is W3CebnfParser.LhsContext) return;
-                    //string id = token_ref.GetText();
-                    //List<ISymbol> list = _pd.RootScope.LookupType(id).ToList();
-                    //if (!list.Any())
-                    //{
-                    //    ISymbol sym = new NonterminalSymbol(id, token_ref.Symbol);
-                    //    _pd.RootScope.define(ref sym);
-                    //    list = _pd.RootScope.LookupType(id).ToList();
-                    //}
-                    //List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
-                    //CombinedScopeSymbol s = new RefSymbol(token_ref.Symbol, list);
-                    //new_attrs.Add(s);
-                    //_pd.Attributes[context] = new_attrs;
-                    //_pd.Attributes[token_ref] = new_attrs;
+                    var listp = frontier.Select(t => t.Symbol).ToList();
+                    ISymbol symp = new NonterminalSymbol(id, listp);
+                    _pd.RootScope.define(ref symp);
+                    prior = _pd.RootScope.LookupType(id).ToList();
                 }
+                var list = frontier.Select(t => t.Symbol).ToList();
+                List<CombinedScopeSymbol> new_attrs = new List<CombinedScopeSymbol>();
+                CombinedScopeSymbol s = new RefSymbol(list, prior);
+                new_attrs.Add(s);
+                _pd.Attributes[context] = new_attrs;
+                _pd.Attributes[context] = new List<CombinedScopeSymbol>() { s };
+                foreach (var tr in frontier)
+                    _pd.Attributes[tr] = new List<CombinedScopeSymbol>() { s };
             }
         }
     }
