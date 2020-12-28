@@ -84,3 +84,4 @@ VsCode/Trash/
 Trash/test/Generated/
 Trash/Generated/
 VsCode/server/
+LanguageServer/.antlr/

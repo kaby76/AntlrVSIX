@@ -39,6 +39,12 @@
     <Antlr4 Include="Iso14977Parser.g4">
       <Package>LanguageServer</Package>
     </Antlr4>
+    <Antlr4 Include="lbnfLexer.g4">
+      <Package>LanguageServer</Package>
+    </Antlr4>
+    <Antlr4 Include="lbnfParser.g4">
+      <Package>LanguageServer</Package>
+    </Antlr4>
     <Antlr4 Include="W3CebnfParser.g4">
 			<Package>LanguageServer</Package>
 		</Antlr4>

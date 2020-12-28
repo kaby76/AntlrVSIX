@@ -7035,7 +7035,7 @@ and not(lexerRuleBlock//ebnfSuffix)
 
             // Get all intertoken text immediately for source reconstruction.
             var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
-            
+
             var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
             using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
                 new AntlrTreeEditing.AntlrDOM.ConvertToDOM().Try(tree, parser))
@@ -7060,6 +7060,99 @@ and not(lexerRuleBlock//ebnfSuffix)
                 {
                     var nodes = engine.parseExpression(
                             @"//labeledElement/(identifier | ASSIGN | PLUS_ASSIGN)",
+                            new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree)
+                        .ToArray();
+                    foreach (var n in nodes) TreeEdits.Delete(n);
+                }
+            }
+
+            StringBuilder sb = new StringBuilder();
+            TreeEdits.Reconstruct(sb, pd_parser.ParseTree, text_before);
+            var new_code = sb.ToString();
+            if (new_code != pd_parser.Code)
+            {
+                result.Add(document.FullPath, new_code);
+            }
+            return result;
+        }
+
+        public static Dictionary<string, string> Strip(Document document)
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+
+            // Check if initial file is a grammar.
+            if (!(ParsingResultsFactory.Create(document) is ParsingResults pd_parser))
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            ExtractGrammarType egt = new ExtractGrammarType();
+            ParseTreeWalker.Default.Walk(egt, pd_parser.ParseTree);
+            bool is_grammar = egt.Type == ExtractGrammarType.GrammarType.Parser
+                              || egt.Type == ExtractGrammarType.GrammarType.Combined
+                              || egt.Type == ExtractGrammarType.GrammarType.Lexer;
+            if (!is_grammar)
+            {
+                throw new LanguageServerException("A grammar file is not selected. Please select one first.");
+            }
+
+            // Get all intertoken text immediately for source reconstruction.
+            var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
+
+            var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
+            using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
+                new AntlrTreeEditing.AntlrDOM.ConvertToDOM().Try(tree, parser))
+            {
+                org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+                {
+                    var nodes = engine.parseExpression(
+                            @"//labeledAlt/(POUND | identifier)",
+                            new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree)
+                        .ToArray();
+                    foreach (var n in nodes) TreeEdits.Delete(n);
+                }
+                {
+                    var nodes = engine.parseExpression(
+                            @"//labeledLexerElement/(identifier | ASSIGN | PLUS_ASSIGN)",
+                            new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree)
+                        .ToArray();
+                    foreach (var n in nodes) TreeEdits.Delete(n);
+                }
+                {
+                    var nodes = engine.parseExpression(
+                            @"//labeledElement/(identifier | ASSIGN | PLUS_ASSIGN)",
+                            new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree)
+                        .ToArray();
+                    foreach (var n in nodes) TreeEdits.Delete(n);
+                }
+                {
+                    var nodes = engine.parseExpression(
+                            @"//parserRuleSpec/ruleReturns",
+                            new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree)
+                        .ToArray();
+                    foreach (var n in nodes) TreeEdits.Delete(n);
+                }
+                {
+                    var nodes = engine.parseExpression(
+                            @"//prequelConstruct",
+                            new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree)
+                        .ToArray();
+                    foreach (var n in nodes) TreeEdits.Delete(n);
+                }
+                {
+                    var nodes = engine.parseExpression(
+                            @"//parserRuleSpec/ruleReturns",
+                            new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree)
+                        .ToArray();
+                    foreach (var n in nodes) TreeEdits.Delete(n);
+                }
+                {
+                    var nodes = engine.parseExpression(
+                            @"//actionBlock",
                             new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
                         .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree)
                         .ToArray();
