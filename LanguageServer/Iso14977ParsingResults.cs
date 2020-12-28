@@ -849,6 +849,7 @@
                 out_token_stream2.Text = code;
                 MyCharStream fake_char_stream2 = new MyCharStream();
                 fake_char_stream2.Text = out_token_stream2.Text;
+                fake_char_stream2.SourceName = ffn;
                 MyLexer lexer2 = new MyLexer(null);
                 lexer2.InputStream = fake_char_stream2;
                 lexer2._vocabulary = lexer.Vocabulary as Vocabulary;
@@ -952,6 +953,7 @@
                 out_token_stream3.Text = code;
                 MyCharStream fake_char_stream3 = new MyCharStream();
                 fake_char_stream3.Text = out_token_stream3.Text;
+                fake_char_stream3.SourceName = ffn;
                 MyLexer lexer3 = new MyLexer(null);
                 lexer3.InputStream = fake_char_stream3;
                 out_token_stream3.TokenSource = lexer3;
