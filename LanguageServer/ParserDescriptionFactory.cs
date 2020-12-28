@@ -36,6 +36,7 @@
                 else if (parse_as == "bison") result = new BisonParsingResults(document);
                 else if (parse_as == "ebnf") result = new W3CebnfParsingResults(document);
                 else if (parse_as == "iso14977") result = new Iso14977ParsingResults(document);
+                else if (parse_as == "lbnf") result = new lbnfParsingResults(document);
                 else result = null;
             }
             else if (document.FullPath.EndsWith(".ebnf"))
@@ -66,6 +67,11 @@
             else if (document.FullPath.EndsWith(".iso14977"))
             {
                 document.ParseAs = "iso14977";
+                result = new Iso14977ParsingResults(document);
+            }
+            else if (document.FullPath.EndsWith(".cf"))
+            {
+                document.ParseAs = "lbnf";
                 result = new Iso14977ParsingResults(document);
             }
             else result = null;
