@@ -7094,14 +7094,21 @@ and not(lexerRuleBlock//ebnfSuffix)
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
 
-            // Get all intertoken text immediately for source reconstruction.
-            var (text_before, other) = TreeEdits.TextToLeftOfLeaves(pd_parser.TokStream, pd_parser.ParseTree);
+            var text_before = new Dictionary<TerminalNodeImpl, string>();
 
             var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);
             using (AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
                 new AntlrTreeEditing.AntlrDOM.ConvertToDOM().Try(tree, parser))
             {
                 org.eclipse.wst.xml.xpath2.processor.Engine engine = new org.eclipse.wst.xml.xpath2.processor.Engine();
+                {
+                    var nodes = engine.parseExpression(
+                            @"//DOC_COMMENT",
+                            new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree)
+                        .ToArray();
+                    foreach (var n in nodes) TreeEdits.Delete(n);
+                }
                 {
                     var nodes = engine.parseExpression(
                             @"//labeledAlt/(POUND | identifier)",
@@ -7157,6 +7164,24 @@ and not(lexerRuleBlock//ebnfSuffix)
                         .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree)
                         .ToArray();
                     foreach (var n in nodes) TreeEdits.Delete(n);
+                }
+                {
+                    var nodes = engine.parseExpression(
+                            @"//parserRuleSpec",
+                            new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree)
+                        .ToArray();
+                    var l1 = nodes.Select(n => TreeEdits.LeftMostToken(n)).ToList();
+                    foreach (var l in l1) text_before[l] = "\n";
+                }
+                {
+                    var nodes = engine.parseExpression(
+                            @"//lexerRuleSpec",
+                            new StaticContextBuilder()).evaluate(dynamicContext, new object[] { dynamicContext.Document })
+                        .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree)
+                        .ToArray();
+                    var l1 = nodes.Select(n => TreeEdits.LeftMostToken(n)).ToList();
+                    foreach (var l in l1) text_before[l] = "\n";
                 }
             }
 
