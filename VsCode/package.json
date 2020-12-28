@@ -70,13 +70,14 @@
         "extensions": [
           ".iso",
           ".iso14977"
-        ],
-        {
-          "id": "lbnf",
-          "extensions": [
-            ".cf"
-          ]
-        }
+        ]
+      },
+      {
+        "id": "lbnf",
+        "extensions": [
+          ".cf"
+        ]
+      }
     ],
     "configuration": {
       "type": "object",

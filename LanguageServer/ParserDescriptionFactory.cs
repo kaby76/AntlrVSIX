@@ -72,7 +72,7 @@
             else if (document.FullPath.EndsWith(".cf"))
             {
                 document.ParseAs = "lbnf";
-                result = new Iso14977ParsingResults(document);
+                result = new lbnfParsingResults(document);
             }
             else result = null;
             _parsing_results[document] = result;
