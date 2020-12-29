@@ -43,6 +43,8 @@ release v8.4 or v9.0.__
 | Antlr3 | .g3 | Basic LSP services (tagging, go to def, find all refs, rename, etc.); conversion to Antlr4 |
 | Antlr2 | .g2 | Basic LSP services (tagging, go to def, find all refs, rename, etc.); conversion to Antlr4 |
 | Bison | .y | Basic LSP services (tagging, go to def, find all refs, rename, etc.); conversion to Antlr4 |
+| ISO 14977 | .iso .iso14977 | Basic LSP services (tagging, go to def, find all refs, rename, etc.) |
+| LBNF | .cf | Basic LSP services (tagging, go to def, find all refs, rename, etc.) |
 | W3C EBNF | .ebnf | Basic LSP services (tagging, go to def, find all refs, rename, etc.); conversion to Antlr4 |
 
 # Installation
@@ -79,68 +81,63 @@ from Appveyor.
 * [Antlrvsix for VS2019](https://ci.appveyor.com/api/projects/kaby76/antlrvsix/artifacts/VsIde/bin/Debug/AntlrVSIX.vsix)
 * [Antlrvsix for VSCode](https://ci.appveyor.com/api/projects/kaby76/antlrvsix/artifacts/VsCode/Antlrvsix-vscode-1.2.0.vsix)
 
-## Current release v8.2 VSIDE, v1.1 VSCode (5 Nov 2020)
+# Current release
 
-This release addresses bug and performance issues in Antlrvsix.
+## v8.3 (30 Dec 2020)
 
-Most of the bugs had to do with commands in Trash.
-In the command-line interpreter, I wrote two special Antlr streams that were very buggy.
-With this release, I rewrote this code to parse input
-in two steps: the first step reads a line of text
-until the end-of-line or end-of-file; the second step parses the line of text
-with an Antlr parser using a simplified grammar (it no longer considers whitespace in
-the parser grammar, and the lexer uses modes).
+After two months of work, release 8.3 for Antlrvsix has been completed.
+Most of the changes pertain to Trash, the command-line interpreter
+shell contained within Antlrvsix, but there are a few other important
+changes to the extension itself.
 
-For several commands in Trash, I supported
-[file globbing](https://en.wikipedia.org/wiki/Glob_(programming)),
-e.g., `ls *.g4`.
-However, I was never happy with the implementation because it was not very good.
-The globbing code was a thin
-layer over Microsoft's basic FileInfo and DirectoryInfo APIs,
-which does a poor job at file pattern matching (e.g., one could not write `ls *Lex*.g4`,
-which has two asterisks, but one could for `ls *Lexer.g4`).
-I replaced this code with a Bash-like globbing library that
-[I wrote](https://github.com/kaby76/AntlrVSIX/blob/4f54c980ae91cc32d32342c3a8d973b79aca925a/Trash/Globbing.cs).
-File and directory names, however, are now case sensitive because the file names should be
-more like Linux, since this tool is intended to be platform independent. In fact, I wrote [code](https://github.com/kaby76/AntlrVSIX/blob/5fba2752ea797de42896511d2fc9b4d4bc792c7c/Workspaces/Document.cs#L77)
-long ago that takes great effort to mutate a name
-that is in the wrong case to the proper case. It should not even be there because it continues
-a non-portable feature. You will need to use the correct case for all file names.
+Release 8.3 features an all-new input/output pipe implementation between
+commands in Trash. It uses a JSON serialization of parse trees between
+commands. The JSON serialization also contains the parser, lexer, token
+stream, file contents, and file location. Basically, it includes everything
+that one would need for a command to manipulate a parse tree. The purpose
+of the JSON file is so that each command can now be implemented
+“out-of-process”, meaning that Trash can now be replaced by Bash and
+each command implemented as an independent program in any language of
+choice. Nobody wants yet another monolithic program to implement
+programming language tools. This release works towards an open system.
+With this release, all the commands and Trash still are implemented in
+one program, but it will be switched over in a month or two.
 
-Recently, I had a task to merge a couple of large Antlr grammars.
-Some of the keyword
-rules in one grammar were in case-folding syntax (e.g., `TRUE: [tT][rR][uU][eE];`),
-while in the other grammar the rules were not (e.g., `TRUE: 'true';`). After
-playing around with the [ulliteral transform](https://github.com/kaby76/AntlrVSIX/blob/master/doc-8.2/refactoring.md#upper-and-lower-case-string-literals),
-I realized that it was not working all that well.
-In addition, there was no inverse of the transform--which is
-very useful because Antlr warns if a grammar
-contains two lexer rules that match the same string literal, but not if one grammar
-is imported by the other, and not if the lexer rule is in case-folding syntax. I added
-'unulliteral' for these situations.
+I’ve also included a few new goodies:
 
-Probably the most exciting change to Trash is the introduction of pipes between commands,
-similar to what you would see in Bash. Instead of passing a plain character buffer between
-commands, though, I pass parse trees. So, you can do something like this
+* Added a grammar diff program.
+* Added an ISO 14977 parser.
+* Added AGL (Automatic Graph Layout), XML, JSON output.
+* Added Cat, Echo, Wc, Strip commands.
+* Adding BNFC’s LBNF and other associated grammars. NB: This work is not yet complete, and only works for the simplest of grammars.
+* For ISO 14977, it was something that I decided to implement a while ago. But I didn’t know what I was getting into, and really should have read what D. Wheeler wrote about the spec. While it is now almost done, I learned along the way that the spec has several problems. One error is that the symbol meta identifier cannot contain spaces (meta identifier = letter, (letter | decimal digit);), yet throughout the spec–and meta identifier itself–meta identifier should allow spaces! And, as Wheeler pointed out, there are many other problems. Yes, grammars in Iso 14977 are very verbose…”a sea of commas”. But, it does have some interesting features, and so worth adding a parser for it.
 
-    read Expr.g4
-    parse
-    . | find //lexerRuleSpec/TOKEN_REF | text
+The “diff” program I implemented with this release is interesting. I
+used the Zhang-Shasha tree-edit distance algorithm, extending it to
+record the actual tree edits that correspond to the minimum tree-edit
+distance. This algorithm is, unfortunately, for an ordered tree, so it
+works best for small differences. And, for large grammars, it is too slow.
+I will be trying to implement other algorithms in the next month or two.
+There is certainly a lot that could be done here. One important type of
+difference is to include no only simple single-node inserts and deletes,
+but more complex operations like fold and unfold.
 
-to print out the lexer rule symbols. But, I have more things planned for the next few months.
+In addition, with this release, I’m disabling semantic highlighting for
+VS2019 (but not for VSCode). This is because it’s buggy and slow, and
+despite my warning people, they complain about it being buggy and slow!
+Use the extension for VSCode. It works fine. In the next release,
+I will try to fix Antlrvsix for VS2019, but you never know.
 
-The complete list of bugs fixed in this release are:
-
-* Fix ["alias w=write" does not work #105](https://github.com/kaby76/AntlrVSIX/issues/105)
-* Fix ["cd .." does not work #104](https://github.com/kaby76/AntlrVSIX/issues/104)
-* Fix [Ulliteral should be able to handle non-uppercase and non-lowercase characters like '_' #103](https://github.com/kaby76/AntlrVSIX/issues/103)
-* Partial fix [Antlr produces a warning for token rules that match the same string literal, but not for u/l cased defs #102](https://github.com/kaby76/AntlrVSIX/issues/102)
-* Fix [ulliteral of a string with numbers gives sets with dups e.g., "2" => "[22]" #101](https://github.com/kaby76/AntlrVSIX/issues/101)
-* Fix [Trash "foldlit //lexerRuleSpec/TOKEN_REF" really slow for PlSqlParser/Lexer.g4 #100](https://github.com/kaby76/AntlrVSIX/issues/100)
-* Fix [Trash crashes if given eof, in script not given "quit" command #98](https://github.com/kaby76/AntlrVSIX/issues/98)
-* Fix [Links to User Guide and Documentation are broken #97](https://github.com/kaby76/AntlrVSIX/issues/97)
-* Fix [Performance Problems #96](https://github.com/kaby76/AntlrVSIX/issues/96)
-
+* Add tests for Trash.
+* Part one of replacing in-process Trash with out-process tools: fast parse information passing.
+* Add grammar diff.
+* Add basic ISO 14977, LBNF/BNFC support.
+* [Turn off semantic highlighting for VS2019 Antlrvsix #114](https://github.com/kaby76/AntlrVSIX/issues/114)
+* [Include fix of Antlrv4parser.g4 grammar](https://github.com/antlr/grammars-v4/issues/1956)
+* [Fix Update to NET 5! #110](https://github.com/kaby76/AntlrVSIX/issues/110)
+* [Fix There should be a graph output command in Trash #108](https://github.com/kaby76/AntlrVSIX/issues/108)
+* [Fix TreeOutput.OutputTree should output tokens in similar format to parse tree nodes #107](https://github.com/kaby76/AntlrVSIX/issues/107)
+* [Fix "Find" should be renamed "XGrep" in Trash #106](https://github.com/kaby76/AntlrVSIX/issues/106)
 
 # Documentation
 
@@ -249,19 +246,6 @@ Bash script "clean.sh" in the Antlrvsix source to clean out the build files so o
 See [this guide](https://github.com/kaby76/AntlrVSIX/blob/master/PriorReleases.md).
 
 # Roadmap
-
-## Planned for v8.3 (mid Dec 2020)
-
-* Add tests for Trash.
-* Part one of replacing in-process Trash with out-process tools: fast parse information passing.
-* Add grammar diff.
-* Add ISO 14977 EBNF.
-* [Turn off semantic highlighting for VS2019 Antlrvsix #114](https://github.com/kaby76/AntlrVSIX/issues/114)
-* [Include fix of Antlrv4parser.g4 grammar](https://github.com/antlr/grammars-v4/issues/1956)
-* [Fix Update to NET 5! #110](https://github.com/kaby76/AntlrVSIX/issues/110)
-* [Fix There should be a graph output command in Trash #108](https://github.com/kaby76/AntlrVSIX/issues/108)
-* [Fix TreeOutput.OutputTree should output tokens in similar format to parse tree nodes #107](https://github.com/kaby76/AntlrVSIX/issues/107)
-* [Fix "Find" should be renamed "XGrep" in Trash #106](https://github.com/kaby76/AntlrVSIX/issues/106)
 
 ## Planned for v9 (end Dec 2020)
 
