@@ -1,7 +1,8 @@
 # AntlrVSIX
 
 AntlrVSIX is a tool to support editing, analysis, refactoring,
-and conversion of Antlr2, Antlr3, Antlr4, Bison and W3C EBNF grammars. It contains
+and conversion of context-free grammars, including Antlr,
+Bison, ISO 14977, LBNF, and W3C EBNF. It contains
 extensions for Visual Studio 2019, Visual Studio Code, Gnu Emacs,
 a [Language Server Protocol (LSP)](https://langserver.org/) server,
 and a stand-alone command-line tool known as [Trash](https://github.com/kaby76/AntlrVSIX/blob/master/doc/Trash.md).
