@@ -829,7 +829,7 @@
             }
             try
             {
-                pt = parser.start_Grammar();
+                pt = parser.start_LGrammar();
             }
             catch (Exception)
             {
@@ -899,7 +899,7 @@
             parser.AddErrorListener(parser_error_listener);
             try
             {
-                pt = parser.start_Grammar();
+                pt = parser.start_LGrammar();
             }
             catch (Exception)
             {
@@ -972,7 +972,8 @@
 
             public override void EnterCat([NotNull] lbnfParser.CatContext context)
             {
-                var id = context.IDENT().GetText();
+                if (context.Identifier() == null) return;
+                var id = context.Identifier().GetText();
                 if (context.Parent is lbnfParser.DefContext)
                 {
                     var frontier = TreeEdits.Frontier(context);
@@ -997,8 +998,9 @@
                 _pd = pd;
             }
             public override void EnterCat([NotNull] lbnfParser.CatContext context)
-            {
-                var id = context.IDENT().GetText();
+	        {
+		        if (context.Identifier() == null) return;
+                var id = context.Identifier().GetText();
                 if (!(context.Parent is lbnfParser.ItemContext))
                     return;
 

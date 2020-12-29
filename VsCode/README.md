@@ -5,7 +5,7 @@ and conversion of context-free grammars, including Antlr,
 Bison, ISO 14977, LBNF, and W3C EBNF. It contains
 extensions for Visual Studio 2019, Visual Studio Code, Gnu Emacs,
 a [Language Server Protocol (LSP)](https://langserver.org/) server,
-and a stand-alone command-line tool known as [Trash](https://github.com/kaby76/AntlrVSIX/blob/master/doc/Trash.md).
+and a stand-alone command-line tool known as [Trash](https://github.com/kaby76/AntlrVSIX/blob/master/Trash/readme.md).
 Trash is analogous to
 [Bash](https://en.wikipedia.org/wiki/Bash_(Unix_shell))
 but for parsing, in the lingua-franca of parsing: parse trees and XPath.
@@ -97,23 +97,23 @@ commands. The JSON serialization also contains the parser, lexer, token
 stream, file contents, and file location. Basically, it includes everything
 that one would need for a command to manipulate a parse tree. The purpose
 of the JSON file is so that each command can now be implemented
-ìout-of-processî, meaning that Trash can now be replaced by Bash and
+‚Äúout-of-process‚Äù, meaning that Trash can now be replaced by Bash and
 each command implemented as an independent program in any language of
 choice. Nobody wants yet another monolithic program to implement
 programming language tools. This release works towards an open system.
 With this release, all the commands and Trash still are implemented in
 one program, but it will be switched over in a month or two.
 
-Iíve also included a few new goodies:
+I‚Äôve also included a few new goodies:
 
 * Added a grammar diff program.
 * Added an ISO 14977 parser.
 * Added AGL (Automatic Graph Layout), XML, JSON output.
 * Added Cat, Echo, Wc, Strip commands.
-* Adding BNFCís LBNF and other associated grammars. NB: This work is not yet complete, and only works for the simplest of grammars.
-* For ISO 14977, it was something that I decided to implement a while ago. But I didnít know what I was getting into, and really should have read what D. Wheeler wrote about the spec. While it is now almost done, I learned along the way that the spec has several problems. One error is that the symbol meta identifier cannot contain spaces (meta identifier = letter, (letter | decimal digit);), yet throughout the specñand meta identifier itselfñmeta identifier should allow spaces! And, as Wheeler pointed out, there are many other problems. Yes, grammars in Iso 14977 are very verboseÖîa sea of commasî. But, it does have some interesting features, and so worth adding a parser for it.
+* Adding BNFC‚Äôs LBNF and other associated grammars. NB: This work is not yet complete, and only works for the simplest of grammars.
+* For ISO 14977, it was something that I decided to implement a while ago. But I didn‚Äôt know what I was getting into, and really should have read what D. Wheeler wrote about the spec. While it is now almost done, I learned along the way that the spec has several problems. One error is that the symbol meta identifier cannot contain spaces (meta identifier = letter, (letter | decimal digit);), yet throughout the spec‚Äìand meta identifier itself‚Äìmeta identifier should allow spaces! And, as Wheeler pointed out, there are many other problems. Yes, grammars in Iso 14977 are very verbose‚Ä¶‚Äùa sea of commas‚Äù. But, it does have some interesting features, and so worth adding a parser for it.
 
-The ìdiffî program I implemented with this release is interesting. I
+The ‚Äúdiff‚Äù program I implemented with this release is interesting. I
 used the Zhang-Shasha tree-edit distance algorithm, extending it to
 record the actual tree edits that correspond to the minimum tree-edit
 distance. This algorithm is, unfortunately, for an ordered tree, so it
@@ -123,8 +123,8 @@ There is certainly a lot that could be done here. One important type of
 difference is to include no only simple single-node inserts and deletes,
 but more complex operations like fold and unfold.
 
-In addition, with this release, Iím disabling semantic highlighting for
-VS2019 (but not for VSCode). This is because itís buggy and slow, and
+In addition, with this release, I‚Äôm disabling semantic highlighting for
+VS2019 (but not for VSCode). This is because it‚Äôs buggy and slow, and
 despite my warning people, they complain about it being buggy and slow!
 Use the extension for VSCode. It works fine. In the next release,
 I will try to fix Antlrvsix for VS2019, but you never know.
