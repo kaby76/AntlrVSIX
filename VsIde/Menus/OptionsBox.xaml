@@ -109,12 +109,12 @@
         <CheckBox Name="semantic_highlighting" Grid.Row="6" Grid.Column="0" Margin="10,0,10,10" >
             <CheckBox.ToolTip>
                 <TextBlock  Margin="10,0,10,10" TextWrapping="Wrap" >
-                    Turn on/off semantic highlighting.
+                    Enable semantic highlighting.
                 </TextBlock>
             </CheckBox.ToolTip>
             <WrapPanel>
                 <TextBlock TextWrapping="Wrap">
-            Turn on/off semantic highlighting (colorization of grammar symbols). When set, expect a performance hit because MS does not support semantic highlighting in its LSP client.
+            Enable semantic highlighting (colorization of grammar symbols). When set, expect a performance hit because MS does not support semantic highlighting in its LSP client.
                 </TextBlock>
             </WrapPanel>
         </CheckBox>
