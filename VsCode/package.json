@@ -5,7 +5,7 @@
     "url": "https://github.com/kaby76/AntlrVSIX/issues"
   },
   "categories": [],
-  "description": "Language server for Antlr2, 3, 4, Bison, W3C EBNF",
+  "description": "Language server for Antlr2, 3, 4, Bison, ISO 14977, LBNF, W3C EBNF",
   "homepage": "https://github.com/kaby76/AntlrVSIX/blob/master/README.md",
   "icon": "AntlrVSIX_large.png",
   "keywords": [

@@ -83,7 +83,7 @@ from Appveyor.
 
 # Current release
 
-## v8.3 (30 Dec 2020)
+## VsIde v8.3, VsCode 1.2 (30 Dec 2020)
 
 After two months of work, release 8.3 for Antlrvsix has been completed.
 Most of the changes pertain to Trash, the command-line interpreter
