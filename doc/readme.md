@@ -12,13 +12,13 @@ IDE.
 
 To get the most out of AntlrVSIX, start reviewing here:
 
-[Install AntlrVSIX in Visual Studio IDE](setup.md)<br/>
-[Basic editing of a grammar file](basic.md)<br/>
-[Building and Running Antlr Applications](building.md)<br/>
-[Customizing the keyboard](customizing.md)<br/>
-[Refactorings for Antlr Grammars](refactoring.md)<br>
-[Options](options.md)<br>
-[Import](Import.md)<br>
+[Install AntlrVSIX in Visual Studio IDE](https://github.com/kaby76/AntlrVSIX/blob/master/doc/setup.md)<br/>
+[Basic editing of a grammar file](https://github.com/kaby76/AntlrVSIX/blob/master/doc/basic.md)<br/>
+[Building and Running Antlr Applications](https://github.com/kaby76/AntlrVSIX/blob/master/doc/building.md)<br/>
+[Customizing the keyboard](https://github.com/kaby76/AntlrVSIX/blob/master/doc/customizing.md)<br/>
+[Refactorings for Antlr Grammars](https://github.com/kaby76/AntlrVSIX/blob/master/Trash/doc/refactoring.md)<br>
+[Options](https://github.com/kaby76/AntlrVSIX/blob/master/doc/options.md)<br>
+[Import](https://github.com/kaby76/AntlrVSIX/blob/master/Trash/doc/Import.md)<br>
 
 
 
