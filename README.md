@@ -128,11 +128,8 @@ despite my warning people, they complain about it being buggy and slow!
 Use the extension for VSCode. It works fine. In the next release,
 I will try to fix Antlrvsix for VS2019, but you never know.
 
-* Add tests for Trash.
-* Part one of replacing in-process Trash with out-process tools: fast parse information passing.
-* Add grammar diff.
-* Add basic ISO 14977, LBNF/BNFC support.
 * [Turn off semantic highlighting for VS2019 Antlrvsix #114](https://github.com/kaby76/AntlrVSIX/issues/114)
+* [Trash history should be limited; Alias setup should be separated from history. #113](https://github.com/kaby76/AntlrVSIX/issues/113)
 * [Include fix of Antlrv4parser.g4 grammar](https://github.com/antlr/grammars-v4/issues/1956)
 * [Fix Update to NET 5! #110](https://github.com/kaby76/AntlrVSIX/issues/110)
 * [Fix There should be a graph output command in Trash #108](https://github.com/kaby76/AntlrVSIX/issues/108)
