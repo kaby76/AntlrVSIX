@@ -1348,8 +1348,9 @@
                         var edit_changes_array = new Dictionary<string, LspTypes.TextEdit[]>();
                         foreach (KeyValuePair<string, LanguageServer.TextEdit[]> pair in changes)
                         {
-                            string doc = pair.Key;
-                            Uri uri = new Uri(doc);
+                            string ffn = pair.Key;
+                            Uri uri = new Uri(ffn);
+                            Document doc = CheckDoc(ffn);
                             LanguageServer.TextEdit[] val = pair.Value;
                             var new_list = new List<LspTypes.TextEdit>();
                             foreach (LanguageServer.TextEdit v in val)
@@ -1358,8 +1359,8 @@
                                 {
                                     Range = new LspTypes.Range()
                                 };
-                                (int, int) lcs = new LanguageServer.Module().GetLineColumn(v.range.Start.Value, document);
-                                (int, int) lce = new LanguageServer.Module().GetLineColumn(v.range.End.Value, document);
+                                (int, int) lcs = new LanguageServer.Module().GetLineColumn(v.range.Start.Value, doc);
+                                (int, int) lce = new LanguageServer.Module().GetLineColumn(v.range.End.Value, doc);
                                 new_edit.Range.Start = new Position(lcs.Item1, lcs.Item2);
                                 new_edit.Range.End = new Position(lce.Item1, lce.Item2);
                                 new_edit.NewText = v.NewText;

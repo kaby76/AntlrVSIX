@@ -6379,8 +6379,8 @@ and not(lexerRuleBlock//ebnfSuffix)
             var node = nodes.First();
             var index = node.Symbol.StartIndex;
             IEnumerable<Location> locations = new Module().FindRefsAndDefs(index, document);
-
-            IEnumerable<Document> documents = locations.Select(r => r.Uri).OrderBy(q => q).Distinct();
+            var x1 = locations.Select(r => r.Uri).ToList();
+            var documents = x1.Distinct().ToList();
             foreach (Document f in documents)
             {
                 string fn = f.FullPath;

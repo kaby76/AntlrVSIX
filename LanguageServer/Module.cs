@@ -954,7 +954,8 @@
         {
             IEnumerable<Location> locations = FindRefsAndDefs(index, doc);
             Dictionary<string, TextEdit[]> result = new Dictionary<string, TextEdit[]>();
-            IEnumerable<Document> documents = locations.Select(r => r.Uri).OrderBy(q => q).Distinct();
+            var x1 = locations.Select(r => r.Uri).ToList();
+            var documents = x1.Distinct().ToList();
             foreach (Document f in documents)
             {
                 string fn = f.FullPath;
