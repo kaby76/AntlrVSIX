@@ -1,17 +1,15 @@
 ﻿namespace LanguageServer
 {
-	using Antlr4.Runtime;
-	using Antlr4.Runtime.Misc;
-	using Antlr4.Runtime.Tree;
-	using Symtab;
-	using System;
-	using System.Collections.Generic;
-	using System.IO;
-	using System.Linq;
-	using System.Text;
-	using Workspaces;
-    using AltAntlr;
-    using AntlrTreeEditing;
+    using Antlr4.Runtime;
+    using Antlr4.Runtime.Misc;
+    using Antlr4.Runtime.Tree;
+    using Symtab;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
+    using Workspaces;
 
     internal class lbnfParsingResults : ParsingResults, IParserDescription
     {
@@ -974,7 +972,8 @@
             {
                 if (context.Identifier() == null) return;
                 var id = context.Identifier().GetText();
-                if (context.Parent is lbnfParser.DefContext)
+                if (context.Parent is lbnfParser.DefContext
+                    || context.Parent is lbnfParser.CatContext)
                 {
                     var frontier = TreeEdits.Frontier(context);
                     var list = frontier.Select(t => t.Symbol).ToList();
