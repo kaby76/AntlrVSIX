@@ -111,7 +111,8 @@ I’ve also included a few new goodies:
 * Added AGL (Automatic Graph Layout), XML, JSON output.
 * Added Cat, Echo, Wc, Strip commands.
 * Adding BNFC’s LBNF and other associated grammars. NB: This work is not yet complete, and only works for the simplest of grammars.
-* For ISO 14977, it was something that I decided to implement a while ago. But I didn’t know what I was getting into, and really should have read what D. Wheeler wrote about the spec. While it is now almost done, I learned along the way that the spec has several problems. One error is that the symbol meta identifier cannot contain spaces (meta identifier = letter, (letter | decimal digit);), yet throughout the spec–and meta identifier itself–meta identifier should allow spaces! And, as Wheeler pointed out, there are many other problems. Yes, grammars in Iso 14977 are very verbose…”a sea of commas”. But, it does have some interesting features, and so worth adding a parser for it.
+
+For ISO 14977, it was something that I decided to implement a while ago. But I didn’t know what I was getting into, and really should have read what D. Wheeler wrote about the spec. While it is now almost done, I learned along the way that the spec has several problems. One error is that the symbol meta identifier cannot contain spaces (meta identifier = letter, (letter | decimal digit);), yet throughout the spec–and meta identifier itself–meta identifier should allow spaces! And, as Wheeler pointed out, there are many other problems. Yes, grammars in Iso 14977 are very verbose…”a sea of commas”. But, it does have some interesting features, and so worth adding a parser for it.
 
 The “diff” program I implemented with this release is interesting. I
 used the Zhang-Shasha tree-edit distance algorithm, extending it to
