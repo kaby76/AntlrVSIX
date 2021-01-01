@@ -417,14 +417,54 @@
                     var en = sym.StopIndex + 1;
                     int s1 = st;
                     int s2 = en;
-                    combined.Add(
-                         new Info()
-                         {
-                             start = s1,
-                             end = s2,
-                             kind = p.Value
-                         });
-                    ;
+                    // Create multiple "info" for multiline tokens.
+                    var (ls, cs) = new LanguageServer.Module().GetLineColumn(st, doc);
+                    var (le, ce) = new LanguageServer.Module().GetLineColumn(en, doc);
+                    if (ls == le)
+                    {
+                         combined.Add(
+                             new Info()
+                             {
+                                 start = s1,
+                                 end = s2 - 1,
+                                 kind = p.Value
+                             });
+                    }
+                    else
+                    {
+                        var text = sym.Text;
+                        int start_region = st;
+                        for (int cur_index = 0; cur_index < text.Length; )
+                        {
+                            if (text[cur_index] == '\n' || text[cur_index] == '\r')
+                            {
+                                // Emit Info().
+                                if (text[cur_index] == '\r' && (cur_index + 1 < text.Length) && text[cur_index + 1] == '\n')
+                                    cur_index++;
+                                cur_index++;
+                                combined.Add(
+                                    new Info()
+                                    {
+                                        start = start_region,
+                                        end = st + cur_index - 1,
+                                        kind = p.Value
+                                    });
+                                start_region = st + cur_index;
+                            }
+                            else
+                                cur_index++;
+                        }
+                        if (start_region != en)
+                        {
+                            combined.Add(
+                                new Info()
+                                {
+                                    start = start_region,
+                                    end = en - 1,
+                                    kind = p.Value
+                                });
+                        }
+                    }
                 }
                 // Sort the list.
                 IOrderedEnumerable<Info> sorted_combined_tokens = combined.OrderBy(t => t.start).ThenBy(t => t.end);
