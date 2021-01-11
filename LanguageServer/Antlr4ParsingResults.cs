@@ -773,29 +773,6 @@
                         }
                     }
             }
-
-
-
-            //byte[] byteArray = Encoding.UTF8.GetBytes(code);
-            //var ais = new AntlrInputStream(
-            //            new StreamReader(
-            //                new MemoryStream(byteArray)).ReadToEnd());
-            //ANTLRv4Lexer lexer = new ANTLRv4Lexer(ais);
-            //CommonTokenStream cts_off_channel = new CommonTokenStream(lexer, ANTLRv4Lexer.OFF_CHANNEL);
-            //lexer.RemoveErrorListeners();
-            //var lexer_error_listener = new ErrorListener<int>(null, lexer, cts_off_channel, this.QuietAfter);
-            //lexer.AddErrorListener(lexer_error_listener);
-            //while (cts_off_channel.LA(1) != ANTLRv4Parser.Eof)
-            //{
-            //    IToken token = cts_off_channel.LT(1);
-            //    if (token.Type == ANTLRv4Lexer.BLOCK_COMMENT
-            //        || token.Type == ANTLRv4Lexer.LINE_COMMENT
-            //        || token.Type == ANTLRv4Lexer.DOC_COMMENT)
-            //    {
-            //        new_list[token] = type;
-            //    }
-            //    cts_off_channel.Consume();
-            //}
             return new_list;
         }
 

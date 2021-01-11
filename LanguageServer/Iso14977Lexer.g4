@@ -4,6 +4,8 @@ lexer grammar Iso14977Lexer;
 // https://dwheeler.com/essays/dont-use-iso-14977-ebnf.html
 // https://www.grammarware.net/text/2012/bnf-was-here.pdf
 
+channels { OFF_CHANNEL , COMMENT }
+
 Al: 'a';
 Bl: 'b';
 Cl: 'c';

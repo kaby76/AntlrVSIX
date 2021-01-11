@@ -1,17 +1,16 @@
 ﻿namespace LanguageServer
 {
-	using Antlr4.Runtime;
-	using Antlr4.Runtime.Misc;
-	using Antlr4.Runtime.Tree;
-	using Symtab;
-	using System;
-	using System.Collections.Generic;
-	using System.IO;
-	using System.Linq;
-	using System.Text;
-	using Workspaces;
     using AltAntlr;
-    using AntlrTreeEditing;
+    using Antlr4.Runtime;
+    using Antlr4.Runtime.Misc;
+    using Antlr4.Runtime.Tree;
+    using Symtab;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
+    using Workspaces;
 
     internal class Iso14977ParsingResults : ParsingResults, IParserDescription
     {
@@ -745,25 +744,20 @@
         public override Dictionary<IToken, int> ExtractComments(string code)
         {
             if (code == null) return null;
-            byte[] byteArray = Encoding.UTF8.GetBytes(code);
-            var ais = new AntlrInputStream(
-                        new StreamReader(
-                            new MemoryStream(byteArray)).ReadToEnd());
-            var lexer = new Iso14977Lexer(ais);
-            CommonTokenStream cts_off_channel = new CommonTokenStream(lexer, W3CebnfLexer.OFF_CHANNEL);
-            lexer.RemoveErrorListeners();
-            var lexer_error_listener = new ErrorListener<int>(null, lexer, this.QuietAfter);
-            lexer.AddErrorListener(lexer_error_listener);
-            Dictionary<IToken, int> new_list = new Dictionary<IToken, int>();
+            var cts = this.TokStream;
             int type = (int)AntlrClassifications.ClassificationComment;
-            while (cts_off_channel.LA(1) != Iso14977Parser.Eof)
+            Dictionary<IToken, int> new_list = new Dictionary<IToken, int>();
+            for (int i = 0; i < cts.Index; ++i)
             {
-                IToken token = cts_off_channel.LT(1);
-                //if (token.Type == Iso14977Parser.COMMENT)
-                //{
-                //    new_list[token] = type;
-                //}
-                cts_off_channel.Consume();
+                IList<IToken> inter = cts.GetHiddenTokensToLeft(i);
+                if (inter != null)
+                    foreach (IToken token in inter)
+                    {
+                        if (token.Type == Iso14977Lexer.COMMENT)
+                        {
+                            new_list[token] = type;
+                        }
+                    }
             }
             return new_list;
         }
@@ -800,19 +794,13 @@
             if (ffn == null) return;
             if (code == null) return;
             this.QuietAfter = pd.QuietAfter;
-
             IParseTree pt = null;
-
             string newcode = code;
             {
-                // Set up Antlr to parse input grammar.
                 byte[] byteArray = Encoding.UTF8.GetBytes(newcode);
                 AntlrInputStream ais = new AntlrInputStream(
-                new StreamReader(
-                    new MemoryStream(byteArray)).ReadToEnd())
-                {
-                    name = ffn
-                };
+                    new StreamReader(new MemoryStream(byteArray))
+                    .ReadToEnd()) { name = ffn };
                 var lexer = new Iso14977Lexer(ais);
                 CommonTokenStream cts = new CommonTokenStream(lexer);
                 var parser = new Iso14977Parser(cts);
@@ -834,7 +822,6 @@
                 }
                 catch (Exception)
                 {
-                    // Parsing error.
                 }
                 if (parser_error_listener.had_error || lexer_error_listener.had_error || (bail_error_handler != null && bail_error_handler.had_error))
                 {
@@ -844,7 +831,6 @@
                 {
                     System.Console.Error.WriteLine("Parse completed of " + ffn);
                 }
-
                 MyTokenStream out_token_stream2 = new MyTokenStream();
                 out_token_stream2.Text = code;
                 MyCharStream fake_char_stream2 = new MyCharStream();
@@ -855,7 +841,6 @@
                 lexer2._vocabulary = lexer.Vocabulary as Vocabulary;
                 lexer2._channelNames = lexer.ChannelNames;
                 out_token_stream2.TokenSource = lexer2;
-                // Create a new stream with gap-free symbols.
                 var s2 = new Stack<IParseTree>();
                 s2.Push(pt);
                 while (s2.Any())
@@ -915,8 +900,6 @@
                         }
                     }
                 }
-
-                // Set up Antlr to parse input grammar.
                 var parser2 = new Iso14977Parser(out_token_stream2);
                 parser2.RemoveErrorListeners();
                 var parser_error_listener2 = new ErrorListener<IToken>(parser2, lexer2, pd.QuietAfter);
@@ -942,13 +925,6 @@
                 {
                     System.Console.Error.WriteLine("Parse completed of " + ffn);
                 }
-
-                //System.Console.WriteLine(TreeOutput.OutputTree(
-                //        pt,
-                //        lexer2,
-                //        parser2,
-                //        null));
-
                 MyTokenStream out_token_stream3 = new MyTokenStream();
                 out_token_stream3.Text = code;
                 MyCharStream fake_char_stream3 = new MyCharStream();
@@ -957,7 +933,6 @@
                 MyLexer lexer3 = new MyLexer(null);
                 lexer3.InputStream = fake_char_stream3;
                 out_token_stream3.TokenSource = lexer3;
-                // Create a new stream with gap-free symbols.
                 var s3 = new Stack<IParseTree>();
                 s3.Push(pt);
                 while (s3.Any())
@@ -978,6 +953,75 @@
                             token.Line = t.Line;
                             token.Column = t.Column;
                             token.Channel = t.Channel;
+                            token.InputStream = lexer2.InputStream;
+                            token.TokenSource = lexer2;
+                            token.TokenIndex = t.TokenIndex;
+                            token.Text =
+                                out_token_stream3.Text.Substring(token.StartIndex, token.StopIndex - token.StartIndex + 1);
+                            out_token_stream3.Add(token);
+                        }
+                    }
+                    else if (n is Iso14977Parser.Commentless_symbolContext gfs2 && (gfs2.Parent is Iso14977Parser.Comment_symbolContext))
+                    {
+                        var start_token_index = gfs2.SourceInterval.a;
+                        var stop_token_index = gfs2.SourceInterval.b;
+                        for (int i = start_token_index; i <= stop_token_index; ++i)
+                        {
+                            cts.Seek(0);
+                            var t = cts.Get(i);
+                            var token = new MyToken();
+                            token.Type = t.Type;
+                            token.StartIndex = t.StartIndex;
+                            token.StopIndex = t.StopIndex;
+                            token.Line = t.Line;
+                            token.Column = t.Column;
+                            token.Channel = Iso14977Lexer.OFF_CHANNEL;
+                            token.InputStream = lexer2.InputStream;
+                            token.TokenSource = lexer2;
+                            token.TokenIndex = t.TokenIndex;
+                            token.Text =
+                                out_token_stream3.Text.Substring(token.StartIndex, token.StopIndex - token.StartIndex + 1);
+                            out_token_stream3.Add(token);
+                        }
+                    }
+                    else if (n is TerminalNodeImpl opstar && opstar.Symbol.Type == Iso14977Lexer.OPSTAR)
+                    {
+                        var start_token_index = opstar.SourceInterval.a;
+                        var stop_token_index = opstar.SourceInterval.b;
+                        for (int i = start_token_index; i <= stop_token_index; ++i)
+                        {
+                            cts.Seek(0);
+                            var t = cts.Get(i);
+                            var token = new MyToken();
+                            token.Type = t.Type;
+                            token.StartIndex = t.StartIndex;
+                            token.StopIndex = t.StopIndex;
+                            token.Line = t.Line;
+                            token.Column = t.Column;
+                            token.Channel = Iso14977Lexer.COMMENT;
+                            token.InputStream = lexer2.InputStream;
+                            token.TokenSource = lexer2;
+                            token.TokenIndex = t.TokenIndex;
+                            token.Text =
+                                out_token_stream3.Text.Substring(token.StartIndex, token.StopIndex - token.StartIndex + 1);
+                            out_token_stream3.Add(token);
+                        }
+                    }
+                    else if (n is TerminalNodeImpl starcp && starcp.Symbol.Type == Iso14977Lexer.STARCP)
+                    {
+                        var start_token_index = starcp.SourceInterval.a;
+                        var stop_token_index = starcp.SourceInterval.b;
+                        for (int i = start_token_index; i <= stop_token_index; ++i)
+                        {
+                            cts.Seek(0);
+                            var t = cts.Get(i);
+                            var token = new MyToken();
+                            token.Type = t.Type;
+                            token.StartIndex = t.StartIndex;
+                            token.StopIndex = t.StopIndex;
+                            token.Line = t.Line;
+                            token.Column = t.Column;
+                            token.Channel = Iso14977Lexer.COMMENT;
                             token.InputStream = lexer2.InputStream;
                             token.TokenSource = lexer2;
                             token.TokenIndex = t.TokenIndex;
