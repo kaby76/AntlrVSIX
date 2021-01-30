@@ -94,8 +94,8 @@
                         Severity = severity,
                         Range = new LspTypes.Range
                         {
-                            Start = new Position(bs.Item1, bs.Item2),
-                            End = new Position(be.Item1, be.Item2)
+                            Start = new Position((uint)bs.Item1, (uint)bs.Item2),
+                            End = new Position((uint)be.Item1, (uint)be.Item2)
                         },
                         Code = "Test" + Enum.GetName(typeof(DiagnosticSeverity), severity)
                     };

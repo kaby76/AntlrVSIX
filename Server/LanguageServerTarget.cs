@@ -118,8 +118,8 @@
                     };
                     (int, int) lcs = new LanguageServer.Module().GetLineColumn(delta.range.Start.Value, document);
                     (int, int) lce = new LanguageServer.Module().GetLineColumn(delta.range.End.Value, document);
-                    new_edit.Range.Start = new Position(lcs.Item1, lcs.Item2);
-                    new_edit.Range.End = new Position(lce.Item1, lce.Item2);
+                    new_edit.Range.Start = new Position((uint)lcs.Item1, (uint)lcs.Item2);
+                    new_edit.Range.End = new Position((uint)lce.Item1, (uint)lce.Item2);
                     new_edit.NewText = delta.NewText;
                     new_list.Add(new_edit);
                     count++;
@@ -211,9 +211,9 @@
 
                     SemanticTokensProvider = new SemanticTokensOptions()
                     {
-                        full = true,
-                        range = false,
-                        legend = new SemanticTokensLegend()
+                        Full = true,
+                        Range = false,
+                        Legend = new SemanticTokensLegend()
                         {
                             tokenTypes = new string[] {
                                 "class",
@@ -462,16 +462,16 @@
                                         foreach (TextDocumentContentChangeEvent change in request.ContentChanges)
                                         {
                                             var range = change.Range;
-                                            int length = change.RangeLength ?? 0; // Why? range encodes start and end => length!
+                                            int length = (int)(change.RangeLength ?? 0); // Why? range encodes start and end => length!
                                             string text = change.Text;
                                             {
-                                                int line = range.Start.Line;
-                                                int character = range.Start.Character;
+                                                int line = (int)range.Start.Line;
+                                                int character = (int)range.Start.Character;
                                                 start_index = new LanguageServer.Module().GetIndex(line, character, document);
                                             }
                                             {
-                                                int line = range.End.Line;
-                                                int character = range.End.Character;
+                                                int line = (int)range.End.Line;
+                                                int character = (int)range.End.Character;
                                                 end_index = new LanguageServer.Module().GetIndex(line, character, document);
                                             }
                                             (int, int) bs = new LanguageServer.Module().GetLineColumn(start_index, document);
@@ -610,8 +610,8 @@
                     Document document = CheckDoc(request.TextDocument.Uri);
                     CompletionContext context = request.Context;
                     Position position = request.Position;
-                    int line = position.Line;
-                    int character = position.Character;
+                    int line = (int)position.Line;
+                    int character = (int)position.Character;
                     int char_index = new LanguageServer.Module().GetIndex(line, character, document);
                     if (trace)
                     {
@@ -705,8 +705,8 @@
                     TextDocumentPositionParams request = arg.ToObject<TextDocumentPositionParams>();
                     Document document = CheckDoc(request.TextDocument.Uri);
                     Position position = request.Position;
-                    int line = position.Line;
-                    int character = position.Character;
+                    int line = (int)position.Line;
+                    int character = (int)position.Character;
                     int index = new LanguageServer.Module().GetIndex(line, character, document);
                     if (trace)
                     {
@@ -722,11 +722,13 @@
 
                     hover = new Hover
                     {
-                        Contents = new MarkupContent
-                        {
-                            Kind = MarkupKind.PlainText,
-                            Value = quick_info.Display
-                        }
+                        Contents = new SumType<string, MarkedString, MarkedString[], MarkupContent>(
+                            new MarkupContent()
+                            {
+                                Kind = MarkupKind.PlainText,
+                                Value = quick_info.Display
+                            }
+                            )
                     };
                     int index_start = quick_info.Range.Start.Value;
                     int index_end = quick_info.Range.End.Value;
@@ -734,8 +736,8 @@
                     (int, int) lce = new LanguageServer.Module().GetLineColumn(index_end, document);
                     hover.Range = new LspTypes.Range
                     {
-                        Start = new Position(lcs.Item1, lcs.Item2),
-                        End = new Position(lce.Item1, lce.Item2)
+                        Start = new Position((uint)lcs.Item1, (uint)lcs.Item2),
+                        End = new Position((uint)lce.Item1, (uint)lce.Item2)
                     };
                     Logger.Log.WriteLine("returning " + quick_info.Display);
                 }
@@ -783,8 +785,8 @@
                     TextDocumentPositionParams request = arg.ToObject<TextDocumentPositionParams>();
                     Document document = CheckDoc(request.TextDocument.Uri);
                     Position position = request.Position;
-                    int line = position.Line;
-                    int character = position.Character;
+                    int line = (int)position.Line;
+                    int character = (int)position.Character;
                     int index = new LanguageServer.Module().GetIndex(line, character, document);
                     if (trace)
                     {
@@ -804,8 +806,8 @@
                         location.Range = new LspTypes.Range();
                         (int, int) lcs = new LanguageServer.Module().GetLineColumn(f.Range.Start.Value, def_document);
                         (int, int) lce = new LanguageServer.Module().GetLineColumn(f.Range.End.Value, def_document);
-                        location.Range.Start = new Position(lcs.Item1, lcs.Item2);
-                        location.Range.End = new Position(lce.Item1, lce.Item2);
+                        location.Range.Start = new Position((uint)lcs.Item1, (uint)lcs.Item2);
+                        location.Range.End = new Position((uint)lce.Item1, (uint)lce.Item2);
                         locations.Add(location);
                     }
                     result = locations.ToArray();
@@ -832,8 +834,8 @@
                     TextDocumentPositionParams request = arg.ToObject<TextDocumentPositionParams>();
                     Document document = CheckDoc(request.TextDocument.Uri);
                     Position position = request.Position;
-                    int line = position.Line;
-                    int character = position.Character;
+                    int line = (int)position.Line;
+                    int character = (int)position.Character;
                     int index = new LanguageServer.Module().GetIndex(line, character, document);
                     if (trace)
                     {
@@ -853,8 +855,8 @@
                         location.Range = new LspTypes.Range();
                         (int, int) lcs = new LanguageServer.Module().GetLineColumn(f.Range.Start.Value, def_document);
                         (int, int) lce = new LanguageServer.Module().GetLineColumn(f.Range.End.Value, def_document);
-                        location.Range.Start = new Position(lcs.Item1, lcs.Item2);
-                        location.Range.End = new Position(lce.Item1, lce.Item2);
+                        location.Range.Start = new Position((uint)lcs.Item1, (uint)lcs.Item2);
+                        location.Range.End = new Position((uint)lce.Item1, (uint)lce.Item2);
                         locations.Add(location);
                     }
                     result = locations.ToArray();
@@ -881,8 +883,8 @@
                     TextDocumentPositionParams request = arg.ToObject<TextDocumentPositionParams>();
                     Document document = CheckDoc(request.TextDocument.Uri);
                     Position position = request.Position;
-                    int line = position.Line;
-                    int character = position.Character;
+                    int line = (int)position.Line;
+                    int character = (int)position.Character;
                     int index = new LanguageServer.Module().GetIndex(line, character, document);
                     if (trace)
                     {
@@ -902,8 +904,8 @@
                         location.Range = new LspTypes.Range();
                         (int, int) lcs = new LanguageServer.Module().GetLineColumn(f.Range.Start.Value, def_document);
                         (int, int) lce = new LanguageServer.Module().GetLineColumn(f.Range.End.Value, def_document);
-                        location.Range.Start = new Position(lcs.Item1, lcs.Item2);
-                        location.Range.End = new Position(lce.Item1, lce.Item2);
+                        location.Range.Start = new Position((uint)lcs.Item1, (uint)lcs.Item2);
+                        location.Range.End = new Position((uint)lce.Item1, (uint)lce.Item2);
                         locations.Add(location);
                     }
                     result = locations.ToArray();
@@ -930,8 +932,8 @@
                     TextDocumentPositionParams request = arg.ToObject<TextDocumentPositionParams>();
                     Document document = CheckDoc(request.TextDocument.Uri);
                     Position position = request.Position;
-                    int line = position.Line;
-                    int character = position.Character;
+                    int line = (int)position.Line;
+                    int character = (int)position.Character;
                     int index = new LanguageServer.Module().GetIndex(line, character, document);
                     if (trace)
                     {
@@ -951,8 +953,8 @@
                         location.Range = new LspTypes.Range();
                         (int, int) lcs = new LanguageServer.Module().GetLineColumn(f.Range.Start.Value, def_document);
                         (int, int) lce = new LanguageServer.Module().GetLineColumn(f.Range.End.Value + 1, def_document);
-                        location.Range.Start = new Position(lcs.Item1, lcs.Item2);
-                        location.Range.End = new Position(lce.Item1, lce.Item2);
+                        location.Range.Start = new Position((uint)lcs.Item1, (uint)lcs.Item2);
+                        location.Range.End = new Position((uint)lce.Item1, (uint)lce.Item2);
                         locations.Add(location);
                     }
                     result = locations.ToArray();
@@ -966,13 +968,13 @@
                             var dd = CheckDoc(v.Uri);
                             return "<" + v.Uri +
                                 ",[" + new LanguageServer.Module().GetIndex(
-                                    v.Range.Start.Line,
-                                    v.Range.Start.Character,
+                                    (int)v.Range.Start.Line,
+                                    (int)v.Range.Start.Character,
                                     dd)
                                 + ".."
                                 + new LanguageServer.Module().GetIndex(
-                                    v.Range.End.Line,
-                                    v.Range.End.Character,
+                                    (int)v.Range.End.Line,
+                                    (int)v.Range.End.Character,
                                     dd)
                                 + "]>";
                         })));
@@ -1003,8 +1005,8 @@
                     TextDocumentPositionParams request = arg.ToObject<TextDocumentPositionParams>();
                     Document document = CheckDoc(request.TextDocument.Uri);
                     Position position = request.Position;
-                    int line = position.Line;
-                    int character = position.Character;
+                    int line = (int)position.Line;
+                    int character = (int)position.Character;
                     int index = new LanguageServer.Module().GetIndex(line, character, document);
                     if (trace)
                     {
@@ -1025,8 +1027,8 @@
                         location.Range = new LspTypes.Range();
                         (int, int) lcs = new LanguageServer.Module().GetLineColumn(f.Range.Start.Value, def_document);
                         (int, int) lce = new LanguageServer.Module().GetLineColumn(f.Range.End.Value + 1, def_document);
-                        location.Range.Start = new Position(lcs.Item1, lcs.Item2);
-                        location.Range.End = new Position(lce.Item1, lce.Item2);
+                        location.Range.Start = new Position((uint)lcs.Item1, (uint)lcs.Item2);
+                        location.Range.End = new Position((uint)lce.Item1, (uint)lce.Item2);
                         locations.Add(location);
                     }
                     result = locations.ToArray();
@@ -1106,8 +1108,8 @@
                         (int, int) lce = new LanguageServer.Module().GetLineColumn(s.range.End.Value, document);
                         si.Location.Range = new LspTypes.Range
                         {
-                            Start = new Position(lcs.Item1, lcs.Item2),
-                            End = new Position(lce.Item1, lce.Item2)
+                            Start = new Position((uint)lcs.Item1, (uint)lcs.Item2),
+                            End = new Position((uint)lce.Item1, (uint)lce.Item2)
                         };
                         symbols.Add(si);
                     }
@@ -1121,13 +1123,13 @@
                             SymbolInformation v = (SymbolInformation)s;
                             return "<" + v.Name + "," + v.Kind
                                 + ",[" + new LanguageServer.Module().GetIndex(
-                                    v.Location.Range.Start.Line,
-                                    v.Location.Range.Start.Character,
+                                    (int)v.Location.Range.Start.Line,
+                                    (int)v.Location.Range.Start.Character,
                                     document)
                                 + ".."
                                 + new LanguageServer.Module().GetIndex(
-                                    v.Location.Range.End.Line,
-                                    v.Location.Range.End.Character,
+                                    (int)v.Location.Range.End.Line,
+                                    (int)v.Location.Range.End.Character,
                                     document)
                                 + "]>";
                         })));
@@ -1262,8 +1264,8 @@
                         };
                         (int, int) lcs = new LanguageServer.Module().GetLineColumn(delta.range.Start.Value, document);
                         (int, int) lce = new LanguageServer.Module().GetLineColumn(delta.range.End.Value, document);
-                        new_edit.Range.Start = new Position(lcs.Item1, lcs.Item2);
-                        new_edit.Range.End = new Position(lce.Item1, lce.Item2);
+                        new_edit.Range.Start = new Position((uint)lcs.Item1, (uint)lcs.Item2);
+                        new_edit.Range.End = new Position((uint)lce.Item1, (uint)lce.Item2);
                         new_edit.NewText = delta.NewText;
                         new_list.Add(new_edit);
                         count++;
@@ -1329,8 +1331,8 @@
                 {
                     RenameParams request = arg.ToObject<RenameParams>();
                     Position position = request.Position;
-                    int line = position.Line;
-                    int character = position.Character;
+                    int line = (int)position.Line;
+                    int character = (int)position.Character;
                     Document document = CheckDoc(request.TextDocument.Uri);
                     if (!ignore_next_change.ContainsKey(document.FullPath))
                     {
@@ -1361,8 +1363,8 @@
                                 };
                                 (int, int) lcs = new LanguageServer.Module().GetLineColumn(v.range.Start.Value, doc);
                                 (int, int) lce = new LanguageServer.Module().GetLineColumn(v.range.End.Value, doc);
-                                new_edit.Range.Start = new Position(lcs.Item1, lcs.Item2);
-                                new_edit.Range.End = new Position(lce.Item1, lce.Item2);
+                                new_edit.Range.Start = new Position((uint)lcs.Item1, (uint)lcs.Item2);
+                                new_edit.Range.End = new Position((uint)lce.Item1, (uint)lce.Item2);
                                 new_edit.NewText = v.NewText;
                                 new_list.Add(new_edit);
                                 count++;
@@ -2239,7 +2241,7 @@
                     Document document = CheckDoc(request.TextDocument.Uri);
                     var r = new LanguageServer.Module().Get(document);
                     List<object> symbols = new List<object>();
-                    List<int> data = new List<int>();
+                    List<uint> data = new List<uint>();
                     // Let us fill up temp values to figure out.
                     int start = 0;
                     var new_r = r.ToList();
@@ -2283,20 +2285,20 @@
                         var diff_l = lcs.Item1 - lc_start.Item1;
                         var diff_c = diff_l != 0 ? lcs.Item2 : lcs.Item2 - lc_start.Item2;
                         // line
-                        data.Add(diff_l);
+                        data.Add((uint)diff_l);
                         // startChar
-                        data.Add(diff_c);
+                        data.Add((uint)diff_c);
                         // length
-                        data.Add(s.end - s.start + 1);
+                        data.Add((uint)(s.end - s.start + 1));
                         // tokenType
-                        data.Add(kind);
+                        data.Add((uint)kind);
                         // tokenModifiers
                         data.Add(0);
 
                         start = s.start;
                     }
                     result = new SemanticTokens();
-                    result.data = data.ToArray();
+                    result.Data = data.ToArray();
                     if (trace)
                     {
                         Logger.Log.Write("returning semantictokens");
