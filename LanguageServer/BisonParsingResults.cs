@@ -4,7 +4,7 @@
     using Antlr4.Runtime.Misc;
     using Antlr4.Runtime.Tree;
     using org.eclipse.wst.xml.xpath2.processor.util;
-    using Symtab;
+    using Domemtech.Symtab;
     using System;
     using System.Collections.Generic;
     using System.IO;

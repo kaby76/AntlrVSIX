@@ -4,7 +4,7 @@
     using Antlr4.Runtime.Tree;
     using LoggerNs;
     using Microsoft.CodeAnalysis;
-    using Symtab;
+    using Domemtech.Symtab;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -172,11 +172,11 @@
             if (list_value.Count == 1)
             {
                 CombinedScopeSymbol value = list_value.First();
-                Symtab.ISymbol name = value as Symtab.ISymbol;
+                Domemtech.Symtab.ISymbol name = value as Domemtech.Symtab.ISymbol;
                 string show = name?.Name;
-                if (value is Symtab.Literal)
+                if (value is Domemtech.Symtab.Literal)
                 {
-                    show = ((Symtab.Literal)value).Cleaned;
+                    show = ((Domemtech.Symtab.Literal)value).Cleaned;
                 }
                 if (gd.PopUpDefinition[tag_type] != null)
                 {
@@ -196,11 +196,11 @@
                 string display = "Ambiguous -- ";
                 foreach (CombinedScopeSymbol value in list_value)
                 {
-                    Symtab.ISymbol name = value as Symtab.ISymbol;
+                    Domemtech.Symtab.ISymbol name = value as Domemtech.Symtab.ISymbol;
                     string show = name?.Name;
-                    if (value is Symtab.Literal)
+                    if (value is Domemtech.Symtab.Literal)
                     {
-                        show = ((Symtab.Literal)value).Cleaned;
+                        show = ((Domemtech.Symtab.Literal)value).Cleaned;
                     }
                     if (gd.PopUpDefinition[tag_type] != null)
                     {
@@ -552,7 +552,7 @@
                 Compile(workspace);
             }
 
-            ref_pd.Attributes.TryGetValue(ref_pt, out IList<Symtab.CombinedScopeSymbol> list_values);
+            ref_pd.Attributes.TryGetValue(ref_pt, out IList<Domemtech.Symtab.CombinedScopeSymbol> list_values);
             if (list_values == null)
             {
                 return result;
@@ -565,13 +565,13 @@
                     continue;
                 }
 
-                Symtab.ISymbol @ref = value as Symtab.ISymbol;
+                Domemtech.Symtab.ISymbol @ref = value as Domemtech.Symtab.ISymbol;
                 if (@ref == null)
                 {
                     continue;
                 }
 
-                List<Symtab.ISymbol> defs = @ref.resolve();
+                List<Domemtech.Symtab.ISymbol> defs = @ref.resolve();
                 if (defs == null)
                 {
                     continue;
@@ -618,22 +618,22 @@
                 Compile(workspace);
             }
 
-            ref_pd.Attributes.TryGetValue(ref_pt, out IList<Symtab.CombinedScopeSymbol> list_value);
+            ref_pd.Attributes.TryGetValue(ref_pt, out IList<Domemtech.Symtab.CombinedScopeSymbol> list_value);
             if (list_value == null)
             {
                 return result;
             }
 
-            List<Symtab.ISymbol> found_defs = null;
-            Symtab.ISymbol found_ref = null;
-            foreach (CombinedScopeSymbol value in list_value)
+            List<Domemtech.Symtab.ISymbol> found_defs = null;
+            Domemtech.Symtab.ISymbol found_ref = null;
+            foreach (Domemtech.Symtab.CombinedScopeSymbol value in list_value)
             {
                 if (value == null)
                 {
                     continue;
                 }
 
-                Symtab.ISymbol @ref = value as Symtab.ISymbol;
+                Domemtech.Symtab.ISymbol @ref = value as Domemtech.Symtab.ISymbol;
                 if (@ref == null)
                 {
                     continue;
@@ -645,7 +645,7 @@
                 }
 
                 found_ref = @ref;
-                List<Symtab.ISymbol> defs = @ref.resolve();
+                List<Domemtech.Symtab.ISymbol> defs = @ref.resolve();
                 if (defs == null)
                 {
                     continue;

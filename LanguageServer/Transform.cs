@@ -9,7 +9,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using org.eclipse.wst.xml.xpath2.processor.util;
-    using Symtab;
+    using Domemtech.Symtab;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -1834,18 +1834,18 @@
             return false;
         }
 
-        private static List<Symtab.ISymbol> GetDef(IParseTree lhs, ParsingResults pd_parser)
+        private static List<Domemtech.Symtab.ISymbol> GetDef(IParseTree lhs, ParsingResults pd_parser)
         {
-            List<Symtab.ISymbol> result = new List<Symtab.ISymbol>();
+            List<Domemtech.Symtab.ISymbol> result = new List<Domemtech.Symtab.ISymbol>();
             var term = lhs as TerminalNodeImpl;
             pd_parser.Attributes.TryGetValue(term, out IList<CombinedScopeSymbol> list_value);
             if (list_value == null) return result;
             if (list_value.Count > 1) return result;
             var value = list_value.First();
             if (value == null) return result;
-            Symtab.ISymbol sym = value as Symtab.ISymbol;
+            Domemtech.Symtab.ISymbol sym = value as Domemtech.Symtab.ISymbol;
             if (sym == null) return result;
-            result = new List<Symtab.ISymbol>() { sym };
+            result = new List<Domemtech.Symtab.ISymbol>() { sym };
             if (sym is RefSymbol) result = sym.resolve();
             return result;
         }
@@ -2068,11 +2068,11 @@
                     .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree as TerminalNodeImpl).ToList();
             }
 
-            Digraph<Symtab.ISymbol> graph = new Digraph<Symtab.ISymbol>();
+            Digraph<Domemtech.Symtab.ISymbol> graph = new Digraph<Domemtech.Symtab.ISymbol>();
 
             // Get LHS defs and refs, then perform transitive closure of all uses, all rules and their symbols.
-            HashSet<Symtab.ISymbol> visited = new HashSet<Symtab.ISymbol>();
-            Stack<Symtab.ISymbol> stack = new Stack<Symtab.ISymbol>();
+            HashSet<Domemtech.Symtab.ISymbol> visited = new HashSet<Domemtech.Symtab.ISymbol>();
+            Stack<Domemtech.Symtab.ISymbol> stack = new Stack<Domemtech.Symtab.ISymbol>();
 
             foreach (var node in all_nodes)
             {
@@ -2124,7 +2124,7 @@
                     foreach (var rhs_sym in rhs_symbols)
                     {
                         var more_defs = GetDef(rhs_sym, pd);
-                        foreach (Symtab.ISymbol def2 in more_defs)
+                        foreach (Domemtech.Symtab.ISymbol def2 in more_defs)
                         {
                             string def_file2 = def2.file;
                             if (def_file2 == null)
@@ -2153,7 +2153,7 @@
                                 continue;
 
                             graph.AddVertex(def2);
-                            DirectedEdge<Symtab.ISymbol> e = new DirectedEdge<Symtab.ISymbol>(def, def2);
+                            DirectedEdge<Domemtech.Symtab.ISymbol> e = new DirectedEdge<Domemtech.Symtab.ISymbol>(def, def2);
                             graph.AddEdge(e);
 
                             stack.Push(def2);
@@ -2163,9 +2163,9 @@
             }
 
             // Check rule and graph.
-            var tarjan = new TarjanSCC<Symtab.ISymbol, DirectedEdge<Symtab.ISymbol>>(graph);
-            List<Symtab.ISymbol> ordered = new List<Symtab.ISymbol>();
-            IDictionary<Symtab.ISymbol, IEnumerable<Symtab.ISymbol>> sccs = tarjan.Compute();
+            var tarjan = new TarjanSCC<Domemtech.Symtab.ISymbol, DirectedEdge<Domemtech.Symtab.ISymbol>>(graph);
+            List<Domemtech.Symtab.ISymbol> ordered = new List<Domemtech.Symtab.ISymbol>();
+            IDictionary<Domemtech.Symtab.ISymbol, IEnumerable<Domemtech.Symtab.ISymbol>> sccs = tarjan.Compute();
             var cycles = sccs.Select(t => t.Value).Distinct().Where(t => t.Count() > 1);
             List<string> result = new List<string>();
             if (!cycles.Any())
@@ -2203,7 +2203,7 @@
 
                 if (nodes == null)
                 {
-                    foreach (KeyValuePair<Symtab.ISymbol, IEnumerable<Symtab.ISymbol>> scc in sccs)
+                    foreach (KeyValuePair<Domemtech.Symtab.ISymbol, IEnumerable<Domemtech.Symtab.ISymbol>> scc in sccs)
                     {
                         if (scc.Value.Count() > 1)
                         {
@@ -4503,9 +4503,9 @@
                         if (list_value.Count > 1) return false;
                         var value = list_value.First();
                         if (value == null) return false;
-                        Symtab.ISymbol sym = value as Symtab.ISymbol;
+                        Domemtech.Symtab.ISymbol sym = value as Domemtech.Symtab.ISymbol;
                         if (sym == null) return false;
-                        List<Symtab.ISymbol> list_of_syms = new List<Symtab.ISymbol>() { sym };
+                        List<Domemtech.Symtab.ISymbol> list_of_syms = new List<Domemtech.Symtab.ISymbol>() { sym };
                         if (sym is RefSymbol) list_of_syms = sym.resolve();
                         if (list_of_syms.Count > 1) return false;
                         var s = list_of_syms.First();
@@ -4529,9 +4529,9 @@
                             if (list_value.Count > 1) return false;
                             var value = list_value.First();
                             if (value == null) return false;
-                            Symtab.ISymbol sym = value as Symtab.ISymbol;
+                            Domemtech.Symtab.ISymbol sym = value as Domemtech.Symtab.ISymbol;
                             if (sym == null) return false;
-                            List<Symtab.ISymbol> list_of_syms = new List<Symtab.ISymbol>() { sym };
+                            List<Domemtech.Symtab.ISymbol> list_of_syms = new List<Domemtech.Symtab.ISymbol>() { sym };
                             if (sym is RefSymbol) list_of_syms = sym.resolve();
                             if (list_of_syms.Count > 1) return false;
                             var s = list_of_syms.First();
@@ -4584,9 +4584,9 @@
                 if (list_value.Count > 1) continue;
                 var value = list_value.First();
                 if (value == null) continue;
-                Symtab.ISymbol sym = value as Symtab.ISymbol;
+                Domemtech.Symtab.ISymbol sym = value as Domemtech.Symtab.ISymbol;
                 if (sym == null) continue;
-                List<Symtab.ISymbol> list_of_syms = new List<Symtab.ISymbol>() { sym };
+                List<Domemtech.Symtab.ISymbol> list_of_syms = new List<Domemtech.Symtab.ISymbol>() { sym };
                 if (sym is RefSymbol) list_of_syms = sym.resolve();
                 if (list_of_syms.Count > 1) continue;
                 var x = list_of_syms.First();
@@ -4748,9 +4748,9 @@
                 if (list_value.Count > 1) continue;
                 var value = list_value.First();
                 if (value == null) continue;
-                Symtab.ISymbol sym = value as Symtab.ISymbol;
+                Domemtech.Symtab.ISymbol sym = value as Domemtech.Symtab.ISymbol;
                 if (sym == null) continue;
-                List<Symtab.ISymbol> list_of_syms = new List<Symtab.ISymbol>() { sym };
+                List<Domemtech.Symtab.ISymbol> list_of_syms = new List<Domemtech.Symtab.ISymbol>() { sym };
                 if (sym is RefSymbol) list_of_syms = sym.resolve();
                 if (list_of_syms.Count > 1) continue;
                 var x = list_of_syms.First();

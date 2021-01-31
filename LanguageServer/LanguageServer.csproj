@@ -58,8 +58,9 @@
                 <PackageReference Include="Antlr4BuildTasks" Version="8.12">
                     <PrivateAssets>all</PrivateAssets>
                 </PackageReference>
-		<PackageReference Include="AntlrTreeEditing" Version="2.3" />
-		<PackageReference Include="cs-codebuff" Version="3.0.0" />
+    <PackageReference Include="AntlrTreeEditing" Version="2.3" />
+    <PackageReference Include="Domemtech.Symtab" Version="0.0.1" />
+    <PackageReference Include="cs-codebuff" Version="3.0.0" />
 		<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.7.0" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.7.0" />
 	</ItemGroup>
@@ -69,7 +70,6 @@
 		<ProjectReference Include="..\AltAntlr\AltAntlr.csproj" />
 		<ProjectReference Include="..\Logger\Logger.csproj" />
 		<ProjectReference Include="..\NWayDiff\NWayDiff.csproj" />
-		<ProjectReference Include="..\Symtab\Symtab.csproj" />
 		<ProjectReference Include="..\Workspaces\Workspaces.csproj" />
 	</ItemGroup>
 

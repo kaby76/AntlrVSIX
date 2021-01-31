@@ -25,7 +25,7 @@
         List<bool> CanGotodef { get; }
         List<bool> CanGotovisitor { get; }
         bool CanReformat { get; }
-        Func<IParserDescription, Dictionary<IParseTree, IList<Symtab.CombinedScopeSymbol>>, IParseTree, int> Classify { get; }
+        Func<IParserDescription, Dictionary<IParseTree, IList<Domemtech.Symtab.CombinedScopeSymbol>>, IParseTree, int> Classify { get; }
         bool IsFileType(string ffn);
         string FileExtension { get; }
         string StartRule { get; }

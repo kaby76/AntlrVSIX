@@ -214,10 +214,6 @@
       <Project>{e4c5ed5b-21ae-492f-8cf8-c3eadf4059e2}</Project>
       <Name>Options</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Symtab\Symtab.csproj">
-      <Project>{95fab63b-1fe9-41f9-a875-49556e5e6b8a}</Project>
-      <Name>Symtab</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Workspaces\Workspaces.csproj">
       <Project>{e138159b-e61c-4cb7-abbc-7c57dc9bdd79}</Project>
       <Name>Workspaces</Name>
