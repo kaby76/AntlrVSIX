@@ -6265,17 +6265,6 @@
                 throw new LanguageServerException("A grammar file is not selected. Please select one first.");
             }
 
-            if (nodes != null)
-            {
-                foreach (var n in nodes)
-                {
-                    if (!(n is ANTLRv4Parser.LexerRuleSpecContext))
-                    {
-                        throw new LanguageServerException("Unexpected type of node--should be for the LHS terminal of a lexer rule.");
-                    }
-                }
-            }
-
             // Find keyword-like literals in lexer rules.
             List<ANTLRv4Parser.LexerRuleSpecContext> to_check_lexer_rule_spec;
             var (tree, parser, lexer) = (pd_parser.ParseTree, pd_parser.Parser, pd_parser.Lexer);

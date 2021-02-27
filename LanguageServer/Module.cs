@@ -108,7 +108,6 @@
 
         public (int, int) GetLineColumn(int index, Document doc)
         {
-            int cur_index = 0;
             string buffer = doc.Code;
             if (buffer == null)
             {
@@ -158,7 +157,7 @@
             }
 
             TerminalNodeImpl q = p as Antlr4.Runtime.Tree.TerminalNodeImpl;
-            Range range = new Workspaces.Range(new Workspaces.Index(q.Symbol.StartIndex), new Workspaces.Index(q.Symbol.StopIndex + 1));
+            var range = new Workspaces.Range(new Workspaces.Index(q.Symbol.StartIndex), new Workspaces.Index(q.Symbol.StopIndex + 1));
             bool found = pd.PopupList.TryGetValue(q, out int tag_type);
             if (!found)
             {
@@ -485,7 +484,7 @@
                 Compile(workspace);
             }
 
-            List<Range> result = new List<Workspaces.Range>();
+            var result = new List<Workspaces.Range>();
             foreach (IParseTree p in pd.Errors)
             {
                 ErrorNodeImpl q = p as Antlr4.Runtime.Tree.ErrorNodeImpl;
@@ -525,7 +524,7 @@
                     continue;
                 }
 
-                Range r = new Workspaces.Range(new Workspaces.Index(a), new Workspaces.Index(b));
+                var r = new Workspaces.Range(new Workspaces.Index(a), new Workspaces.Index(b));
                 result.Add(r);
             }
             return result;
@@ -1007,7 +1006,7 @@
                 {
                     Document d = l.Uri;
                     string xx = d.FullPath;
-                    Range r = l.Range;
+                    var r = l.Range;
                     string pre = code.Substring(previous, r.Start.Value - previous);
                     sb.Append(pre);
                     sb.Append(new_text);

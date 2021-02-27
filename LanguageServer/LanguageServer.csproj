@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>netstandard2.0</TargetFramework>
-	</PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+  </PropertyGroup>
 
 	<ItemGroup>
 		<Antlr4 Remove="LexBasic.g4" />
@@ -61,8 +61,8 @@
     <PackageReference Include="AntlrTreeEditing" Version="2.3" />
     <PackageReference Include="Domemtech.Symtab" Version="0.0.1" />
     <PackageReference Include="cs-codebuff" Version="3.0.0" />
-		<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.7.0" />
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.7.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.8.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.8.0" />
 	</ItemGroup>
 
 	<ItemGroup>

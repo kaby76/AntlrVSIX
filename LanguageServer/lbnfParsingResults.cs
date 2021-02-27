@@ -743,7 +743,7 @@
         public override Dictionary<IToken, int> ExtractComments(string code)
         {
             return null;
-            if (code == null) return null;
+            //if (code == null) return null;
             //byte[] byteArray = Encoding.UTF8.GetBytes(code);
             //var ais = new AntlrInputStream(
             //            new StreamReader(

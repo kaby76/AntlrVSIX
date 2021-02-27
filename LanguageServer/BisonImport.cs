@@ -52,7 +52,6 @@
                         new StaticContextBuilder()).evaluate(
                         dynamicContext, new object[] { dynamicContext.Document })
                     .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
-                Antlr4.Runtime.Tree.IParseTree parent;
                 foreach (var token in nodes)
                 {
                     string tok = token.GetText();

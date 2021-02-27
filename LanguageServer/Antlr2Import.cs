@@ -332,22 +332,6 @@
                 }
             }
 
-            // If the symbol occurs on the RHS of a parser rule, remove "protected".
-            if (false) {
-                org.eclipse.wst.xml.xpath2.processor.Engine engine =
-                    new org.eclipse.wst.xml.xpath2.processor.Engine();
-                AntlrTreeEditing.AntlrDOM.AntlrDynamicContext dynamicContext =
-                    new AntlrTreeEditing.AntlrDOM.ConvertToDOM().Try(tree, parser);
-                var nodes = engine.parseExpression(
-                        @"//rule_
-                            [not(id/TOKEN_REF/text() = //rule_[id/RULE_REF]/altList//TOKEN_REF/text())]
-                            /(PROTECTED | PUBLIC | PRIVATE)",
-                        new StaticContextBuilder()).evaluate(
-                        dynamicContext, new object[] { dynamicContext.Document })
-                    .Select(x => (x.NativeValue as AntlrTreeEditing.AntlrDOM.AntlrElement).AntlrIParseTree);
-                TreeEdits.Delete(nodes);
-            }
-
             StringBuilder sb = new StringBuilder();
             TreeEdits.Reconstruct(sb, tree, text_before);
             var new_code = sb.ToString();

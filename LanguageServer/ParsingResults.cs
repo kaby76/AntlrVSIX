@@ -245,7 +245,7 @@
                                 ColorizedList.Add(t.Symbol, i);
                             }
                         }
-                        catch (Exception eeks) { }
+                        catch (Exception) { }
                         try
                         {
                             if (i == (int)LanguageServer.Antlr4ParsingResults.AntlrClassifications.ClassificationNonterminalRef
@@ -258,7 +258,7 @@
                                 PopupList.Add(t, i);
                             }
                         }
-                        catch (Exception eeks) { }
+                        catch (Exception) { }
                         try
                         {
                             if (i == (int)LanguageServer.Antlr4ParsingResults.AntlrClassifications.ClassificationNonterminalDef
@@ -271,7 +271,7 @@
                                 PopupList.Add(t, i);
                             }
                         }
-                        catch (Exception eeks) { }
+                        catch (Exception) { }
                     }
                 }
 
