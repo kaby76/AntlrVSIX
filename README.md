@@ -1,5 +1,7 @@
 # AntlrVSIX
 
+_NB: This and the Antlr4BuildTasks repo are being completely reorganized! The new repos will contain base libraries, Trash, the editor extensions and LSP server for Antlr. Trash will consist of a collection of dotnet tools instead of a Bash-like shell with commands. I then expect to make a release of this extension and Trash, then archive the old repos, sometime by May '21. --Ken (Apr 2, '21).) 
+
 AntlrVSIX is a tool to support editing, analysis, refactoring,
 and conversion of context-free grammars, including Antlr,
 Bison, ISO 14977, LBNF, and W3C EBNF. It contains
