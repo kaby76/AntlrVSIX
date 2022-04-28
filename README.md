@@ -1,6 +1,8 @@
 # AntlrVSIX
 
-_NB: This and the Antlr4BuildTasks repo are being completely reorganized! The new repos will contain base libraries, Trash, the editor extensions and LSP server for Antlr. Trash will consist of a collection of dotnet tools instead of a Bash-like shell with commands. I then expect to make a release of this extension and Trash, then archive the old repos, sometime by May '21. --Ken (Apr 2, '21)._
+_NB: This repo is being redeveloped for VS2022! MS appears to have updated the LSP interface in Visual Studio IDE.
+I am updating the code to see if their code supports LSP 3.16. And, I will be refreshing the VSCode extension as well.
+--Ken (Apr 28, '22)._
 
 AntlrVSIX is a tool to support editing, analysis, refactoring,
 and conversion of context-free grammars, including Antlr,
