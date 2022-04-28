@@ -141,13 +141,6 @@
 				</Strings>
 			</Button>
 
-			<Button guid="guidMenuAndCommandsCmdSet" id="AddLexerRulesForStringLiteralsCmd" priority="0x100" type="Button">
-				<Parent guid="guidMenuAndCommandsCmdSet" id="TransformMenuGroup"/>
-				<Strings>
-					<ButtonText>Add lexer rules for string literals</ButtonText>
-				</Strings>
-			</Button>
-
 			<Button guid="guidMenuAndCommandsCmdSet" id="SortModesCmd" priority="0x100" type="Button">
 				<Parent guid="guidMenuAndCommandsCmdSet" id="TransformMenuGroup"/>
 				<Strings>
@@ -294,7 +287,6 @@
 			<IDSymbol name="ImportCmd" value="0x7019" />
 			<IDSymbol name="EliminateDirectLeftRecursionCmd" value="0x7020" />
 			<IDSymbol name="EliminateAntlrKeywordsInRulesCmd" value="0x7021" />
-			<IDSymbol name="AddLexerRulesForStringLiteralsCmd" value="0x7022" />
 			<IDSymbol name="SortModesCmd" value="0x7023" />
 			<IDSymbol name="EliminateIndirectLeftRecursionCmd" value="0x7024" />
 			<IDSymbol name="ConvertRecursionToKleeneOperator" value="0x7025" />
